@@ -125,8 +125,7 @@ namespace Yavsc.Services
                             var hubClient = hubContext.Clients.User(cxid);
                             var data = new Dictionary<string, object>();
                             data["event"] = ev;
-
-                            hubClient.push(ev.Topic, data);
+                            hubClient.push(ev.Topic, JsonConvert.SerializeObject(data));
                         }
 
                         result.message_id = MimeKit.Utils.MimeUtils.GenerateMessageId(

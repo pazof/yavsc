@@ -8,11 +8,13 @@ namespace Yavsc.Services
         void SetUserName(string cxId, string userName);
 
         string GetUserName (string cxId);
-        void OnConnected(string userName, bool isCop);
+        void OnConnected(string cxId, bool isCop);
         bool IsConnected(string candidate);
+
+        void OnDisctonnected (string cxId);
         bool IsPresent(string roomName, string userName);
         
-        ChatRoomInfo Join(string roomName, string userName);
+        ChatRoomInfo Join(string roomName, string cxId);
 
         bool Part(string cxId, string roomName,  string reason);
 
@@ -25,7 +27,6 @@ namespace Yavsc.Services
         bool TryGetChanInfo(string room, out ChatRoomInfo chanInfo);
 
         IEnumerable<string> GetConnexionIds(string userName);
-        void Abort(string connectionId);
 
         void SetErrorHandler(Action<string,string> errorHandler);
         IEnumerable<ChannelShortInfo> ListChannels(string pattern);

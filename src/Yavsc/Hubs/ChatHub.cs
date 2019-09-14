@@ -20,7 +20,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Concurrent;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,12 +31,9 @@ using Microsoft.Extensions.Localization;
 namespace Yavsc
 {
 
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     using Models;
     using Models.Chat;
     using Yavsc.Abstract.Chat;
-    using Yavsc.Attributes.Validation;
     using Yavsc.Services;
     public partial class ChatHub : Hub, IDisposable
     {
@@ -46,7 +42,7 @@ namespace Yavsc
         private IStringLocalizer _localizer;
         ILogger _logger;
 
-        public HubInputValidator HubInputValidator { get; }
+        public HubInputValidator InputValidator { get; }
 
         public ChatHub()
         {
@@ -64,74 +60,50 @@ namespace Yavsc
                  NotifyUser(NotificationTypes.Error, context, error);
              });
             _logger = loggerFactory.CreateLogger<ChatHub>();
-            HubInputValidator = new HubInputValidator { NotifyUser = this.NotifyUser };
+            InputValidator = new HubInputValidator { NotifyUser = this.NotifyUser };
         }
 
         void SetUserName(string cxId, string userName)
         {
-            _cxManager.SetUserName( cxId,  userName);
+            _cxManager.SetUserName(cxId,  userName);
         }
 
         public override async Task OnConnected()
         {
-            bool isAuth = false;
+            bool isAuth = (Context.User != null);
             bool isCop = false;
             string userName = setUserName();
-            if (Context.User != null)
+            if (isAuth)
             {
-                isAuth = Context.User.Identity.IsAuthenticated;
 
                 var group = isAuth ?
                  ChatHubConstants.HubGroupAuthenticated : ChatHubConstants.HubGroupAnonymous;
                 // Log ("Cx: " + group);
                 await Groups.Add(Context.ConnectionId, group);
-                if (isAuth)
+                _logger.LogInformation(_localizer.GetString(ChatHubConstants.LabAuthChatUser));
+
+                var userId = _dbContext.Users.First(u => u.UserName == userName).Id;
+
+                Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).notifyUser(NotificationTypes.Connected, userName, null);
+                isCop = Context.User.IsInRole(Constants.AdminGroupName) ;
+                if (isCop)
                 {
-                    _logger.LogInformation(_localizer.GetString(ChatHubConstants.LabAuthChatUser));
-
-                    var userId = _dbContext.Users.First(u => u.UserName == userName).Id;
-
-                    var userHadConnections = _dbContext.ChatConnection.Any(accx => accx.ConnectionId == Context.ConnectionId);
-
-                    if (userHadConnections)
-                    {
-                        var ccx = _dbContext.ChatConnection.First(c => c.ConnectionId == Context.ConnectionId);
-                        ccx.Connected = true;
-                    }
-                    else
-                        _dbContext.ChatConnection.Add(new ChatConnection
-                        {
-                            ApplicationUserId = userId,
-                            ConnectionId = Context.ConnectionId,
-                            UserAgent = Context.Request.Headers["User-Agent"],
-                            Connected = true
-                        });
-                    _dbContext.SaveChanges();
-                    Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).notifyUser(NotificationTypes.Connected, userName, null);
-                    isCop = Context.User.IsInRole(Constants.AdminGroupName) ;
-                    if (isCop)
-                    {
-                        await Groups.Add(Context.ConnectionId, ChatHubConstants.HubGroupCops);
-                    }
-
-                    foreach (var uid in _dbContext.CircleMembers.Select(m => m.MemberId))
-                    {
-                        await Groups.Add(Context.ConnectionId, ChatHubConstants.HubGroupFollowingPrefix + uid);
-                    }
+                    await Groups.Add(Context.ConnectionId, ChatHubConstants.HubGroupCops);
                 }
-                else
+
+                foreach (var uid in _dbContext.CircleMembers.Select(m => m.MemberId))
                 {
-                    // this line isn't reached: Context.User != null <=> Context.User.Identity.IsAuthenticated
-                    throw new NotSupportedException("Context.User != null && no auth");
+                    await Groups.Add(Context.ConnectionId, ChatHubConstants.HubGroupFollowingPrefix + uid);
                 }
             }
             else
             {
                 await Groups.Add(Context.ConnectionId, ChatHubConstants.HubGroupAnonymous);
             }
-            _cxManager.OnConnected(userName, isCop);
+            _cxManager.OnConnected(Context.ConnectionId, isCop);
             await base.OnConnected();
         }
+
         string setUserName()
         {
             if (Context.User != null)
@@ -160,53 +132,27 @@ namespace Yavsc
                 var userId = user.Id;
                 Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).notifyUser(NotificationTypes.DisConnected, userName, null);
 
-                var cx = _dbContext.ChatConnection.SingleOrDefault(c => c.ConnectionId == Context.ConnectionId);
-                if (cx != null)
-                {
-                    _dbContext.ChatConnection.Remove(cx);
-                    _dbContext.SaveChanges();
-                }
-                else
-                    _logger.LogError($"Could not remove user cx {Context.ConnectionId}");
+                _cxManager.OnDisctonnected(Context.ConnectionId);
             }
-            _cxManager.Abort(Context.ConnectionId);
             return base.OnDisconnected(stopCalled);
         }
 
         public override Task OnReconnected()
         {
+                    
+            var isCop = Context.User?.IsInRole(Constants.AdminGroupName) ?? false;
+            var userName = setUserName();
             if (Context.User != null) if (Context.User.Identity.IsAuthenticated)
                 {
-                    var userName = Context.User.Identity.Name;
-                    var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
-                    var userId = user.Id;
-                    var userHadConnections = _dbContext.ChatConnection.Any(accx => accx.ConnectionId == Context.ConnectionId);
-
-                    if (userHadConnections)
-                    {
-                        var ccx = _dbContext.ChatConnection.First(c => c.ConnectionId == Context.ConnectionId);
-                        ccx.Connected = true;
-                    }
-                    else
-                        _dbContext.ChatConnection.Add(new ChatConnection
-                        {
-                            ApplicationUserId = userId,
-                            ConnectionId = Context.ConnectionId,
-                            UserAgent = Context.Request.Headers["User-Agent"],
-                            Connected = true
-                        });
-                    _dbContext.SaveChanges();
                     Clients.Group("authenticated").notifyUser(NotificationTypes.Reconnected, userName, "reconnected");
                 }
+            _cxManager.OnConnected(Context.ConnectionId, isCop);
             return base.OnReconnected();
         }
 
-
-
-
         public void Nick(string nickName)
         {
-            if (!HubInputValidator.ValidateUserName(nickName)) return;
+            if (!InputValidator.ValidateUserName(nickName)) return;
 
             var candidate = "?" + nickName;
             if (_cxManager.IsConnected(candidate))
@@ -227,7 +173,12 @@ namespace Yavsc
 
         public ChatRoomInfo Join(string roomName)
         {
-            if (!HubInputValidator.ValidateRoomName(roomName)) return null;
+            _logger.LogInformation($"Join:{roomName}"); 
+            if (!InputValidator.ValidateRoomName(roomName))
+            {
+               _logger.LogError("!InputValidator.ValidateRoomName(roomName)"); 
+                return null;
+            }
 
             var roomGroupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
             var user = _cxManager.GetUserName(Context.ConnectionId);
@@ -235,22 +186,25 @@ namespace Yavsc
             ChatRoomInfo chanInfo;
             if (!_cxManager.IsPresent(roomName, user))
             {
-                chanInfo = _cxManager.Join(roomName, user);
+                _logger.LogInformation($"Joining"); 
+                chanInfo = _cxManager.Join(roomName, Context.ConnectionId);
                 Clients.Group(roomGroupName).notifyRoom(NotificationTypes.UserJoin, roomName, user);
             } else{
+                _logger.LogInformation($"already present"); 
                 // in case in an additional connection, 
                 // one only send info on room without 
                 // warning any other user.
                 _cxManager.TryGetChanInfo(roomName, out chanInfo);
             } 
 
+            _logger.LogInformation($"returning chan info"); 
             return chanInfo;
         }
 
         [Authorize]
         public void Register(string room)
         {
-            if (!HubInputValidator.ValidateRoomName(room)) return ;
+            if (!InputValidator.ValidateRoomName(room)) return ;
             var existent = _dbContext.ChatRoom.Any(r => r.Name == room);
             if (existent)
             {
@@ -276,9 +230,9 @@ namespace Yavsc
         [Authorize]
         public void KickBan(string roomName,  string userName, string reason)
         {
-            if (!HubInputValidator.ValidateRoomName(roomName)) return ;
-            if (!HubInputValidator.ValidateUserName(userName)) return ;
-            if (!HubInputValidator.ValidateReason(reason)) return;
+            if (!InputValidator.ValidateRoomName(roomName)) return ;
+            if (!InputValidator.ValidateUserName(userName)) return ;
+            if (!InputValidator.ValidateReason(reason)) return;
             Kick(roomName, userName, reason);
             Ban(roomName, userName, reason);
         }
@@ -286,9 +240,9 @@ namespace Yavsc
         [Authorize]
         public void Kick(string roomName,  string userName,  string reason)
         {
-            if (!HubInputValidator.ValidateRoomName(roomName)) return ;
-            if (!HubInputValidator.ValidateUserName(userName)) return ;
-            if (!HubInputValidator.ValidateReason(reason)) return;
+            if (!InputValidator.ValidateRoomName(roomName)) return ;
+            if (!InputValidator.ValidateUserName(userName)) return ;
+            if (!InputValidator.ValidateReason(reason)) return;
             ChatRoomInfo chanInfo;
             var roomGroupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
             if (_cxManager.TryGetChanInfo(roomName, out chanInfo))
@@ -311,9 +265,9 @@ namespace Yavsc
         [Authorize]
         public void Ban(string roomName,  string userName,  string reason)
         {
-            if (!HubInputValidator.ValidateRoomName(roomName)) return ;
-            if (!HubInputValidator.ValidateUserName(userName)) return ;
-            if (!HubInputValidator.ValidateReason(reason)) return;
+            if (!InputValidator.ValidateRoomName(roomName)) return ;
+            if (!InputValidator.ValidateUserName(userName)) return ;
+            if (!InputValidator.ValidateReason(reason)) return;
             var cxIds = _cxManager.GetConnexionIds(userName);
             throw new NotImplementedException();
         }
@@ -321,15 +275,15 @@ namespace Yavsc
         [Authorize]
         public void Gline(string userName,  string reason)
         {
-            if (!HubInputValidator.ValidateUserName(userName)) return ;
-            if (!HubInputValidator.ValidateReason(reason)) return;
+            if (!InputValidator.ValidateUserName(userName)) return ;
+            if (!InputValidator.ValidateReason(reason)) return;
             throw new NotImplementedException();
         }
        
         public void Part(string roomName,  string reason)
         {
-            if (!HubInputValidator.ValidateRoomName(roomName)) return ;
-            if (!HubInputValidator.ValidateReason(reason)) return;
+            if (!InputValidator.ValidateRoomName(roomName)) return ;
+            if (!InputValidator.ValidateReason(reason)) return;
             if (_cxManager.Part(Context.ConnectionId,  roomName,   reason))
              {
                 var roomGroupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
@@ -351,13 +305,20 @@ namespace Yavsc
 
         public void Send(string roomName,  string message)
         {
-            if (!HubInputValidator.ValidateRoomName(roomName)) return ;
-            if (!HubInputValidator.ValidateMessage(message)) return ;
-            
+            _logger.LogInformation($"Send {roomName} {message}");
+            if (!InputValidator.ValidateRoomName(roomName))  {
+                _logger.LogError($"Invalid roomName : {roomName}");
+                return ;
+            }
+            if (!InputValidator.ValidateMessage(message))  {
+                _logger.LogError($"Invalid message : {message}");
+                return ;
+            }
             var groupname = ChatHubConstants.HubGroupRomsPrefix + roomName;
             ChatRoomInfo chanInfo ;
             if (!_cxManager.TryGetChanInfo(roomName, out chanInfo))
             {
+                _logger.LogError($"No such room : {roomName}");
                 var noChanMsg = _localizer.GetString(ChatHubConstants.LabNoSuchChan).ToString();
                 NotifyUserInRoom(NotificationTypes.Error, roomName, noChanMsg);
                 return;
@@ -365,14 +326,17 @@ namespace Yavsc
             var userName = _cxManager.GetUserName(Context.ConnectionId);
             if (!_cxManager.IsPresent(roomName, userName))
             {
+                _logger.LogError($"{userName} Not present in room : {roomName}");
                 var notSentMsg = _localizer.GetString(ChatHubConstants.LabnoJoinNoSend).ToString();
                 NotifyUserInRoom(NotificationTypes.Error, roomName, notSentMsg);
                 return;
             }
             Clients.Group(groupname).addMessage(userName, roomName, message);
         }
+
         void NotifyUser(string type, string targetId, string message)
         {
+            _logger.LogInformation("notifying user  {type} {targetId} : {message}");
             Clients.Caller.notifyUser(type, targetId, message);
         }
         void NotifyUserInRoom(string type, string room, string message)
@@ -383,8 +347,19 @@ namespace Yavsc
         [Authorize]
         public void SendPV(string userName,  string message)
         {
-            if (!HubInputValidator.ValidateUserName(userName)) return ;
-            if (!HubInputValidator.ValidateMessage(message)) return ;
+            _logger.LogInformation($"Sending pv to {userName}");
+           
+            if (!InputValidator.ValidateUserName(userName)) 
+            {
+                _logger.LogError($"Invalid username : {userName}");
+                return ;
+            }
+          if (!InputValidator.ValidateMessage(message)) 
+            {
+                _logger.LogError($"Invalid message : {message}");
+                return ;
+            }
+            _logger.LogInformation($"Message form is validated.");
 
             if (userName[0] != '?')
                 if (!Context.User.IsInRole(Constants.AdminGroupName))
@@ -397,24 +372,33 @@ namespace Yavsc
 
                     if (bl.Count() > 0)
                     {
+                        _logger.LogError($"Black listed : {Context.User.Identity.Name}");
                         NotifyUser(NotificationTypes.PrivateMessageDenied, userName, "you are black listed.");
                         return;
                     }
+                    _logger.LogInformation("Sender is no black listed");
                 }
+
+            _logger.LogInformation("getting cx id´s");
             var cxIds = _cxManager.GetConnexionIds(userName);
-            if (cxIds!=null)
-            foreach (var connectionId in cxIds)
+            if (cxIds==null || cxIds.Count()==0)
+                _logger.LogError($"No such connected user : {userName}");
+            else foreach (var connectionId in cxIds)
             {
+                _logger.LogInformation($"cx: {connectionId}");
                 var cli = Clients.Client(connectionId);
+                _logger.LogInformation($"cli: {cli.ToString()}");
                 cli.addPV(Context.User.Identity.Name, message);
+                _logger.LogInformation($"Sent pv to cx {connectionId}");
             }
+
         }
 
         [Authorize]
 
         public void SendStream(string connectionId, long streamId,  string message)
         {
-            if (!HubInputValidator.ValidateMessage(message)) return;
+            if (!InputValidator.ValidateMessage(message)) return;
             var sender = Context.User.Identity.Name;
             var cli = Clients.Client(connectionId);
             cli.addStreamInfo(sender, streamId, message);

@@ -77,16 +77,19 @@ namespace Yavsc.Services
             }
             ChatUserNames[cxId] = userName;
         }
-
-        public void OnConnected(string userName, bool isCop)
+        // Username must have been set before calling this method.
+        public void OnConnected(string cxId,  bool isCop)
         {
-            ChatRoomPresence[userName] = new List<string>();
-            _isCop[userName] = isCop;
+            var username = ChatUserNames[cxId];
+            if (!IsConnected(username)) 
+                ChatRoomPresence[username] = new List<string>();
+            _isCop[username] = isCop;
         }
 
         public bool IsConnected(string candidate)
         {
-            return ChatRoomPresence[candidate] != null;
+            return ChatRoomPresence.ContainsKey(candidate)
+                && ChatRoomPresence[candidate] != null;
         }
 
         public bool IsPresent(string roomName, string userName)
@@ -98,26 +101,27 @@ namespace Yavsc.Services
         {
             return _isCop[userName];
         }
-        public void Abort(string connectionId)
+
+        public void OnDisctonnected(string connectionId)
         {
             string uname;
 
             if (!ChatUserNames.TryRemove(connectionId, out uname))
-                _logger.LogError($"Could not remove user name for cx {connectionId}");
+                _logger.LogError($"Could not get removed user name for cx {connectionId}");
             else
             {
                 List<string> cxIds;
                 if (ChatCxIds.TryGetValue(uname, out cxIds))
                 {
                     cxIds.Remove(connectionId);
+                    foreach (var room in ChatRoomPresence[uname])
+                    {
+                        Part(connectionId, room, "connexion aborted");
+                    }
                 }
                 else
                     _logger.LogError($"Could not remove user cx {connectionId}");
 
-                foreach (var room in ChatRoomPresence[uname])
-                {
-                    Part(connectionId, room, "connexion aborted");
-                }
                 ChatRoomPresence[uname] = null;
             }
         }
@@ -128,12 +132,15 @@ namespace Yavsc.Services
             var userName = ChatUserNames[cxId];
             if (Channels.TryGetValue(roomName, out chanInfo))
             {
-                if (!chanInfo.Users.Contains(userName))
+                if (!chanInfo.Users.Contains(cxId))
                 {
                     // TODO NotifyErrorToCaller(roomName, "you didn't join.");
                     return false;
                 }
-                chanInfo.Users.Remove(userName);
+                // FIXME only remove cx, not username,
+                // as long as he might be connected 
+                // from another device, to the same room
+                chanInfo.Users.Remove(cxId);
                 if (chanInfo.Users.Count == 0)
                 {
                     ChatRoomInfo deadchanInfo;
@@ -153,8 +160,10 @@ namespace Yavsc.Services
             }
         }
 
-        public ChatRoomInfo Join(string roomName, string userName)
+        public ChatRoomInfo Join(string roomName, string cxId)
         {
+            var userName = ChatUserNames[cxId];
+
             _logger.LogInformation($"Join: {userName}=>{roomName}");
             ChatRoomInfo chanInfo;
             // if channel already is open
@@ -172,13 +181,14 @@ namespace Yavsc.Services
                     {
                         if (isCop(userName))
                         {
-                            chanInfo.Ops.Add(userName);
+                            chanInfo.Ops.Add(cxId);
                         }
                         else{
-                            chanInfo.Users.Add(userName);
+                            chanInfo.Users.Add(cxId);
                         } 
                         _logger.LogInformation($"existing room joint: {userName}=>{roomName}");
-                        ChatRoomPresence[userName].Add(roomName);
+                        if (!ChatRoomPresence[userName].Contains(roomName))
+                            ChatRoomPresence[userName].Add(roomName);
                         return chanInfo;
                     }
                 }
@@ -198,13 +208,13 @@ namespace Yavsc.Services
             {
                 chanInfo.Topic = room.Topic;
                 chanInfo.Name = room.Name;
-                chanInfo.Users.Add(userName);
+                chanInfo.Users.Add(cxId);
             }
             else
             { // a first join, we create it.
                 chanInfo.Name = roomName;
                 chanInfo.Topic =  _localizer.GetString(ChatHubConstants.JustCreatedBy)+userName;
-                chanInfo.Ops.Add(userName);
+                chanInfo.Ops.Add(cxId);
             }
 
             if (Channels.TryAdd(roomName, chanInfo))
@@ -291,8 +301,8 @@ namespace Yavsc.Services
             }
             
             var kickerName = GetUserName(cxId);
-            if (!chanInfo.Ops.Contains(kickerName))
-            if (!chanInfo.Hops.Contains(kickerName))
+            if (!chanInfo.Ops.Contains(cxId))
+            if (!chanInfo.Hops.Contains(cxId))
             {
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabYouNotOp).ToString());
                 return false;
@@ -303,8 +313,9 @@ namespace Yavsc.Services
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchUser).ToString());
                 return false;
             }
-            if (chanInfo.Hops.Contains(kickerName))
-            if (chanInfo.Ops.Contains(userName))
+            var ucxs = GetConnexionIds(userName);
+            if (chanInfo.Hops.Contains(cxId))
+            if (chanInfo.Ops.Any(c => ucxs.Contains(c)))
             {
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.HopWontKickOp).ToString());
                 return false;
@@ -316,15 +327,16 @@ namespace Yavsc.Services
             }
 
             // all good, time to kick :-)
-            
-            if (chanInfo.Users.Contains(userName)) 
-                chanInfo.Users.Remove(userName);
+            foreach (var ucx in ucxs) { 
+            if (chanInfo.Users.Contains(ucx)) 
+                chanInfo.Users.Remove(ucx);
 
-            else if (chanInfo.Ops.Contains(userName)) 
-                chanInfo.Ops.Remove(userName);
+            else if (chanInfo.Ops.Contains(ucx)) 
+                chanInfo.Ops.Remove(ucx);
 
-            else if (chanInfo.Hops.Contains(userName)) 
-                chanInfo.Hops.Remove(userName);
+            else if (chanInfo.Hops.Contains(ucx)) 
+                chanInfo.Hops.Remove(ucx);
+            }
 
             return true;
             
