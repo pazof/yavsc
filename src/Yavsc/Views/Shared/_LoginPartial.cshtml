@@ -6,7 +6,7 @@
         <ul class="nav navbar-nav navbar-right">
             <li>
                 <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
-                   @Component.Invoke("Avatar", User.GetUserId(), ".xs")
+                   <img src="@(User.GetUserName()+".xs")" asp-append-version="true" />
                 </a>
             </li>
             <li class="dropdown">
