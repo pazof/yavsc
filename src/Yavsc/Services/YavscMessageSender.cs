@@ -66,6 +66,7 @@ namespace Yavsc.Services
                 List<MessageWithPayloadResponse.Result> results = new List<MessageWithPayloadResponse.Result>();
                 foreach (var userId in raa)
                 {
+                    _logger.LogDebug($"For performer id : {userId}");
                     MessageWithPayloadResponse.Result result = new MessageWithPayloadResponse.Result();
                     result.registration_id = userId;
 
@@ -122,7 +123,8 @@ namespace Yavsc.Services
 
                         foreach (var cxid in cxids)
                         {
-                            var hubClient = hubContext.Clients.User(cxid);
+                            // from usr asp.net Id : var hubClient = hubContext.Clients.User(userId);
+                            var hubClient = hubContext.Clients.Client(cxid);
                             var data = new Dictionary<string, object>();
                             data["event"] = ev;
                             hubClient.push(ev.Topic, JsonConvert.SerializeObject(data));
