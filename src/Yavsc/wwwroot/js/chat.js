@@ -61,7 +61,7 @@ window.ChatHubHandler = (function ($) {
     // Create a function that the hub can call back to display messages.
     chat.client.addMessage = function (name, room, message) {
       // Add the message to the page.
-      var $userTag = $('<a>' + htmlEncode(name) + '</a>').click(function() {
+      var $userTag = $('<a>' + htmlEncode(name) + '</a>').click(function () {
         buildPv(name);
       });
       var $li = $('<li class="discussion"></li>');
@@ -111,12 +111,12 @@ window.ChatHubHandler = (function ($) {
 
     chat.client.addPublicStream = function (pubStrInfo) {
       $('<li></li>').append(pubStrInfo.sender + ': ')
-      .append('<a href="' + pubStrInfo.url + '">' + pubStrInfo.title + '</a>').append('[' + pubStrInfo.mediaType + ']').addClass('streaminfo').appendTo(notifications);
+        .append('<a href="' + pubStrInfo.url + '">' + pubStrInfo.title + '</a>').append('[' + pubStrInfo.mediaType + ']').addClass('streaminfo').appendTo(notifications);
     };
 
     chat.client.push = function (what, data) {
       $('<li></li>').append(what + ': ')
-      .append(data.event).addClass('event').appendTo(notifications);
+        .append(data).addClass('event').appendTo(notifications);
     };
 
     var setChanInfo = function (chanInfo) {
@@ -191,18 +191,17 @@ window.ChatHubHandler = (function ($) {
         .keydown(function (ev) {
           if (ev.which == 13) {
             if (this.value.length == 0) return;
-              sendCmd(chanName, this.value);
-            // chat.server.send(chanName, this.value);
+            sendCmd(chanName, this.value);
             this.value = '';
           }
         }).appendTo(roomview);
-        if (chanType == 'r') chans.push(chanName);
-        else if (chanType == 'u' || chanType == 'a') userlist.push(chanName);
+      if (chanType == 'r') chans.push(chanName);
+      else if (chanType == 'u' || chanType == 'a') userlist.push(chanName);
       setActiveChan(chanId);
     };
 
     var buildRoom = function (roomName) {
-      if (!chans.some(function(cname) { return cname == roomName; })) {
+      if (!chans.some(function (cname) { return cname == roomName; })) {
         buildChan('#', 'r', roomName, chat.server.send);
       }
     };
@@ -216,7 +215,7 @@ window.ChatHubHandler = (function ($) {
     }
 
     var buildPv = function (userName) {
-      if (!userlist.some(function(uname) { return uname == userName; })) {
+      if (!userlist.some(function (uname) { return uname == userName; })) {
         if (userName[0] == '?') buildChan('@?', 'a', userName.slice(1), chat.server.sendPV);
         else buildChan('@', 'u', userName, chat.server.sendPV);
       }
@@ -238,8 +237,8 @@ window.ChatHubHandler = (function ($) {
       $view.removeClass('disabled');
       setTimeout(function () {
         chans.forEach(function (chan) {
-            join(chan);
-          });
+          join(chan);
+        });
       }, 120);
     }
 
@@ -256,10 +255,10 @@ window.ChatHubHandler = (function ($) {
     $.connection.hub.disconnected(function () {
       onDisCx();
       setTimeout(function () {
-          $.connection.hub.start().done(function () {
-            onCx();
-          });
-        }, 30000); // Re-start connection after 30 seconds
+        $.connection.hub.start().done(function () {
+          onCx();
+        });
+      }, 30000); // Re-start connection after 30 seconds
     });
 
     chanName.keydown(function (event) {
@@ -272,7 +271,7 @@ window.ChatHubHandler = (function ($) {
       // else TODO showRoomInfo(this.value);
     });
 
-    ptc.click(function() {
+    ptc.click(function () {
       DestroyRoom();
     });
 
@@ -288,15 +287,16 @@ window.ChatHubHandler = (function ($) {
 
     var addChatUser = function (uname) {
 
-      $('#u_' + uname).remove();
-      // ulist.remove("li.user[data='"+uname+"']");
+      ulist.children('li').filter(function () {
+        return $(this).data('uname') == uname;
+      }).remove();
 
       $('<li class="user"><img src="/Avatars/' + uname + '.xs.png"> ' + uname + '</li>')
-        .prop('id', 'u_' + uname)
+        .data('uname', uname)
         .css('cursor', 'pointer')
         .click(function () {
-           buildPv(uname);
-          })
+          buildPv(uname);
+        })
         .appendTo(ulist);
     };
 
@@ -306,7 +306,7 @@ window.ChatHubHandler = (function ($) {
       return encodedValue;
     }
 
-    $(window).unload(function () { $.connection.hub.abort() });
+    $(window).unload(function () { $.connection.hub.stop() });
 
   };
 

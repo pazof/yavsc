@@ -36,14 +36,20 @@ namespace Yavsc
         }
         public bool ValidateUserName (string userName)
         {
-            bool valid = ValidateStringLength(userName, 1,12);
-            if (valid) valid = IsLetterOrDigit(userName);
-            NotifyUser(NotificationTypes.Error, "char:"+userName.First (c => !char.IsLetterOrDigit(c)), ChatHub.InvalidUserName);
+            bool valid = true;
+            
+            if (userName.Length<1 || userName[0] == '?' && userName.Length<2) valid = false;
+            if (valid) {
+                    string suname = (userName[0] == '?') ? userName.Substring(1) : userName;
+                    if (valid) valid = ValidateStringLength(suname, 1,12);
+                    if (valid) valid = IsLetterOrDigit(userName);
+            }
+            if (!valid) NotifyUser(NotificationTypes.Error, "userName" , ChatHub.InvalidUserName);
             return valid;
         }
         public bool ValidateMessage (string message)
         {
-            if (!ValidateStringLength(message, 1,240))
+            if (!ValidateStringLength(message, 1, 10240))
             {
                 NotifyUser(NotificationTypes.Error, "message", ChatHub.InvalidMessage);
                 return false;
