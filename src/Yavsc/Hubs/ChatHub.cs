@@ -168,9 +168,6 @@ namespace Yavsc
             return _cxManager.IsPresent(roomName, userName);
         }
 
-        
-
-
         public ChatRoomInfo Join(string roomName)
         {
             _logger.LogInformation($"Join:{roomName}"); 
@@ -189,7 +186,7 @@ namespace Yavsc
                 _logger.LogInformation($"Joining"); 
                 chanInfo = _cxManager.Join(roomName, Context.ConnectionId);
                 Clients.Group(roomGroupName).notifyRoom(NotificationTypes.UserJoin, roomName, user);
-            } else{
+            } else {
                 _logger.LogInformation($"already present"); 
                 // in case in an additional connection, 
                 // one only send info on room without 
@@ -348,13 +345,13 @@ namespace Yavsc
         public void SendPV(string userName,  string message)
         {
             _logger.LogInformation($"Sending pv to {userName}");
-           
+
             if (!InputValidator.ValidateUserName(userName)) 
             {
                 _logger.LogError($"Invalid username : {userName}");
                 return ;
             }
-          if (!InputValidator.ValidateMessage(message)) 
+            if (!InputValidator.ValidateMessage(message)) 
             {
                 _logger.LogError($"Invalid message : {message}");
                 return ;
@@ -365,10 +362,10 @@ namespace Yavsc
                 if (!Context.User.IsInRole(Constants.AdminGroupName))
                 {
                     var bl = _dbContext.BlackListed
-                    .Include(r => r.User)
-                    .Include(r => r.Owner)
-                    .Where(r => r.User.UserName == Context.User.Identity.Name && r.Owner.UserName == userName)
-                    .Select(r => r.OwnerId);
+                        .Include(r => r.User)
+                        .Include(r => r.Owner)
+                        .Where(r => r.User.UserName == Context.User.Identity.Name && r.Owner.UserName == userName)
+                        .Select(r => r.OwnerId);
 
                     if (bl.Count() > 0)
                     {
@@ -391,11 +388,9 @@ namespace Yavsc
                 cli.addPV(Context.User.Identity.Name, message);
                 _logger.LogInformation($"Sent pv to cx {connectionId}");
             }
-
         }
 
         [Authorize]
-
         public void SendStream(string connectionId, long streamId,  string message)
         {
             if (!InputValidator.ValidateMessage(message)) return;
