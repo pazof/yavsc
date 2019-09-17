@@ -33,7 +33,7 @@ namespace Yavsc.Models.Messaging
 
         public RdvQueryEvent(string subTopic)
         {
-             Topic = MessagingConstants.TopicRdvQuery;
+             Topic = Topics.RdvQuery;
              SubTopic = subTopic;
         }
 
