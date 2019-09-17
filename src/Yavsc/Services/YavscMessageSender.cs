@@ -126,7 +126,7 @@ namespace Yavsc.Services
                             // from usr asp.net Id : var hubClient = hubContext.Clients.User(userId);
                             var hubClient = hubContext.Clients.Client(cxid);
                             var data = new Dictionary<string, object>();
-                            data["event"] = ev;
+                            data["event"] = JsonConvert.SerializeObject(ev);
                             hubClient.push(ev.Topic, JsonConvert.SerializeObject(data));
                         }
 

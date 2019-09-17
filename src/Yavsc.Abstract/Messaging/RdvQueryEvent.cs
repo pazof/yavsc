@@ -21,7 +21,7 @@
 
 namespace Yavsc.Models.Messaging
 {
-using Interfaces.Workflow;
+    using Interfaces.Workflow;
     using Yavsc.Abstract.Messaging;
 
     public class RdvQueryEvent: RdvQueryProviderInfo, IEvent
@@ -49,8 +49,7 @@ using Interfaces.Workflow;
 
         public string CreateBody()
         {
-            return string.Format(
-               ResourcesHelpers.GlobalLocalizer["RdvToPerf"],
+            return string.Format(Resources.RdvToPerf,
              Client.UserName,
             EventDate?.ToString("dddd dd/MM/yyyy à HH:mm"),
             Location.Address,

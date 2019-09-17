@@ -1,23 +1,16 @@
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Interfaces;
 
 namespace Yavsc.Models.Messaging
 {
-    public enum Reason: byte { 
-            Private,
-            Corporate,
-            SearchingAPro,
-            Selling,
-            Buying,
-            ServiceProposal
 
-        }
-    public class Announce: BaseEvent, IOwned
+public class Announce : BaseEvent, IAnnounce, IOwned
     {
         public Reason For { get; set; }
 
-        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
         public string OwnerId { get; set; }
@@ -28,7 +21,7 @@ namespace Yavsc.Models.Messaging
         public string Message { get; set; }
         public override string CreateBody()
         {
-            return $"Annonce de {Owner.UserName}: {For}\n\n{Message}";
+            return $"Annonce de {Owner.UserName}: {For.ToString()}\n\n{Message}";
         }
     }
 }
