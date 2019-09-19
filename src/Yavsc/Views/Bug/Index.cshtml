@@ -44,7 +44,10 @@
             @Html.DisplayFor(modelItem => item.Status)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Description)
+            <pre><code>
+            @item.Description
+            </code></pre>
+
         </td>
         <td>
             <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
