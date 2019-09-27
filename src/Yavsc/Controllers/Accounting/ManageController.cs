@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,7 +23,6 @@ namespace Yavsc.Controllers
     using Yavsc.ViewModels.Manage;
     using System.IO;
 
-    [Authorize]
     public class ManageController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -122,8 +120,9 @@ namespace Yavsc.Controllers
                 EMail = user.Email,
                 EmailConfirmed = await _userManager.IsEmailConfirmedAsync(user),
                 AllowMonthlyEmail = user.AllowMonthlyEmail,
-                Address = user.PostalAddress.Address
+                Address = user.PostalAddress?.Address
             };
+            
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
             var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id).ToArray();
 // TODO remember me who this magical a.Settings is built
@@ -229,6 +228,7 @@ namespace Yavsc.Controllers
                 await _userManager.SetTwoFactorEnabledAsync(user, false);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation(2, "User disabled two-factor authentication.");
+                return RedirectToAction(nameof(Index), new { Message = ManageMessageId.UnsetTwoFactorSuccess });
             }
             return RedirectToAction(nameof(Index), "Manage");
         }
@@ -427,7 +427,7 @@ namespace Yavsc.Controllers
                        model.NewUserName);
                     if (userdirinfo.Exists)
                         userdirinfo.MoveTo(newdir);
-                    // Renames the Avatars
+                    // Renames the Avatars files
                     foreach (string s in new string [] { ".png", ".s.png", ".xs.png" })
                     {
                         FileInfo fi = new FileInfo(
@@ -694,6 +694,7 @@ namespace Yavsc.Controllers
             ChangePasswordSuccess,
             ChangeNameSuccess,
             SetTwoFactorSuccess,
+            UnsetTwoFactorSuccess,
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
