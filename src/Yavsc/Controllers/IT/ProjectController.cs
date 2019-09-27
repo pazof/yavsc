@@ -20,6 +20,7 @@ namespace Yavsc.Controllers
         private ApplicationDbContext _context;
         ILogger _logger;
         IStringLocalizer<Yavsc.YavscLocalisation> _localizer;
+        IStringLocalizer<BugController> _bugLocalizer;
           
         public ProjectController(ApplicationDbContext context, 
         ILoggerFactory loggerFactory,
@@ -69,7 +70,7 @@ namespace Yavsc.Controllers
             ViewBag.PaymentIdItems = _context.PayPalPayment.CreateSelectListItems<PayPalPayment>
             (p => p.OrderReference, p => $"{p.Executor.UserName} {p.PaypalPayerId} {p.OrderReference}");
 
-            ViewBag.Status = typeof(Yavsc.QueryStatus).CreateSelectListItems(null);
+            ViewBag.Status = _bugLocalizer.CreateSelectListItems(typeof(Yavsc.QueryStatus), Yavsc.QueryStatus.Inserted);
             ViewBag.RepositoryItems = _context.GitRepositoryReference.CreateSelectListItems<GitRepositoryReference>(
                 u => u.Id.ToString(), u => u.ToString());
 

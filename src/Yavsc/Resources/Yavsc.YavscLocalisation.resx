@@ -398,6 +398,8 @@
   <data name="ThisPerformerGivesAccessToHisCalendarAndItAppearsHeShouldNotBeAvailableThis"><value>Selon son calendier Google, ce perstataire pourrait ne pas être disponible ce</value></data>
   <data name="ThisPerformerDoesntGiveAccessToHisCalendar"><value>Ce prestataire n'a pas mis de calendrier à disposition.</value></data>
   <data name="Title"><value>Titre</value></data>
+  <data name="Feature"><value>Fonctionalité</value></data>
+  <data name="FeatureId"><value>Identifiant de fonctionalité</value></data>
   <data name="to"><value>à</value></data>
   <data name="TwoFactorAuthentication"><value>Double identification</value></data>
   <data name="Unitary_cost"><value>Coût unitaire</value></data>
@@ -504,4 +506,9 @@ Facture réglée: {5}</value></data>
 <data name="LiveFlow"><value>Flux live</value></data>
 <data name="Instrumentation"><value>Instrumentation</value></data>
 <data name="Partenariat"><value>Partenariat</value></data>
+<data name="IconWebUploadSpecification"><value>
+Le format png pourrait être supporté ici, 
+le format Gif, peut-être aussi, et même, mais là, moins souvent, le surnommé Jpg.
+</value></data>
+
 </root>

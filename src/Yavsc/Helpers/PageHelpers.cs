@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 
 namespace Yavsc.Server.Helpers
 {
     public static class PageHelpers
     {
-        public static List<SelectListItem> CreateSelectListItems (this Type enumType, object selectedValue =null)
+        public static List<SelectListItem> CreateSelectListItems<T> (this IStringLocalizer<T>  localisation, Type enumType, object selectedValue =null)
         {
             string selectedName = (selectedValue != null) ? enumType.GetEnumName(selectedValue) : null;
 
@@ -17,12 +18,11 @@ namespace Yavsc.Server.Helpers
             {
                 var itemName = names[index];
                 items.Add(new SelectListItem() {
-                Value = values.GetValue(index).ToString(), Text = itemName, Selected = ( itemName == selectedName)
+                Value = values.GetValue(index).ToString(), Text = localisation[itemName], Selected = ( itemName == selectedName)
                 }) ;
             }
             var list = new SelectList(items);
             return items;
-
         }
 
         public static List<SelectListItem> AddNull(this List<SelectListItem> selectList, string displayNull, object selectedValue = null)

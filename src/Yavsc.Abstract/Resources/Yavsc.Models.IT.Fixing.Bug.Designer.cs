@@ -26,7 +26,7 @@ namespace Yavsc.Models.IT.Fixing {
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager(("Yavsc.Server.Resources." + "Yavsc.Models.IT.Fixing.Bug"), typeof(Bug).GetTypeInfo().Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager(("Yavsc.Abstract.Resources." + "Yavsc.Models.IT.Fixing.Bug"), typeof(Bug).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

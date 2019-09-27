@@ -8,6 +8,7 @@ using Yavsc.Server.Helpers;
 using System.Collections.Generic;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
+using Microsoft.AspNet.Authorization;
 
 namespace Yavsc.Controllers
 {
@@ -15,11 +16,16 @@ namespace Yavsc.Controllers
     {
         ApplicationDbContext _context;
         IStringLocalizer<BugController> _localizer;
+        IStringLocalizer<Yavsc.Models.IT.Fixing.Resources> _statusLocalizer;
 
-        public BugController(ApplicationDbContext context, IStringLocalizer<BugController> localizer )
+        public BugController(ApplicationDbContext context, 
+                IStringLocalizer<BugController> localizer,
+                IStringLocalizer<Resources> statusLocalizer
+                )
         {
             _context = context;
             _localizer = localizer; 
+            _statusLocalizer = statusLocalizer;
         }
 
         // GET: Bug
@@ -54,9 +60,10 @@ namespace Yavsc.Controllers
         }
 
         IEnumerable<SelectListItem> Statuses(BugStatus ?status) =>
-            typeof(Yavsc.Models.IT.Fixing.BugStatus).CreateSelectListItems(status);
+            _statusLocalizer.CreateSelectListItems(typeof(BugStatus), status); 
+
         IEnumerable<SelectListItem> Features(ApplicationDbContext context) => 
-         context.Feature.CreateSelectListItems<Feature>(f => f.Id.ToString(), f => f.ShortName, null)
+         context.Feature.CreateSelectListItems<Feature>(f => f.Id.ToString(), f => $"{f.ShortName} ({f.Description})", null)
          .AddNull(_localizer["noAttachedFID"]); 
 
         // POST: Bug/Create
@@ -76,6 +83,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Bug/Edit/5
+        [Authorize("AdministratorOnly")]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -98,6 +106,7 @@ namespace Yavsc.Controllers
         // POST: Bug/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize("AdministratorOnly")]
         public async Task<IActionResult> Edit(Bug bug)
         {
             if (ModelState.IsValid)
@@ -111,6 +120,7 @@ namespace Yavsc.Controllers
 
         // GET: Bug/Delete/5
         [ActionName("Delete")]
+        [Authorize("AdministratorOnly")]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -130,6 +140,7 @@ namespace Yavsc.Controllers
         // POST: Bug/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize("AdministratorOnly")]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             Bug bug = await _context.Bug.SingleAsync(m => m.Id == id);
