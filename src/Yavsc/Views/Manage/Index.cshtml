@@ -79,8 +79,7 @@
         
         <dt>@SR["Avatar"]:</dt>
         <dd>
-            
-            @Component.Invoke("Avatar", User.GetUserId(), ".s")
+                   <img src="/Avatars/@(User.GetUserName()+".s").png" asp-append-version="true" class="smalltofhol" />
             [<a asp-controller="Manage" asp-action="SetAvatar"
             >@SR["Modify"]</a>]
         </dd> 
