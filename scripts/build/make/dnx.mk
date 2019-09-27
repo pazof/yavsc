@@ -56,7 +56,9 @@ bin/output:
 	@$(dnu) publish
 
 bin/output/wwwroot/version: bin/output
-	@git log -1 --pretty=format:%h > bin/output/wwwroot/version
+	echo $(version) > bin/output/wwwroot/version
+
+#	@git log -1 --pretty=format:%h > bin/output/wwwroot/version
 
 pack: $(NUGETSOURCE)/$(PKGFILENAME)
 
