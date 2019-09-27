@@ -1,5 +1,5 @@
 @model ApplicationUser
 
 @if (Model!=null) {
-@Component.Invoke("Avatar", Model.Id, ".xs")
+                   <img src="/Avatars/@(Model.UserName+".xs").png" asp-append-version="true" class="smalltofhol" />
 }
