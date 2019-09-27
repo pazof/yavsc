@@ -7,6 +7,7 @@ using Microsoft.Data.Entity;
 
 namespace Yavsc.Controllers
 {
+    using Microsoft.Extensions.Localization;
     using Models;
     using Models.IT.Evolution;
     using Yavsc.Server.Helpers;
@@ -14,11 +15,14 @@ namespace Yavsc.Controllers
     public class FeatureController : Controller
     {
         private ApplicationDbContext _context;
+        private IStringLocalizer<BugController> _bugLocalizer;
+
         IEnumerable<SelectListItem> Statuses(FeatureStatus ?status) =>
-            typeof(FeatureStatus).CreateSelectListItems(status);
-        public FeatureController(ApplicationDbContext context)
+            _bugLocalizer.CreateSelectListItems(typeof(FeatureStatus), status);
+        public FeatureController(ApplicationDbContext context, IStringLocalizer<BugController> bugLocalizer)
         {
             _context = context;    
+            _bugLocalizer = bugLocalizer;
         }
 
         // GET: Feature

@@ -1,5 +1,10 @@
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
+BASERESX=Resources/Yavsc.Models.Relationship.HyperLink.resx \
+  Resources/Yavsc.Models.Streaming.LiveFlow.resx
+BASERESXGEN=$(BASERESX:.resx=.Designer.cs)
+
+
 include $(MAKEFILE_DIR)/versioning.mk
 include $(MAKEFILE_DIR)/dnx.mk
 
@@ -17,8 +22,6 @@ $(BINTARGETPATH): ../OAuth.AspNet.AuthServer/bin/$(CONFIGURATION)/OAuth.AspNet.A
 %.Designer.cs: %.resx
 	strotygen -l -p -t -r "Yavsc.Server.Resources." $^
 
-prepare_code: Resources/Yavsc.Models.IT.Fixing.Bug.Designer.cs \
-  Resources/Yavsc.Models.Relationship.HyperLink.Designer.cs \
-  Resources/Yavsc.Models.Streaming.LiveFlow.Designer.cs
+prepare_code: $(BASERESXGEN)
 
-all: $(BINTARGETPATH)
+all: $(BINTARGETPATH) 

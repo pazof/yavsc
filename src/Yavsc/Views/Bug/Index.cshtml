@@ -1,4 +1,5 @@
 @model IEnumerable<Yavsc.Models.IT.Fixing.Bug>
+@inject IStringLocalizer<Yavsc.Models.IT.Fixing.Resources> SRR
 
 @{
     ViewData["Title"] = @SR["Index"];
@@ -9,22 +10,20 @@
 <p>
     <a asp-action="Create">@SR["Create New"]</a>
 </p>
+
 <table class="table">
     <tr>
         <td>
-            @Html.DisplayNameFor(model => model.Id)
+            @SR[Html.DisplayNameFor(model => model.Id)]
         </td>
         <td>
-            @Html.DisplayNameFor(model => model.Title)
+            @SR[Html.DisplayNameFor(model => model.Title)]
         </td>
         <th>
-            @Html.DisplayNameFor(model => model.FeatureId)
+            @SR[Html.DisplayNameFor(model => model.FeatureId)]
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
+            @SR[Html.DisplayNameFor(model => model.Status)]
         </th>
         <th></th>
     </tr>
@@ -41,18 +40,13 @@
             @Html.DisplayFor(modelItem => item.FeatureId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            <pre><code>
-            @item.Description
-            </code></pre>
 
+            @SRR[typeof(Yavsc.Models.IT.Fixing.BugStatus).GetEnumNames()[(int)item.Status]]
         </td>
         <td>
-            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            <a asp-action="Edit" asp-route-id="@item.Id">@SR["Edit"]</a> |
+            <a asp-action="Details" asp-route-id="@item.Id">@SR["Details"]</a> |
+            <a asp-action="Delete" asp-route-id="@item.Id">@SR["Delete"]</a>
         </td>
     </tr>
 }

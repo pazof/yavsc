@@ -15,4 +15,13 @@ pushInPre:
 packages:
 	make -C src/Yavsc.Abstract pack
 
+findResources:
+	find src -name "*.resx" |sort
+
+prepare_all_code: 
+	make -C  src/Yavsc.Abstract prepare_code 
+	make -C  src/Yavsc.Server prepare_code 
+	make -C  src/Yavsc prepare_code
+
+
 .PHONY: packages

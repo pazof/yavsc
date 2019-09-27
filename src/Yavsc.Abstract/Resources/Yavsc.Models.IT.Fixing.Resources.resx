@@ -58,8 +58,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <!-- 
-    route name for the api controller used to tag the 'BlogPost' entity
-   -->
-  <data name="TitleTooLong"><value>Le titre est trop long</value></data>
+  <data name="Rejected" comment="bug statuses"><value>Rejeté</value></data>
+  <data name="Inserted" comment="bug statuses"><value>Inséré</value></data>
+  <data name="Confirmed" comment="bug statuses"><value>Confirmé</value></data>
+  <data name="Feature" comment="bug statuses"><value>Fonctionalité</value></data>
+  <data name="Fixed" comment="bug statuses"><value>Corrigé</value></data>
+ 
 </root>
+

@@ -4,10 +4,11 @@ HOSTING=localhost
 ASPNET_LOG_LEVEL=debug
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
-BASERESX= Resources/Yavsc.ChatHub.resx\
-	Resources/Yavsc.ViewComponents.CommentViewComponent.resx\
-	Resources/Yavsc.ViewModels.FrontOffice.PerformerProfileViewModel.resx\
-	Resources/Yavsc.ViewModels.EnrolerViewModel.resx\
+BASERESX= Resources/Yavsc.Models.IT.Fixing.Resources.resx \
+	Resources/Yavsc.ChatHub.resx \
+	Resources/Yavsc.ViewComponents.CommentViewComponent.resx \
+	Resources/Yavsc.ViewModels.FrontOffice.PerformerProfileViewModel.resx \
+	Resources/Yavsc.ViewModels.EnrolerViewModel.resx \
 	Resources/Yavsc.YavscLocalisation.resx
 BASERESXGEN=$(BASERESX:.resx=.Designer.cs)
 MCS_OPTIONS=--debug
@@ -94,8 +95,6 @@ prepare_mvc_templates: $(SOURCE_DIR)/scripts/configure/tools/mvc-code-generators
 	$(SOURCE_DIR)/scripts/configure/tools/mvc-code-generators/new-templates/ViewGenerator/List.cshtml \
 	$(SOURCE_DIR)/scripts/configure/tools/mvc-code-generators/new-templates/ViewGenerator/Details.cshtml
 	cp $^ $(SOURCE_DIR)/packages/Microsoft.Extensions.CodeGenerators.Mvc/1.0.0-rc1-final/Templates/ViewGenerator/
-
-project.lock.json: project.json ../Yavsc.Abstract/project.lock.json ../Yavsc.Server/project.lock.json ../OAuth.AspNet.Token/project.lock.json ../OAuth.AspNet.AuthServer/project.lock.json
 
 $(BINTARGETPATH): $(BASERESXGEN) project.lock.json
 
