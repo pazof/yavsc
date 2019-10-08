@@ -26,7 +26,7 @@ namespace Yavsc {
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager(("Yavsc.Resources." + "Yavsc.ChatHub"), typeof(ChatHub).GetTypeInfo().Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager(("Yavsc.Abstract.Resources." + "Yavsc.ChatHub"), typeof(ChatHub).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

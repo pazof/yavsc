@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Attributes.Validation;
+using Yavsc.Abstract;
+    using Yavsc;
 
 namespace Yavsc.ViewModels.Account
 {
-    using Yavsc;
-    public class RegisterViewModel
+    public class RegisterModel
     {
 
         [YaStringLength(2,Constants.MaxUserNameLength)]

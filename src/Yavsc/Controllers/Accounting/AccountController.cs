@@ -244,7 +244,7 @@ namespace Yavsc.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterModel model)
         {
             if (ModelState.IsValid)
             {
@@ -315,7 +315,7 @@ namespace Yavsc.Controllers
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account",
-             new { userId = user.Id, code = code }, protocol: "https", host: Startup.Authority);
+            new { userId = user.Id, code = code }, protocol: "https", host: Startup.Authority);
             var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, 
             this._localizer["ConfirmYourAccountTitle"],
             string.Format(this._localizer["ConfirmYourAccountBody"],
@@ -525,6 +525,7 @@ namespace Yavsc.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
+            
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, 
                 protocol:  "https", host: Startup.Authority);
@@ -532,6 +533,8 @@ namespace Yavsc.Controllers
               
                 await _emailSender.SendEmailAsync(user.UserName, user.Email, _localizer["Reset Password"],
                    _localizer["Please reset your password by following this link:"] + " <" + callbackUrl + ">");
+
+
                 return View("ForgotPasswordConfirmation");
             }
 
@@ -611,6 +614,9 @@ namespace Yavsc.Controllers
             {
                 return View("Error", new Exception("No Two factor authentication user"));
             }
+
+            
+
             var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(user);
 
 
@@ -635,16 +641,9 @@ namespace Yavsc.Controllers
             }
 
             // Generate the token and send it
-            var code = await _userManager.GenerateTwoFactorTokenAsync(user, model.SelectedProvider);
-            if (string.IsNullOrWhiteSpace(code))
-            {
-                return View("Error", new Exception("Code is empty"));
-            }
-
-            var message = "Your security code is: " + code;
             if (model.SelectedProvider == Constants.MobileAppFactor)
             {
-                return View("Error", new Exception("No SMS service was activated"));
+                return View("Error", new Exception("No mobile app service was activated"));
             }
             else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
             if (model.SelectedProvider == Constants.SMSFactor)
@@ -654,7 +653,7 @@ namespace Yavsc.Controllers
             }
             else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
             {
-                await _emailSender.SendEmailAsync(user.UserName, await _userManager.GetEmailAsync(user), "Security Code", message);
+               var sent = await this.SendEMailForConfirmAsync(user);
             }
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
@@ -690,6 +689,7 @@ namespace Yavsc.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account
             // will be locked out for a specified amount of time.
             _logger.LogWarning("Signin with code: {0} {1}", model.Provider, model.Code);
+
             var result = await _signInManager.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser);
             if (result.Succeeded)
             {
