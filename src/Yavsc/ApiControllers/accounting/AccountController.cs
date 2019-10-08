@@ -91,7 +91,7 @@ namespace Yavsc.WebApi.Controllers
 
         // POST api/Account/Register
         [AllowAnonymous]
-		public async Task<IActionResult> Register(RegisterViewModel model)
+		public async Task<IActionResult> Register(RegisterModel model)
         {
             if (!ModelState.IsValid)
             {

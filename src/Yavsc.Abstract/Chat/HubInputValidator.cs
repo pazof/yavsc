@@ -21,6 +21,7 @@
 
 using System;
 using System.Linq;
+using Yavsc;
 
 namespace Yavsc
 {

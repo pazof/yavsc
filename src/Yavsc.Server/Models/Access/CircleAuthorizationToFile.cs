@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using Yavsc.Abstract;
 using Yavsc.Abstract.Identity.Security;
 using Yavsc.Attributes.Validation;
 using Yavsc.Models.Relationship;

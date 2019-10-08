@@ -5,7 +5,6 @@ ASPNET_LOG_LEVEL=debug
 SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
 BASERESX= Resources/Yavsc.Models.IT.Fixing.Resources.resx \
-	Resources/Yavsc.ChatHub.resx \
 	Resources/Yavsc.ViewComponents.CommentViewComponent.resx \
 	Resources/Yavsc.ViewModels.FrontOffice.PerformerProfileViewModel.resx \
 	Resources/Yavsc.ViewModels.EnrolerViewModel.resx \

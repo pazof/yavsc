@@ -7,7 +7,7 @@ using cli.Model;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
-using Yavsc;
+using Yavsc.Abstract;
 
 namespace cli {
   
