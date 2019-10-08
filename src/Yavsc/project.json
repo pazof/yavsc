@@ -75,6 +75,7 @@
     "defaultNamespace": "Yavsc"
   },
   "dependencies": {
+    "CommonMark": "0.11.0",
     "EntityFramework.Commands": "7.0.0-rc1-final",
     "EntityFramework.Core": "7.0.0-rc1-final",
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
@@ -82,7 +83,6 @@
     "EntityFramework7.Npgsql": "3.1.0-rc1-3",
     "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
     "MailKit": "1.12.0",
-    "MarkdownDeep-av.NET": "1.5.8",
     "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
     "Microsoft.AspNet.Authentication.Facebook": "1.0.0-rc1-final",
     "Microsoft.AspNet.Authentication.Twitter": "1.0.0-rc1-final",
