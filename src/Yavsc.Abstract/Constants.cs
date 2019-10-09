@@ -19,14 +19,16 @@ namespace Yavsc
         public const string CompanyClaimType = "https://schemas.pschneider.fr/identity/claims/Company";
         public const string UserNameRegExp = @"^[a-zA-Z][a-zA-Z0-9._-]*$";
         public const string UserFileNamePatternRegExp = @"^([a-zA-Z0-9._-]*/)*[a-zA-Z0-9._-]+$";
-        public const string AuthorizePath = "/authorize";
-        public const string TokenPath = "/token";
-        public const string LoginPath = "/signin";
-        public const string LogoutPath = "/signout";
+        public const string AuthorizePath = "~/authorize";
+        public const string TokenPath = "~/token";
+        public const string LoginPath = "~/signin";
+        public const string LogoutPath = "~/signout";
 
-        public const string UserInfoPath = "/api/me";
 
         public const string SignalRPath = "/api/signalr";
+        public const string UserFilesPath = "/files";
+        public const string AvatarsPath = "/avatars";
+        public const string GitPath = "/sources";
         public const string LiveUserPath = "live";
 
         public const string ApplicationAuthenticationSheme = "ServerCookie";
@@ -41,9 +43,6 @@ namespace Yavsc
         public const string StarHunterGroupName = "StarHunter";
         public const string BlogModeratorGroupName = "Moderator";
         public const string FrontOfficeGroupName = "FrontOffice";
-        public const string UserFilesPath = "/files";
-        public const string AvatarsPath = "/avatars";
-        public const string GitPath = "/sources";
         public const string DefaultAvatar = "/images/Users/icon_user.png";
         public const string AnonAvatar = "/images/Users/icon_anon_user.png";
         public const string YavscConnectionStringEnvName = "YAVSC_DB_CONNECTION";

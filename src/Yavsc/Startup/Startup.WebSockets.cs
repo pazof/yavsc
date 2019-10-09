@@ -22,7 +22,7 @@ namespace Yavsc
             };
             
             app.UseWebSockets(webSocketOptions);
-            app.UseSignalR(Constants.SignalRPath);
+            app.UseSignalR(PathString.FromUriComponent(Constants.SignalRPath));
         }
 
         private async Task Echo(HttpContext context, WebSocket webSocket)
