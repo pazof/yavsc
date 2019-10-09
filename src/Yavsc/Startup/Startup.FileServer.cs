@@ -31,7 +31,7 @@ namespace Yavsc
             UserFilesOptions = new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(AbstractFileSystemHelpers.UserFilesDirName),
-                RequestPath = new PathString(Constants.UserFilesPath),
+                RequestPath = PathString.FromUriComponent(Constants.UserFilesPath),
                 EnableDirectoryBrowsing = env.IsDevelopment(),
             };
             UserFilesOptions.EnableDefaultFiles=true;
@@ -56,7 +56,7 @@ namespace Yavsc
             AvatarsOptions = new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(AvatarsDirName),
-                RequestPath = new PathString(Constants.AvatarsPath),
+                RequestPath = PathString.FromUriComponent(Constants.AvatarsPath),
                 EnableDirectoryBrowsing = env.IsDevelopment()
             };
 
@@ -67,7 +67,7 @@ namespace Yavsc
             GitOptions = new FileServerOptions()
             {
                 FileProvider = new PhysicalFileProvider(GitDirName),
-                RequestPath = new PathString(Constants.GitPath),
+                RequestPath = PathString.FromUriComponent(Constants.GitPath),
                 EnableDirectoryBrowsing = env.IsDevelopment(),
             };
             GitOptions.DefaultFilesOptions.DefaultFileNames.Add("index.md");
