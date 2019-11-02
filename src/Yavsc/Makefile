@@ -23,6 +23,9 @@ MINCSS=wwwroot/css/coiffure.min.css  wwwroot/css/dev.min.css           wwwroot/c
 web: project.lock.json
 	MCS_OPTIONS=$(MCS_OPTIONS) MONO_OPTIONS=$(MONO_OPTIONS) ASPNET_LOG_LEVEL=$(ASPNET_LOG_LEVEL) ASPNET_ENV=$(ASPNET_ENV) dnx web --configuration=$(CONFIGURATION) |tee web.log
 
+nweb:
+	MONO_PATH=$(MONO_PATH):~/.dnx/runtimes/dnx-mono.1.0.0-rc1-update2/bin ~/.dnx/runtimes/dnx-mono.1.0.0-rc1-update2/bin/ndnx web
+
 showConfig:
 	@echo HOSTING: $(USER)@$(HOSTING)
 	@echo ENV: $(ASPNET_ENV)
