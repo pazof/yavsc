@@ -27,16 +27,13 @@ namespace cli
                        multipleValues: false);
                        genargjson = target.Argument(
                        "json",
-                       "Json file to generate a schema for.",
+                       "Json file generated",
                        multipleValues: false);
                    }, false);
             cmd.OnExecute(
-                async () => {
-                    if (genargjson.Value == "jsonSchema") {
-                        if (genargjson.Value == null)
-                        await GenerateCiBuildSettingsSchema();
-                        else 
-                        await GenerateCiBuildSettingsSchema(genargjson.Value);
+                 () => {
+                    if (genargclass.Value == "jsonSchema") {
+                        GenerateCiBuildSettingsSchema(genargjson.Value);
                     } else {
                         cmd.ShowHint();
                         return 1;
@@ -46,9 +43,9 @@ namespace cli
             );
                    return cmd;
         }
-        public static async Task GenerateCiBuildSettingsSchema(string outputFileName = "pauls-ci-schema.json")
+        public static void GenerateCiBuildSettingsSchema(string outputFileName = "pauls-ci-schema.json")
         {
-            var schema = await JsonSchema4.FromTypeAsync<CiBuildSettings>();
+            var schema = JsonSchema.FromType(typeof(CiBuildSettings));
             var schemaData = schema.ToJson();
 
             FileInfo ofi = new FileInfo(outputFileName);
@@ -57,12 +54,6 @@ namespace cli
             owritter.WriteLine(schemaData);
             owritter.Close();
             ostream.Close();
-            /*  var errors = schema.Validate("{...}");
-
-            foreach (var error in errors)
-                Console.WriteLine(error.Path + ": " + error.Kind);
-
-            schema = await JsonSchema4.FromJsonAsync(schemaData); */
         }
 
     }

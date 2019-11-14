@@ -82,7 +82,7 @@ namespace cli {
             _logger.LogInformation("Connecting to "+url);
             await _client.ConnectAsync(new Uri(url), _tokenSource.Token);
             _logger.LogInformation("Connected");
-            const int bufLen = Constants.WebSocketsMaxBufLen;
+            const int bufLen = Yavsc.Constants.WebSocketsMaxBufLen;
             byte [] buffer = new byte[bufLen+4*sizeof(int)];
             const int offset=0;
             int read = 0;
