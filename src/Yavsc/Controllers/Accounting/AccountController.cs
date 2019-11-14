@@ -693,7 +693,7 @@ namespace Yavsc.Controllers
             {
                var sent = await this.SendEMailFactorAsync(user, model.SelectedProvider);
             }
-            return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+            return View("VerifyCode", new VerifyCodeViewModel { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
 
         //
@@ -708,7 +708,7 @@ namespace Yavsc.Controllers
             {
                 return View("Error", new Exception("user is null"));
             }
-            // it may be a GET response from some email url, or the web response to second fqctor requirement
+            // it may be a GET response from some email url, or the web response to second factor requirement
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe, Code = code });
         }
 
