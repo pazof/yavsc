@@ -19,25 +19,26 @@ namespace Yavsc.Abstract.IT
 
         public virtual int Run()
         {
-            Process latest = null;
             Queue<Process> runQueue = new Queue<Process>();
             Queue<Task> joints = new Queue<Task>();
             if (Pipe.Length == 0) return -1;
             if (Pipe.Length == 1)
             {
-                latest = Pipe[0].Start();
-                latest.WaitForExit();
-                return latest.ExitCode;
+                Process singlecmd = Pipe[0].Start();
+                singlecmd.WaitForExit();
+                return singlecmd.ExitCode;
             }
 
-            for (int i = 0; i < Pipe.Length; i++)
+            Command cmd = Pipe[0];
+            Process newProcess = cmd.Start(WorkingDir, false, true);
+            Process latest = newProcess;
+            Task ending = Task.Run(() => { latest.WaitForExit(); });
+            for (int i = 1; i < Pipe.Length; i++)
             {
-                Process newProcess = null;
-                var cmd = Pipe[i];
-                bool isNotLast = (i + 1) >= Pipe.Length;
+                joints.Enqueue(ending);
+                cmd = Pipe[i];
+                bool isNotLast = i < Pipe.Length;
 
-                if (latest != null) // i.e. isNotFirst
-                {
                     newProcess = cmd.Start(WorkingDir, true, isNotLast);
                     var jt = Task.Run(async () =>
                     {
@@ -49,13 +50,7 @@ namespace Yavsc.Abstract.IT
                         }
                     });
                     joints.Enqueue(jt);
-                }
-                else
-                {
-                    newProcess = cmd.Start(WorkingDir, false, isNotLast);
-                    Task ending = Task.Run(() => { latest.WaitForExit(); });
-                    joints.Enqueue(ending);
-                }
+               
                 latest = newProcess;
                 runQueue.Enqueue(latest);
             }
