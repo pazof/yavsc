@@ -463,10 +463,22 @@
   <data name="ConfirmPassword"><value>Confirmation du mot de passe</value></data>
   <data name="ErrorSendingEmailForConfirm"><value>L'envoi de de courrier pour confirmation de l'adresse e-mail a échoué.</value></data>
   <data name="EmailSentForConfirm"><value>Un courrier a été envoyé pour confirmation de l'adresse e-mail .</value></data>
+  
+  <data name="AccountEmailFactorTitle"><value>Le second facteur de votre identification</value></data>
+  <data name="AccountEmailFactorBody"><value>Votre compte est endurci d'une requisition d'un second facteur d'identification.
+  Une nouvelle connection depuis un navigateur web nécéssite votre authorisation.
+Vous pouvez l'accorder en suivant le lien suivant : &lt;{1}&gt;.
+
+Votre code dáctivation est : {4}
+
+Vour pourrez cochez la case "Se souvenir de ce navigateur" pour conserver cette authorisation pour ce navigateur.
+{0} - {2} &lt;{3}&gt;</value></data>
   <data name="ConfirmYourAccountTitle"><value>S'il vous plait, confirmez votre addresse e-mail</value></data>
   <data name="ConfirmYourAccountBody"><value>Vous avez créé avec succès votre compte {0},
 mais votre adresse e-mail reste à confirmer.
-Pour ce faire, suivez le lien suivant : &lt;{1}&gt;.
+
+Pour ce faire, veuillez, s'il vous plait, suivre le lien suivant
+dans votre navigateur favori : &lt;{1}&gt;.
 
 -- 
 {0} - {2} &lt;{3}&gt;</value></data>
