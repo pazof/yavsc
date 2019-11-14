@@ -19,6 +19,9 @@ CONFIGS="/etc/kestrel/*.webenv"
 DNX_USER_HOME=/srv/www/dnx
 DNXRUNTIMEVERSION=$(cat /srv/www/dnx/alias/default.alias)
 
+. /home/paul/mono46/mono-env
+MONO_BINARY=`which mono`
+
 # fix issue with DNX exception in case of two env vars with the same name but different case
 TMP_SAVE_runlevel_VAR=$runlevel
 unset runlevel
@@ -41,7 +44,8 @@ setdnxenv() {
     . $env
     # reset all except the name to default values
 	export ASPNET_ENV=$NAME
-	WWW_USER=www-data
+	export WWW_USER=www-data
+	DNXEXE=${DNX_USER_HOME}/runtimes/${DNXRUNTIMEVERSION}/bin/ndnx
 	DNXRUNTIME=${DNX_USER_HOME}/runtimes/${DNXRUNTIMEVERSION}/bin/Microsoft.Dnx.Host.Mono.dll
 	PROJECT=approot/Web
 	CONFIGURATION=Release
@@ -49,6 +53,7 @@ setdnxenv() {
     DESC="$NAME"
     PIDFILE=/var/run/kestrel-${NAME}.pid
 	export MONO_OPTIONS="--server"
+    export MONO_PATH=$MONO_PATH:${DNX_USER_HOME}/runtimes/${DNXRUNTIMEVERSION}/bin
     LOGDIR=/var/log
     # reset to specified values
     . $env
@@ -76,8 +81,8 @@ start() {
 		echo "Service already running $DESC" "$NAME"
 		log_end_msg 0  
 	else
-		log_daemon_msg "Starting service $NAME"
-		if ! start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -x /usr/bin/mono $DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME >${LOGDIR}/kestrel-${NAME}.log
+		log_daemon_msg "Starting service $NAME for user $WWW_USER"
+		if ! start-stop-daemon -SbmCv --user $WWW_USER -p $PIDFILE -d $ROOT -g www-data -x $DNXEXE -- --project $PROJECT --configuration $CONFIGURATION $NAME > "${LOGDIR}/kestrel-${NAME}.log"
         then 
 			log_daemon_msg "Could not start $NAME : $?, see ${LOGDIR}/kestrel-${NAME}.log"
 			log_end_msg 2
