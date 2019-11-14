@@ -32,7 +32,7 @@ namespace Yavsc
         {
             bool valid = ValidateStringLength(roomName,1,25);
             if (valid) valid = IsLetterOrDigit(roomName);
-            if (!valid) NotifyUser(NotificationTypes.Error, "roomName", ChatHub.InvalidRoomName);
+            if (!valid) NotifyUser(NotificationTypes.Error, "roomName", ChatHubLabels.InvalidRoomName);
             return valid;
         }
         public bool ValidateUserName (string userName)
@@ -45,14 +45,14 @@ namespace Yavsc
                     if (valid) valid = ValidateStringLength(suname, 1,12);
                     if (valid) valid = IsLetterOrDigit(userName);
             }
-            if (!valid) NotifyUser(NotificationTypes.Error, "userName" , ChatHub.InvalidUserName);
+            if (!valid) NotifyUser(NotificationTypes.Error, "userName" , ChatHubLabels.InvalidUserName);
             return valid;
         }
         public bool ValidateMessage (string message)
         {
             if (!ValidateStringLength(message, 1, 10240))
             {
-                NotifyUser(NotificationTypes.Error, "message", ChatHub.InvalidMessage);
+                NotifyUser(NotificationTypes.Error, "message", ChatHubLabels.InvalidMessage);
                 return false;
             }
             return true;
@@ -61,7 +61,7 @@ namespace Yavsc
         {
             if (!ValidateStringLength(reason, 1,240))
             {
-                NotifyUser(NotificationTypes.Error, "reason", ChatHub.InvalidReason);
+                NotifyUser(NotificationTypes.Error, "reason", ChatHubLabels.InvalidReason);
                 return false;
             }
             return true;
