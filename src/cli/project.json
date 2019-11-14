@@ -46,14 +46,15 @@
     "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
     "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
     "Newtonsoft.Json": "9.0.1",
-    "NJsonSchema.CodeGeneration.CSharp": "9.10.65",
+    "NJsonSchema.CodeGeneration.CSharp": "10.0.27",
     "Yavsc": {
       "version": "1.0.6-rc05",
       "target": "package"
     },
     "Microsoft.Dnx.Host": "1.0.0-rc1-final",
     "Microsoft.Dnx.Runtime": "1.0.0-rc1-final",
-    "Microsoft.Dnx.DesignTimeHost": "1.0.0-rc1-final"
+    "Microsoft.Dnx.DesignTimeHost": "1.0.0-rc1-final",
+    "YamlDotNet": "8.0.0"
   },
   "frameworks": {
     "dnx451": {
