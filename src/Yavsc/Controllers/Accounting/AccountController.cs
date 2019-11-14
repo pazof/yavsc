@@ -26,10 +26,10 @@ namespace Yavsc.Controllers
 
     public class AccountController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         const string  nextPageTokenKey = "nextPageTokenKey";
         const int defaultLen = 10;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         // private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
@@ -323,6 +323,19 @@ namespace Yavsc.Controllers
                    _siteSettings.Audience));
             return res;
         }
+
+        private async Task<EmailSentViewModel> SendEMailFactorAsync(ApplicationUser user, string provider)
+        {
+            var code = await _userManager.GenerateTwoFactorTokenAsync(user, provider);
+            var callbackUrl = Url.Action("VerifyCode", "Account",
+            new { userId = user.Id, code, provider }, protocol: "https", host: Startup.Authority);
+            var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, 
+            this._localizer["AccountEmailFactorTitle"],
+            string.Format(this._localizer["AccountEmailFactorBody"],
+                  _siteSettings.Title, callbackUrl, _siteSettings.Slogan,
+                   _siteSettings.Audience, code));
+            return res;
+        }
         //
         // POST: /Account/LogOff
         [HttpPost(Constants.LogoutPath)]
@@ -366,7 +379,7 @@ namespace Yavsc.Controllers
             }
             if (result.RequiresTwoFactor)
             {
-                return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl });
+                return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe= true });
             }
             if (result.IsLockedOut)
             {
@@ -465,13 +478,41 @@ namespace Yavsc.Controllers
             IdentityResult result=null;
             try { 
                 result = await _userManager.ConfirmEmailAsync(user, code);
+                _dbContext.SaveChanges(userId);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.StackTrace);
                 _logger.LogError(ex.Message);
             }
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            return View(result.Succeeded ? "EmailConfirmed" : "Error");
+        }
+
+        // GET: /Account/ConfirmTwoFactorToken
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmTwoFactorToken(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return View("Error");
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return View("Error");
+            }
+            bool result=false;
+            try { 
+                result = await _userManager.VerifyTwoFactorTokenAsync(user, Constants.DefaultFactor, code);
+                _dbContext.SaveChanges(userId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                _logger.LogError(ex.Message);
+            }
+            return View(result ? "EmailConfirmed" : "Error");
         }
 
         //
@@ -607,7 +648,7 @@ namespace Yavsc.Controllers
         //
         // GET: /Account/SendCode
         [HttpGet, AllowAnonymous]
-        public async Task<ActionResult> SendCode(string returnUrl = null, bool rememberMe = false)
+        public async Task<ActionResult> SendCode(string returnUrl = null, bool rememberMe = true)
         {
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
@@ -615,10 +656,7 @@ namespace Yavsc.Controllers
                 return View("Error", new Exception("No Two factor authentication user"));
             }
 
-            
-
             var userFactors = await _userManager.GetValidTwoFactorProvidersAsync(user);
-
 
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
@@ -645,7 +683,7 @@ namespace Yavsc.Controllers
             {
                 return View("Error", new Exception("No mobile app service was activated"));
             }
-            else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
+            else 
             if (model.SelectedProvider == Constants.SMSFactor)
             {
                 return View("Error", new Exception("No SMS service was activated"));
@@ -653,7 +691,7 @@ namespace Yavsc.Controllers
             }
             else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
             {
-               var sent = await this.SendEMailForConfirmAsync(user);
+               var sent = await this.SendEMailFactorAsync(user, model.SelectedProvider);
             }
             return RedirectToAction(nameof(VerifyCode), new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
@@ -662,7 +700,7 @@ namespace Yavsc.Controllers
         // GET: /Account/VerifyCode
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> VerifyCode(string provider, bool rememberMe, string returnUrl = null)
+        public async Task<IActionResult> VerifyCode(string code, string provider, bool rememberMe=true, string returnUrl = null)
         {
             // Require that the user has already logged in via username/password or external login
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
@@ -670,7 +708,8 @@ namespace Yavsc.Controllers
             {
                 return View("Error", new Exception("user is null"));
             }
-            return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
+            // it may be a GET response from some email url, or the web response to second fqctor requirement
+            return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe, Code = code });
         }
 
         //
@@ -690,12 +729,14 @@ namespace Yavsc.Controllers
             // will be locked out for a specified amount of time.
             _logger.LogWarning("Signin with code: {0} {1}", model.Provider, model.Code);
 
-            var result = await _signInManager.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberBrowser);
+            var result = await _signInManager.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberMe);
             if (result.Succeeded)
             {
                 ViewData["StatusMessage"] = "Your code was verified";
                 _logger.LogInformation($"Signed in. returning to {model.ReturnUrl}");
+                if (model.ReturnUrl!=null)
                 return Redirect(model.ReturnUrl);
+                else RedirectToAction("Index","Home");
             }
             if (result.IsLockedOut)
             {

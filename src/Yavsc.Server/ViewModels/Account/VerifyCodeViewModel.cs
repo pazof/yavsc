@@ -14,9 +14,6 @@ namespace Yavsc.ViewModels.Account
         public string ReturnUrl { get; set; }
 
         [Display(Name = "Se souvenir de ce navigateur?")]
-        public bool RememberBrowser { get; set; }
-
-        [Display(Name = "Se souvenir de moi?")]
         public bool RememberMe { get; set; }
     }
 }

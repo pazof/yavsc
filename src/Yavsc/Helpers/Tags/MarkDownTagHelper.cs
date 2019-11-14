@@ -47,7 +47,8 @@ namespace Yavsc.TagHelpers
             string actual;
             var settings = CommonMarkSettings.Default.Clone();
             settings.OutputFormat = OutputFormat.Html;
-            // settings.PrologueLineHandler = null;
+            settings.AdditionalFeatures |= CommonMarkAdditionalFeatures.StrikethroughTilde;
+
             Block document;
 
             // Act
