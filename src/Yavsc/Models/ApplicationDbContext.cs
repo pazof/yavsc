@@ -77,16 +77,30 @@ namespace Yavsc.Models
                     et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
             }
         }
+
+        // this is not a failback procedure.
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var appSetup = (string)AppDomain.CurrentDomain.GetData(Constants.YavscConnectionStringEnvName);
-            if (appSetup!=null) optionsBuilder.UseNpgsql(appSetup);
-            else {
-              var envSetup = Environment.GetEnvironmentVariable(Constants.YavscConnectionStringEnvName);
-              if (envSetup!=null) optionsBuilder.UseNpgsql(envSetup);
-            }
+            if (optionsBuilder.IsConfigured) return;
+            if (!string.IsNullOrWhiteSpace(Startup.ConnectionString))
+                {
+                    optionsBuilder.UseNpgsql(Startup.ConnectionString);
+                    return;
+                }
 
+            var appSetup = (string) AppDomain.CurrentDomain.GetData(Constants.YavscConnectionStringEnvName);
+
+            
+            if (!string.IsNullOrWhiteSpace(appSetup)) 
+            {
+                optionsBuilder.UseNpgsql(appSetup);
+                return;
+            }
+            var envSetup = Environment.GetEnvironmentVariable(Constants.YavscConnectionStringEnvName);
+            if (envSetup!=null) 
+                optionsBuilder.UseNpgsql(envSetup);
         }
+
 
         public DbSet<Client> Applications { get; set; }
 
