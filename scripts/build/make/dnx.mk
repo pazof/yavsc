@@ -16,7 +16,7 @@ BINTARGET=$(PRJNAME).dll
 BINTARGETPATH=bin/$(CONFIGURATION)/$(FRAMEWORKALIAS)/$(BINTARGET)
 PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
 dnu=dnu
-dnx=dnx
+dnx=ndnx
 
 # OBS SUBDIRS=Yavsc.Server Yavsc.Abstract Yavsc cli
 #
