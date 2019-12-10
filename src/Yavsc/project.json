@@ -150,8 +150,7 @@
     "Yavsc.Server": {
       "target": "project",
       "type": "build"
-    },
-    "GoogleTranslate": "1.0.5"
+    }
   },
   "commands": {
     "ef": "EntityFramework.Commands",

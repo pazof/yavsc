@@ -29,7 +29,7 @@
         "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
         "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
         "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
-        "Newtonsoft.Json": "9.0.1"
+        "Newtonsoft.Json": "6.0.0"
     },
     "commands": {
         "web": "Microsoft.AspNet.Server.Kestrel --server.urls=http://*:5002"
