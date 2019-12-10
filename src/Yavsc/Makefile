@@ -10,8 +10,8 @@ BASERESX= Resources/Yavsc.Models.IT.Fixing.Resources.resx \
 	Resources/Yavsc.ViewModels.EnrolerViewModel.resx \
 	Resources/Yavsc.YavscLocalisation.resx
 BASERESXGEN=$(BASERESX:.resx=.Designer.cs)
-MCS_OPTIONS=--debug
-MONO_OPTIONS=--debug
+MCS_OPTIONS=-debug
+MONO_OPTIONS="--debug"
 
 include $(MAKEFILE_DIR)/versioning.mk
 include $(MAKEFILE_DIR)/dnx.mk

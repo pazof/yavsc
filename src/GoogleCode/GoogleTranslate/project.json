@@ -25,7 +25,7 @@
     "defaultNamespace": "Yavsc"
   },
   "dependencies": {
-    "Newtonsoft.Json": "9.0.1",
+    "Newtonsoft.Json": "6.0.0",
     "Gapi.net45": "1.0.1",
     "RestSharp": "103.4.0"
   },
