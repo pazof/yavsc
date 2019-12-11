@@ -61,5 +61,11 @@
       "System.Net": {},
       "System.Xml": {}
     }
+  },
+  "scripts": {
+    "postrestore": [
+        "grep -v '\\.\\.dll' project.lock.json > new.project.lock.json",
+        "mv new.project.lock.json project.lock.json"
+    ]
   }
 }

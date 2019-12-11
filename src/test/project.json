@@ -39,7 +39,7 @@
     "EntityFramework.Commands": "7.0.0-rc1-final",
     "EntityFramework7.Npgsql": "3.1.0-rc1-3",
     "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
-    "Newtonsoft.Json": "6.0.0",
+    "Newtonsoft.Json": "6.0.1-beta1",
     "xunit": "2.1.0",
     "xunit.analyzers": "0.9.0",
     "xunit.assert": "2.1.0",
@@ -62,5 +62,11 @@
   "commands": {
     "test": "xunit.runner.dnx"
   },
-  "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f"
+  "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
+  "scripts": {
+    "postrestore": [
+        "grep -v '\\.\\.dll' project.lock.json > new.project.lock.json",
+        "mv new.project.lock.json project.lock.json"
+    ]
+  }
 }

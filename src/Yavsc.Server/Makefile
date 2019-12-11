@@ -4,9 +4,8 @@ BASERESX=Resources/Yavsc.Models.Relationship.HyperLink.resx \
   Resources/Yavsc.Models.Streaming.LiveFlow.resx
 BASERESXGEN=$(BASERESX:.resx=.Designer.cs)
 
-
-include $(MAKEFILE_DIR)/versioning.mk
 include $(MAKEFILE_DIR)/dnx.mk
+include $(MAKEFILE_DIR)/versioning.mk
 
 default: all
 
@@ -20,7 +19,7 @@ $(BINTARGETPATH): ../OAuth.AspNet.AuthServer/bin/$(CONFIGURATION)/OAuth.AspNet.A
 	make -C ../Yavsc.Abstract
 
 %.Designer.cs: %.resx
-	strotygen -l -p -t -r "Yavsc.Server.Resources." $^
+	strongresbuildercli -l -p -t -r "Yavsc.Server.Resources." $^
 
 prepare_code: $(BASERESXGEN)
 

@@ -2029,6 +2029,18 @@ namespace Yavsc {
             }
         }
         
+        public static string AccountEmailFactorTitle {
+            get {
+                return ResourceManager.GetString("AccountEmailFactorTitle", resourceCulture);
+            }
+        }
+        
+        public static string AccountEmailFactorBody {
+            get {
+                return ResourceManager.GetString("AccountEmailFactorBody", resourceCulture);
+            }
+        }
+        
         public static string ConfirmYourAccountTitle {
             get {
                 return ResourceManager.GetString("ConfirmYourAccountTitle", resourceCulture);

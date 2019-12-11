@@ -13,8 +13,8 @@ BASERESXGEN=$(BASERESX:.resx=.Designer.cs)
 MCS_OPTIONS=-debug
 MONO_OPTIONS="--debug"
 
-include $(MAKEFILE_DIR)/versioning.mk
 include $(MAKEFILE_DIR)/dnx.mk
+include $(MAKEFILE_DIR)/versioning.mk
 
 MINJS=wwwroot/js/bootstrap.min.js      wwwroot/js/input-lib.min.js             wwwroot/js/jquery.signalR-2.2.1.min.js  wwwroot/js/quill.min.js wwwroot/js/chat.min.js           wwwroot/js/jquery-2.2.4.min.js          wwwroot/js/jquery-ui.min.js             wwwroot/js/showdown.min.js wwwroot/js/comment.min.js        wwwroot/js/jquery-3.2.1.min.js          wwwroot/js/md-helpers.min.js            wwwroot/js/site.min.js wwwroot/js/dropzone.min.js       wwwroot/js/jquery-migrate-3.0.0.min.js  wwwroot/js/parallax.min.js              wwwroot/js/str.min.js wwwroot/js/google-geoloc.min.js  wwwroot/js/jquery.min.js                wwwroot/js/paypalbutton.min.js          wwwroot/js/to-markdown.min.js
 
@@ -52,6 +52,7 @@ pushInPre: cleanoutput bin/output/wwwroot/version
 	sudo service kestrel-pre stop
 	sudo rm -rf $(DESTDIR)/approot
 	sudo cp -a bin/output/* $(DESTDIR)
+	sudo cp ../../yavscd /usr/local/bin/yavscd-pre
 	sudo sync
 	sudo service kestrel-pre start
 
@@ -60,6 +61,7 @@ ifeq ($(git_status),0)
 	sudo service kestrel stop
 	sudo rm -rf $(PRODDESTDIR)/approot
 	sudo cp -a bin/output/* $(PRODDESTDIR) 
+	sudo cp ../../yavscd /usr/local/bin/yavscd
 	sudo sync
 	sudo service kestrel start
 else
@@ -76,7 +78,7 @@ cleanPublish: pushInPre pushInProd
 	jsmin < $^ > $@
 
 %.Designer.cs: %.resx
-	strotygen -l -p -t -r "Yavsc.Resources." $^
+	strongresbuildercli -l -p -t -r "Yavsc.Resources." $^
 
 prepare_code: $(BASERESXGEN)
 
