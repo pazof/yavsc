@@ -45,7 +45,7 @@
     "Microsoft.Extensions.WebEncoders.Core": "1.0.0-rc1-final",
     "Microsoft.Framework.Configuration.Json": "1.0.0-beta8",
     "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta4",
-    "Newtonsoft.Json": "6.0.0",
+    "Newtonsoft.Json": "6.0.1-beta1",
     "NJsonSchema.CodeGeneration.CSharp": "10.0.27",
     "Yavsc": {
       "version": "1.0.6-rc05",

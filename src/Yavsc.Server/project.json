@@ -60,7 +60,7 @@
         "Microsoft.Extensions.Logging.TraceSource": "1.0.0-rc1-final",
         "Microsoft.Extensions.Options": "0.0.1-alpha",
         "Microsoft.Extensions.Localization": "1.0.0-rc1-final",
-        "Newtonsoft.Json": "6.0.0",
+        "Newtonsoft.Json": "6.0.1-beta1",
         "Gapi.net45": "1.0.1",
         "PayPalMerchant-net451": "2.7.109",
         "MailKit": "1.12.0",

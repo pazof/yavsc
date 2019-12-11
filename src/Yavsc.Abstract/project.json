@@ -28,7 +28,7 @@
     "defaultNamespace": "Yavsc"
   },
   "dependencies": {
-    "Newtonsoft.Json": "6.0.0"
+    "Newtonsoft.Json": "6.0.1-beta1"
   },
   "frameworks": {
     "dnx451": {
