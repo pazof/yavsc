@@ -16,18 +16,15 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 CONFIGS="/etc/kestrel/*.prewebenv"
-DNX_USER_HOME=/srv/www/dnx
-DNXRUNTIMEVERSION=$(cat /srv/www/dnx/alias/default.alias)
 
-# fix issue with DNX exception in case of two env vars with the same name but different case
 TMP_SAVE_runlevel_VAR=$runlevel
 unset runlevel
 
 running() {
   if [ -f $PIDFILE ]
   then
-    DNXPID=$(cat $PIDFILE)
-    if kill -0 $DNXPID 2>/dev/null
+    PID=$(cat $PIDFILE)
+    if kill -0 $PID 2>/dev/null
       then
 	    return 0
     fi
@@ -41,14 +38,13 @@ setdnxenv() {
     . $env
     # reset all except the name to default values
 	export ASPNET_ENV=$NAME
-	WWW_USER=www-data
-	DNXRUNTIME=${DNX_USER_HOME}/runtimes/${DNXRUNTIMEVERSION}/bin/Microsoft.Dnx.Host.Mono.dll
+	export WWW_USER=www-data
+	YAVSCBIN=/usr/local/bin/yavscd-pre
 	PROJECT=approot/Web
 	CONFIGURATION=Release
 	ROOT=/srv/www/yavscpre
     DESC="$NAME"
     PIDFILE=/var/run/kestrel-${NAME}.pid
-	export MONO_OPTIONS="--server"
     LOGDIR=/var/log
     # reset to specified values
     . $env
@@ -60,7 +56,7 @@ status() {
     setdnxenv "$env"
 	if running;
 	then
-		echo "Service running $DESC ($NAME; pid: $DNXPID)"
+		echo "Service running $DESC ($NAME; pid: $PID)"
 	else
 		echo "Service stopped $DESC ($NAME)"
 	fi
@@ -76,8 +72,8 @@ start() {
 		echo "Service already running $DESC" "$NAME"
 		log_end_msg 0  
 	else
-		log_daemon_msg "Starting service $NAME"
-		if ! start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -x /usr/bin/mono $DNXRUNTIME -- --project $PROJECT --configuration $CONFIGURATION $NAME >${LOGDIR}/kestrel-${NAME}.log
+		log_daemon_msg "Starting service $NAME for user $WWW_USER"
+		if ! start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -g www-data -x $YAVSCBIN -- --project $PROJECT --configuration $CONFIGURATION $NAME > "${LOGDIR}/kestrel-${NAME}.log"
         then 
 			log_daemon_msg "Could not start $NAME : $?, see ${LOGDIR}/kestrel-${NAME}.log"
 			log_end_msg 2
