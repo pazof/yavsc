@@ -65,6 +65,8 @@ status() {
 
 
 start() {
+    # wait a little for postgresql to be available
+    sleep 1
   for env in $CONFIGS
   do
     setdnxenv "$env"

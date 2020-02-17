@@ -25,22 +25,22 @@ namespace Yavsc.Models.Messaging
     using Interfaces.Workflow;
 
     /// <summary>
-    /// /// Base event.
+    /// Base event.
     /// </summary>
 
     public abstract class BaseEvent : IEvent {
-         public BaseEvent()
-         {
-             Topic = GetType().Name;
-         }
-         public BaseEvent(string topic)
+        public BaseEvent()
         {
-            Topic = GetType().Name+"/"+topic;
+            Topic = GetType().Name;
+        }
+        public BaseEvent(string topic)
+        {
+            Topic = GetType().Name + "/" + topic;
         }
         public string Topic { get; private set; }
         public string Sender { get; set; }
 
-        abstract public string CreateBody();
+        public abstract string CreateBody();
     }
 
 
