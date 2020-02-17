@@ -26,21 +26,21 @@ namespace Yavsc.Controllers
 
     public class AccountController : Controller
     {
-        const string  nextPageTokenKey = "nextPageTokenKey";
-        const int defaultLen = 10;
+        private const string nextPageTokenKey = "nextPageTokenKey";
+        private const int defaultLen = 10;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         // private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
-        SiteSettings _siteSettings;
-        TwilioSettings _twilioSettings;
+        readonly SiteSettings _siteSettings;
+        readonly TwilioSettings _twilioSettings;
 
-        IStringLocalizer _localizer;
+        readonly IStringLocalizer _localizer;
 
         //  TwilioSettings _twilioSettings;
 
-        ApplicationDbContext _dbContext;
+        readonly ApplicationDbContext _dbContext;
         
 
         public AccountController(
@@ -53,13 +53,10 @@ namespace Yavsc.Controllers
             ApplicationDbContext dbContext)
         {
             _userManager = userManager;
-            
             _signInManager = signInManager;
             var emailUserTokenProvider = new UserTokenProvider();
             _userManager.RegisterTokenProvider("EmailConfirmation", emailUserTokenProvider);
-            
             _userManager.RegisterTokenProvider("ResetPassword", emailUserTokenProvider);
-            
             // _userManager.RegisterTokenProvider("SMS",new UserTokenProvider());
             // _userManager.RegisterTokenProvider("Phone", new UserTokenProvider());
             _emailSender = emailSender;
@@ -171,7 +168,7 @@ namespace Yavsc.Controllers
 
                         if (result.RequiresTwoFactor)
                         {
-                            return RedirectToAction(nameof(SendCode), new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+                            return RedirectToAction(nameof(SendCode), new { returnUrl = model.ReturnUrl, rememberMe = model.RememberMe });
                         }
                         if (result.IsLockedOut)
                         {
@@ -219,7 +216,7 @@ namespace Yavsc.Controllers
                         return HttpBadRequest();
                     }
                     // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
-                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = model.ReturnUrl }, protocol:"https" , host: Startup.Authority);
+                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { model.ReturnUrl }, protocol:"https", host: Startup.Authority);
                     var properties = _signInManager.ConfigureExternalAuthenticationProperties(model.Provider, redirectUrl);
                     // var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
                     return new ChallengeResult(model.Provider, properties);
@@ -566,17 +563,12 @@ namespace Yavsc.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
-            
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, 
-                protocol:  "https", host: Startup.Authority);
-                
-              
-                await _emailSender.SendEmailAsync(user.UserName, user.Email, _localizer["Reset Password"],
-                   _localizer["Please reset your password by following this link:"] + " <" + callbackUrl + ">");
-
-
-                return View("ForgotPasswordConfirmation");
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code },
+                protocol: "https", host: Startup.Authority);
+                var sent = await _emailSender.SendEmailAsync(user.UserName, user.Email, _localizer["Reset Password"],
+                    _localizer["Please reset your password by following this link:"] + " <" + callbackUrl + ">");
+                return View("ForgotPasswordConfirmation", sent);
             }
 
             // If we got this far, something failed, redisplay form
@@ -600,7 +592,7 @@ namespace Yavsc.Controllers
             var user = await _userManager.FindByIdAsync(UserId);
             if (user==null) return new BadRequestResult();
             // We just serve the form to reset here.
-            return  View();
+            return View();
         }
 
         // POST: /Account/ResetPassword
