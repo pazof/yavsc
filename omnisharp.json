@@ -10,6 +10,9 @@
 		"enablePackageRestore": false,
 		"projects": "src/*/project.json;*/project.json;project.json;test/*/project.json" 
 	},
+	"Script": {
+		"enabled": false
+	},
 	"fileOptions": {
     "systemExcludeSearchPatterns": [
       "**/bin/**/*",

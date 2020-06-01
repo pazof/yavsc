@@ -22,13 +22,15 @@ namespace Yavsc.Controllers
         IStringLocalizer<Yavsc.YavscLocalisation> _localizer;
         IStringLocalizer<BugController> _bugLocalizer;
           
-        public ProjectController(ApplicationDbContext context, 
+        public ProjectController(ApplicationDbContext context,
         ILoggerFactory loggerFactory,
-        IStringLocalizer<Yavsc.YavscLocalisation> localizer
+        IStringLocalizer<Yavsc.YavscLocalisation> localizer,
+        IStringLocalizer<BugController> bugLocalizer
         )
         {
             _context = context;
             _localizer = localizer;
+            _bugLocalizer = bugLocalizer;
             _logger = loggerFactory.CreateLogger<ProjectController>();
 
         }
@@ -36,6 +38,7 @@ namespace Yavsc.Controllers
         // GET: Project
         public async Task<IActionResult> Index()
         {
+
             var applicationDbContext = _context.Project.Include(p => p.Client).Include(p => p.Context).Include(p => p.PerformerProfile).Include(p => p.Regularisation).Include(p => p.Repository);
             return View(await applicationDbContext.ToListAsync());
         }
