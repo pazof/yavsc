@@ -94,10 +94,11 @@ namespace Yavsc.Controllers
             // user.EmailConfirmed
             return View(toShow.ToArray());
         }
+
         string GeneratePageToken() {
             return System.Guid.NewGuid().ToString();
         }
-
+        
         [AllowAnonymous]
         [HttpGet(Constants.LoginPath)]
         public ActionResult SignIn(string returnUrl = null)
@@ -152,7 +153,11 @@ namespace Yavsc.Controllers
                                 return this.ViewOk(model);
                             }
                         }
-
+                        else {
+                                ModelState.AddModelError(string.Empty, 
+                                            "No such user.");
+                                return this.ViewOk(model);
+                        }
                         // This doesn't count login failures towards account lockout
                         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                         var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
