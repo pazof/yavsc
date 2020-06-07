@@ -48,26 +48,6 @@ deploy-pkg: publish
 
 deploy: pushInPre pushInProd
 
-pushInPre: cleanoutput bin/output/wwwroot/version
-	sudo service kestrel-pre stop
-	sudo rm -rf $(DESTDIR)/approot
-	sudo cp -a bin/output/* $(DESTDIR)
-	sudo cp ../../yavscd /usr/local/bin/yavscd-pre
-	sudo sync
-	sudo service kestrel-pre start
-
-pushInProd: cleanoutput bin/output/wwwroot/version
-ifeq ($(git_status),0)
-	sudo service kestrel stop
-	sudo rm -rf $(PRODDESTDIR)/approot
-	sudo cp -a bin/output/* $(PRODDESTDIR) 
-	sudo cp ../../yavscd /usr/local/bin/yavscd
-	sudo sync
-	sudo service kestrel start
-else
-	$(error EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.)
-endif
-
 cleanPublish: pushInPre pushInProd 
 	rm -rf bin/output/
 

@@ -1,5 +1,4 @@
 # Common defs
-# assumes SOLUTIONDIR already defined
 #
 
 ifndef PRJNAME
@@ -62,7 +61,7 @@ bin/output/wwwroot/version: bin/output
 
 pack: $(NUGETSOURCE)/$(PKGFILENAME)
 
-$(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) $(SOLUTIONDIR)/version.txt
+$(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) ../../version.txt
 ifeq ($(git_status),0)
 	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
 else
