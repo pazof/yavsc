@@ -1,9 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Yavsc.ViewModels.UserFiles;
-
-using System;
 
 namespace Yavsc.Helpers
 {
@@ -50,7 +49,7 @@ namespace Yavsc.Helpers
             {
                 if (ValidFileNameChars.Contains(c))
                     sb.Append(c);
-                else sb.Append('_');
+                else sb.Append("#"+((int)c).ToString("D3"));
             }
            return sb.ToString();
         }
@@ -71,7 +70,7 @@ namespace Yavsc.Helpers
         public const char RemoteDirectorySeparator = '/';
 
         // Only accept descent remote file names
-        public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. ".ToCharArray();
+        public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. %#".ToCharArray();
    
         // Estimate signature file name format
         public static Func<string,string,long,string>

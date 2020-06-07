@@ -2,7 +2,7 @@
 ifndef PRJNAME
 PRJNAME := $(shell basename `pwd -P`)
 endif
-SOLUTIONDIR=$(HOME)/workspace/yavsc
+SOLUTIONDIR=../..
 version := $(shell cat $(SOLUTIONDIR)/version.txt)
 MAKE=make
 NUGETSOURCE=$(HOME)/Nupkgs

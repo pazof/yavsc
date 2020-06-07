@@ -5,6 +5,8 @@ DNXLIBS=Microsoft.Dnx.Host.Mono.dll Microsoft.Dnx.Host.dll Microsoft.Dnx.Applica
 DNXLIBFP:=$(addprefix $(DNX_USER_HOME)/runtimes/dnx-mono.1.0.0-rc1-update2/bin/, $(DNXLIBS))
 CONFIG=Debug
 
+git_status := $(shell git status -s --porcelain |wc -l)
+
 clean: 
 	rm -f src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/Yavsc.Abstract.dll src/OAuth.AspNet.Token/bin/$(CONFIG)/dnx451/OAuth.AspNet.Token.dll src/OAuth.AspNet.AuthServer/bin/$(CONFIG)/dnx451/OAuth.AspNet.AuthServer.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll 
 
@@ -17,11 +19,21 @@ test:
 web:
 	make -C src/Yavsc web
 
-pushInProd:
-	make -C src/Yavsc pushInProd
+pushInPre: yavscd
+	sudo service kestrel-pre stop
+	sudo cp yavscd /usr/local/bin/yavscd-pre
+	sudo sync
+	sudo service kestrel-pre start
 
-pushInPre:
-	make -C src/Yavsc pushInPre
+pushInProd: yavscd
+ifeq ($(git_status),0)
+	sudo service kestrel stop
+	sudo cp yavscd /usr/local/bin/yavscd
+	sudo sync
+	sudo service kestrel start
+else
+	$(error EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.)
+endif
 
 packages:
 	make -C src/Yavsc.Abstract pack
@@ -49,7 +61,7 @@ src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll: src/Yavsc.Abstract/bin/$
 src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll: src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/Yavsc.Abstract.dll src/OAuth.AspNet.AuthServer/bin/$(CONFIG)/dnx451/OAuth.AspNet.AuthServer.dll src/OAuth.AspNet.Token/bin/$(CONFIG)/dnx451/OAuth.AspNet.Token.dll
 	make -C  src/Yavsc CONFIGURATION=$(CONFIG)
 
-bundle: src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/Yavsc.Abstract.dll src/OAuth.AspNet.AuthServer/bin/$(CONFIG)/dnx451/OAuth.AspNet.AuthServer.dll src/OAuth.AspNet.Token/bin/$(CONFIG)/dnx451/OAuth.AspNet.Token.dll
+yavscd: src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/Yavsc.Abstract.dll src/OAuth.AspNet.AuthServer/bin/$(CONFIG)/dnx451/OAuth.AspNet.AuthServer.dll src/OAuth.AspNet.Token/bin/$(CONFIG)/dnx451/OAuth.AspNet.Token.dll
 	mkbundle --static $(DNXLIBS) src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll src/Yavsc/bin/$(CONFIG)/dnx451/pt/Yavsc.resources.dll src/Yavsc/bin/$(CONFIG)/dnx451/en/Yavsc.resources.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/en/Yavsc.Server.resources.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/Yavsc.Abstract.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/en/Yavsc.Abstract.resources.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/pt/Yavsc.Abstract.resources.dll src/OAuth.AspNet.AuthServer/bin/$(CONFIG)/dnx451/OAuth.AspNet.AuthServer.dll src/OAuth.AspNet.Token/bin/$(CONFIG)/dnx451/OAuth.AspNet.Token.dll  $(LIBS) -L $(DNX_USER_HOME)/runtimes/dnx-mono.1.0.0-rc1-update2/bin --machine-config $(MONO_PREFIX)/etc/mono/4.5/machine.config -o yavscd
 	strip yavscd
 
