@@ -20,20 +20,10 @@ web:
 	make -C src/Yavsc web
 
 pushInPre: yavscd
-	sudo service kestrel-pre stop
-	sudo cp yavscd /usr/local/bin/yavscd-pre
-	sudo sync
-	sudo service kestrel-pre start
+	make -C src/Yavsc pushInPre
 
 pushInProd: yavscd
-ifeq ($(git_status),0)
-	sudo service kestrel stop
-	sudo cp yavscd /usr/local/bin/yavscd
-	sudo sync
-	sudo service kestrel start
-else
-	$(error EPRODANDGITSTATUS! Refus de pousser en production: des changements doivent être validés auprès du contrôle de versions.)
-endif
+	make -C src/Yavsc pushInProd
 
 packages:
 	make -C src/Yavsc.Abstract pack
