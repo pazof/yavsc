@@ -50,8 +50,8 @@ if (typeof XMLHttpRequest === 'undefined') {
         var dnames = _this.root.split('/');
         $.each(dnames, function () {
           var part = this;
-          if (npath == null) npath = part;
-          else npath = npath + '/' + part;
+          if (npath == null) npath = encodeURIComponent(part);
+          else npath = npath + '/' + encodeURIComponent(part);
           $('<button/>')
             .append(part)
             .click(function () {
@@ -90,7 +90,7 @@ if (typeof XMLHttpRequest === 'undefined') {
         {
           $.each(data.SubDirectories, function () {
             var item = this;
-            var spath = _this.root ? _this.root + '/' + item.Name : item.Name;
+            var spath = _this.root ? _this.root + '/' + encodeURIComponent(item.Name) : encodeURIComponent(item.Name);
             $('<button/>')
               .append(item.Name)
               .click(function () {
@@ -110,8 +110,8 @@ if (typeof XMLHttpRequest === 'undefined') {
                 _this.SetItemSelected(item.Name, this.checked);
               })
               .appendTo($td);
-              var furl =  (_this.root) ? '/files/' + owner + '/' + _this.root + '/' + item.Name
-                : '/files/' + owner + '/' + item.Name;
+              var furl =  (_this.root) ? '/files/' + owner + '/' + _this.root + '/' + encodeURIComponent(item.Name)
+                : '/files/' + owner + '/' + encodeURIComponent(item.Name);
             $('<td class="filename"></td>')
               .append($('<a></a>').attr('href',furl)
                 .append(item.Name)).appendTo($tr);
