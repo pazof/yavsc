@@ -75,7 +75,7 @@
     "defaultNamespace": "Yavsc"
   },
   "dependencies": {
-    "ya.CommonMark.NET": "0.11.0",
+    "MarkdownDeep-av.NET": "1.5.26",
     "EntityFramework.Commands": "7.0.0-rc1-final",
     "EntityFramework.Core": "7.0.0-rc1-final",
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
