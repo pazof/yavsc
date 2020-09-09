@@ -75,7 +75,7 @@
     "defaultNamespace": "Yavsc"
   },
   "dependencies": {
-    "MarkdownDeep-av.NET": "1.5.26",
+    "MarkdownDeep-av.NET": "1.5.27",
     "EntityFramework.Commands": "7.0.0-rc1-final",
     "EntityFramework.Core": "7.0.0-rc1-final",
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
@@ -165,7 +165,7 @@
   "frameworks": {
     "dnx451": {
       "frameworkAssemblies": {
-        "System.Drawing": "4.0.0.0",
+        "System.Drawing": "4.0.0",
         "System.Net": "4.0.0.0",
         "System.Xml": "4.0.0.0",
         "System": "4.0.0.0"

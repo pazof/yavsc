@@ -1,3 +1,5 @@
+//@ts-check
+
 if (typeof jQuery === 'undefined') {
     throw new Error('This Google maps client script requires jQuery')
 }

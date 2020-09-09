@@ -14,7 +14,7 @@ namespace testOauthClient.Controllers
 {
     public class HomeController : Controller
     {
-        ILogger _logger;
+        readonly ILogger _logger;
                    
         public class GCMRegistrationRecord {
                      public string   GCMRegistrationId { get; set; } = "testGoogleRegistrationIdValue";

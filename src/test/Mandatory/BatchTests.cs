@@ -31,8 +31,7 @@ namespace test
     [Trait("regres", "no")]
     public class BatchTests: BaseTestContext, IClassFixture<ServerSideFixture>, IDisposable
     {
-
-        ApplicationDbContext _dbContext;
+        readonly ApplicationDbContext _dbContext;
         ServerSideFixture _fixture;
 
         public  BatchTests(ITestOutputHelper output, ServerSideFixture fixture) : base (output, fixture)

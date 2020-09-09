@@ -17,8 +17,8 @@ namespace test
     [Trait("regres", "yes")]
     public class NotWorking : BaseTestContext
     {
-        SourceInformationProvider _sourceInfoProvider;
-       IOptions<LocalizationOptions> _localizationOptions;
+        readonly SourceInformationProvider _sourceInfoProvider;
+        readonly IOptions<LocalizationOptions> _localizationOptions;
         public NotWorking( IHostingEnvironment env , IOptions<SiteSettings> siteSettings, 
         SourceInformationProvider sourceInfoProvider, 
         IOptions<LocalizationOptions> localizationOptions,
