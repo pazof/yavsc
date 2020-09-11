@@ -4,7 +4,7 @@ BINTARGET=bin/$(CONFIGURATION)/dnx451/test.dll
 all: test
 
 project.lock.json: project.json
-	dnu restore
+	dnu restore --ignore-failed-sources
 
 ../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll:
 	make -C ../Yavsc
