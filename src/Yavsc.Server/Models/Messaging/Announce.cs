@@ -21,7 +21,7 @@ public class Announce : BaseEvent, IAnnounce, IOwned
         public string Message { get; set; }
         public override string CreateBody()
         {
-            return $"Annonce de {Owner.UserName}: {For.ToString()}\n\n{Message}";
+            return $"Annonce de {Owner.UserName}: {For}\n\n{Message}";
         }
     }
 }

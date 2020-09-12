@@ -2,9 +2,10 @@ using System.IO;
 using Yavsc.Server.Models.IT;
 using Yavsc.Server.Models.IT.SourceCode;
 
-public class Builder {
-    string _gitRepository;
-    private Project _projectInfo;
+public class Builder
+{
+    readonly string _gitRepository;
+    private readonly Project _projectInfo;
 
     public Builder()
     {

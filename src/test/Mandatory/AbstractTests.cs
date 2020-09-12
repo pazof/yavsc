@@ -9,7 +9,7 @@ namespace test
     [Trait("regres", "no")]
     public class AbstractTests
     {
-        ITestOutputHelper output;
+        readonly ITestOutputHelper output;
         public AbstractTests(ITestOutputHelper output)
         {
             this.output = output;

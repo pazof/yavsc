@@ -15,7 +15,7 @@ namespace Yavsc.Auth
 {
     internal class GoogleHandler : OAuthHandler<YavscGoogleOptions>
     {
-        private ILogger _logger;
+        private readonly ILogger _logger;
         public GoogleHandler(HttpClient httpClient,ILogger logger)
             : base(httpClient)
         {
@@ -92,9 +92,11 @@ namespace Yavsc.Auth
         {
             
             var scope = FormatScope();
-            var queryStrings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            queryStrings.Add("response_type", "code");
-            queryStrings.Add("client_id", Options.ClientId);
+            var queryStrings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "response_type", "code" },
+                { "client_id", Options.ClientId }
+            };
             // this runtime may not known this value, 
             // it should be get from config,
             // And always be using a secure sheme ... since Google won't support anymore insecure ones.

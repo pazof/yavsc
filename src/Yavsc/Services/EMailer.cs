@@ -27,14 +27,12 @@ namespace Yavsc.Lib
         const string DefaultBaseClassName = "ATemplate";
         const string DefaultBaseClass = nameof(UserOrientedTemplate);
         const string DefaultNamespace = "CompiledRazorTemplates";
-
-        RazorTemplateEngine razorEngine;
-        IStringLocalizer<EMailer> stringLocalizer;
-
-        ApplicationDbContext dbContext;
-        IEmailSender mailSender;
-        RazorEngineHost host;
-        ILogger logger;
+        readonly RazorTemplateEngine razorEngine;
+        readonly IStringLocalizer<EMailer> stringLocalizer;
+        readonly ApplicationDbContext dbContext;
+        readonly IEmailSender mailSender;
+        readonly RazorEngineHost host;
+        readonly ILogger logger;
 
         public EMailer(ApplicationDbContext context, IEmailSender sender, 
                        IStringLocalizer<EMailer> localizer, 

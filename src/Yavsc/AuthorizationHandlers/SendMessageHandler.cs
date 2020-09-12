@@ -8,7 +8,7 @@ namespace Yavsc.AuthorizationHandlers
 {
     public class SendMessageHandler : AuthorizationHandler<PrivateChatEntryRequirement, string>
     {
-        ApplicationDbContext _dbContext ;
+        readonly ApplicationDbContext _dbContext ;
 
         public SendMessageHandler(ApplicationDbContext dbContext)
         {

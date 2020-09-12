@@ -33,7 +33,7 @@ namespace OAuth.AspNet.AuthServer
 
             MemoryStream stream, memoryStream = null;
 
-            StreamWriter streamWriter = null;
+            StreamWriter streamWriter;
 
             try
             {

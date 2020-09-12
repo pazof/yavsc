@@ -14,8 +14,8 @@ namespace Yavsc.Controllers
     [Authorize()]
     public class MyFSRulesController : Controller
     {
-        private ApplicationDbContext _context;
-        private ILogger _logger;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
 
         public MyFSRulesController(ApplicationDbContext context,
          ILoggerFactory loggerFactory)

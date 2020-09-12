@@ -12,10 +12,10 @@ using Yavsc.Abstract;
 namespace cli {
   
     public class Streamer: ICommander {
-        private ClientWebSocket _client;
-        private ILogger _logger;
-        private ConnectionSettings _cxSettings;
-        private UserConnectionSettings _userCxSettings;
+        private readonly ClientWebSocket _client;
+        private readonly ILogger _logger;
+        private readonly ConnectionSettings _cxSettings;
+        private readonly UserConnectionSettings _userCxSettings;
         private CommandOption _fileOption;
         private CommandArgument _flowIdArg;
         private CancellationTokenSource _tokenSource;
@@ -83,42 +83,22 @@ namespace cli {
             await _client.ConnectAsync(new Uri(url), _tokenSource.Token);
             _logger.LogInformation("Connected");
             const int bufLen = Yavsc.Constants.WebSocketsMaxBufLen;
-            byte [] buffer = new byte[bufLen+4*sizeof(int)];
+            byte [] buffer = new byte[bufLen];
             const int offset=0;
-            int read = 0;
-            /* 
-            var reciving = Task.Run(async ()=> {
-                 byte [] readbuffer = new byte[bufLen];
-                 var rb = new ArraySegment<byte>(readbuffer, 0, bufLen);
-                 bool continueReading = false;
-                 do {
-                    var result = await _client.ReceiveAsync(rb, _tokenSource.Token);
-                    _logger.LogInformation($"received {result.Count} bytes");
-                    continueReading = !result.CloseStatus.HasValue;
-                 } while (continueReading);
-            } ); */
+            int read;
+            bool lastFrame;
 
-            do {
-                read = await stream.ReadAsync(buffer, offset + sizeof(int), bufLen);
-                if (read>0) {
-                    // assert sizeof(int)==4
-                    buffer[3]= (byte) (read % 256);
-                    var left = read / 256;
-                    buffer[2]=  (byte) (left % 256);
-                    left = left / 256;
-                    buffer[1] = (byte) (left % 256);
-                    left = left /256;
-                    buffer[0]=(byte) (byte) (left % 256);
-                    var segment = new ArraySegment<byte>(buffer, offset, read+4);
-                
-
-                    await _client.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, _tokenSource.Token);
-                     _logger.LogInformation($"sent {segment.Count} ");
-                 }
-                
-            } while (read>0);
-            // reciving.Wait();
-             await _client.CloseAsync(WebSocketCloseStatus.NormalClosure, "EOF", _tokenSource.Token);
+            WebSocketMessageType pckType = WebSocketMessageType.Binary;
+            do
+            {
+                read = await stream.ReadAsync(buffer, offset, bufLen);
+                lastFrame = read < Yavsc.Constants.WebSocketsMaxBufLen;
+                ArraySegment<byte> segment = new ArraySegment<byte>(buffer, offset, read);
+                await _client.SendAsync(new ArraySegment<byte>(buffer), pckType, lastFrame, _tokenSource.Token);
+                _logger.LogInformation($"sent {segment.Count} ");
+            } while (!lastFrame);
+            _logger.LogInformation($"Closing socket");
+            await _client.CloseAsync(WebSocketCloseStatus.NormalClosure, "EOF", _tokenSource.Token);
         }
-    }  
+    }
 }

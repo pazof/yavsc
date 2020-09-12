@@ -13,19 +13,11 @@ namespace Yavsc.ViewComponents
 {
     public class BlogIndexViewComponent: ViewComponent
     {
-        ILogger _logger;
-        private ApplicationDbContext _context;
-        private IAuthorizationService _authorizationService;
+        private readonly ApplicationDbContext _context;
         public BlogIndexViewComponent(
-            ApplicationDbContext context,
-            UserManager<ApplicationUser> userManager,
-            ILoggerFactory loggerFactory,
-            IAuthorizationService authorizationService,
-            IOptions<SiteSettings> siteSettings)
+            ApplicationDbContext context)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<BlogIndexViewComponent>();
-            _authorizationService = authorizationService;
         }
 
         // Renders blog index ofr the specified user by name

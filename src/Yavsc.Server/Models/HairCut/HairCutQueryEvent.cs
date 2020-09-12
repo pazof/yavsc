@@ -36,6 +36,5 @@ namespace Yavsc.Models.Haircut
             private set;
         }
 
-        HairCutQuery Data { get; set; }
     }
 }

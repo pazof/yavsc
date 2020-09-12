@@ -27,7 +27,7 @@ namespace OAuth.AspNet.Tokens
 
         #region non-Public Members
 
-        private TicketDataFormat _ticketDataFormat;
+        private readonly TicketDataFormat _ticketDataFormat;
 
         private const string _serializationRegex = @"^[A-Za-z0-9-_]*$";
 

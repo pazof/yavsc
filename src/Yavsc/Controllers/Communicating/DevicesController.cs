@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
     using Models.Identity;
     public class DevicesController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public DevicesController(ApplicationDbContext context)
         {

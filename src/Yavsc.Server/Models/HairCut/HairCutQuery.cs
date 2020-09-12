@@ -140,7 +140,7 @@ Prestation.Gender == HairCutGenders.Women ?
                                 bill.Add(new CommandLine
                                 {
                                     Name = name,
-                                    Description = name = name + shorthairsuffix,
+                                    Description = name + shorthairsuffix,
                                     UnitaryCost = multicolor ? SelectedProfile.ShortMultiColorPrice : SelectedProfile.ShortColorPrice
                                 });
 

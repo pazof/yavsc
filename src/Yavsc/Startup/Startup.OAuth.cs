@@ -91,8 +91,7 @@ namespace Yavsc
             // 
             ;
         }
-        private void ConfigureOAuthApp(IApplicationBuilder app,
-            SiteSettings settingsOptions, ILogger logger)
+        private void ConfigureOAuthApp(IApplicationBuilder app)
         {
 
             app.UseIdentity();

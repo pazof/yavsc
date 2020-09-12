@@ -13,15 +13,9 @@ namespace Yavsc
     // * an AppData folder
     public partial class Startup
     {
-        public void CheckServices(IServiceCollection services)
-        {
-            
-        }
 
-        public void CheckApp(IApplicationBuilder app,
-                SiteSettings siteSettings, IHostingEnvironment env,
-                ILoggerFactory loggerFactory
-                )
+        public void CheckApp(IHostingEnvironment env,
+                ILoggerFactory loggerFactory)
         {
 
             var logger = loggerFactory.CreateLogger<Startup>();

@@ -16,9 +16,9 @@ namespace Yavsc.Controllers
     [Authorize("AdministratorOnly")]
     public class ActivityController : Controller
     {
-        private ApplicationDbContext _context;
-        IStringLocalizer<Yavsc.YavscLocalisation> SR;
-        ILogger logger;
+        private readonly ApplicationDbContext _context;
+        readonly IStringLocalizer<Yavsc.YavscLocalisation> SR;
+        readonly ILogger logger;
 
         public ActivityController(ApplicationDbContext context, 
         IStringLocalizer<Yavsc.YavscLocalisation> SR,

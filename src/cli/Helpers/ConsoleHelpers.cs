@@ -13,15 +13,9 @@ namespace cli.Helpers
             return commander.Integrate(rootApp);
         }
 
-        static OAuthenticator OAuthorInstance { get; set; }
+        public static OAuthenticator OAuthorInstance { get; private set; }
         public static OAuthenticator InitAuthor(
-            this ConnectionSettings settings,
-            string clientId,
-            string clientSecret,
-            string scope,
-            string authorizeUrl,
-            string redirectUrl,
-            string accessTokenUrl)
+            this ConnectionSettings settings)
         {
             return OAuthorInstance = new OAuthenticator(settings.ClientId, 
             settings.ClientSecret, 

@@ -16,20 +16,17 @@ namespace Yavsc.ViewComponents
 {
     public class BillViewComponent : ViewComponent
     {
-        ApplicationDbContext dbContext;
-        IBillingService billing;
-        IStringLocalizer<Yavsc.YavscLocalisation> localizer;
-        ILogger logger ;
+        readonly ApplicationDbContext dbContext;
+        readonly IBillingService billing;
+        readonly IStringLocalizer<Yavsc.YavscLocalisation> localizer;
 
         public BillViewComponent(ApplicationDbContext dbContext, 
             IStringLocalizer<Yavsc.YavscLocalisation> localizer,
-            IBillingService billing,
-            ILoggerFactory loggerFactory)
+            IBillingService billing)
         {
             this.billing = billing;
             this.dbContext = dbContext;
             this.localizer = localizer;
-            logger = loggerFactory.CreateLogger<BillViewComponent>();
         }
 
         public async Task<IViewComponentResult> InvokeAsync(string code, IBillable billable, OutputFormat format, bool asBill)

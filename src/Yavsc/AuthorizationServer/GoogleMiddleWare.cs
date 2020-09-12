@@ -16,8 +16,8 @@ namespace Yavsc.Auth
     /// </summary>
     public class GoogleMiddleware : OAuthMiddleware<YavscGoogleOptions>
     {
-        private RequestDelegate _next;
-        private ILogger _logger;
+        private readonly RequestDelegate _next;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes a new <see cref="GoogleMiddleware"/>.

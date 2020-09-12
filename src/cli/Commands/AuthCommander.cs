@@ -16,13 +16,12 @@ namespace cli.Commands
         private CommandOption _secret;
         private CommandOption _scope;
         private CommandOption _save;
-
-        ILogger _logger;
+        readonly ILogger _logger;
 
         public AuthCommander(ILoggerFactory loggerFactory)
-         {
-             _logger = loggerFactory.CreateLogger<AuthCommander>();
-         }
+        {
+            _logger = loggerFactory.CreateLogger<AuthCommander>();
+        }
 
         public CommandLineApplication Integrate(CommandLineApplication rootApp)
         {
@@ -32,37 +31,41 @@ namespace cli.Commands
                     target.FullName = "Authentication methods";
                     target.Description = "Login, save credentials and get authorized.";
                     target.HelpOption("-? | -h | --help");
-                    var loginCommand = target.Command("login", app => {
+                    var loginCommand = target.Command("login", app =>
+                    {
                         _login = app.Argument("login", "login to use", true);
                         _apiKey = app.Option("-a | --api", "API key to use against authorization server", CommandOptionType.SingleValue);
-                        _secret = app.Option( "-e | --secret", "Secret phrase associated to API key", CommandOptionType.SingleValue);
-                        _scope = app.Option( "-c | --scope", "invoked scope asking for a security token", CommandOptionType.SingleValue);
-                        _save = app.Option( "-s | --save", "Save authentication token to given file", CommandOptionType.SingleValue);
+                        _secret = app.Option("-e | --secret", "Secret phrase associated to API key", CommandOptionType.SingleValue);
+                        _scope = app.Option("-c | --scope", "invoked scope asking for a security token", CommandOptionType.SingleValue);
+                        _save = app.Option("-s | --save", "Save authentication token to given file", CommandOptionType.SingleValue);
                         app.HelpOption("-? | -h | --help");
-                    }  );
-                    loginCommand.OnExecute(async ()=>
+                    });
+                    loginCommand.OnExecute(async () =>
             {
-                var authUrl = Startup.ConnectionSettings.AuthorizeUrl;
-                var redirect = Startup.ConnectionSettings.RedirectUrl;
-                var tokenUrl = Startup.ConnectionSettings.AccessTokenUrl;
+                string authUrl = Startup.ConnectionSettings.AuthorizeUrl;
+                string redirect = Startup.ConnectionSettings.RedirectUrl;
+                string tokenUrl = Startup.ConnectionSettings.AccessTokenUrl;
 
-                 var oauthor = new OAuthenticator(_apiKey.HasValue() ? _apiKey.Value() : Startup.ConnectionSettings.ClientId,
-                  _secret.HasValue() ? _secret.Value() : Startup.ConnectionSettings.ClientSecret, 
-                  _scope.HasValue() ? _scope.Value() : Startup.ConnectionSettings.Scope,
-                new Uri(authUrl), new Uri(redirect), new Uri(tokenUrl));
-                var query = new Dictionary<string, string>();
-                query["username"] = _login.Value;
-                query["password"] = GetPassword(_login.Value);
-                query["grant_type"] = "password";
-                try {
+                OAuthenticator oauthor = new OAuthenticator(_apiKey.HasValue() ? _apiKey.Value() : Startup.ConnectionSettings.ClientId,
+                 _secret.HasValue() ? _secret.Value() : Startup.ConnectionSettings.ClientSecret,
+                 _scope.HasValue() ? _scope.Value() : Startup.ConnectionSettings.Scope,
+                 new Uri(authUrl), new Uri(redirect), new Uri(tokenUrl));
+                Dictionary<string, string> query = new Dictionary<string, string>
+                {
+                    ["username"] = _login.Value,
+                    ["password"] = GetPassword(_login.Value),
+                    ["grant_type"] = "password"
+                };
+                try
+                {
                     var result = await oauthor.RequestAccessTokenAsync(query);
                     Startup.UserConnectionSettings.AccessToken = result["access_token"];
                     Startup.UserConnectionSettings.ExpiresIn = result["expires_in"];
                     Startup.UserConnectionSettings.RefreshToken = result["refresh_token"];
                     Startup.UserConnectionSettings.TokenType = result["token_type"];
                     Startup.UserConnectionSettings.UserName = _login.Value;
-                    Startup.SaveCredentials(_save.HasValue() ? _save.Value() :  Startup.UserConnectionsettingsFileName);
-                   
+                    Startup.SaveCredentials(_save.HasValue() ? _save.Value() : Startup.UserConnectionsettingsFileName);
+
                 }
                 catch (Exception ex)
                 {
@@ -112,6 +115,6 @@ namespace cli.Commands
             Console.WriteLine();
             return pwd.ToString();
         }
-        
+
     }
 }

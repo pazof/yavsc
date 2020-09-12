@@ -250,8 +250,7 @@ Microsoft.Extensions.CodeGeneration.ICodeGeneratorActionsService),
             Services = services;
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
-        IOptions<SiteSettings> siteSettings, 
+        public void Configure(
         IOptions<ConnectionSettings> cxSettings,
         IOptions<UserConnectionSettings> useCxSettings,
         ILoggerFactory loggerFactory)

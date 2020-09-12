@@ -9,8 +9,8 @@ namespace test.Mandatory
     [Trait("dev", "wip")]
     public class Database: IClassFixture<ServerSideFixture>, IDisposable
     {
-        ServerSideFixture _serverFixture;
-        ITestOutputHelper output;
+        readonly ServerSideFixture _serverFixture;
+        readonly ITestOutputHelper output;
         public Database(ServerSideFixture serverFixture, ITestOutputHelper output)
         {
             this.output = output;

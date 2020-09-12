@@ -13,6 +13,10 @@ clean:
 checklibs:
 	ls $(DNXLIBFP)
 
+updatedeps:
+	cp src/Yavsc/bin/output/approot/packages/*/*/lib/*net451*/*.dll private/lib/
+	cp src/Yavsc/bin/output/approot/packages/*/*/lib/*dnx451*/*.dll private/lib/
+
 test:
 	make -C src/test
 

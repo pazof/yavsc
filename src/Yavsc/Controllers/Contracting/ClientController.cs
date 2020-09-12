@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
 {
     public class ClientController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public ClientController(ApplicationDbContext context)
         {

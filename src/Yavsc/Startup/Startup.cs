@@ -278,7 +278,6 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             });
-            CheckServices(services);
         }
         static ApplicationDbContext _dbContext;
         public static IServiceProvider Services { get; private set; }
@@ -288,7 +287,6 @@ namespace Yavsc
             IApplicationBuilder app, IHostingEnvironment env,
             ApplicationDbContext dbContext, IOptions<SiteSettings> siteSettings,
         IOptions<RequestLocalizationOptions> localizationOptions,
-        IOptions<OAuth2AppSettings> oauth2SettingsContainer,
         IAuthorizationService authorizationService,
         IOptions<PayPalSettings> payPalSettings,
         IOptions<GoogleAuthSettings> googleSettings,
@@ -355,8 +353,10 @@ namespace Yavsc
 
                 app.UseDeveloperExceptionPage();
                 app.UseRuntimeInfoPage();
-                var epo = new ErrorPageOptions();
-                epo.SourceCodeLineCount = 20;
+                var epo = new ErrorPageOptions
+                {
+                    SourceCodeLineCount = 20
+                };
                 app.UseDeveloperExceptionPage(epo);
                 app.UseDatabaseErrorPage(
                   x =>
@@ -404,19 +404,22 @@ namespace Yavsc
             });
             app.UseSession();
 
-            ConfigureOAuthApp(app, SiteSetup, _logger);
+            ConfigureOAuthApp(app);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"en-US"));
 
-            ConfigureWorkflow(app, SiteSetup, _logger);
+            ConfigureWorkflow();
+
             // Empty this odd chat user list from db
+            /* 
             foreach (var p in dbContext.ChatConnection)
             {
               dbContext.Entry(p).State = EntityState.Deleted;
             }
             dbContext.SaveChanges();
+            FIXME */
 
-            ConfigureWebSocketsApp(app, SiteSetup, env);
+            ConfigureWebSocketsApp(app);
 
             app.UseMvc(routes =>
             {
@@ -451,7 +454,7 @@ namespace Yavsc
                     }
 
                 });
-            CheckApp(app, SiteSetup, env, loggerFactory);
+            CheckApp( env, loggerFactory);
         }
 
         // Entry point for the application.

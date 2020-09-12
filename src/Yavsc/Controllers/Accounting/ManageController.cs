@@ -29,18 +29,18 @@ namespace Yavsc.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
-        private SiteSettings _siteSettings;
+        private readonly SiteSettings _siteSettings;
 
-        private ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
 
-        private GoogleAuthSettings _googleSettings;
+        private readonly GoogleAuthSettings _googleSettings;
 
-        private PayPalSettings _payPalSettings;
-        private IYavscMessageSender _GCMSender;
-        private SIRENChecker _cchecker;
-        private IStringLocalizer _SR;
-        private CompanyInfoSettings _cinfoSettings;
-        ICalendarManager _calendarManager;
+        private readonly PayPalSettings _payPalSettings;
+        private readonly IYavscMessageSender _GCMSender;
+        private readonly SIRENChecker _cchecker;
+        private readonly IStringLocalizer _SR;
+        private readonly CompanyInfoSettings _cinfoSettings;
+        readonly ICalendarManager _calendarManager;
 
 
         public ManageController(
@@ -300,7 +300,7 @@ namespace Yavsc.Controllers
         {
           var uid = User.GetUserId();
 
-          var calendars = await _calendarManager.GetCalendarsAsync(uid, pageToken);
+          var calendars = await _calendarManager.GetCalendarsAsync(pageToken);
           return View(new SetGoogleCalendarViewModel { 
               ReturnUrl = returnUrl, 
               Calendars = calendars

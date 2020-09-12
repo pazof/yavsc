@@ -7,9 +7,9 @@ namespace cli.Services
     
     public class MvcGenerator  : CommandLineGenerator
     {
-        CommandLineGeneratorModel _model;
-        ILogger _logger;
-        public MvcGenerator (IServiceProvider services, ILoggerFactory loggerFactory): base (services)
+        readonly CommandLineGeneratorModel _model;
+        readonly ILogger _logger;
+        public MvcGenerator(IServiceProvider services, ILoggerFactory loggerFactory) : base(services)
         {
             _model = new CommandLineGeneratorModel();
             _logger = loggerFactory.CreateLogger<MvcGenerator>();
@@ -17,7 +17,6 @@ namespace cli.Services
 
         public async void Generate(
             string modelClass, 
-            string ns, 
             string dbContextFullName,
             string controllerName,
             string relativeFolderPath

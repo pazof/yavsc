@@ -9,8 +9,8 @@ namespace Yavsc.Services
 {
     public class FileSystemAuthManager : IFileSystemAuthManager
     {
-        ApplicationDbContext _dbContext;
-        ILogger _logger;
+        readonly ApplicationDbContext _dbContext;
+        readonly ILogger _logger;
 
         public FileSystemAuthManager(ApplicationDbContext dbContext, ILoggerFactory loggerFactory)
         {

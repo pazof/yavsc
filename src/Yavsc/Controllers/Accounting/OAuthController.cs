@@ -20,12 +20,10 @@ namespace Yavsc.Controllers
     [AllowAnonymous]
     public class OAuthController : Controller
     {
-        ApplicationDbContext _context;
-        UserManager<ApplicationUser> _userManager;
-
-        SiteSettings _siteSettings;
-
-        ILogger _logger;
+        readonly ApplicationDbContext _context;
+        readonly UserManager<ApplicationUser> _userManager;
+        readonly SiteSettings _siteSettings;
+        readonly ILogger _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public OAuthController(ApplicationDbContext context, SignInManager<ApplicationUser> signInManager, IKeyManager keyManager,

@@ -17,9 +17,9 @@ namespace Yavsc.Controllers
     [Authorize]
     public class DoController : Controller
     {
-        private ApplicationDbContext dbContext;
-        ILogger logger;
-        IBillingService billing;
+        private readonly ApplicationDbContext dbContext;
+        readonly ILogger logger;
+        readonly IBillingService billing;
         public DoController(
             ApplicationDbContext context,
             IBillingService billing,

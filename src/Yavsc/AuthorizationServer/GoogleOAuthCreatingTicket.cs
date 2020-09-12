@@ -15,8 +15,9 @@ namespace Yavsc.Auth {
             _googleUserId = googleUserId;
             Principal = ticket.Principal;
         }
-        AuthenticationTicket _ticket;
-        string _googleUserId;
+
+        readonly AuthenticationTicket _ticket;
+        readonly string _googleUserId;
 
         public AuthenticationTicket Ticket { get { return _ticket; } }
 

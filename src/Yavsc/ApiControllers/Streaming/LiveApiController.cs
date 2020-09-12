@@ -18,10 +18,8 @@ namespace Yavsc.Controllers
     [Route("api/live")]
     public class LiveApiController : Controller
     {
-        
-        ILiveProcessor _liveProcessor;
-        private ApplicationDbContext _dbContext;
-        ILogger _logger;
+        readonly ILiveProcessor _liveProcessor;
+        private readonly ApplicationDbContext _dbContext;
 
         /// <summary>
         /// Live Api Controller
@@ -30,13 +28,11 @@ namespace Yavsc.Controllers
         /// <param name="context"></param>
 
         public LiveApiController(
-            ILoggerFactory loggerFactory,
             ApplicationDbContext context,
             ILiveProcessor liveProcessor)
         {
             _liveProcessor = liveProcessor;
             _dbContext = context;
-            _logger = loggerFactory.CreateLogger<LiveApiController>();
         }
 
         [HttpGet("filenamehint/{id}")]

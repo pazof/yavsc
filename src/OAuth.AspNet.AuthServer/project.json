@@ -26,7 +26,7 @@
         "defaultNamespace": "Yavsc"
     },
     "dependencies": {
-        "Newtonsoft.Json": "6.0.1-beta1",
+        "Newtonsoft.Json": "7.0.1",
         "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-*",
         "OAuth.AspNet.Token": {
             "type": "build",

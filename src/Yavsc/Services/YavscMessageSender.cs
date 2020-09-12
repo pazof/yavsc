@@ -16,18 +16,16 @@ namespace Yavsc.Services
 {
     public class YavscMessageSender : IYavscMessageSender
     {
-        private ILogger _logger;
-        IEmailSender _emailSender;
-        SiteSettings siteSettings;
-        private IHubContext hubContext;
-        ApplicationDbContext _dbContext;
-
-        IConnexionManager _cxManager;
+        private readonly ILogger _logger;
+        readonly IEmailSender _emailSender;
+        readonly SiteSettings siteSettings;
+        private readonly IHubContext hubContext;
+        readonly ApplicationDbContext _dbContext;
+        readonly IConnexionManager _cxManager;
 
         public YavscMessageSender(
             ILoggerFactory loggerFactory,
             IOptions<SiteSettings> sitesOptions,
-            IOptions<SmtpSettings> smtpOptions,
             IEmailSender emailSender,
             ApplicationDbContext dbContext,
             IConnexionManager cxManager
@@ -67,8 +65,10 @@ namespace Yavsc.Services
                 foreach (var userId in raa)
                 {
                     _logger.LogDebug($"For performer id : {userId}");
-                    MessageWithPayloadResponse.Result result = new MessageWithPayloadResponse.Result();
-                    result.registration_id = userId;
+                    MessageWithPayloadResponse.Result result = new MessageWithPayloadResponse.Result
+                    {
+                        registration_id = userId
+                    };
 
                     var user = _dbContext.Users.FirstOrDefault(u => u.Id == userId);
                     if (user == null)
@@ -125,8 +125,10 @@ namespace Yavsc.Services
                         {
                             // from usr asp.net Id : var hubClient = hubContext.Clients.User(userId);
                             var hubClient = hubContext.Clients.Client(cxid);
-                            var data = new Dictionary<string, object>();
-                            data["event"] = JsonConvert.SerializeObject(ev);
+                            var data = new Dictionary<string, object>
+                            {
+                                ["event"] = JsonConvert.SerializeObject(ev)
+                            };
                             hubClient.push(ev.Topic, JsonConvert.SerializeObject(data));
                         }
 

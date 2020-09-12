@@ -16,7 +16,7 @@ namespace Yavsc.Controllers
     [Authorize("AdministratorOnly")]
     public class MailingTemplateController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public MailingTemplateController(ApplicationDbContext context)
         {
