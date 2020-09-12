@@ -31,7 +31,7 @@ namespace Yavsc.Server.Helpers
     /// </summary>
     public class SimpleJsonPostMethod : IDisposable
 	{
-    private HttpWebRequest request=null;
+    private readonly HttpWebRequest request=null;
 
 		/// <summary>
 		/// Initializes a new instance of the Yavsc.Helpers.SimpleJsonPostMethod class.

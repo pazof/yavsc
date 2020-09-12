@@ -26,13 +26,12 @@ namespace cli.Services
         const string DefaultBaseClassName = "ATemplate";
         const string DefaultBaseClass = nameof(UserOrientedTemplate);
         const string DefaultNamespace = "CompiledRazorTemplates";
-
-        RazorTemplateEngine razorEngine;
-        IStringLocalizer<EMailer> stringLocalizer;
-        ILogger logger;
-        ApplicationDbContext dbContext;
-        IEmailSender mailSender;
-        RazorEngineHost host;
+        readonly RazorTemplateEngine razorEngine;
+        readonly IStringLocalizer<EMailer> stringLocalizer;
+        readonly ILogger logger;
+        readonly ApplicationDbContext dbContext;
+        readonly IEmailSender mailSender;
+        readonly RazorEngineHost host;
 
         public EMailer(ApplicationDbContext context, IEmailSender sender, IStringLocalizer<EMailer> localizer, ILoggerFactory loggerFactory)
         {

@@ -57,7 +57,7 @@ namespace Yavsc.Models
             builder.Entity<UserActivity>().HasKey(u => new { u.DoesCode, u.UserId });
             builder.Entity<Instrumentation>().HasKey(u => new { u.InstrumentId, u.UserId });
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a => new { a.CircleId, a.BlogPostId });
-            builder.Entity<CircleMember>().HasKey(c => new { MemberId = c.MemberId, CircleId = c.CircleId });
+            builder.Entity<CircleMember>().HasKey(c => new { c.MemberId, c.CircleId });
             builder.Entity<DimissClicked>().HasKey(c => new { uid = c.UserId, notid = c.NotificationId });
             builder.Entity<HairTaintInstance>().HasKey(ti => new { ti.TaintId, ti.PrestationId });
             builder.Entity<HyperLink>().HasKey(l => new { l.HRef, l.Method });
@@ -79,9 +79,9 @@ namespace Yavsc.Models
         }
 
         // this is not a failback procedure.
+       
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (optionsBuilder.IsConfigured) return;
             if (!string.IsNullOrWhiteSpace(Startup.ConnectionString))
                 {
                     optionsBuilder.UseNpgsql(Startup.ConnectionString);
@@ -161,12 +161,6 @@ namespace Yavsc.Models
         public DbSet<Service> Services { get; set; }
         public DbSet<Product> Products { get; set; }
 
-        Client FindApplication(string clientId)
-        {
-            return Applications.FirstOrDefault(
-                app => app.Id == clientId);
-        }
-
         public DbSet<ExceptionSIREN> ExceptionsSIREN { get; set; }
 
         public DbSet<Location> Locations { get; set; }
@@ -231,7 +225,7 @@ namespace Yavsc.Models
         public async Task<int> SaveChangesAsync(string userId, CancellationToken ctoken = default(CancellationToken))
         {
             AddTimestamps(userId);
-            return await base.SaveChangesAsync();
+            return await base.SaveChangesAsync(ctoken);
         }
 
         public DbSet<Circle> Circle { get; set; }

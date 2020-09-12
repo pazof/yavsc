@@ -43,45 +43,22 @@ namespace Yavsc.Services
     /// <summary>
     /// Google Calendar API client.
     /// </summary>
-    public class CalendarManager : ICalendarManager 
+    public class CalendarManager : ICalendarManager
     {
         public class ExpiredTokenException : Exception { }
-        protected static string [] scopesCalendar = 
+        protected static string[] scopesCalendar =
         { "https://www.googleapis.com/auth/calendar",
           "https://www.googleapis.com/auth/calendar.events"
         };
-        private string _ApiKey;
-        private IAuthorizationCodeFlow _flow;
-        ApplicationDbContext _dbContext;
+        readonly ILogger _logger;
+        readonly string _client_id;
+        readonly string _client_secret;
 
-        IDataStore _dataStore;
-        ILogger _logger;
-        string _client_id;
-        string _client_secret; 
-
-        public CalendarManager(
-        ApplicationDbContext dbContext,
-        IDataStore dataStore,
-        ILoggerFactory loggerFactory,
-        IOptions<GoogleAuthSettings> settings)
+        public CalendarManager(ILoggerFactory loggerFactory)
         {
-          _client_id = Startup.GoogleWebClientConfiguration["web:cient_id"];
-          _client_secret = Startup.GoogleWebClientConfiguration["web:cient_secret"];
-
-            _ApiKey = settings.Value.ApiKey;
-            _dbContext = dbContext;
+            _client_id = Startup.GoogleWebClientConfiguration["web:cient_id"];
+            _client_secret = Startup.GoogleWebClientConfiguration["web:cient_secret"];
             _logger = loggerFactory.CreateLogger<CalendarManager>();
-            _dataStore = dataStore;
-            _flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
-                {
-                    ClientSecrets = new ClientSecrets
-                    {
-                        ClientId = _client_id,
-                        ClientSecret = _client_secret
-                    },
-                    Scopes = scopesCalendar ,
-                    DataStore = dataStore
-                });
         }
 
         /// <summary>
@@ -98,29 +75,27 @@ namespace Yavsc.Services
         /// </summary>
         /// <returns>The calendars.</returns>
         /// <param name="userId">Yavsc user id</param>
-        public async Task<CalendarList> GetCalendarsAsync(string userId, string pageToken)
+        public async Task<CalendarList> GetCalendarsAsync(string pageToken)
         {
-            if (string.IsNullOrWhiteSpace(userId))
-                throw new Exception("the user id is not specified");
-			var service = await CreateUserCalendarServiceAsync(userId);
+            var service = await CreateUserCalendarServiceAsync();
 #if Debug
       if (service==null) throw new Exception("Could not get service");
 #endif
-      _logger.LogInformation("Got a service");
+            _logger.LogInformation("Got a service");
 
 #if Debug
       if (service.CalendarList==null) throw new Exception("Could not get calendar list");
 #endif
-			CalendarListResource.ListRequest calListReq = service.CalendarList.List ();
+            CalendarListResource.ListRequest calListReq = service.CalendarList.List();
 
 #if Debug
       if (calListReq==null) throw new Exception ("list is null");
 #endif
 
-      calListReq.PageToken = pageToken;
-			return calListReq.Execute ();
+            calListReq.PageToken = pageToken;
+            return calListReq.Execute();
         }
-        
+
         /// <summary>
         /// Gets a calendar event list, between the given dates.
         /// </summary>
@@ -158,16 +133,17 @@ namespace Yavsc.Services
 
             foreach (var ev in eventList.Items)
             {
-                if (ev.Start.DateTime.HasValue && ev.End.DateTime.HasValue ) {
-                DateTime start = ev.Start.DateTime.Value;
-                DateTime end = ev.End.DateTime.Value;
-
-                if (ev.Transparency == "transparent")
+                if (ev.Start.DateTime.HasValue && ev.End.DateTime.HasValue)
                 {
+                    DateTime start = ev.Start.DateTime.Value;
+                    DateTime end = ev.End.DateTime.Value;
 
-                    free.Add(new Period { Start = start, End = end });
-                }
-                else busy.Add(new Period { Start = start, End = end });
+                    if (ev.Transparency == "transparent")
+                    {
+
+                        free.Add(new Period { Start = start, End = end });
+                    }
+                    else busy.Add(new Period { Start = start, End = end });
                 }
             }
 
@@ -200,7 +176,7 @@ namespace Yavsc.Services
 
             if (string.IsNullOrWhiteSpace(calid))
                 throw new Exception("the calendar identifier is not specified");
-            
+
             var service = await GetServiceAsync();
             Event ev = new Event
             {
@@ -217,15 +193,16 @@ namespace Yavsc.Services
         CalendarService _service = null;
         public async Task<CalendarService> GetServiceAsync()
         {
-            if (_service==null) {
+            if (_service == null)
+            {
                 GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
                 var baseClientService = new BaseClientService.Initializer()
-                    {
-                        HttpClientInitializer = credential
-                    };
+                {
+                    HttpClientInitializer = credential
+                };
                 if (credential.IsCreateScopedRequired)
                 {
-                    credential = credential.CreateScoped( scopesCalendar );
+                    credential = credential.CreateScoped(scopesCalendar);
                 }/* 
                 var credential = await GoogleHelpers.GetCredentialForApi(new string [] { scopeCalendar });
                 if (credential.IsCreateScopedRequired)
@@ -239,26 +216,26 @@ namespace Yavsc.Services
                 });
                 }*/
                 _service = new CalendarService(new BaseClientService.Initializer()
-                    {
-                        HttpClientInitializer = credential,
-                        ApplicationName = "Yavsc"
-                    });
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "Yavsc"
+                });
             }
             return _service;
         }
 
-		/// <summary>
-		/// Creates Google User Credential
-		/// </summary>
-		/// <param name="userId">Yavsc use id</param>
-		/// <returns></returns>
-        public async Task<CalendarService> CreateUserCalendarServiceAsync(string userId)
+        /// <summary>
+        /// Creates Google User Credential
+        /// </summary>
+        /// <param name="userId">Yavsc use id</param>
+        /// <returns></returns>
+        public async Task<CalendarService> CreateUserCalendarServiceAsync()
         {
             GoogleCredential credential = await GoogleCredential.GetApplicationDefaultAsync();
 
             if (credential.IsCreateScopedRequired)
             {
-                credential = credential.CreateScoped( scopesCalendar);
+                credential = credential.CreateScoped(scopesCalendar);
             }
 
 
@@ -268,25 +245,32 @@ namespace Yavsc.Services
                 ApplicationName = "yavsc-001"
             });
 
-			return service; 
-		}
+            return service;
+        }
 
         public async Task<TokenResponse> RefreshToken(TokenResponse oldResponse)
         {
             string ep = " https://www.googleapis.com/oauth2/v4/token";
             _logger.LogInformation($"rt:{oldResponse.RefreshToken}");
             // refresh_token client_id client_secret grant_type=refresh_token
-            try {
-                using (var m = new SimpleJsonPostMethod(ep)) {
+            try
+            {
+                using (var m = new SimpleJsonPostMethod(ep))
+                {
                     return await m.Invoke<TokenResponse>(
-                        new { refresh_token= oldResponse.RefreshToken, client_id=_client_id,
-                         client_secret=_client_secret,
-                          grant_type="refresh_token" }
+                        new
+                        {
+                            refresh_token = oldResponse.RefreshToken,
+                            client_id = _client_id,
+                            client_secret = _client_secret,
+                            grant_type = "refresh_token"
+                        }
                     );
                 }
             }
-            catch (Exception ex) {
-                throw new Exception ("Quelque chose s'est mal passé à l'envoi",ex);
+            catch (Exception ex)
+            {
+                throw new Exception("Quelque chose s'est mal passé à l'envoi", ex);
             }
         }
     }

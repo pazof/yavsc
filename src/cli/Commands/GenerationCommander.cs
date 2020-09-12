@@ -58,7 +58,6 @@ namespace cli.Commands
                     logger.LogInformation($"Using parameters : modelFullName:{modelFullName} nameSpace:{nameSpace} dbContext:{dbContext} controllerName:{controllerName} relativePath:{relativePath}");
 
                     generator.Generate(modelFullName,
-                     nameSpace,
                      dbContext, 
                      controllerName,
                      relativePath);

@@ -24,13 +24,14 @@ namespace Yavsc.Models.Messaging
            Sender = perfer.Performer.UserName;
             _localizer = SR;
         }
-          // TODO via e-mail only: Message = string.Format(
-              // SR["EstimationMessageToClient"],perfer.Performer.UserName, estimate.Title,estimate.Bill.Addition());
-              //
+
+        // TODO via e-mail only: Message = string.Format(
+        // SR["EstimationMessageToClient"],perfer.Performer.UserName, estimate.Title,estimate.Bill.Addition());
+
         ProviderClientInfo ProviderInfo { get; set; }
         Estimate Estimation { get; set; }
 
-        private PerformerProfile perfer;
+        private readonly PerformerProfile perfer;
 
         public string Topic
         {
@@ -46,7 +47,7 @@ namespace Yavsc.Models.Messaging
 
         public string CreateBody()
         {
-            return string.Format( _localizer["EstimationMessageToClient"], perfer.Performer.UserName, this.Estimation.Bill.Addition());
+            return string.Format(_localizer["EstimationMessageToClient"], perfer.Performer.UserName, this.Estimation.Bill.Addition());
         }
     }
 }

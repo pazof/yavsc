@@ -10,7 +10,7 @@ namespace Yavsc.Helpers
     {
         public static string UserBillsDirName {  set; get; }
         public static string UserFilesDirName {  set; get; }
-        
+
         /// <summary>
         /// Is Valid this Path?
         /// Return true when given value is a valid user file sub-path,
@@ -37,7 +37,7 @@ namespace Yavsc.Helpers
         {
             return !name.Any(c => !ValidFileNameChars.Contains(c));
         }
-        
+
         // Ensure this path is canonical,
         // No "dirto/./this", neither "dirt/to/that/"
         // no .. and each char must be listed as valid in constants
@@ -49,11 +49,11 @@ namespace Yavsc.Helpers
             {
                 if (ValidFileNameChars.Contains(c))
                     sb.Append(c);
-                else sb.Append("#"+((int)c).ToString("D3"));
+                else sb.Append("#" + ((int)c).ToString("D3"));
             }
-           return sb.ToString();
+            return sb.ToString();
         }
-  
+
         public static UserDirectoryInfo GetUserFiles(string userName, string subdir)
         {
             UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, userName, subdir);
@@ -71,10 +71,10 @@ namespace Yavsc.Helpers
 
         // Only accept descent remote file names
         public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. %#".ToCharArray();
-   
+
         // Estimate signature file name format
-        public static Func<string,string,long,string>
-          SignFileNameFormat = new Func<string,string,long,string> ((signType,billingCode,estimateId) => $"sign-{billingCode}-{signType}-{estimateId}.png");
-        
+        public static Func<string, string, long, string>
+          SignFileNameFormat = new Func<string, string, long, string>((signType, billingCode, estimateId) => $"sign-{billingCode}-{signType}-{estimateId}.png");
+
     }
 }

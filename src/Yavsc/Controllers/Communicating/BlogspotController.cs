@@ -21,11 +21,10 @@ namespace Yavsc.Controllers
 {
     public class BlogspotController : Controller
     {
-        ILogger _logger;
-        private ApplicationDbContext _context;
-        private IAuthorizationService _authorizationService;
-
-        RequestLocalizationOptions _localisationOptions;
+        readonly ILogger _logger;
+        private readonly ApplicationDbContext _context;
+        private readonly IAuthorizationService _authorizationService;
+        readonly RequestLocalizationOptions _localisationOptions;
 
         public BlogspotController(
             ApplicationDbContext context,

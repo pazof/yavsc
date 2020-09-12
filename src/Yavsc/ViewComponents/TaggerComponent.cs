@@ -9,17 +9,14 @@ namespace Yavsc.ViewComponents
     public class TaggerViewComponent : ViewComponent
     
     {
-        ApplicationDbContext dbContext;
-        IStringLocalizer<TaggerViewComponent> localizer;
-        ILogger logger ;
+        readonly ApplicationDbContext dbContext;
+        readonly IStringLocalizer<TaggerViewComponent> localizer;
         public TaggerViewComponent(
             ApplicationDbContext pdbContext,
-            IStringLocalizer<TaggerViewComponent> pLocalizer,
-            ILoggerFactory loggerFactory)
+            IStringLocalizer<TaggerViewComponent> pLocalizer)
         {
             dbContext = pdbContext;
             this.localizer = pLocalizer;
-            this.logger = loggerFactory.CreateLogger<TaggerViewComponent>();
         }
         public IViewComponentResult Invoke(ITaggable<long> longTaggable)
         {

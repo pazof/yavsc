@@ -47,7 +47,7 @@ namespace Yavsc.Server.Models.IT.SourceCode
                         writer.WriteLine(process.StandardOutput.ReadLine());
                 }
             }
-            if (ResultHandler!=null) ResultHandler(true);
+            ResultHandler?.Invoke(true);
         }
     }
 }

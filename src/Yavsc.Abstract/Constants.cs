@@ -48,7 +48,7 @@ namespace Yavsc
         public const string YavscConnectionStringEnvName = "YAVSC_DB_CONNECTION";
 
         // at the end, let 4*4 bytes in peace
-        public const int WebSocketsMaxBufLen = 4 * 1020;
+        public const int WebSocketsMaxBufLen = 4096;
 
         public static readonly long DefaultFSQ = 1024 * 1024 * 500;
 

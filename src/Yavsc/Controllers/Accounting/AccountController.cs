@@ -71,7 +71,6 @@ namespace Yavsc.Controllers
         [Authorize(Roles = Constants.AdminGroupName)]
         public IActionResult Index(string page, string len)
         {
-            
             return View();
         }
 
@@ -262,7 +261,7 @@ namespace Yavsc.Controllers
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol:  "https", host: Startup.Authority);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol:  "https", host: Startup.Authority);
                     var emailSent = await _emailSender.SendEmailAsync(model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
                       string.Format(_localizer["ConfirmYourAccountBody"], _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
                    // No, wait for more than a login pass submission:
@@ -317,7 +316,7 @@ namespace Yavsc.Controllers
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account",
-            new { userId = user.Id, code = code }, protocol: "https", host: Startup.Authority);
+            new { userId = user.Id, code }, protocol: "https", host: Startup.Authority);
             var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, 
             this._localizer["ConfirmYourAccountTitle"],
             string.Format(this._localizer["ConfirmYourAccountBody"],

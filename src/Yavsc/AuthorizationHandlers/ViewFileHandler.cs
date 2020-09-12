@@ -5,8 +5,7 @@ using Yavsc.ViewModels.Auth;
 namespace Yavsc.AuthorizationHandlers {
 
     public class ViewFileHandler : AuthorizationHandler<ViewRequirement, ViewFileContext> {
-
-        IFileSystemAuthManager _authManager;
+        readonly IFileSystemAuthManager _authManager;
 
         public ViewFileHandler (IFileSystemAuthManager authManager) {
             _authManager = authManager;

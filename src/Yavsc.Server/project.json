@@ -41,7 +41,8 @@
           "Resources/**/*.resx"
         ],
         "publicSign": false,
-        "keyFile": "../../../sgKey.snk"
+        "keyFile": "../../../sgKey.snk",
+        "nowarn": ["IDE1006"]
     },
     "tooling": {
         "defaultNamespace": "Yavsc"

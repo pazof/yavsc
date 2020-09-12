@@ -10,7 +10,7 @@ namespace Yavsc.Controllers
     [Authorize("AdministratorOnly")]
     public class UsersController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public UsersController(ApplicationDbContext context)
         {

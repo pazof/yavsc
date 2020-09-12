@@ -16,8 +16,8 @@ namespace Yavsc.ApiControllers
     [Route("~/api/bug")]
     public class BugApiController : Controller
     {
-        private ApplicationDbContext _context;
-        ILogger _logger;
+        private readonly ApplicationDbContext _context;
+        readonly ILogger _logger;
 
         public BugApiController(ApplicationDbContext context, ILoggerFactory factory)
         {

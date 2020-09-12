@@ -12,18 +12,14 @@ namespace Yavsc.Services
 {
     public class MailSender : IEmailSender
     {
-        private ILogger _logger;
-        SiteSettings siteSettings;
-        SmtpSettings smtpSettings;
+        readonly SiteSettings siteSettings;
+        readonly SmtpSettings smtpSettings;
 
         public MailSender(
-            ILoggerFactory loggerFactory, 
             IOptions<SiteSettings> sitesOptions, 
-            IOptions<SmtpSettings> smtpOptions,
-            IOptions<GoogleAuthSettings> googleOptions
+            IOptions<SmtpSettings> smtpOptions
             )
         {
-            _logger = loggerFactory.CreateLogger<MailSender>();
             siteSettings = sitesOptions?.Value;
             smtpSettings = smtpOptions?.Value;
         }

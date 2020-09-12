@@ -7,7 +7,7 @@ namespace Yavsc.Services
     using Models.societe.com;
     public class SIRENChecker
     {
-        private CompanyInfoSettings _settings;
+        private readonly CompanyInfoSettings _settings;
         public SIRENChecker(CompanyInfoSettings settings)
         {
             _settings = settings;

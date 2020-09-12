@@ -30,7 +30,7 @@ namespace Yavsc
         /// </summary>
         public static readonly string[] Forms = new string[] { "Profiles", "HairCut" };
 
-        private void ConfigureWorkflow(IApplicationBuilder app, SiteSettings settings, ILogger logger)
+        private void ConfigureWorkflow()
         {
           //  System.AppDomain.CurrentDomain.ResourceResolve += OnYavscResourceResolve;
 
@@ -50,7 +50,7 @@ namespace Yavsc
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.TargetSite.Name);
+                _logger.LogError(ex.TargetSite.Name);
             }
             
 
@@ -64,7 +64,7 @@ namespace Yavsc
                         // TODO swith () case {}
                         if (typeof(IQueryable<ISpecializationSettings>).IsAssignableFrom(propinfo.PropertyType))
                         {// double-bingo 
-                            logger.LogVerbose($"Pro: {propinfo.Name}");
+                            _logger.LogVerbose($"Pro: {propinfo.Name}");
                             BillingService.UserSettings.Add(propinfo);
                         }
                         else
@@ -75,7 +75,7 @@ namespace Yavsc
 base de donnée porte l'attribut [ActivitySetting],
 mais n'implemente pas l'interface IQueryable<ISpecializationSettings>
 ({propinfo.MemberType.GetType()})";
-                            logger.LogCritical(msg);
+                            _logger.LogCritical(msg);
                         }
                     }
                 }

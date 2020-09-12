@@ -16,13 +16,14 @@ namespace Yavsc.Authentication
         {
            
         }
-        string clientId;
-        string clientSecret;
-        string scope;
-        Uri authorizeUrl;
-        Uri accessTokenUrl;
-        Uri redirectUrl;
-        GetUsernameAsyncFunc getUsernameAsync;
+
+        readonly string clientId;
+        readonly string clientSecret;
+        readonly string scope;
+        readonly Uri authorizeUrl;
+        readonly Uri accessTokenUrl;
+        readonly Uri redirectUrl;
+        readonly GetUsernameAsyncFunc getUsernameAsync;
 
         string requestState;
         bool reportedForgery = false;

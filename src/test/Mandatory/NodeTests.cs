@@ -12,12 +12,14 @@ namespace test
         [Fact]
         void TestNodeJsForAnsitohtml ()
         {
-            var procStart = new ProcessStartInfo("node", "node_modules/ansi-to-html/bin/ansi-to-html");
-            procStart.UseShellExecute = false;
-            procStart.RedirectStandardInput = true;
-            procStart.RedirectStandardOutput = true;
-            procStart.RedirectStandardError = true;
-           var proc = Process.Start(procStart);
+            var procStart = new ProcessStartInfo("node", "node_modules/ansi-to-html/bin/ansi-to-html")
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            var proc = Process.Start(procStart);
            proc.StandardInput.WriteLine("\x001b[30mblack\x1b[37mwhite");
            proc.StandardInput.Close();
            while (!proc.StandardOutput.EndOfStream)
@@ -29,10 +31,12 @@ namespace test
         [Fact]
         void AnsiToHtml()
         {
-            var procStart = new ProcessStartInfo("ls", "-l --color=always");
-            procStart.UseShellExecute = false;
-            procStart.RedirectStandardInput = false;
-            procStart.RedirectStandardOutput = true;
+            var procStart = new ProcessStartInfo("ls", "-l --color=always")
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = false,
+                RedirectStandardOutput = true
+            };
             var proc = Process.Start(procStart);
             var encoded = GetStream(proc.StandardOutput); 
             var reader = new StreamReader(encoded);

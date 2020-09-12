@@ -11,9 +11,9 @@ namespace test
     public class EMaillingTests : IClassFixture<ServerSideFixture>
 
     {
-        ServerSideFixture _serverFixture;
-        ITestOutputHelper output;
-        ILogger _logger;
+        readonly ServerSideFixture _serverFixture;
+        readonly ITestOutputHelper output;
+        readonly ILogger _logger;
         public EMaillingTests(ServerSideFixture serverFixture, ITestOutputHelper output)
         {
             this.output = output;

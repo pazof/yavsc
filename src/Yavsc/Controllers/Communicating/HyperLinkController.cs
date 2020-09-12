@@ -10,7 +10,7 @@ namespace Yavsc.Controllers
     [Authorize("AdministratorOnly")]
     public class HyperLinkController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public HyperLinkController(ApplicationDbContext context)
         {

@@ -65,23 +65,27 @@ namespace cli
 
             var services = new ServiceCollection();
             // create a service provider with the HostEnvironment.
-            HostingEnvironment = new HostingEnvironment();
-            HostingEnvironment.EnvironmentName = appEnv.Configuration;
+            HostingEnvironment = new HostingEnvironment
+            {
+                EnvironmentName = appEnv.Configuration
+            };
 
             var startup = new Startup(HostingEnvironment, appEnv);
             startup.ConfigureServices(services);
             services.AddInstance<IHostingEnvironment>(HostingEnvironment);
             var serviceProvider = services.BuildServiceProvider();
 
-            var app = new ApplicationBuilder(serviceProvider);
-            app.ApplicationServices = serviceProvider;
-            
+            var app = new ApplicationBuilder(serviceProvider)
+            {
+                ApplicationServices = serviceProvider
+            };
+
             var siteSettings = serviceProvider.GetRequiredService<IOptions<SiteSettings>>();
             var cxSettings = serviceProvider.GetRequiredService<IOptions<ConnectionSettings>>();
             var userCxSettings = serviceProvider.GetRequiredService<IOptions<UserConnectionSettings>>();
             var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
 
-            startup.Configure(app, HostingEnvironment, siteSettings, cxSettings, userCxSettings, loggerFactory);
+            startup.Configure(cxSettings, userCxSettings, loggerFactory);
             
             return app;
         }
@@ -95,12 +99,14 @@ namespace cli
         [STAThread]
         public static int Main(string[] args)
         {
-            CommandLineApplication cliapp = new CommandLineApplication(false);
-            cliapp.Name = "cli";
-            cliapp.FullName = "Yavsc command line interface";
-            cliapp.Description = "Dnx console app for yavsc server side";
-            cliapp.ShortVersionGetter = () => "v1.0";
-            cliapp.LongVersionGetter = () => "version 1.0 (stable)";
+            CommandLineApplication cliapp = new CommandLineApplication(false)
+            {
+                Name = "cli",
+                FullName = "Yavsc command line interface",
+                Description = "Dnx console app for yavsc server side",
+                ShortVersionGetter = () => "v1.0",
+                LongVersionGetter = () => "version 1.0 (stable)"
+            };
 
             // calling a Startup sequence
             var appBuilder = ConfigureApplication();

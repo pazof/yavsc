@@ -9,7 +9,7 @@ namespace Yavsc.Controllers
 {
     public class NotificationsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public NotificationsController(ApplicationDbContext context)
         {

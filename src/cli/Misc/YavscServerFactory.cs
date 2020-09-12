@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Yavsc.Server
 {
-    public class cliServerFactory : IServerFactory
+    public class CliServerFactory : IServerFactory
     {
         public IFeatureCollection Initialize(IConfiguration configuration)
         {

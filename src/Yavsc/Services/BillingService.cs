@@ -13,7 +13,6 @@ namespace Yavsc.Services
     public class BillingService : IBillingService
     {
         public ApplicationDbContext DbContext { get; private set; }
-        private ILogger logger;
         public static Dictionary<string,Func<ApplicationDbContext,long,IDecidableQuery>> Billing =
         new Dictionary<string,Func<ApplicationDbContext,long,IDecidableQuery>> ();
         public static List<PropertyInfo> UserSettings = new List<PropertyInfo>();
@@ -25,9 +24,8 @@ namespace Yavsc.Services
           get { return GlobalBillingMap; }
         }
 
-        public BillingService(ILoggerFactory loggerFactory, ApplicationDbContext dbContext)
+        public BillingService(ApplicationDbContext dbContext)
         {
-            logger = loggerFactory.CreateLogger<BillingService>();
             DbContext = dbContext;
         }
 

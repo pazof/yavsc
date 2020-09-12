@@ -8,7 +8,7 @@
 	"Dnx": {
 		"enabled": true,
 		"enablePackageRestore": false,
-		"projects": "src/*/project.json;*/project.json;project.json;test/*/project.json" 
+		"projects": "src/*/project.json;*/project.json;project.json;test/*/project.json"
 	},
 	"Script": {
 		"enabled": false

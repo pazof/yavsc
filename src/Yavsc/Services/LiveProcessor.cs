@@ -21,14 +21,15 @@ using Newtonsoft.Json;
 namespace Yavsc.Services
 {
 
-    public class LiveProcessor : ILiveProcessor {
-        IHubContext _hubContext;
-        private ILogger _logger;
-        ApplicationDbContext _dbContext;
-        public PathString LiveCastingPath {get; set;} = Constants.LivePath;
+    public class LiveProcessor : ILiveProcessor
+    {
+        readonly IHubContext _hubContext;
+        private readonly ILogger _logger;
+        readonly ApplicationDbContext _dbContext;
+        public PathString LiveCastingPath { get; set; } = Constants.LivePath;
 
 
-        public  ConcurrentDictionary<string, LiveCastHandler> Casters {get;} = new ConcurrentDictionary<string, LiveCastHandler>();
+        public ConcurrentDictionary<string, LiveCastHandler> Casters { get; } = new ConcurrentDictionary<string, LiveCastHandler>();
 
         public LiveProcessor(ApplicationDbContext dbContext, ILoggerFactory loggerFactory)
         {
@@ -37,7 +38,7 @@ namespace Yavsc.Services
             _logger = loggerFactory.CreateLogger<LiveProcessor>();
         }
 
-        public async Task<bool> AcceptStream (HttpContext context)
+        public async Task<bool> AcceptStream(HttpContext context)
         {
             // TODO defer request handling
             var liveId = long.Parse(context.Request.Path.Value.Substring(LiveCastingPath.Value.Length + 1));
@@ -51,22 +52,23 @@ namespace Yavsc.Services
                 context.Response.StatusCode = 400;
                 return false;
             }
-            _logger.LogInformation("flow : "+flow.Title+" for "+uname);
-            
+            _logger.LogInformation("flow : " + flow.Title + " for " + uname);
+
 
             LiveCastHandler liveHandler = null;
             if (Casters.ContainsKey(uname))
             {
                 _logger.LogWarning($"Casters.ContainsKey({uname})");
                 liveHandler = Casters[uname];
-                if (liveHandler.Socket.State == WebSocketState.Open || liveHandler.Socket.State == WebSocketState.Connecting )
+                if (liveHandler.Socket.State == WebSocketState.Open || liveHandler.Socket.State == WebSocketState.Connecting)
                 {
-                _logger.LogWarning($"Closing cx");
+                    _logger.LogWarning($"Closing cx");
                     // FIXME loosed connexion should be detected & disposed else where
-                    await liveHandler.Socket.CloseAsync( WebSocketCloseStatus.EndpointUnavailable, "one by user", CancellationToken.None);
-                    
+                    await liveHandler.Socket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, "one by user", CancellationToken.None);
+
                 }
-                if (!liveHandler.TokenSource.IsCancellationRequested) {
+                if (!liveHandler.TokenSource.IsCancellationRequested)
+                {
                     liveHandler.TokenSource.Cancel();
                 }
                 liveHandler.Socket.Dispose();
@@ -81,7 +83,7 @@ namespace Yavsc.Services
             }
             _logger.LogInformation("Accepted web socket");
             // Dispatch the flow
-            
+
             try
             {
                 if (liveHandler.Socket != null && liveHandler.Socket.State == WebSocketState.Open)
@@ -90,33 +92,33 @@ namespace Yavsc.Services
                     // TODO: Handle the socket here.
                     // Find receivers: others in the chat room
                     // send them the flow
-                    var buffer = new byte[Constants.WebSocketsMaxBufLen+16];
+                    var buffer = new byte[Constants.WebSocketsMaxBufLen];
                     var sBuffer = new ArraySegment<byte>(buffer);
                     _logger.LogInformation("Receiving bytes...");
 
                     WebSocketReceiveResult received = await liveHandler.Socket.ReceiveAsync(sBuffer, liveHandler.TokenSource.Token);
-                    int count = (received.Count<4)? 0 : buffer[0]*256*1024 +buffer[1]*1024+buffer[2]*256 + buffer[3];
 
-                    _logger.LogInformation($"Received bytes : {count}");
+                    _logger.LogInformation($"Received bytes : {received.Count}");
                     _logger.LogInformation($"Is the end : {received.EndOfMessage}");
                     const string livePath = "live";
 
                     string destDir = context.User.InitPostToFileSystem(livePath);
                     _logger.LogInformation($"Saving flow to {destDir}");
-                    
-                    string fileName =  flow.GetFileName();
+
+                    string fileName = flow.GetFileName();
                     FileInfo destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
                     // this should end :-)
-                    while (destFileInfo.Exists) {
+                    while (destFileInfo.Exists)
+                    {
                         flow.SequenceNumber++;
-                        fileName =  flow.GetFileName();
+                        fileName = flow.GetFileName();
                         destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
                     }
                     var fsInputQueue = new Queue<ArraySegment<byte>>();
-                   
-                    bool endOfInput=false;
+
+                    bool endOfInput = false;
                     fsInputQueue.Enqueue(sBuffer);
-                    var taskWritingToFs = liveHandler.ReceiveUserFile(user, _logger, destDir, fsInputQueue, fileName, flow.MediaType, ()=> endOfInput);
+                    var taskWritingToFs = liveHandler.ReceiveUserFile(user, _logger, destDir, fsInputQueue, fileName, flow.MediaType, () => endOfInput);
                     var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
 
                     hubContext.Clients.All.addPublicStream(new PublicStreamInfo
@@ -132,15 +134,18 @@ namespace Yavsc.Services
 
                     try
                     {
-                        do {
-                            
+                        do
+                        {
+
                             _logger.LogInformation($"Echoing {received.Count} bytes received in a {received.MessageType} message; Fin={received.EndOfMessage}");
                             // Echo anything we receive
                             // and send to all listner found
+                             _logger.LogInformation($"{liveHandler.Listeners.Count} listeners");
                             foreach (var cliItem in liveHandler.Listeners)
                             {
                                 var listenningSocket = cliItem.Value;
-                                if (listenningSocket.State == WebSocketState.Open) {
+                                if (listenningSocket.State == WebSocketState.Open)
+                                {
                                     _logger.LogInformation(cliItem.Key);
                                     await listenningSocket.SendAsync(
                                     sBuffer, received.MessageType, received.EndOfMessage, liveHandler.TokenSource.Token);
@@ -150,43 +155,47 @@ namespace Yavsc.Services
                                     ToClose.Push(cliItem.Key);
                                 }
                             }
-                            buffer = new byte[Constants.WebSocketsMaxBufLen+16];
+
+                            if (!received.CloseStatus.HasValue) 
+                            {
+                             _logger.LogInformation("try and receive new bytes");
+
+                            buffer = new byte[Constants.WebSocketsMaxBufLen];
                             sBuffer = new ArraySegment<byte>(buffer);
                             received = await liveHandler.Socket.ReceiveAsync(sBuffer, liveHandler.TokenSource.Token);
-                            count = (received.Count<4)? 0 : buffer[0]*256*1024 +buffer[1]*1024+buffer[2]*256 + buffer[3];
-                            _logger.LogInformation($"Received bytes : {count}");
+                            
+                            _logger.LogInformation($"Received bytes : {received.Count}");
                             _logger.LogInformation($"Is the end : {received.EndOfMessage}");
-                            if (received.Count<=4 || count > Constants.WebSocketsMaxBufLen) {
-                                if (received.CloseStatus.HasValue) {
-                                    _logger.LogInformation($"received a close status: {received.CloseStatus.Value.ToString()}: {received.CloseStatusDescription}");
-                                }
-                                else {
-                                    _logger.LogError("Wrong packet size: "+count.ToString());
-                                    _logger.LogError(JsonConvert.SerializeObject(received));
-                                }
+                            fsInputQueue.Enqueue(sBuffer);
+                            if (received.CloseStatus.HasValue)
+                            {
+                                endOfInput=true;
+                                _logger.LogInformation($"received a close status: {received.CloseStatus.Value}: {received.CloseStatusDescription}");
                             }
-                            else fsInputQueue.Enqueue(sBuffer);
-                            while (ToClose.Count >0)
+                            }
+                            else endOfInput=true;
+                            while (ToClose.Count > 0)
                             {
                                 string no = ToClose.Pop();
                                 _logger.LogInformation("Closing follower connection");
                                 WebSocket listenningSocket;
-                                if (liveHandler.Listeners.TryRemove(no, out listenningSocket)) {
+                                if (liveHandler.Listeners.TryRemove(no, out listenningSocket))
+                                {
                                     await listenningSocket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable,
                                      "State != WebSocketState.Open", CancellationToken.None);
                                     listenningSocket.Dispose();
                                 }
                             }
                         }
-                        while (!received.CloseStatus.HasValue);
-                        _logger.LogInformation("Closing connection");
-                        endOfInput=true;
-                        taskWritingToFs.Wait();
-                        await liveHandler.Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, received.CloseStatusDescription,liveHandler.TokenSource.Token );
+                        while (liveHandler.Socket.State == WebSocketState.Open);
                         
+                        _logger.LogInformation("Closing connection");
+                        taskWritingToFs.Wait();
+                        await liveHandler.Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, received.CloseStatusDescription, liveHandler.TokenSource.Token);
+
                         liveHandler.TokenSource.Cancel();
                         liveHandler.Dispose();
-                        _logger.LogInformation("Resulting file : " +JsonConvert.SerializeObject(taskWritingToFs.Result));
+                        _logger.LogInformation("Resulting file : " + JsonConvert.SerializeObject(taskWritingToFs.Result));
                     }
                     catch (Exception ex)
                     {
@@ -200,16 +209,16 @@ namespace Yavsc.Services
                 else
                 {
                     // Socket was not accepted open ...
-                     // not (meta.Socket != null && meta.Socket.State == WebSocketState.Open)
+                    // not (meta.Socket != null && meta.Socket.State == WebSocketState.Open)
                     if (liveHandler.Socket != null)
                     {
-                        _logger.LogError($"meta.Socket.State not Open: {liveHandler.Socket.State.ToString()} ");
+                        _logger.LogError($"meta.Socket.State not Open: {liveHandler.Socket.State} ");
                         liveHandler.Socket.Dispose();
                     }
                     else
                         _logger.LogError("socket object is null");
                 }
-                
+
                 RemoveLiveInfo(uname);
             }
             catch (IOException ex)
@@ -231,9 +240,9 @@ namespace Yavsc.Services
         void RemoveLiveInfo(string userName)
         {
             LiveCastHandler caster;
-            if (Casters.TryRemove(userName, out caster)) 
+            if (Casters.TryRemove(userName, out caster))
                 _logger.LogInformation("removed live info");
-            else 
+            else
                 _logger.LogError("could not remove live info");
 
         }

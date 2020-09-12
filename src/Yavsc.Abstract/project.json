@@ -24,11 +24,14 @@
       "Chat"
     ]
   },
+  "buildOptions": {
+    "nowarn": ["IDE1006"]
+  },
   "tooling": {
     "defaultNamespace": "Yavsc"
   },
   "dependencies": {
-    "Newtonsoft.Json": "6.0.1-beta1"
+    "Newtonsoft.Json": "7.0.1"
   },
   "frameworks": {
     "dnx451": {

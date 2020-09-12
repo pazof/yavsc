@@ -11,8 +11,7 @@ namespace Yavsc
 {
     public partial class Startup
     {
-        public void ConfigureWebSocketsApp(IApplicationBuilder app,
-                SiteSettings siteSettings, IHostingEnvironment env)
+        public void ConfigureWebSocketsApp(IApplicationBuilder app)
         {
             var webSocketOptions = new WebSocketOptions()
             {
@@ -25,7 +24,7 @@ namespace Yavsc
             app.UseSignalR(PathString.FromUriComponent(Constants.SignalRPath));
         }
 
-        private async Task Echo(HttpContext context, WebSocket webSocket)
+        private async Task Echo(WebSocket webSocket)
         {
             var buffer = new byte[1024 * 4];
             WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);

@@ -11,7 +11,7 @@ namespace Yavsc.Controllers
 {
     public class CircleController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public CircleController(ApplicationDbContext context)
         {

@@ -39,7 +39,7 @@ namespace Yavsc.Server.Models.IT
         [ForeignKey("GitId")]
         public virtual GitRepositoryReference Repository { get; set; }
 
-        List<IBillItem> bill = new List<IBillItem>();
+        readonly List<IBillItem> bill = new List<IBillItem>();
         public void AddBillItem(IBillItem item)
         {
             bill.Add(item);

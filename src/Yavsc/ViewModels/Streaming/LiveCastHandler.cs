@@ -41,10 +41,12 @@ namespace Yavsc.ViewModels.Streaming
             // this process is not safe at concurrent access.
             long usage = user.DiskUsage;
 
-            var item = new FileRecievedInfo();
-            item.FileName = AbstractFileSystemHelpers.FilterFileName (destFileName);
-            item.MimeType = contentType;
-            item.DestDir = root;
+            var item = new FileRecievedInfo
+            {
+                FileName = AbstractFileSystemHelpers.FilterFileName(destFileName),
+                MimeType = contentType,
+                DestDir = root
+            };
             var fi = new FileInfo(Path.Combine(root, item.FileName));
             if (fi.Exists)
             {
@@ -59,26 +61,17 @@ namespace Yavsc.ViewModels.Streaming
                     {
                         if (queue.Count>0) {
                             var buffer = queue.Dequeue();
-                            int count = buffer.Array[0]*256*1024 +buffer.Array[1]*1024+buffer.Array[2]*256 + buffer.Array[3];
                             
-                            if (count >0 && count <= Constants.WebSocketsMaxBufLen
-                                && buffer.Array.Length >= count+4) {
-                                logger.LogInformation($"writing {count} bytes from {buffer.Array.Length}.");
+                                logger.LogInformation($"writing {buffer.Array.Length} bytes...");
 
-                                await dest.WriteAsync(buffer.Array, 4, count);
-                                logger.LogInformation($"wrote {count} bytes.");
-                                usage += count;
-                            }
-                            else {
-                                var packetInfo = JsonConvert.SerializeObject(buffer);
-                                logger.LogError($"didn´t wrote {count} bytes from {buffer.Array.Length}!\n{packetInfo}");
-                            }  
+                                await dest.WriteAsync(buffer.Array, 0, buffer.Array.Length);
+                                logger.LogInformation($"done.");
+                                usage += buffer.Array.Length;
+                           
                         }
                         if (usage >= user.DiskQuota) break;
                         if (queue.Count==0 && !isEndOfInput()) {
-                            logger.LogInformation($"Waitting 200ms.");
                             await Task.Delay(100);
-                            logger.LogInformation($"Done waiting");
                         }
                     }
                     user.DiskUsage = usage;

@@ -34,19 +34,19 @@ namespace Yavsc.Models.HairCut
 
         public string Sender { get; set; }
 
-        HairCutQuery query;
+        readonly HairCutQuery query;
 
-        private string invoiceId;
-        private string payerName;
-        private string phone;
-        private string payerEmail;
-        private string amount;
-        private HairCutGenders gender;
-        private string date;
-        private string lieu;
-        private string clientFinal;
-        private string token;
-        private string payerId;
+        private readonly string invoiceId;
+        private readonly string payerName;
+        private readonly string phone;
+        private readonly string payerEmail;
+        private readonly string amount;
+        private readonly HairCutGenders gender;
+        private readonly string date;
+        private readonly string lieu;
+        private readonly string clientFinal;
+        private readonly string token;
+        private readonly string payerId;
 
         public string CreateBody()
         {

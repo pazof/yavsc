@@ -60,10 +60,12 @@ namespace test
         [Fact]
         void AnsiToHtml()
         {
-            var procStart = new ProcessStartInfo("ls", "-l --color=always");
-            procStart.UseShellExecute = false;
-            procStart.RedirectStandardInput = false;
-            procStart.RedirectStandardOutput = true;
+            var procStart = new ProcessStartInfo("ls", "-l --color=always")
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = false,
+                RedirectStandardOutput = true
+            };
             var proc = Process.Start(procStart);
             var encoded =  AnsiToHtmlEncoder.GetStream(proc.StandardOutput);
             using (var reader = new StreamReader(encoded))
@@ -99,12 +101,14 @@ namespace test
 
         internal static BeforeCompileContext CreateYavscCompilationContext()
         {
-            var projectContext = new ProjectContext();
-            projectContext.Name = "Yavsc";
-            projectContext.ProjectDirectory = "../Yavsc";
-            projectContext.ProjectFilePath = "../Yavsc/project.json";
-            projectContext.TargetFramework = new FrameworkName("DNX", new Version(4, 5, 1));
-            projectContext.Configuration = Environment.GetEnvironmentVariable("ASPNET_ENV");
+            var projectContext = new ProjectContext
+            {
+                Name = "Yavsc",
+                ProjectDirectory = "../Yavsc",
+                ProjectFilePath = "../Yavsc/project.json",
+                TargetFramework = new FrameworkName("DNX", new Version(4, 5, 1)),
+                Configuration = Environment.GetEnvironmentVariable("ASPNET_ENV")
+            };
 
             return new BeforeCompileContext(
                 null, projectContext, () => null, () => null, () => null);

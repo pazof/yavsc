@@ -13,7 +13,7 @@ namespace Yavsc.Controllers
     /// </summary>
     public class CommentsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public CommentsController(ApplicationDbContext context)
         {

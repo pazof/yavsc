@@ -31,24 +31,24 @@ namespace Yavsc.Services
         /// <typeparam name="string"></typeparam>
         /// <returns></returns>
 
-        static ConcurrentDictionary<string, string> ChatUserNames = new ConcurrentDictionary<string, string>();
+        static readonly ConcurrentDictionary<string, string> ChatUserNames = new ConcurrentDictionary<string, string>();
         /// <summary>
         /// by user  name
         /// </summary>
         /// <returns></returns>
-        static ConcurrentDictionary<string, List<string>> ChatCxIds = new ConcurrentDictionary<string, List<string>>();
+        static readonly ConcurrentDictionary<string, List<string>> ChatCxIds = new ConcurrentDictionary<string, List<string>>();
 
         /// <summary>
         /// by user  name,
         /// the list of its chat rooms
         /// </summary>
         /// <returns></returns>
-        static ConcurrentDictionary<string, List<string>> ChatRoomPresence = new ConcurrentDictionary<string, List<string>>();
-        static ConcurrentDictionary<string, bool> _isCop = new ConcurrentDictionary<string, bool>();
+        static readonly ConcurrentDictionary<string, List<string>> ChatRoomPresence = new ConcurrentDictionary<string, List<string>>();
+        static readonly ConcurrentDictionary<string, bool> _isCop = new ConcurrentDictionary<string, bool>();
 
         public static ConcurrentDictionary<string, ChatRoomInfo> Channels = new ConcurrentDictionary<string, ChatRoomInfo>();
-        ApplicationDbContext _dbContext;
-        IStringLocalizer _localizer;
+        readonly ApplicationDbContext _dbContext;
+        readonly IStringLocalizer _localizer;
 
         public HubConnectionManager()
         {
@@ -97,7 +97,7 @@ namespace Yavsc.Services
             return ChatRoomPresence[userName].Contains(roomName);
         }
 
-        public bool isCop(string userName)
+        public bool IsCop(string userName)
         {
             return _isCop[userName];
         }
@@ -179,7 +179,7 @@ namespace Yavsc.Services
                     }
                     else
                     {
-                        if (isCop(userName))
+                        if (IsCop(userName))
                         {
                             chanInfo.Ops.Add(cxId);
                         }
@@ -320,7 +320,7 @@ namespace Yavsc.Services
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.HopWontKickOp).ToString());
                 return false;
             }
-            if (isCop(userName))
+            if (IsCop(userName))
             {
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.NoKickOnCop).ToString());
                 return false;
