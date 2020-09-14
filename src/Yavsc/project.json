@@ -40,7 +40,9 @@
           "wwwroot",
           "node_modules",
           "bower_components",
-          "contrib"
+          "contrib",
+          "Blog-Dev",
+          "Temp-Dev"
       ]
     },
     "embed": [
@@ -176,7 +178,9 @@
     "exclude": [
       "**.user",
       "**.vspscc",
-      "contrib/**/*.*"
+      "contrib/**/*.*",
+      "Blog-Dev/**/*.*",
+      "Temp-Dev/**/*.*"
     ]
   },
   "scripts": {
