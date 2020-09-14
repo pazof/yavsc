@@ -165,6 +165,7 @@ namespace Yavsc.Services
                             received = await liveHandler.Socket.ReceiveAsync(sBuffer, liveHandler.TokenSource.Token);
                             
                             _logger.LogInformation($"Received bytes : {received.Count}");
+                            _logger.LogInformation($"segment : offset: {sBuffer.Offset} count: {sBuffer.Count}");
                             _logger.LogInformation($"Is the end : {received.EndOfMessage}");
                             fsInputQueue.Enqueue(sBuffer);
                             if (received.CloseStatus.HasValue)
