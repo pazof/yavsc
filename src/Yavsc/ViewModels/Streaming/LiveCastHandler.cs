@@ -64,10 +64,9 @@ namespace Yavsc.ViewModels.Streaming
                             
                                 logger.LogInformation($"writing {buffer.Array.Length} bytes...");
 
-                                await dest.WriteAsync(buffer.Array, 0, buffer.Array.Length);
+                                await dest.WriteAsync(buffer.Array, buffer.Offset, buffer.Count);
                                 logger.LogInformation($"done.");
-                                usage += buffer.Array.Length;
-                           
+                                usage += buffer.Count;
                         }
                         if (usage >= user.DiskQuota) break;
                         if (queue.Count==0 && !isEndOfInput()) {
