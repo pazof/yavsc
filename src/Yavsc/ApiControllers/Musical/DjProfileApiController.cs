@@ -5,7 +5,7 @@ namespace Yavsc.ApiControllers
 
     public class DjProfileApiController : ProfileApiController<DjSettings>
     {
-        public DjProfileApiController(ApplicationDbContext context) : base(context)
+        public DjProfileApiController() : base()
         {
         }
     }

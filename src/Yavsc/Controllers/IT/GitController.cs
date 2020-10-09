@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
     [Authorize("AdministratorOnly")]
     public class GitController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public GitController(ApplicationDbContext context)
         {

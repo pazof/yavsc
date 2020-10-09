@@ -14,8 +14,8 @@ namespace Yavsc.Controllers
 
     public class FeatureController : Controller
     {
-        private ApplicationDbContext _context;
-        private IStringLocalizer<BugController> _bugLocalizer;
+        private readonly ApplicationDbContext _context;
+        private readonly IStringLocalizer<BugController> _bugLocalizer;
 
         IEnumerable<SelectListItem> Statuses(FeatureStatus ?status) =>
             _bugLocalizer.CreateSelectListItems(typeof(FeatureStatus), status);

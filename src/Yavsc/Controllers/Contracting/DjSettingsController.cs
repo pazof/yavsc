@@ -8,7 +8,7 @@ namespace Yavsc.Controllers
 {
     public class DjSettingsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public DjSettingsController(ApplicationDbContext context)
         {

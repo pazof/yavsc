@@ -9,7 +9,7 @@ namespace Yavsc.Auth {
 
     public class MonoXmlEncryptor : IXmlEncryptor
     {
-        public MonoXmlEncryptor (IServiceProvider serviceProvider)
+        public MonoXmlEncryptor ()
         {
         }
         public EncryptedXmlInfo Encrypt(XElement plaintextElement)

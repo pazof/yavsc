@@ -15,9 +15,9 @@ namespace Yavsc.Controllers
     [Route("api/chat")]
     public class ChatApiController : Controller
     {
-        ApplicationDbContext dbContext;
-        UserManager<ApplicationUser> userManager;
-        private IConnexionManager _cxManager;
+        readonly ApplicationDbContext dbContext;
+        readonly UserManager<ApplicationUser> userManager;
+        private readonly IConnexionManager _cxManager;
         public ChatApiController(ApplicationDbContext dbContext,
         UserManager<ApplicationUser> userManager, 
         IConnexionManager cxManager)

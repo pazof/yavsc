@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
 {
     public class InstrumentRatingController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public InstrumentRatingController(ApplicationDbContext context)
         {

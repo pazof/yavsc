@@ -25,15 +25,15 @@ namespace Yavsc.ApiControllers
     [Route("api/bill"), Authorize]
     public class BillingController : Controller
     {
-        ApplicationDbContext dbContext;
-        private IStringLocalizer _localizer;
-        private GoogleAuthSettings _googleSettings;
-        private IYavscMessageSender _GCMSender;
-        private IAuthorizationService authorizationService;
+        readonly ApplicationDbContext dbContext;
+        private readonly IStringLocalizer _localizer;
+        private readonly GoogleAuthSettings _googleSettings;
+        private readonly IYavscMessageSender _GCMSender;
+        private readonly IAuthorizationService authorizationService;
 
 
-        private ILogger logger;
-        private IBillingService billingService;
+        private readonly ILogger logger;
+        private readonly IBillingService billingService;
 
         public BillingController(
             IAuthorizationService authorizationService,

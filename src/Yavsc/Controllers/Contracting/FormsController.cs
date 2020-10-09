@@ -9,7 +9,7 @@ namespace Yavsc.Controllers
 {
     public class FormsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public FormsController(ApplicationDbContext context)
         {

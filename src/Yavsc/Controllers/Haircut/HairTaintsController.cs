@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
     [Authorize("AdministratorOnly")]
     public class HairTaintsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public HairTaintsController(ApplicationDbContext context)
         {

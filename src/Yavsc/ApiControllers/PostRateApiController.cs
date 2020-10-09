@@ -10,7 +10,7 @@ namespace Yavsc.Controllers
     [Route("~/api/PostRateApi")]
     public class PostRateApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public PostRateApiController(ApplicationDbContext context)
         {

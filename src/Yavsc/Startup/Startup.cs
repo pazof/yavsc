@@ -24,12 +24,14 @@ using Newtonsoft.Json;
 namespace Yavsc
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Security.Claims;
     using Formatters;
     using Google.Apis.Util.Store;
     using Microsoft.AspNet.Http;
     using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.SignalR;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
     using Models;
@@ -37,6 +39,7 @@ namespace Yavsc
     using Yavsc.Abstract.FileSystem;
     using Yavsc.AuthorizationHandlers;
     using Yavsc.Helpers;
+    using Yavsc.Models.Messaging;
     using static System.Environment;
 
     public partial class Startup
@@ -59,12 +62,12 @@ namespace Yavsc
         /// generating reset password and confirmation tokens
         /// </summary>
         public IUserTokenProvider<ApplicationUser> UserTokenProvider { get; set; }
-        
+
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnHandledException;
-            
+
             var devtag = env.IsDevelopment() ? "D" : "";
             var prodtag = env.IsProduction() ? "P" : "";
             var stagetag = env.IsStaging() ? "S" : "";
@@ -103,7 +106,7 @@ namespace Yavsc
                 GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
             }
         }
-        
+
         // never hit ...
         private void OnUnHandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -141,8 +144,9 @@ namespace Yavsc
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<RequestLocalizationOptions>), typeof(OptionsManager<RequestLocalizationOptions>)));
+
+            services.Add(ServiceDescriptor.Singleton(typeof(IDiskUsageTracker), typeof(DiskUsageTracker)));
             
-           
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 var supportedCultures = new[]
@@ -430,7 +434,8 @@ namespace Yavsc
             _logger.LogInformation("LocalApplicationData: " + Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
             app.Use(async (context, next) =>
                 {
-                    var liveCasting = context.Request.Path.StartsWithSegments(_liveProcessor.LiveCastingPath);
+                    const string livePath = "live";
+                    var liveCasting = context.Request.Path.StartsWithSegments(Constants.LivePath);
                     if (liveCasting)
                     {
 
@@ -441,10 +446,49 @@ namespace Yavsc
                                 context.Response.StatusCode = 403;
                             else
                             {
-                                await _liveProcessor.AcceptStream(context);
+                                var liveId = long.Parse(context.Request.Path.Value.Substring(Constants.LivePath.Length + 1));
+                                var userId = context.User.GetUserId();
+                                var user = await _dbContext.Users.FirstAsync(u => u.Id == userId);
+                                var uname = user.UserName;
+                                var flow = _dbContext.LiveFlow.Include(f => f.Owner).SingleOrDefault(f => (f.OwnerId == userId && f.Id == liveId));
+
+                                if (flow == null)
+                                {
+                                    _logger.LogWarning("Aborting. Flow info was not found.");
+                                    context.Response.StatusCode = 400;
+                                    return;
+                                }
+                                var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+
+                                hubContext.Clients.All.addPublicStream(new PublicStreamInfo
+                                {
+                                    id = flow.Id,
+                                    sender = flow.Owner.UserName,
+                                    title = flow.Title,
+                                    url = flow.GetFileUrl(),
+                                    mediaType = flow.MediaType
+                                }, $"{flow.Owner.UserName} is starting a stream!");
+
+                                string destDir = context.User.InitPostToFileSystem(livePath);
+                                _logger.LogInformation($"Saving flow to {destDir}");
+
+                                string fileName = flow.GetFileName();
+
+                                _logger.LogInformation("flow : " + flow.Title + " for " + uname);
+                                FileInfo destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
+                                // this should end :-)
+                                while (destFileInfo.Exists)
+                                {
+                                    flow.SequenceNumber++;
+                                    fileName = flow.GetFileName();
+                                    destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
+                                }
+
+                                await _liveProcessor.AcceptStream(context, user, destDir, fileName);
                             }
                         }
-                        else {
+                        else
+                        {
                             context.Response.StatusCode = 400;
                         }
                     }
@@ -454,7 +498,7 @@ namespace Yavsc
                     }
 
                 });
-            CheckApp( env, loggerFactory);
+            CheckApp(env, loggerFactory);
         }
 
         // Entry point for the application.

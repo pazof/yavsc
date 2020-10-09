@@ -10,11 +10,6 @@ namespace Yavsc.Auth  {
 
     public class UserTokenProvider : Microsoft.AspNet.Identity.IUserTokenProvider<ApplicationUser>
     {
-        private MonoDataProtector protector=null;
-        public MonoDataProtector Protector {
-            get { return protector; } 
-        }
-
         public Task<bool> CanGenerateTwoFactorTokenAsync(UserManager<ApplicationUser> manager, ApplicationUser user)
         {
             return Task.FromResult(true);

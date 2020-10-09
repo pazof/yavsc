@@ -16,7 +16,7 @@ namespace Yavsc.ViewModels.UserFiles
         public DirectoryShortInfo [] SubDirectories { 
             get; set;
         }
-        private DirectoryInfo dInfo;
+        private readonly DirectoryInfo dInfo;
 
         // for deserialization
         public UserDirectoryInfo()

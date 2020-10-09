@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
     [Route("api/blogacl")]
     public class BlogAclApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public BlogAclApiController(ApplicationDbContext context)
         {

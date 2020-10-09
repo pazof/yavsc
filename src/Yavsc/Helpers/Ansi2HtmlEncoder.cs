@@ -18,11 +18,13 @@ namespace Yavsc.Helpers
 
         public static Stream GetStream(StreamReader reader)
         {
-            var procStart = new ProcessStartInfo("node", "node_modules/ansi-to-html/bin/ansi-to-html");
-            procStart.UseShellExecute = false;
-            procStart.RedirectStandardInput = true;
-            procStart.RedirectStandardOutput = true;
-          //  procStart.RedirectStandardError = true;
+            var procStart = new ProcessStartInfo("node", "node_modules/ansi-to-html/bin/ansi-to-html")
+            {
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true
+            };
+            //  procStart.RedirectStandardError = true;
             var mem = new MemoryStream();
             var writer = new StreamWriter(mem);
             var proc = Process.Start(procStart);

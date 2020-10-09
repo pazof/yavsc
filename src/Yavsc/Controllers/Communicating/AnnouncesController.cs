@@ -13,10 +13,9 @@ namespace Yavsc.Controllers
 {
     public class AnnouncesController : Controller
     {
-        private ApplicationDbContext _context;
-        IStringLocalizer<AnnouncesController> _localizer;
-
-        IAuthorizationService _authorizationService;
+        private readonly ApplicationDbContext _context;
+        readonly IStringLocalizer<AnnouncesController> _localizer;
+        readonly IAuthorizationService _authorizationService;
 
         public AnnouncesController(ApplicationDbContext context, 
         IAuthorizationService authorizationService,
@@ -61,9 +60,7 @@ namespace Yavsc.Controllers
         {
             ViewBag.IsAdmin = User.IsInRole(Constants.AdminGroupName);
             ViewBag.IsPerformer = User.IsInRole(Constants.PerformerGroupName);
-            ViewBag.AllowEdit = (announce!=null && announce.Id>0) ?
-                await _authorizationService.AuthorizeAsync(User,announce,new EditRequirement()) :
-                true;
+            ViewBag.AllowEdit = announce==null || announce.Id<=0 || await _authorizationService.AuthorizeAsync(User,announce,new EditRequirement());
             List<SelectListItem> dl = new List<SelectListItem>();
             var rnames = System.Enum.GetNames(typeof(Reason));
             var rvalues = System.Enum.GetValues(typeof(Reason));

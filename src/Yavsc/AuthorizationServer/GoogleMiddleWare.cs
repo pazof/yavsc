@@ -16,7 +16,6 @@ namespace Yavsc.Auth
     /// </summary>
     public class GoogleMiddleware : OAuthMiddleware<YavscGoogleOptions>
     {
-        private readonly RequestDelegate _next;
         private readonly ILogger _logger;
 
         /// <summary>
@@ -37,11 +36,6 @@ namespace Yavsc.Auth
             YavscGoogleOptions options)
             : base(next, dataProtectionProvider, loggerFactory, encoder, sharedOptions, options)
         {
-            if (next == null)
-            {
-                throw new ArgumentNullException(nameof(next));
-            }
-            _next = next;
 
             if (dataProtectionProvider == null)
             {

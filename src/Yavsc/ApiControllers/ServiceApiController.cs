@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
     [Route("api/ServiceApi")]
     public class ServiceApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public ServiceApiController(ApplicationDbContext context)
         {

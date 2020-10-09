@@ -21,10 +21,11 @@ namespace Yavsc.Helpers
     {
         public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signtype)
         {
-            var item = new FileRecievedInfo();
-            item.FileName = AbstractFileSystemHelpers.SignFileNameFormat("pro",billingCode,estimateId);
-            item.MimeType = formFile.ContentDisposition;
-            
+            var item = new FileRecievedInfo
+            {
+                FileName = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, estimateId)
+            };
+
             var destFileName = Path.Combine(Startup.SiteSetup.Bills, item.FileName);
 
             var fi = new FileInfo(destFileName);
@@ -200,10 +201,11 @@ namespace Yavsc.Helpers
             // this process is not safe at concurrent access.
             long usage = user.DiskUsage;
 
-            var item = new FileRecievedInfo();
-            item.FileName = AbstractFileSystemHelpers.FilterFileName (destFileName);
-            item.MimeType = contentType;
-            item.DestDir = root;
+            var item = new FileRecievedInfo
+            {
+                FileName = AbstractFileSystemHelpers.FilterFileName(destFileName),
+                DestDir = root
+            };
             var fi = new FileInfo(Path.Combine(root, item.FileName));
             if (fi.Exists)
             {
@@ -251,8 +253,10 @@ namespace Yavsc.Helpers
 
         public static FileRecievedInfo ReceiveAvatar(this ApplicationUser user, IFormFile formFile)
         {
-            var item = new FileRecievedInfo();
-            item.FileName = user.UserName + ".png";
+            var item = new FileRecievedInfo
+            {
+                FileName = user.UserName + ".png"
+            };
 
             var destFileName = Path.Combine(Startup.SiteSetup.Avatars, item.FileName);
 

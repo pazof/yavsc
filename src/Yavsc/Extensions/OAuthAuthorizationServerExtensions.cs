@@ -49,9 +49,8 @@ namespace Microsoft.AspNet.Builder
 
 
             var options = new OAuthAuthorizationServerOptions();
-            if (configureOptions != null)
 
-                configureOptions(options);
+            configureOptions?.Invoke(options);
 
             return app.UseOAuthAuthorizationServer(options);
         }

@@ -90,7 +90,7 @@ namespace Yavsc.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult Create(string proId, string activityCode, string billingCode)
+        public IActionResult Create(string proId, string activityCode)
         {
             if (string.IsNullOrWhiteSpace(proId))
                 throw new InvalidOperationException(
@@ -159,7 +159,7 @@ namespace Yavsc.Controllers
                 _context.RdvQueries.Add(command, GraphBehavior.IncludeDependents);
                 _context.SaveChanges(User.GetUserId());
 
-                var yaev = command.CreateEvent(_localizer, "NewCommand");
+                var yaev = command.CreateEvent("NewCommand");
 
                 MessageWithPayloadResponse nrep = null;
 

@@ -14,9 +14,9 @@ namespace Yavsc.Controllers
 {
     public class BugController : Controller
     {
-        ApplicationDbContext _context;
-        IStringLocalizer<BugController> _localizer;
-        IStringLocalizer<Yavsc.Models.IT.Fixing.Resources> _statusLocalizer;
+        readonly ApplicationDbContext _context;
+        readonly IStringLocalizer<BugController> _localizer;
+        readonly IStringLocalizer<Yavsc.Models.IT.Fixing.Resources> _statusLocalizer;
 
         public BugController(ApplicationDbContext context, 
                 IStringLocalizer<BugController> localizer,

@@ -8,7 +8,7 @@ namespace Yavsc.Controllers
     using Models.Musical;
     public class MusicalTendenciesController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public MusicalTendenciesController(ApplicationDbContext context)
         {

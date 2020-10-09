@@ -6,10 +6,8 @@ namespace Yavsc.Controllers
 {
     public class FileSystemController : Controller
     {
-        ILogger _logger;
-        public FileSystemController(ILoggerFactory loggerFactory)
+        public FileSystemController()
         {
-            _logger = loggerFactory.CreateLogger<FileSystemController>();
         }
 
         public IActionResult Index(string subdir="")

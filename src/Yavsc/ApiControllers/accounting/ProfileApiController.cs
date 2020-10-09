@@ -11,8 +11,8 @@ namespace Yavsc.ApiControllers.accounting
     [Route("~/api/profile")]
     public class ProfileApiController: Controller
     {
-        UserManager<ApplicationUser> _userManager;
-        ApplicationDbContext _dbContext;
+        readonly UserManager<ApplicationUser> _userManager;
+        readonly ApplicationDbContext _dbContext;
         public ProfileApiController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
         {
             _dbContext = dbContext;

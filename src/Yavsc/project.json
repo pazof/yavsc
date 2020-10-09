@@ -37,12 +37,12 @@
     "compile": {
       "include": "*.cs",
       "exclude": [
-          "wwwroot",
-          "node_modules",
-          "bower_components",
-          "contrib",
-          "Blog-Dev",
-          "Temp-Dev"
+        "wwwroot",
+        "node_modules",
+        "bower_components",
+        "contrib",
+        "Blog-Dev",
+        "Temp-Dev"
       ]
     },
     "embed": [
@@ -152,7 +152,8 @@
     "Yavsc.Server": {
       "target": "project",
       "type": "build"
-    }
+    },
+    "rules": "1.1.0"
   },
   "commands": {
     "ef": "EntityFramework.Commands",

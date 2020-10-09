@@ -24,8 +24,7 @@ namespace Yavsc.Authentication
         readonly Uri accessTokenUrl;
         readonly Uri redirectUrl;
         readonly GetUsernameAsyncFunc getUsernameAsync;
-
-        string requestState;
+        readonly string requestState;
         bool reportedForgery = false;
 
         /// <summary>

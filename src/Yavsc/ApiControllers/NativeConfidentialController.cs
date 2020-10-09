@@ -11,8 +11,8 @@ using Yavsc.Models.Identity;
 [Authorize, Route("~/api/gcm")]
 public class NativeConfidentialController : Controller
 {
-    ILogger _logger;
-    ApplicationDbContext _context;
+    readonly ILogger _logger;
+    readonly ApplicationDbContext _context;
 
     public NativeConfidentialController(ApplicationDbContext context,
      ILoggerFactory loggerFactory)

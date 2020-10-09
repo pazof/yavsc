@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
     [Route("api/blacklist"), Authorize]
     public class BlackListApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public BlackListApiController(ApplicationDbContext context)
         {

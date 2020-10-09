@@ -8,7 +8,7 @@ namespace Yavsc.Controllers
     using Models.Musical;
     public class InstrumentsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public InstrumentsController(ApplicationDbContext context)
         {

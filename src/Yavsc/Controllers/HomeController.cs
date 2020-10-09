@@ -21,22 +21,19 @@ namespace Yavsc.Controllers
     [AllowAnonymous]
     public class HomeController : Controller
     {
-        IHostingEnvironment _hosting;
-
-        ApplicationDbContext _dbContext;
+        readonly ApplicationDbContext _dbContext;
 
         readonly IHtmlLocalizer _localizer;
-        public HomeController(IHtmlLocalizer<Startup> localizer, IHostingEnvironment hosting,
-        ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public HomeController(IHtmlLocalizer<Startup> localizer, 
+        ApplicationDbContext context)
         {
             _localizer = localizer;
-            _hosting = hosting;
             _dbContext = context;
         }
 
         public async Task<IActionResult> Index(string id)
         {
-            ViewBag.IsFromSecureProx = (Request.Headers.ContainsKey(Constants.SshHeaderKey)) ? Request.Headers[Constants.SshHeaderKey] == "on" : false;
+            ViewBag.IsFromSecureProx = Request.Headers.ContainsKey(Constants.SshHeaderKey) && Request.Headers[Constants.SshHeaderKey] == "on";
             ViewBag.SecureHomeUrl = "https://" + Request.Headers["X-Forwarded-Host"];
             ViewBag.SshHeaderKey = Request.Headers[Constants.SshHeaderKey];
             var uid = User.GetUserId();

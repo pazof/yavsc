@@ -17,13 +17,11 @@ namespace Yavsc.Controllers
     [Authorize("AdministratorOnly")]
     public class ProjectController : Controller
     {
-        private ApplicationDbContext _context;
-        ILogger _logger;
-        IStringLocalizer<Yavsc.YavscLocalisation> _localizer;
-        IStringLocalizer<BugController> _bugLocalizer;
+        private readonly ApplicationDbContext _context;
+        readonly IStringLocalizer<Yavsc.YavscLocalisation> _localizer;
+        readonly IStringLocalizer<BugController> _bugLocalizer;
           
         public ProjectController(ApplicationDbContext context,
-        ILoggerFactory loggerFactory,
         IStringLocalizer<Yavsc.YavscLocalisation> localizer,
         IStringLocalizer<BugController> bugLocalizer
         )
@@ -31,14 +29,11 @@ namespace Yavsc.Controllers
             _context = context;
             _localizer = localizer;
             _bugLocalizer = bugLocalizer;
-            _logger = loggerFactory.CreateLogger<ProjectController>();
-
         }
 
         // GET: Project
         public async Task<IActionResult> Index()
         {
-
             var applicationDbContext = _context.Project.Include(p => p.Client).Include(p => p.Context).Include(p => p.PerformerProfile).Include(p => p.Regularisation).Include(p => p.Repository);
             return View(await applicationDbContext.ToListAsync());
         }

@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
     [Route("api/blogcomments")]
     public class CommentsApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public CommentsApiController(ApplicationDbContext context)
         {

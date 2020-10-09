@@ -156,7 +156,7 @@ if (typeof XMLHttpRequest === 'undefined') {
             }
           }
         };
-        xmlhttp.open('DELETE', '/api/fs/' + dfilep, true);
+        xmlhttp.open('DELETE', '/api/fs/' + encodeURIComponent(dfilep), true);
         xmlhttp.send();
       });
     },

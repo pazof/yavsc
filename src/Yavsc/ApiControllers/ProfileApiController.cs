@@ -9,11 +9,8 @@ namespace Yavsc.ApiControllers
     /// </summary>
     [Produces("application/json"),Route("api/profile")]
     public abstract class ProfileApiController<T> : Controller  
-    {
-        ApplicationDbContext dbContext;
-        public ProfileApiController(ApplicationDbContext context)
+    {        public ProfileApiController()
         {
-            dbContext = context;
         }
 
     }

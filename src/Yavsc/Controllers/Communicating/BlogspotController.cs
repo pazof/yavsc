@@ -40,7 +40,7 @@ namespace Yavsc.Controllers
 
         // GET: Blog
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string id, int skip=0, int maxLen=25)
+        public async Task<IActionResult> Index(string id)
         {
             if (!string.IsNullOrEmpty(id)) {
                 return await UserPosts(id);
