@@ -18,13 +18,11 @@ namespace Yavsc.Controllers
 
     public class FrontOfficeController : Controller
     {
-        ApplicationDbContext _context;
-        UserManager<ApplicationUser> _userManager;
-
-        ILogger _logger;
-
-        IStringLocalizer _SR;
-        private IBillingService _billing;
+        readonly ApplicationDbContext _context;
+        readonly UserManager<ApplicationUser> _userManager;
+        readonly ILogger _logger;
+        readonly IStringLocalizer _SR;
+        private readonly IBillingService _billing;
 
         public FrontOfficeController(ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,

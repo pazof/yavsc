@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
     [Route("api/cirle")]
     public class CircleApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public CircleApiController(ApplicationDbContext context)
         {

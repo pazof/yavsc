@@ -20,25 +20,12 @@ namespace Yavsc.Controllers
     [AllowAnonymous]
     public class OAuthController : Controller
     {
-        readonly ApplicationDbContext _context;
-        readonly UserManager<ApplicationUser> _userManager;
-        readonly SiteSettings _siteSettings;
         readonly ILogger _logger;
-        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public OAuthController(ApplicationDbContext context, SignInManager<ApplicationUser> signInManager, IKeyManager keyManager,
-        UserManager<ApplicationUser> userManager,
-        IOptions<SiteSettings> siteSettings,
-        ILoggerFactory loggerFactory
-        )
+        public OAuthController(ILoggerFactory loggerFactory)
         {
-            _siteSettings = siteSettings.Value;
-            _context = context;
-            _signInManager = signInManager;
-            _userManager = userManager;
             _logger = loggerFactory.CreateLogger<OAuthController>();
         }
-
        
 
         [HttpGet("~/api/getclaims"), Produces("application/json")]

@@ -29,6 +29,7 @@ namespace Yavsc.Controllers
 
     public class HairCutCommandController : CommandController
     {
+        readonly PayPalSettings payPalSettings;
         public HairCutCommandController(ApplicationDbContext context,
           IOptions<PayPalSettings> payPalSettings,
           IOptions<GoogleAuthSettings> googleSettings,
@@ -44,7 +45,7 @@ namespace Yavsc.Controllers
         {
             this.payPalSettings = payPalSettings.Value;
         }
-        PayPalSettings payPalSettings;
+
         
         private async Task<HairCutQuery> GetQuery(long id)
         {

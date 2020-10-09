@@ -11,8 +11,8 @@ namespace Yavsc.ApiControllers
     [Route("api/payment")]
     public class PaymentApiController : Controller
     {
-        private ApplicationDbContext dbContext;
-        private SiteSettings siteSettings;
+        private readonly ApplicationDbContext dbContext;
+        private readonly SiteSettings siteSettings;
         private readonly ILogger _logger;
         public PaymentApiController(
             ApplicationDbContext dbContext,

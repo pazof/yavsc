@@ -8,7 +8,7 @@ namespace Yavsc.Controllers
 {
     public class GeneralSettingsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public GeneralSettingsController(ApplicationDbContext context)
         {

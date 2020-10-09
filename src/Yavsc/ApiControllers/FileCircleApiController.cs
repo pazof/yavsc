@@ -16,7 +16,7 @@ namespace Yavsc.Controllers
     [Authorize]
     public class FileCircleApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public FileCircleApiController(ApplicationDbContext context)
         {

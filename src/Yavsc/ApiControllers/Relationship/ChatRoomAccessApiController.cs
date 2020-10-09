@@ -15,7 +15,7 @@ namespace Yavsc.Controllers
     [Route("api/ChatRoomAccessApi")]
     public class ChatRoomAccessApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public ChatRoomAccessApiController(ApplicationDbContext context)
         {

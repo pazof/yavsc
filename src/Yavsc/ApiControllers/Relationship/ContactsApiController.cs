@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
     [Route("api/ContactsApi")]
     public class ContactsApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public ContactsApiController(ApplicationDbContext context)
         {

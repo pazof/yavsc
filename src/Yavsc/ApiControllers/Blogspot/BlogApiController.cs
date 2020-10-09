@@ -16,7 +16,7 @@ namespace Yavsc.Controllers
 
     public class BlogApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public BlogApiController(ApplicationDbContext context)
         {

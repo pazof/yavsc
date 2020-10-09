@@ -13,7 +13,7 @@ namespace Yavsc.Controllers
     [Route("api/MusicalTendenciesApi")]
     public class MusicalTendenciesApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public MusicalTendenciesApiController(ApplicationDbContext context)
         {

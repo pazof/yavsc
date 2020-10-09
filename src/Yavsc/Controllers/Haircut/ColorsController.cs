@@ -9,7 +9,7 @@ namespace Yavsc.Controllers
 {
     public class ColorsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public ColorsController(ApplicationDbContext context)
         {

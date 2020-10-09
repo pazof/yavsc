@@ -21,10 +21,9 @@ namespace Yavsc.Controllers
     [Authorize]
     public class EstimateController : Controller
     {
-        private ApplicationDbContext _context;
-        private SiteSettings _site;
-
-        IAuthorizationService authorizationService;
+        private readonly ApplicationDbContext _context;
+        private readonly SiteSettings _site;
+        readonly IAuthorizationService authorizationService;
 
         public EstimateController(ApplicationDbContext context, IAuthorizationService authorizationService, IOptions<SiteSettings> siteSettings)
         {
@@ -143,10 +142,6 @@ namespace Yavsc.Controllers
         }
 
 
-        private void Save(ICollection<IFormFile> newGraphics,
-         ICollection<IFormFile> newFiles) {
-
-         }
         // GET: Estimate/Edit/5
         public IActionResult Edit(long? id)
         {

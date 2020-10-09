@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
     [Route("api/users")]
     public class ApplicationUserApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public ApplicationUserApiController(ApplicationDbContext context)
         {

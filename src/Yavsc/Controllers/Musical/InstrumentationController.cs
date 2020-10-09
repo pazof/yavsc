@@ -13,7 +13,7 @@ namespace Yavsc.Controllers
     [Authorize]
     public class InstrumentationController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public InstrumentationController(ApplicationDbContext context)
         {

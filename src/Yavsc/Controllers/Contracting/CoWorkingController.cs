@@ -11,7 +11,7 @@ namespace Yavsc.Controllers
 {
     public class CoWorkingController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public CoWorkingController(ApplicationDbContext context)
         {

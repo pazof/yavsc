@@ -12,7 +12,7 @@ namespace Yavsc.Controllers
     [Route("api/blogtags")]
     public class BlogTagsApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public BlogTagsApiController(ApplicationDbContext context)
         {

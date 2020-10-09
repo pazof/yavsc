@@ -69,7 +69,7 @@ namespace Yavsc.Controllers
 
 
         [Authorize(Roles = Constants.AdminGroupName)]
-        public IActionResult Index(string page, string len)
+        public IActionResult Index()
         {
             return View();
         }
@@ -591,7 +591,7 @@ namespace Yavsc.Controllers
         // GET: /Account/ResetPassword
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ResetPassword(string UserId, string code = null)
+        public async Task<IActionResult> ResetPassword(string UserId)
         {
             var user = await _userManager.FindByIdAsync(UserId);
             if (user==null) return new BadRequestResult();

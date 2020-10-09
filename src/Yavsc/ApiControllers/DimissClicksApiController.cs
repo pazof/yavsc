@@ -15,7 +15,7 @@ namespace Yavsc.Controllers
     [Route("api/dimiss")]
     public class DimissClicksApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public DimissClicksApiController(ApplicationDbContext context)
         {

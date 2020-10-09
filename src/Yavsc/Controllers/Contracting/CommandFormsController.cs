@@ -11,7 +11,7 @@ namespace Yavsc.Controllers
 {
     public class CommandFormsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public CommandFormsController(ApplicationDbContext context)
         {

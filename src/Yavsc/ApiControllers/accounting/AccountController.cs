@@ -22,9 +22,8 @@ namespace Yavsc.WebApi.Controllers
         
         private UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-
-        ApplicationDbContext _dbContext;
-        private ILogger _logger;
+        readonly ApplicationDbContext _dbContext;
+        private readonly ILogger _logger;
 
         public ApiAccountController(UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager, ILoggerFactory loggerFactory, ApplicationDbContext dbContext)

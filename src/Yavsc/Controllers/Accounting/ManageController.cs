@@ -195,9 +195,9 @@ namespace Yavsc.Controllers
             // Generate the token and send it
             var user = await GetCurrentUserAsync();
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
-            // TODO         await _smsSender.SendSmsAsync(_twilioSettings, model.PhoneNumber, "Your security code is: " + code);
+            // TODO ? await _smsSender.SendSmsAsync(_twilioSettings, model.PhoneNumber, "Your security code is: " + code);
 
-            return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
+            return RedirectToAction(nameof(VerifyPhoneNumber), new { model.PhoneNumber });
         }
 
         //

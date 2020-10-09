@@ -5,7 +5,7 @@ namespace Yavsc.Attributes.Validation
     public partial class YaStringLength: YaValidationAttribute
     {
         public long MinimumLength { get; set; } = 0;
-        private long maxLen;
+        private readonly long maxLen;
         public YaStringLength(long maxLen) : base( ()=> "BadStringLength")
         {
             this.maxLen = maxLen;

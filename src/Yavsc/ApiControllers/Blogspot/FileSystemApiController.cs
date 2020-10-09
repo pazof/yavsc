@@ -20,9 +20,9 @@ namespace Yavsc.ApiControllers
     [Authorize,Route("api/fs")]
     public partial class FileSystemApiController : Controller
     {
-        ApplicationDbContext dbContext;
-        private IAuthorizationService AuthorizationService;
-        private ILogger _logger;
+        readonly ApplicationDbContext dbContext;
+        private readonly IAuthorizationService AuthorizationService;
+        private readonly ILogger _logger;
 
         public FileSystemApiController(ApplicationDbContext context,
         IAuthorizationService authorizationService, 

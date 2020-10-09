@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
     [Route("api/bursherprofiles")]
     public class BursherProfilesApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public BursherProfilesApiController(ApplicationDbContext context)
         {

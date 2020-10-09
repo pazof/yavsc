@@ -8,7 +8,7 @@ namespace Yavsc.Controllers
 {
     public class HairPrestationsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public HairPrestationsController(ApplicationDbContext context)
         {

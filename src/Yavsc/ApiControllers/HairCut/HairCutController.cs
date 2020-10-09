@@ -26,37 +26,12 @@ namespace Yavsc.ApiControllers
     [Route("api/haircut")]
     public class HairCutController : Controller
     {
-        private ApplicationDbContext _context;
-        private IEmailSender _emailSender;
-        private IYavscMessageSender _GCMSender;
-        private GoogleAuthSettings _googleSettings;
-        private IStringLocalizer<YavscLocalisation> _localizer;
-        private ILogger _logger;
-        private SiteSettings _siteSettings;
-        private SmtpSettings _smtpSettings;
-        private UserManager<ApplicationUser> _userManager;
-
-        PayPalSettings _paymentSettings;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
         public HairCutController(ApplicationDbContext context,
-        IOptions<GoogleAuthSettings> googleSettings,
-        IYavscMessageSender GCMSender,
-          UserManager<ApplicationUser> userManager,
-          IStringLocalizer<Yavsc.YavscLocalisation> localizer,
-          IEmailSender emailSender,
-          IOptions<SmtpSettings> smtpSettings,
-          IOptions<SiteSettings> siteSettings,
-          IOptions<PayPalSettings> payPalSettings,
           ILoggerFactory loggerFactory)
         {
             _context = context;
-            _GCMSender = GCMSender;
-            _emailSender = emailSender;
-            _googleSettings = googleSettings.Value;
-            _userManager = userManager;
-            _smtpSettings = smtpSettings.Value;
-            _siteSettings = siteSettings.Value;
-            _paymentSettings = payPalSettings.Value;
-            _localizer = localizer;
             _logger = loggerFactory.CreateLogger<HairCutController>();
         }
 

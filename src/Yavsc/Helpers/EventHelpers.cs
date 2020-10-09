@@ -11,8 +11,7 @@ namespace Yavsc.Helpers
 
     public static class EventHelpers
     {
-        public static RdvQueryEvent CreateEvent(this RdvQuery query,
-        IStringLocalizer SR, string subtopic)
+        public static RdvQueryEvent CreateEvent(this RdvQuery query, string subtopic)
         {
             var yaev = new RdvQueryEvent(subtopic)
             {

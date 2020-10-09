@@ -13,7 +13,7 @@ namespace Yavsc.Controllers
     [Route("api/museprefs")]
     public class MusicalPreferencesApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public MusicalPreferencesApiController(ApplicationDbContext context)
         {

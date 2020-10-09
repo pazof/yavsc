@@ -16,7 +16,7 @@ namespace Yavsc.Controllers
     public class PerformersApiController : Controller
     {
         ApplicationDbContext dbContext;
-        private IBillingService billing;
+        private readonly IBillingService billing;
 
         public PerformersApiController(ApplicationDbContext context, IBillingService billing)
         {

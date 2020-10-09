@@ -10,7 +10,7 @@ namespace Yavsc.Controllers
     [Authorize(Roles="Administrator")]
     public class SIRENExceptionsController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public SIRENExceptionsController(ApplicationDbContext context)
         {

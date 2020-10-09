@@ -14,7 +14,7 @@ namespace Yavsc.Controllers
     [Route("api/ProductApi")]
     public class ProductApiController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public ProductApiController(ApplicationDbContext context)
         {

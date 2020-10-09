@@ -65,5 +65,17 @@ namespace Yavsc
         /// <returns>the supported activity code</returns>
         public string OnlyOneActivityCode { get; set; }
 
+        /// <summary>
+        /// Disk usage user list maximum length in memory
+        /// </summary>
+        /// <value></value>
+        public int DUUserListLen { get; set; } = 256;
+
+        /// <summary>
+        /// Default acl file name
+        /// </summary>
+        /// <value></value>
+        public string AccessListFileName { get; set; } = ".access";
+
     }
 }

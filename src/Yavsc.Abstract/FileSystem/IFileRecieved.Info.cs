@@ -2,7 +2,6 @@ namespace Yavsc.Abstract.FileSystem
 {
     public interface IFileRecievedInfo
     {
-        string MimeType { get; set; }
         
         string DestDir { get; set; }
 

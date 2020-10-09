@@ -12,10 +12,8 @@ namespace Yavsc.Auth
     public class MonoJwtSecurityTokenHandler : JwtSecurityTokenHandler
     {
 
-        MonoDataProtectionProvider protectionProvider;
-        public MonoJwtSecurityTokenHandler(MonoDataProtectionProvider prpro)
+        public MonoJwtSecurityTokenHandler()
         {
-            protectionProvider = prpro;
         }
         public override JwtSecurityToken CreateToken(
    string issuer,

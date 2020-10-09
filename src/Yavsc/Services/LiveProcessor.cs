@@ -26,7 +26,6 @@ namespace Yavsc.Services
         readonly IHubContext _hubContext;
         private readonly ILogger _logger;
         readonly ApplicationDbContext _dbContext;
-        public PathString LiveCastingPath { get; set; } = Constants.LivePath;
 
 
         public ConcurrentDictionary<string, LiveCastHandler> Casters { get; } = new ConcurrentDictionary<string, LiveCastHandler>();
@@ -38,23 +37,12 @@ namespace Yavsc.Services
             _logger = loggerFactory.CreateLogger<LiveProcessor>();
         }
 
-        public async Task<bool> AcceptStream(HttpContext context)
+        public async Task<bool> AcceptStream(HttpContext context, ApplicationUser user, string destDir, string fileName)
         {
             // TODO defer request handling
-            var liveId = long.Parse(context.Request.Path.Value.Substring(LiveCastingPath.Value.Length + 1));
-            var userId = context.User.GetUserId();
-            var user = await _dbContext.Users.FirstAsync(u => u.Id == userId);
-            var uname = user.UserName;
-            var flow = _dbContext.LiveFlow.Include(f => f.Owner).SingleOrDefault(f => (f.OwnerId == userId && f.Id == liveId));
-            if (flow == null)
-            {
-                _logger.LogWarning("Aborting. Flow info was not found.");
-                context.Response.StatusCode = 400;
-                return false;
-            }
-            _logger.LogInformation("flow : " + flow.Title + " for " + uname);
+            
 
-
+            string uname = user.UserName;
             LiveCastHandler liveHandler = null;
             if (Casters.ContainsKey(uname))
             {
@@ -100,35 +88,15 @@ namespace Yavsc.Services
 
                     _logger.LogInformation($"Received bytes : {received.Count}");
                     _logger.LogInformation($"Is the end : {received.EndOfMessage}");
-                    const string livePath = "live";
+                   
 
-                    string destDir = context.User.InitPostToFileSystem(livePath);
-                    _logger.LogInformation($"Saving flow to {destDir}");
-
-                    string fileName = flow.GetFileName();
-                    FileInfo destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
-                    // this should end :-)
-                    while (destFileInfo.Exists)
-                    {
-                        flow.SequenceNumber++;
-                        fileName = flow.GetFileName();
-                        destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
-                    }
+                   
                     var fsInputQueue = new Queue<ArraySegment<byte>>();
 
                     bool endOfInput = false;
                     fsInputQueue.Enqueue(sBuffer);
-                    var taskWritingToFs = liveHandler.ReceiveUserFile(user, _logger, destDir, fsInputQueue, fileName, flow.MediaType, () => endOfInput);
-                    var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
-
-                    hubContext.Clients.All.addPublicStream(new PublicStreamInfo
-                    {
-                        id = flow.Id,
-                        sender = flow.Owner.UserName,
-                        title = flow.Title,
-                        url = flow.GetFileUrl(),
-                        mediaType = flow.MediaType
-                    }, $"{flow.Owner.UserName} is starting a stream!");
+                    var taskWritingToFs = liveHandler.ReceiveUserFile(user, _logger, destDir, fsInputQueue, fileName, () => endOfInput);
+                    
 
                     Stack<string> ToClose = new Stack<string>();
 
@@ -136,7 +104,6 @@ namespace Yavsc.Services
                     {
                         do
                         {
-
                             _logger.LogInformation($"Echoing {received.Count} bytes received in a {received.MessageType} message; Fin={received.EndOfMessage}");
                             // Echo anything we receive
                             // and send to all listner found

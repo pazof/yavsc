@@ -30,10 +30,9 @@ namespace Yavsc.Models.FileSystem
         public FileRecievedInfo()
         {
             QuotaOffensed = Overriden = false;
-            MimeType = DestDir = FileName = null;
+            DestDir = FileName = null;
         }
 
-        public string MimeType { get; set; }
         public string DestDir { get; set; }
         public string FileName { get; set; }
         public bool Overriden { get; set; }
