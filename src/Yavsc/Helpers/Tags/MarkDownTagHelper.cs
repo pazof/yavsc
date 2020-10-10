@@ -24,6 +24,7 @@ namespace Yavsc.TagHelpers
     {
         private const string MarkdownContentAttributeName = "markdown";
         private const string MarkdownMarkAttributeName = "ismarkdown";
+        private const string SummaryMarkAttributeName = "summary";
 		[HtmlAttributeName("site")]
         public SiteSettings Site { get; set; }
         [HtmlAttributeName("base")]
@@ -31,6 +32,11 @@ namespace Yavsc.TagHelpers
 
         [HtmlAttributeName(MarkdownContentAttributeName)]
         public string MarkdownContent { get; set; }
+
+
+        [HtmlAttributeName(SummaryMarkAttributeName)]
+        public int Summary { get; set; }
+        
 
         static Regex rxExtractLanguage = new Regex("^({{(.+)}}[\r\n])", RegexOptions.Compiled);
         private static string FormatCodePrettyPrint(MarkdownDeep.Markdown m, string code)
@@ -98,6 +104,8 @@ namespace Yavsc.TagHelpers
             markdownTransformer.FormatCodeBlock = FormatCodePrettyPrint;
             markdownTransformer.ExtractHeadBlocks = true;
             markdownTransformer.UserBreaks = true;
+            markdownTransformer.SummaryLength = Summary;
+            // TODO markdownTransformer.DoOnlyHtmlChunk = true;
             return markdownTransformer;
         }
 
