@@ -25,8 +25,8 @@ namespace Yavsc.TagHelpers
         private const string MarkdownContentAttributeName = "markdown";
         private const string MarkdownMarkAttributeName = "ismarkdown";
         private const string SummaryMarkAttributeName = "summary";
-		[HtmlAttributeName("site")]
-        public SiteSettings Site { get; set; }
+        [HtmlAttributeName("site")]
+        public SiteSettings Site { get; set; }
         [HtmlAttributeName("base")]
         public string Base { get; set; }
 
@@ -36,7 +36,7 @@ namespace Yavsc.TagHelpers
 
         [HtmlAttributeName(SummaryMarkAttributeName)]
         public int Summary { get; set; }
-        
+
 
         static Regex rxExtractLanguage = new Regex("^({{(.+)}}[\r\n])", RegexOptions.Compiled);
         private static string FormatCodePrettyPrint(MarkdownDeep.Markdown m, string code)
@@ -90,7 +90,18 @@ namespace Yavsc.TagHelpers
             // Transform the supplied text (Markdown) into HTML.
             var markdownTransformer = GetMarkdownTransformer();
             markdownTransformer.UrlBaseLocation = urlBaseLocation;
+            // Si seul un sommaire est demandé,
+            // s'assurer que la longueur du contenu ne dépasse pas de trop la longueur indiquée
+            if (Summary > 0)
+            {
+                if (text.Length > Summary + 28)
+                {
+                    text = text.Substring(0, Summary + 28);
+                }
+            }
+
             string html = markdownTransformer.Transform(text);
+
             // Wrap the html in an MvcHtmlString otherwise it'll be HtmlEncoded and displayed to the user as HTML :(
             return html;
         }
@@ -110,7 +121,7 @@ namespace Yavsc.TagHelpers
         }
 
         public ModelExpression Content { get; set; }
-        
+
         public async override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             if (output.TagName == "markdown")
@@ -123,7 +134,7 @@ namespace Yavsc.TagHelpers
             var markdown = content;
 
             var htbase = Base;
-            
+
 
             var html = Markdown(markdown, htbase);
 
