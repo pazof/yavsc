@@ -26,13 +26,14 @@
 <a asp-action="Title" asp-route-id="@group.Key" >@title</a></td></tr> 
   @foreach (var item in group) {
       var trclass = (item.Visible)?"visiblepost":"hiddenpost";
-
+      var trunked = item.Content?.Length > 256;
       <tr class="@trclass">
           <td><a asp-action="Details" asp-route-id="@item.Id" class="bloglink">
          <img src="@item.Photo" class="blogphoto"></a>
           </td>
           <td>
-              <markdown>@((item.Content?.Length > 256) ? item.Content.Substring(0, 256) + " ..." : item.Content)</markdown>
+              <markdown summary="256">@item.Content</markdown>
+              @if (trunked) { <a asp-action="Details" asp-route-id="@item.Id" class="bloglink">...</a> }
               <span style="font-size:x-small;">(@item.Author.UserName </span>,
               <span style="font-size:xx-small;">
               posté le @item.DateCreated.ToString("dddd d MMM yyyy à H:mm")
