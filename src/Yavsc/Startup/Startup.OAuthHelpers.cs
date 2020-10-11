@@ -105,9 +105,11 @@ namespace Yavsc
 
                 var claims = new List<Claim>(
                         context.Scope.Select(x => new Claim("urn:oauth:scope", x))
-                );
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                claims.Add(new Claim(ClaimTypes.Email, user.Email));
+                )
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.Email, user.Email)
+                };
                 claims.AddRange((await _usermanager.GetRolesAsync(user)).Select(
                     r => new Claim(ClaimTypes.Role, r)
                     ));

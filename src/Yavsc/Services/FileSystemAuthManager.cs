@@ -57,11 +57,15 @@ namespace Yavsc.Services
                 _logger.LogInformation("Serving file to owner.");
                 return FileAccessRight.Read | FileAccessRight.Write;
             }
-            var aclfi = new FileInfo(Path.Combine(Environment.CurrentDirectory, fileDir, aclfileName));
-            // TODO default user scoped file access policy
-            if (!aclfi.Exists) return FileAccessRight.Read;
             ruleSetParser.Reset();
-            ruleSetParser.ParseFile(aclfi.FullName);
+            for (int dirlevel = parts.Length - 1; dirlevel>0; dirlevel--)
+            {
+                var aclfi = new FileInfo(Path.Combine(Environment.CurrentDirectory, fileDir, aclfileName));
+                if (!aclfi.Exists) continue;
+                ruleSetParser.ParseFile(aclfi.FullName);
+            }
+            // TODO default user scoped file access policy
+           
             if (ruleSetParser.Rules.Allow(user.GetUserName()))
                 return FileAccessRight.Read;
 
