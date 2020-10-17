@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+
 using System.Linq;
 using System.Net.WebSockets;
 using System.Security.Claims;
@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
-using Microsoft.Extensions.Logging;
 using Yavsc.Models;
 using Yavsc.Models.Streaming;
 using Yavsc.Services;
-using Yavsc.ViewModels.Streaming;
 
 namespace Yavsc.Controllers
 {

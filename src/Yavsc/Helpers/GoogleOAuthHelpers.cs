@@ -33,15 +33,13 @@ using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Util.Store;
 using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Util;
+using Yavsc.Models;
+using Yavsc.Models.Calendar;
+using Yavsc.Services;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Helpers
 {
-    using Models;
-    using Models.Calendar;
-    using Services;
-    using Server.Helpers;
-
-
     /// <summary>
     /// Google helpers.
     /// </summary>
