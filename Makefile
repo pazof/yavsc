@@ -62,4 +62,5 @@ yavscd: src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll src/Yavsc.Server/bin/$(CONFIG)/
 version-increment-patch:
 	scripts/version.sh $$(cat version.txt) patch > version.txt
 
-sPHONY: packages
+
+.PHONY: packages
