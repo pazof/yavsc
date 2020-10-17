@@ -8,6 +8,7 @@ using Microsoft.Extensions.OptionsModel;
 using System.IO;
 using rules;
 using Microsoft.Data.Entity;
+using Microsoft.AspNet.FileProviders;
 
 namespace Yavsc.Services
 {
@@ -46,45 +47,38 @@ namespace Yavsc.Services
             _logger = loggerFactory.CreateLogger<FileSystemAuthManager>();
             SiteSettings = sitesOptions.Value;
             aclfileName = SiteSettings.AccessListFileName;
-            ruleSetParser = new RuleSetParser(true);
+            ruleSetParser = new RuleSetParser(false);
         }
 
-        public FileAccessRight GetFilePathAccess(ClaimsPrincipal user, string normalizedFullPath)
+        public FileAccessRight GetFilePathAccess(ClaimsPrincipal user, IFileInfo file)
         {
+            var parts = file.PhysicalPath.Split(Path.DirectorySeparatorChar);
+            var cwd = Environment.CurrentDirectory.Split(Path.DirectorySeparatorChar).Length;
 
-            // Assert (normalizedFullPath!=null)
-            var parts = normalizedFullPath.Split('/');
-
-            // below 4 parts, no file name.
-            if (parts.Length < 4) return FileAccessRight.None;
+            // below 4 parts behind cwd, no file name.
+            if (parts.Length < cwd + 4) return FileAccessRight.None;
 
             var fileDir = string.Join("/", parts.Take(parts.Length - 1));
             var fileName = parts[parts.Length - 1];
 
-
-            var firstFileNamePart = parts[3];
-            if (firstFileNamePart == "pub" && aclfileName != fileName)
-            {
-                _logger.LogInformation("Serving public file.");
-                return FileAccessRight.Read;
-            }
-            if (user == null) return FileAccessRight.None;
-
-            var funame = parts[2];
             var cusername = user.GetUserName();
+
+            if (string.IsNullOrEmpty(cusername)) return FileAccessRight.None;
+
+            var funame = parts[cwd+1];
             if (funame == cusername)
             {
-                _logger.LogInformation("Serving file to owner.");
                 return FileAccessRight.Read | FileAccessRight.Write;
             }
-            if (aclfileName == fileName) 
+
+            if (aclfileName == fileName)
                 return FileAccessRight.None;
-                
-            _logger.LogInformation($"Access to {normalizedFullPath} for {cusername}");
 
             ruleSetParser.Reset();
             var cuserid = user.GetUserId();
-            var fuserid = _dbContext.Users.Single(u => u.UserName == funame).Id;
+
+            var fuserid = _dbContext.Users.SingleOrDefault(u => u.UserName == funame).Id;
+            if (string.IsNullOrEmpty(fuserid)) return FileAccessRight.None;
             var circles = _dbContext.Circle.Include(mb => mb.Members).Where(c => c.OwnerId == fuserid).ToArray();
             foreach (var circle in circles)
             {
@@ -93,31 +87,24 @@ namespace Yavsc.Services
                 else ruleSetParser.Definitions.Add(circle.Name, Out);
             }
 
-            // _dbContext.Circle.Select(c => c.OwnerId == )
-            for (int dirlevel = parts.Length - 1; dirlevel>0; dirlevel--)
+            for (int dirlevel = parts.Length - 1; dirlevel > cwd + 1; dirlevel--)
             {
-                var aclfi = new FileInfo(Path.Combine(Environment.CurrentDirectory, fileDir, aclfileName));
+                fileDir = string.Join(Path.DirectorySeparatorChar.ToString(), parts.Take(dirlevel));
+
+               
+                var aclfin = Path.Combine(fileDir, aclfileName);
+                var aclfi = new FileInfo(aclfin);
                 if (!aclfi.Exists) continue;
                 ruleSetParser.ParseFile(aclfi.FullName);
             }
             // TODO default user scoped file access policy
-           
-            if (ruleSetParser.Rules.Allow(user.GetUserName()))
-                return FileAccessRight.Read;
 
-            var ucl = user.Claims.Where(c => c.Type == YavscClaimTypes.CircleMembership).Select(c => long.Parse(c.Value)).Distinct().ToArray();
-
-            var uclString = string.Join(",", ucl);
-            _logger.LogInformation($"{uclString} ");
-            foreach (
-                var cid in ucl
-            )
+            if (ruleSetParser.Rules.Allow(cusername))
             {
-                var ok = _dbContext.CircleAuthorizationToFile.Any(a => a.CircleId == cid && a.FullPath == fileDir);
-                if (ok) return FileAccessRight.Read;
+                return FileAccessRight.Read;
             }
+            return  FileAccessRight.None;
 
-            return FileAccessRight.None;
         }
 
         public string NormalizePath(string path)
