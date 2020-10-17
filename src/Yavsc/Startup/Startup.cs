@@ -331,7 +331,7 @@ namespace Yavsc
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             _logger = loggerFactory.CreateLogger<Startup>();
-            app.UseStatusCodePagesWithReExecute("/Home/Status/{0}");
+
 
             if (env.IsDevelopment())
             {
@@ -410,6 +410,7 @@ namespace Yavsc
 
             ConfigureOAuthApp(app);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
+            
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"en-US"));
 
             ConfigureWorkflow();
@@ -498,6 +499,9 @@ namespace Yavsc
                     }
 
                 });
+
+            // FIXME
+            app.UseStatusCodePages();
             CheckApp(env, loggerFactory);
         }
 

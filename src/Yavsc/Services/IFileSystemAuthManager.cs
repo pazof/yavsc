@@ -1,6 +1,7 @@
 using System;
 using System.Security.Claims;
 using System.Security.Principal;
+using Microsoft.AspNet.FileProviders;
 
 namespace Yavsc.Services
 {
@@ -23,7 +24,7 @@ namespace Yavsc.Services
         /// <param name="user"></param>
         /// <param name="normalizedFullPath"></param>
         /// <returns></returns>
-        FileAccessRight GetFilePathAccess(ClaimsPrincipal user, string normalizedFullPath);
+        FileAccessRight GetFilePathAccess(ClaimsPrincipal user, IFileInfo file);
 
         void SetAccess (long circleId, string normalizedFullPath, FileAccessRight access);
 

@@ -1,29 +1,37 @@
 using Microsoft.AspNet.Authorization;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Yavsc.Services;
 using Yavsc.ViewModels.Auth;
 
-namespace Yavsc.AuthorizationHandlers {
+namespace Yavsc.AuthorizationHandlers
+{
 
-    public class ViewFileHandler : AuthorizationHandler<ViewRequirement, ViewFileContext> {
+    public class ViewFileHandler : AuthorizationHandler<ViewRequirement, ViewFileContext>
+    {
         readonly IFileSystemAuthManager _authManager;
+        private readonly ILogger _logger;
 
-        public ViewFileHandler (IFileSystemAuthManager authManager) {
+        public ViewFileHandler(IFileSystemAuthManager authManager, ILoggerFactory logFactory)
+        {
             _authManager = authManager;
+            _logger = logFactory.CreateLogger<ViewFileHandler>();
         }
 
-        protected override void Handle (AuthorizationContext context, ViewRequirement requirement, ViewFileContext fileContext) {
-            // TODO file access rules
-            if (fileContext.Path.StartsWith ("/pub/"))
-                context.Succeed (requirement);
-            else {
-                if (!fileContext.Path.StartsWith ("/"))
-                    context.Fail ();
-                else {
-                    var rights = _authManager.GetFilePathAccess (context.User, fileContext.Path);
-                    if ((rights & FileAccessRight.Read) > 0)
-                        context.Succeed (requirement);
-                    else context.Fail ();
-                }
+        protected override void Handle(AuthorizationContext context, ViewRequirement requirement, ViewFileContext fileContext)
+        {
+
+            var rights = _authManager.GetFilePathAccess(context.User, fileContext.File);
+            _logger.LogInformation("Got access value : " + rights);
+            if ((rights & FileAccessRight.Read) > 0)
+            {
+                _logger.LogInformation("Allowing access");
+                context.Succeed(requirement);
+            }
+            else
+            {
+                _logger.LogInformation("Denying access");
+                context.Fail();
             }
         }
     }

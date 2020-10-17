@@ -289,6 +289,7 @@ namespace Yavsc.Models
 
         public DbSet<ChatRoomAccess> ChatRoomAccess { get; set; }
 
+        [Obsolete("use pazof.rules from .access files")]
         public DbSet<CircleAuthorizationToFile> CircleAuthorizationToFile { get; set; }
 
         public DbSet<InstrumentRating> InstrumentRating { get; set; }
