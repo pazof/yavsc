@@ -55,15 +55,14 @@ namespace Yavsc.Services
             var parts = file.PhysicalPath.Split(Path.DirectorySeparatorChar);
             var cwd = Environment.CurrentDirectory.Split(Path.DirectorySeparatorChar).Length;
 
-            // below 4 parts behind cwd, no file name.
-            if (parts.Length < cwd + 4) return FileAccessRight.None;
+            
+            // below 3 parts behind cwd, no file name.
+            if (parts.Length < cwd + 3) return FileAccessRight.None;
 
             var fileDir = string.Join("/", parts.Take(parts.Length - 1));
             var fileName = parts[parts.Length - 1];
 
             var cusername = user.GetUserName();
-
-            if (string.IsNullOrEmpty(cusername)) return FileAccessRight.None;
 
             var funame = parts[cwd+1];
             if (funame == cusername)
@@ -78,7 +77,9 @@ namespace Yavsc.Services
             var cuserid = user.GetUserId();
 
             var fuserid = _dbContext.Users.SingleOrDefault(u => u.UserName == funame).Id;
+
             if (string.IsNullOrEmpty(fuserid)) return FileAccessRight.None;
+
             var circles = _dbContext.Circle.Include(mb => mb.Members).Where(c => c.OwnerId == fuserid).ToArray();
             foreach (var circle in circles)
             {
@@ -90,20 +91,18 @@ namespace Yavsc.Services
             for (int dirlevel = parts.Length - 1; dirlevel > cwd + 1; dirlevel--)
             {
                 fileDir = string.Join(Path.DirectorySeparatorChar.ToString(), parts.Take(dirlevel));
-
-               
                 var aclfin = Path.Combine(fileDir, aclfileName);
                 var aclfi = new FileInfo(aclfin);
                 if (!aclfi.Exists) continue;
                 ruleSetParser.ParseFile(aclfi.FullName);
             }
-            // TODO default user scoped file access policy
 
             if (ruleSetParser.Rules.Allow(cusername))
             {
                 return FileAccessRight.Read;
             }
             return  FileAccessRight.None;
+            // TODO default user scoped file access policy
 
         }
 
