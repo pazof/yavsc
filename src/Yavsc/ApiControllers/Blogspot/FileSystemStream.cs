@@ -27,8 +27,11 @@ namespace Yavsc.ApiControllers
             this.logger = loggerFactory.CreateLogger<FileSystemStreamController>();
             this.liveProcessor = liveProcessor;
         }
+
+        [Authorize, Route("put/{filename}")]
         public async Task<IActionResult> Put([ValidRemoteUserFilePath] string filename)
         {
+            logger.LogInformation("Put : " + filename);
             if (!HttpContext.WebSockets.IsWebSocketRequest)
                 return HttpBadRequest("not a web socket");
             if (!HttpContext.User.Identity.IsAuthenticated)
@@ -36,10 +39,12 @@ namespace Yavsc.ApiControllers
             var subdirs = filename.Split('/');
             var filePath = subdirs.Length > 1 ? string.Join("/", subdirs.Take(subdirs.Length-1)) : null;
             var shortFileName = subdirs[subdirs.Length-1];
-            if (shortFileName.IsValidShortFileName())
+            if (!shortFileName.IsValidShortFileName())
+            {
+                logger.LogInformation("invalid file name : " + filename);
                 return HttpBadRequest("invalid file name");
-
-
+            }
+            logger.LogInformation("validated: api/stream/Put: "+filename);
             var userName = User.GetUserName();
             var hubContext = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
             string url = string.Format(
@@ -59,7 +64,7 @@ namespace Yavsc.ApiControllers
             logger.LogInformation($"Saving flow to {destDir}");
             var userId = User.GetUserId();
             var user = await dbContext.Users.FirstAsync(u => u.Id == userId);
-
+            logger.LogInformation("Accepting stream ...");
             await liveProcessor.AcceptStream(HttpContext, user, destDir, shortFileName);
             return Ok();
         }
