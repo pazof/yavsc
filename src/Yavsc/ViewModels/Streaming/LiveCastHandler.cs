@@ -64,7 +64,7 @@ namespace Yavsc.ViewModels.Streaming
                     {
                         var buffer = queue.Dequeue();
 
-                        logger.LogInformation($"writing {buffer.Array.Length} bytes...");
+                        logger.LogInformation($"writing {buffer.Count} bytes...");
 
                         await dest.WriteAsync(buffer.Array, buffer.Offset, buffer.Count);
                         logger.LogInformation($"done.");

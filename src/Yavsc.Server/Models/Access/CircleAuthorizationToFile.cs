@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -8,6 +9,7 @@ using Yavsc.Models.Relationship;
 
 namespace Yavsc.Server.Models.Access
 {
+    [Obsolete]
     public class CircleAuthorizationToFile : ICircleAuthorization
     {
 

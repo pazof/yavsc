@@ -38,6 +38,17 @@ namespace Yavsc.Helpers
             return !name.Any(c => !ValidFileNameChars.Contains(c));
         }
 
+        public static bool IsValidShortFileName(this string name)
+        {
+            if (name.Any(c => !ValidFileNameChars.Contains(c)))
+                return false;
+            
+            if (!name.Any(c => !AlfaNum.Contains(c)))
+                return false;
+                
+            return true;
+        }
+
         // Ensure this path is canonical,
         // No "dirto/./this", neither "dirt/to/that/"
         // no .. and each char must be listed as valid in constants
@@ -69,6 +80,7 @@ namespace Yavsc.Helpers
         // Server side only supports POSIX file systems
         public const char RemoteDirectorySeparator = '/';
 
+        public static char[] AlfaNum = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
         // Only accept descent remote file names
         public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. %#".ToCharArray();
 

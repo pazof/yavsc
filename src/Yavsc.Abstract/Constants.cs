@@ -60,5 +60,7 @@ namespace Yavsc
         public const int MaxUserNameLength = 26;
 
         public const string LivePath = "/live/cast";
+        
+        public const string StreamingPath = "/api/stream/Put";
     }
 }
