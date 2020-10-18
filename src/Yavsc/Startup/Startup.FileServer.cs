@@ -130,7 +130,7 @@ namespace Yavsc
                 _logger.LogInformation("403");
                 // TODO prettier
                 context.Context.Response.StatusCode = 403;
-                context.Context.Response.Redirect("/Home/Status/403");
+                context.Context.Response.Redirect("/Home/Status/403", false);
             }
         }
 
