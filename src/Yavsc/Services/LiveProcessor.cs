@@ -40,8 +40,6 @@ namespace Yavsc.Services
         public async Task<bool> AcceptStream(HttpContext context, ApplicationUser user, string destDir, string fileName)
         {
             // TODO defer request handling
-            
-
             string uname = user.UserName;
             LiveCastHandler liveHandler = null;
             if (Casters.ContainsKey(uname))
@@ -94,6 +92,7 @@ namespace Yavsc.Services
                     var fsInputQueue = new Queue<ArraySegment<byte>>();
 
                     bool endOfInput = false;
+                    sBuffer = new ArraySegment<byte>(buffer,0,received.Count);
                     fsInputQueue.Enqueue(sBuffer);
                     var taskWritingToFs = liveHandler.ReceiveUserFile(user, _logger, destDir, fsInputQueue, fileName, () => endOfInput);
                     
@@ -128,18 +127,20 @@ namespace Yavsc.Services
                              _logger.LogInformation("try and receive new bytes");
 
                             buffer = new byte[Constants.WebSocketsMaxBufLen];
-                            sBuffer = new ArraySegment<byte>(buffer);
                             received = await liveHandler.Socket.ReceiveAsync(sBuffer, liveHandler.TokenSource.Token);
                             
                             _logger.LogInformation($"Received bytes : {received.Count}");
+
+                            sBuffer = new ArraySegment<byte>(buffer,0,received.Count);
                             _logger.LogInformation($"segment : offset: {sBuffer.Offset} count: {sBuffer.Count}");
                             _logger.LogInformation($"Is the end : {received.EndOfMessage}");
-                            fsInputQueue.Enqueue(sBuffer);
+                            
                             if (received.CloseStatus.HasValue)
                             {
                                 endOfInput=true;
                                 _logger.LogInformation($"received a close status: {received.CloseStatus.Value}: {received.CloseStatusDescription}");
                             }
+                            else fsInputQueue.Enqueue(sBuffer);
                             }
                             else endOfInput=true;
                             while (ToClose.Count > 0)
