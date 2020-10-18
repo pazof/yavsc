@@ -116,12 +116,13 @@ namespace cli
 
             CommandOption rootCommandHelpOption = cliapp.HelpOption("-? | -h | --help");
 
-            (new SendMailCommandProvider()).Integrate(cliapp);
-            (new GenerateJsonSchema()).Integrate(cliapp);
+            new SendMailCommandProvider().Integrate(cliapp);
+            new GenerateJsonSchema().Integrate(cliapp);
             (new AuthCommander(loggerFactory)).Integrate(cliapp);
             (new CiBuildCommand()).Integrate(cliapp);
             (new GenerationCommander()).Integrate(cliapp);
             (new Streamer(loggerFactory, cxSettings, usercxSettings )).Integrate(cliapp);
+            new NStreamer(loggerFactory, cxSettings, usercxSettings ).Integrate(cliapp);
 
             if (args.Length == 0)
             {

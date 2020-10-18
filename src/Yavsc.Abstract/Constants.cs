@@ -61,6 +61,6 @@ namespace Yavsc
 
         public const string LivePath = "/live/cast";
         
-        public const string StreamingPath = "/api/stream/Put";
+        public const string StreamingPath = "/api/stream/put";
     }
 }
