@@ -31,8 +31,8 @@
     "contrib"
   ],
   "buildOptions": {
-    "debugType": "full",
-    "emitEntryPoint": true,
+    "debugType": "portable",
+    "emitEntryPoint": false,
     "outputName": "Yavsc",
     "compile": {
       "include": "*.cs",
@@ -185,7 +185,11 @@
     ]
   },
   "scripts": {
-    "prepublish": "make minify"
+    "prepublish": "make minify",
+    "postrestore": [
+        "grep -v '\\.\\.dll' project.lock.json > new.project.lock.json",
+        "mv new.project.lock.json project.lock.json"
+    ]
   },
   "embed": "Views/**/*.cshtml"
 }

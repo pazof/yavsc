@@ -19,6 +19,14 @@ updatedeps:
 	cp src/Yavsc/bin/output/approot/packages/*/*/lib/*net451*/*.dll private/lib/
 	cp src/Yavsc/bin/output/approot/packages/*/*/lib/*dnx451*/*.dll private/lib/
 
+restore:
+	make -C src/OAuth.AspNet.AuthServer  restore
+	make -C src/OAuth.AspNet.Token  restore
+	make -C src/Yavsc.Server restore
+	make -C src/Yavsc restore
+	make -C src/cli restore
+	make -C src/test restore
+
 test:
 	make -C src/test
 
