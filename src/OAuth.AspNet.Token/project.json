@@ -34,5 +34,11 @@
         "dnx451": {
             "frameworkAssemblies": {}
         }
+    },
+    "scripts": {
+      "postrestore": [
+          "grep -v '\\.\\.dll' project.lock.json > new.project.lock.json",
+          "mv new.project.lock.json project.lock.json"
+      ]
     }
 }

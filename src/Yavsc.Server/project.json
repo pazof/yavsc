@@ -120,5 +120,11 @@
     "commands": {
         "ef": "EntityFramework.Commands",
         "gen": "Microsoft.Extensions.CodeGeneration"
+    },
+    "scripts": {
+      "postrestore": [
+          "grep -v '\\.\\.dll' project.lock.json > new.project.lock.json",
+          "mv new.project.lock.json project.lock.json"
+      ]
     }
 }

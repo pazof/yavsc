@@ -30,6 +30,9 @@ node_modules/ansi-to-html:
 test: $(BINTARGET) node_modules/ansi-to-html
 	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regres=no
 
+restore:
+	dnu restore --ignore-failed-sources
+
 clean:
 	rm -rf bin obj testingrepo
 
