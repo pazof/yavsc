@@ -36,17 +36,10 @@ namespace cli
             $"{SiteAccessSheme}://{Authority}:{Port}/token";
         } }
 
+
         [NotMapped]
         [JsonIgnore]
         public string StreamingUrl { get {
-            return Port==0 ? $"ws://{Authority}"+Constants.LivePath:
-            $"ws://{Authority}:{Port}"+Constants.LivePath;
-        } }
-
-
-        [NotMapped]
-        [JsonIgnore]
-        public string NStreamingUrl { get {
             return Port==0 ? $"ws://{Authority}"+Constants.StreamingPath:
             $"ws://{Authority}:{Port}"+Constants.StreamingPath;
         } }
