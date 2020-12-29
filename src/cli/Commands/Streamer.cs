@@ -79,7 +79,7 @@ namespace cli {
         async Task DoStream (Stream stream)
         {
             _tokenSource = new CancellationTokenSource();
-            var url = _cxSettings.NStreamingUrl + "/" + HttpUtility.UrlEncode(_destArg.Value);
+            var url = _cxSettings.StreamingUrl + "/" + HttpUtility.UrlEncode(_destArg.Value);
 
             _logger.LogInformation("Connecting to " + url);
             await _client.ConnectAsync(new Uri(url), _tokenSource.Token);
