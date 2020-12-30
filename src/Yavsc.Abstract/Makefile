@@ -1,5 +1,5 @@
 
-MAKEFILE_DIR=../../scripts/build/make
+MAKEFILE_DIR=../../scripts/make
 BASERESX=Resources/Yavsc.Attributes.Validation.Resources.resx \
 		 Resources/Yavsc.Models.Messaging.Resources.resx \
 		 Resources/Yavsc.Models.IT.Fixing.Bug.resx\

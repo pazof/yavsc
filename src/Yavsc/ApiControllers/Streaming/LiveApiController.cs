@@ -39,9 +39,11 @@ namespace Yavsc.Controllers
             return await _dbContext.Tags.Where( t=> t.Name.StartsWith(id)).Select(t=>t.Name).Take(25).ToArrayAsync();
         }
         
-        [HttpGet("live/{id}")]
-        public async Task<IActionResult> GetLive(string id)
+        [HttpGet("live/uid-{id}")]
+        public async Task<IActionResult> ByUserId(string id)
         {
+            // TODO read access rights
+            // TODO multiple channel
             if (!HttpContext.WebSockets.IsWebSocketRequest) return new BadRequestResult();
             var uid = User.GetUserId();
             var existent = _liveProcessor.Casters[id];
@@ -73,7 +75,7 @@ namespace Yavsc.Controllers
         }
 
 
-        [HttpGet("meta/{id}")]
+        [HttpGet("meta/uid-{id}")]
         public async Task<IActionResult> GetLiveFlow([FromRoute] long id)
         {
             if (!ModelState.IsValid)
@@ -163,29 +165,29 @@ namespace Yavsc.Controllers
         }
 
         // DELETE: api/LiveApi/5
-        [HttpDelete("meta/{id}")]
-        public async Task<IActionResult> DeleteLiveFlow([FromRoute] long id)
+        [HttpDelete("meta/uid-{uid}")]
+        public async Task<IActionResult> DeleteLiveFlow([FromRoute] long uid)
         {
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);
             }
 
-            LiveFlow liveFlow = await _dbContext.LiveFlow.SingleAsync(m => m.Id == id);
+            LiveFlow liveFlow = await _dbContext.LiveFlow.SingleAsync(m => m.Id == uid);
             if (liveFlow == null)
             {
                 return HttpNotFound();
             }
 
-            var uid = User.GetUserId();
-            if (liveFlow.OwnerId!=uid)
+            var cuid = User.GetUserId();
+            if (liveFlow.OwnerId!=cuid)
             {
                 ModelState.AddModelError("id","This flow isn't yours.");
                 return HttpBadRequest(ModelState);
             }
 
             _dbContext.LiveFlow.Remove(liveFlow);
-            await _dbContext.SaveChangesAsync(uid);
+            await _dbContext.SaveChangesAsync(cuid);
 
             return Ok(liveFlow);
         }
