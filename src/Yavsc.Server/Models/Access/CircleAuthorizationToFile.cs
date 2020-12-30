@@ -9,7 +9,7 @@ using Yavsc.Models.Relationship;
 
 namespace Yavsc.Server.Models.Access
 {
-    [Obsolete]
+    [Obsolete("use rules from .access files")]
     public class CircleAuthorizationToFile : ICircleAuthorization
     {
 

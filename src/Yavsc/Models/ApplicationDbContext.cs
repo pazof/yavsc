@@ -285,6 +285,7 @@ namespace Yavsc.Models
         
         public DbSet<BlogTrad> BlogTrad { get; set; }
 
+        [Obsolete("use signaled flows")]
         public DbSet<LiveFlow> LiveFlow { get; set; }
 
         public DbSet<ChatRoomAccess> ChatRoomAccess { get; set; }

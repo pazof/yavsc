@@ -10,8 +10,20 @@ using RestSharp;
 using RestSharp.Deserializers;
 using System.Linq;
 
+
 namespace GoogleTranslateNET
 {
+    public class NoSevrerSideImplementationAttribute : Attribute
+    {
+        public string Reason { get ; private set; }
+        public NoSevrerSideImplementationAttribute(string reason) : base()
+        {
+            Reason  = reason;
+        }
+
+    }
+
+    [NoSevrerSideImplementation("none")]
     public class GoogleTranslate
     {
         private string _key;

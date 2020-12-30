@@ -1,5 +1,5 @@
 SOURCE_DIR=$(HOME)/workspace/yavsc
-MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
+MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
 BASERESX=Resources/Yavsc.Models.Relationship.HyperLink.resx \
   Resources/Yavsc.Models.Streaming.LiveFlow.resx
 BASERESXGEN=$(BASERESX:.resx=.Designer.cs)
