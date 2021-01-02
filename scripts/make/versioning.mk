@@ -15,5 +15,3 @@ ifndef version
 else
 	@echo 'Got version number : $(version)'
 endif
-
-
