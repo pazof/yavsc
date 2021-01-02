@@ -13,7 +13,6 @@ using Yavsc.Services;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.WebEncoders;
 using test.Settings;
-
 namespace test
 {
     public class Startup
@@ -22,7 +21,7 @@ namespace test
         public static IConfiguration Configuration { get; set; }
 
         public static string HostingFullName { get; private set; }
-        public static DbConnectionSettings DbSettings { get; private set; }
+        public static Testing Testing { get; private set; }
 
         ILogger logger;
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
@@ -55,6 +54,8 @@ namespace test
             services.Configure<SmtpSettings>(smtpSettingsconf);
             var dbSettingsconf = Configuration.GetSection("ConnectionStrings");
             services.Configure<DbConnectionSettings>(dbSettingsconf);
+            var testingconf = Configuration.GetSection("Testing");
+            services.Configure<Testing>(testingconf);
             
             services.AddInstance(typeof(ILoggerFactory), new LoggerFactory());
             services.AddTransient(typeof(IEmailSender), typeof(MailSender));
@@ -70,7 +71,7 @@ namespace test
             services.AddEntityFramework()
               .AddNpgsql() 
               .AddDbContext<ApplicationDbContext>(
-                  db => db.UseNpgsql(Startup.DbSettings.Default)
+                  db => db.UseNpgsql(Testing.ConnectionStrings.Default)
               );
 
             services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
@@ -78,19 +79,19 @@ namespace test
         }
 
         public void Configure (IApplicationBuilder app, IHostingEnvironment env,
-        IOptions<SiteSettings> siteSettings,
-        IOptions<DbConnectionSettings> cxOptions,
+        IOptions<Testing> testingSettings,
          ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             logger = loggerFactory.CreateLogger<Startup>();
             logger.LogInformation(env.EnvironmentName);
-
-            DbSettings = cxOptions.Value;
-            logger.LogInformation($"default db : {DbSettings.Default}");
-            logger.LogInformation($"test db : {DbSettings.Testing}");
-            AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", DbSettings.Default);
+            Testing = testingSettings.Value;
+            if (Testing.ConnectionStrings==null)
+                logger.LogInformation($" Testing.ConnectionStrings is null : ");
+            else {
+                AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", Testing.ConnectionStrings.Default);
+            }
         
             var authConf = Configuration.GetSection("Authentication").GetSection("Yavsc");
             var clientId = authConf.GetSection("ClientId").Value;

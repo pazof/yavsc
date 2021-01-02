@@ -10,21 +10,25 @@ using Yavsc;
 using Yavsc.Models;
 using Xunit;
 using Npgsql;
+using test.Settings;
+using Microsoft.Data.Entity;
+using Microsoft.Data.Entity.Metadata.Conventions;
 
 namespace test
 {
     [Trait("regres", "no")]
-    public class ServerSideFixture : IDisposable { 
+    public class ServerSideFixture : IDisposable
+    {
         SiteSettings _siteSetup;
         ILogger _logger;
         IApplication _app;
         EMailer _mailer;
         ILoggerFactory _loggerFactory;
         IEmailSender _mailSender;
-        
-        public static string ApiKey  => "53f4d5da-93a9-4584-82f9-b8fdf243b002" ;
 
-        public ApplicationDbContext DbContext { get; private set;  } 
+        public static string ApiKey => "53f4d5da-93a9-4584-82f9-b8fdf243b002";
+
+        public ApplicationDbContext DbContext { get; private set; }
         public SiteSettings SiteSetup
         {
             get
@@ -37,6 +41,12 @@ namespace test
                 _siteSetup = value;
             }
         }
+
+        /// <summary>
+        /// initialized by Init
+        /// </summary>
+        /// <value></value>
+        public static object TestingSetup { get; private set; }
 
         public IEmailSender MailSender
         {
@@ -64,10 +74,12 @@ namespace test
             }
         }
 
+
+
         internal void UpgradeDb()
         {
             Microsoft.Data.Entity.Commands.Program.Main(
-                new string [] { "database", "update" });
+                new string[] { "database", "update" });
         }
 
         public ILogger Logger
@@ -82,97 +94,109 @@ namespace test
                 _logger = value;
             }
         }
-        public bool DbCreated { get; private set; }
+        bool dbCreated;
+        private WebHostBuilder host;
+        private IHostingEngine hostengnine;
+
 
 
         // 
         public ServerSideFixture()
         {
-            InitTestHost();
-            Logger.LogInformation("ServerSideFixture created.");
-        }
+             host = new WebHostBuilder();
 
-        [Fact]
-        void InitTestHost()
-        {
-
-            var host = new WebHostBuilder();
-
-            var hostengnine = host
+            hostengnine = host
             .UseEnvironment("Development")
             .UseServer("test")
             .UseStartup<test.Startup>()
             .Build();
 
             App = hostengnine.Start();
+
+            //  hostengnine.ApplicationServices
+
             _mailer = App.Services.GetService(typeof(EMailer)) as EMailer;
             _loggerFactory = App.Services.GetService(typeof(ILoggerFactory)) as ILoggerFactory;
-           
-            Logger = _loggerFactory.CreateLogger<ServerSideFixture> ();
             var siteSetup = App.Services.GetService(typeof(IOptions<SiteSettings>)) as IOptions<SiteSettings>;
-            SiteSetup = siteSetup.Value;
+            var testingSetup = App.Services.GetService(typeof(IOptions<Testing>)) as IOptions<Testing>;
             MailSender = App.Services.GetService(typeof(IEmailSender)) as IEmailSender;
-
-            var builder = new DbConnectionStringBuilder();
-            builder.ConnectionString = Startup.DbSettings.Testing;
-            Logger.LogInformation("testing database:" +builder["Database"]);
-            TestingDatabase = (string) builder["Database"];
-
-            CheckDbExistence();
-            if (!DbCreated)
-                CreateTestDb();
             DbContext = App.Services.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
 
+            SiteSetup = siteSetup.Value;
+            TestingSetup = testingSetup.Value;
+
+
+            Logger = _loggerFactory.CreateLogger<ServerSideFixture>();
+
+            var builder = new DbConnectionStringBuilder
+            {
+                ConnectionString = Startup.Testing.ConnectionStrings.Default
+            };
+            ConventionSet conventions = new ConventionSet();
+
+            modelBuilder = new ModelBuilder(conventions);
+            ApplicationDbContext context = new ApplicationDbContext();
+            
+
+
+            TestingDatabase = (string)builder["Database"];
+            Logger.LogInformation("ServerSideFixture created.");
         }
+
+        [Fact]
+        public void InitTestHost()
+        {
+
+           
+
+            EnsureTestDb();
+
+        }
+
+        private ModelBuilder modelBuilder;
 
         public string TestingDatabase { get; private set; }
 
         public void CheckDbExistence()
         {
             using (
-            NpgsqlConnection cx = new NpgsqlConnection(Startup.DbSettings.DatabaseCtor))
+            NpgsqlConnection cx = new NpgsqlConnection(Startup.Testing.ConnectionStrings.DatabaseCtor))
             {
                 cx.Open();
                 var command = cx.CreateCommand();
                 command.CommandText = $"SELECT 1 FROM pg_database WHERE datname='{TestingDatabase}';";
-                DbCreated = (command.ExecuteScalar()!=null);
-
-                _logger.LogInformation($"DbCreated:{DbCreated}");
+                dbCreated = (command.ExecuteScalar()!=null);
+                _logger.LogInformation($"DbCreated:{dbCreated}");
                 cx.Close();
             }
         }
-        public void CreateTestDb()
+
+        public bool EnsureTestDb()
         {
-            if (!DbCreated)
-            using (
-            NpgsqlConnection cx = new NpgsqlConnection(Startup.DbSettings.DatabaseCtor))
+            CheckDbExistence();
+            if (!dbCreated) 
             {
-                cx.Open();
-                var command = cx.CreateCommand();
-                command.CommandText = $"create database \"{TestingDatabase}\";";
-                command.ExecuteNonQuery();
+                 using (NpgsqlConnection cx = new NpgsqlConnection(Startup.Testing.ConnectionStrings.DatabaseCtor))
+                {
 
-                _logger.LogInformation($"database created.");
-                cx.Close();
+                    cx.Open();
+                    var command = cx.CreateCommand();
+                    using (NpgsqlConnection ownercx =  new NpgsqlConnection(Startup.Testing.ConnectionStrings.Default))
+                    command.CommandText = $"create database '{TestingDatabase}' OWNER = '{ownercx.UserName}';";
+                    command.ExecuteNonQuery();
+                }
+                dbCreated = DbContext.Database.EnsureCreated();
             }
-            DbCreated=true;
+            return dbCreated;
         }
+
         public void DropTestDb()
         {
-            if (DbCreated)
-            using (
-            NpgsqlConnection cx = new NpgsqlConnection(Startup.DbSettings.DatabaseCtor))
-            {
-                cx.Open();
-                var command = cx.CreateCommand();
-                command.CommandText = $"drop database \"{TestingDatabase}\"";
-                command.ExecuteNonQuery();
-                _logger.LogInformation($"database dropped");
-                cx.Close();
-            }
-            DbCreated=false;
-        } 
-          
+            if (dbCreated)
+                DbContext.Database.EnsureDeleted();
+            dbCreated = false;
+        }
+
         public void Dispose()
         {
             Logger.LogInformation("Disposing");

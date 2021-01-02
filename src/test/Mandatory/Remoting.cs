@@ -4,10 +4,13 @@
 // */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Hosting;
+using Microsoft.Extensions.PlatformAbstractions;
 using Xunit;
 using Xunit.Abstractions;
 using Yavsc.Authentication;
@@ -22,6 +25,7 @@ namespace test
         public Remoting(ServerSideFixture serverFixture, ITestOutputHelper output)
         : base(output, serverFixture)
         {
+            
         }
 
         [Theory]
@@ -42,10 +46,14 @@ namespace test
             {
                 var oauthor = new OAuthenticator(clientId, clientSecret, scope,
                 new Uri(authorizeUrl), new Uri(redirectUrl), new Uri(accessTokenUrl));
-                var query = new Dictionary<string, string>();
-                query[Parameters.Username] = login;
-                query[Parameters.Password] = pass;
-                query[Parameters.GrantType] = GrantTypes.Password;
+                var query = new Dictionary<string, string>
+                {
+                    [Parameters.Username] = Startup.Testing.ValidCreds[0].UserName,
+                    [Parameters.Password] = Startup.Testing.ValidCreds[0].Password,
+                    [Parameters.GrantType] = GrantTypes.Password
+                };
+                EnsureWeb();
+
                 var result = await oauthor.RequestAccessTokenAsync(query);
                 Console.WriteLine(">> Got an output");
                 Console.WriteLine(Parameters.AccessToken + ": " + result[Parameters.AccessToken]);
@@ -68,49 +76,46 @@ namespace test
                 throw;
             }
         }
-        public static string GetPassword()
+        internal static void EnsureWeb()
         {
-            var pwd = new StringBuilder();
-            while (true)
-            {
-                var len = pwd.ToString().Length;
-                ConsoleKeyInfo i = Console.ReadKey(true);
-                if (i.Key == ConsoleKey.Enter)
-                {
-                    break;
-                }
-                else if (i.Key == ConsoleKey.Backspace)
-                {
-                    if (pwd.Length > 0)
-                    {
-                        pwd.Remove(len - 1, 1);
-                        Console.Write("\b \b");
-                    }
-                }
-                else
-                {
-                    pwd.Append(i.KeyChar);
-                    Console.Write("*");
-                }
-            }
-            return pwd.ToString();
+            DirectoryInfo di = new DirectoryInfo("../Yavsc");
+            Environment.CurrentDirectory = di.FullName;
+            var host = new WebHostBuilder();
+             
+            var hostengine = host
+            
+            .UseEnvironment("Development")
+
+            .UseServer("web")
+            .UseStartup<Yavsc.Startup>()
+            .Build();
+// hostengine.ApplicationServices
+            var startup = hostengine.Start();
         }
         public static IEnumerable<object[]> GetLoginIntentData(int numTests)
         {
 
             var allData = new List<object[]>();
-            Console.WriteLine($"Please, enter {numTests}:");
 
-            for (int iTest=0; iTest<numTests; iTest++)
+            for (int iTest=0; iTest < numTests && iTest < Startup.Testing.ValidCreds.Length; iTest++)
             {
-                Console.Write("Please, enter a login:");
-                var login = Console.ReadLine();
-                Console.Write("Please, enter a pass:");
-                var pass = GetPassword();
+
+                var login = Startup.Testing.ValidCreds[iTest].UserName;
+                var pass =  Startup.Testing.ValidCreds[iTest].Password;
 
                 allData.Add(new object[] { ServerSideFixture.ApiKey, "blouh", "profile",
                 "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
-                    "http://localhost:5000/token",login, pass });
+                    "http://localhost:5000/token",login, pass});
+            }
+            var valid = allData.Count;
+            for (int iTest=0; iTest + valid < numTests  && iTest < Startup.Testing.InvalidCreds.Length; iTest++)
+            {
+                var login = Startup.Testing.InvalidCreds[iTest].UserName;
+                var pass =  Startup.Testing.InvalidCreds[iTest].Password;
+
+                allData.Add(new object[] { ServerSideFixture.ApiKey, "blouh", "profile",
+                "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
+                    "http://localhost:5000/token",login, 0 });
             }
             return allData.Take(numTests);
 
