@@ -28,7 +28,7 @@ namespace test
 
 
     [Collection("Yavsc mandatory success story")]
-    [Trait("regres", "no")]
+    [Trait("regres", "yes")]
     public class BatchTests: BaseTestContext, IClassFixture<ServerSideFixture>, IDisposable
     {
         ServerSideFixture _fixture;

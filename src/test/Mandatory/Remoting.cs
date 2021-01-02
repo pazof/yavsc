@@ -19,7 +19,7 @@ using static OAuth.AspNet.AuthServer.Constants;
 namespace test
 {
     [Collection("Yavsc Work In Progress")]
-    [Trait("regres", "no")]
+    [Trait("regres", "yes")]
     public class Remoting : BaseTestContext, IClassFixture<ServerSideFixture>
     {
         public Remoting(ServerSideFixture serverFixture, ITestOutputHelper output)
@@ -78,6 +78,8 @@ namespace test
         }
         internal static void EnsureWeb()
         {
+            throw new NotImplementedException();
+
             DirectoryInfo di = new DirectoryInfo("../Yavsc");
             Environment.CurrentDirectory = di.FullName;
             var host = new WebHostBuilder();
@@ -86,7 +88,7 @@ namespace test
             
             .UseEnvironment("Development")
 
-            .UseServer("web")
+            .UseServer("Microsoft.AspNet.Server.Kestrel")
             .UseStartup<Yavsc.Startup>()
             .Build();
 // hostengine.ApplicationServices
