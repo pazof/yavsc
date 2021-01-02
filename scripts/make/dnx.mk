@@ -15,7 +15,6 @@ BINTARGET=$(PRJNAME).dll
 BINTARGETPATH=bin/$(CONFIGURATION)/$(FRAMEWORKALIAS)/$(BINTARGET)
 PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
 dnu=dnu
-dnx=ndnx
 
 # OBS SUBDIRS=Yavsc.Server Yavsc.Abstract Yavsc cli
 #
@@ -27,6 +26,9 @@ git_status := $(shell git status -s --porcelain |wc -l)
 
 all: $(BINTARGETPATH)
 
+fixSystemXML:
+	@# fixing package id reference case, to System.Xml, from package NJsonSchema.CodeGeneration.CSharp
+	@sed 's/System.XML/System.Xml/' project.lock.json > project.lock.json.new && mv project.lock.json.new project.lock.json
 
 restore:
 	touch project.json

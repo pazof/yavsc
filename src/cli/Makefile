@@ -1,29 +1,27 @@
 SOURCE_DIR=$(HOME)/workspace/yavsc
-MAKEFILE_DIR=$(SOURCE_DIR)/scripts/build/make
-include $(MAKEFILE_DIR)/versioning.mk
-include $(MAKEFILE_DIR)/dnx.mk
-
+MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
 MSBUILD=msbuild
 
 all: $(BINTARGETPATH)
 
+include $(MAKEFILE_DIR)/dnx.mk
+
+# makes version
+include $(MAKEFILE_DIR)/versioning.mk
+
 msbuild-restore:
-	$(MSBUILD) cli.csproj /t:Restore
+	$(MSBUILD) $(PRJNAME).csproj /t:Restore
 
 check: run
 
-fixSystemXML:
-	@# fixing package id reference case, to System.Xml, from package NJsonSchema.CodeGeneration.CSharp
-	@sed 's/System.XML/System.Xml/' project.lock.json > project.lock.json.new && mv project.lock.json.new project.lock.json
-
-
-$(BINTARGETPATH): project.lock.json
+: project.lock.json
+	@dnu build --configuration=$(CONFIGURATION) 
 
 run: $(BINTARGETPATH)
 	ASPNET_ENV=$(ASPNET_ENV) dnx --configuration=$(CONFIGURATION) run send monthly
 
 info:
-	@echo $(PRJNAME)
+	@echo $(PRJNAME) : $(BINTARGETPATH) $(version)
 
 # Due to NJsonSchema.CodeGeneration.CSharp package:
-.PHONY: project.lock.json
+.PHONY: $(BINTARGETPATH)
