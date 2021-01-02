@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 namespace test.Mandatory
 {
     [Collection("Database")]
-    [Trait("regres", "no")]
+    [Trait("regres", "yes")]
     [Trait("dev", "wip")]
     public class Database: IClassFixture<ServerSideFixture>, IDisposable
     {
@@ -16,9 +16,8 @@ namespace test.Mandatory
             this.output = output;
             _serverFixture = serverFixture;
             try {
-                
-                 = new Microsoft.Data.Entity.Infrastructure.DatabaseFacade(_serverFixture.DbContext.Database);
-                  
+                if (_serverFixture.DbCreated)
+                 
             _serverFixture.DropTestDb();
 
             }
@@ -36,7 +35,6 @@ namespace test.Mandatory
         [Fact]
         public void InstallFromScratchUsingPoweredNpgsqlUser()
         {
-            
             _serverFixture.EnsureTestDb();
             _serverFixture.UpgradeDb();
         }

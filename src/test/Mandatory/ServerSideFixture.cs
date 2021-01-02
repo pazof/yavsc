@@ -140,18 +140,10 @@ namespace test
 
 
             TestingDatabase = (string)builder["Database"];
+            
             Logger.LogInformation("ServerSideFixture created.");
         }
 
-        [Fact]
-        public void InitTestHost()
-        {
-
-           
-
-            EnsureTestDb();
-
-        }
 
         private ModelBuilder modelBuilder;
 
@@ -201,6 +193,8 @@ namespace test
         {
             Logger.LogInformation("Disposing");
         }
+
+        public bool DbCreated { get { return dbCreated; } }
     }
 }
 
