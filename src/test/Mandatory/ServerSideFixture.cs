@@ -155,6 +155,7 @@ namespace test
             NpgsqlConnection cx = new NpgsqlConnection(Startup.Testing.ConnectionStrings.DatabaseCtor))
             {
                 cx.Open();
+                _logger.LogInformation($"check db for TestingDatabase:{TestingDatabase}");
                 var command = cx.CreateCommand();
                 command.CommandText = $"SELECT 1 FROM pg_database WHERE datname='{TestingDatabase}';";
                 dbCreated = (command.ExecuteScalar()!=null);
@@ -165,19 +166,21 @@ namespace test
 
         public bool EnsureTestDb()
         {
-            CheckDbExistence();
-            if (!dbCreated) 
+            if (!DbCreated) 
             {
                  using (NpgsqlConnection cx = new NpgsqlConnection(Startup.Testing.ConnectionStrings.DatabaseCtor))
                 {
+                _logger.LogInformation($"create database for TestingDatabase : {TestingDatabase}");
 
                     cx.Open();
                     var command = cx.CreateCommand();
                     using (NpgsqlConnection ownercx =  new NpgsqlConnection(Startup.Testing.ConnectionStrings.Default))
-                    command.CommandText = $"create database '{TestingDatabase}' OWNER = '{ownercx.UserName}';";
+                    command.CommandText = $"create database \"{TestingDatabase}\" OWNER \"{ownercx.UserName}\";";
+                    _logger.LogInformation(command.CommandText);
                     command.ExecuteNonQuery();
                 }
-                dbCreated = DbContext.Database.EnsureCreated();
+                dbCreated = true;
+
             }
             return dbCreated;
         }
@@ -194,7 +197,9 @@ namespace test
             Logger.LogInformation("Disposing");
         }
 
-        public bool DbCreated { get { return dbCreated; } }
+        public bool DbCreated { get { 
+            CheckDbExistence();
+            return dbCreated; } }
     }
 }
 

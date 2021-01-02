@@ -41,7 +41,8 @@ namespace test
         [Fact]
         public void GitClone()
         {
-            _serverFixture.EnsureTestDb();
+            Assert.True(_serverFixture.EnsureTestDb());
+            Assert.NotNull (_fixture.DbContext.Project);
             var firstProject = _fixture.DbContext.Project.Include(p=>p.Repository).FirstOrDefault();
             Assert.NotNull (firstProject);
             var di = new DirectoryInfo(_serverFixture.SiteSetup.GitRepository);
