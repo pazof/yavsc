@@ -31,25 +31,21 @@ namespace test
     [Trait("regres", "no")]
     public class BatchTests: BaseTestContext, IClassFixture<ServerSideFixture>, IDisposable
     {
-        readonly ApplicationDbContext _dbContext;
         ServerSideFixture _fixture;
 
         public  BatchTests(ITestOutputHelper output, ServerSideFixture fixture) : base (output, fixture)
         {
-          _dbContext = fixture.DbContext;
           _fixture = fixture;
-            if (!_fixture.DbCreated)
-                _fixture.CreateTestDb();
         }
 
         [Fact]
         public void GitClone()
         {
-            var firstProject = _dbContext.Project.Include(p=>p.Repository).FirstOrDefault();
+            _serverFixture.EnsureTestDb();
+            var firstProject = _fixture.DbContext.Project.Include(p=>p.Repository).FirstOrDefault();
             Assert.NotNull (firstProject);
             var di = new DirectoryInfo(_serverFixture.SiteSetup.GitRepository);
             if (!di.Exists) di.Create();
-
 
             var clone = new GitClone(_serverFixture.SiteSetup.GitRepository);
             clone.Launch(firstProject);
@@ -86,12 +82,12 @@ namespace test
         [Fact]
         void HaveHost()
         {
-            beforeCompileContext = CreateYavscCompilationContext();
+            
             
         }
 
         [Fact]
-        public void AConfigurationRoot()
+        public void EnsureConfigurationRoot()
         {
             var builder = new ConfigurationBuilder();
             builder.AddJsonFile( "appsettings.json", false);
@@ -149,12 +145,11 @@ namespace test
             {
                 options.ResourcesPath = "Resources";
             });
-            var connectionString = configuration["ConnectionStrings:Default"];
-            AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", connectionString);
+            AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", Startup.Testing.ConnectionStrings.Default);
             serviceCollection.AddEntityFramework()
               .AddNpgsql()
               .AddDbContext<ApplicationDbContext>(
-                                 db => db.UseNpgsql(connectionString)
+                                 db => db.UseNpgsql(Startup.Testing.ConnectionStrings.Default)
               );
             provider = serviceCollection.BuildServiceProvider();
         }
@@ -164,12 +159,11 @@ namespace test
         public void ARequestAppDelegate()
         {
             var services = new ServiceCollection();
-           
             services.AddTransient<IRuntimeEnvironment>(
                 svs => PlatformServices.Default.Runtime
             );
 
-            HaveHost();
+            beforeCompileContext = CreateYavscCompilationContext();
             var prjDir = this.beforeCompileContext.ProjectContext.ProjectDirectory;
             ConfigureServices(services, prjDir, out configurationRoot, out serviceProvider);
 
@@ -177,6 +171,7 @@ namespace test
             var rtd = app.Build();
             
         }
+
 
         [Fact]
         public void InitApplicationBuilder()
@@ -203,9 +198,7 @@ namespace test
             {
                 Directory.Delete(Path.Combine(gitRepo,"yavsc"), true);
             }
-            if (_fixture.DbCreated)
-                _fixture.DropTestDb();
-
+            _fixture.DropTestDb();
         }
     }
 }

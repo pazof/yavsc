@@ -15,10 +15,18 @@ namespace test.Mandatory
         {
             this.output = output;
             _serverFixture = serverFixture;
-            if (_serverFixture.DbCreated)
-                _serverFixture.DropTestDb();
-            
-            output.WriteLine($"Startup.DbSettings.Testing is {Startup.DbSettings.Testing}");
+            try {
+                
+                 = new Microsoft.Data.Entity.Infrastructure.DatabaseFacade(_serverFixture.DbContext.Database);
+                  
+            _serverFixture.DropTestDb();
+
+            }
+            catch (Exception)
+            {
+                output.WriteLine("db not dropped");
+            }
+            output.WriteLine($"Startup.Testing.ConnectionStrings.DatabaseCtor is {Startup.Testing.ConnectionStrings.DatabaseCtor}");
         }
 
         /// <summary>
@@ -28,14 +36,14 @@ namespace test.Mandatory
         [Fact]
         public void InstallFromScratchUsingPoweredNpgsqlUser()
         {
-            _serverFixture.CreateTestDb();
+            
+            _serverFixture.EnsureTestDb();
             _serverFixture.UpgradeDb();
         }
 
         public void Dispose()
         {
-            if (_serverFixture.DbCreated)
-                _serverFixture.DropTestDb();
+            _serverFixture.DropTestDb();
 
         }
     }

@@ -4,6 +4,5 @@ namespace test.Settings
     {
         public string DatabaseCtor { get; set; }
         public string Default { get; set; }
-        public string Testing { get; set; }
     }
 }
