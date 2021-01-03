@@ -22,10 +22,12 @@ namespace test
     [Trait("regres", "yes")]
     public class Remoting : BaseTestContext, IClassFixture<ServerSideFixture>
     {
+        RegiserAPI r;
         public Remoting(ServerSideFixture serverFixture, ITestOutputHelper output)
         : base(output, serverFixture)
         {
             
+                r = new RegiserAPI(serverFixture, output);
         }
 
         [Theory]
@@ -44,6 +46,8 @@ namespace test
         {
             try
             {
+                r.EnsureWeb();
+
                 var oauthor = new OAuthenticator(clientId, clientSecret, scope,
                 new Uri(authorizeUrl), new Uri(redirectUrl), new Uri(accessTokenUrl));
                 var query = new Dictionary<string, string>
@@ -52,7 +56,6 @@ namespace test
                     [Parameters.Password] = Startup.Testing.ValidCreds[0].Password,
                     [Parameters.GrantType] = GrantTypes.Password
                 };
-                EnsureWeb();
 
                 var result = await oauthor.RequestAccessTokenAsync(query);
                 Console.WriteLine(">> Got an output");
@@ -76,24 +79,7 @@ namespace test
                 throw;
             }
         }
-        internal static void EnsureWeb()
-        {
-            throw new NotImplementedException();
-
-            DirectoryInfo di = new DirectoryInfo("../Yavsc");
-            Environment.CurrentDirectory = di.FullName;
-            var host = new WebHostBuilder();
-             
-            var hostengine = host
-            
-            .UseEnvironment("Development")
-
-            .UseServer("Microsoft.AspNet.Server.Kestrel")
-            .UseStartup<Yavsc.Startup>()
-            .Build();
-// hostengine.ApplicationServices
-            var startup = hostengine.Start();
-        }
+        
         public static IEnumerable<object[]> GetLoginIntentData(int numTests)
         {
 
