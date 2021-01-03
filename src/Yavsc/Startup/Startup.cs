@@ -56,8 +56,6 @@ namespace Yavsc
         public static PayPalSettings PayPalSettings { get; private set; }
         private static ILogger _logger;
 
-        static ILiveProcessor _liveProcessor;
-
         /// <summary>
         /// generating reset password and confirmation tokens
         /// </summary>
@@ -144,7 +142,6 @@ namespace Yavsc
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<GoogleAuthSettings>), typeof(OptionsManager<GoogleAuthSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<RequestLocalizationOptions>), typeof(OptionsManager<RequestLocalizationOptions>)));
-
             services.Add(ServiceDescriptor.Singleton(typeof(IDiskUsageTracker), typeof(DiskUsageTracker)));
             
             services.Configure<RequestLocalizationOptions>(options =>
@@ -296,14 +293,11 @@ namespace Yavsc
         IOptions<GoogleAuthSettings> googleSettings,
         IStringLocalizer<Yavsc.YavscLocalisation> localizer,
         UserManager<ApplicationUser> usermanager,
-        ILiveProcessor liveProcessor,
          ILoggerFactory loggerFactory)
         {
             Services = app.ApplicationServices;
-
             _dbContext = dbContext;
             _usermanager = usermanager;
-            _liveProcessor = liveProcessor;
             GoogleSettings = googleSettings.Value;
             ResourcesHelpers.GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
@@ -433,6 +427,9 @@ namespace Yavsc
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
             _logger.LogInformation("LocalApplicationData: " + Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
+            
+            #if EXPERIMENTAL
+            
             app.Use(async (context, next) =>
                 {
                     const string livePath = "live";
@@ -499,6 +496,9 @@ namespace Yavsc
                     }
 
                 });
+                
+                #endif
+
 
             // FIXME
             app.UseStatusCodePages();

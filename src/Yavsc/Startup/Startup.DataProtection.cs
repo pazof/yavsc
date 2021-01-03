@@ -24,7 +24,7 @@ namespace Yavsc
                      new DirectoryInfo(Configuration["DataProtection:Keys:Dir"]));
             });
         }
-        private sealed class SystemWebApplicationDiscriminator : IApplicationDiscriminator
+        public sealed class SystemWebApplicationDiscriminator : IApplicationDiscriminator
         {
             private readonly Lazy<string> _lazyDiscriminator = new Lazy<string>(GetAppDiscriminatorCore);
 
