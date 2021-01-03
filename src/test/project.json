@@ -40,6 +40,10 @@
     "EntityFramework7.Npgsql": "3.1.0-rc1-3",
     "EntityFramework7.Npgsql.Design": "3.1.0-rc1-5",
     "Newtonsoft.Json": "7.0.1",
+    "Microsoft.AspNet.Mvc": "6.0.0-rc1-*",
+    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-*",
+    "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1-*",
+    "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-*",
     "xunit": "2.1.0",
     "xunit.analyzers": "0.9.0",
     "xunit.assert": "2.1.0",
@@ -51,6 +55,10 @@
        "target": "project",
        "type": "build"
            },
+    "Yavsc.Abstract": {
+      "target": "project",
+      "type": "build"
+    },
     "Yavsc": {
       "target": "project",
       "type": "build"
@@ -60,6 +68,7 @@
     "dnx451": {}
   },
   "commands": {
+    "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls https://*:5001",
     "test": "xunit.runner.dnx"
   },
   "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",

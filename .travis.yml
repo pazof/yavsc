@@ -10,7 +10,8 @@ install:
 - cd ../OAuth.AspNet.AuthServer && dnu restore --ignore-failed-sources
 - cd ../Yavsc.Abstract && dnu restore --ignore-failed-sources
 - cd ../Yavsc.Server && dnu restore --ignore-failed-sources
-- cd ../Yavsc && dnu restore --ignore-failed-sources
+- cd ../yavsc && dnu restore --ignore-failed-sources
+- cd ../test && dnu restore --ignore-failed-sources
 script:
 - "dnu build"
 
