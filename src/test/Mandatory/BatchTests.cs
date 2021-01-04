@@ -25,10 +25,8 @@ using Yavsc.Server.Models.IT.SourceCode;
 
 namespace test
 {
-
-
     [Collection("Yavsc mandatory success story")]
-    [Trait("regres", "yes")]
+    [Trait("regression", "oui")]
     public class BatchTests: BaseTestContext, IClassFixture<ServerSideFixture>, IDisposable
     {
         ServerSideFixture _fixture;

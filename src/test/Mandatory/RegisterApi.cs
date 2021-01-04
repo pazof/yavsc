@@ -22,7 +22,7 @@ using Microsoft.AspNet.Mvc.Razor;
 namespace test
 {
     [Collection("Yavsc Work In Progress")]
-    [Trait("regres", "yes")]
+    [Trait("regression", "oui")]
     [Trait("module", "api")]
     public class RegiserAPI : BaseTestContext, IClassFixture<ServerSideFixture>
     {

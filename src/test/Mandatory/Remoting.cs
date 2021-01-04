@@ -19,7 +19,7 @@ using static OAuth.AspNet.AuthServer.Constants;
 namespace test
 {
     [Collection("Yavsc Work In Progress")]
-    [Trait("regres", "yes")]
+    [Trait("regression", "oui")]
     public class Remoting : BaseTestContext, IClassFixture<ServerSideFixture>
     {
         RegiserAPI r;

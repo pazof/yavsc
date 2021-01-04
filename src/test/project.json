@@ -5,6 +5,28 @@
   "authors": [
     "Paul Schneider <paul@pschneider.fr>"
   ],
+  "resource": "Resources/**/*.resx",
+  "buildOptions": {
+    "debugType": "full",
+    "emitEntryPoint": true,
+    "compile": {
+      "include": "*.cs",
+      "exclude": [
+        "contrib"
+      ]
+    },
+    "embed": [
+      "Resources/**/*.resx"
+    ],
+    "define": ["USERMANAGER"]
+  },
+  "frameworks": {
+    "dnx451": {}
+  },
+  "commands": {
+    "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls https://*:5001",
+    "test": "xunit.runner.dnx"
+  },
   "packOptions": {
     "repository": {
       "type": "git",
@@ -18,7 +40,6 @@
     "summary": "Yet another very small company",
     "projectUrl": "http://yavsc.pschneider.fr",
     "tags": [
-      "Blog",
       "Blog",
       "PoS",
       "Chat"
@@ -63,13 +84,6 @@
       "target": "project",
       "type": "build"
     }
-  },
-  "frameworks": {
-    "dnx451": {}
-  },
-  "commands": {
-    "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.Kestrel --server.urls https://*:5001",
-    "test": "xunit.runner.dnx"
   },
   "userSecretsId": "aspnet5-YavscWeb-a0dadd21-2ced-43d3-96f9-7e504345102f",
   "scripts": {
