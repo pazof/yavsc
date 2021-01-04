@@ -1,10 +1,12 @@
 CONFIGURATION=Debug
 BINTARGET=bin/$(CONFIGURATION)/dnx451/test.dll
+SOURCE_DIR=$(HOME)/workspace/yavsc
+MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
+MSBUILD=msbuild
 
 all: test
 
-project.lock.json: project.json
-	dnu restore --ignore-failed-sources
+include $(MAKEFILE_DIR)/dnx.mk
 
 ../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll:
 	make -C ../Yavsc
@@ -18,23 +20,21 @@ project.lock.json: project.json
 $(BINTARGET): project.lock.json ../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll ../Yavsc.Abstract/bin/$(CONFIGURATION)/dnx451/Yavsc.Abstract.dll ../Yavsc.Server/bin/$(CONFIGURATION)/dnx451/Yavsc.Server.dll
 	dnu build --configuration $(CONFIGURATION)
 
-breaking:
-	dnx test -trait regres=yes
+non-regression: $(BINTARGET) node_modules/ansi-to-html
+	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regression=non
 
-testdev: $(BINTARGET)
+regression: $(BINTARGET) node_modules/ansi-to-html
+	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regression=oui
+
+test: non-regression
+
+testdev: $(BINTARGET) 
 	ASPNET_ENV=Development dnx test -maxthreads 1 -trait dev=wip 
 
 node_modules/ansi-to-html: 
 	npm install ansi-to-html
 
-test: $(BINTARGET) node_modules/ansi-to-html
-	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regres=no
-
-restore:
-	dnu restore --ignore-failed-sources
-
 clean:
 	rm -rf bin obj testingrepo
 
 .PHONY: test
-

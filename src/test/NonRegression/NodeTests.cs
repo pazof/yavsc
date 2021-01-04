@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace test
 {
 
-    [Trait("regres", "no")]
+    [Trait("regression", "non")]
     public class NodeTests
     {
         [Fact]

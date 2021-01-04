@@ -2,7 +2,6 @@
 namespace test {
     public class ResxResources {
         const string resPath = "Resources/Test.TestResources.resx";
-
         public void HaveAResxLoader()
         {
             System.Resources.ResourceReader loader = new System.Resources.ResourceReader(resPath);

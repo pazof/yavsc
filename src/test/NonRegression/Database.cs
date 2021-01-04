@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 namespace test.Mandatory
 {
     [Collection("Database")]
-    [Trait("regres", "no")]
+    [Trait("regression", "non")]
     [Trait("dev", "wip")]
     public class Database: IClassFixture<ServerSideFixture>, IDisposable
     {

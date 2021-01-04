@@ -333,7 +333,6 @@ namespace test
             ApplicationUser user = null;
             user = DbContext.Users.Include(u => u.Membership).First(u => u.UserName == context.UserName);
 
-#if USERMANAGER
 
             if (await _usermanager.CheckPasswordAsync(user, context.Password))
             {
@@ -359,6 +358,7 @@ namespace test
                 context.HttpContext.User = principal;
                 context.Validated(principal);
             }
+#if USERMANAGER
 #endif
             return Task.FromResult(0);
         }
@@ -413,16 +413,17 @@ namespace test
 
         #endregion
 
-#if USERMANAGER
-                    _usermanager = usermanager;
-#endif
+
+        UserManager<ApplicationUser> _usermanager;
 
         public void Configure(
             IApplicationBuilder app,
             IHostingEnvironment env,
             ApplicationDbContext dbContext,
             IOptions<Testing> testingSettings,
-            ILoggerFactory loggerFactory)
+            UserManager<ApplicationUser> usermanager,
+            ILoggerFactory loggerFactory
+            )
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -430,6 +431,11 @@ namespace test
             logger.LogInformation(env.EnvironmentName);
             this.DbContext = dbContext;
             Testing = testingSettings.Value;
+
+                    _usermanager = usermanager;
+#if USERMANAGER
+#endif
+
             if (Testing.ConnectionStrings == null)
                 logger.LogInformation($" Testing.ConnectionStrings is null : ");
             else
