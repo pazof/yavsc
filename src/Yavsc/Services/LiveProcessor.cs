@@ -23,17 +23,12 @@ namespace Yavsc.Services
 
     public class LiveProcessor : ILiveProcessor
     {
-        readonly IHubContext _hubContext;
         private readonly ILogger _logger;
-        readonly ApplicationDbContext _dbContext;
-
 
         public ConcurrentDictionary<string, LiveCastHandler> Casters { get; } = new ConcurrentDictionary<string, LiveCastHandler>();
 
-        public LiveProcessor(ApplicationDbContext dbContext, ILoggerFactory loggerFactory)
+        public LiveProcessor(ILoggerFactory loggerFactory)
         {
-            _dbContext = dbContext;
-            _hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
             _logger = loggerFactory.CreateLogger<LiveProcessor>();
         }
 

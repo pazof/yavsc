@@ -11,7 +11,7 @@ namespace Yavsc.ViewComponents
 
     public class CirclesControlViewComponent : ViewComponent
     {
-        ApplicationDbContext dbContext;
+        private readonly ApplicationDbContext dbContext;
         public CirclesControlViewComponent(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;

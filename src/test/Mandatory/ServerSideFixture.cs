@@ -22,8 +22,8 @@ namespace test
         SiteSettings _siteSetup;
         ILogger _logger;
         IApplication _app;
-        EMailer _mailer;
-        ILoggerFactory _loggerFactory;
+        readonly EMailer _mailer;
+        readonly ILoggerFactory _loggerFactory;
         IEmailSender _mailSender;
 
         public static string ApiKey => "53f4d5da-93a9-4584-82f9-b8fdf243b002";
@@ -95,8 +95,8 @@ namespace test
             }
         }
         bool dbCreated;
-        private WebHostBuilder host;
-        private IHostingEngine hostengnine;
+        private readonly WebHostBuilder host;
+        private readonly IHostingEngine hostengnine;
 
 
 
@@ -145,7 +145,7 @@ namespace test
         }
 
 
-        private ModelBuilder modelBuilder;
+        private readonly ModelBuilder modelBuilder;
 
         public string TestingDatabase { get; private set; }
 

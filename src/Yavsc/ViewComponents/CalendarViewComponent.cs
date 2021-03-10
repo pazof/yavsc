@@ -8,15 +8,12 @@ namespace Yavsc.ViewComponents
 {
     public class CalendarViewComponent : ViewComponent
     {
-        readonly ApplicationDbContext _dbContext;
         readonly ICalendarManager _manager;
 
         public CalendarViewComponent (
-            ApplicationDbContext dbContext,
             ICalendarManager manager)
         {
             _manager = manager;
-            _dbContext = dbContext;
         }
 
         public async Task<IViewComponentResult> InvokeAsync (

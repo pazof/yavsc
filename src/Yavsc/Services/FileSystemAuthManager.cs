@@ -28,23 +28,21 @@ namespace Yavsc.Services
                 return false;
             }
         }
-        UserMatch Out = new OutOfCircle();
-        UserMatch In = new BelongsToCircle();
 
-        readonly ApplicationDbContext _dbContext;
-        readonly ILogger _logger;
+        private readonly UserMatch Out = new OutOfCircle();
+        private readonly UserMatch In = new BelongsToCircle();
 
-        readonly SiteSettings SiteSettings;
+        private readonly ApplicationDbContext _dbContext;
 
-        readonly string aclfileName;
+        private readonly SiteSettings SiteSettings;
+
+        private readonly string aclfileName;
 
         readonly RuleSetParser ruleSetParser;
 
-        public FileSystemAuthManager(ApplicationDbContext dbContext, ILoggerFactory loggerFactory,
-            IOptions<SiteSettings> sitesOptions)
+        public FileSystemAuthManager(ApplicationDbContext dbContext, IOptions<SiteSettings> sitesOptions)
         {
             _dbContext = dbContext;
-            _logger = loggerFactory.CreateLogger<FileSystemAuthManager>();
             SiteSettings = sitesOptions.Value;
             aclfileName = SiteSettings.AccessListFileName;
             ruleSetParser = new RuleSetParser(false);

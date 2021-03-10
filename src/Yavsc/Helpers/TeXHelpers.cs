@@ -143,11 +143,13 @@ namespace Yavsc.Helpers
                 using (Process p = new Process())
                 {
                     p.StartInfo.WorkingDirectory = tempdir;
-                    p.StartInfo = new ProcessStartInfo();
-                    p.StartInfo.UseShellExecute = false;
-                    p.StartInfo.WorkingDirectory = tempdir;
-                    p.StartInfo.FileName = "/usr/bin/texi2pdf";
-                    p.StartInfo.Arguments = $"--batch --build-dir=. -o {fo.FullName} {fi.FullName}";
+                    p.StartInfo = new ProcessStartInfo
+                    {
+                        UseShellExecute = false,
+                        WorkingDirectory = tempdir,
+                        FileName = "/usr/bin/texi2pdf",
+                        Arguments = $"--batch --build-dir=. -o {fo.FullName} {fi.FullName}"
+                    };
                     p.Start();
                     p.WaitForExit();
                     if (p.ExitCode != 0)

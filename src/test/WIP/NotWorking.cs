@@ -19,11 +19,12 @@ namespace test
     {
         readonly SourceInformationProvider _sourceInfoProvider;
         readonly IOptions<LocalizationOptions> _localizationOptions;
-        public NotWorking( IHostingEnvironment env , IOptions<SiteSettings> siteSettings, 
-        SourceInformationProvider sourceInfoProvider, 
+        public NotWorking(
+        SourceInformationProvider sourceInfoProvider,
         IOptions<LocalizationOptions> localizationOptions,
         ServerSideFixture serverFixture, ITestOutputHelper output
-          ) : base (output, serverFixture) {
+          ) : base(output, serverFixture)
+        {
             _sourceInfoProvider = sourceInfoProvider;
             _localizationOptions = localizationOptions;
         }
@@ -38,8 +39,8 @@ namespace test
 
         public void NoDnxEnv()
         {
-           
-            IOptions<LocalizationOptions> localOptions = Activator.CreateInstance<IOptions<LocalizationOptions>>(); 
+
+            IOptions<LocalizationOptions> localOptions = Activator.CreateInstance<IOptions<LocalizationOptions>>();
             ResourceManagerStringLocalizerFactory strFact = new ResourceManagerStringLocalizerFactory(applicationEnvironment, localOptions);
             IStringLocalizer stringLocalizer = strFact.Create(typeof(NotWorking));
         }

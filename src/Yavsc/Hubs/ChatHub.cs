@@ -37,10 +37,10 @@ namespace Yavsc
     using Yavsc.Services;
     public partial class ChatHub : Hub, IDisposable
     {
-        ApplicationDbContext _dbContext;
-        private IConnexionManager _cxManager;
-        private IStringLocalizer _localizer;
-        ILogger _logger;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IConnexionManager _cxManager;
+        private readonly IStringLocalizer _localizer;
+        private readonly ILogger _logger;
 
         public HubInputValidator InputValidator { get; }
 
