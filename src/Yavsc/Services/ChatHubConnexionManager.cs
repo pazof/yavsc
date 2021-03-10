@@ -20,9 +20,9 @@ namespace Yavsc.Services
     /// </summary>
     public class HubConnectionManager : IConnexionManager
     {
-        ILogger _logger;
+        private readonly ILogger _logger;
 
-        Action<string, string> _errorHandler;
+        private Action<string, string> _errorHandler;
 
         /// <summary>
         /// by cx id

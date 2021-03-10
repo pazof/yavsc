@@ -22,7 +22,7 @@ namespace test
     [Trait("regression", "oui")]
     public class Remoting : BaseTestContext, IClassFixture<ServerSideFixture>
     {
-        RegiserAPI r;
+        readonly RegiserAPI r;
         public Remoting(ServerSideFixture serverFixture, ITestOutputHelper output)
         : base(output, serverFixture)
         {

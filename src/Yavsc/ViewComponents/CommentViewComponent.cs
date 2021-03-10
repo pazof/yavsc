@@ -6,11 +6,10 @@ namespace Yavsc.ViewComponents
 {
     public partial class CommentViewComponent : ViewComponent
     {
-        IStringLocalizer<CommentViewComponent> localizer;
+        private readonly IStringLocalizer<CommentViewComponent> localizer;
         public CommentViewComponent(IStringLocalizer<CommentViewComponent> localizer)
         {
-           this.localizer = localizer;
-           
+            this.localizer = localizer;
         }
         public IViewComponentResult Invoke(IIdentified<long> longCommentable)
         {
