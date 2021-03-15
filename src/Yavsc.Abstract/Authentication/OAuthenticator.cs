@@ -243,13 +243,13 @@ namespace Yavsc.Authentication
 
             if (url.AbsoluteUri.StartsWith(this.redirectUrl.AbsoluteUri))
             {
-                // if (!this.redirectUrl.Equals(url))            {
+                if (!this.redirectUrl.Equals(url)) {
 
                 // this is not our redirect page,
                 // but perhaps one one the third party identity providers
                 // One don't check for a state here.
                 // 
-                /*  if (fragment.ContainsKey("continue")) { 
+                 if (fragment.ContainsKey("continue")) {
                   var cont = fragment["continue"];
                       // TODO continue browsing this address
 
@@ -257,8 +257,8 @@ namespace Yavsc.Authentication
                       tcs.SetResult(new Uri(cont));
                       tcs.Task.RunSynchronously();
                   }
-                  return;*/
-                //   }
+                  return;
+                }
 
                 var all = new Dictionary<string, string>(query);
                 foreach (var kv in fragment)
