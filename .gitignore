@@ -35,3 +35,4 @@ connectionsettings.Development.json
 appsettings.Development.json
 /src/Yavsc/web.log
 yavscd
+builds/
