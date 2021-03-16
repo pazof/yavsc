@@ -1,0 +1,46 @@
+# using the official mono docker image to build a visual studio project.
+#
+# MyProject.sln
+#   MyProject\
+#     MyProject\
+#        MyProject.csproj (console application)
+#     MyProject.Test\
+#        MyProject.Test.csproj (test library using nuget packages "NUnit" and "NUnit.ConsoleRunner")
+#
+# Please find the full example project here:
+# https://gitlab.com/tobiaskoch/gitlab-ci-example-mono
+
+# see https://hub.docker.com/_/mono/
+image: mono:latest
+language: csharp
+os: linux
+
+stages:
+  - test
+  - deploy
+
+debug:
+  stage: test
+  script:
+    - curl --insecure -sSL https://lua.pschneider.fr/files/Paul/pub/dnx-install.sh  | bash
+    - DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh
+    - cd src/OAuth.AspNet.Token && dnu restore --ignore-failed-sources
+    - cd ../OAuth.AspNet.AuthServer && dnu restore --ignore-failed-sources
+    - cd ../Yavsc.Abstract && dnu restore --ignore-failed-sources
+    - cd ../Yavsc.Server && dnu restore --ignore-failed-sources
+    - cd ../yavsc && dnu restore --ignore-failed-sources
+    - cd ../test && dnu restore --ignore-failed-sources
+    - cd ../..
+    - make
+
+release:
+  stage: deploy
+  only:
+    - master
+  artifacts:
+    paths:
+      - binaries/Release
+  script:
+    - make packages
+
+
