@@ -6,7 +6,11 @@ using System.Diagnostics;
 namespace test
 {
 
-    [Trait("regression", "non")]
+    /// <summary>
+    /// Since node isn't any requirement by here,
+    /// It may regress
+    /// </summary>
+    [Trait("regression", "oui")]
     public class NodeTests
     {
         [Fact]
