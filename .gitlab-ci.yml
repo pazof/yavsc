@@ -11,7 +11,7 @@
 # https://gitlab.com/tobiaskoch/gitlab-ci-example-mono
 
 # see https://hub.docker.com/_/mono/
-image: mono:latest
+image: mono:4.6.2.7
 language: csharp
 os: linux
 
