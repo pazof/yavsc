@@ -20,19 +20,16 @@ include $(MAKEFILE_DIR)/dnx.mk
 $(BINTARGET): project.lock.json ../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll ../Yavsc.Abstract/bin/$(CONFIGURATION)/dnx451/Yavsc.Abstract.dll ../Yavsc.Server/bin/$(CONFIGURATION)/dnx451/Yavsc.Server.dll
 	dnu build --configuration $(CONFIGURATION)
 
-non-regression: $(BINTARGET) node_modules/ansi-to-html
+non-regression: $(BINTARGET) 
 	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regression=non
 
-regression: $(BINTARGET) node_modules/ansi-to-html
+regression: $(BINTARGET)
 	ASPNET_ENV=Development dnx test -maxthreads 1 -trait regression=oui
 
 test: non-regression
 
 testdev: $(BINTARGET) 
 	ASPNET_ENV=Development dnx test -maxthreads 1 -trait dev=wip 
-
-node_modules/ansi-to-html: 
-	npm install ansi-to-html
 
 clean:
 	rm -rf bin obj testingrepo

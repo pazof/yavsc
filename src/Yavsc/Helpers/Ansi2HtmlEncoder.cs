@@ -18,6 +18,7 @@ namespace Yavsc.Helpers
 
         public static Stream GetStream(StreamReader reader)
         {
+            // FIXME get some more stable alternative
             var procStart = new ProcessStartInfo("node", "node_modules/ansi-to-html/bin/ansi-to-html")
             {
                 UseShellExecute = false,
