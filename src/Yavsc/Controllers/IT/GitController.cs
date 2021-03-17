@@ -45,7 +45,7 @@ namespace Yavsc.Controllers
                 var accept = Request.Headers["Accept"];
                 if (accept.Any(v => v.Split(',').Contains("text/html")))
                 {
-                     return File(AnsiToHtmlEncoder.GetStream(stream),"text/html");
+                     return File(AnsiToHtmlEncoder.GetStream(stream), "text/html");
                 }
                 return File(stream,"text/text");
             }

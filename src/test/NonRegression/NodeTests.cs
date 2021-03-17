@@ -13,7 +13,6 @@ namespace test
     [Trait("regression", "oui")]
     public class NodeTests
     {
-        [Fact]
         void TestNodeJsForAnsitohtml ()
         {
             var procStart = new ProcessStartInfo("node", "node_modules/ansi-to-html/bin/ansi-to-html")
@@ -32,7 +31,6 @@ namespace test
             }
         }
         
-        [Fact]
         void AnsiToHtml()
         {
             var procStart = new ProcessStartInfo("ls", "-l --color=always")
