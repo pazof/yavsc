@@ -4,9 +4,9 @@ SOURCE_DIR=$(HOME)/workspace/yavsc
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
 MSBUILD=msbuild
 
-all: test
-
 include $(MAKEFILE_DIR)/dnx.mk
+
+all: test
 
 ../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll:
 	make -C ../Yavsc

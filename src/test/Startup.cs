@@ -108,7 +108,7 @@ namespace test
             services.Configure<DbConnectionSettings>(dbSettingsconf);
             var testingconf = Configuration.GetSection("Testing");
             services.Configure<Testing>(testingconf);
-
+            services.AddInstance(typeof(ServerSideFixture), new ServerSideFixture());
             services.AddInstance(typeof(ILoggerFactory), new LoggerFactory());
             services.AddTransient(typeof(IEmailSender), typeof(MailSender));
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>();
