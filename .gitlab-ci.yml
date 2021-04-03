@@ -13,9 +13,9 @@
 # see https://hub.docker.com/_/mono/
 image: mono:4.6.2.7
 
-#language: csharp
+#nsnt language: csharp
 
-os: linux
+#nsnt os: linux
 
 stages:
   - test
