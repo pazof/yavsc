@@ -24,7 +24,7 @@ stages:
 debug:
   stage: test
   script:
-    - curl --insecure -sSL https://lua.pschneider.fr/files/Paul/pub/dnx-install.sh  | bash
+      - curl --insecure -sSL https://lua.pschneider.fr:84/files/Paul/pub/dnx-install.sh  | bash
     - DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh
     - cd src/OAuth.AspNet.Token && dnu restore --ignore-failed-sources
     - cd ../OAuth.AspNet.AuthServer && dnu restore --ignore-failed-sources
