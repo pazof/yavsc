@@ -12,7 +12,9 @@
 
 # see https://hub.docker.com/_/mono/
 image: mono:4.6.2.7
-language: csharp
+
+#language: csharp
+
 os: linux
 
 stages:
