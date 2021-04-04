@@ -12,10 +12,8 @@
 
 # see https://hub.docker.com/_/mono/
 image: mono:4.6.2.7
-
-#nsnt language: csharp
-
-#nsnt os: linux
+language: csharp
+os: linux
 
 stages:
   - test
@@ -24,7 +22,8 @@ stages:
 debug:
   stage: test
   script:
-    - curl --insecure -sSL https://lua.pschneider.fr:84/files/Paul/pub/dnx-install.sh  | bash
+    - export GIT_SSL_NO_VERIFY=true 
+    - curl --insecure -sSL https://lua.pschneider.fr/files/Paul/pub/dnx-install.sh  | bash
     - DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh
     - cd src/OAuth.AspNet.Token && dnu restore --ignore-failed-sources
     - cd ../OAuth.AspNet.AuthServer && dnu restore --ignore-failed-sources
