@@ -28,10 +28,7 @@ debug:
     - cd ../Yavsc.Abstract && dnu restore --ignore-failed-sources
     - cd ../Yavsc.Server && dnu restore --ignore-failed-sources
     - cd ../Yavsc && dnu restore --ignore-failed-sources
-    - cd ../test
-    - make restore
-    - make
-    - cd ../..
+    - cd ../tes && dnu restore --ignore-failed-sourcest
     - make
     
 release:
