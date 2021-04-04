@@ -16,7 +16,7 @@ using Microsoft.Data.Entity.Metadata.Conventions;
 
 namespace test
 {
-    [Trait("regres", "no")]
+    [Trait("regression", "II")]
     public class ServerSideFixture : IDisposable
     {
         SiteSettings _siteSetup;
@@ -99,27 +99,42 @@ namespace test
         private readonly IHostingEngine hostengnine;
 
 
-
+        void AssertNotNull(object obj, string msg)
+        {
+            if (obj == null)
+                throw new Exception(msg);
+        }
+        
         // 
         public ServerSideFixture()
         {
              host = new WebHostBuilder();
+            AssertNotNull(host, nameof(host));
 
             hostengnine = host
             .UseEnvironment("Development")
-            .UseServer("test")
+            .UseServer("test")  
             .UseStartup<test.Startup>()
             .Build();
+            
+            AssertNotNull(hostengnine, nameof(hostengnine));
 
             App = hostengnine.Start();
+            
+            AssertNotNull(App, nameof(App));
 
             //  hostengnine.ApplicationServices
 
             _mailer = App.Services.GetService(typeof(EMailer)) as EMailer;
-            _loggerFactory = App.Services.GetService(typeof(ILoggerFactory)) as ILoggerFactory;
-            var siteSetup = App.Services.GetService(typeof(IOptions<SiteSettings>)) as IOptions<SiteSettings>;
-            var testingSetup = App.Services.GetService(typeof(IOptions<Testing>)) as IOptions<Testing>;
+            AssertNotNull(_mailer, nameof(_mailer));
             MailSender = App.Services.GetService(typeof(IEmailSender)) as IEmailSender;
+            AssertNotNull(MailSender, nameof(MailSender));
+
+            _loggerFactory = App.Services.GetService(typeof(ILoggerFactory)) as ILoggerFactory;
+            AssertNotNull(_loggerFactory, nameof(_loggerFactory));
+            var siteSetup = App.Services.GetService(typeof(IOptions<SiteSettings>)) as IOptions<SiteSettings>;
+            AssertNotNull(siteSetup, nameof(siteSetup));
+            var testingSetup = App.Services.GetService(typeof(IOptions<Testing>)) as IOptions<Testing>;
             DbContext = App.Services.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
 
             SiteSetup = siteSetup.Value;

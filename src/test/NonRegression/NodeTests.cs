@@ -10,7 +10,7 @@ namespace test
     /// Since node isn't any requirement by here,
     /// It may regress
     /// </summary>
-    [Trait("regression", "oui")]
+    [Trait("regression", "allways")]
     public class NodeTests
     {
         void TestNodeJsForAnsitohtml ()

@@ -52,3 +52,11 @@ release:
     - make packages
 
 
+deploy_staging:
+  stage: deploy
+  script:
+    - echo "Deploy to staging server"
+  environment:
+    name: staging
+    url: https://yavscpre.pschneider.fr
+    

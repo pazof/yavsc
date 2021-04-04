@@ -6,7 +6,7 @@ using Yavsc.Helpers;
 namespace test
 {
     [Collection("Yavsc Abstract tests")]
-    [Trait("regression", "non")]
+    [Trait("regression", "II")]
     public class AbstractTests
     {
         readonly ITestOutputHelper output;

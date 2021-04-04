@@ -7,7 +7,7 @@ namespace test
 {
 
     [Collection("EMaillingTeststCollection")]
-    [Trait("regression", "non")]
+    [Trait("regression", "II")]
     public class EMaillingTests : IClassFixture<ServerSideFixture>
 
     {

@@ -47,6 +47,7 @@ using Microsoft.AspNet.DataProtection.Infrastructure;
 using System.IO;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Yavsc.Auth;
+using Yavsc.Lib;
 
 namespace test
 {
@@ -114,7 +115,10 @@ namespace test
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>();
             services.AddTransient((s) => new RazorTemplateEngine(s.GetService<RazorEngineHost>()));
             services.AddLogging();
+            services.AddTransient<ServerSideFixture>();
             services.AddTransient<MailSender>();
+            services.AddTransient<EMailer>();
+            
             services.AddLocalization(options =>
             {
                 options.ResourcesPath = "Resources";
