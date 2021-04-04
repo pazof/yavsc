@@ -1,6 +1,6 @@
 
 
-[![pipeline status](https://lua.pschneider.fr/Paul/yavsc/badges/vnext/pipeline.svg)](https://lua.pschneider.fr/Paul/yavsc/-/commits/vnext)
+[![pipeline status](http://gitlab.pschneider.fr/Paul/yavsc/badges/vnext/pipeline.svg)](http://gitlab.pschneider.fr/Paul/yavsc/-/commits/vnext)
 [![Build Status](https://travis-ci.org/pazof/yavsc.svg?branch=vnext)](https://travis-ci.org/pazof/yavsc)
 
 # [Yavsc](https://yavsc.pschneider.fr)
