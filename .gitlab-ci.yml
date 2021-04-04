@@ -30,7 +30,7 @@ debug:
     - cd ../Yavsc && dnu restore --ignore-failed-sources
     - cd ../test && dnu restore --ignore-failed-sources
     - dnu build
-    - dnx test
+    - dnx test -maxthreads 1 -trait regression=non
     
 release:
   stage: deploy
