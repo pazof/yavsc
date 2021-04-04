@@ -22,6 +22,7 @@ stages:
 debug:
   stage: test
   script:
+    - export GIT_SSL_NO_VERIFY=true 
     - curl --insecure -sSL https://lua.pschneider.fr/files/Paul/pub/dnx-install.sh  | bash
     - DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh
     - cd src/OAuth.AspNet.Token && dnu restore --ignore-failed-sources
