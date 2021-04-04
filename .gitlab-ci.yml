@@ -28,8 +28,9 @@ debug:
     - cd ../Yavsc.Abstract && dnu restore --ignore-failed-sources
     - cd ../Yavsc.Server && dnu restore --ignore-failed-sources
     - cd ../Yavsc && dnu restore --ignore-failed-sources
-    - cd ../tes && dnu restore --ignore-failed-sourcest
-    - make
+    - cd ../test && dnu restore --ignore-failed-sourcest
+    - dnu build
+    - dnx test
     
 release:
   stage: deploy
