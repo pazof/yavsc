@@ -1,4 +1,4 @@
-SOURCE_DIR=$(HOME)/workspace/yavsc
+SOURCE_DIR=../..
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
 BASERESX=Resources/Yavsc.Models.Relationship.HyperLink.resx \
   Resources/Yavsc.Models.Streaming.LiveFlow.resx
