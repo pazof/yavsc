@@ -67,6 +67,7 @@ $(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) ../../version.txt
 ifeq ($(git_status),0)
 	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
 else
+	git status
 	$(error Please, commit your changes before publishing your NuGet packages)
 endif
 
