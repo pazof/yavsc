@@ -41,7 +41,7 @@ debug:
 release:
   stage: deploy
   only:
-    - master
+    - vnext
   artifacts:
     paths:
       - binaries/Release
