@@ -63,12 +63,14 @@ bin/output/wwwroot/version: bin/output
 
 pack: $(NUGETSOURCE)/$(PKGFILENAME)
 
+git_status_msg := $(shell git status -s)
+
 $(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) ../../version.txt
 ifeq ($(git_status),0)
 	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
 else
-	$(error $(shell git status -s))
-	$(error Please, commit your changes before publishing your NuGet packages)
+	$(info $(git_status_msg))
+	$(error Please, git_status: $(git_status), git_status_msg: $(git_status_msg), commit your changes before publishing your NuGet packages)
 endif
 
 deploy-pkg: pack
