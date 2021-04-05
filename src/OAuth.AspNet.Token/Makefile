@@ -1,4 +1,4 @@
-SOURCE_DIR=$(HOME)/workspace/yavsc
+SOURCE_DIR=../..
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
 
 include $(MAKEFILE_DIR)/dnx.mk

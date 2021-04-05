@@ -2,7 +2,7 @@ DESTDIR=/srv/www/yavscpre
 PRODDESTDIR=/srv/www/yavsc
 HOSTING=localhost
 ASPNET_LOG_LEVEL=debug
-SOURCE_DIR=$(HOME)/workspace/yavsc
+SOURCE_DIR=../..
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
 BASERESX= Resources/Yavsc.Models.IT.Fixing.Resources.resx \
 	Resources/Yavsc.ViewComponents.CommentViewComponent.resx \

@@ -1,6 +1,6 @@
 CONFIGURATION=Debug
 BINTARGET=bin/$(CONFIGURATION)/dnx451/test.dll
-SOURCE_DIR=$(HOME)/workspace/yavsc
+SOURCE_DIR=../..
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
 MSBUILD=msbuild
 
