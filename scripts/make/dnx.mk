@@ -66,7 +66,7 @@ pack: $(BINTARGETPATH) ../../version.txt
 	@nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
 
 push: pack
-	@nuget push bin/$(PRJNAME).$(VERSION).nupkg $(NUGETSOURCEAPIKEY) -src $(NUGETSOURCE) 
+	@nuget push bin/$(PRJNAME).$(VERSION).nupkg $(NUGETSOURCEAPIKEY) -src $(NUGETSOURCE) -SkipDuplicate
 
 .PHONY: rc-num.txt-check 
 
