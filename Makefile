@@ -17,11 +17,17 @@ clean:
 checklibs:
 	ls $(DNXLIBFP)
 
-updatedeps:
+src/Yavsc/bin/output/wwwroot:
+	make -C src/Yavsc publish
+
+private/lib:
+	mkdir -p private/lib
+
+updatedeps: src/Yavsc/bin/output/wwwroot private/lib
 	cp src/Yavsc/bin/output/approot/packages/*/*/lib/*net451*/*.dll private/lib/
 	cp src/Yavsc/bin/output/approot/packages/*/*/lib/*dnx451*/*.dll private/lib/
 
-restore:
+restore: /home/paul/workspace/tmp/yavsc/src/Yavsc/bin/output/wwwroot
 	make -C src/OAuth.AspNet.AuthServer  restore
 	make -C src/OAuth.AspNet.Token  restore
 	make -C src/Yavsc.Server restore

@@ -56,7 +56,8 @@ deploy_staging:
   stage: deploy
   script:
     - echo "Deploy to staging server"
+    - make strip_yavscd
   environment:
     name: staging
     url: https://yavscpre.pschneider.fr
-    
+
