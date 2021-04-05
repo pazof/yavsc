@@ -60,6 +60,7 @@ deploy_staging:
     - curl --insecure -sSL https://lua.pschneider.fr/files/Paul/pub/dnx-install.sh  | bash
     - DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh
     - make restore
+    - make
     - make strip_yavscd
   environment:
     name: staging
