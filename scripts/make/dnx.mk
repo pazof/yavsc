@@ -60,13 +60,13 @@ bin/output:
 	@$(dnu) publish
 
 bin/output/wwwroot/version: bin/output
-	echo $(version) > bin/output/wwwroot/version
+	@echo $(version) > bin/output/wwwroot/version
 
 pack: $(BINTARGETPATH) ../../version.txt
-	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
+	@nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
 
 push: pack
-	nuget push bin/$(PRJNAME).$(VERSION).nupkg $(NUGETSOURCEAPIKEY) -src $(NUGETSOURCE) 
+	@nuget push bin/$(PRJNAME).$(VERSION).nupkg $(NUGETSOURCEAPIKEY) -src $(NUGETSOURCE) 
 
 .PHONY: rc-num.txt-check 
 
