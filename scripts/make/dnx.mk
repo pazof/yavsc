@@ -15,6 +15,9 @@ BINTARGET=$(PRJNAME).dll
 BINTARGETPATH=bin/$(CONFIGURATION)/$(FRAMEWORKALIAS)/$(BINTARGET)
 PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
 dnu=dnu
+ifndef NUGETSOURCE
+NUGETSOURCE=$(HOME)/Nupkgs
+endif
 
 # OBS SUBDIRS=Yavsc.Server Yavsc.Abstract Yavsc cli
 #
@@ -59,17 +62,11 @@ bin/output:
 bin/output/wwwroot/version: bin/output
 	echo $(version) > bin/output/wwwroot/version
 
-#	@git log -1 --pretty=format:%h > bin/output/wwwroot/version
-
-pack: $(NUGETSOURCE)/$(PKGFILENAME)
-
-git_status_msg := $(shell git status -s)
-
-$(NUGETSOURCE)/$(PKGFILENAME): $(BINTARGETPATH) ../../version.txt
+pack: $(BINTARGETPATH) ../../version.txt
 	nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
 
-deploy-pkg: pack
-	@mv bin/$(PKGFILENAME) $(NUGETSOURCE)
+push: pack
+	nuget push bin/$(PRJNAME).$(VERSION).nupkg $(NUGETSOURCEAPIKEY) -src $(NUGETSOURCE) 
 
 .PHONY: rc-num.txt-check 
 

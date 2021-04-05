@@ -5,7 +5,6 @@ DNXLIBS=Microsoft.Dnx.Host.Mono.dll Microsoft.Dnx.Host.dll Microsoft.Dnx.Applica
 DNXLIBFP:=$(addprefix $(DNX_USER_HOME)/runtimes/dnx-mono.1.0.0-rc1-update2/bin/, $(DNXLIBS))
 CONFIG=Debug
 
-git_status := $(shell git status -s --porcelain |wc -l)
 yavscd=binaries/$(CONFIG)/yavscd
 yavsccli=binaries/$(CONFIG)/yavsccli
 
@@ -50,6 +49,9 @@ pushInProd: yavscd
 packages:
 	make -C src/Yavsc.Abstract pack
 
+push_packages:
+	make -C src/Yavsc.Abstract push
+
 findResources:
 	find src -name "*.resx" |sort
  
@@ -79,12 +81,10 @@ $(yavscd): yavscassemblies updatedeps
 	mkdir -p binaries/$(CONFIG)
 	mkbundle --static $(DNXLIBS) src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll src/Yavsc/bin/$(CONFIG)/dnx451/pt/Yavsc.resources.dll src/Yavsc/bin/$(CONFIG)/dnx451/en/Yavsc.resources.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/en/Yavsc.Server.resources.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/Yavsc.Abstract.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/en/Yavsc.Abstract.resources.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/pt/Yavsc.Abstract.resources.dll src/OAuth.AspNet.AuthServer/bin/$(CONFIG)/dnx451/OAuth.AspNet.AuthServer.dll src/OAuth.AspNet.Token/bin/$(CONFIG)/dnx451/OAuth.AspNet.Token.dll $(shell ls private/lib/*.dll) -L $(DNX_USER_HOME)/runtimes/dnx-mono.1.0.0-rc1-update2/bin --machine-config $(MONO_PREFIX)/etc/mono/4.5/machine.config -o $(yavscd)
 
-
 strip_yavscd: $(yavscd)
 	strip $(yavscd)
 
 cliassemblies: src/cli/bin/$(CONFIG)/dnx451/cli.dll src/cli/bin/$(CONFIG)/dnx451/fr/cli.resources.dll src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll src/Yavsc/bin/$(CONFIG)/dnx451/pt/Yavsc.resources.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/Yavsc.Abstract.dll src/OAuth.AspNet.AuthServer/bin/$(CONFIG)/dnx451/OAuth.AspNet.AuthServer.dll src/OAuth.AspNet.Token/bin/$(CONFIG)/dnx451/OAuth.AspNet.Token.dll
-
 
 yavsccli: cliassemblies 	
 	mkdir -p binaries/$(CONFIG)
