@@ -17,9 +17,8 @@ stages:
   - test
   - deploy
 
-debug:
-  stage: test
-  script:
+before_script:
+    - . /opt/mono-4.6/mono-env
     - export GIT_SSL_NO_VERIFY=true 
     - curl --insecure -sSL https://lua.pschneider.fr/files/Paul/pub/dnx-install.sh  | bash
     - DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh
@@ -29,6 +28,13 @@ debug:
     - cd ../Yavsc.Server && dnu restore --ignore-failed-sources
     - cd ../Yavsc && dnu restore --ignore-failed-sources
     - cd ../test && dnu restore --ignore-failed-sources
+    - cd ../cli && dnu restore --ignore-failed-sources
+    - cd ../..
+  
+debug:
+  stage: test
+  script:
+    - cd test
     - dnu build
     - dnx test -maxthreads 1 -trait regression=non
     
@@ -40,27 +46,12 @@ release:
     paths:
       - binaries/Release
   script:
-    - curl --insecure -sSL https://lua.pschneider.fr/files/Paul/pub/dnx-install.sh  | bash
-    - DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh
-    - cd src/OAuth.AspNet.Token && dnu restore --ignore-failed-sources
-    - cd ../OAuth.AspNet.AuthServer && dnu restore --ignore-failed-sources
-    - cd ../Yavsc.Abstract && dnu restore --ignore-failed-sources
-    - cd ../Yavsc.Server && dnu restore --ignore-failed-sources
-    - cd ../Yavsc && dnu restore --ignore-failed-sources
-
-    - cd ../..
     - make packages
-
 
 deploy_staging:
   stage: deploy
   script:
     - echo "Deploy to staging server"
-    - . /opt/mono-4.6/mono-env
-    - curl --insecure -sSL https://lua.pschneider.fr/files/Paul/pub/dnx-install.sh  | bash
-    - DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh
-    - make restore
-    - make
     - make strip_yavscd
   environment:
     name: staging
