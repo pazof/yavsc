@@ -1,0 +1,19 @@
+CONFIGURATION=Debug
+BINTARGET=bin/$(CONFIGURATION)/dnx451/test.dll
+SOURCE_DIR=$(HOME)/workspace/yavsc
+MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
+MSBUILD=msbuild
+
+include $(MAKEFILE_DIR)/dnx.mk
+
+../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll:
+	make -C ../Yavsc
+
+../Yavsc.Abstract/bin/$(CONFIGURATION)/dnx451/Yavsc.Abstract.dll:
+	make -C ../Yavsc.Abstract
+
+../Yavsc.Server/bin/$(CONFIGURATION)/dnx451/Yavsc.Server.dll:
+	make -C ../Yavsc.Server
+
+$(BINTARGET): project.lock.json ../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll ../Yavsc.Abstract/bin/$(CONFIGURATION)/dnx451/Yavsc.Abstract.dll ../Yavsc.Server/bin/$(CONFIGURATION)/dnx451/Yavsc.Server.dll
+	dnu build --configuration $(CONFIGURATION)
