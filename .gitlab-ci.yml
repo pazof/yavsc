@@ -44,7 +44,7 @@ release:
     - vnext
   artifacts:
     paths:
-      - binaries/Release
+      - binaries/Debug
   script:
     - make packages
 
