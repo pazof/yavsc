@@ -34,7 +34,7 @@ before_script:
 debug:
   stage: test
   script:
-    - cd test
+    - cd src/test
     - dnu build
     - dnx test -maxthreads 1 -trait regression=non
     
