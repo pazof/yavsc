@@ -67,7 +67,8 @@ pack: $(BINTARGETPATH) ../../version.txt
 
 push: pack
 	@echo push to source: $(NUGETSOURCE)
-	@nuget push bin/$(PRJNAME).$(VERSION).nupkg -ApiKey $(NUGETSOURCEAPIKEY) -src $(NUGETSOURCE) -SkipDuplicate
+	@nuget setApiKey $(NUGETSOURCEAPIKEY) -Source $(NUGETSOURCE)
+	@nuget push bin/$(PRJNAME).$(VERSION).nupkg -src $(NUGETSOURCE) -SkipDuplicate
 
 .PHONY: rc-num.txt-check 
 
