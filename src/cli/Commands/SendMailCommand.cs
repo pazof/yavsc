@@ -9,17 +9,12 @@ using System.Linq;
 using Yavsc.Models;
 using System.Collections.Generic;
 using System;
+using Yavsc.Templates;
 
 namespace cli
 {
     public class SendMailCommandProvider : ICommander
     {
-        readonly Dictionary<string, Func<ApplicationUser, bool>> Criterias =
-            new Dictionary<string, Func<ApplicationUser, bool>>
-            {
-                {"allow-monthly", u => u.AllowMonthlyEmail },
-                { "email-not-confirmed", u => !u.EmailConfirmed }
-            };
         public CommandLineApplication Integrate(CommandLineApplication rootApp)
         {
 
@@ -43,9 +38,7 @@ namespace cli
 
             sendMailCommandApp.OnExecute(() =>
             {
-                int code;
-                bool showhelp = !int.TryParse(codeCommandArg.Value, out code)
-                  || Criterias.ContainsKey(critCommandArg.Value);
+                bool showhelp = TemplateConstants.Criterias.ContainsKey(critCommandArg.Value);
 
                 if (!showhelp)
                 {
@@ -60,7 +53,7 @@ namespace cli
                     var loggerFactory = app.Services.GetService<ILoggerFactory>();
                     var logger = loggerFactory.CreateLogger<Program>();
                     logger.LogInformation("Starting emailling");
-                    mailer.SendEmailFromCriteria(code, Criterias[critCommandArg.Value]);
+                    mailer.SendEmailFromCriteria(critCommandArg.Value, TemplateConstants.Criterias[critCommandArg.Value]);
                     logger.LogInformation("Finished emailling");
                 }
                 else

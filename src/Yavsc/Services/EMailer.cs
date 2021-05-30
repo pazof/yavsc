@@ -63,12 +63,7 @@ namespace Yavsc.Lib
             razorEngine = new RazorTemplateEngine(host);
         }
 
-        public string GenerateTemplateObject(string baseclassName = DefaultBaseClassName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SendMonthlyEmail(long templateCode, string baseclassName = DefaultBaseClassName)
+        public void SendMonthlyEmail(string templateCode, string baseclassName = DefaultBaseClassName)
         {
             string className = "Generated" + baseclassName;
 
