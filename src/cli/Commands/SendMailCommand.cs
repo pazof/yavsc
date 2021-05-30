@@ -5,42 +5,62 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using cli.Services;
 using cli.Model;
+using System.Linq;
+using Yavsc.Models;
+using System.Collections.Generic;
+using System;
 
-namespace cli {
-    
-public class SendMailCommandProvider : ICommander {
+namespace cli
+{
+    public class SendMailCommandProvider : ICommander
+    {
+        readonly Dictionary<string, Func<ApplicationUser, bool>> Criterias =
+            new Dictionary<string, Func<ApplicationUser, bool>>
+            {
+                {"allow-monthly", u => u.AllowMonthlyEmail },
+                { "email-not-confirmed", u => !u.EmailConfirmed }
+            };
         public CommandLineApplication Integrate(CommandLineApplication rootApp)
         {
-         CommandArgument sendMailCommandArg = null;
-         CommandOption sendHelpOption = null;
-         CommandLineApplication sendMailCommandApp 
-            = rootApp.Command("send",
-                (target) =>
-                {
-                    target.FullName = "Send email";
-                    target.Description = "Sends emails using given template";
-                    sendHelpOption = target.HelpOption("-? | -h | --help");
-                    sendMailCommandArg = target.Argument(
-                    "class",
-                    "class name of mailling to execute (actually, only 'monthly') .",
-                    multipleValues: true);
-                }, false);
+
+            CommandArgument codeCommandArg = null;
+            CommandArgument critCommandArg = null;
+            CommandOption sendHelpOption = null;
+            CommandLineApplication sendMailCommandApp
+               = rootApp.Command("send-monthly",
+                   (target) =>
+                   {
+                       target.FullName = "Send email";
+                       target.Description = "Sends monthly emails using given template from code";
+                       sendHelpOption = target.HelpOption("-? | -h | --help");
+                       codeCommandArg = target.Argument(
+                       "code",
+                       "template code of mailling to execute.");
+                       critCommandArg = target.Argument(
+                           "criteria",
+                           "user selection criteria : 'allow-monthly' or 'email-not-confirmed'");
+                   }, false);
 
             sendMailCommandApp.OnExecute(() =>
             {
-                if (sendMailCommandArg.Value == "monthly")
+                int code;
+                bool showhelp = !int.TryParse(codeCommandArg.Value, out code)
+                  || Criterias.ContainsKey(critCommandArg.Value);
+
+                if (!showhelp)
                 {
                     var host = new WebHostBuilder();
-                    var hostengnine = host.UseEnvironment("Development")
+
+                    var hostengnine = host.UseEnvironment(Program.HostingEnvironment.EnvironmentName)
                         .UseServer("cli")
                         .UseStartup<Startup>()
                         .Build();
                     var app = hostengnine.Start();
                     var mailer = app.Services.GetService<EMailer>();
                     var loggerFactory = app.Services.GetService<ILoggerFactory>();
-                    var logger = loggerFactory.CreateLogger<cli.Program>();
+                    var logger = loggerFactory.CreateLogger<Program>();
                     logger.LogInformation("Starting emailling");
-                    mailer.SendMonthlyEmail(1, "UserOrientedTemplate");
+                    mailer.SendEmailFromCriteria(code, Criterias[critCommandArg.Value]);
                     logger.LogInformation("Finished emailling");
                 }
                 else

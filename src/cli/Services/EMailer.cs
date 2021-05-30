@@ -61,9 +61,9 @@ namespace cli.Services
         }
 
 
-        public void SendMonthlyEmail(long templateCode, string baseclassName = DefaultBaseClassName)
+        public void SendEmailFromCriteria(long templateCode, Func<ApplicationUser,bool> criteria)
         {
-            string className = "Generated" + baseclassName;
+            string className = "GeneratedTemplate";
 
             string subtemp = stringLocalizer["MonthlySubjectTemplate"].Value;
 
@@ -156,7 +156,7 @@ namespace cli.Services
                             throw new InvalidOperationException("No generated template");
                         }
                         foreach (var user in dbContext.ApplicationUser.Where(
-                            u => u.AllowMonthlyEmail
+                            u => criteria(u)
                         ))
                         {
                             logger.LogInformation("Generation for " + user.UserName);
@@ -172,15 +172,10 @@ namespace cli.Services
                                 logger.LogError($"{mailSentInfo.ErrorMessage}");
                             else 
                                 logger.LogInformation($"mailId:{mailSentInfo?.MessageId} \nto:{user.UserName}");
-
-
-                            
                         }
-
                     }
                 }
             }
-
         }
     }
 }
