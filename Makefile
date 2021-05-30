@@ -35,7 +35,7 @@ restore: /home/paul/workspace/tmp/yavsc/src/Yavsc/bin/output/wwwroot
 	make -C src/test restore
 
 test:
-	make -C src/test
+	make -C test/yavscTests
 
 web:
 	make -C src/Yavsc web
