@@ -23,17 +23,17 @@ namespace Yavsc.Server.Models.EMailing
             set;
         }
 
-        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        [Key][MaxLength(256),MinLength(3)]
+        public string Id { get; set; }
 
-        [MaxLengthAttribute(128),MinLength(3)]
+        [MaxLength(256),MinLength(3)]
         public string Topic { get; set; }
 
         /// <summary>
         /// Markdown template to process
         /// </summary>
         /// <returns></returns>
-        [MaxLengthAttribute(64*1024)]
+        [MaxLength(64*1024)]
         public string Body { get; set; }
 
         [EmailAddress()]

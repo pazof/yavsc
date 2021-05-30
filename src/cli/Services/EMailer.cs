@@ -61,7 +61,7 @@ namespace cli.Services
         }
 
 
-        public void SendEmailFromCriteria(long templateCode, Func<ApplicationUser,bool> criteria)
+        public void SendEmailFromCriteria(string templateCode, Func<ApplicationUser,bool> criteria)
         {
             string className = "GeneratedTemplate";
 

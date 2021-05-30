@@ -9,7 +9,8 @@ using Yavsc.Models;
 using Yavsc.Models.Calendar;
 using Yavsc.Server.Models.EMailing;
 using Microsoft.AspNet.Authorization;
-
+using Yavsc.Templates;
+using System.Linq;
 
 namespace Yavsc.Controllers
 {
@@ -31,7 +32,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: MailingTemplate/Details/5
-        public async Task<IActionResult> Details(long? id)
+        public async Task<IActionResult> Details(string id)
         {
             if (id == null)
             {
@@ -47,8 +48,7 @@ namespace Yavsc.Controllers
             return View(mailingTemplate);
         }
 
-
-        List<SelectListItem> GetSelectFromEnum(Type enumType )
+        List<SelectListItem> GetSelectFromEnum(Type enumType)
         {
 
             var list = new List<SelectListItem>();
@@ -60,12 +60,15 @@ namespace Yavsc.Controllers
   
         }
 
-
         // GET: MailingTemplate/Create
         public IActionResult Create()
         {
             ViewBag.ManagerId = new SelectList(_context.ApplicationUser, "Id", "UserName");
             ViewBag.ToSend = GetSelectFromEnum(typeof(Periodicity));
+            ViewBag.Id = new SelectList(
+                TemplateConstants.Criterias.Select(
+                    c => new SelectListItem{ Text = c.Key, Value = c.Key })
+                );
             return View();
         }
 
@@ -82,11 +85,15 @@ namespace Yavsc.Controllers
             }
             ViewBag.ManagerId = new SelectList(_context.ApplicationUser, "Id", "UserName");
             ViewBag.ToSend = GetSelectFromEnum(typeof(Periodicity));
+            ViewBag.Id = new SelectList(
+                TemplateConstants.Criterias.Select(
+                    c => new SelectListItem{ Text = c.Key, Value = c.Key })
+                );
             return View(mailingTemplate);
         }
 
         // GET: MailingTemplate/Edit/5
-        public async Task<IActionResult> Edit(long? id)
+        public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
             {
@@ -100,6 +107,10 @@ namespace Yavsc.Controllers
             }
             ViewBag.ManagerId = new SelectList(_context.ApplicationUser, "Id", "UserName");
             ViewBag.ToSend = GetSelectFromEnum(typeof(Periodicity));
+            ViewBag.Id = new SelectList(
+                TemplateConstants.Criterias.Select(
+                    c => new SelectListItem{ Text = c.Key, Value = c.Key })
+                );
             return View(mailingTemplate);
         }
 
@@ -116,12 +127,16 @@ namespace Yavsc.Controllers
             }
             ViewBag.ManagerId = new SelectList(_context.ApplicationUser, "Id", "UserName");
             ViewBag.ToSend = GetSelectFromEnum(typeof(Periodicity));
+            ViewBag.Id = new SelectList(
+                TemplateConstants.Criterias.Select(
+                    c => new SelectListItem{ Text = c.Key, Value = c.Key })
+                );
             return View(mailingTemplate);
         }
 
         // GET: MailingTemplate/Delete/5
         [ActionName("Delete")]
-        public async Task<IActionResult> Delete(long? id)
+        public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
@@ -140,7 +155,7 @@ namespace Yavsc.Controllers
         // POST: MailingTemplate/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             MailingTemplate mailingTemplate = await _context.MailingTemplate.SingleAsync(m => m.Id == id);
             _context.MailingTemplate.Remove(mailingTemplate);

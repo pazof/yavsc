@@ -32,7 +32,7 @@ namespace Yavsc.Controllers
 
         // GET: api/MailingTemplateApi/5
         [HttpGet("{id}", Name = "GetMailingTemplate")]
-        public async Task<IActionResult> GetMailingTemplate([FromRoute] long id)
+        public async Task<IActionResult> GetMailingTemplate([FromRoute] string id)
         {
             if (!ModelState.IsValid)
             {
@@ -51,7 +51,7 @@ namespace Yavsc.Controllers
 
         // PUT: api/MailingTemplateApi/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMailingTemplate([FromRoute] long id, [FromBody] MailingTemplate mailingTemplate)
+        public async Task<IActionResult> PutMailingTemplate([FromRoute] string id, [FromBody] MailingTemplate mailingTemplate)
         {
             if (!ModelState.IsValid)
             {
@@ -117,7 +117,7 @@ namespace Yavsc.Controllers
 
         // DELETE: api/MailingTemplateApi/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMailingTemplate([FromRoute] long id)
+        public async Task<IActionResult> DeleteMailingTemplate([FromRoute] string id)
         {
             if (!ModelState.IsValid)
             {
@@ -145,7 +145,7 @@ namespace Yavsc.Controllers
             base.Dispose(disposing);
         }
 
-        private bool MailingTemplateExists(long id)
+        private bool MailingTemplateExists(string id)
         {
             return _context.MailingTemplate.Count(e => e.Id == id) > 0;
         }
