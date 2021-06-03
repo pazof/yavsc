@@ -782,11 +782,6 @@ namespace Yavsc.Controllers
 
             _dbContext.DeviceDeclaration.RemoveRange( _dbContext.DeviceDeclaration.Where(g => g.DeviceOwnerId == userId ));
             
-            foreach (var template in _dbContext.MailingTemplate.Where( t=>t.ManagerId == userId )) 
-            {
-                template.ManagerId = template.SuccessorId;
-            }
-
             return await _userManager.DeleteAsync(user);
         }
 

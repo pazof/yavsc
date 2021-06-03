@@ -88,8 +88,6 @@ namespace Yavsc.Controllers
         [HttpPost]
         public async Task<IActionResult> PostMailingTemplate([FromBody] MailingTemplate mailingTemplate)
         {
-            mailingTemplate.ManagerId = User.GetUserId();
-
             if (!ModelState.IsValid)
             {
                 return HttpBadRequest(ModelState);

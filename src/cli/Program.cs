@@ -119,7 +119,6 @@ namespace cli
             new SendMailCommandProvider().Integrate(cliapp);
             new GenerateJsonSchema().Integrate(cliapp);
             new AuthCommander(loggerFactory).Integrate(cliapp);
-            new CiBuildCommand().Integrate(cliapp);
             new GenerationCommander().Integrate(cliapp);
             new Streamer(loggerFactory, cxSettings, usercxSettings ).Integrate(cliapp);
 

@@ -16,7 +16,7 @@
         <div class="form-group">
             <label asp-for="Id" class="control-label col-md-2">@SR["Id"]</label>
             <div class="col-md-10">
-                <select asp-for="Id" asp-items="@ViewBag.Id" class="form-control" >
+                <select name="Id" asp-for="Id" asp-items="@ViewBag.Id" class="form-control" >
                 </select>
                 <span asp-validation-for="Id" class="text-danger" ></span>
             </div>
