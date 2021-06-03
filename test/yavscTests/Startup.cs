@@ -180,24 +180,8 @@ namespace test
                  option =>
                  {
                      IdentityAppOptions = option;
-                     option.User.AllowedUserNameCharacters += " ";
                      option.User.RequireUniqueEmail = true;
                      option.Cookies.ApplicationCookie.LoginPath = "/signin";
-                        // option.Cookies.TwoFactorRememberMeCookie.ExpireTimeSpan = TimeSpan.FromDays(30);
-                        // option.Cookies.TwoFactorRememberMeCookie.DataProtectionProvider = ProtectionProvider;
-                        // option.Cookies.ApplicationCookie.DataProtectionProvider = ProtectionProvider;
-                        // option.Cookies.ExternalCookie.DataProtectionProvider = ProtectionProvider;
-                        // option.Cookies.ApplicationCookie.AuthenticationScheme = Constants.ApplicationAuthenticationSheme;
-                        /*
-                         option.Cookies.ApplicationCookie.LoginPath = new PathString(Constants.LoginPath.Substring(1));
-                         option.Cookies.ApplicationCookie.AccessDeniedPath = new PathString(Constants.AccessDeniedPath.Substring(1));
-                         option.Cookies.ApplicationCookie.AutomaticAuthenticate = true;
-                         option.Cookies.ApplicationCookie.AuthenticationScheme = Constants.ApplicationAuthenticationSheme;
-                         option.Cookies.ApplicationCookieAuthenticationScheme = Constants.ApplicationAuthenticationSheme;
-                         option.Cookies.ExternalCookieAuthenticationScheme = Constants.ExternalAuthenticationSheme;
-                         option.Cookies.ExternalCookie.AutomaticAuthenticate = true;
-                         option.Cookies.ExternalCookie.AuthenticationScheme = Constants.ExternalAuthenticationSheme;
-                         */
                  }
              ).AddEntityFrameworkStores<ApplicationDbContext>()
              .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.DefaultFactor)

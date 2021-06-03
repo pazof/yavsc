@@ -12,6 +12,7 @@ using Microsoft.AspNet.Authorization;
 using Yavsc.Templates;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Yavsc.Server.Settings;
 
 namespace Yavsc.Controllers
 {
@@ -69,7 +70,7 @@ namespace Yavsc.Controllers
         {
             ViewBag.ManagerId = new SelectList(_context.ApplicationUser, "Id", "UserName");
             ViewBag.ToSend = GetSelectFromEnum(typeof(Periodicity));
-            ViewBag.Id = TemplateConstants.Criterias.Select(
+            ViewBag.Id = UserPolicies.Criterias.Select(
                     c => new SelectListItem{ Text = c.Key, Value = c.Key }).ToList();
         }
 

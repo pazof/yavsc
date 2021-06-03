@@ -21,6 +21,13 @@ using Yavsc.Server.Settings;
 
 namespace cli.Services
 {
+    public class NoMaillingTemplateException : Exception
+    {
+        public NoMaillingTemplateException(string templateCode) : base ($"No template found under id {templateCode}.")
+        {
+
+        }
+    }
 
     public class EMailer
     {
@@ -74,7 +81,7 @@ namespace cli.Services
 
             var templateInfo = dbContext.MailingTemplate.FirstOrDefault(t => t.Id == templateCode);
 
-            if (templateInfo==null) throw new Exception($"No template found under id {templateCode}.");  
+            if (templateInfo==null) throw new NoMaillingTemplateException(templateCode);  
             logger.LogInformation($"Using code: {templateCode},  subject: {subtemp} ");
             logger.LogInformation("And body:\n"+templateInfo.Body);
             using (StringReader reader = new StringReader(templateInfo.Body))

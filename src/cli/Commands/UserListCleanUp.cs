@@ -47,11 +47,23 @@ namespace cli.Commands
                     ApplicationDbContext dbContext = app.Services.GetService<ApplicationDbContext>();
                     Func<ApplicationUser, bool> criteria = UserPolicies.Criterias["user-to-remove"];
 
+                    if (userManager==null)
+                    {
+                        logger.LogError("No user manager");
+                        throw new Exception("No user manager");
+                    }
+
                     logger.LogInformation("Starting emailling");
-                    mailer.SendEmailFromCriteria("user-to-remove");
-                    foreach (ApplicationUser user in dbContext.ApplicationUser.Where(
-                            u => criteria(u)
-                        ))
+                    try {
+                        mailer.SendEmailFromCriteria("user-to-remove");
+                    }
+                    catch (NoMaillingTemplateException ex)
+                    {
+                        logger.LogWarning(ex.Message);
+                    }
+                    ApplicationUser [] users = dbContext.ApplicationUser.Where(
+                            u => criteria(u)).ToArray();
+                    foreach (ApplicationUser user in users)
                     {
                         dbContext.DeviceDeclaration.RemoveRange(dbContext.DeviceDeclaration.Where(g => g.DeviceOwnerId == user.Id));
                         await userManager.DeleteAsync(user);
