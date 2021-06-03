@@ -5,11 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using cli.Services;
 using cli.Model;
-using System.Linq;
-using Yavsc.Models;
-using System.Collections.Generic;
-using System;
-using Yavsc.Templates;
+using Yavsc.Server.Settings;
 
 namespace cli
 {
@@ -17,8 +13,6 @@ namespace cli
     {
         public CommandLineApplication Integrate(CommandLineApplication rootApp)
         {
-
-            CommandArgument codeCommandArg = null;
             CommandArgument critCommandArg = null;
             CommandOption sendHelpOption = null;
             CommandLineApplication sendMailCommandApp
@@ -28,9 +22,6 @@ namespace cli
                        target.FullName = "Send email";
                        target.Description = "Sends monthly emails using given template from code";
                        sendHelpOption = target.HelpOption("-? | -h | --help");
-                       codeCommandArg = target.Argument(
-                       "code",
-                       "template code of mailling to execute.");
                        critCommandArg = target.Argument(
                            "criteria",
                            "user selection criteria : 'allow-monthly' or 'email-not-confirmed'");
@@ -38,7 +29,8 @@ namespace cli
 
             sendMailCommandApp.OnExecute(() =>
             {
-                bool showhelp = TemplateConstants.Criterias.ContainsKey(critCommandArg.Value);
+                bool showhelp = !UserPolicies.Criterias.ContainsKey(critCommandArg.Value)
+                || sendHelpOption.HasValue();
 
                 if (!showhelp)
                 {
@@ -53,7 +45,7 @@ namespace cli
                     var loggerFactory = app.Services.GetService<ILoggerFactory>();
                     var logger = loggerFactory.CreateLogger<Program>();
                     logger.LogInformation("Starting emailling");
-                    mailer.SendEmailFromCriteria(critCommandArg.Value, TemplateConstants.Criterias[critCommandArg.Value]);
+                    mailer.SendEmailFromCriteria(critCommandArg.Value);
                     logger.LogInformation("Finished emailling");
                 }
                 else

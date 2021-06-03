@@ -17,6 +17,7 @@ using Yavsc.Templates;
 using Yavsc.Abstract.Templates;
 using Yavsc.Services;
 using Yavsc.Abstract.Manage;
+using Yavsc.Server.Settings;
 
 namespace cli.Services
 {
@@ -61,11 +62,13 @@ namespace cli.Services
         }
 
 
-        public void SendEmailFromCriteria(string templateCode, Func<ApplicationUser,bool> criteria)
+        public void SendEmailFromCriteria(string templateCode)
         {
             string className = "GeneratedTemplate";
 
             string subtemp = stringLocalizer["MonthlySubjectTemplate"].Value;
+
+            Func<ApplicationUser,bool> criteria = UserPolicies.Criterias[templateCode];
 
             logger.LogInformation($"Generating {subtemp}[{className}]");
 
