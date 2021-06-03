@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using Microsoft.Extensions.CodeGeneration.EntityFramework;
 using System.Linq;
 using Newtonsoft.Json;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace cli
 {
@@ -143,6 +145,7 @@ namespace cli
             services.AddSingleton(typeof(IAssemblyLoadContextAccessor), svs => PlatformServices.Default.AssemblyLoadContextAccessor);
             services.AddSingleton(typeof(IAssemblyLoaderContainer), svs => PlatformServices.Default.AssemblyLoaderContainer);
             services.AddSingleton(typeof(ILibraryManager), svs => PlatformServices.Default.LibraryManager);
+            services.AddSingleton<UserManager<ApplicationDbContext>>();
 
             services.AddSingleton(typeof(BootstrapperContext),
                 svs => new BootstrapperContext
@@ -247,6 +250,12 @@ Microsoft.Extensions.CodeGeneration.ICodeGeneratorActionsService),
             services.AddTransient(typeof(IPackageInstaller),typeof(PackageInstaller));
             services.AddTransient(typeof(Microsoft.Extensions.CodeGeneration.ILogger),typeof(Microsoft.Extensions.CodeGeneration.ConsoleLogger));
 
+            services.AddIdentity<ApplicationUser, IdentityRole>(
+                    option =>
+                    {
+                        option.User.RequireUniqueEmail = true;
+                    }
+                ).AddEntityFrameworkStores<ApplicationDbContext>();
             Services = services;
         }
 

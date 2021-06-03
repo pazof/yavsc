@@ -121,6 +121,7 @@ namespace cli
             new AuthCommander(loggerFactory).Integrate(cliapp);
             new GenerationCommander().Integrate(cliapp);
             new Streamer(loggerFactory, cxSettings, usercxSettings ).Integrate(cliapp);
+            new UserListCleanUp().Integrate(cliapp);
 
             if (args.Length == 0)
             {

@@ -38,7 +38,6 @@ namespace Yavsc.Models
     using Blog;
     using Yavsc.Abstract.Identity;
     using Yavsc.Server.Models.Blog;
-    using Yavsc.Server.Models.Access;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -68,7 +67,6 @@ namespace Yavsc.Models
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.User);
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.Owner);
             builder.Entity<BlogTrad>().HasKey(tr => new { post = tr.PostId, lang = tr.Lang });
-            builder.Entity<CircleAuthorizationToFile>().HasKey(a => new { cid=a.CircleId, path=a.FullPath });
             builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument= i.InstrumentId, owner = i.OwnerId });
 
             foreach (var et in builder.Model.GetEntityTypes())
@@ -289,9 +287,6 @@ namespace Yavsc.Models
         public DbSet<LiveFlow> LiveFlow { get; set; }
 
         public DbSet<ChatRoomAccess> ChatRoomAccess { get; set; }
-
-        [Obsolete("use pazof.rules from .access files")]
-        public DbSet<CircleAuthorizationToFile> CircleAuthorizationToFile { get; set; }
 
         public DbSet<InstrumentRating> InstrumentRating { get; set; }
 

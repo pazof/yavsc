@@ -16,11 +16,11 @@ namespace cli
             CommandArgument critCommandArg = null;
             CommandOption sendHelpOption = null;
             CommandLineApplication sendMailCommandApp
-               = rootApp.Command("send-monthly",
+               = rootApp.Command("send-email",
                    (target) =>
                    {
                        target.FullName = "Send email";
-                       target.Description = "Sends monthly emails using given template from code";
+                       target.Description = "Sends emails using given template from code";
                        sendHelpOption = target.HelpOption("-? | -h | --help");
                        critCommandArg = target.Argument(
                            "criteria",
