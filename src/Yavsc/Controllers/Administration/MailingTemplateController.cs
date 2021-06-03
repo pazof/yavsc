@@ -11,6 +11,7 @@ using Yavsc.Server.Models.EMailing;
 using Microsoft.AspNet.Authorization;
 using Yavsc.Templates;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Yavsc.Controllers
 {
@@ -18,16 +19,20 @@ namespace Yavsc.Controllers
     public class MailingTemplateController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger logger;
 
-        public MailingTemplateController(ApplicationDbContext context)
+        public MailingTemplateController(ApplicationDbContext context,
+         ILoggerFactory loggerFactory)
         {
-            _context = context;    
+            _context = context;
+            logger = loggerFactory.CreateLogger<MailingTemplateController>();
+
         }
 
         // GET: MailingTemplate
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.MailingTemplate.Include(m => m.Manager);
+            var applicationDbContext = _context.MailingTemplate;
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -60,15 +65,18 @@ namespace Yavsc.Controllers
   
         }
 
-        // GET: MailingTemplate/Create
-        public IActionResult Create()
+        private void SetupViewBag()
         {
             ViewBag.ManagerId = new SelectList(_context.ApplicationUser, "Id", "UserName");
             ViewBag.ToSend = GetSelectFromEnum(typeof(Periodicity));
-            ViewBag.Id = new SelectList(
-                TemplateConstants.Criterias.Select(
-                    c => new SelectListItem{ Text = c.Key, Value = c.Key })
-                );
+            ViewBag.Id = TemplateConstants.Criterias.Select(
+                    c => new SelectListItem{ Text = c.Key, Value = c.Key }).ToList();
+        }
+
+        // GET: MailingTemplate/Create
+        public IActionResult Create()
+        {
+            SetupViewBag();
             return View();
         }
 
@@ -83,12 +91,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
-            ViewBag.ManagerId = new SelectList(_context.ApplicationUser, "Id", "UserName");
-            ViewBag.ToSend = GetSelectFromEnum(typeof(Periodicity));
-            ViewBag.Id = new SelectList(
-                TemplateConstants.Criterias.Select(
-                    c => new SelectListItem{ Text = c.Key, Value = c.Key })
-                );
+            SetupViewBag();
             return View(mailingTemplate);
         }
 
@@ -105,12 +108,7 @@ namespace Yavsc.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.ManagerId = new SelectList(_context.ApplicationUser, "Id", "UserName");
-            ViewBag.ToSend = GetSelectFromEnum(typeof(Periodicity));
-            ViewBag.Id = new SelectList(
-                TemplateConstants.Criterias.Select(
-                    c => new SelectListItem{ Text = c.Key, Value = c.Key })
-                );
+            SetupViewBag();
             return View(mailingTemplate);
         }
 
@@ -119,18 +117,14 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(MailingTemplate mailingTemplate)
         {
+
             if (ModelState.IsValid)
             {
                 _context.Update(mailingTemplate);
                 await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
-            ViewBag.ManagerId = new SelectList(_context.ApplicationUser, "Id", "UserName");
-            ViewBag.ToSend = GetSelectFromEnum(typeof(Periodicity));
-            ViewBag.Id = new SelectList(
-                TemplateConstants.Criterias.Select(
-                    c => new SelectListItem{ Text = c.Key, Value = c.Key })
-                );
+            SetupViewBag();
             return View(mailingTemplate);
         }
 
