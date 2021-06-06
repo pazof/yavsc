@@ -18,8 +18,8 @@ before_script:
     - cd ../Yavsc.Abstract && dnu restore --ignore-failed-sources
     - cd ../Yavsc.Server && dnu restore --ignore-failed-sources
     - cd ../Yavsc && dnu restore --ignore-failed-sources
-    - cd ../test && dnu restore --ignore-failed-sources
     - cd ../cli && dnu restore --ignore-failed-sources
+    - cd ../../test/yavscTests && dnu restore --ignore-failed-sources
     - cd ../..
   
 debug:
