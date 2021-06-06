@@ -35,7 +35,7 @@ debug:
     - cp $yavsc_client_secret_json yavsc-client-secret.json
     - dnu build
     - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml
-    - xsltproc ../../assets/xunit_to_html.xsl test-results.xml > test-results.html
+    - xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
     
 release:
   stage: deploy
