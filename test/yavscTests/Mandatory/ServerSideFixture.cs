@@ -230,7 +230,7 @@ namespace yavscTests
                 WebHostBuilder = new WebHostBuilder();
                 webhostengnine = WebHostBuilder
                 .UseEnvironment("Development")
-                .UseServer("Yavsc")
+                .UseServer("yavscTests")
                 .UseStartup<Yavsc.Startup>()
                 .Build();
                 WebApp = webhostengnine.Start();
@@ -240,9 +240,9 @@ namespace yavscTests
 
         public void Dispose()
         {
-            WebApp.Dispose();
-            
-            Logger.LogInformation("Disposing");
+            if (DbCreated) DropTestDb();
+            if (WebApp!=null) WebApp.Dispose();
+            if (Logger!=null) Logger.LogInformation("Disposing");
         }
 
         public bool DbCreated { get { 
