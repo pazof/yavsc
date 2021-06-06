@@ -2,7 +2,7 @@ using System;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace test.Mandatory
+namespace yavscTests.Mandatory
 {
     [Collection("Database")]
     [Trait("regression", "II")]
@@ -25,7 +25,7 @@ namespace test.Mandatory
             {
                 output.WriteLine("db not dropped");
             }
-            output.WriteLine($"Startup.Testing.ConnectionStrings.DatabaseCtor is {Startup.Testing.ConnectionStrings.DatabaseCtor}");
+            output.WriteLine($"Startup.Testing.ConnectionStrings.Default is {Startup.TestingSetup.ConnectionStrings.Default}");
         }
 
         /// <summary>
@@ -35,8 +35,8 @@ namespace test.Mandatory
         [Fact]
         public void InstallFromScratchUsingPoweredNpgsqlUser()
         {
-            _serverFixture.EnsureTestDb();
-            _serverFixture.UpgradeDb();
+            Assert.True(_serverFixture.EnsureTestDb());
+            Assert.True(_serverFixture.UpgradeDb()==0);
         }
 
         public void Dispose()

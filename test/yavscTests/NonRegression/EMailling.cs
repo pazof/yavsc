@@ -3,7 +3,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Yavsc.Abstract.Manage;
 
-namespace test
+namespace yavscTests
 {
 
     [Collection("EMaillingTeststCollection")]

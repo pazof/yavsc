@@ -22,26 +22,27 @@ using Xunit.Abstractions;
 using System.IO;
 using System.Linq;
 using Yavsc.Server.Models.IT.SourceCode;
+using yavscTests.Settings;
 
-namespace test
+namespace yavscTests
 {
     [Collection("Yavsc mandatory success story")]
     [Trait("regression", "oui")]
     public class BatchTests: BaseTestContext, IClassFixture<ServerSideFixture>, IDisposable
     {
-        ServerSideFixture _fixture;
+        private TestingSetup _testingOptions;
 
         public  BatchTests(ITestOutputHelper output, ServerSideFixture fixture) : base (output, fixture)
         {
-          _fixture = fixture;
+          _testingOptions = fixture.TestingSetup;
         }
 
         [Fact]
         public void GitClone()
         {
             Assert.True(_serverFixture.EnsureTestDb());
-            Assert.NotNull (_fixture.DbContext.Project);
-            var firstProject = _fixture.DbContext.Project.Include(p=>p.Repository).FirstOrDefault();
+            Assert.NotNull (_serverFixture.DbContext.Project);
+            var firstProject = _serverFixture.DbContext.Project.Include(p=>p.Repository).FirstOrDefault();
             Assert.NotNull (firstProject);
             var di = new DirectoryInfo(_serverFixture.SiteSetup.GitRepository);
             if (!di.Exists) di.Create();
@@ -94,19 +95,32 @@ namespace test
             configurationRoot = builder.Build();
         }
 
-        internal static BeforeCompileContext CreateYavscCompilationContext()
+        internal BeforeCompileContext CreateYavscCompilationContext()
         {
+            BeforeCompileContext newBeforeCompileContext = null;
+            Assert.NotNull(_testingOptions);
+            try 
+            {
             var projectContext = new ProjectContext
             {
                 Name = "Yavsc",
-                ProjectDirectory = "../Yavsc",
-                ProjectFilePath = "../Yavsc/project.json",
+                ProjectDirectory = _testingOptions.YavscWebPath,
+                ProjectFilePath = Path.Combine(_testingOptions.YavscWebPath, "project.json"),
                 TargetFramework = new FrameworkName("DNX", new Version(4, 5, 1)),
                 Configuration = Environment.GetEnvironmentVariable("ASPNET_ENV")
             };
 
-            return new BeforeCompileContext(
+            newBeforeCompileContext = new BeforeCompileContext(
                 null, projectContext, () => null, () => null, () => null);
+
+            }
+            catch(Exception ex)
+            {
+                _output.WriteLine(ex.Message);
+                _output.WriteLine(ex.StackTrace);
+            }
+
+            return newBeforeCompileContext;
         }
 
         internal static IConfigurationRoot CreateConfiguration(string prjDir)
@@ -144,19 +158,21 @@ namespace test
             {
                 options.ResourcesPath = "Resources";
             });
-            AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", Startup.Testing.ConnectionStrings.Default);
+            AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", Startup.TestingSetup.ConnectionStrings.Default);
             serviceCollection.AddEntityFramework()
               .AddNpgsql()
               .AddDbContext<ApplicationDbContext>(
-                                 db => db.UseNpgsql(Startup.Testing.ConnectionStrings.Default)
+                                 db => db.UseNpgsql(Startup.TestingSetup.ConnectionStrings.Default)
               );
             provider = serviceCollection.BuildServiceProvider();
         }
 
 
+        // TODO 
         [Fact]
-        public void ARequestAppDelegate()
+        public void ARequestDelegate()
         {
+            try {
             var services = new ServiceCollection();
             services.AddTransient<IRuntimeEnvironment>(
                 svs => PlatformServices.Default.Runtime
@@ -168,13 +184,20 @@ namespace test
 
             IApplicationBuilder app = new ApplicationBuilder(serviceProvider);
             var rtd = app.Build();
-            
+
+            }
+            catch (Exception ex)
+            {
+                _output.WriteLine(ex.Message);
+                _output.WriteLine(ex.StackTrace);
+            }
         }
 
 
         [Fact]
         public void InitApplicationBuilder()
         {
+            try {
             var services = new ServiceCollection();
 
             services.AddTransient<IRuntimeEnvironment>(
@@ -189,6 +212,17 @@ namespace test
             var rtd = app.Build();
             IOptions<LocalizationOptions> localOptions = ActivatorUtilities.GetServiceOrCreateInstance<IOptions<LocalizationOptions>>(provider); ;
 
+
+            }
+            catch (Exception ex)
+            {
+                _output.WriteLine(ex.Message);
+                _output.WriteLine(ex.StackTrace);
+            }
+            finally
+            {
+
+            }
         }
 
         public void Dispose()
@@ -197,7 +231,7 @@ namespace test
             {
                 Directory.Delete(Path.Combine(gitRepo,"yavsc"), true);
             }
-            _fixture.DropTestDb();
+            _serverFixture.DropTestDb();
         }
     }
 }

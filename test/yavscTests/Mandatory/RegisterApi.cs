@@ -19,7 +19,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.AspNet.Mvc.Razor;
 
-namespace test
+namespace yavscTests
 {
     [Collection("Yavsc Work In Progress")]
     [Trait("regression", "oui")]
@@ -35,11 +35,6 @@ namespace test
         [Fact]
         public void EnsureWeb()
         {
-            var host = new WebHostBuilder();
-             host.UseEnvironment("Development")
-            .UseServer("Microsoft.AspNet.Server.Kestrel")
-            .UseStartup<test.Startup>()
-            .Build().Start();
         }
 
     }

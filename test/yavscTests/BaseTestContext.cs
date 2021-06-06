@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using Xunit.Abstractions;
 
-namespace test
+namespace yavscTests
 {
     public class BaseTestContext {
 
