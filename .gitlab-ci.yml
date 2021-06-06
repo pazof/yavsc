@@ -30,6 +30,7 @@ debug:
     when: always
   script:
     - cd test/yavscTests
+    - cp $TestingConfig appsettings.Testing.json
     - dnu build
     - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml
     
