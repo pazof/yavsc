@@ -26,13 +26,12 @@ debug:
   stage: test
   artifacts:
     paths:
-      - test-results.xml
-      - test-results.html
+      - test/yavscTests/test-results.xml
     when: always
   script:
     - cd test/yavscTests
     - dnu build
-    - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml  -html test-results.html
+    - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml
     
 release:
   stage: deploy

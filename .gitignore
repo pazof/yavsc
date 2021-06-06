@@ -36,3 +36,4 @@ appsettings.Development.json
 /src/Yavsc/web.log
 yavscd
 builds/
+test-results.xml
