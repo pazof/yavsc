@@ -28,8 +28,7 @@ debug:
     paths:
       - test-results.xml
       - test-results.html
-    when:
-      - always
+    when: always
   script:
     - cd test/yavscTests
     - dnu build
