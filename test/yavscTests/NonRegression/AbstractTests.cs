@@ -3,7 +3,7 @@ using Xunit;
 using Xunit.Abstractions;
 using Yavsc.Helpers;
 
-namespace test
+namespace yavscTests
 {
     [Collection("Yavsc Abstract tests")]
     [Trait("regression", "II")]

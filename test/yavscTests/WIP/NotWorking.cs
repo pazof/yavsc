@@ -11,7 +11,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Dnx.TestHost.TestAdapter;
 using Xunit.Abstractions;
 
-namespace test
+namespace yavscTests
 {
     [Collection("Yavsc dropped intents")]
     [Trait("regres", "yes")]

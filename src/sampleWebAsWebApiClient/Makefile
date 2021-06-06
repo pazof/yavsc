@@ -3,17 +3,18 @@ BINTARGET=bin/$(CONFIGURATION)/dnx451/test.dll
 SOURCE_DIR=../..
 MAKEFILE_DIR=$(SOURCE_DIR)/scripts/make
 MSBUILD=msbuild
+YAVSCSRC=../../src
 
 include $(MAKEFILE_DIR)/dnx.mk
 
-../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll:
-	make -C ../Yavsc
+$(YAVSCSRC)/Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll:
+	make -C $(YAVSCSRC)/Yavsc
 
-../Yavsc.Abstract/bin/$(CONFIGURATION)/dnx451/Yavsc.Abstract.dll:
-	make -C ../Yavsc.Abstract
+$(YAVSCSRC)/Yavsc.Abstract/bin/$(CONFIGURATION)/dnx451/Yavsc.Abstract.dll:
+	make -C $(YAVSCSRC)/Yavsc.Abstract
 
-../Yavsc.Server/bin/$(CONFIGURATION)/dnx451/Yavsc.Server.dll:
-	make -C ../Yavsc.Server
+$(YAVSCSRC)/Yavsc.Server/bin/$(CONFIGURATION)/dnx451/Yavsc.Server.dll:
+	make -C $(YAVSCSRC)/Yavsc.Server
 
-$(BINTARGET): project.lock.json ../Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll ../Yavsc.Abstract/bin/$(CONFIGURATION)/dnx451/Yavsc.Abstract.dll ../Yavsc.Server/bin/$(CONFIGURATION)/dnx451/Yavsc.Server.dll
+$(BINTARGET): project.lock.json $(YAVSCSRC)/Yavsc/bin/$(CONFIGURATION)/dnx451/Yavsc.dll $(YAVSCSRC)/Yavsc.Abstract/bin/$(CONFIGURATION)/dnx451/Yavsc.Abstract.dll $(YAVSCSRC)/Yavsc.Server/bin/$(CONFIGURATION)/dnx451/Yavsc.Server.dll
 	dnu build --configuration $(CONFIGURATION)

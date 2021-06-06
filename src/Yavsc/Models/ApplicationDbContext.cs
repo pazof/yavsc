@@ -279,7 +279,7 @@ namespace Yavsc.Models
 
         public DbSet<GitRepositoryReference> GitRepositoryReference { get; set; }
 
-        public DbSet<Project> Project { get; set; }        
+        public DbSet<Project> Project { get; set; }
         
         public DbSet<BlogTrad> BlogTrad { get; set; }
 

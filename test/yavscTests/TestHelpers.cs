@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace test {
+namespace yavscTests {
 
 	public static class AssertAsync {
 

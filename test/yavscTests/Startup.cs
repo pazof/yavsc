@@ -12,7 +12,7 @@ using Yavsc.Models;
 using Yavsc.Services;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.WebEncoders;
-using test.Settings;
+using yavscTests.Settings;
 using Microsoft.AspNet.Diagnostics;
 using System.Net;
 using Yavsc.Extensions;
@@ -49,7 +49,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Yavsc.Auth;
 using Yavsc.Lib;
 
-namespace test
+namespace yavscTests
 {
     public class Startup
     {
@@ -60,7 +60,7 @@ namespace test
 
         public ApplicationDbContext DbContext { get; private set; }
 
-        public static Testing Testing { get; private set; }
+        public static TestingSetup TestingSetup { get; private set; }
 
         public static IConfigurationRoot GoogleWebClientConfiguration { get; set; }
 
@@ -69,6 +69,8 @@ namespace test
         public static OAuth.AspNet.AuthServer.OAuthAuthorizationServerOptions OAuthServerAppOptions { get; private set; }
         public Yavsc.Auth.YavscGoogleOptions YavscGoogleAppOptions { get; private set; }
         private static ILogger logger;
+
+        public static string ApiKey { get; private set; }
 
 
         public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
@@ -108,7 +110,7 @@ namespace test
             var dbSettingsconf = Configuration.GetSection("ConnectionStrings");
             services.Configure<DbConnectionSettings>(dbSettingsconf);
             var testingconf = Configuration.GetSection("Testing");
-            services.Configure<Testing>(testingconf);
+            services.Configure<TestingSetup>(testingconf);
 
             services.AddInstance(typeof(ILoggerFactory), new LoggerFactory());
             services.AddTransient(typeof(IEmailSender), typeof(MailSender));
@@ -408,7 +410,7 @@ namespace test
             IApplicationBuilder app,
             IHostingEnvironment env,
             ApplicationDbContext dbContext,
-            IOptions<Testing> testingSettings,
+            IOptions<TestingSetup> testingSettings,
             UserManager<ApplicationUser> usermanager,
             ILoggerFactory loggerFactory
             )
@@ -418,17 +420,15 @@ namespace test
             logger = loggerFactory.CreateLogger<Startup>();
             logger.LogInformation(env.EnvironmentName);
             this.DbContext = dbContext;
-            Testing = testingSettings.Value;
+            TestingSetup = testingSettings.Value;
 
                     _usermanager = usermanager;
-#if USERMANAGER
-#endif
 
-            if (Testing.ConnectionStrings == null)
+            if (TestingSetup.ConnectionStrings == null)
                 logger.LogInformation($" Testing.ConnectionStrings is null : ");
             else
             {
-                AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", Testing.ConnectionStrings.Default);
+                AppDomain.CurrentDomain.SetData("YAVSC_DB_CONNECTION", TestingSetup.ConnectionStrings.Default);
             }
 
             var authConf = Configuration.GetSection("Authentication").GetSection("Yavsc");

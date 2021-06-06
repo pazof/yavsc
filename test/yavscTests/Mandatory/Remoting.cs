@@ -10,13 +10,14 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Hosting;
+using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.PlatformAbstractions;
 using Xunit;
 using Xunit.Abstractions;
 using Yavsc.Authentication;
 using static OAuth.AspNet.AuthServer.Constants;
 
-namespace test
+namespace yavscTests
 {
     [Collection("Yavsc Work In Progress")]
     [Trait("regression", "oui")]
@@ -39,9 +40,7 @@ namespace test
              string scope,
              string authorizeUrl,
              string redirectUrl,
-             string accessTokenUrl,
-             string login,
-             string pass
+             string accessTokenUrl
             )
         {
             try
@@ -52,8 +51,8 @@ namespace test
                 new Uri(authorizeUrl), new Uri(redirectUrl), new Uri(accessTokenUrl));
                 var query = new Dictionary<string, string>
                 {
-                    [Parameters.Username] = Startup.Testing.ValidCreds[0].UserName,
-                    [Parameters.Password] = Startup.Testing.ValidCreds[0].Password,
+                    [Parameters.Username] = Startup.TestingSetup.ValidCreds.UserName,
+                    [Parameters.Password] = Startup.TestingSetup.ValidCreds.Password,
                     [Parameters.GrantType] = GrantTypes.Password
                 };
 
@@ -70,7 +69,7 @@ namespace test
                 var webex = ex as WebException;
                 if (webex != null && webex.Status == (WebExceptionStatus)400)
                 {
-                    if (login == "joe")
+                    if (Startup.TestingSetup.ValidCreds.UserName == "lame-user")
                     {
                         Console.WriteLine("Bad pass joe!");
                         return;
@@ -85,30 +84,20 @@ namespace test
 
             var allData = new List<object[]>();
 
-            for (int iTest=0; iTest < numTests && iTest < Startup.Testing.ValidCreds.Length; iTest++)
-            {
 
-                var login = Startup.Testing.ValidCreds[iTest].UserName;
-                var pass =  Startup.Testing.ValidCreds[iTest].Password;
+            allData.Add(new object[] { "blouh", "profile",
+            "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
+                "http://localhost:5000/token", "http://localhost:5000/authorize"});
+        
+        
 
-                allData.Add(new object[] { ServerSideFixture.ApiKey, "blouh", "profile",
-                "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
-                    "http://localhost:5000/token",login, pass});
-            }
-            var valid = allData.Count;
-            for (int iTest=0; iTest + valid < numTests  && iTest < Startup.Testing.InvalidCreds.Length; iTest++)
-            {
-                var login = Startup.Testing.InvalidCreds[iTest].UserName;
-                var pass =  Startup.Testing.InvalidCreds[iTest].Password;
-
-                allData.Add(new object[] { ServerSideFixture.ApiKey, "blouh", "profile",
-                "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
-                    "http://localhost:5000/token",login, 0 });
-            }
-            return allData.Take(numTests);
+            allData.Add(new object[] {  "blouh", "profile",
+            "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
+                "http://localhost:5000/token", "http://localhost:5000/authorize"});
+            
+            return allData.Take(numTests);;
 
         }
-
 
     }
 }

@@ -10,11 +10,11 @@ using Yavsc;
 using Yavsc.Models;
 using Xunit;
 using Npgsql;
-using test.Settings;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata.Conventions;
+using yavscTests.Settings;
 
-namespace test
+namespace yavscTests
 {
     [Trait("regression", "II")]
     public class ServerSideFixture : IDisposable
@@ -26,7 +26,7 @@ namespace test
         readonly ILoggerFactory _loggerFactory;
         IEmailSender _mailSender;
 
-        public static string ApiKey => "53f4d5da-93a9-4584-82f9-b8fdf243b002";
+        public  string ApiKey { get; private set; }
 
         public ApplicationDbContext DbContext { get; private set; }
         public SiteSettings SiteSetup
@@ -46,7 +46,7 @@ namespace test
         /// initialized by Init
         /// </summary>
         /// <value></value>
-        public static object TestingSetup { get; private set; }
+        public TestingSetup TestingSetup { get; private set; }
 
         public IEmailSender MailSender
         {
@@ -76,9 +76,9 @@ namespace test
 
 
 
-        internal void UpgradeDb()
+        internal int UpgradeDb()
         {
-            Microsoft.Data.Entity.Commands.Program.Main(
+            return Microsoft.Data.Entity.Commands.Program.Main(
                 new string[] { "database", "update" });
         }
 
@@ -95,7 +95,7 @@ namespace test
             }
         }
         bool dbCreated;
-        private readonly WebHostBuilder host;
+        public WebHostBuilder Host { get; private set; }
         private readonly IHostingEngine hostengnine;
 
 
@@ -108,13 +108,13 @@ namespace test
         // 
         public ServerSideFixture()
         {
-             host = new WebHostBuilder();
-            AssertNotNull(host, nameof(host));
+             Host = new WebHostBuilder();
+            AssertNotNull(Host, nameof(Host));
 
-            hostengnine = host
-            .UseEnvironment("Development")
-            .UseServer("test")  
-            .UseStartup<test.Startup>()
+            hostengnine = Host
+            .UseEnvironment("Testing")
+            .UseServer("yavscTests")
+            .UseStartup<Startup>()
             .Build();
             
             AssertNotNull(hostengnine, nameof(hostengnine));
@@ -132,20 +132,27 @@ namespace test
 
             _loggerFactory = App.Services.GetService(typeof(ILoggerFactory)) as ILoggerFactory;
             AssertNotNull(_loggerFactory, nameof(_loggerFactory));
+
             var siteSetup = App.Services.GetService(typeof(IOptions<SiteSettings>)) as IOptions<SiteSettings>;
             AssertNotNull(siteSetup, nameof(siteSetup));
-            var testingSetup = App.Services.GetService(typeof(IOptions<Testing>)) as IOptions<Testing>;
+
+            var testingSetup = App.Services.GetService(typeof(IOptions<TestingSetup>)) as IOptions<TestingSetup>;
+            AssertNotNull(testingSetup, nameof(testingSetup));
+
             DbContext = App.Services.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
 
             SiteSetup = siteSetup.Value;
-            TestingSetup = testingSetup.Value;
+            AssertNotNull(SiteSetup, nameof(SiteSetup));
 
+            TestingSetup = testingSetup.Value;
+            AssertNotNull(TestingSetup, nameof(TestingSetup));
 
             Logger = _loggerFactory.CreateLogger<ServerSideFixture>();
+            AssertNotNull(Logger, nameof(Logger));
 
             var builder = new DbConnectionStringBuilder
             {
-                ConnectionString = Startup.Testing.ConnectionStrings.Default
+                ConnectionString = Startup.TestingSetup.ConnectionStrings.Default
             };
             ConventionSet conventions = new ConventionSet();
 
@@ -155,6 +162,7 @@ namespace test
 
 
             TestingDatabase = (string)builder["Database"];
+            AssertNotNull(TestingDatabase, nameof(TestingDatabase));
             
             Logger.LogInformation("ServerSideFixture created.");
         }
@@ -167,7 +175,7 @@ namespace test
         public void CheckDbExistence()
         {
             using (
-            NpgsqlConnection cx = new NpgsqlConnection(Startup.Testing.ConnectionStrings.DatabaseCtor))
+            NpgsqlConnection cx = new NpgsqlConnection(Startup.TestingSetup.ConnectionStrings.Default))
             {
                 cx.Open();
                 _logger.LogInformation($"check db for TestingDatabase:{TestingDatabase}");
@@ -183,16 +191,19 @@ namespace test
         {
             if (!DbCreated) 
             {
-                 using (NpgsqlConnection cx = new NpgsqlConnection(Startup.Testing.ConnectionStrings.DatabaseCtor))
+                using (NpgsqlConnection cx = 
+                new NpgsqlConnection(Startup.TestingSetup.ConnectionStrings.DatabaseCtor))
                 {
                 _logger.LogInformation($"create database for TestingDatabase : {TestingDatabase}");
 
                     cx.Open();
                     var command = cx.CreateCommand();
-                    using (NpgsqlConnection ownercx =  new NpgsqlConnection(Startup.Testing.ConnectionStrings.Default))
+                    using (NpgsqlConnection ownercx =  new NpgsqlConnection(Startup.TestingSetup.ConnectionStrings.Default))
                     command.CommandText = $"create database \"{TestingDatabase}\" OWNER \"{ownercx.UserName}\";";
+                    
                     _logger.LogInformation(command.CommandText);
                     command.ExecuteNonQuery();
+                    cx.Close();
                 }
                 dbCreated = true;
 
@@ -213,7 +224,15 @@ namespace test
         }
 
         public bool DbCreated { get { 
+            try {
             CheckDbExistence();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                _logger.LogError(ex.StackTrace);
+            }
             return dbCreated; } }
     }
 }

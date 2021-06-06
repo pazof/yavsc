@@ -1,4 +1,4 @@
-namespace test.Settings
+namespace yavscTests.Settings
 {
     public class DbConnectionSettings
     {

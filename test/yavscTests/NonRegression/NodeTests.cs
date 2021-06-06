@@ -3,7 +3,7 @@ using Xunit;
 using System.IO;
 using System.Diagnostics;
 
-namespace test
+namespace yavscTests
 {
 
     /// <summary>
