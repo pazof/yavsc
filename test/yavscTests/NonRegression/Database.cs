@@ -41,7 +41,10 @@ namespace yavscTests.Mandatory
 
         public void Dispose()
         {
-            _serverFixture.DropTestDb();
+            if (_serverFixture!=null) 
+            {
+                _serverFixture.Dispose();
+            }
 
         }
     }
