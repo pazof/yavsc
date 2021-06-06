@@ -13,6 +13,8 @@ using Npgsql;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata.Conventions;
 using yavscTests.Settings;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace yavscTests
 {
@@ -217,9 +219,29 @@ namespace yavscTests
                 DbContext.Database.EnsureDeleted();
             dbCreated = false;
         }
+        public bool EnsureWeb()
+        {
+            if (WebApp!=null) return true;
+
+            Task.Run(() => {
+                var di = new DirectoryInfo(Startup.TestingSetup.YavscWebPath);
+                Assert.True(di.Exists);
+                Environment.CurrentDirectory = di.FullName;
+                WebHostBuilder = new WebHostBuilder();
+                webhostengnine = WebHostBuilder
+                .UseEnvironment("Development")
+                .UseServer("Yavsc")
+                .UseStartup<Yavsc.Startup>()
+                .Build();
+                WebApp = webhostengnine.Start();
+            }).Wait();
+            return true;
+        }
 
         public void Dispose()
         {
+            WebApp.Dispose();
+            
             Logger.LogInformation("Disposing");
         }
 
@@ -234,6 +256,12 @@ namespace yavscTests
                 _logger.LogError(ex.StackTrace);
             }
             return dbCreated; } }
+
+        public WebHostBuilder WebHostBuilder { get; private set; }
+
+        private IHostingEngine webhostengnine;
+
+        public IApplication WebApp { get; private set; }
     }
 }
 

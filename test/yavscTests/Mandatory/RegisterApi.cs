@@ -35,6 +35,7 @@ namespace yavscTests
         [Fact]
         public void EnsureWeb()
         {
+            _serverFixture.EnsureWeb();
         }
 
     }
