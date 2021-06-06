@@ -31,6 +31,7 @@ debug:
   script:
     - cd test/yavscTests
     - cp $TestingConfig appsettings.Testing.json
+    - cp $yavsc_client_secret_json yavsc-client-secret.json
     - dnu build
     - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml
     
