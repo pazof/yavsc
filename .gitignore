@@ -34,6 +34,8 @@ omnisharp.json
 connectionsettings.Development.json
 appsettings.Development.json
 /src/Yavsc/web.log
-yavscd
+/yavscd
 builds/
-test-results.xml
+/test/yavscTests/test-results.xml
+/test/yavscTests/test-results.html
+/binaries/Debug/yavscd
