@@ -37,11 +37,20 @@ non_reg:
   artifacts:
     paths:
       - test/yavscTests/test-results.xml
-      - test/yavscTests/test-results.html
     when: always
   script:
     - cd test/yavscTests
-    - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml || xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
+    - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml 
+
+non_reg_html:
+  stage: test
+  artifacts:
+    paths:
+      - test/yavscTests/test-results.html
+    when: manual
+  script:
+    - cd test/yavscTests
+    - xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
 
 release:
   stage: deploy
