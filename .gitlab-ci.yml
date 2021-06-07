@@ -47,10 +47,13 @@ non_reg_html:
   artifacts:
     paths:
       - test/yavscTests/test-results.html
-    when: always
   script:
     - cd test/yavscTests
     - xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
+  trigger:
+    include:
+      - artifact: test/yavscTests/test-results.xml
+        job: non_reg
 
 release:
   stage: deploy
