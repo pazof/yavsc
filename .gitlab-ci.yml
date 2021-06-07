@@ -40,6 +40,7 @@ non_reg:
       - test/yavscTests/test-results.html
     when: always
   script:
+    - cd test/yavscTests
     - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml || xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
 
 release:
