@@ -24,6 +24,7 @@
                     .skipped { color: #cc0; }
                     .timing { float: right; }
                     .indent { margin: 0.25em 0 0.5em 2em; }
+                    .indenttest { margin: 0.25em 0 0.5em 1em; }
                     .clickable { cursor: pointer; }
                     .testcount { font-size: 85%; }
                 </style>
@@ -35,6 +36,12 @@
                         }
                         else {
                             elem.style.display = "none";
+                        }
+                    }
+                    function EnsureBlock(id) {
+                        var elem = document.getElementById(id);
+                        if (elem.style.display == "none") {
+                            elem.style.display = "block";
                         }
                     }
                 </script>
@@ -78,6 +85,7 @@
     </xsl:template>
 
     <xsl:template match="test">
+        
         <div>
             <xsl:attribute name="class"><xsl:if test="(position() mod 2 = 0)">alt</xsl:if>row</xsl:attribute>
            
@@ -86,15 +94,15 @@
             <xsl:if test="@result='Fail'"><span class="failure">&#x2718;</span></xsl:if>
             <xsl:if test="@result='Pass'"><span class="success">&#x2714;</span></xsl:if>
              <span class="clickable">
-                <xsl:attribute name="onclick">ToggleClass('class<xsl:value-of select="generate-id()"/>')</xsl:attribute>
+                <xsl:attribute name="onclick">ToggleClass('test<xsl:value-of select="generate-id()"/>')</xsl:attribute>
             &#160;<xsl:value-of select="@name"/>
             </span>
            
 
-        <div class="indent">
+        <div >
 
-            <xsl:if test="@failed = 0"><xsl:attribute name="style">display: none;</xsl:attribute></xsl:if>
-            <xsl:attribute name="id">class<xsl:value-of select="generate-id()"/></xsl:attribute>
+            <xsl:if test="@result='Pass'"><xsl:attribute name="style">display: none;</xsl:attribute></xsl:if>
+            <xsl:attribute name="id">test<xsl:value-of select="generate-id()"/></xsl:attribute>
 
              <xsl:if test="child::node()/message"> : <xsl:value-of select="child::node()/message"/></xsl:if>
             <br clear="all" />
@@ -120,8 +128,8 @@
         <h3>
             <span class="timing"><xsl:value-of select="@time"/>s</span>
             <span class="clickable">
-                <xsl:attribute name="onclick">ToggleClass('class<xsl:value-of select="generate-id()"/>')</xsl:attribute>
-                <xsl:attribute name="ondblclick">ToggleClass('class<xsl:value-of select="generate-id()"/>')</xsl:attribute>
+                <xsl:attribute name="onclick">ToggleClass('collection<xsl:value-of select="generate-id()"/>')</xsl:attribute>
+                <xsl:attribute name="ondblclick">ToggleClass('collection<xsl:value-of select="generate-id()"/>')</xsl:attribute>
                 <xsl:if test="@failed > 0"><span class="failure">&#x2718;</span></xsl:if>
                 <xsl:if test="@failed = 0"><span class="success">&#x2714;</span></xsl:if>
                 &#160;<xsl:value-of select="@name"/>
@@ -131,8 +139,26 @@
         </h3>
         <div class="indent">
             <xsl:if test="@failed = 0"><xsl:attribute name="style">display: none;</xsl:attribute></xsl:if>
-            <xsl:attribute name="id">class<xsl:value-of select="generate-id()"/></xsl:attribute>
-            <xsl:apply-templates select="test"><xsl:sort select="@name"/></xsl:apply-templates>
+            <xsl:attribute name="id">collection<xsl:value-of select="generate-id()"/></xsl:attribute>
+
+
+    <xsl:for-each select="test">
+       <div class="indent">
+        <xsl:if test="@result ='Fail'">
+            <a>
+                <xsl:attribute name="onclick">EnsureBlock('test<xsl:value-of select="generate-id()"/>')</xsl:attribute>
+                <xsl:attribute name="href">#test<xsl:value-of select="generate-id()"/></xsl:attribute>
+                <span class="failure">&#x2718;</span>
+                <xsl:value-of select="@name"/>
+            </a>
+        </xsl:if>
+        <xsl:if test="@result ='Pass'">
+            <span class="success">&#x2714;</span>
+            <xsl:value-of select="@name"/>
+        </xsl:if>
+     </div>
+    </xsl:for-each>
+           
         </div>
     </xsl:template>
 
