@@ -30,15 +30,6 @@ debug:
   artifacts:
     paths:
       - test/yavscTests/bin
-      - packages
-      - src/OAuth.AspNet.AuthServer/project.lock.json
-      - src/OAuth.AspNet.Token/project.lock.json
-      - src/Yavsc.Abstract/project.lock.json
-      - src/Yavsc.Server/project.lock.json
-      - src/Yavsc/project.lock.json
-      - src/cli/project.lock.json
-      - test/yavscTests/bin/
-      - test/yavscTests/project.lock.json
   script:
     - cd test/yavscTests
     - dnu build
