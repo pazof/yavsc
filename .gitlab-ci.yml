@@ -46,19 +46,6 @@ non_reg:
     - cd test/yavscTests
     - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml 
 
-non_reg_html:
-  stage: test
-  trigger:
-    include:
-      - artifact: test/yavscTests/test-results.xml
-        job: non_reg
-    artifacts:
-      paths:
-        - test/yavscTests/test-results.html
-    script:
-      - cd test/yavscTests
-      - xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
-
 release:
   stage: deploy
   only:
