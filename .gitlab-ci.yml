@@ -21,23 +21,27 @@ before_script:
     - cd ../cli && dnu restore --ignore-failed-sources
     - cd ../../test/yavscTests && dnu restore --ignore-failed-sources
     - cd ../..
-  
+
+after_script:
+
 debug:
   stage: test
-  allow_failure: true
+  script:
+    - cd test/yavscTests
+    - cp $TestingConfig appsettings.Testing.json
+    - cp $yavsc_client_secret_json yavsc-client-secret.json
+    - dnu build
+
+non_reg:
+  stage: test
   artifacts:
     paths:
       - test/yavscTests/test-results.xml
       - test/yavscTests/test-results.html
     when: always
   script:
-    - cd test/yavscTests
-    - cp $TestingConfig appsettings.Testing.json
-    - cp $yavsc_client_secret_json yavsc-client-secret.json
-    - dnu build
-    - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml
-    - xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
-    
+    - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml || xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
+
 release:
   stage: deploy
   only:
