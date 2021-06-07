@@ -5,6 +5,7 @@
 image: mono:4.6.2.7
 
 stages:
+  - build
   - test
   - deploy
 
@@ -25,7 +26,10 @@ before_script:
 after_script:
 
 debug:
-  stage: test
+  stage: build
+  artifacts:
+    paths:
+      - test/yavscTests/bin
   script:
     - cd test/yavscTests
     - cp $TestingConfig appsettings.Testing.json
@@ -44,16 +48,16 @@ non_reg:
 
 non_reg_html:
   stage: test
-  artifacts:
-    paths:
-      - test/yavscTests/test-results.html
-  script:
-    - cd test/yavscTests
-    - xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
   trigger:
     include:
       - artifact: test/yavscTests/test-results.xml
         job: non_reg
+    artifacts:
+      paths:
+        - test/yavscTests/test-results.html
+    script:
+      - cd test/yavscTests
+      - xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
 
 release:
   stage: deploy
