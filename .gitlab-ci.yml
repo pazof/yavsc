@@ -47,7 +47,7 @@ non_reg_html:
   artifacts:
     paths:
       - test/yavscTests/test-results.html
-    when: manual
+    when: always
   script:
     - cd test/yavscTests
     - xsltproc ../../assets/dnx_xunit_to_html.xsl test-results.xml > test-results.html
