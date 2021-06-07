@@ -24,6 +24,7 @@ before_script:
   
 debug:
   stage: test
+  allow_failure: true
   artifacts:
     paths:
       - test/yavscTests/test-results.xml
