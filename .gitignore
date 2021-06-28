@@ -39,3 +39,4 @@ builds/
 /test/yavscTests/test-results.xml
 /test/yavscTests/test-results.html
 /binaries/Debug/yavscd
+yavsc-pre
