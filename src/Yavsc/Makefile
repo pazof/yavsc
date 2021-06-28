@@ -53,7 +53,7 @@ deploy-pkg: publish
 
 deploy: pushInPre pushInProd
 
-pushInPre: cleanoutput bin/output/wwwroot/version
+pushInPre: cleanoutput bin/output/wwwroot/version ../../yavscd-pre
 	sudo service kestrel-pre stop
 	sudo rm -rf $(DESTDIR)/approot
 	sudo cp -a bin/output/* $(DESTDIR)
@@ -61,7 +61,7 @@ pushInPre: cleanoutput bin/output/wwwroot/version
 	sudo sync
 	sudo service kestrel-pre start
 
-pushInProd: cleanoutput bin/output/wwwroot/version
+pushInProd: cleanoutput bin/output/wwwroot/version ../../yavscd
 ifeq ($(git_status),0)
 	sudo service kestrel stop
 	sudo rm -rf $(PRODDESTDIR)/approot
