@@ -325,8 +325,7 @@ namespace Yavsc
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             _logger = loggerFactory.CreateLogger<Startup>();
-
-
+            app.UseStatusCodePagesWithReExecute("/Home/Status/{0}");
             if (env.IsDevelopment())
             {
                 var logenvvar = Environment.GetEnvironmentVariable("ASPNET_LOG_LEVEL");
@@ -349,7 +348,6 @@ namespace Yavsc
                     }
 
 
-                app.UseDeveloperExceptionPage();
                 app.UseRuntimeInfoPage();
                 var epo = new ErrorPageOptions
                 {
@@ -408,16 +406,6 @@ namespace Yavsc
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"en-US"));
 
             ConfigureWorkflow();
-
-            // Empty this odd chat user list from db
-            /* 
-            foreach (var p in dbContext.ChatConnection)
-            {
-              dbContext.Entry(p).State = EntityState.Deleted;
-            }
-            dbContext.SaveChanges();
-            FIXME */
-
             ConfigureWebSocketsApp(app);
 
             app.UseMvc(routes =>
@@ -428,80 +416,6 @@ namespace Yavsc
             });
             _logger.LogInformation("LocalApplicationData: " + Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
             
-            #if EXPERIMENTAL
-            
-            app.Use(async (context, next) =>
-                {
-                    const string livePath = "live";
-                    var liveCasting = context.Request.Path.StartsWithSegments(Constants.LivePath);
-                    if (liveCasting)
-                    {
-
-                        // ensure this request is for a websocket
-                        if (context.WebSockets.IsWebSocketRequest)
-                        {
-                            if (!context.User.Identity.IsAuthenticated)
-                                context.Response.StatusCode = 403;
-                            else
-                            {
-                                var liveId = long.Parse(context.Request.Path.Value.Substring(Constants.LivePath.Length + 1));
-                                var userId = context.User.GetUserId();
-                                var user = await _dbContext.Users.FirstAsync(u => u.Id == userId);
-                                var uname = user.UserName;
-                                var flow = _dbContext.LiveFlow.Include(f => f.Owner).SingleOrDefault(f => (f.OwnerId == userId && f.Id == liveId));
-
-                                if (flow == null)
-                                {
-                                    _logger.LogWarning("Aborting. Flow info was not found.");
-                                    context.Response.StatusCode = 400;
-                                    return;
-                                }
-                                var hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
-
-                                hubContext.Clients.All.addPublicStream(new PublicStreamInfo
-                                {
-                                    id = flow.Id,
-                                    sender = flow.Owner.UserName,
-                                    title = flow.Title,
-                                    url = flow.GetFileUrl(),
-                                    mediaType = flow.MediaType
-                                }, $"{flow.Owner.UserName} is starting a stream!");
-
-                                string destDir = context.User.InitPostToFileSystem(livePath);
-                                _logger.LogInformation($"Saving flow to {destDir}");
-
-                                string fileName = flow.GetFileName();
-
-                                _logger.LogInformation("flow : " + flow.Title + " for " + uname);
-                                FileInfo destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
-                                // this should end :-)
-                                while (destFileInfo.Exists)
-                                {
-                                    flow.SequenceNumber++;
-                                    fileName = flow.GetFileName();
-                                    destFileInfo = new FileInfo(Path.Combine(destDir, fileName));
-                                }
-
-                                await _liveProcessor.AcceptStream(context, user, destDir, fileName);
-                            }
-                        }
-                        else
-                        {
-                            context.Response.StatusCode = 400;
-                        }
-                    }
-                    else
-                    {
-                        await next();
-                    }
-
-                });
-                
-                #endif
-
-
-            // FIXME
-            app.UseStatusCodePages();
             CheckApp(env, loggerFactory);
         }
 
