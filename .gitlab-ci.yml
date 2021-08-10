@@ -61,7 +61,6 @@ deploy_staging:
     - echo "Deploy to staging server"
     - make strip_yavscd
     - make packages
-    - cd 
     - isn push -s $ISNSOURCE -k $NUGETSOURCEAPIKEY src/Yavsc.Abstract/bin/*/*.nupkg
   environment:
     name: staging
