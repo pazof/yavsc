@@ -21,14 +21,6 @@ namespace Yavsc
     {
         public static IApplicationBuilder UseYaFileServer(this IApplicationBuilder builder, FileServerOptions options)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException("builder");
-            }
-            if (options == null)
-            {
-                throw new ArgumentNullException("options");
-            }
             if (options == null)
             {
                 throw new ArgumentNullException("options");
@@ -46,10 +38,6 @@ namespace Yavsc
 
         public static IApplicationBuilder UseYaSendFileFallback(this IApplicationBuilder builder)
         {
-            if (builder == null)
-            {
-                throw new ArgumentNullException("builder");
-            }
             return builder.UseMiddleware<YaSendFileMiddleware>(new object[0]);
         }
     }

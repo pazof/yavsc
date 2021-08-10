@@ -42,9 +42,8 @@ non_reg:
     when: always
   script:
     - cd test/yavscTests
-    - cp $TestingConfig appsettings.Testing.json
     - cp $yavsc_client_secret_json yavsc-client-secret.json
-    - ASPNET_ENV=Testing dnx test -maxthreads 1 -xml test-results.xml 
+    - ASPNET_ENV=Development dnx test -trait=Category=non_reg -maxthreads 1 -xml test-results.xml 
 
 release:
   stage: deploy
