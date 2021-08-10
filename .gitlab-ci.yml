@@ -60,8 +60,9 @@ deploy_staging:
   script:
     - echo "Deploy to staging server"
     - make strip_yavscd
+    - make packages
     - cd src/Yavsc.Abstract
-    - make push ISNSOURCE=$ISNSOURCE NUGETSOURCEAPIKEY=$NUGETSOURCEAPIKEY
+    - isn push -s $ISNSOURCE -k $NUGETSOURCEAPIKEY *.nupkg
   environment:
     name: staging
     url: https://yavscpre.pschneider.fr

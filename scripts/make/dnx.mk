@@ -15,9 +15,6 @@ BINTARGET=$(PRJNAME).dll
 BINTARGETPATH=bin/$(CONFIGURATION)/$(FRAMEWORKALIAS)/$(BINTARGET)
 PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
 dnu=dnu
-ifndef ISNSOURCE
-ISNSOURCE=$(HOME)/Nupkgs
-endif
 
 # OBS SUBDIRS=Yavsc.Server Yavsc.Abstract Yavsc cli
 #
@@ -57,18 +54,17 @@ $(BINTARGETPATH): project.lock.json rc-num.txt-check
 # Default target, from one level sub dirs
 
 bin/output:
-	@$(dnu) publish
+	$(dnu) publish
 
 bin/output/wwwroot/version: bin/output
 	@echo $(version) > bin/output/wwwroot/version
 
 pack: $(BINTARGETPATH) ../../version.txt
-	@nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
+	dnu pack --configuration $(CONFIGURATION)
 
 push: pack
 	@echo push to source: $(ISNSOURCE)
-	@nuget setApiKey $(NUGETSOURCEAPIKEY) -Source $(ISNSOURCE)
-	@nuget push bin/$(PRJNAME).$(VERSION).nupkg -src $(ISNSOURCE) -SkipDuplicate
+	isn push -s $(ISNSOURCE) -k $(NUGETSOURCEAPIKEY) src/$(PRJNAME)/bin/$(CONFIGURATION)/$(PRJNAME).*.nupkg
 
 .PHONY: rc-num.txt-check 
 
