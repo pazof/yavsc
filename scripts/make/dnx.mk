@@ -15,8 +15,8 @@ BINTARGET=$(PRJNAME).dll
 BINTARGETPATH=bin/$(CONFIGURATION)/$(FRAMEWORKALIAS)/$(BINTARGET)
 PKGFILENAME=$(PRJNAME).$(VERSION).nupkg
 dnu=dnu
-ifndef NUGETSOURCE
-NUGETSOURCE=$(HOME)/Nupkgs
+ifndef ISNSOURCE
+ISNSOURCE=$(HOME)/Nupkgs
 endif
 
 # OBS SUBDIRS=Yavsc.Server Yavsc.Abstract Yavsc cli
@@ -66,9 +66,9 @@ pack: $(BINTARGETPATH) ../../version.txt
 	@nuget pack $(PRJNAME).nuspec -Version $(VERSION) -Properties config=$(CONFIGURATION) -OutputDirectory bin 
 
 push: pack
-	@echo push to source: $(NUGETSOURCE)
-	@nuget setApiKey $(NUGETSOURCEAPIKEY) -Source $(NUGETSOURCE)
-	@nuget push bin/$(PRJNAME).$(VERSION).nupkg -src $(NUGETSOURCE) -SkipDuplicate
+	@echo push to source: $(ISNSOURCE)
+	@nuget setApiKey $(NUGETSOURCEAPIKEY) -Source $(ISNSOURCE)
+	@nuget push bin/$(PRJNAME).$(VERSION).nupkg -src $(ISNSOURCE) -SkipDuplicate
 
 .PHONY: rc-num.txt-check 
 
