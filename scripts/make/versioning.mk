@@ -4,7 +4,7 @@ PRJNAME := $(shell basename `pwd -P`)
 endif
 version := $(shell cat ../../version.txt)
 MAKE=make
-NUGETSOURCE=$(HOME)/Nupkgs
+ISNSOURCE=$(HOME)/Nupkgs
 VERSION=$(version)
 CONFIGURATION=Debug
 
