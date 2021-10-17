@@ -86,7 +86,10 @@ namespace Yavsc.Controllers
         {
             return View();
         }
-
+        public IActionResult Dash()
+        {
+            return View();
+        }
         public ActionResult Chat()
         {
             if (User.Identity.IsAuthenticated)
