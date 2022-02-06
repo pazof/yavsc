@@ -7,4 +7,4 @@
 | ------- | ------------------ |
 | 1.0.6   | :x:                |
 
-(https://yavsc.pschneider.fr)
+(https://pschneider.fr:84)

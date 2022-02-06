@@ -11,15 +11,15 @@
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
 <environment names="lua,coiffure,zicmoove,yavsc,yavscpre">
     <script>
-        var CREATE_PAYMENT_URL = 'https://lua.pschneider.fr/api/payment/create';
-        var EXECUTE_PAYMENT_URL = 'https://lua.pschneider.fr/api/payment/execute';
+        var CREATE_PAYMENT_URL = 'http://pschneider.fr:85/api/payment/create';
+        var EXECUTE_PAYMENT_URL = 'http://pschneider.fr:85/api/payment/execute';
         var PAYPAL_ENV = 'sandbox';
     </script>
 </environment>
 <environment names="Development">
     <script>
-        var CREATE_PAYMENT_URL = 'https://dev.pschneider.fr/api/payment/create';
-        var EXECUTE_PAYMENT_URL = 'https://dev.pschneider.fr/api/payment/execute';
+        var CREATE_PAYMENT_URL = 'http://pschneider.fr:85/api/payment/create';
+        var EXECUTE_PAYMENT_URL = 'http://dev.pschneider.fr:85/api/payment/execute';
         var PAYPAL_ENV = 'sandbox';
     </script>
 </environment>

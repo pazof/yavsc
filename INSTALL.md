@@ -8,7 +8,7 @@ In this doc, let's say, `FreeField`
 
 ### A domain name
 
-Wait ... `freefield.pschneider.fr`
+Wait ... `pschneider.fr`
 You'll have to see with your provider, in order to power it, and make it point to your host ip, at least concerning the ports 80 & 443.
 
 ### An Npgsql db
