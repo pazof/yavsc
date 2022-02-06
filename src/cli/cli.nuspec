@@ -8,7 +8,7 @@
 		<owners>Paul Schneider</owners>
 		<License>https://github.com/pazof/yavsc/blob/vnext/LICENSE</License>
 		<projectUrl>https://github.com/pazof/yavsc/blob/vnext/README.md</projectUrl>
-		<iconUrl>http://yavsc.pschneider.fr/images/yavsc.png</iconUrl>
+		<iconUrl>http://pschneider.fr:84/images/yavsc.png</iconUrl>
 		<requireLicenseAcceptance>true</requireLicenseAcceptance>
 		<description>A command line interface to Yavsc server API's</description>
 		<tags></tags>
