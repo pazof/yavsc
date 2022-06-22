@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNet.Authentication.JwtBearer" Version="1.0.0-rc1-final" />
     <PackageReference Include="Microsoft.AspNet.DataProtection" Version="1.0.0-rc1-final" />
   </ItemGroup>
