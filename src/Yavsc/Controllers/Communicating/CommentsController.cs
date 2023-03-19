@@ -1,8 +1,8 @@
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 
@@ -32,13 +32,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Comment comment = await _context.Comment.SingleAsync(m => m.Id == id);
             if (comment == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(comment);
@@ -73,13 +73,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Comment comment = await _context.Comment.SingleAsync(m => m.Id == id);
             if (comment == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewData["PostId"] = new SelectList(_context.Blogspot, "Id", "Post", comment.PostId);
             return View(comment);
@@ -106,13 +106,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Comment comment = await _context.Comment.SingleAsync(m => m.Id == id);
             if (comment == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(comment);

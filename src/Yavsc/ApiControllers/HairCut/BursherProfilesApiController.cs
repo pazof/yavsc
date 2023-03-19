@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Haircut;
 
@@ -34,14 +30,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             BrusherProfile brusherProfile = await _context.BrusherProfile.SingleAsync(m => m.UserId == id);
 
             if (brusherProfile == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(brusherProfile);
@@ -53,17 +49,17 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != brusherProfile.UserId)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
             
             if (id != User.GetUserId())
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
             _context.Entry(brusherProfile).State = EntityState.Modified;
 
@@ -75,7 +71,7 @@ namespace Yavsc.Controllers
             {
                 if (!BrusherProfileExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -83,7 +79,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/BursherProfilesApi
@@ -92,7 +88,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.BrusherProfile.Add(brusherProfile);
@@ -104,7 +100,7 @@ namespace Yavsc.Controllers
             {
                 if (BrusherProfileExists(brusherProfile.UserId))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -121,13 +117,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             BrusherProfile brusherProfile = await _context.BrusherProfile.SingleAsync(m => m.UserId == id);
             if (brusherProfile == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.BrusherProfile.Remove(brusherProfile);

@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNet.Builder;
-using Microsoft.Extensions.Logging;
-
 namespace Yavsc
 {
-    using Microsoft.Data.Entity;
+    using Microsoft.EntityFrameworkCore;
     using Models;
     using Yavsc.Abstract.Workflow;
     using Yavsc.Billing;
@@ -64,7 +58,7 @@ namespace Yavsc
                         // TODO swith () case {}
                         if (typeof(IQueryable<ISpecializationSettings>).IsAssignableFrom(propinfo.PropertyType))
                         {// double-bingo 
-                            _logger.LogVerbose($"Pro: {propinfo.Name}");
+                            _logger.LogTrace($"Pro: {propinfo.Name}");
                             BillingService.UserSettings.Add(propinfo);
                         }
                         else

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.SignalR;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Yavsc.Interfaces.Workflow;
 using Yavsc.Models;
@@ -19,22 +14,23 @@ namespace Yavsc.Services
         private readonly ILogger _logger;
         readonly IEmailSender _emailSender;
         readonly SiteSettings siteSettings;
-        private readonly IHubContext hubContext;
         readonly ApplicationDbContext _dbContext;
         readonly IConnexionManager _cxManager;
+        private readonly IHubContext<ChatHub> hubContext;
 
         public YavscMessageSender(
             ILoggerFactory loggerFactory,
             IOptions<SiteSettings> sitesOptions,
             IEmailSender emailSender,
             ApplicationDbContext dbContext,
-            IConnexionManager cxManager
+            IConnexionManager cxManager,
+            IHubContext<ChatHub> hubContext
         )
         {
             _logger = loggerFactory.CreateLogger<MailSender>();
             _emailSender = emailSender;
             siteSettings = sitesOptions?.Value;
-            hubContext = GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+            this.hubContext = hubContext;
             _dbContext = dbContext;
             _cxManager = cxManager;
         }
@@ -129,7 +125,7 @@ namespace Yavsc.Services
                             {
                                 ["event"] = JsonConvert.SerializeObject(ev)
                             };
-                            hubClient.push(ev.Topic, JsonConvert.SerializeObject(data));
+                            await hubClient.SendAsync("push", ev.Topic, JsonConvert.SerializeObject(data));
                         }
 
                         result.message_id = MimeKit.Utils.MimeUtils.GenerateMessageId(

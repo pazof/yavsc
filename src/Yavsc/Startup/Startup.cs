@@ -1,46 +1,27 @@
 
-using System;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
-using System.Web.Optimization;
-using Microsoft.AspNet.Authentication;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Diagnostics;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Localization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Filters;
-using Microsoft.AspNet.Mvc.Razor;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
+using System.Net;
+using Google.Apis.Util.Store;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
+using Yavsc.Helpers;
+using static System.Environment;
 
 namespace Yavsc
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net;
-    using System.Security.Claims;
-    using Formatters;
-    using Google.Apis.Util.Store;
-    using Microsoft.AspNet.Http;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.AspNet.SignalR;
-    using Microsoft.Extensions.Localization;
-    using Microsoft.Extensions.Logging;
+    using Microsoft.AspNetCore.Mvc.Authorization;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Options;
     using Models;
     using Services;
-    using Yavsc.Abstract.FileSystem;
-    using Yavsc.AuthorizationHandlers;
-    using Yavsc.Helpers;
-    using Yavsc.Models.Messaging;
-    using static System.Environment;
 
     public partial class Startup
     {
@@ -56,13 +37,9 @@ namespace Yavsc
         public static PayPalSettings PayPalSettings { get; private set; }
         private static ILogger _logger;
 
-        /// <summary>
-        /// generating reset password and confirmation tokens
-        /// </summary>
-        public IUserTokenProvider<ApplicationUser> UserTokenProvider { get; set; }
 
 
-        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+        public Startup( IWebHostEnvironment env)
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnHandledException;
 
@@ -70,20 +47,12 @@ namespace Yavsc
             var prodtag = env.IsProduction() ? "P" : "";
             var stagetag = env.IsStaging() ? "S" : "";
 
-            HostingFullName = $"{appEnv.RuntimeFramework.FullName} [{env.EnvironmentName}:{prodtag}{devtag}{stagetag}]";
+            HostingFullName = $"{env.EnvironmentName} [{prodtag}/{devtag}/{stagetag}]";
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
-            if (env.IsDevelopment())
-            {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
-                BundleTable.EnableOptimizations = false;
-            }
-
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
@@ -175,16 +144,10 @@ namespace Yavsc
                     };
             });
 
-            // DataProtection
-            ConfigureProtectionServices(services);
-
-
             // Add framework services.
-            services.AddEntityFramework()
-              .AddNpgsql()
+            services.AddEntityFrameworkNpgsql()
               .AddDbContext<ApplicationDbContext>();
 
-            ConfigureOAuthServices(services);
 
             services.AddCors(
 
@@ -197,8 +160,6 @@ namespace Yavsc
             }
 
             );
-            // Add memory cache services
-            services.AddCaching();
 
             // Add session related services.
             services.AddSession();
@@ -223,7 +184,7 @@ namespace Yavsc
                 options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
             });
 
-            services.AddSingleton<IAuthorizationHandler, HasBadgeHandler>();
+        /* FIXME    services.AddSingleton<IAuthorizationHandler, HasBadgeHandler>();
             services.AddSingleton<IAuthorizationHandler, HasTemporaryPassHandler>();
             services.AddSingleton<IAuthorizationHandler, BlogEditHandler>();
             services.AddSingleton<IAuthorizationHandler, BlogViewHandler>();
@@ -231,7 +192,8 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, BillViewHandler>();
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
             services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
-            services.AddSingleton<IAuthorizationHandler, SendMessageHandler>();
+            services.AddSingleton<IAuthorizationHandler, SendMessageHandler>(); */
+
             services.AddSingleton<IConnexionManager, HubConnectionManager>();
             services.AddSingleton<ILiveProcessor, LiveProcessor>();
             services.AddSingleton<IFileSystemAuthManager, FileSystemAuthManager>();
@@ -245,7 +207,6 @@ namespace Yavsc
                 config.Filters.Add(new ProducesAttribute("application/json"));
                 // config.ModelBinders.Insert(0,new MyDateTimeModelBinder());
                 // config.ModelBinders.Insert(0,new MyDecimalModelBinder());
-                config.OutputFormatters.Add(new PdfFormatter());
             }).AddFormatterMappings(
                 config => config.SetMediaTypeMappingForFormat("text/pdf",
                 new MediaTypeHeaderValue("text/pdf"))
@@ -263,7 +224,7 @@ namespace Yavsc
 
             // Inject ticket formatting
             services.AddTransient(typeof(ISecureDataFormat<>), typeof(SecureDataFormat<>));
-            services.AddTransient<Microsoft.AspNet.Authentication.ISecureDataFormat<AuthenticationTicket>, Microsoft.AspNet.Authentication.SecureDataFormat<AuthenticationTicket>>();
+            services.AddTransient<ISecureDataFormat<AuthenticationTicket>, SecureDataFormat<AuthenticationTicket>>();
             services.AddTransient<ISecureDataFormat<AuthenticationTicket>, TicketDataFormat>();
 
             // Add application services.
@@ -281,11 +242,13 @@ namespace Yavsc
             });
         }
         static ApplicationDbContext _dbContext;
+        private UserManager<ApplicationUser> _usermanager;
+
         public static IServiceProvider Services { get; private set; }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
-            IApplicationBuilder app, IHostingEnvironment env,
+            IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env,
             ApplicationDbContext dbContext, IOptions<SiteSettings> siteSettings,
         IOptions<RequestLocalizationOptions> localizationOptions,
         IAuthorizationService authorizationService,
@@ -322,47 +285,12 @@ namespace Yavsc
                 if (!di.Exists) di.Create();
             }
 
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
             _logger = loggerFactory.CreateLogger<Startup>();
             app.UseStatusCodePagesWithReExecute("/Home/Status/{0}");
             if (env.IsDevelopment())
             {
-                var logenvvar = Environment.GetEnvironmentVariable("ASPNET_LOG_LEVEL");
-                if (logenvvar != null)
-                    switch (logenvvar)
-                    {
-                        case "info":
-                            loggerFactory.MinimumLevel = LogLevel.Information;
-                            break;
-                        case "warn":
-                            loggerFactory.MinimumLevel = LogLevel.Warning;
-                            break;
-                        case "err":
-                            loggerFactory.MinimumLevel = LogLevel.Error;
-                            break;
-                        case "debug":
-                        default:
-                            loggerFactory.MinimumLevel = LogLevel.Debug;
-                            break;
-                    }
-
-
-                app.UseRuntimeInfoPage();
-                var epo = new ErrorPageOptions
-                {
-                    SourceCodeLineCount = 20
-                };
-                app.UseDeveloperExceptionPage(epo);
-                app.UseDatabaseErrorPage(
-                  x =>
-                  {
-                      x.EnableAll();
-                      x.ShowExceptionDetails = true;
-                  }
-                );
+                app.UseDeveloperExceptionPage();
                 app.UseWelcomePage("/welcome");
-
             }
             else
             {
@@ -393,36 +321,49 @@ namespace Yavsc
             // then, fix it.
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xC00; // Tls12, required by PayPal
 
-            app.UseIISPlatformHandler(options =>
-            {
-                options.AuthenticationDescriptions.Clear();
-                options.AutomaticAuthentication = false;
-            });
 
             app.UseSession();
 
-            ConfigureOAuthApp(app);
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
             
-            app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"en-US"));
+            app.UseRequestLocalization();
 
             ConfigureWorkflow();
             ConfigureWebSocketsApp(app);
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+           
             _logger.LogInformation("LocalApplicationData: " + Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
             
             CheckApp(env, loggerFactory);
         }
 
         // Entry point for the application.
-        public static void Main(string[] args) => Microsoft.AspNet.Hosting.WebApplication.Run<Startup>(args);
-    }
+        public static void Main(string[] args) {
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddSignalR();
+            var app = builder.Build();
 
+            // Configure the HTTP request pipeline.
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.MapRazorPages();
+            app.MapHub<ChatHub>("/chatHub");
+
+            app.Run();
+
+        }
+    }
 }
 //

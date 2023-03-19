@@ -1,24 +1,20 @@
-﻿// // EMailer.cs
+﻿using System.Text;
+// // EMailer.cs
 // /*
 // paul  26/06/2018 12:18 20182018 6 26
 // */
-using System;
-using Microsoft.AspNet.Razor;
 using Yavsc.Templates;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 
 using Yavsc.Models;
 using Yavsc.Services;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
 using System.Reflection;
 using Yavsc.Abstract.Templates;
+using Microsoft.AspNetCore.Identity;
+using RazorEngine.Configuration;
 
 namespace Yavsc.Lib
 {
@@ -26,16 +22,20 @@ namespace Yavsc.Lib
     {
         const string DefaultBaseClassName = "ATemplate";
         const string DefaultBaseClass = nameof(UserOrientedTemplate);
-        const string DefaultNamespace = "CompiledRazorTemplates";
-        readonly RazorTemplateEngine razorEngine;
+        ISet<string> Namespaces = new System.Collections.Generic.HashSet<string> {
+            "System",
+            "Yavsc.Templates" ,
+            "Yavsc.Models",
+            "Yavsc.Models.Identity"};
+
         readonly IStringLocalizer<EMailer> stringLocalizer;
         readonly ApplicationDbContext dbContext;
         readonly IEmailSender mailSender;
-        readonly RazorEngineHost host;
+
         readonly ILogger logger;
 
-        public EMailer(ApplicationDbContext context, IEmailSender sender, 
-                       IStringLocalizer<EMailer> localizer, 
+        public EMailer(ApplicationDbContext context, IEmailSender sender,
+                       IStringLocalizer<EMailer> localizer,
                        ILoggerFactory loggerFactory)
         {
             stringLocalizer = localizer;
@@ -43,24 +43,15 @@ namespace Yavsc.Lib
 
             logger = loggerFactory.CreateLogger<EMailer>();
 
-            var language = new CSharpRazorCodeLanguage();
 
-            host = new RazorEngineHost(language)
+            var templateServiceConfig = new TemplateServiceConfiguration()
             {
-                DefaultBaseClass = DefaultBaseClass,
-                DefaultClassName = DefaultBaseClassName,
-                DefaultNamespace = DefaultNamespace
+                BaseTemplateType = typeof(UserOrientedTemplate),
+                Language = RazorEngine.Language.CSharp,
+                Namespaces = Namespaces
+
             };
 
-            host.NamespaceImports.Add("System");
-            host.NamespaceImports.Add("Yavsc.Templates");
-            host.NamespaceImports.Add("Yavsc.Models");
-            host.NamespaceImports.Add("Yavsc.Models.Identity");
-            host.NamespaceImports.Add("Microsoft.AspNet.Identity.EntityFramework");
-            host.InstrumentedSourceFilePath = ".";
-            host.StaticHelpers = true;
-            dbContext = context;
-            razorEngine = new RazorTemplateEngine(host);
         }
 
         public void SendMonthlyEmail(string templateCode, string baseclassName = DefaultBaseClassName)
@@ -70,9 +61,11 @@ namespace Yavsc.Lib
             string subtemp = stringLocalizer["MonthlySubjectTemplate"].Value;
 
             logger.LogInformation($"Generating {subtemp}[{className}]");
-          
-          
+
+
             var templateInfo = dbContext.MailingTemplate.FirstOrDefault(t => t.Id == templateCode);
+            var templatekey = RazorEngine.Engine.Razor.GetKey(templateInfo.Id);
+
 
             logger.LogInformation($"Using code: {templateCode},  subject: {subtemp} ");
             logger.LogInformation("And body:\n" + templateInfo.Body);
@@ -80,16 +73,20 @@ namespace Yavsc.Lib
             {
 
                 // Generate code for the template
-                var razorResult = razorEngine.GenerateCode(reader, className, DefaultNamespace, DefaultNamespace + ".cs");
+                using (var rzcode = new MemoryStream())
+                {
+                    using (var writter = new StreamWriter(rzcode))
+                    {
+                        RazorEngine.Engine.Razor.Run(templatekey, writter);
+                        rzcode.Seek(0, SeekOrigin.Begin);
 
-                logger.LogInformation("Razor exited " + (razorResult.Success ? "Ok" : "Ko") + ".");
+                        SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(Encoding.Default.GetString(rzcode.ToArray()));
 
-                logger.LogInformation(razorResult.GeneratedCode);
-                SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(razorResult.GeneratedCode);
-                logger.LogInformation("CSharp parsed");
-                List<MetadataReference> references = new List<MetadataReference>();
 
-                foreach (var type in new Type[] {
+                        logger.LogInformation("CSharp parsed");
+                        List<MetadataReference> references = new List<MetadataReference>();
+
+                        foreach (var type in new Type[] {
                     typeof(object),
                     typeof(Enumerable),
                     typeof(IdentityUser),
@@ -98,78 +95,80 @@ namespace Yavsc.Lib
                     typeof(UserOrientedTemplate),
                     typeof(System.Threading.Tasks.TaskExtensions)
                  })
-                {
-                    var location = type.Assembly.Location;
-                    if (!string.IsNullOrWhiteSpace(location))
-                    {
-                        references.Add(
-                            MetadataReference.CreateFromFile(location)
-                        );
-                        logger.LogInformation($"Assembly for {type.Name} found at {location}");
-                    }
-                    else logger.LogWarning($"Assembly Not found for {type.Name}");
-                }
-
-                logger.LogInformation("Compilation creation ...");
-
-                var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-                    .WithAllowUnsafe(true).WithOptimizationLevel(OptimizationLevel.Debug)
-                    .WithOutputKind(OutputKind.DynamicallyLinkedLibrary).WithPlatform(Platform.AnyCpu)
-                    .WithUsings("Yavsc.Templates")
-                    ;
-                string assemblyName = DefaultNamespace;
-                CSharpCompilation compilation = CSharpCompilation.Create(
-                    assemblyName,
-                    syntaxTrees: new[] { syntaxTree },
-                    references: references,
-                    options: compilationOptions
-                    );
-
-                using (var ms = new MemoryStream())
-                {
-                    logger.LogInformation("Emitting result ...");
-                    EmitResult result = compilation.Emit(ms);
-                    foreach (Diagnostic diagnostic in result.Diagnostics.Where(diagnostic =>
-                            diagnostic.Severity < DiagnosticSeverity.Error && !diagnostic.IsWarningAsError))
-                    {
-                        logger.LogWarning("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
-                        logger.LogWarning("{0}: {1}", diagnostic.Id, diagnostic.Location.GetLineSpan());
-                    }
-                    if (!result.Success)
-                    {
-                        logger.LogInformation(razorResult.GeneratedCode);
-                        IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
-                            diagnostic.IsWarningAsError ||
-                            diagnostic.Severity == DiagnosticSeverity.Error);
-                        foreach (Diagnostic diagnostic in failures)
                         {
-                            logger.LogCritical("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
-                            logger.LogCritical("{0}: {1}", diagnostic.Id, diagnostic.Location.GetLineSpan());
-                        }
-                    }
-                    else
-                    {
-                        logger.LogInformation(razorResult.GeneratedCode);
-                        ms.Seek(0, SeekOrigin.Begin);
-                        Assembly assembly = Assembly.Load(ms.ToArray());
-
-                        Type type = assembly.GetType(DefaultNamespace + "." + className);
-                        var generatedtemplate = (UserOrientedTemplate)Activator.CreateInstance(type);
-                        foreach (var user in dbContext.ApplicationUser.Where(
-                            u => u.AllowMonthlyEmail
-                        ))
-                        {
-                            logger.LogInformation("Generation for " + user.UserName);
-                            generatedtemplate.Init();
-                            generatedtemplate.User = user;
-                            generatedtemplate.ExecuteAsync();
-                            logger.LogInformation(generatedtemplate.GeneratedText);
+                            var location = type.Assembly.Location;
+                            if (!string.IsNullOrWhiteSpace(location))
+                            {
+                                references.Add(
+                                    MetadataReference.CreateFromFile(location)
+                                );
+                                logger.LogInformation($"Assembly for {type.Name} found at {location}");
+                            }
+                            else logger.LogWarning($"Assembly Not found for {type.Name}");
                         }
 
+                        logger.LogInformation("Compilation creation ...");
+
+                        var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+                            .WithAllowUnsafe(true).WithOptimizationLevel(OptimizationLevel.Debug)
+                            .WithOutputKind(OutputKind.DynamicallyLinkedLibrary).WithPlatform(Platform.AnyCpu)
+                            .WithUsings("Yavsc.Templates")
+                            ;
+                        string assemblyName = "EMailSenderTemplate";
+                        CSharpCompilation compilation = CSharpCompilation.Create(
+                            assemblyName,
+                            syntaxTrees: new[] { syntaxTree },
+                            references: references,
+                            options: compilationOptions
+                            );
+
+                        using (var ms = new MemoryStream())
+                        {
+                            logger.LogInformation("Emitting result ...");
+                            EmitResult result = compilation.Emit(ms);
+                            foreach (Diagnostic diagnostic in result.Diagnostics.Where(diagnostic =>
+                                    diagnostic.Severity < DiagnosticSeverity.Error && !diagnostic.IsWarningAsError))
+                            {
+                                logger.LogWarning("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+                                logger.LogWarning("{0}: {1}", diagnostic.Id, diagnostic.Location.GetLineSpan());
+                            }
+                            if (!result.Success)
+                            {
+
+                                IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic =>
+                                    diagnostic.IsWarningAsError ||
+                                    diagnostic.Severity == DiagnosticSeverity.Error);
+                                foreach (Diagnostic diagnostic in failures)
+                                {
+                                    logger.LogCritical("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+                                    logger.LogCritical("{0}: {1}", diagnostic.Id, diagnostic.Location.GetLineSpan());
+                                }
+                            }
+                            else
+                            {
+
+                                ms.Seek(0, SeekOrigin.Begin);
+                                Assembly assembly = Assembly.Load(ms.ToArray());
+
+                                Type type = assembly.GetType(Namespaces + "." + className);
+                                var generatedtemplate = (UserOrientedTemplate)Activator.CreateInstance(type);
+                                foreach (var user in dbContext.ApplicationUser.Where(
+                                    u => u.AllowMonthlyEmail
+                                ))
+                                {
+                                    logger.LogInformation("Generation for " + user.UserName);
+                                    generatedtemplate.Init();
+                                    generatedtemplate.User = user;
+                                    generatedtemplate.ExecuteAsync();
+                                    logger.LogInformation(generatedtemplate.GeneratedText);
+                                }
+
+                            }
+                        }
                     }
+
                 }
             }
-
         }
     }
 }

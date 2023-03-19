@@ -1,16 +1,14 @@
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models;
 using Yavsc.Server.Models.IT;
-using Microsoft.AspNet.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Yavsc.Server.Helpers;
 using Yavsc.Models.Workflow;
 using Yavsc.Models.Payment;
 using Yavsc.Server.Models.IT.SourceCode;
 using Microsoft.Extensions.Localization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.Controllers
 {
@@ -43,13 +41,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Project project = await _context.Project.SingleAsync(m => m.Id == id);
             if (project == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(project);
@@ -103,13 +101,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Project project = await _context.Project.SingleAsync(m => m.Id == id);
             if (project == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
          /*   ViewBag.ClientId = new SelectList(_context.ApplicationUser, "Id", "Client", project.ClientId);
             ViewBag.ActivityCodeItems = new SelectList(_context.Activities, "Code", "Context", project.ActivityCode);
@@ -142,13 +140,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Project project = await _context.Project.SingleAsync(m => m.Id == id);
             if (project == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(project);

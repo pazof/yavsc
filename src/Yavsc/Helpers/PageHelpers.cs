@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 
 namespace Yavsc.Server.Helpers

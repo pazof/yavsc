@@ -19,23 +19,14 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
 using Google.Apis.Auth.OAuth2;
-using Google.Apis.Util.Store;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
-using System.Collections.Generic;
-using System.Linq;
 using Google.Apis.Services;
-using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2.Responses;
 
 namespace Yavsc.Services
 {
-    using Yavsc.Models;
     using Yavsc.Models.Calendar;
     using Yavsc.Server.Helpers;
     using Yavsc.ViewModels.Calendar;

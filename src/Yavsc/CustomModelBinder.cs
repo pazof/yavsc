@@ -1,44 +1,43 @@
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Yavsc
 {
    public class MyDecimalModelBinder : IModelBinder
     {
 
-        public async Task<ModelBindingResult> BindModelAsync(ModelBindingContext bindingContext)
+        async Task IModelBinder.BindModelAsync(ModelBindingContext bindingContext)
         {
-            ValueProviderResult valueResult = bindingContext.ValueProvider
+              ValueProviderResult valueResult = bindingContext.ValueProvider
             .GetValue(bindingContext.ModelName);
             decimal actualValue ;
 
             try {
-                actualValue = Decimal.Parse(valueResult.FirstValue,  System.Globalization.NumberStyles.AllowDecimalPoint);
-                return await ModelBindingResult.SuccessAsync(bindingContext.ModelName,actualValue);
+                bindingContext.Result = ModelBindingResult.Success(
+                    Decimal.Parse(valueResult.FirstValue,  System.Globalization.NumberStyles.AllowDecimalPoint));
             }
             catch (Exception ) {
+                bindingContext.Result = ModelBindingResult.Failed();
             }
-            return await ModelBindingResult.FailedAsync(bindingContext.ModelName);
         }
     }
 
     public class MyDateTimeModelBinder : IModelBinder
     {
-        public async Task<ModelBindingResult> BindModelAsync(ModelBindingContext bindingContext)
+        async Task IModelBinder.BindModelAsync(ModelBindingContext bindingContext)
         {
            ValueProviderResult valueResult = bindingContext.ValueProvider
             .GetValue(bindingContext.ModelName);
             DateTime actualValue ;
-            ModelStateEntry modelState = new ModelStateEntry();
-                // DateTime are sent in the french format
-                if (DateTime.TryParse(valueResult.FirstValue,new CultureInfo("fr-FR"), DateTimeStyles.AllowInnerWhite, out actualValue))
-                {
-                    return await ModelBindingResult.SuccessAsync(bindingContext.ModelName,actualValue);
-                }
-           
-            return await ModelBindingResult.FailedAsync(bindingContext.ModelName);
+            // DateTime are sent in the french format
+            if (DateTime.TryParse(valueResult.FirstValue,new CultureInfo("fr-FR"), DateTimeStyles.AllowInnerWhite, out actualValue))
+            {
+                bindingContext.Result = ModelBindingResult.Success(actualValue);
+            }
+            else bindingContext.Result = ModelBindingResult.Failed();
+            
         }
     }
 }

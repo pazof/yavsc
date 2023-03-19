@@ -1,7 +1,6 @@
-using System;
+
 using System.Security.Claims;
-using System.Security.Principal;
-using Microsoft.AspNet.FileProviders;
+using Microsoft.Extensions.FileProviders;
 
 namespace Yavsc.Services
 {

@@ -1,12 +1,9 @@
-
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Yavsc.Controllers
 {
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Localization;
     using Models;
     using Models.IT.Evolution;
@@ -36,13 +33,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Feature feature = await _context.Feature.SingleAsync(m => m.Id == id);
             if (feature == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(feature);
@@ -75,13 +72,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Feature feature = await _context.Feature.SingleAsync(m => m.Id == id);
             if (feature == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             var featureStatusEnumType = typeof(FeatureStatus);
             var fsstatuses = new List<SelectListItem>();
@@ -113,13 +110,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Feature feature = await _context.Feature.SingleAsync(m => m.Id == id);
             if (feature == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(feature);

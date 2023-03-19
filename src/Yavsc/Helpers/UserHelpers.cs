@@ -1,6 +1,7 @@
+using System.Security.Claims;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 
@@ -8,6 +9,21 @@ namespace Yavsc.Helpers
 {
     public static class UserHelpers
     {
+
+        public static string GetUserId(this ClaimsPrincipal user)
+        {
+            return user.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+        
+        public static string GetUserName(this ClaimsPrincipal user)
+        {
+            return user.FindFirstValue(ClaimTypes.Name);
+        }
+
+        public static bool IsSignedIn(this ClaimsPrincipal user)
+        {
+            return user.Identity.IsAuthenticated;
+        }
 
         public static IEnumerable<BlogPost> UserPosts(this ApplicationDbContext dbContext, string posterId, string readerId)
         {

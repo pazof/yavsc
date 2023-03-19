@@ -1,17 +1,7 @@
-using System;
-using System.IO;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.FileProviders;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Features;
-using Microsoft.AspNet.StaticFiles;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
 using Yavsc.Helpers;
-using Yavsc.Services;
 using Yavsc.ViewModels.Auth;
 
 namespace Yavsc
@@ -52,7 +42,7 @@ namespace Yavsc
         static IAuthorizationService AuthorizationService { get; set; }
 
         public void ConfigureFileServerApp(IApplicationBuilder app,
-                SiteSettings siteSettings, IHostingEnvironment env,
+                SiteSettings siteSettings, Microsoft.AspNetCore.Hosting.IHostingEnvironment env,
                  IAuthorizationService authorizationService)
         {
             AuthorizationService = authorizationService;
@@ -113,7 +103,7 @@ namespace Yavsc
             var path = context.Context.Request.Path;
             var result = await AuthorizationService.AuthorizeAsync(context.Context.User,
                 new ViewFileContext{ UserName = uname, File = context.File, Path = path }, new ViewRequirement());
-            if (!result)
+            if (!result.Succeeded)
             {
                 _logger.LogInformation("403");
                 // TODO prettier

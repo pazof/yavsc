@@ -1,6 +1,6 @@
 
 using System.IO;
-using Microsoft.AspNet.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Yavsc.Models.Blog;
 
 namespace Yavsc.ViewModels.Auth {

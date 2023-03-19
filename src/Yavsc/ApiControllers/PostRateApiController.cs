@@ -1,7 +1,8 @@
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Yavsc.Helpers;
 using Yavsc.Models;
 
 namespace Yavsc.Controllers
@@ -23,20 +24,20 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             Models.Blog.BlogPost blogpost = _context.Blogspot.Single(x=>x.Id == id);
 
             if (blogpost == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (blogpost.AuthorId!=uid)
                 if (!User.IsInRole(Constants.AdminGroupName))
-                    return HttpBadRequest();
+                    return BadRequest();
 
             blogpost.Rate = rate;
             _context.SaveChanges(User.GetUserId());

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Razor;
+﻿using Microsoft.AspNetCore.Razor;
 
 namespace cli
 {

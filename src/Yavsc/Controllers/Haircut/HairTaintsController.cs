@@ -1,9 +1,8 @@
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Haircut;
 
@@ -31,13 +30,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HairTaint hairTaint = await _context.HairTaint.SingleAsync(m => m.Id == id);
             if (hairTaint == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(hairTaint);
@@ -70,13 +69,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HairTaint hairTaint = await _context.HairTaint.SingleAsync(m => m.Id == id);
             if (hairTaint == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewBag.ColorId = new SelectList(_context.Color, "Id", "Name",hairTaint.ColorId);
             return View(hairTaint);
@@ -103,13 +102,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HairTaint hairTaint = await _context.HairTaint.SingleAsync(m => m.Id == id);
             if (hairTaint == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(hairTaint);

@@ -1,10 +1,7 @@
-using System.Globalization;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Musical;
 
@@ -22,7 +19,7 @@ namespace Yavsc.Controllers
         // GET: InstrumentRating
         public async Task<IActionResult> Index()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var applicationDbContext = 
             _context.InstrumentRating
             .Include(i => i.Profile)
@@ -37,15 +34,15 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             InstrumentRating instrumentRating = await _context.InstrumentRating
             .Include(i => i.Instrument).SingleAsync(m => m.Id == id);
             if (instrumentRating == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(instrumentRating);
@@ -54,7 +51,7 @@ namespace Yavsc.Controllers
         // GET: InstrumentRating/Create
         public async Task<IActionResult> Create()
         {
-             var uid = User.GetUserId();
+             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
              var actual = await _context.InstrumentRating
                 .Where(m => m.OwnerId == uid). Select( r => r.InstrumentId ).ToArrayAsync();
@@ -88,13 +85,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             InstrumentRating instrumentRating = await _context.InstrumentRating.SingleAsync(m => m.Id == id);
             if (instrumentRating == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewData["OwnerId"] = new SelectList(_context.Performers, "PerformerId", "Profile", instrumentRating.OwnerId);
             return View(instrumentRating);
@@ -121,14 +118,14 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             InstrumentRating instrumentRating = await _context.InstrumentRating
             .Include(i => i.Instrument).SingleAsync(m => m.Id == id);
             if (instrumentRating == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(instrumentRating);

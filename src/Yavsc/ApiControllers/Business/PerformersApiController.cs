@@ -1,12 +1,11 @@
 
-using Microsoft.AspNet.Mvc;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Yavsc.Controllers
 {
+    using Microsoft.EntityFrameworkCore;
     using Models;
     using Yavsc.Helpers;
     using Yavsc.Services;
@@ -44,7 +43,7 @@ namespace Yavsc.Controllers
                 ModelState.AddModelError("id","Specifier un identifiant de prestataire valide");
             }
             else {
-                var uid = User.GetUserId();
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (!User.IsInRole("Administrator"))
                 if (uid != id) return new ChallengeResult();
 

@@ -1,9 +1,7 @@
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
 
@@ -30,13 +28,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             CommandForm commandForm = await _context.CommandForm.SingleAsync(m => m.Id == id);
             if (commandForm == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(commandForm);
@@ -73,13 +71,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             CommandForm commandForm = await _context.CommandForm.SingleAsync(m => m.Id == id);
             if (commandForm == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             SetViewBag(commandForm);
             return View(commandForm);
@@ -106,13 +104,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             CommandForm commandForm = await _context.CommandForm.SingleAsync(m => m.Id == id);
             if (commandForm == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(commandForm);

@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Abstract.Identity;
+using Yavsc.Helpers;
 using Yavsc.Models;
 
 namespace Yavsc.Controllers
@@ -49,14 +50,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
-            ApplicationUser applicationUser = _context.Users.Include(u=>u.Roles).Include(u=>u.Logins).Include(u=>u.Claims).Single(m => m.Id == id);
+            ApplicationUser applicationUser = _context.Users.Single(m => m.Id == id);
 
             if (applicationUser == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(applicationUser);
@@ -68,12 +69,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != applicationUser.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(applicationUser).State = EntityState.Modified;
@@ -86,7 +87,7 @@ namespace Yavsc.Controllers
             {
                 if (!ApplicationUserExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -94,7 +95,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/ApplicationUserApi
@@ -103,7 +104,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.Users.Add(applicationUser);
@@ -115,7 +116,7 @@ namespace Yavsc.Controllers
             {
                 if (ApplicationUserExists(applicationUser.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -132,13 +133,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             ApplicationUser applicationUser = _context.Users.Single(m => m.Id == id);
             if (applicationUser == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.Users.Remove(applicationUser);

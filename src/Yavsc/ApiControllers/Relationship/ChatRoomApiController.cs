@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Chat;
 
@@ -34,14 +30,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             ChatRoom chatRoom = await _context.ChatRoom.SingleAsync(m => m.Name == id);
 
             if (chatRoom == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(chatRoom);
@@ -53,17 +49,17 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != chatRoom.Name)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             if (User.GetUserId() != chatRoom.OwnerId )
             {
-                return HttpBadRequest(new {error = "OwnerId"});
+                return BadRequest(new {error = "OwnerId"});
             }
 
             _context.Entry(chatRoom).State = EntityState.Modified;
@@ -76,7 +72,7 @@ namespace Yavsc.Controllers
             {
                 if (!ChatRoomExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -84,7 +80,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/ChatRoomApi
@@ -93,12 +89,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (User.GetUserId() != chatRoom.OwnerId )
             {
-                return HttpBadRequest(new {error = "OwnerId"});
+                return BadRequest(new {error = "OwnerId"});
             }
 
             _context.ChatRoom.Add(chatRoom);
@@ -110,7 +106,7 @@ namespace Yavsc.Controllers
             {
                 if (ChatRoomExists(chatRoom.Name))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -127,7 +123,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
             ChatRoom chatRoom = await _context.ChatRoom.SingleAsync(m => m.Name == id);
 
@@ -135,13 +131,13 @@ namespace Yavsc.Controllers
 
             if (chatRoom == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (User.GetUserId() != chatRoom.OwnerId )
             {
                 if (!User.IsInRole(Constants.AdminGroupName))
-                    return HttpBadRequest(new {error = "OwnerId"});
+                    return BadRequest(new {error = "OwnerId"});
             }
 
             _context.ChatRoom.Remove(chatRoom);

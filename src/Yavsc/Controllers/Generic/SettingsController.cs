@@ -1,13 +1,12 @@
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Yavsc.Controllers.Generic
 {
     using System.Linq;
+    using Microsoft.EntityFrameworkCore;
     using Models;
+    using Yavsc.Helpers;
     using Yavsc.Services;
 
     [Authorize]
@@ -48,7 +47,7 @@ namespace Yavsc.Controllers.Generic
             var profile = await Settings.SingleAsync(m => m.UserId == id);
             if (profile == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(profile);
@@ -85,13 +84,13 @@ namespace Yavsc.Controllers.Generic
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             var brusherProfile = await Settings.SingleAsync(m => m.UserId == id);
             if (brusherProfile == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(brusherProfile);

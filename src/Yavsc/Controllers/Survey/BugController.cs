@@ -1,15 +1,12 @@
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
 using Yavsc.Models;
 using Yavsc.Models.IT.Fixing;
 using Yavsc.Models.IT.Evolution;
 using Yavsc.Server.Helpers;
-using System.Collections.Generic;
-using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
-using Microsoft.AspNet.Authorization;
-using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.Controllers
 {
@@ -40,13 +37,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Bug bug = await _context.Bug.SingleAsync(m => m.Id == id);
             if (bug == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(bug);
@@ -89,13 +86,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Bug bug = await _context.Bug.SingleAsync(m => m.Id == id);
             if (bug == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             ViewBag.Features = Features(_context);
@@ -126,13 +123,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Bug bug = await _context.Bug.SingleAsync(m => m.Id == id);
             if (bug == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(bug);
@@ -156,7 +153,7 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }  
             Bug bugref = await _context.Bug.SingleAsync(m => m.Id == id);
             if (bugref == null)

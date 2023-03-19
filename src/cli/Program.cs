@@ -2,8 +2,8 @@
 using System;
 using System.Runtime.Versioning;
 using cli.Commands;
-using Microsoft.AspNet.Builder.Internal;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Builder.Internal;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Dnx.Runtime;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;

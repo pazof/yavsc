@@ -1,7 +1,6 @@
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Forms;
 
@@ -27,13 +26,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Form form = await _context.Form.SingleAsync(m => m.Id == id);
             if (form == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(form);
@@ -64,13 +63,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Form form = await _context.Form.SingleAsync(m => m.Id == id);
             if (form == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(form);
         }
@@ -95,13 +94,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Form form = await _context.Form.SingleAsync(m => m.Id == id);
             if (form == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(form);

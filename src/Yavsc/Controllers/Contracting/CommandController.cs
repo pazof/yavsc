@@ -1,18 +1,14 @@
-using System;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
 
 namespace Yavsc.Controllers
 {
     using Helpers;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Options;
     using Models;
     using Models.Google.Messaging;
     using Models.Relationship;
@@ -58,7 +54,7 @@ namespace Yavsc.Controllers
         [Authorize]
         public virtual async Task<IActionResult> Index()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return View(await _context.RdvQueries
             .Include(x => x.Client)
             .Include(x => x.PerformerProfile)
@@ -77,7 +73,7 @@ namespace Yavsc.Controllers
             .SingleAsync(m => m.Id == id);
             if (command == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(command);
@@ -105,7 +101,7 @@ namespace Yavsc.Controllers
                 x => x.PerformerId == proId
             );
             if (pro == null)
-                return HttpNotFound();
+                return NotFound();
             ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == activityCode);
             ViewBag.GoogleSettings = _googleSettings;
             var userid = User.GetUserId();
@@ -126,7 +122,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Create(RdvQuery command)
         {
             // TODO validate BillingCode value
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
             || string.IsNullOrWhiteSpace(prid))
@@ -156,7 +152,7 @@ namespace Yavsc.Controllers
                     command.Location = existingLocation;
                 }
                 else _context.Attach<Location>(command.Location);
-                _context.RdvQueries.Add(command, GraphBehavior.IncludeDependents);
+                _context.RdvQueries.Add(command);
                 _context.SaveChanges(User.GetUserId());
 
                 var yaev = command.CreateEvent("NewCommand");
@@ -213,13 +209,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             RdvQuery command = _context.RdvQueries.Single(m => m.Id == id);
             if (command == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(command);
         }
@@ -244,13 +240,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             RdvQuery command = _context.RdvQueries.Single(m => m.Id == id);
             if (command == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(command);

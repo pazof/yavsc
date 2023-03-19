@@ -1,14 +1,10 @@
-using System;
-using System.Linq;
-using System.Security.Principal;
 using System.Security.Claims;
-using Yavsc.Models;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
-using System.IO;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using rules;
-using Microsoft.Data.Entity;
-using Microsoft.AspNet.FileProviders;
+using Yavsc.Helpers;
+using Yavsc.Models;
 
 namespace Yavsc.Services
 {

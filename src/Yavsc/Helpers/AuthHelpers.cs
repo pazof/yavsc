@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using Yavsc.ViewModels.Account;
 
 namespace Yavsc.Helpers
@@ -12,7 +12,7 @@ namespace Yavsc.Helpers
                 throw new ArgumentNullException(nameof(context));
             }
 
-            return from description in context.Authentication.GetAuthenticationSchemes()
+            return from description in context.GetExternalProviders()
                    where !string.IsNullOrEmpty(description.DisplayName)
                    select 
                             ( new YaAuthenticationDescription 

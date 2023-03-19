@@ -1,5 +1,4 @@
 @model IEnumerable<Yavsc.Models.IT.Fixing.Bug>
-@inject IStringLocalizer<Yavsc.Models.IT.Fixing.Resources> SRR
 
 @{
     ViewData["Title"] = @SR["Index"];
@@ -41,7 +40,7 @@
         </td>
         <td>
 
-            @SRR[typeof(Yavsc.Models.IT.Fixing.BugStatus).GetEnumNames()[(int)item.Status]]
+            @SR[typeof(Yavsc.Models.IT.Fixing.BugStatus).GetEnumNames()[(int)item.Status]]
         </td>
         <td>
             <a asp-action="Edit" asp-route-id="@item.Id">@SR["Edit"]</a> |

@@ -1,14 +1,15 @@
 using System;
 using System.IO;
+using System.IO.Pipelines;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Http.Features;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 
 namespace Yavsc
 {
 
-    class YaSendFileWrapper : IHttpSendFileFeature
+    class YaSendFileWrapper : IHttpResponseBodyFeature
     {
         private readonly Stream _output;
 
@@ -56,9 +57,28 @@ namespace Yavsc
 
         private const int maxbufferlen = 65536;
 
+        public Stream Stream => throw new NotImplementedException();
+
+        public PipeWriter Writer => throw new NotImplementedException();
+
         private async Task CopyToAsync(FileStream fileStream, Stream output)
         {
             await Task.Run(() => fileStream.CopyTo(output, maxbufferlen));
+        }
+
+        public void DisableBuffering()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task StartAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CompleteAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

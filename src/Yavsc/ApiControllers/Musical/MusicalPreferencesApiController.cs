@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Musical;
 
@@ -33,14 +30,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             MusicalPreference musicalPreference = _context.MusicalPreference.Single(m => m.OwnerProfileId == id);
 
             if (musicalPreference == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(musicalPreference);
@@ -51,12 +48,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != musicalPreference.OwnerProfileId)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(musicalPreference).State = EntityState.Modified;
@@ -69,7 +66,7 @@ namespace Yavsc.Controllers
             {
                 if (!MusicalPreferenceExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -77,7 +74,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/MusicalPreferencesApi
@@ -86,7 +83,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.MusicalPreference.Add(musicalPreference);
@@ -98,7 +95,7 @@ namespace Yavsc.Controllers
             {
                 if (MusicalPreferenceExists(musicalPreference.OwnerProfileId))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -115,13 +112,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             MusicalPreference musicalPreference = _context.MusicalPreference.Single(m => m.OwnerProfileId == id);
             if (musicalPreference == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.MusicalPreference.Remove(musicalPreference);

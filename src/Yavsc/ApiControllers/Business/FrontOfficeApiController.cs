@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Services;
@@ -30,10 +30,10 @@ namespace Yavsc.ApiControllers
         [HttpPost("query/reject")]
         public IActionResult RejectQuery(string billingCode, long queryId)
         {
-            if (billingCode == null) return HttpBadRequest("billingCode");
-            if (queryId == 0) return HttpBadRequest("queryId");
+            if (billingCode == null) return BadRequest("billingCode");
+            if (queryId == 0) return BadRequest("queryId");
             var billing = BillingService.GetBillable(dbContext, billingCode, queryId);
-            if (billing == null) return HttpBadRequest();
+            if (billing == null) return BadRequest();
             billing.Rejected = true;
             billing.RejectedAt = DateTime.Now;
             dbContext.SaveChanges();

@@ -1,19 +1,15 @@
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Identity;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace Yavsc.Controllers
 {
     using Helpers;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Localization;
     using Models;
     using ViewModels.FrontOffice;
-    using Yavsc.Abstract.FileSystem;
     using Yavsc.Services;
 
     public class FrontOfficeController : Controller
@@ -38,7 +34,7 @@ namespace Yavsc.Controllers
         }
         public ActionResult Index()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var now = DateTime.Now;
 
             var model = new FrontOfficeIndexViewModel

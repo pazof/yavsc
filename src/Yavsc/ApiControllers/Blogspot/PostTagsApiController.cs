@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Yavsc.Controllers
 {
     using System.Security.Claims;
-    using Models;    
+    using Microsoft.EntityFrameworkCore;
+    using Models;
+    using Yavsc.Helpers;
     using Yavsc.Models.Blog;
 
     [Produces("application/json")]
@@ -34,14 +35,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             BlogTag postTag = _context.TagsDomain.Single(m => m.PostId == id);
 
             if (postTag == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(postTag);
@@ -53,12 +54,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != postTag.PostId)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(postTag).State = EntityState.Modified;
@@ -71,7 +72,7 @@ namespace Yavsc.Controllers
             {
                 if (!PostTagExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -79,7 +80,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/PostTagsApi
@@ -88,7 +89,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.TagsDomain.Add(postTag);
@@ -100,7 +101,7 @@ namespace Yavsc.Controllers
             {
                 if (PostTagExists(postTag.PostId))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -117,13 +118,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             BlogTag postTag = _context.TagsDomain.Single(m => m.PostId == id);
             if (postTag == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.TagsDomain.Remove(postTag);

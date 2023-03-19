@@ -2,8 +2,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Data.Entity;
 using System.Threading;
 using Yavsc.Models.Haircut;
 using Yavsc.Models.IT.Evolution;
@@ -38,6 +36,9 @@ namespace Yavsc.Models
     using Blog;
     using Yavsc.Abstract.Identity;
     using Yavsc.Server.Models.Blog;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Yavsc.Server.Models.Calendar;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -72,7 +73,7 @@ namespace Yavsc.Models
             foreach (var et in builder.Model.GetEntityTypes())
             {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity") != null)
-                    et.FindProperty("DateCreated").IsReadOnlyAfterSave = true;
+                    et.FindProperty("DateCreated").SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             }
         }
 

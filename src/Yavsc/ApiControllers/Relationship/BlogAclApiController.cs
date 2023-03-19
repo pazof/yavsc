@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Access;
 
@@ -34,15 +31,15 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.CircleAuthorizationToBlogPost.SingleAsync(
                 m => m.CircleId == id && m.Allowed.OwnerId == uid );
 
             if (circleAuthorizationToBlogPost == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(circleAuthorizationToBlogPost);
@@ -54,12 +51,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != circleAuthorizationToBlogPost.CircleId)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             if (!CheckOwner(circleAuthorizationToBlogPost.CircleId))
@@ -76,7 +73,7 @@ namespace Yavsc.Controllers
             {
                 if (!CircleAuthorizationToBlogPostExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -84,12 +81,12 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
         private bool CheckOwner (long circleId)
         {
             
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var circle = _context.Circle.First(c=>c.Id==circleId);
             _context.Entry(circle).State = EntityState.Detached;
             return (circle.OwnerId == uid);
@@ -100,7 +97,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
             if (!CheckOwner(circleAuthorizationToBlogPost.CircleId))
             {
@@ -115,7 +112,7 @@ namespace Yavsc.Controllers
             {
                 if (CircleAuthorizationToBlogPostExists(circleAuthorizationToBlogPost.CircleId))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -132,9 +129,9 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             CircleAuthorizationToBlogPost circleAuthorizationToBlogPost = await _context.CircleAuthorizationToBlogPost.Include(
                 a=>a.Allowed
@@ -142,7 +139,7 @@ namespace Yavsc.Controllers
             && m.Allowed.OwnerId == uid);
             if (circleAuthorizationToBlogPost == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             _context.CircleAuthorizationToBlogPost.Remove(circleAuthorizationToBlogPost);
             await _context.SaveChangesAsync(User.GetUserId());

@@ -1,7 +1,6 @@
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Messaging;
 
@@ -27,13 +26,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Notification notification = await _context.Notification.SingleAsync(m => m.Id == id);
             if (notification == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(notification);
@@ -64,13 +63,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Notification notification = await _context.Notification.SingleAsync(m => m.Id == id);
             if (notification == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(notification);
         }
@@ -95,13 +94,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Notification notification = await _context.Notification.SingleAsync(m => m.Id == id);
             if (notification == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(notification);

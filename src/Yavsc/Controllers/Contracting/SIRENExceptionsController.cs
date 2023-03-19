@@ -1,7 +1,6 @@
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 
@@ -28,13 +27,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             ExceptionSIREN exceptionSIREN = _context.ExceptionsSIREN.Single(m => m.SIREN == id);
             if (exceptionSIREN == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(exceptionSIREN);
@@ -65,13 +64,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             ExceptionSIREN exceptionSIREN = _context.ExceptionsSIREN.Single(m => m.SIREN == id);
             if (exceptionSIREN == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(exceptionSIREN);
         }
@@ -96,13 +95,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             ExceptionSIREN exceptionSIREN = _context.ExceptionsSIREN.Single(m => m.SIREN == id);
             if (exceptionSIREN == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(exceptionSIREN);

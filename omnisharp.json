@@ -1,17 +1,12 @@
 {
 	"dotnet": {
-		"enabled": true
-	},
-	"msbuild": {
 		"enabled": false
 	},
-	"scriptcs": {
+	"msbuild": {
 		"enabled": true
 	},
 	"Dnx": {
-		"enabled": false,
-		"enablePackageRestore": false,
-		"projects": "src/*/project.json;*/project.json;project.json;test/*/project.json"
+		"enabled": false
 	},
 	"Script": {
 		"enabled": false
@@ -24,5 +19,4 @@
     ],
     "userExcludeSearchPatterns": []
   }
-
 }

@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 
 namespace Yavsc.Controllers
@@ -29,13 +29,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             ApplicationUser applicationUser = await _context.ApplicationUser.SingleAsync(m => m.Id == id);
             if (applicationUser == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(applicationUser);
@@ -68,13 +68,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             ApplicationUser applicationUser = await _context.ApplicationUser.SingleAsync(m => m.Id == id);
             if (applicationUser == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewData["PostalAddressId"] = new SelectList(_context.Locations, "Id", "PostalAddress", applicationUser.PostalAddressId);
             return View(applicationUser);
@@ -101,13 +101,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             ApplicationUser applicationUser = await _context.ApplicationUser.SingleAsync(m => m.Id == id);
             if (applicationUser == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(applicationUser);

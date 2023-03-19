@@ -1,9 +1,7 @@
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
 
@@ -30,13 +28,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             CoWorking coWorking = await _context.CoWorking.SingleAsync(m => m.Id == id);
             if (coWorking == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(coWorking);
@@ -71,13 +69,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             CoWorking coWorking = await _context.CoWorking.SingleAsync(m => m.Id == id);
             if (coWorking == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewData["PerformerId"] = new SelectList(_context.Performers, "PerformerId", "Performer", coWorking.PerformerId);
             ViewData["WorkingForId"] = new SelectList(_context.Users, "Id", "WorkingFor", coWorking.WorkingForId);
@@ -106,13 +104,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             CoWorking coWorking = await _context.CoWorking.SingleAsync(m => m.Id == id);
             if (coWorking == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(coWorking);

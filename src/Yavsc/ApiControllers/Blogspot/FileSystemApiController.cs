@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Yavsc.Models;
 
 namespace Yavsc.ApiControllers
@@ -63,11 +61,11 @@ namespace Yavsc.ApiControllers
             }
             if (pathex!=null) {
                 _logger.LogError($"invalid sub path: '{subdir}'.");
-                return HttpBadRequest(pathex);
+                return BadRequest(pathex);
             }
             _logger.LogInformation($"Receiving files, saved in '{destDir}' (specified as '{subdir}').");
             
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
@@ -91,7 +89,7 @@ namespace Yavsc.ApiControllers
         [Authorize("AdministratorOnly")]
         public IActionResult AddQuota(string uname, int len)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = dbContext.Users.FirstOrDefault(
                 u => u.UserName == uname
             );
@@ -107,7 +105,7 @@ namespace Yavsc.ApiControllers
         public IActionResult MoveFile([FromBody] RenameFileQuery query)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
@@ -124,10 +122,10 @@ namespace Yavsc.ApiControllers
             if (!ModelState.IsValid) {
                 var idvr = new ValidRemoteUserFilePathAttribute();
 
-                return this.HttpBadRequest(new { id = idvr.IsValid(query.id), to = idvr.IsValid(query.to), errors = ModelState });
+                return this.BadRequest(new { id = idvr.IsValid(query.id), to = idvr.IsValid(query.to), errors = ModelState });
             }
             _logger.LogInformation($"Valid move query: {query.id} => {query.to}");
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );

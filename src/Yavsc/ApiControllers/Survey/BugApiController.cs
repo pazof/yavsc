@@ -1,14 +1,9 @@
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Authorization;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Yavsc.Models;
 using Yavsc.Models.IT.Fixing;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.ApiControllers
 {
@@ -73,14 +68,14 @@ namespace Yavsc.ApiControllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             Bug bug = await _context.Bug.SingleAsync(m => m.Id == id);
 
             if (bug == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(bug);
@@ -92,12 +87,12 @@ namespace Yavsc.ApiControllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != bug.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(bug).State = EntityState.Modified;
@@ -110,7 +105,7 @@ namespace Yavsc.ApiControllers
             {
                 if (!BugExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -118,7 +113,7 @@ namespace Yavsc.ApiControllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/bug
@@ -127,7 +122,7 @@ namespace Yavsc.ApiControllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.Bug.Add(bug);
@@ -139,7 +134,7 @@ namespace Yavsc.ApiControllers
             {
                 if (BugExists(bug.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -156,13 +151,13 @@ namespace Yavsc.ApiControllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             Bug bug = await _context.Bug.SingleAsync(m => m.Id == id);
             if (bug == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.Bug.Remove(bug);

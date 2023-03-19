@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Access;
 
@@ -34,22 +32,22 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
             BlackListed blackListed = _context.BlackListed.Single(m => m.Id == id);
             if (blackListed == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             if (!CheckPermission(blackListed))
-                return HttpBadRequest();
+                return BadRequest();
 
             return Ok(blackListed);
         }
 
         private bool CheckPermission(BlackListed blackListed)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != blackListed.OwnerId)
                 if (!User.IsInRole(Constants.AdminGroupName))
                     if (!User.IsInRole(Constants.FrontOfficeGroupName))
@@ -62,15 +60,15 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != blackListed.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
             if (!CheckPermission(blackListed))
-                return HttpBadRequest();
+                return BadRequest();
             _context.Entry(blackListed).State = EntityState.Modified;
 
             try
@@ -81,7 +79,7 @@ namespace Yavsc.Controllers
             {
                 if (!BlackListedExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -89,7 +87,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/BlackListApi
@@ -98,11 +96,11 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (!CheckPermission(blackListed))
-                return HttpBadRequest();
+                return BadRequest();
 
             _context.BlackListed.Add(blackListed);
             try
@@ -113,7 +111,7 @@ namespace Yavsc.Controllers
             {
                 if (BlackListedExists(blackListed.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -130,17 +128,17 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             BlackListed blackListed = _context.BlackListed.Single(m => m.Id == id);
             if (blackListed == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (!CheckPermission(blackListed))
-                return HttpBadRequest();
+                return BadRequest();
                 
             _context.BlackListed.Remove(blackListed);
             _context.SaveChanges(User.GetUserId());

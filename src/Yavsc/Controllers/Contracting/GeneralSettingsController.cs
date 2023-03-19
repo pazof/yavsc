@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Musical.Profiles;
 
@@ -26,13 +25,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             GeneralSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
             if (generalSettings == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(generalSettings);
@@ -63,13 +62,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             GeneralSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
             if (generalSettings == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(generalSettings);
         }
@@ -94,13 +93,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             GeneralSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
             if (generalSettings == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(generalSettings);

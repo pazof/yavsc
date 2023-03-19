@@ -1,9 +1,7 @@
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Abstract.Identity;
+using Yavsc.Helpers;
 using Yavsc.Models;
 
 namespace Yavsc.Controllers
@@ -32,12 +30,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != clientProviderInfo.UserId)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(clientProviderInfo).State = EntityState.Modified;
@@ -50,7 +48,7 @@ namespace Yavsc.Controllers
             {
                 if (!ClientProviderInfoExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -58,7 +56,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/ContactsApi
@@ -67,7 +65,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.ClientProviderInfo.Add(clientProviderInfo);
@@ -79,7 +77,7 @@ namespace Yavsc.Controllers
             {
                 if (ClientProviderInfoExists(clientProviderInfo.UserId))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -96,13 +94,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             ClientProviderInfo clientProviderInfo = _context.ClientProviderInfo.Single(m => m.UserId == id);
             if (clientProviderInfo == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.ClientProviderInfo.Remove(clientProviderInfo);
