@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{503DDD6B-BE10-4235-9EBD-E9B1FA6067DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc.Abstract", "src\Yavsc.Abstract\Yavsc.Abstract.csproj", "{5AFB6255-CF1B-4660-BB35-F24C8C75FECE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc.Server", "src\Yavsc.Server\Yavsc.Server.csproj", "{830F5A71-0192-4288-9F4D-D7849D958970}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AFB6255-CF1B-4660-BB35-F24C8C75FECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AFB6255-CF1B-4660-BB35-F24C8C75FECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AFB6255-CF1B-4660-BB35-F24C8C75FECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AFB6255-CF1B-4660-BB35-F24C8C75FECE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{830F5A71-0192-4288-9F4D-D7849D958970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{830F5A71-0192-4288-9F4D-D7849D958970}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{830F5A71-0192-4288-9F4D-D7849D958970}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{830F5A71-0192-4288-9F4D-D7849D958970}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5AFB6255-CF1B-4660-BB35-F24C8C75FECE} = {503DDD6B-BE10-4235-9EBD-E9B1FA6067DF}
+		{830F5A71-0192-4288-9F4D-D7849D958970} = {503DDD6B-BE10-4235-9EBD-E9B1FA6067DF}
+	EndGlobalSection
+EndGlobal
