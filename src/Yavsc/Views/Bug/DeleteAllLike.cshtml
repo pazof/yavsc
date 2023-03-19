@@ -1,0 +1,53 @@
+@model IEnumerable<Yavsc.Models.IT.Fixing.Bug>
+@inject IStringLocalizer<Yavsc.Models.IT.Fixing.Resources> SRR
+
+@{
+    ViewData["Title"] = @SR["DeleteAllLike"];
+}
+
+<h2>@SR["Index"]</h2>
+
+<p>
+    <a asp-action="Create">@SR["Create New"]</a>
+</p>
+
+<table class="table">
+    <tr>
+        <td>
+            @SR[Html.DisplayNameFor(model => model.Id)]
+        </td>
+        <td>
+            @SR[Html.DisplayNameFor(model => model.Title)]
+        </td>
+        <th>
+            @SR[Html.DisplayNameFor(model => model.FeatureId)]
+        </th>
+        <th>
+            @SR[Html.DisplayNameFor(model => model.Status)]
+        </th>
+        <th></th>
+    </tr>
+    
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(model => item.Id)
+        </td>
+        <td>
+            @Html.DisplayFor(model => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FeatureId)
+        </td>
+        <td>
+
+            @SRR[typeof(Yavsc.Models.IT.Fixing.BugStatus).GetEnumNames()[(int)item.Status]]
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.Id">@SR["Edit"]</a> |
+            <a asp-action="Details" asp-route-id="@item.Id">@SR["Details"]</a> |
+            <a asp-action="DeleteAllLike" asp-route-id="@item.Id">@SR["Delete"]</a>
+        </td>
+    </tr>
+}
+</table>

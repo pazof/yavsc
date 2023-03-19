@@ -5,6 +5,9 @@
 	"msbuild": {
 		"enabled": false
 	},
+	"scriptcs": {
+		"enabled": false
+	},
 	"Dnx": {
 		"enabled": true,
 		"enablePackageRestore": false,

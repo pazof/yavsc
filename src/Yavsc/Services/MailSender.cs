@@ -14,14 +14,18 @@ namespace Yavsc.Services
     {
         readonly SiteSettings siteSettings;
         readonly SmtpSettings smtpSettings;
+        private readonly ILogger logger;
 
         public MailSender(
             IOptions<SiteSettings> sitesOptions, 
-            IOptions<SmtpSettings> smtpOptions
+            IOptions<SmtpSettings> smtpOptions,
+            ILoggerFactory loggerFactory
             )
         {
             siteSettings = sitesOptions?.Value;
             smtpSettings = smtpOptions?.Value;
+            logger = loggerFactory.CreateLogger<MailSender>();
+            
         }
         
         /// <summary>
@@ -40,6 +44,7 @@ namespace Yavsc.Services
             EmailSentViewModel model = new EmailSentViewModel{ EMail = email };
             try
             {
+                logger.LogInformation($"SendEmailAsync for {email}: {message}");
                 MimeMessage msg = new MimeMessage();
                 msg.From.Add(new MailboxAddress(
                     siteSettings.Owner.Name,
@@ -59,6 +64,7 @@ namespace Yavsc.Services
                         smtpSettings.Host,
                         smtpSettings.Port,
                         SecureSocketOptions.Auto);
+                    
                     if (smtpSettings.UserName!=null) {
                         NetworkCredential creds = new NetworkCredential(
 	                    smtpSettings.UserName, smtpSettings.Password, smtpSettings.Domain);
@@ -68,6 +74,7 @@ namespace Yavsc.Services
                     await sc.SendAsync(msg);
                     model.MessageId = msg.MessageId;
                     model.Sent = true; // a duplicate info to remove from the view model, that equals to MessageId == null
+                    logger.LogInformation($"Sent : {msg}");
                 }
             }
             catch (Exception ex)

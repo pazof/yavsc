@@ -2,7 +2,7 @@
 MONO_PREFIX=/home/paul/mono46
 DNX_USER_HOME=/home/paul/.dnx
 DNXLIBS=Microsoft.Dnx.Host.Mono.dll Microsoft.Dnx.Host.dll Microsoft.Dnx.ApplicationHost.dll Microsoft.Dnx.Loader.dll Microsoft.Dnx.Compilation.Abstractions.dll Microsoft.Dnx.Compilation.CSharp.Abstractions.dll Microsoft.CodeAnalysis.dll Microsoft.CodeAnalysis.CSharp.dll Microsoft.Dnx.Compilation.CSharp.Common.dll Microsoft.Dnx.Compilation.CSharp.dll Microsoft.Dnx.Compilation.dll Microsoft.Dnx.Runtime.dll Microsoft.Dnx.Runtime.Internals.dll Microsoft.Extensions.PlatformAbstractions.dll System.Collections.Immutable.dll System.Reflection.Metadata.dll
-DNXLIBFP:=$(addprefix $(DNX_USER_HOME)/runtimes/dnx-mono.1.0.0-rc1-update2/bin/, $(DNXLIBS))
+DNXLIBFP:=./packages/System.Diagnostics.DiagnosticSource/4.0.0-beta-23516/lib/portable-net45+win8+wp8+wpa81/System.Diagnostics.DiagnosticSource.dll $(addprefix $(DNX_USER_HOME)/runtimes/dnx-mono.1.0.0-rc1-update2/bin/, $(DNXLIBS))
 CONFIG=Debug
 
 yavscd=yavscd
@@ -79,7 +79,7 @@ yavscassemblies: src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll src/Yavsc.Server/bin/$
 
 yavscd: yavscassemblies updatedeps
 	mkdir -p binaries/$(CONFIG)
-	mkbundle --static $(DNXLIBS) src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll src/Yavsc/bin/$(CONFIG)/dnx451/pt/Yavsc.resources.dll src/Yavsc/bin/$(CONFIG)/dnx451/en/Yavsc.resources.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/en/Yavsc.Server.resources.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/Yavsc.Abstract.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/en/Yavsc.Abstract.resources.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/pt/Yavsc.Abstract.resources.dll src/OAuth.AspNet.AuthServer/bin/$(CONFIG)/dnx451/OAuth.AspNet.AuthServer.dll src/OAuth.AspNet.Token/bin/$(CONFIG)/dnx451/OAuth.AspNet.Token.dll $(shell ls private/lib/*.dll) -L $(DNX_USER_HOME)/runtimes/dnx-mono.1.0.0-rc1-update2/bin --machine-config $(MONO_PREFIX)/etc/mono/4.5/machine.config -o $(yavscd)
+	mkbundle --deps $(DNXLIBS) src/Yavsc/bin/$(CONFIG)/dnx451/Yavsc.dll src/Yavsc/bin/$(CONFIG)/dnx451/pt/Yavsc.resources.dll src/Yavsc/bin/$(CONFIG)/dnx451/en/Yavsc.resources.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/Yavsc.Server.dll src/Yavsc.Server/bin/$(CONFIG)/dnx451/en/Yavsc.Server.resources.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/Yavsc.Abstract.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/en/Yavsc.Abstract.resources.dll src/Yavsc.Abstract/bin/$(CONFIG)/dnx451/pt/Yavsc.Abstract.resources.dll src/OAuth.AspNet.AuthServer/bin/$(CONFIG)/dnx451/OAuth.AspNet.AuthServer.dll src/OAuth.AspNet.Token/bin/$(CONFIG)/dnx451/OAuth.AspNet.Token.dll $(shell ls private/lib/*.dll) -L $(DNX_USER_HOME)/runtimes/dnx-mono.1.0.0-rc1-update2/bin --machine-config $(MONO_PREFIX)/etc/mono/4.5/machine.config -o $(yavscd)
 
 strip_yavscd: $(yavscd)
 	strip $(yavscd)
