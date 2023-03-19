@@ -1,7 +1,5 @@
 namespace Yavsc.Server
 {
-    using Microsoft.AspNet.Http;
-    using Yavsc.Models.Auth;
 
     public static class ServerConstants
     {

@@ -1,15 +1,15 @@
 {
 	"dotnet": {
-		"enabled": false
+		"enabled": true
 	},
 	"msbuild": {
 		"enabled": false
 	},
 	"scriptcs": {
-		"enabled": false
+		"enabled": true
 	},
 	"Dnx": {
-		"enabled": true,
+		"enabled": false,
 		"enablePackageRestore": false,
 		"projects": "src/*/project.json;*/project.json;project.json;test/*/project.json"
 	},

@@ -1,21 +1,22 @@
 
+using System;
 using System.Collections.Generic;
-using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
+using Yavsc.Models.Relationship;
+ using Yavsc.Models.Relationship;
+    using Yavsc.Models.Identity;
+    using Yavsc.Models.Chat;
+    using Yavsc.Models.Bank;
+    using Yavsc.Models.Access;
 namespace Yavsc.Models
 {
-    using Models.Relationship;
-    using Models.Identity;
-    using Models.Chat;
-    using Models.Bank;
-    using Models.Access;
-    using Newtonsoft.Json;
-    using System;
 
     public class ApplicationUser : IdentityUser, IBaseTrackedEntity
     {
+
         /// <summary>
         /// Another me, as a byte array.
         /// This value points a picture that may be used
@@ -36,31 +37,31 @@ namespace Yavsc.Models
         /// WIP Paypal
         /// </summary>
         /// <returns></returns>
-        [Display(Name="Account balance")]
-        public virtual AccountBalance AccountBalance { get; set; }
+        [Display(Name = "Account balance")]
+        public virtual AccountBalance AccountBalance { get; set; }
 
         /// <summary>
         /// User's posts
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("Author"),JsonIgnore]
-        public virtual List<Blog.BlogPost> Posts { get; set; }
+        [InverseProperty("Author"), JsonIgnore]
+        public virtual List<Blog.BlogPost> Posts { get; set; }
 
         /// <summary>
         /// User's contact list
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("Owner"),JsonIgnore]
+        [InverseProperty("Owner"), JsonIgnore]
         public virtual List<Contact> Book { get; set; }
 
         /// <summary>
         /// External devices using the API
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("DeviceOwner"),JsonIgnore]
+        [InverseProperty("DeviceOwner"), JsonIgnore]
         public virtual List<DeviceDeclaration> DeviceDeclaration { get; set; }
 
-        [InverseProperty("Owner"),JsonIgnore]
+        [InverseProperty("Owner"), JsonIgnore]
         public virtual List<ChatConnection> Connections { get; set; }
 
 
@@ -68,9 +69,9 @@ namespace Yavsc.Models
         /// User's circles
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("Owner"),JsonIgnore]
+        [InverseProperty("Owner"), JsonIgnore]
 
-        public virtual List<Circle> Circles { get; set; }
+        public virtual List<Circle> Circles { get; set; }
 
         /// <summary>
         /// Billing postal address
@@ -87,29 +88,34 @@ namespace Yavsc.Models
         [MaxLength(512)]
         public string DedicatedGoogleCalendar { get; set; }
 
-        public override string ToString() {
-            return this.Id+" "+this.AccountBalance?.Credits.ToString()+this.Email+" "+this.UserName+" $"+this.AccountBalance?.Credits.ToString();
+        public override string ToString()
+        {
+            return this.Id + " " + this.AccountBalance?.Credits.ToString() + this.Email + " " + this.UserName + " $" + this.AccountBalance?.Credits.ToString();
         }
 
-        public BankIdentity BankInfo { get; set; }
+        public BankIdentity BankInfo { get; set; }
 
-        public long DiskQuota { get; set; } = 512*1024*1024;
-        public long DiskUsage { get; set; } = 0;
+        public long DiskQuota { get; set; } = 512 * 1024 * 1024;
+        public long DiskUsage { get; set; } = 0;
 
-        public long MaxFileSize { get; set; } = 512*1024*1024;
+        public long MaxFileSize { get; set; } = 512 * 1024 * 1024;
 
-        [JsonIgnore][InverseProperty("Owner")]
+        [JsonIgnore]
+        [InverseProperty("Owner")]
         public virtual List<BlackListed> BlackList { get; set; }
 
         public bool AllowMonthlyEmail { get; set; } = false;
 
-        [JsonIgnore][InverseProperty("Owner")]
+        [JsonIgnore]
+        [InverseProperty("Owner")]
         public virtual List<ChatRoom> Rooms { get; set; }
 
-        [JsonIgnore][InverseProperty("User")]
+        [JsonIgnore]
+        [InverseProperty("User")]
         public virtual List<ChatRoomAccess> RoomAccess { get; set; }
 
-        [JsonIgnore][InverseProperty("Member")]
+        [JsonIgnore]
+        [InverseProperty("Member")]
         public virtual List<CircleMember> Membership { get; set; }
 
         public DateTime DateCreated
@@ -120,13 +126,13 @@ namespace Yavsc.Models
         public string UserCreated
         {
             get; set;
-        }        
-        
-        public DateTime DateModified 
+        }
+
+        public DateTime DateModified
         {
             get; set;
-        }        
-        
+        }
+
         public string UserModified
         {
             get; set;
