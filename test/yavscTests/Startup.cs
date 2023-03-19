@@ -456,7 +456,7 @@ namespace yavscTests
             app.UseWelcomePage("/welcome");
 
             // before fixing the security protocol, let beleive our lib it's done with it.
-            var cxmgr = PayPal.Manager.ConnectionManager.Instance;
+            //var cxmgr = PayPal.Manager.ConnectionManager.Instance;
             // then, fix it.
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xC00; // Tls12, required by PayPal
 

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using Microsoft.AspNet.Authorization;
+using System.Linq;
 
 namespace Yavsc.Controllers
 {
@@ -145,6 +146,37 @@ namespace Yavsc.Controllers
         {
             Bug bug = await _context.Bug.SingleAsync(m => m.Id == id);
             _context.Bug.Remove(bug);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        
+        [Authorize("AdministratorOnly")]
+        public async Task<IActionResult> DeleteAllLike(long? id)
+        {
+            if (id == null)
+            {
+                return HttpNotFound();
+            }  
+            Bug bugref = await _context.Bug.SingleAsync(m => m.Id == id);
+            if (bugref == null)
+            {
+                return null;
+            }
+            var bugs =  _context.Bug.Where(b => b.Description == bugref.Description);
+            return View(bugs);
+        }
+
+        // POST: Bug/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize("AdministratorOnly")]
+        public async Task<IActionResult> DeleteAllLikeConfirmed(long id)
+        {
+            Bug bug = await _context.Bug.SingleAsync(m => m.Id == id);
+            var bugs = await _context.Bug.Where(b => b.Description == bug.Description).ToArrayAsync();
+            foreach (var btd in bugs)
+                _context.Bug.Remove(btd);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }

@@ -398,6 +398,7 @@ namespace Yavsc
                 options.AuthenticationDescriptions.Clear();
                 options.AutomaticAuthentication = false;
             });
+
             app.UseSession();
 
             ConfigureOAuthApp(app);
