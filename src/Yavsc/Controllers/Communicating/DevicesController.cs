@@ -1,13 +1,11 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace Yavsc.Controllers
 {
+    using Microsoft.EntityFrameworkCore;
     using Models;
     using Models.Identity;
     public class DevicesController : Controller
@@ -22,7 +20,7 @@ namespace Yavsc.Controllers
         // GET: GCMDevices
         public async Task<IActionResult> Index()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var applicationDbContext = _context.DeviceDeclaration.Include(g => g.DeviceOwner).Where(d=>d.DeviceOwnerId == uid);
             return View(await applicationDbContext.ToListAsync());
@@ -33,13 +31,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             DeviceDeclaration googleCloudMobileDeclaration = await _context.DeviceDeclaration.SingleAsync(m => m.DeviceId == id);
             if (googleCloudMobileDeclaration == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(googleCloudMobileDeclaration);
@@ -51,13 +49,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             DeviceDeclaration googleCloudMobileDeclaration = await _context.DeviceDeclaration.SingleAsync(m => m.DeviceId == id);
             if (googleCloudMobileDeclaration == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(googleCloudMobileDeclaration);

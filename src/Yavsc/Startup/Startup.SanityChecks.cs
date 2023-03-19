@@ -1,10 +1,5 @@
-using System;
-using System.IO;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
+using Microsoft.AspNetCore.Hosting;
 
 namespace Yavsc
 {
@@ -14,7 +9,7 @@ namespace Yavsc
     public partial class Startup
     {
 
-        public void CheckApp(IHostingEnvironment env,
+        public void CheckApp(Microsoft.AspNetCore.Hosting.IHostingEnvironment env,
                 ILoggerFactory loggerFactory)
         {
 

@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Yavsc.Controllers
@@ -14,6 +13,8 @@ namespace Yavsc.Controllers
     using Yavsc.Models.Workflow;
     using Yavsc.Models.Billing;
     using Yavsc.Abstract.Identity;
+    using Microsoft.EntityFrameworkCore;
+    using Yavsc.Helpers;
 
     [Produces("application/json")]
     [Route("api/bookquery"), Authorize(Roles = "Performer,Administrator")]
@@ -37,7 +38,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<RdvQueryProviderInfo> GetCommands(long maxId=long.MaxValue)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var now = DateTime.Now;
             
             var result = _context.RdvQueries.Include(c => c.Location).
@@ -69,15 +70,15 @@ namespace Yavsc.Controllers
 
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             RdvQuery bookQuery = _context.RdvQueries.Where(c => c.ClientId == uid || c.PerformerId == uid).Single(m => m.Id == id);
 
             if (bookQuery == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(bookQuery);
@@ -89,16 +90,16 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != bookQuery.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (bookQuery.ClientId != uid)
-                return HttpNotFound();
+                return NotFound();
 
             _context.Entry(bookQuery).State = EntityState.Modified;
 
@@ -110,7 +111,7 @@ namespace Yavsc.Controllers
             {
                 if (!BookQueryExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -118,7 +119,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/BookQueryApi
@@ -127,9 +128,9 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (bookQuery.ClientId != uid)
             {
                 ModelState.AddModelError("ClientId", "You must be the client at creating a book query");
@@ -144,7 +145,7 @@ namespace Yavsc.Controllers
             {
                 if (BookQueryExists(bookQuery.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -161,16 +162,16 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             RdvQuery bookQuery = _context.RdvQueries.Single(m => m.Id == id);
 
             if (bookQuery == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            if (bookQuery.ClientId != uid) return HttpNotFound();
+            if (bookQuery.ClientId != uid) return NotFound();
 
             _context.RdvQueries.Remove(bookQuery);
             _context.SaveChanges(User.GetUserId());

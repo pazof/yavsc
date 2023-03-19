@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Features;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 
 namespace Yavsc
@@ -43,9 +43,9 @@ namespace Yavsc
         {
             if (context.Response.StatusCode < 400 || context.Response.StatusCode >= 600 )
             {
-            if (context.Features.Get<IHttpSendFileFeature>() == null)
+            if (context.Features.Get<YaSendFileWrapper>() == null)
             {
-                context.Features.Set((IHttpSendFileFeature)new YaSendFileWrapper(context.Response.Body, _logger));
+                context.Features.Set(new YaSendFileWrapper(context.Response.Body, _logger));
             }
             }
             return _next(context);

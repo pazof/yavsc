@@ -1,13 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
 using Yavsc.Models;
 using Yavsc.Server.Models.EMailing;
-using Microsoft.AspNet.Authorization;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.Controllers
 {
@@ -36,14 +31,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             MailingTemplate mailingTemplate = await _context.MailingTemplate.SingleAsync(m => m.Id == id);
 
             if (mailingTemplate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(mailingTemplate);
@@ -55,12 +50,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != mailingTemplate.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(mailingTemplate).State = EntityState.Modified;
@@ -73,7 +68,7 @@ namespace Yavsc.Controllers
             {
                 if (!MailingTemplateExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -81,7 +76,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/MailingTemplateApi
@@ -90,7 +85,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.MailingTemplate.Add(mailingTemplate);
@@ -102,7 +97,7 @@ namespace Yavsc.Controllers
             {
                 if (MailingTemplateExists(mailingTemplate.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -119,13 +114,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             MailingTemplate mailingTemplate = await _context.MailingTemplate.SingleAsync(m => m.Id == id);
             if (mailingTemplate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.MailingTemplate.Remove(mailingTemplate);

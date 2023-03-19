@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 
@@ -24,7 +22,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<EstimateTemplate> GetEstimateTemplate()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return _context.EstimateTemplates.Where(x=>x.OwnerId==uid);
         }
 
@@ -34,15 +32,15 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             EstimateTemplate estimateTemplate = _context.EstimateTemplates.Where(x=>x.OwnerId==uid).Single(m => m.Id == id);
 
             if (estimateTemplate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(estimateTemplate);
@@ -54,17 +52,17 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != estimateTemplate.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (estimateTemplate.OwnerId!=uid)
             if (!User.IsInRole(Constants.AdminGroupName))
-            return new HttpStatusCodeResult(StatusCodes.Status403Forbidden);
+            return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             _context.Entry(estimateTemplate).State = EntityState.Modified;
 
@@ -76,7 +74,7 @@ namespace Yavsc.Controllers
             {
                 if (!EstimateTemplateExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -84,7 +82,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/EstimateTemplatesApi
@@ -93,7 +91,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
             estimateTemplate.OwnerId=User.GetUserId();
 
@@ -106,7 +104,7 @@ namespace Yavsc.Controllers
             {
                 if (EstimateTemplateExists(estimateTemplate.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -123,18 +121,18 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             EstimateTemplate estimateTemplate = _context.EstimateTemplates.Single(m => m.Id == id);
             if (estimateTemplate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (estimateTemplate.OwnerId!=uid)
             if (!User.IsInRole(Constants.AdminGroupName))
-            return new HttpStatusCodeResult(StatusCodes.Status403Forbidden);
+            return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             _context.EstimateTemplates.Remove(estimateTemplate);
             _context.SaveChanges(User.GetUserId());

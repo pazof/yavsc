@@ -1,14 +1,8 @@
-using System;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
 
 namespace Yavsc.Controllers
 {
@@ -18,14 +12,16 @@ namespace Yavsc.Controllers
     using Yavsc.Models.Relationship;
     using Yavsc.Services;
     using Newtonsoft.Json;
-    using Microsoft.AspNet.Http;
+    using Microsoft.AspNetCore.Http;
     using Yavsc.Extensions;
     using Yavsc.Models.Haircut;
     using System.Globalization;
-    using Microsoft.AspNet.Mvc.Rendering;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using System.Collections.Generic;
     using Yavsc.Models.Messaging;
     using PayPal.PayPalAPIInterfaceService.Model;
+    using Microsoft.Extensions.Options;
+    using Microsoft.EntityFrameworkCore;
 
     public class HairCutCommandController : CommandController
     {
@@ -65,7 +61,7 @@ namespace Yavsc.Controllers
             HairCutQuery command = await GetQuery(id);
             if (command == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             SetViewBagPaymentUrls(id);
             return View(command);
@@ -75,7 +71,7 @@ namespace Yavsc.Controllers
             HairCutQuery command = await GetQuery(id);
             if (command == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             var paymentInfo = await _context.ConfirmPayment(User.GetUserId(), PayerID, token);
             ViewData["paymentinfo"] = paymentInfo;
@@ -139,9 +135,9 @@ namespace Yavsc.Controllers
         {
             var query = await GetQuery(id); if (query == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (query.ClientId != uid)
                 return new ChallengeResult();
             _context.HairCutQueries.Remove(query);
@@ -154,7 +150,7 @@ namespace Yavsc.Controllers
         /// <returns></returns>
         public override async Task<IActionResult> Index()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return View("Index", await _context.HairCutQueries
             .Include(x => x.Client)
             .Include(x => x.PerformerProfile)
@@ -175,7 +171,7 @@ namespace Yavsc.Controllers
             .SingleOrDefaultAsync(m => m.Id == id);
             if (command == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             SetViewBagPaymentUrls(id);
             return View(command);
@@ -194,7 +190,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> CreateHairCutQuery(HairCutQuery model, string taintIds)
         {
             // TODO utiliser Markdown-av+tags
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             model.ClientId = uid;
 
             var prid = model.PerformerId;
@@ -335,7 +331,7 @@ namespace Yavsc.Controllers
                 pPrestation = new HairPrestation { };
             }
 
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(uid);
 
             SetViewData(activityCode, performerId, pPrestation);
@@ -381,7 +377,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHairMultiCutQuery(HairMultiCutQuery command)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var prid = command.PerformerId;
             if (string.IsNullOrWhiteSpace(uid)
             || string.IsNullOrWhiteSpace(prid))
@@ -415,7 +411,7 @@ namespace Yavsc.Controllers
                 }
                 else _context.Attach<Location>(command.Location);
 
-                _context.HairMultiCutQueries.Add(command, GraphBehavior.IncludeDependents);
+                _context.HairMultiCutQueries.Add(command);
                 _context.SaveChanges(User.GetUserId());
                 var brSettings = await _context.BrusherProfile.SingleAsync(
                     bp => bp.UserId == command.PerformerId

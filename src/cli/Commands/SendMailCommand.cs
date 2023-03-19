@@ -1,5 +1,5 @@
 
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

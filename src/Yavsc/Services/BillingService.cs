@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Models;
-using Microsoft.Data.Entity;
 
 namespace Yavsc.Services
 {

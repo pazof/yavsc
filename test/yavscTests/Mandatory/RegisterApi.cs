@@ -9,15 +9,15 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.PlatformAbstractions;
 using Xunit;
 using Xunit.Abstractions;
 using Yavsc.Authentication;
 using static OAuth.AspNet.AuthServer.Constants;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Filters;
-using Microsoft.AspNet.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace yavscTests
 {

@@ -1,9 +1,7 @@
-using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Yavsc.Controllers
 {
@@ -13,6 +11,8 @@ namespace Yavsc.Controllers
     using Yavsc.ViewModels.Workflow;
     using Yavsc.Services;
     using System.Threading.Tasks;
+    using Yavsc.Helpers;
+    using Microsoft.EntityFrameworkCore;
 
     [Authorize]
     public class DoController : Controller
@@ -49,14 +49,14 @@ namespace Yavsc.Controllers
 
             if (id == null || activityCode == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             UserActivity userActivity = dbContext.UserActivities.Include(m=>m.Does)
             .Include(m=>m.User).Single(m => m.DoesCode == activityCode && m.UserId == id);
             if (userActivity == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             bool hasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
             var settings = await billing.GetPerformerSettingsAsync(activityCode,id);
@@ -88,7 +88,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(UserActivity userActivity)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!User.IsInRole("Administrator"))
                if (uid != userActivity.UserId)
                     ModelState.AddModelError("User","You're not admin.");
@@ -110,7 +110,7 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             UserActivity userActivity = dbContext.UserActivities.Include(
@@ -120,7 +120,7 @@ namespace Yavsc.Controllers
              ).Single(m => m.DoesCode == activityCode && m.UserId == id);
             if (userActivity == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewData["DoesCode"] = new SelectList(dbContext.Activities, "Code", "Does", userActivity.DoesCode);
             ViewData["UserId"] = new SelectList(dbContext.Performers, "PerformerId", "User", userActivity.UserId);
@@ -152,14 +152,14 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             UserActivity userActivity = dbContext.UserActivities.Single(m => m.UserId == id && m.DoesCode == activityCode);
 
             if (userActivity == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             if (!User.IsInRole("Administrator"))
                if (User.GetUserId() != userActivity.UserId)

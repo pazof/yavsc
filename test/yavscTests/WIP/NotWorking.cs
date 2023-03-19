@@ -7,7 +7,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.OptionsModel;
 using Xunit;
 using Yavsc;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Dnx.TestHost.TestAdapter;
 using Xunit.Abstractions;
 

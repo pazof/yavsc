@@ -1,5 +1,4 @@
 @model NominativeServiceCommand
-@inject IOptions<PayPalSettings> PayPalSettings
 
 @if (Model!=null && Model.PaymentId!=null) {
    
@@ -27,8 +26,8 @@
 <script>
 var CREATE_PAYMENT_URL = '@ViewBag.CreatePaymentUrl';
 var EXECUTE_PAYMENT_URL = '@ViewBag.ExecutePaymentUrl';
-var PAYPAL_ENV = '@PayPalSettings.Value.Mode';
-var MERCH_ID = '@PayPalSettings.Value.';
+var PAYPAL_ENV = '@ViewBag.PayPalSettings.Mode';
+var MERCH_ID = '@ViewBag.PayPalSettings.MERCH_ID';
 
 
 paypal.checkout.setup(MERCH_ID, {

@@ -1,13 +1,13 @@
 using System.Threading.Tasks;
 using Yavsc.ViewModels.Auth;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Yavsc.Models;
 using Yavsc.Models.Messaging;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
-using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.Controllers
 {
@@ -37,13 +37,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Announce announce = await _context.Announce.SingleAsync(m => m.Id == id);
             if (announce == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(announce);
@@ -60,7 +60,7 @@ namespace Yavsc.Controllers
         {
             ViewBag.IsAdmin = User.IsInRole(Constants.AdminGroupName);
             ViewBag.IsPerformer = User.IsInRole(Constants.PerformerGroupName);
-            ViewBag.AllowEdit = announce==null || announce.Id<=0 || await _authorizationService.AuthorizeAsync(User,announce,new EditRequirement());
+            ViewBag.AllowEdit = announce==null || announce.Id<=0 || !_authorizationService.AuthorizeAsync(User,announce,new EditRequirement()).IsFaulted;
             List<SelectListItem> dl = new List<SelectListItem>();
             var rnames = System.Enum.GetNames(typeof(Reason));
             var rvalues = System.Enum.GetValues(typeof(Reason));
@@ -107,13 +107,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Announce announce = await _context.Announce.SingleAsync(m => m.Id == id);
             if (announce == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(announce);
         }
@@ -138,13 +138,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Announce announce = await _context.Announce.SingleAsync(m => m.Id == id);
             if (announce == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(announce);

@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using Yavsc.Models;
 using Yavsc.ViewModels.Streaming;
 

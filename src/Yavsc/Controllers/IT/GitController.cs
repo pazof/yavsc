@@ -1,13 +1,10 @@
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models;
 using Yavsc.Server.Models.IT.SourceCode;
 using Yavsc.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.Controllers
 {
@@ -26,19 +23,19 @@ namespace Yavsc.Controllers
         {
             if (path == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
            /*
             GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Path == path);
             if (gitRepositoryReference == null)
             {
-                return HttpNotFound();
+                return NotFound();
             } 
             */
             var info = Startup.GitOptions.FileProvider.GetFileInfo(path);
             if (!info.Exists)
-                return HttpNotFound();
+                return NotFound();
             var stream = info.CreateReadStream();
             if (path.EndsWith(".ansi.log")) 
             {
@@ -69,7 +66,7 @@ namespace Yavsc.Controllers
             GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Id == id);
             if (gitRepositoryReference == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(gitRepositoryReference);
@@ -104,7 +101,7 @@ namespace Yavsc.Controllers
             GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Id == id);
             if (gitRepositoryReference == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewBag.OwnerId = new SelectList(_context.ApplicationUser, "Id", "Owner", gitRepositoryReference.OwnerId);
             return View(gitRepositoryReference);
@@ -131,13 +128,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Path == id);
             if (gitRepositoryReference == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(gitRepositoryReference);

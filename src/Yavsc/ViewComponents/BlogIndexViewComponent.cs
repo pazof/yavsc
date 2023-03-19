@@ -1,12 +1,7 @@
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNet.Authorization;
-using Microsoft.Extensions.OptionsModel;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
-using Microsoft.Data.Entity;
-using System.Linq;
 using Yavsc.Models.Blog;
 
 namespace Yavsc.ViewComponents

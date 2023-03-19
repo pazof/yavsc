@@ -2,9 +2,10 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Identity;
 
@@ -30,7 +31,7 @@ public class NativeConfidentialController : Controller
     public IActionResult Register(
         [FromBody] DeviceDeclaration declaration)
     {
-      var uid = User.GetUserId();
+      var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
       if (!ModelState.IsValid)
       {
@@ -40,12 +41,15 @@ public class NativeConfidentialController : Controller
       declaration.LatestActivityUpdate = DateTime.Now;
 
       _logger.LogInformation($"Registering device with id:{declaration.DeviceId} for {uid}");
-      var alreadyRegisteredDevice = _context.DeviceDeclaration.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
+        DeviceDeclaration? alreadyRegisteredDevice = _context.DeviceDeclaration.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
       var deviceAlreadyRegistered = (alreadyRegisteredDevice!=null);
-      if (deviceAlreadyRegistered)
+      if (alreadyRegisteredDevice==null)
       {
-        _logger.LogInformation($"deviceAlreadyRegistered");
-        // Override an exiting owner
+        declaration.DeclarationDate = DateTime.Now;
+        declaration.DeviceOwnerId = uid;
+        _context.DeviceDeclaration.Add(declaration);
+      }
+      else {
         alreadyRegisteredDevice.DeviceOwnerId = uid;
         alreadyRegisteredDevice.Model = declaration.Model;
         alreadyRegisteredDevice.Platform = declaration.Platform;
@@ -53,18 +57,13 @@ public class NativeConfidentialController : Controller
         _context.Update(alreadyRegisteredDevice);
         _context.SaveChanges(User.GetUserId());
       }
-      else
-      {
-        _logger.LogInformation($"new device");
-        declaration.DeclarationDate = DateTime.Now;
-        declaration.DeviceOwnerId = uid;
-        _context.DeviceDeclaration.Add(declaration as DeviceDeclaration);
+        
         _context.SaveChanges(User.GetUserId());
-      }
+    
       var latestActivityUpdate = _context.Activities.Max(a=>a.DateModified);
       return Json(new { 
           IsAnUpdate = deviceAlreadyRegistered, 
-          UpdateActivities = (latestActivityUpdate != declaration.LatestActivityUpdate)
+          UpdateActivities = latestActivityUpdate != declaration.LatestActivityUpdate
           });
     }
 

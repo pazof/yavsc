@@ -1,9 +1,8 @@
 
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 
@@ -29,16 +28,16 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
             if (circle == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            var uid = User.GetUserId();
-            if (uid != circle.OwnerId) return this.HttpUnauthorized();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (uid != circle.OwnerId) return this.Unauthorized();
             return View(circle);
         }
 
@@ -53,11 +52,11 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Circle circle)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (ModelState.IsValid)
             {
                 if (uid != circle.OwnerId)
-                    return this.HttpUnauthorized();
+                    return this.Unauthorized();
 
                 _context.Circle.Add(circle);
                 await _context.SaveChangesAsync(uid);
@@ -71,18 +70,18 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
             
             if (circle == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != circle.OwnerId)
-                return this.HttpUnauthorized();
+                return Unauthorized();
             return View(circle);
         }
 
@@ -94,8 +93,8 @@ namespace Yavsc.Controllers
 
             if (ModelState.IsValid)
             {
-                var uid = User.GetUserId();
-                if (uid != circle.OwnerId) return this.HttpUnauthorized();
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (uid != circle.OwnerId) return Unauthorized();
                 _context.Update(circle);
                 await _context.SaveChangesAsync(uid);
                 return RedirectToAction("Index");
@@ -109,16 +108,16 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
              if (circle == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-             var uid = User.GetUserId();
-             if (uid != circle.OwnerId) return this.HttpUnauthorized();
+             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+             if (uid != circle.OwnerId) return Unauthorized();
             
             return View(circle);
         }
@@ -129,8 +128,8 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
-             var uid = User.GetUserId();
-             if (uid != circle.OwnerId) return this.HttpUnauthorized();
+             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+             if (uid != circle.OwnerId) return Unauthorized();
             _context.Circle.Remove(circle);
             await _context.SaveChangesAsync(uid);
             return RedirectToAction("Index");

@@ -1,12 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Auth;
-using System.Security.Claims;
 
 namespace Yavsc.Controllers
 {
@@ -30,13 +27,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Client client = await _context.Applications.SingleAsync(m => m.Id == id);
             if (client == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(client);
         }
@@ -81,13 +78,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Client client = await _context.Applications.SingleAsync(m => m.Id == id);
             if (client == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             SetAppTypesInputValues();
             return View(client);
@@ -113,13 +110,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Client client = await _context.Applications.SingleAsync(m => m.Id == id);
             if (client == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(client);

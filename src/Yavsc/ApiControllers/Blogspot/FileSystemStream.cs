@@ -1,16 +1,13 @@
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Logging;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Attributes.Validation;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Messaging;
 using Yavsc.Services;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Yavsc.ApiControllers
 {
@@ -19,13 +16,16 @@ namespace Yavsc.ApiControllers
     {
         private readonly ILogger logger;
         private readonly ILiveProcessor liveProcessor;
+        private readonly IHubContext<ChatHub> hubContext;
         readonly ApplicationDbContext dbContext;
 
-        public FileSystemStreamController(ApplicationDbContext context, ILiveProcessor liveProcessor, ILoggerFactory loggerFactory)
+        public FileSystemStreamController(ApplicationDbContext context, ILiveProcessor liveProcessor, ILoggerFactory loggerFactory,
+        IHubContext<ChatHub> hubContext)
         {
             this.dbContext = context;
             this.logger = loggerFactory.CreateLogger<FileSystemStreamController>();
             this.liveProcessor = liveProcessor;
+            this.hubContext = hubContext;
         }
 
         [Authorize, Route("put/{filename}")]
@@ -33,20 +33,20 @@ namespace Yavsc.ApiControllers
         {
             logger.LogInformation("Put : " + filename);
             if (!HttpContext.WebSockets.IsWebSocketRequest)
-                return HttpBadRequest("not a web socket");
+                return BadRequest("not a web socket");
             if (!HttpContext.User.Identity.IsAuthenticated)
-                return new HttpUnauthorizedResult();
+                return new UnauthorizedResult();
             var subdirs = filename.Split('/');
             var filePath = subdirs.Length > 1 ? string.Join("/", subdirs.Take(subdirs.Length-1)) : null;
             var shortFileName = subdirs[subdirs.Length-1];
             if (!shortFileName.IsValidShortFileName())
             {
                 logger.LogInformation("invalid file name : " + filename);
-                return HttpBadRequest("invalid file name");
+                return BadRequest("invalid file name");
             }
             logger.LogInformation("validated: api/stream/Put: "+filename);
             var userName = User.GetUserName();
-            var hubContext = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<ChatHub>();
+            
             string url = string.Format(
                 "{0}/{1}/{2}",
                 Startup.UserFilesOptions.RequestPath.ToUriComponent(),
@@ -54,7 +54,7 @@ namespace Yavsc.ApiControllers
                 filename
             );
 
-            hubContext.Clients.All.addPublicStream(new PublicStreamInfo
+            hubContext.Clients.All.SendAsync("addPublicStream", new PublicStreamInfo
             {
                 sender = userName,
                 url = url,

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ViewModels.Gen

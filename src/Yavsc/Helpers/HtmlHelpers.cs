@@ -1,6 +1,7 @@
 using System;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models.Drawing;
 
 namespace Yavsc.Helpers

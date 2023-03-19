@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Haircut;
 
@@ -26,13 +25,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HairPrestation hairPrestation = await _context.HairPrestation.SingleAsync(m => m.Id == id);
             if (hairPrestation == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(hairPrestation);
@@ -63,13 +62,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HairPrestation hairPrestation = await _context.HairPrestation.SingleAsync(m => m.Id == id);
             if (hairPrestation == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(hairPrestation);
         }
@@ -94,13 +93,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HairPrestation hairPrestation = await _context.HairPrestation.SingleAsync(m => m.Id == id);
             if (hairPrestation == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(hairPrestation);

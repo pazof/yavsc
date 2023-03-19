@@ -19,9 +19,10 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using Microsoft.Data.Entity;
-using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Migrations;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Yavsc.Models;
 
 namespace Yavsc.Migrations

@@ -1,9 +1,9 @@
-using System.Linq;
+
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 
@@ -21,7 +21,7 @@ namespace Yavsc.Controllers
         // GET: CircleMembers
         public async Task<IActionResult> Index()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var applicationDbContext = _context.CircleMembers.Include(c => c.Circle).Include(c => c.Member)
             .Where(c=>c.Circle.OwnerId == uid);
             return View(await applicationDbContext.ToListAsync());
@@ -30,14 +30,14 @@ namespace Yavsc.Controllers
         // GET: CircleMembers/Details/5
         public async Task<IActionResult> Details(long id)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             CircleMember circleMember = await _context.CircleMembers
             .Include(m=>m.Circle)
             .FirstOrDefaultAsync(c=>c.CircleId == id);
             if (circleMember == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(circleMember);
@@ -46,7 +46,7 @@ namespace Yavsc.Controllers
         // GET: CircleMembers/Create
         public IActionResult Create()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewBag.CircleId = new SelectList(_context.Circle.Where(c=>c.OwnerId == uid), "Id", "Name");
             ViewBag.MemberId = new SelectList(_context.Users, "Id", "UserName");
             return View();
@@ -57,7 +57,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CircleMember circleMember)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var circle = _context.Circle.SingleOrDefault(c=>c.OwnerId == uid && c.Id == circleMember.CircleId);
             if (circle==null)
                 return new BadRequestResult();
@@ -76,13 +76,13 @@ namespace Yavsc.Controllers
         // GET: CircleMembers/Edit/5
         public async Task<IActionResult> Edit(long id)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             CircleMember circleMember = await _context.CircleMembers
             .Include(m=>m.Member)
             .SingleOrDefaultAsync(m => m.CircleId == id && m.MemberId == uid);
             if (circleMember == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(circleMember);
         }
@@ -107,7 +107,7 @@ namespace Yavsc.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> Delete(long id)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             CircleMember circleMember = await _context.CircleMembers
             .Include(m=>m.Circle)
@@ -115,7 +115,7 @@ namespace Yavsc.Controllers
             .SingleOrDefaultAsync(m => m.CircleId == id && m.MemberId == uid);
             if (circleMember == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(circleMember);

@@ -1,6 +1,5 @@
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
 
@@ -16,14 +15,15 @@ namespace Yavsc.ApiControllers
     using Models.Haircut;
     using System.Threading.Tasks;
     using Helpers;
-    using Microsoft.Data.Entity;
     using Models.Payment;
     using Newtonsoft.Json;
     using PayPal.PayPalAPIInterfaceService.Model;
     using Yavsc.Models.Haircut.Views;
-    using Microsoft.AspNet.Http;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Authorization;
 
-    [Route("api/haircut")]
+    [Route("api/haircut")][Authorize]
     public class HairCutController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -40,7 +40,9 @@ namespace Yavsc.ApiControllers
         // user, as a client
         public IActionResult Index()
         {
-            var uid = User.GetUserId();
+            
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var now = DateTime.Now;
             var result = _context.HairCutQueries
                          .Include(q => q.Prestation)
@@ -61,14 +63,14 @@ namespace Yavsc.ApiControllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             HairCutQuery hairCutQuery = await _context.HairCutQueries.SingleAsync(m => m.Id == id);
 
             if (hairCutQuery == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(hairCutQuery);
@@ -80,12 +82,12 @@ namespace Yavsc.ApiControllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != hairCutQuery.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(hairCutQuery).State = EntityState.Modified;
@@ -98,7 +100,7 @@ namespace Yavsc.ApiControllers
             {
                 if (!HairCutQueryExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -106,20 +108,20 @@ namespace Yavsc.ApiControllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         [HttpPost]
         public async Task<IActionResult> PostQuery(HairCutQuery hairCutQuery)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!ModelState.IsValid)
             {
                 return new BadRequestObjectResult(ModelState);
             }
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.HairCutQueries.Add(hairCutQuery);
@@ -131,7 +133,7 @@ namespace Yavsc.ApiControllers
             {
                 if (HairCutQueryExists(hairCutQuery.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -159,13 +161,13 @@ namespace Yavsc.ApiControllers
             }
             catch (Exception ex) {
                 _logger.LogError(ex.Message);
-                return new HttpStatusCodeResult(500);
+                return new StatusCodeResult(500);
             }
 
             if (payment==null) {
                 _logger.LogError("Error doing SetExpressCheckout, aborting.");
                 _logger.LogError(JsonConvert.SerializeObject(Startup.PayPalSettings));
-                return new HttpStatusCodeResult(500);
+                return new StatusCodeResult(500);
             }
             switch (payment.Ack)
             {
@@ -195,13 +197,13 @@ namespace Yavsc.ApiControllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return  BadRequest(ModelState);
             }
 
             HairCutQuery hairCutQuery = await _context.HairCutQueries.SingleAsync(m => m.Id == id);
             if (hairCutQuery == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.HairCutQueries.Remove(hairCutQuery);

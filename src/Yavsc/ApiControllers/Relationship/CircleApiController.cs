@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 
@@ -34,14 +30,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
 
             if (circle == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(circle);
@@ -53,12 +49,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != circle.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(circle).State = EntityState.Modified;
@@ -71,7 +67,7 @@ namespace Yavsc.Controllers
             {
                 if (!CircleExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -79,7 +75,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/CircleApi
@@ -88,7 +84,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.Circle.Add(circle);
@@ -100,7 +96,7 @@ namespace Yavsc.Controllers
             {
                 if (CircleExists(circle.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -117,13 +113,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
             if (circle == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.Circle.Remove(circle);

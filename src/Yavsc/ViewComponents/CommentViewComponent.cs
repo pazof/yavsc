@@ -1,4 +1,4 @@
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Yavsc.Models.Blog;
 

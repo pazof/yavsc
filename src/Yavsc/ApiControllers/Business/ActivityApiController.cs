@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
 
@@ -37,14 +38,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             Activity activity = await _context.Activities.SingleAsync(m => m.Code == id);
 
             if (activity == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             // Also return hidden ones
             // hidden doesn't mean disabled
@@ -57,12 +58,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != activity.Code)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(activity).State = EntityState.Modified;
@@ -75,7 +76,7 @@ namespace Yavsc.Controllers
             {
                 if (!ActivityExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -83,7 +84,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/ActivityApi
@@ -92,7 +93,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.Activities.Add(activity);
@@ -104,7 +105,7 @@ namespace Yavsc.Controllers
             {
                 if (ActivityExists(activity.Code))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -121,13 +122,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             Activity activity = await _context.Activities.SingleAsync(m => m.Code == id);
             if (activity == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.Activities.Remove(activity);

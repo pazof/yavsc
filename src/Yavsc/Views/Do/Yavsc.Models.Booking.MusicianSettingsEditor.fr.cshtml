@@ -1,4 +1,4 @@
-@model MusicianSettings
+@model Instrumentation
 @{
      ViewBag.YetAvailableInstruments = _context.Instrument.Where(i=> !_context.MusicianSettings.Any(s=>s.UserId==id && s.Instrumentation.Any(j=>j.Id == i.Id)))
       .Select(k=>new SelectListItem { Text = k.Name });

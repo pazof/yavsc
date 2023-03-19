@@ -1,7 +1,6 @@
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 
@@ -28,13 +27,13 @@ namespace Yavsc.Controllers
         {
             if (href == null || method ==null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == href && m.Method == method);
             if (hyperLink == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(hyperLink);
@@ -65,13 +64,13 @@ namespace Yavsc.Controllers
         {
             if (href == null || method ==null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == href && m.Method == method);
             if (hyperLink == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(hyperLink);
         }
@@ -96,14 +95,14 @@ namespace Yavsc.Controllers
         {
             if (href == null || method ==null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == href && m.Method == method);
 
             if (hyperLink == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(hyperLink);
@@ -116,7 +115,7 @@ namespace Yavsc.Controllers
         {
             if (HRef == null || Method ==null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == HRef && m.Method == Method);

@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Musical;
 
@@ -33,14 +30,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             MusicalTendency musicalTendency = _context.MusicalTendency.Single(m => m.Id == id);
 
             if (musicalTendency == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(musicalTendency);
@@ -52,12 +49,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != musicalTendency.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(musicalTendency).State = EntityState.Modified;
@@ -70,7 +67,7 @@ namespace Yavsc.Controllers
             {
                 if (!MusicalTendencyExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -78,7 +75,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/MusicalTendenciesApi
@@ -87,7 +84,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.MusicalTendency.Add(musicalTendency);
@@ -99,7 +96,7 @@ namespace Yavsc.Controllers
             {
                 if (MusicalTendencyExists(musicalTendency.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -116,13 +113,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             MusicalTendency musicalTendency = _context.MusicalTendency.Single(m => m.Id == id);
             if (musicalTendency == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.MusicalTendency.Remove(musicalTendency);

@@ -1,9 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 
@@ -33,14 +29,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
 
             if (hyperLink == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(hyperLink);
@@ -52,12 +48,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != hyperLink.HRef)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(hyperLink).State = EntityState.Modified;
@@ -70,7 +66,7 @@ namespace Yavsc.Controllers
             {
                 if (!HyperLinkExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -78,7 +74,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/HyperLinkApi
@@ -87,7 +83,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.HyperLink.Add(hyperLink);
@@ -99,7 +95,7 @@ namespace Yavsc.Controllers
             {
                 if (HyperLinkExists(hyperLink.HRef))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -116,13 +112,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             HyperLink hyperLink = await _context.HyperLink.SingleAsync(m => m.HRef == id);
             if (hyperLink == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.HyperLink.Remove(hyperLink);

@@ -1,5 +1,4 @@
 @model Yavsc.Models.IT.Fixing.Bug
-@inject IStringLocalizer<Yavsc.Models.IT.Fixing.Resources> SRR
 
 @{
     ViewData["Title"] = @SR["Details"];
@@ -27,7 +26,7 @@
             @SR["Status"]
         </dt>
         <dd>
-            @SRR[typeof(Yavsc.Models.IT.Fixing.BugStatus).GetEnumNames()[(int)Model.Status]]
+            @SR[typeof(Yavsc.Models.IT.Fixing.BugStatus).GetEnumNames()[(int)Model.Status]]
         </dd>
     </dl>
 

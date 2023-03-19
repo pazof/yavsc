@@ -2,13 +2,14 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.AspNet.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
 
 namespace Yavsc.Helpers
 {
+    using Microsoft.AspNetCore.Mvc.Infrastructure;
     using ViewModels.Gen;
     public class TeXString : HtmlString
     {
@@ -172,8 +173,8 @@ namespace Yavsc.Helpers
 
         public static string RenderViewToString(
             this Controller controller, IViewEngine engine,
-            IHttpContextAccessor httpContextAccessor,
-         string viewName, object model)
+            IActionContextAccessor contextAccessor,
+         string viewName, object model, bool isMainPage = true)
         {
             using (var sw = new StringWriter())
             {
@@ -182,19 +183,17 @@ namespace Yavsc.Helpers
 
                 // try to find the specified view
                 controller.TryValidateModel(model);
-                ViewEngineResult viewResult = engine.FindPartialView(controller.ActionContext, viewName);
+                ViewEngineResult viewResult = engine.FindView(contextAccessor.ActionContext, viewName, isMainPage);
 
                 // create the associated context
                 ViewContext viewContext = new ViewContext();
-                viewContext.ActionDescriptor = controller.ActionContext.ActionDescriptor;
-                viewContext.HttpContext = controller.ActionContext.HttpContext;
+                viewContext.ActionDescriptor = contextAccessor.ActionContext.ActionDescriptor;
+                viewContext.HttpContext = contextAccessor.ActionContext.HttpContext;
                 viewContext.TempData = controller.TempData;
                 viewContext.View = viewResult.View;
                 viewContext.Writer = sw;
-
                 // write the render view with the given context to the stringwriter
-                viewResult.View.RenderAsync(viewContext);
-                viewResult.EnsureSuccessful();
+                viewResult.View.RenderAsync(viewContext).Wait();
                 return sw.GetStringBuilder().ToString();
             }
         }

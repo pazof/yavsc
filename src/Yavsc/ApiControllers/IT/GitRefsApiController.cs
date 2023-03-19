@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Server.Models.IT.SourceCode;
 
@@ -35,14 +31,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Id == id);
 
             if (gitRepositoryReference == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(gitRepositoryReference);
@@ -54,7 +50,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.Entry(gitRepositoryReference).State = EntityState.Modified;
@@ -67,7 +63,7 @@ namespace Yavsc.Controllers
             {
                 if (!GitRepositoryReferenceExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -75,7 +71,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/GitRefsApi
@@ -84,7 +80,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.GitRepositoryReference.Add(gitRepositoryReference);
@@ -96,7 +92,7 @@ namespace Yavsc.Controllers
             {
                 if (GitRepositoryReferenceExists(gitRepositoryReference.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -113,13 +109,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Id == id);
             if (gitRepositoryReference == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.GitRepositoryReference.Remove(gitRepositoryReference);

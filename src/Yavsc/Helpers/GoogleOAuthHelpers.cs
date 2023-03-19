@@ -23,8 +23,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Microsoft.Data.Entity;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
@@ -37,6 +35,9 @@ using Yavsc.Models;
 using Yavsc.Models.Calendar;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Server.Models.Calendar;
 
 namespace Yavsc.Helpers
 {

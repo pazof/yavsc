@@ -1,11 +1,11 @@
-using System.Linq;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Yavsc.Controllers
 {
-    using System.Security.Claims;
     using Models;
     using Models.Musical;
+    using Yavsc.Helpers;
+
     public class MusicalTendenciesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,13 +26,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             MusicalTendency musicalTendency = _context.MusicalTendency.Single(m => m.Id == id);
             if (musicalTendency == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(musicalTendency);
@@ -63,13 +63,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             MusicalTendency musicalTendency = _context.MusicalTendency.Single(m => m.Id == id);
             if (musicalTendency == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(musicalTendency);
         }
@@ -94,13 +94,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             MusicalTendency musicalTendency = _context.MusicalTendency.Single(m => m.Id == id);
             if (musicalTendency == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(musicalTendency);

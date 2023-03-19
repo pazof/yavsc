@@ -1,21 +1,7 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.WebSockets;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.SignalR;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Logging;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.ViewModels.Streaming;
-using Yavsc.Models.Messaging;
-using Yavsc.Models.FileSystem;
 using Newtonsoft.Json;
 
 namespace Yavsc.Services

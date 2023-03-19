@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Yavsc.ViewModels;
 using Yavsc.Models;
-using Microsoft.Data.Entity;
 using System.Linq;
 
 namespace Yavsc.Helpers

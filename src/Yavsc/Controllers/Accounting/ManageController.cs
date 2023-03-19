@@ -1,27 +1,22 @@
 
-using System.Linq;
-using System.Threading.Tasks;
 using System.Security.Claims;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.Data.Entity;
-using System;
-using System.Collections.Generic;
+using System.IO;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Yavsc.Models.Workflow;
+using Yavsc.Helpers;
+using Yavsc.Models.Relationship;
+using Yavsc.Models.Bank;
+using Yavsc.ViewModels.Calendar;
+using Yavsc.Models;
+using Yavsc.Services;
+using Yavsc.ViewModels.Manage;
 
 namespace Yavsc.Controllers
 {
-    using Yavsc.Helpers;
-    using Models.Relationship;
-    using Models.Bank;
-    using ViewModels.Calendar;
-    using Yavsc.Models;
-    using Yavsc.Services;
-    using Yavsc.ViewModels.Manage;
-    using System.IO;
 
     public class ManageController : Controller
     {
@@ -298,7 +293,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> SetGoogleCalendar(string returnUrl, string pageToken)
 
         {
-          var uid = User.GetUserId();
+          var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
           var calendars = await _calendarManager.GetCalendarsAsync(pageToken);
           return View(new SetGoogleCalendarViewModel { 
@@ -321,7 +316,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public async Task<IActionResult> AddBankInfo()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _dbContext.Users.Include(u=>u.BankInfo).SingleAsync(u=>u.Id==uid);
 
             return View(user.BankInfo);
@@ -333,7 +328,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 // TODO PostBankInfoRequirement & auth
-                var uid = User.GetUserId();
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var user = _dbContext.Users.Include(u=>u.BankInfo)
                     .Single(u=>u.Id == uid);
 
@@ -496,13 +491,12 @@ namespace Yavsc.Controllers
                 return View("Error");
             }
             var userLogins = await _userManager.GetLoginsAsync(user);
-            var otherLogins = _signInManager.GetExternalAuthenticationSchemes().Where(auth => userLogins.All(ul => auth.AuthenticationScheme != ul.LoginProvider)).ToList();
+          
             ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
 
             return View(new ManageLoginsViewModel
             {
-                CurrentLogins = userLogins,
-                OtherLogins = otherLogins
+                CurrentLogins = userLogins
             });
         }
 
@@ -720,7 +714,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public async Task <IActionResult> SetAddress()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _dbContext.Users.Include(u=>u.PostalAddress).SingleAsync(u=>u.Id==uid);
             ViewBag.GoogleSettings =  _googleSettings;
             return View (user.PostalAddress ?? new Location());
@@ -730,7 +724,7 @@ namespace Yavsc.Controllers
         public async Task <IActionResult> SetAddress(Location model)
         {
             if (ModelState.IsValid) {
-                var uid = User.GetUserId();
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var user = _dbContext.Users.Include(u=>u.PostalAddress).Single(u=>u.Id==uid);
 

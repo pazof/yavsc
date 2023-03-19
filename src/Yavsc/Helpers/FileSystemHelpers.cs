@@ -1,14 +1,9 @@
 
-
-using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Security.Claims;
-using System.Threading;
-using System.Web;
-using Microsoft.AspNet.FileProviders;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Html;
+using Microsoft.Extensions.FileProviders;
 using Yavsc.Exceptions;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
@@ -313,6 +308,11 @@ namespace Yavsc.Helpers
             var namelen = flow.DifferedFileName.Length - ext.Length;
             var basename =  flow.DifferedFileName.Substring(0,namelen);
             return $"{basename}-{flow.SequenceNumber}{ext}";
+        }
+
+        public static void SaveAs(this IFormFile file, string destFileName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

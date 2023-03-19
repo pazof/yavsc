@@ -1,7 +1,6 @@
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Drawing;
 
@@ -27,13 +26,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Color color = await _context.Color.SingleAsync(m => m.Id == id);
             if (color == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(color);
@@ -64,13 +63,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Color color = await _context.Color.SingleAsync(m => m.Id == id);
             if (color == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(color);
         }
@@ -95,13 +94,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Color color = await _context.Color.SingleAsync(m => m.Id == id);
             if (color == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(color);

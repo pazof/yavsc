@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -12,9 +12,8 @@ namespace Yavsc.WebApi.Controllers
     using ViewModels.Account;
     using Yavsc.Helpers;
     using System.Linq;
-    using Microsoft.Data.Entity;
-    using Microsoft.AspNet.Identity.EntityFramework;
     using Yavsc.Abstract.Identity;
+    using Microsoft.EntityFrameworkCore;
 
     [Authorize(),Route("~/api/account")]
     public class ApiAccountController : Controller
@@ -132,12 +131,11 @@ namespace Yavsc.WebApi.Controllers
             if (User==null) 
             return new BadRequestObjectResult(
                     new { error = "user not found" });
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var userData = await _dbContext.Users
                 .Include(u=>u.PostalAddress)
                 .Include(u=>u.AccountBalance)
-                .Include(u=>u.Roles)
                 .FirstAsync(u=>u.Id == uid);
 
             var user = new Yavsc.Models.Auth.Me(userData.Id, userData.UserName, userData.Email, 

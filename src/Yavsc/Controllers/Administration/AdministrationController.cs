@@ -1,14 +1,11 @@
 
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Abstract.Identity;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.ViewModels;
 using Yavsc.ViewModels.Administration;
@@ -75,7 +72,7 @@ namespace Yavsc.Controllers
                     
                     return Ok(new { message = "you already got it." });
                 }
-                return HttpNotFound();
+                return NotFound();
             }
             
             var user = await _userManager.FindByIdAsync(User.GetUserId());
@@ -105,12 +102,10 @@ namespace Yavsc.Controllers
             var youAreAdmin = await _userManager.IsInRoleAsync(
                 await _userManager.FindByIdAsync(User.GetUserId()),
                 Constants.AdminGroupName);
-            var roles = _roleManager.Roles.Include(
-                x => x.Users
-            ).Select(x => new RoleInfo {
+                throw new NotImplementedException();
+            var roles = _roleManager.Roles.Select(x => new RoleInfo {
                 Id = x.Id,
-                Name = x.Name,
-                Users = x.Users.Select(u=>u.UserId).ToArray()
+                Name = x.Name
             });
             var assembly = GetType().Assembly;
            ViewBag.ThisAssembly = assembly.FullName;
@@ -125,26 +120,6 @@ namespace Yavsc.Controllers
             });
         }
 
-        public IActionResult Role(string id)
-        {
-            IdentityRole role = _roleManager.Roles
-            .Include(r=>r.Users).FirstOrDefault
-                ( r=> r.Id == id );
-            var ri = GetRoleUserCollection(role);
-            return View("Role",ri);
-        }
-
-        public RoleUserCollection GetRoleUserCollection(IdentityRole role)
-        {
-            var result = new RoleUserCollection {
-                Id = role.Id,
-                Name = role.Name,
-                Users = _dbContext.Users.Where(u=>role.Users.Any(ru => u.Id == ru.UserId))
-                .Select( u => new UserInfo { UserName = u.UserName, Avatar = u.Avatar, UserId = u.Id } )
-                .ToArray()
-            };
-            return result;
-        }
 
         [Authorize("AdministratorOnly")]
         public IActionResult Enroll(string roleName)
@@ -160,7 +135,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 var newAdmin  = await _dbContext.Users.FirstOrDefaultAsync(u=>u.Id==model.EnroledUserId);
-                if (newAdmin==null) return HttpNotFound();
+                if (newAdmin==null) return NotFound();
                 var addToRoleResult = await _userManager.AddToRoleAsync(newAdmin, model.RoleName);
                 if (addToRoleResult.Succeeded)
                 {
@@ -176,7 +151,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Fire(string roleName, string userId)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u=>u.Id==userId);
-            if (user == null) return HttpNotFound();
+            if (user == null) return NotFound();
 
             return View(new FireViewModel{ RoleName = roleName, EnroledUserId = userId, EnroledUserName = user.UserName });
         }
@@ -188,7 +163,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 var oldEnroled  = await _dbContext.Users.FirstOrDefaultAsync(u=>u.Id==model.EnroledUserId);
-                if (oldEnroled==null) return HttpNotFound();
+                if (oldEnroled==null) return NotFound();
                 var removeFromRole = await _userManager.RemoveFromRoleAsync(oldEnroled, model.RoleName);
                 if (removeFromRole.Succeeded)
                 {

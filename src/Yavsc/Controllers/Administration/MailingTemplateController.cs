@@ -1,18 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models;
 using Yavsc.Models.Calendar;
 using Yavsc.Server.Models.EMailing;
-using Microsoft.AspNet.Authorization;
-using Yavsc.Templates;
-using System.Linq;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 using Yavsc.Server.Settings;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -42,13 +37,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             MailingTemplate mailingTemplate = await _context.MailingTemplate.SingleAsync(m => m.Id == id);
             if (mailingTemplate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(mailingTemplate);
@@ -101,13 +96,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             MailingTemplate mailingTemplate = await _context.MailingTemplate.SingleAsync(m => m.Id == id);
             if (mailingTemplate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             SetupViewBag();
             return View(mailingTemplate);
@@ -135,13 +130,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             MailingTemplate mailingTemplate = await _context.MailingTemplate.SingleAsync(m => m.Id == id);
             if (mailingTemplate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(mailingTemplate);

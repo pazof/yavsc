@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Data.Entity;
+﻿
 using Newtonsoft.Json.Linq;
 
 namespace Yavsc.Helpers.Auth
 {
+    using Microsoft.EntityFrameworkCore;
     using Yavsc.Models;
     using Yavsc.Models.Auth;
     public static class ExternalAuthStoreHelper {

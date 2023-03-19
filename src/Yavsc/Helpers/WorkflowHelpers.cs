@@ -4,7 +4,7 @@ namespace Yavsc.Helpers
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.Data.Entity;
+    using Microsoft.EntityFrameworkCore;
     using Yavsc.Models;
     using Yavsc.Services;
     using Yavsc.ViewModels.FrontOffice;

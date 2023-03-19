@@ -1,13 +1,10 @@
-
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Data.Entity;
 using System.Security.Claims;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Yavsc.Models;
 using Yavsc.ViewModels.Chat;
 using Yavsc.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.Controllers
 {
@@ -72,12 +69,12 @@ namespace Yavsc.Controllers
             if (!ModelState.IsValid)
             // Miguel mech profiler
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = dbContext.ApplicationUser.Include(u => u.Connections).FirstOrDefault(u => u.UserName == userName);
 
-            if (user == null) return HttpNotFound();
+            if (user == null) return NotFound();
 
             return Ok(new ChatUserInfo
             {

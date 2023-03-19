@@ -1,11 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Chat;
 
@@ -35,7 +31,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             ChatRoomAccess chatRoomAccess = await _context.ChatRoomAccess.SingleAsync(m => m.ChannelName == id);
@@ -44,16 +40,16 @@ namespace Yavsc.Controllers
 
             if (chatRoomAccess == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != chatRoomAccess.UserId && uid != chatRoomAccess.Room.OwnerId
              && ! User.IsInRole(Constants.AdminGroupName))
            
             {
                 ModelState.AddModelError("UserId","get refused");
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
             
             return Ok(chatRoomAccess);
@@ -65,20 +61,20 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (id != chatRoomAccess.ChannelName)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
 
             if (uid != room.OwnerId && ! User.IsInRole(Constants.AdminGroupName))
             {
                 ModelState.AddModelError("ChannelName", "access put refused");
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.Entry(chatRoomAccess).State = EntityState.Modified;
@@ -91,7 +87,7 @@ namespace Yavsc.Controllers
             {
                 if (!ChatRoomAccessExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -99,7 +95,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/ChatRoomAccessApi
@@ -108,15 +104,15 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
             if (room == null || (uid != room.OwnerId && ! User.IsInRole(Constants.AdminGroupName)))
             {
                 ModelState.AddModelError("ChannelName", "access post refused");
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.ChatRoomAccess.Add(chatRoomAccess);
@@ -129,7 +125,7 @@ namespace Yavsc.Controllers
             {
                 if (ChatRoomAccessExists(chatRoomAccess.ChannelName))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -146,21 +142,21 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             ChatRoomAccess chatRoomAccess = await _context.ChatRoomAccess.Include(acc => acc.Room).SingleAsync(m => m.ChannelName == id);
             if (chatRoomAccess == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
             if (room == null || (uid != room.OwnerId  && chatRoomAccess.UserId != uid && ! User.IsInRole(Constants.AdminGroupName)))
             {
                 ModelState.AddModelError("UserId", "access drop refused");
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.ChatRoomAccess.Remove(chatRoomAccess);

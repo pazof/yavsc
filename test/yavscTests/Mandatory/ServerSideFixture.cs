@@ -1,7 +1,7 @@
 using System;
 using System.Data.Common;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Hosting.Internal;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Yavsc.Lib;

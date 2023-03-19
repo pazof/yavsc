@@ -1,17 +1,14 @@
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 
 namespace Yavsc.Controllers
 {
-    using System.Security.Claims;
+    using Microsoft.EntityFrameworkCore;
     using Models;
     using Models.Workflow;
+    using Yavsc.Helpers;
 
     [Authorize("AdministratorOnly")]
     public class ActivityController : Controller
@@ -105,13 +102,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Activity activity = _context.Activities.Single(m => m.Code == id);
             if (activity == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(activity);
@@ -150,13 +147,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Activity activity = _context.Activities.Single(m => m.Code == id);
             if (activity == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewBag.ParentCode = GetEligibleParent(id);
             SetSettingClasseInfo();
@@ -187,13 +184,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Activity activity = _context.Activities.Single(m => m.Code == id);
             if (activity == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(activity);

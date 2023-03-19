@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Yavsc.Models.Messaging;
 
 namespace Yavsc.Helpers
@@ -52,7 +52,7 @@ namespace Yavsc.Helpers
                 if (accepted == "application/json")
                 {
                     if (controller.ModelState.ErrorCount>0) 
-                       result = controller.HttpBadRequest(controller.ModelState);
+                       result = controller.BadRequest(controller.ModelState);
                     else 
                        result = controller.Ok(model);
                     return true;

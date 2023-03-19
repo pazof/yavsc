@@ -1,15 +1,7 @@
-using System.IO;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using System.Web.Routing;
-using System.Linq;
-using Microsoft.Data.Entity;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.OptionsModel;
 using Newtonsoft.Json;
-using System;
 using System.Security.Claims;
 using Yavsc.Helpers;
 using Yavsc.ViewModels;
@@ -21,6 +13,8 @@ namespace Yavsc.ApiControllers
 
     using Models.Messaging;
     using ViewModels.Auth;
+    using Microsoft.Extensions.Options;
+    using Microsoft.EntityFrameworkCore;
 
     [Route("api/bill"), Authorize]
     public class BillingController : Controller
@@ -59,7 +53,7 @@ namespace Yavsc.ApiControllers
         {     
             var bill = await billingService.GetBillAsync(billingCode, id);
 
-            if (!await authorizationService.AuthorizeAsync(User, bill, new ViewRequirement()))
+            if ( authorizationService.AuthorizeAsync(User, bill, new ViewRequirement()).IsFaulted)
             {
                 return new ChallengeResult();
             }
@@ -77,11 +71,11 @@ namespace Yavsc.ApiControllers
 
             if (bill==null) {
                logger.LogCritical ( $"# not found !! {id} in {billingCode}");
-               return this.HttpNotFound();
+               return this.NotFound();
             }
-            logger.LogVerbose(JsonConvert.SerializeObject(bill));
+            logger.LogTrace(JsonConvert.SerializeObject(bill));
 
-            if (!await authorizationService.AuthorizeAsync(User, bill, new ViewRequirement()))
+            if (!(await authorizationService.AuthorizeAsync(User, bill, new ViewRequirement())).Succeeded)
             {
                 return new ChallengeResult();
             }
@@ -96,7 +90,7 @@ namespace Yavsc.ApiControllers
            
             if (bill==null) {
                logger.LogCritical ( $"# not found !! {id} in {billingCode}");
-               return this.HttpNotFound();
+               return this.NotFound();
             }
              logger.LogWarning("Got bill ack:"+bill.GetIsAcquitted().ToString());
             return ViewComponent("Bill",new object[] { billingCode, bill, OutputFormat.Pdf, true } );
@@ -112,7 +106,9 @@ namespace Yavsc.ApiControllers
             .FirstOrDefault(e=>e.Id == id);
             if (estimate == null)
                 return new BadRequestResult();
-            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement())).Succeeded)
+
+          
             {
                 return new ChallengeResult();
             }
@@ -138,25 +134,26 @@ namespace Yavsc.ApiControllers
         {
             // For authorization purpose
             var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
-            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement())).Succeeded)
+            
             {
                 return new ChallengeResult();
             }
 
             var filename = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, id);
             FileInfo fi = new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
-            if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
+            if (!fi.Exists) return NotFound(new { Error = "Professional signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
 
         [HttpPost("clisign/{billingCode}/{id}")]
         public async Task<IActionResult> CliSign(string billingCode, long id)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var estimate = dbContext.Estimates.Include( e=>e.Query
             ).Include(e=>e.Owner).Include(e=>e.Owner.Performer).Include(e=>e.Client)
             .FirstOrDefault( e=> e.Id == id && e.Query.ClientId == uid );
-            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement())).Succeeded)
             {
                 return new ChallengeResult();
             }
@@ -173,14 +170,14 @@ namespace Yavsc.ApiControllers
         {
             // For authorization purpose
             var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
-            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement())).Succeeded)
             {
                 return new ChallengeResult();
             }
             
             var filename = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, id);
             FileInfo fi = new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
-            if (!fi.Exists) return HttpNotFound(new { Error = "Professional signature not found" });
+            if (!fi.Exists) return NotFound(new { Error = "Professional signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
     }

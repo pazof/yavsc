@@ -1,6 +1,7 @@
 using System;
-using System.Collections.Generic;
-using Microsoft.Data.Entity.Migrations;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Yavsc.Migrations
 {

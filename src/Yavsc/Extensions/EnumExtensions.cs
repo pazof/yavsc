@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 
 namespace Yavsc.Extensions

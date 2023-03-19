@@ -1,10 +1,11 @@
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Linq;
 using Yavsc.Models;
 using Yavsc.Abstract.Identity;
+using Yavsc.Helpers;
 
 namespace Yavsc.ApiControllers.accounting
 {

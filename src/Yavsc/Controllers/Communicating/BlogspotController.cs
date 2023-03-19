@@ -2,18 +2,18 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNet.Authorization;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.AspNetCore.Authorization;
 using Yavsc.Models;
 using Yavsc.ViewModels.Auth;
-using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models.Blog;
 using Yavsc.Helpers;
-using Microsoft.AspNet.Localization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -52,7 +52,7 @@ namespace Yavsc.Controllers
         [AllowAnonymous]
         public IActionResult Title(string id)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewData["Title"] = id;
             return View("Title", _context.Blogspot.Include(
                 b => b.Author
@@ -75,7 +75,7 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             BlogPost blog = _context.Blogspot
@@ -86,9 +86,9 @@ namespace Yavsc.Controllers
             .Single(m => m.Id == id);
             if (blog == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            if (!await _authorizationService.AuthorizeAsync(User, blog, new ViewRequirement()))
+            if ( _authorizationService.AuthorizeAsync(User, blog, new ViewRequirement()).IsFaulted)
             {
                 return new ChallengeResult();
             }
@@ -141,7 +141,7 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             ViewData["PostTarget"]="Edit";
@@ -150,9 +150,9 @@ namespace Yavsc.Controllers
 
             if (blog == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            if (await _authorizationService.AuthorizeAsync(User, blog, new EditRequirement()))
+            if (!_authorizationService.AuthorizeAsync(User, blog, new EditRequirement()).IsFaulted)
             {
                 ViewBag.ACL = _context.Circle.Where(
                 c=>c.OwnerId == blog.AuthorId)
@@ -181,7 +181,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 var auth = _authorizationService.AuthorizeAsync(User, blog, new EditRequirement());
-                if (auth.Result)
+                if (!auth.IsFaulted)
                 {
                     // saves the change
                     _context.Update(blog);
@@ -205,7 +205,7 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             BlogPost blog = _context.Blogspot.Include(
@@ -213,7 +213,7 @@ namespace Yavsc.Controllers
            ).Single(m => m.Id == id);
             if (blog == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(blog);
@@ -224,13 +224,11 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
-            BlogPost blog = _context.Blogspot.Single(m => m.Id == id);
-            var auth = _authorizationService.AuthorizeAsync(User, blog, new EditRequirement());
-            if (auth.Result)
-            {
-                _context.Blogspot.Remove(blog);
-                _context.SaveChanges(User.GetUserId());
-            }
+            BlogPost blog = _context.Blogspot.Single(m => m.Id == id && m.GetOwnerId()== User.GetUserId());
+           
+            _context.Blogspot.Remove(blog);
+            _context.SaveChanges(User.GetUserId());
+           
             return RedirectToAction("Index");
         }
     }

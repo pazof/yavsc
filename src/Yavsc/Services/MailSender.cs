@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using Yavsc.Abstract.Manage;
 
@@ -44,7 +44,7 @@ namespace Yavsc.Services
             EmailSentViewModel model = new EmailSentViewModel{ EMail = email };
             try
             {
-                logger.LogInformation($"SendEmailAsync for {email}: {message}");
+                logger.LogInformation($"sendEmail for {email} : {message}");
                 MimeMessage msg = new MimeMessage();
                 msg.From.Add(new MailboxAddress(
                     siteSettings.Owner.Name,

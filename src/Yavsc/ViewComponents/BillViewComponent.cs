@@ -1,16 +1,13 @@
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using Yavsc.Abstract.FileSystem;
 using Yavsc.Billing;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.ViewModels;
 using Yavsc.ViewModels.Gen;
 using Yavsc.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.ViewComponents
 {
@@ -86,9 +83,9 @@ namespace Yavsc.ViewComponents
                             BaseFileName = billable.GetFileBaseName(billing)
                         };
                     if (genrtrData.GenerateEstimatePdf()) {
-                        return Json(new { Generated = genrtrData.BaseFileName+".pdf" });
+                        return this.View(new { Generated = genrtrData.BaseFileName+".pdf" });
                     } else {
-                        return Json(new { Error = genrtrData.GenerationErrorMessage } );
+                        return View(new { Error = genrtrData.GenerationErrorMessage } );
                     }
             }
             ViewBag.BillFileInfo =  billable.GetBillInfo(billing);

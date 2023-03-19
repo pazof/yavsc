@@ -1,18 +1,13 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Mime;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.OptionsModel;
- using Yavsc.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Options;
     using Models;
     using Models.Billing;
     using Models.Workflow;
@@ -36,7 +31,7 @@ namespace Yavsc.Controllers
         
         public IActionResult Index()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return View(_context.Estimates.Include(e=>e.Query)
             .Include(e=>e.Query.PerformerProfile)
             .Include(e=>e.Query.PerformerProfile.Performer)
@@ -49,10 +44,10 @@ namespace Yavsc.Controllers
         // GET: Estimate/Details/5
         public async Task<IActionResult> Details(long? id)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Estimate estimate = _context.Estimates
@@ -66,9 +61,9 @@ namespace Yavsc.Controllers
             .Single(m => m.Id == id);
             if (estimate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            if (!await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()))
+            if (authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()).IsFaulted)
             {
                 return new ChallengeResult();
             }
@@ -80,7 +75,7 @@ namespace Yavsc.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             IQueryable<RdvQuery> queries = _context.RdvQueries.Include(q=>q.Location).Where(bq=>bq.PerformerId == uid);
             //.Select(bq=>new SelectListItem{ Text = bq.Client.UserName, Value = bq.Client.Id });
             ViewBag.Clients = queries.Select(q=>q.Client).Distinct();
@@ -147,15 +142,15 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             Estimate estimate = _context.Estimates
             .Where(e=>e.OwnerId==uid||e.ClientId==uid).Single(m => m.Id == id);
             if (estimate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             
             ViewBag.Files =  Yavsc.Helpers.FileSystemHelpers.GetFileName(null);
@@ -170,9 +165,9 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Estimate estimate)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (estimate.OwnerId!=uid&&estimate.ClientId!=uid
-            ) return new HttpNotFoundResult();
+            ) return NotFound();
             if (ModelState.IsValid)
             {
                 _context.Update(estimate);
@@ -188,15 +183,15 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             Estimate estimate = _context.Estimates
             .Where(e=>e.OwnerId==uid||e.ClientId==uid) .Single(m => m.Id == id);
             if (estimate == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(estimate);

@@ -1,27 +1,20 @@
 
-
-using System;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Account;
 using Microsoft.Extensions.Localization;
-using Microsoft.Data.Entity;
 using Newtonsoft.Json;
 
 namespace Yavsc.Controllers
 {
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Options;
     using Yavsc.Abstract.Manage;
-    using Yavsc.Auth;
     using Yavsc.Helpers;
 
     public class AccountController : Controller
@@ -54,11 +47,6 @@ namespace Yavsc.Controllers
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            var emailUserTokenProvider = new UserTokenProvider();
-            _userManager.RegisterTokenProvider("EmailConfirmation", emailUserTokenProvider);
-            _userManager.RegisterTokenProvider("ResetPassword", emailUserTokenProvider);
-            // _userManager.RegisterTokenProvider("SMS",new UserTokenProvider());
-            // _userManager.RegisterTokenProvider("Phone", new UserTokenProvider());
             _emailSender = emailSender;
             _siteSettings = siteSettings.Value;
             _twilioSettings = twilioSettings.Value;
@@ -86,7 +74,7 @@ namespace Yavsc.Controllers
             var toShow = users.Skip(shown).Take(pageLen);
 
             ViewBag.page = pageNum;
-            ViewBag.hasNext = await users.CountAsync() > (toShow.Count() + shown);
+            ViewBag.hasNext =  users.Count() > (toShow.Count() + shown);
             ViewBag.nextpage = pageNum+1;
             ViewBag.pageLen = pageLen;
             // ApplicationUser user;
@@ -122,7 +110,8 @@ namespace Yavsc.Controllers
         [AllowAnonymous]
         public ActionResult AccessDenied(string requestUrl = null)
         {
-            ViewBag.UserIsSignedIn = User.IsSignedIn();
+            ViewBag.UserIsSignedIn = User.Identity.IsAuthenticated;
+            
             if (string.IsNullOrWhiteSpace(requestUrl))
                 if (string.IsNullOrWhiteSpace(Request.Headers["Referer"]))
                     requestUrl = "/";
@@ -198,13 +187,7 @@ namespace Yavsc.Controllers
                     if (string.IsNullOrEmpty(model.Provider))
                     {
                         _logger.LogWarning("Provider not specified");
-                        return HttpBadRequest();
-                    }
-
-                    if (!_signInManager.GetExternalAuthenticationSchemes().Any(x => x.AuthenticationScheme == model.Provider))
-                    {
-                        _logger.LogWarning($"Provider not found : {model.Provider}");
-                        return HttpBadRequest();
+                        return BadRequest();
                     }
 
                     // Instruct the middleware corresponding to the requested external identity
@@ -217,7 +200,7 @@ namespace Yavsc.Controllers
                     if (string.IsNullOrEmpty(model.ReturnUrl))
                     {
                         _logger.LogWarning("ReturnUrl not specified");
-                        return HttpBadRequest();
+                        return BadRequest();
                     }
                     // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
                     var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { model.ReturnUrl }, protocol:"https", host: Startup.Authority);
@@ -364,7 +347,8 @@ namespace Yavsc.Controllers
             }
 
             // Sign in the user with this external login provider if the user already has a login.
-            info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+            throw new NotImplementedException();
+            // info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
 
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
             if (result.Succeeded)
@@ -392,9 +376,9 @@ namespace Yavsc.Controllers
                 // If the user does not have an account, then ask the user to create an account.
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
-                var email = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Email);
-                var name = info.ExternalPrincipal.FindFirstValue(ClaimTypes.Name);
-                var avatar = info.ExternalPrincipal.FindFirstValue("urn:google:profile");
+                var email = info.AuthenticationProperties.GetParameter<string>(ClaimTypes.Email);
+                var name = info.AuthenticationProperties.GetParameter<string>(ClaimTypes.Name);
+                var avatar = info.AuthenticationProperties.GetParameter<string>("urn:google:profile");
                 /* var phone = info.ExternalPrincipal.FindFirstValue(ClaimTypes.HomePhone);
                  var mobile = info.ExternalPrincipal.FindFirstValue(ClaimTypes.MobilePhone);
                  var postalcode = info.ExternalPrincipal.FindFirstValue(ClaimTypes.PostalCode);
@@ -403,9 +387,9 @@ namespace Yavsc.Controllers
                 foreach (var claim in info.ExternalPrincipal.Claims)
                     _logger.LogWarning("# {0} Claim: {1} {2}", info.LoginProvider, claim.Type, claim.Value);
 */
-                var access_token = info.ExternalPrincipal.FindFirstValue("access_token");
-                var token_type = info.ExternalPrincipal.FindFirstValue("token_type");
-                var expires_in = info.ExternalPrincipal.FindFirstValue("expires_in");
+                var access_token = info.AuthenticationProperties.GetParameter<string>("access_token");
+                var token_type = info.AuthenticationProperties.GetParameter<string>("token_type");
+                var expires_in = info.AuthenticationProperties.GetParameter<string>("expires_in");
 
                 return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel
                 {
@@ -439,7 +423,8 @@ namespace Yavsc.Controllers
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    info.ProviderDisplayName = info.ExternalPrincipal.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+                     throw new NotImplementedException();
+                   // info.ProviderDisplayName = info.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
 
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)

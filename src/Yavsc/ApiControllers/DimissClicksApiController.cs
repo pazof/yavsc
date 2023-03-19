@@ -1,11 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Messaging;
 
@@ -26,7 +23,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<DimissClicked> GetDimissClicked()
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return _context.DimissClicked.Where(d=>d.UserId == uid);
         }
 
@@ -47,19 +44,19 @@ namespace Yavsc.Controllers
         [HttpGet("{id}", Name = "GetDimissClicked")]
         public async Task<IActionResult> GetDimissClicked([FromRoute] string id)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != id) return new ChallengeResult();
 
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             DimissClicked dimissClicked = await _context.DimissClicked.SingleAsync(m => m.UserId == id);
 
             if (dimissClicked == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(dimissClicked);
@@ -69,17 +66,17 @@ namespace Yavsc.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDimissClicked([FromRoute] string id, [FromBody] DimissClicked dimissClicked)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != id || uid != dimissClicked.UserId) return new ChallengeResult();
 
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != dimissClicked.UserId)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(dimissClicked).State = EntityState.Modified;
@@ -92,7 +89,7 @@ namespace Yavsc.Controllers
             {
                 if (!DimissClickedExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -100,19 +97,19 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/DimissClicksApi
         [HttpPost]
         public async Task<IActionResult> PostDimissClicked([FromBody] DimissClicked dimissClicked)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != dimissClicked.UserId) return new ChallengeResult();
 
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.DimissClicked.Add(dimissClicked);
@@ -124,7 +121,7 @@ namespace Yavsc.Controllers
             {
                 if (DimissClickedExists(dimissClicked.UserId))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -139,19 +136,19 @@ namespace Yavsc.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDimissClicked([FromRoute] string id)
         {
-            var uid = User.GetUserId();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!User.IsInRole("Administrator"))
             if (uid != id) return new ChallengeResult();
             
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             DimissClicked dimissClicked = await _context.DimissClicked.SingleAsync(m => m.UserId == id);
             if (dimissClicked == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.DimissClicked.Remove(dimissClicked);

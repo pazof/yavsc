@@ -1,11 +1,13 @@
 using System.Linq;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Yavsc.Controllers
 {
     using System.Security.Claims;
     using Models;
     using Models.Musical;
+    using Yavsc.Helpers;
+
     public class InstrumentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,13 +28,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Instrument instrument = _context.Instrument.Single(m => m.Id == id);
             if (instrument == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(instrument);
@@ -63,13 +65,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Instrument instrument = _context.Instrument.Single(m => m.Id == id);
             if (instrument == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(instrument);
         }
@@ -94,13 +96,13 @@ namespace Yavsc.Controllers
         {
             if (id == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             Instrument instrument = _context.Instrument.Single(m => m.Id == id);
             if (instrument == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(instrument);

@@ -1,6 +1,6 @@
 using Yavsc.Models;
 using Yavsc.Models.Haircut;
-using Microsoft.AspNet.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Yavsc.Controllers.Generic;
 
 namespace Yavsc.Controllers

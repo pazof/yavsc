@@ -1,4 +1,5 @@
-using Microsoft.AspNet.FileProviders;
+
+using Microsoft.Extensions.FileProviders;
 
 namespace Yavsc.ViewModels.Auth
 {

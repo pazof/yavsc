@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Market;
 
@@ -34,14 +31,14 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             Service service = _context.Services.Single(m => m.Id == id);
 
             if (service == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Ok(service);
@@ -53,12 +50,12 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             if (id != service.Id)
             {
-                return HttpBadRequest();
+                return BadRequest();
             }
 
             _context.Entry(service).State = EntityState.Modified;
@@ -71,7 +68,7 @@ namespace Yavsc.Controllers
             {
                 if (!ServiceExists(id))
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
                 else
                 {
@@ -79,7 +76,7 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new HttpStatusCodeResult(StatusCodes.Status204NoContent);
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
         // POST: api/ServiceApi
@@ -88,7 +85,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             _context.Services.Add(service);
@@ -100,7 +97,7 @@ namespace Yavsc.Controllers
             {
                 if (ServiceExists(service.Id))
                 {
-                    return new HttpStatusCodeResult(StatusCodes.Status409Conflict);
+                    return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
                 else
                 {
@@ -117,13 +114,13 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return HttpBadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             Service service = _context.Services.Single(m => m.Id == id);
             if (service == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             _context.Services.Remove(service);
