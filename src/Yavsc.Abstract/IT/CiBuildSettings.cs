@@ -10,7 +10,7 @@ public class CiBuildSettings
     /// The global process environment variables
     /// </summary>
     /// <value></value>
-    [JsonPropertyAttribute("env")]
+    [JsonProperty("env")]
     public string[] Environment { get; set; }
 
     /// <summary>
