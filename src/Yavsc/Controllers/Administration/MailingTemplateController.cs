@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Yavsc.Server.Settings;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Helpers;
+using Yavsc.Server.Models.Calendar;
 
 namespace Yavsc.Controllers
 {

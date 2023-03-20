@@ -9,7 +9,7 @@
 <form asp-controller="Account" asp-action="ExternalLoginConfirmation" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal" role="form">
     <h4>Formulaire d'Association</h4>
     <hr />
-    <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+    <div asp-validation-summary="All" class="text-danger"></div>
 
     <p class="text-info">
         Vous vous êtes authentifié avec succès auprès de <strong>@ViewData["LoginProvider"]</strong>.

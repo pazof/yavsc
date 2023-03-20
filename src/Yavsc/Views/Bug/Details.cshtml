@@ -1,40 +1,40 @@
 @model Yavsc.Models.IT.Fixing.Bug
 
 @{
-    ViewData["Title"] = @SR["Details"];
+    ViewData["Title"] = "Details";
 }
 
-<h2>@SR["Details"]</h2>
+<h2>Details</h2>
 
 <div>
     <h3>Bug</h3>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @SR["FeatureId"]
+            FeatureId"]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.FeatureId)
         </dd>
         <dt>
-            @SR["Title"]
+            Title"]
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Title)
         </dd>
         <dt>
-            @SR["Status"]
+            Status"]
         </dt>
         <dd>
             @SR[typeof(Yavsc.Models.IT.Fixing.BugStatus).GetEnumNames()[(int)Model.Status]]
         </dd>
     </dl>
 
-    <h3>@SR["Description"]</h3>
+    <h3>Description</h3>
     <code><pre>@Html.DisplayFor(model => model.Description)</pre></code>
 
 </div>
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a> |
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
 </p>

@@ -3,7 +3,7 @@
 <div class="performer @(Model.Active?"active":"inactive")">
      @if (Model.Performer!=null) { Html.DisplayFor(m=>m.Performer); } 
         @if (Model.WebSite!=null) { 
-            <a target="yaext" href="@Model.WebSite" class="btn btn-info">@SR["WebSite"]: @Model.WebSite</a>
+            <a target="yaext" href="@Model.WebSite" class="btn btn-info">WebSite: @Model.WebSite</a>
         }
    
 </div>

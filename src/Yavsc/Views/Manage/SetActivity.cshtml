@@ -14,13 +14,13 @@
 @Html.DisplayFor(model => model)
 
 <form id="FrmSetAct" asp-controller="Manage" asp-action="SetActivity" method="post" class="form-horizontal" role="form">
-    <h4>@SR["Setup below your activity parameters"]:</h4>
+    <h4>Setup below your activity parameters:</h4>
     <hr />
-    <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
+    <div asp-validation-summary="All" class="text-danger" id="valsum"></div>
     
     <div class="form-group">
         <label asp-for="AcceptNotifications" class="col-md-2 control-label">
-            @SR["AcceptNotifications"]
+            AcceptNotifications"]
         </label>
         <div class="col-md-10">
             <input asp-for="AcceptNotifications" class="form-control" />
@@ -29,7 +29,7 @@
     </div>
     <div class="form-group">
 
-        <label asp-for="AcceptPublicContact" class="col-md-2 control-label">@SR["AcceptPublicContact"]</label>
+        <label asp-for="AcceptPublicContact" class="col-md-2 control-label">AcceptPublicContact</label>
         <div class="col-md-10">
             <input asp-for="AcceptPublicContact" class="form-control" />
 
@@ -39,7 +39,7 @@
     <div class="form-group">
 
         <label asp-for="UseGeoLocalizationToReduceDistanceWithClients" class="col-md-2 control-label">
-            @SR["UseGeoLocalizationToReduceDistanceWithClients"]
+            UseGeoLocalizationToReduceDistanceWithClients"]
         </label>
         <div class="col-md-10">
             <input asp-for="UseGeoLocalizationToReduceDistanceWithClients" class="form-control" />
@@ -49,7 +49,7 @@
     </div>
     <div class="form-group">
 
-        <label asp-for="WebSite" class="col-md-2 control-label">@SR["WebSite"]</label>
+        <label asp-for="WebSite" class="col-md-2 control-label">WebSite</label>
         <div class="col-md-10">
             <input asp-for="WebSite" class="form-control" />
 
@@ -58,7 +58,7 @@
     </div>
     <div class="form-group">
 
-        <label asp-for="MinDailyCost" class="col-md-2 control-label">@SR["MinDailyCost"]</label>
+        <label asp-for="MinDailyCost" class="col-md-2 control-label">MinDailyCost</label>
         <div class="col-md-10">
             <input asp-for="MinDailyCost" class="form-control" />
 
@@ -67,7 +67,7 @@
     </div>
     <div class="form-group">
 
-        <label asp-for="MaxDailyCost" class="col-md-2 control-label">@SR["MaxDailyCost"]</label>
+        <label asp-for="MaxDailyCost" class="col-md-2 control-label">MaxDailyCost</label>
         <div class="col-md-10">
             <input asp-for="MaxDailyCost" class="form-control" />
 
@@ -76,7 +76,7 @@
     </div>
     <div class="form-group">
 
-        <label asp-for="Active" class="col-md-2 control-label">@SR["ActivateMyProSettings"]</label>
+        <label asp-for="Active" class="col-md-2 control-label">ActivateMyProSettings</label>
         <div class="col-md-10">
             <input asp-for="Active" class="form-control" />
 
@@ -85,7 +85,7 @@
     </div>
     <div class="form-group">
 
-        <label asp-for="SIREN" class="col-md-2 control-label">@SR["SIREN"]</label>
+        <label asp-for="SIREN" class="col-md-2 control-label">SIREN</label>
         <div class="col-md-10">
             <input asp-for="SIREN" class="form-control" />
 
@@ -94,7 +94,7 @@
     </div>
     <div class="form-group">
 
-        <label asp-for="OrganizationAddress.Address" class="col-md-2 control-label">@SR["Address"]</label>
+        <label asp-for="OrganizationAddress.Address" class="col-md-2 control-label">Address</label>
         <div class="col-md-10">
             <input asp-for="OrganizationAddress.Address" class="form-control" type="text" />
 
@@ -108,15 +108,15 @@
     @Html.Hidden("OrganizationAddress.Latitude") 
     @Html.Hidden("OrganizationAddress.Longitude") 
     @Html.Hidden("PerformerId")
-    <button type="submit" class="btn btn-default">@SR["Save these settings"]</button>
+    <button type="submit" class="btn btn-default">Save these settings</button>
 
 </form>
 
-<a asp-controller="InstrumentRating" asp-action="Index">@SR["Instrumentation"]</a>
+<a asp-controller="InstrumentRating" asp-action="Index">Instrumentation</a>
 
 <form asp-controller="Manage" asp-action="UnsetActivity" method="post" class="form-horizontal" role="form">
     @Html.Hidden("PerfomerId")
-    <button type="submit" class="btn btn-default">@SR["UnsetActivity"]</button>
+    <button type="submit" class="btn btn-default">UnsetActivity</button>
 </form>
 @section scripts { 
 @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

@@ -1,14 +1,14 @@
 @model Yavsc.Models.Relationship.HyperLink
 
 @{
-    ViewData["Title"] = @SR["Edit"];
+    ViewData["Title"] = "Edit";
 }
 
-<h2>@SR["Edit"]</h2>
+<h2>Edit</h2>
 
 <form asp-action="Edit">
     <div class="form-horizontal">
-        <h4>@SR["HyperLink"]</h4>
+        <h4>HyperLink</h4>
         <hr />
         <dl class="dl-horizontal">
         <dt>
@@ -24,7 +24,7 @@
             @Html.DisplayFor(model => model.Method)
         </dd>
         </dl>
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="HRef" />
         <input type="hidden" asp-for="Method" />
         <div class="form-group">
@@ -50,6 +50,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 

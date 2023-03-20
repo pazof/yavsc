@@ -4,13 +4,13 @@
     ViewData["Title"] = "Edit";
 }
 
-<h2>@SR["Edit"]</h2>
+<h2>Edit</h2>
 
 <form asp-action="Edit">
     <div class="form-horizontal">
         <h4>Circle Member</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="MemberId" />
         <input type="hidden" asp-for="CircleId" />
         <div class="form-group">
@@ -22,6 +22,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 

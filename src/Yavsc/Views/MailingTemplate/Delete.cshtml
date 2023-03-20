@@ -1,12 +1,12 @@
 @model Yavsc.Server.Models.EMailing.MailingTemplate
 
 @{
-    ViewData["Title"] = @SR["Delete"];
+    ViewData["Title"] = "Delete";
 }
 
-<h2>@SR["Delete"]</h2>
+<h2>Delete</h2>
 
-<h3>@SR["AreYourSureYouWantToDeleteThis"]</h3>
+<h3>AreYourSureYouWantToDeleteThis</h3>
 <div>
     <h4>MailingTemplate</h4>
     <hr />
@@ -64,7 +64,7 @@
     <form asp-action="Delete">
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-default" /> |
-            <a asp-action="Index">@SR["Back to List"]</a>
+            <a asp-action="Index">Back to List</a>
         </div>
     </form>
 </div>

@@ -8,19 +8,19 @@
     <h1>@ViewData["Title"]</h1>
     <hr/>
     
-    <h2 class="lead text-left">@SR["Use a local account to log in"]</h2>
+    <h2 class="lead text-left">Use a local account to log in</h2>
       <form action="@Constants.LoginPath" method="post" class="form-horizontal" role="form">
 
-                <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+                <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
-                    <label for="UserName" class="col-md-2 control-label">@SR["UserName"]</label>
+                    <label for="UserName" class="col-md-2 control-label">UserName</label>
                     <div class="col-md-10">
                         <input asp-for="UserName" class="form-control" />
                         <span asp-validation-for="UserName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="Password" class="col-md-2 control-label">@SR["Password"]</label>
+                    <label for="Password" class="col-md-2 control-label">Password</label>
                     <div class="col-md-10">
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
@@ -30,20 +30,20 @@
                     <div class="col-md-offset-2 col-md-10">
                         <div class="checkbox">
                             <input asp-for="RememberMe" />
-                        <label for="RememberMe" class="control-label">@SR["Remember me"]</label>
+                        <label for="RememberMe" class="control-label">Remember me</label>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
-                        <button type="submit" class="btn btn-lg btn-success">@SR["Login"]</button>
+                        <button type="submit" class="btn btn-lg btn-success">Login</button>
                     </div>
                 </div>
                 <p>
-                    <a asp-action="Register" asp-controller="Account">@SR["Register as a new user"]?</a>
+                    <a asp-action="Register" asp-controller="Account">Register as a new user?</a>
                 </p>
                 <p>
-                    <a asp-action="ForgotPassword" asp-controller="Account">@SR["Forgot your password"]?</a>
+                    <a asp-action="ForgotPassword" asp-controller="Account">Forgot your password?</a>
                 </p>
                  <input type="hidden" name="Provider" value="LOCAL" />
                 <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
@@ -52,7 +52,7 @@
             </form>
 
     <hr/>
-    <h2 class="lead text-left">@SR["Use another service to log in"]:</h2>
+    <h2 class="lead text-left">Use another service to log in:</h2>
     @if (Model.ExternalProviders?.Count() == 0)
                 {
                     <div>
@@ -68,7 +68,7 @@
         <form action="@Constants.LoginPath" method="post">
             <input type="hidden" name="Provider" value="@description.AuthenticationScheme" />
             <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
-            <button class="btn btn-lg btn-success" type="submit">@SR["Connect using"] @description.DisplayName</button>
+            <button class="btn btn-lg btn-success" type="submit">Connect using @description.DisplayName</button>
             @Html.AntiForgeryToken()
         </form>
                 }

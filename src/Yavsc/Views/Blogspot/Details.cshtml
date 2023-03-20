@@ -97,9 +97,9 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
 @if (User.GetUserId()!=null) {
     <div class="form-horizontal">
         <div class="input-group" >
-            <input id="Comment" class="form-control" placeholder="@SR["DoCommentPlaceHolder"]"/>
+            <input id="Comment" class="form-control" placeholder="DoCommentPlaceHolder"]"/>
             <span class="input-group-btn">
-                <input type="button" value="@SR["DoComment"]" class="btn btn-secondary"
+                <input type="button" value="DoComment"]" class="btn btn-secondary"
                 data-receiverid="@Model.Id" id="cmtBtn"
                  />
             </span> 
@@ -113,7 +113,7 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
     
 </div>
 @if (await AuthorizationService.AuthorizeAsync(User, Model, new EditRequirement())) {
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">@SR["Edit"]</a>
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">Edit</a>
 }
-<a asp-action="Index" class="btn btn-link">@SR["Back to List"]</a>
+<a asp-action="Index" class="btn btn-link">Back to List</a>
 </div>

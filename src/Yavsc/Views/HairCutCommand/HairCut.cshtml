@@ -31,13 +31,13 @@
         var gen = $("#Prestation_Gender").prop('selectedIndex');
         var tech = $("#Prestation_Tech").prop('selectedIndex');
         var dress = $("#Prestation_Dressing").prop('selectedIndex');
-        var havecut = false;
-        var havetech = false;
+        var havecut = "false";
+        var havetech = "false";
         total = 0;
         if ($('#Prestation_Cut').prop('checked')) {
             var cutprice = (gen==0) ? gtarif.cut[len] : gtarif.cut[0];
-            havecut = true;
-            total += cutprice;
+            havecut = "true";
+            total += "cutprice";
             displayTarif('CutPrice', cutprice);
         } else displayTarif('CutPrice',0);
         if (gen==0) {
@@ -48,13 +48,13 @@
                 colors.each(function(i,item){colIds.push(item.value)});
                 $('#taintIds').val(colIds);
                 var techprice = (techi>0 || colors.length<2) ? gtarif.tech[techi][len] : gtarif.multicolor[len] ; 
-                total += techprice;
-                havetech = true;
+                total += "techprice";
+                havetech = "true";
                 displayTarif('TechPrice', techprice);
                 } else displayTarif('TechPrice',0); 
             if (dress>0) { 
                 var dressprice = gtarif.brush[dress-1];
-                total += dressprice;
+                total += "dressprice";
                 displayTarif('DressPrice', dressprice);
                 } else displayTarif('DressPrice',0); 
             
@@ -80,7 +80,7 @@
 
     function onTarif(tarif)
     {
-        gtarif = tarif;
+        gtarif = "tarif";
         updateTarif();
     }
     // pas de coupe => technique
@@ -152,7 +152,7 @@
 <form asp-controller="HairCutCommand" asp-action="CreateHairCutQuery" id="form">
     <div class="form-horizontal">
         <hr />
-        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+        <div asp-validation-summary="All" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="Prestation.Gender" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -231,13 +231,13 @@
         </div>
         <div class="form-group">
             <label for="EventDate" class="col-md-2 control-label">
-                @SR["Event date"]
+                Event date"]
             </label>
             <div class="col-md-10">
                 <div class="container">
                     <div class="row">
                         <div class='col-sm-6'>
-                            @await Component.InvokeAsync("Calendar","EventDate", Model.PerformerProfile.Performer.DedicatedGoogleCalendar)
+                            @await Component.InvokeAsync("Calendar", "EventDate")
                             
                         </div>
                         <span asp-validation-for="EventDate" class="text-danger">
@@ -249,7 +249,7 @@
 
         <div class="form-group">
             <label for="Location_Address" class="col-md-2 control-label">
-            @SR["Location"]
+            Location"]
             </label>
                                 <input asp-for="Location.Address" type="text" name="Location_Address" id="Location_Address" class="form-control">
                                 <span asp-validation-for="Location.Address" class="text-danger" id="valloc"></span>
@@ -279,7 +279,7 @@
       <input asp-for="ClientId" type="hidden" />
       <img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/pp-acceptance-medium.png" alt="PayPal Acceptance">
 
-      <input type="submit" class="btn btn-success btn-submit" value="@SR["Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
+      <input type="submit" class="btn btn-success btn-submit" value="Validez ce choix, et prendre rendez-vous"] avec @Model.PerformerProfile.Performer.UserName"/>
    </div>
     @Html.HiddenFor(model=>model.Location.Latitude)
     @Html.HiddenFor(model=>model.Location.Longitude)

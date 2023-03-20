@@ -29,6 +29,7 @@ namespace Yavsc.Services
 {
     using Yavsc.Models.Calendar;
     using Yavsc.Server.Helpers;
+    using Yavsc.Server.Models.Calendar;
     using Yavsc.ViewModels.Calendar;
 
     /// <summary>

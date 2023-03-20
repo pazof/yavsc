@@ -20,7 +20,7 @@
 </dt>
 <dd>@Html.DisplayFor(m=>m.AdditionalInfo)
 </dd>
-<dt>@SR["La facture"]
+<dt>La facture
 </dt>
 <dd>@await Component.InvokeAsync("Bill", "Brush", Model, OutputFormat.Html, true)
 </dd>

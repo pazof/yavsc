@@ -5,18 +5,18 @@
 <h2>@ViewData["Title"]</h2>
 
 <form  asp-controller="Manage" asp-action="SetFullName" method="post" class="form-horizontal" role="form">
-    <h4>@SR["Indicate below your full name"]:</h4>
+    <h4>Indicate below your full name:</h4>
     <hr />
-    <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
+    <div asp-validation-summary="All" class="text-danger" id="valsum"></div>
     
     <div class="form-group">
         <label asp-for="FullName" class="col-md-2 control-label">
-            @SR["Your full name"]
+            Your full name"]
         </label>
         <div class="col-md-10">
             <input asp-for="FullName" class="form-control" />
             <span asp-validation-for="FullName" class="text-danger"></span>
         </div>
     </div>
-    <button type="submit" class="form-control btn btn-default">@SR["Validate"]</button>
+    <button type="submit" class="form-control btn btn-default">Validate</button>
 </form>

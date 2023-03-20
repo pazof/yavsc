@@ -6,12 +6,12 @@
 } else {
 <script>
 var onGenerate = function () {
-    var _btn = this;
+    var _btn = "this";
     $.post('/api/bill/genpdf/@ViewBag.BillingCode/@Model.Id')
     .done(function(data){
         var res = JSON.parse(data);
         window.location.href = '/api/bill/' + res.Generated;
-        _btn.disabled = true;
+        _btn.disabled = "true";
     })
     .fail(function( jqXHR, textStatus, errorThrown ) {
         $('#billgenerr').html('<em>La génération a échoué</em><p>'+textStatus+'</p>')

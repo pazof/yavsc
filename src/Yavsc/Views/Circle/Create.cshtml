@@ -1,16 +1,16 @@
 @model Circle
 
 @{
-    ViewData["Title"] = @SR["Create"];
+    ViewData["Title"] = "Create";
 }
 
-<h2>@SR["Create"]</h2>
+<h2>Create</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
         <h4>Circle</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <span asp-validation-for="OwnerId" class="text-danger" ></span>
                 <input asp-for="OwnerId" type="hidden" />
         <div class="form-group">
@@ -29,6 +29,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 

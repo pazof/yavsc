@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = SR["Forbidden"];
+    ViewData["Title"] = "Forbidden";
 }
 <h1>@ViewData["Title"]</h1>
 
@@ -9,10 +9,10 @@ L'accès à cette ressource est protégé.
 
 @:Vous ne possédez pas les droits suffisants pour y acceder.
 
-<a class="btn btn-lg btn-success" asp-controller="Account" asp-action="SignIn" asp-route-returnurl="@Model" >@SR["Login"] avec un autre compte</a>
+<a class="btn btn-lg btn-success" asp-controller="Account" asp-action="SignIn" asp-route-returnurl="@Model" >Login avec un autre compte</a>
 
 }
 else {
 
-    <a class="btn btn-lg btn-success" class="success" asp-controller="Account" asp-action="SignIn" asp-route-returnurl="@Model" >@SR["Login"]</a>
+    <a class="btn btn-lg btn-success" class="success" asp-controller="Account" asp-action="SignIn" asp-route-returnurl="@Model" >Login</a>
 }

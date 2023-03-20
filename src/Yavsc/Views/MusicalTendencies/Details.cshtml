@@ -1,10 +1,10 @@
 @model MusicalTendency
 
 @{
-    ViewData["Title"] = @SR["Details"];
+    ViewData["Title"] = "Details";
 }
 
-<h2>@SR["Details"]</h2>
+<h2>Details</h2>
 
 <div>
     <h4>MusicalTendency</h4>
@@ -19,6 +19,6 @@
     </dl>
 </div>
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a> |
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
 </p>

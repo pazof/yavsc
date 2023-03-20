@@ -1,14 +1,14 @@
 @model CircleMember
 
 @{
-    ViewData["Title"] = @SR["Create"];
+    ViewData["Title"] = "Create";
 }
 
-<h2>@SR["Create"]</h2>
+<h2>Create</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
-        <h4>@SR["CircleMember"]</h4>
+        <h4>CircleMember</h4>
         <hr />
 
         @Html.ValidationSummary() 
@@ -19,7 +19,7 @@
         <select asp-for="MemberId" asp-items="@ViewBag.MemberId" >
         </select>
 
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />
@@ -29,6 +29,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 

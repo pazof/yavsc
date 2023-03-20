@@ -6,15 +6,15 @@
 @section scripts { 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 }
-<h2>@SR["Edit"]</h2>
+<h2>Edit</h2>
 
 <form asp-action="Edit">
     <div class="form-horizontal">
         <h4>MailingTemplate</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
-            <label asp-for="Id" class="control-label col-md-2">@SR["Id"]</label>
+            <label asp-for="Id" class="control-label col-md-2">Id</label>
             <div class="col-md-10">
                 <select name="Id" asp-for="Id" asp-items="@ViewBag.Id" class="form-control" >
                 </select>
@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="ManagerId" class="control-label col-md-2">@SR["Manager"]</label>
+            <label asp-for="ManagerId" class="control-label col-md-2">Manager</label>
             <div class="col-md-10">
                 <select asp-for="ManagerId" asp-items="@ViewBag.ManagerId" class="form-control" >
                 </select>
@@ -68,6 +68,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 
