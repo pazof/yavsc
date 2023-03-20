@@ -1,17 +1,17 @@
 @model RdvQuery
 
 @{
-    ViewData["Title"] = @SR["Details"];
+    ViewData["Title"] = "Details";
 }
 
 <h2>@ViewData["Title"]</h2>
 
 <div>
-    <h4>@SR["Command"]</h4>
+    <h4>Command</h4>
     <hr />
     @Html.DisplayFor(m=>m)
 </div>
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a> |
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
 </p>

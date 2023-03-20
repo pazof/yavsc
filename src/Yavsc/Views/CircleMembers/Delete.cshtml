@@ -1,10 +1,10 @@
 @model CircleMember
 
 @{
-    ViewData["Title"] = @SR["Delete"];
+    ViewData["Title"] = "Delete";
 }
 
-<h2>@SR["Delete"]</h2>
+<h2>Delete</h2>
 
 <h3>Supprimer cette appartenance au cercle?</h3>
 <div>
@@ -27,6 +27,6 @@ Membre
 <form asp-action="Delete">
     <div class="form-actions no-color">
         <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="Index">@SR["Back to List"]</a>
+        <a asp-action="Index">Back to List</a>
     </div>
 </form>

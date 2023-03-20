@@ -1,7 +1,7 @@
 @model UserActivityViewModel
 
 @{
-    ViewData["Title"] = SR["Details"];
+    ViewData["Title"] = "Details";
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -10,7 +10,7 @@
     <h4>Détails de votre activité en <em>@Model.Declaration.Does.Name</em></h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>@SR["Activity"]</dt>
+        <dt>Activity</dt>
         <dd>@Html.DisplayFor(m=>m.Declaration.Does)
           @if (Model.NeedsSettings) {
               <a asp-controller="@ViewBag.ProfileType.Name" asp-action="Index" class="btn btn-default">
@@ -26,5 +26,5 @@
 </div>
 <p>
     <a asp-action="Edit" asp-route-id="@Model.Declaration.UserId" asp-route-activityCode="@Model.Declaration.DoesCode">Edit</a> |
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </p>

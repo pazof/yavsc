@@ -4,7 +4,7 @@
 }
 
 @{
-    ViewData["Title"] = @SR["Annuler votre commande"];
+    ViewData["Title"] = Annuler votre commande;
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -15,5 +15,5 @@
 </div>
 <p>
     <a asp-action="ClientCancelConfirm" asp-route-id="@Model.Id" class="btn btn-success">Je confirme, je veux annuler cette commande</a> |
-    <a asp-action="Index" class="btn btn-link">@SR["Back to List"]</a>
+    <a asp-action="Index" class="btn btn-link">Back to List</a>
 </p>

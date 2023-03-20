@@ -1,16 +1,16 @@
 @model Yavsc.Models.Musical.InstrumentRating
 
 @{
-    ViewData["Title"] = @SR["Edit"];
+    ViewData["Title"] = "Edit";
 }
 
-<h2>@SR["Edit"]</h2>
+<h2>Edit</h2>
 
 <form asp-action="Edit">
     <div class="form-horizontal">
         <h4>InstrumentRating</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label asp-for="OwnerId" class="control-label col-md-2">OwnerId</label>
@@ -35,6 +35,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 

@@ -5,23 +5,23 @@
 }
 <h2>@ViewData["Title"]</h2>
     <div class="form-horizontal">
-        <h4>@SR["Your book query"]</h4>
+        <h4>Your book query</h4>
         <hr />
-        <label for="EventDate">@SR["Event date"]</label>: @Html.DisplayFor(m => m.EventDate)
+        <label for="EventDate">Event date</label>: @Html.DisplayFor(m => m.EventDate)
         <br/>
 
-        <label for="Location">@SR["Location"]</label>: @Html.DisplayFor(m => m.Location)
+        <label for="Location">Location</label>: @Html.DisplayFor(m => m.Location)
         <br/>
 
         @if (ViewBag.GooglePayload !=null) 
         {
             @if (ViewBag.GooglePayload.success>0) {
-                <h4>@SR["GCM Notifications sent"]</h4>
+                <h4>GCM Notifications sent</h4>
             }
             else {
                 if (ViewBag.GooglePayload.failure>0)
                     {
-                        <h4>@SR["GCM Notification sending failed"]</h4>
+                        <h4>GCM Notification sending failed</h4>
                         <pre><code>@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.GooglePayload)</code></pre>
                     }
             }

@@ -1,13 +1,13 @@
 @model IEnumerable<Yavsc.Models.IT.Fixing.Bug>
 
 @{
-    ViewData["Title"] = @SR["DeleteAllLike"];
+    ViewData["Title"] = "DeleteAllLike";
 }
 
-<h2>@SR["Index"]</h2>
+<h2>Index</h2>
 
 <p>
-    <a asp-action="Create">@SR["Create New"]</a>
+    <a asp-action="Create">Create New</a>
 </p>
 
 <table class="table">
@@ -43,9 +43,9 @@
             @SR[typeof(Yavsc.Models.IT.Fixing.BugStatus).GetEnumNames()[(int)item.Status]]
         </td>
         <td>
-            <a asp-action="Edit" asp-route-id="@item.Id">@SR["Edit"]</a> |
-            <a asp-action="Details" asp-route-id="@item.Id">@SR["Details"]</a> |
-            <a asp-action="DeleteAllLike" asp-route-id="@item.Id">@SR["Delete"]</a>
+            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+            <a asp-action="DeleteAllLike" asp-route-id="@item.Id">Delete</a>
         </td>
     </tr>
 }

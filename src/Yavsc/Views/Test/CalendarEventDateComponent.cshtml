@@ -1,6 +1,6 @@
 @model Yavsc.ViewModels.Test.CalendarViewModel
 @{
-    ViewData["Title"] = @SR["Page d'accueil"];
+    ViewData["Title"] = "Page d'accueil";
 }
 @section header {
     <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
@@ -12,7 +12,7 @@
     <div class="form-horizontal">
         <h4>Saisissez votre demande de rendez-vous</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.All" class="text-danger" id="valsum"></div>
+        <div asp-validation-summary="All" class="text-danger" id="valsum"></div>
         <div class="form-group" has-feedback>
             <fieldset>
                 <legend>Votre évennement</legend>

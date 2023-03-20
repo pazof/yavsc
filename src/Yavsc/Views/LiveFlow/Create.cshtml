@@ -1,16 +1,16 @@
 @model Yavsc.Models.Streaming.LiveFlow
 
 @{
-    ViewData["Title"] = @SR["Create"];
+    ViewData["Title"] = "Create";
 }
 
 <h2>@ViewData["Title"]</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
-        <h4>@SR["LiveFlow"]</h4>
+        <h4>LiveFlow</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+        <div asp-validation-summary="All" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="DifferedFileName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -51,6 +51,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 

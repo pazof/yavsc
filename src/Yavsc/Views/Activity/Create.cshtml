@@ -1,18 +1,18 @@
 @model Activity
 
 @{
-    ViewData["Title"] = @SR["Create"];
+    ViewData["Title"] = "Create";
 }
 
-<h2>@SR["Create"]</h2>
+<h2>Create</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
-        <h4>@SR["Activity"]</h4>
+        <h4>Activity</h4>
         <hr />
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
-            <label asp-for="Code" class="col-md-2 control-label">@SR["Code"]</label>
+            <label asp-for="Code" class="col-md-2 control-label">Code</label>
             <div class="col-md-10">
                 <input asp-for="Code" class="form-control" />
                 <span asp-validation-for="Code" class="text-danger" ></span>
@@ -20,7 +20,7 @@
         </div>
         <div class="form-group">
             <label asp-for="Name" class="col-md-2 control-label">
-                @SR["Name"]</label>
+                Name"]</label>
             <div class="col-md-10">
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger" ></span>
@@ -28,7 +28,7 @@
         </div>
         <div class="form-group">
             <label asp-for="Parent" class="col-md-2 control-label">
-                @SR["Parent"]</label>
+                Parent"]</label>
             <div class="col-md-10">
                 <select asp-for="ParentCode" asp-items=@ViewBag.ParentCode class="form-control" >
                 </select>
@@ -37,7 +37,7 @@
         </div>
         <div class="form-group">
             <label asp-for="Description" class="col-md-2 control-label">
-                @SR["Description"]</label>
+                Description"]</label>
             <div class="col-md-10">
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger" ></span>
@@ -45,7 +45,7 @@
         </div>
         <div class="form-group">
             <label asp-for="Photo" class="col-md-2 control-label">
-                @SR["Photo"]
+                Photo"]
             </label>
             <div class="col-md-10">
                 <input asp-for="Photo" class="form-control" />
@@ -54,7 +54,7 @@
         </div>
         <div class="form-group">
             <label asp-for="SettingsClassName" class="col-md-2 control-label">
-                @SR["SettingsClass"]
+                SettingsClass"]
             </label>
             <div class="col-md-10">
                 <select asp-for="SettingsClassName" class="form-control" asp-items="@ViewBag.SettingsClassName">
@@ -67,14 +67,14 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="@SR["Create"]" class="btn btn-default" />
+                <input type="submit" value="Create"]" class="btn btn-default" />
             </div>
         </div>
     </div>
 </form>
 
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 
 

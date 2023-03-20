@@ -8,11 +8,11 @@
 
 <h2>@ViewData["Title"]</h2>
     <div class="form-horizontal">
-        <h4>@SR["Your book query"]</h4>
+        <h4>Your book query</h4>
         <hr />
         <dl class="dl-horizontal">
             <dt>
-                @SR["Votre prestataire"]
+                Votre prestataire"]
             </dt>
             <dd>
                 @Html.DisplayFor(m=>m.PerformerProfile)
@@ -35,7 +35,7 @@
                 @Html.DisplayFor(m=>m.AdditionalInfo)
             </dd>
 
-            <dt>@SR["Addition minimale"]
+            <dt>Addition minimale
             </dt>
             <dd> <span class="price"> @ViewBag.Addition </span> <br/>
 
@@ -48,7 +48,7 @@
          <p>Pas de date convenue ...</p>
         } else {
         <label for="EventDate">
-            @SR["Event date"]</label>
+            Event date"]</label>
            @Html.DisplayFor(m => m.EventDate)
         }</dd>
         <dt> @Html.DisplayNameFor(m => m.Location)
@@ -56,32 +56,32 @@
         <dd>@if (Model.Location == null) {
          <p>Pas de lieu convenu ...</p> 
          } else {
-        <label for="Location">@SR["Location"]</label>
+        <label for="Location">Location</label>
          @Html.DisplayFor(m => m.Location)
         }
         </dd>
-        <dt>@SR["Notification"]
+        <dt>Notification
         </dt>
         <dd>@if (ViewBag.GooglePayload !=null) 
         {
             @if (ViewBag.GooglePayload.success>0) {
-                <h4>@SR["GCM Notifications sent"]</h4>
+                <h4>GCM Notifications sent</h4>
             }
             else {
                 if (ViewBag.GooglePayload.failure>0)
                     {
-                        <div class="error">@SR["EGCMBUTEMAIL"]</div>
+                        <div class="error">EGCMBUTEMAIL</div>
                     }
                     else {
-                       <div>@SR["E-mail sent"]</div>
+                       <div>E-mail sent"]</div>
                     }
             }
-        } else {<div>@SR["E-mail sent"]</div>}
+        } else {<div>E-mail sent"]</div>}
         </dd>
         <dt>Numéro identifiant votre commande</dt>
         <dd>@Model.Id</dd>
 
-        <dt>@SR["La facture"]
+        <dt>La facture
         </dt>
         <dd>@await Component.InvokeAsync("Bill", "Brush", Model, OutputFormat.Html, false )
         </dd>

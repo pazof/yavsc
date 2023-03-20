@@ -6,7 +6,7 @@
         <ul class="nav navbar-nav navbar-right">
             <li>
                 <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
-                   <img src="/Avatars/@(User.GetUserName()+".xs").png" asp-append-version="true" class="smalltofhol" />
+                   <img src="/Avatars/@(User.GetUserName()).xs.png" asp-append-version="true" class="smalltofhol" />
                 </a>
             </li>
             <li class="dropdown">
@@ -15,9 +15,9 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a asp-controller="Bug" asp-action="Index">Bugs</a></li>
-                        <li><a asp-controller="HyperLink" asp-action="Index">@SR["HyperLink"]</a></li>
-                        <li><a asp-controller="LiveFlow" asp-action="Index">@SR["LiveFlow"]</a></li>
-                        <li><a asp-controller="Feature" asp-action="Index">@SR["Features"]</a></li>
+                        <li><a asp-controller="HyperLink" asp-action="Index">HyperLink</a></li>
+                        <li><a asp-controller="LiveFlow" asp-action="Index">LiveFlow</a></li>
+                        <li><a asp-controller="Feature" asp-action="Index">Features</a></li>
                     </ul>
              @if (User.IsInRole(Constants.AdminGroupName)) {
              <li class="dropdown">
@@ -38,7 +38,7 @@
             <li>
                  <form asp-controller="Account" asp-action="LogOff" 
                  method="post" id="logoutForm">
-                     <button type="submit" class="btn navbar-btn" >@SR["Logout"]</button>
+                     <button type="submit" class="btn navbar-btn" >Logout</button>
                  <input type="hidden" name="ReturnUrl" value="/" />
                 </form>
             </li>
@@ -47,8 +47,8 @@
 else
 {
     <ul class="nav navbar-nav navbar-right">
-        <li><a class="navbar-link" asp-controller="Account" asp-action="Register" asp-route-returnurl="@Url.Action()" >@SR["Register"]</a></li>
+        <li><a class="navbar-link" asp-controller="Account" asp-action="Register" asp-route-returnurl="@Url.Action()" >Register</a></li>
            
-        <li><a class="navbar-link" asp-controller="Account" asp-action="SignIn" asp-route-returnurl="@Url.Action()" >@SR["Login"]</a></li>
+        <li><a class="navbar-link" asp-controller="Account" asp-action="SignIn" asp-route-returnurl="@Url.Action()" >Login</a></li>
     </ul>
 }

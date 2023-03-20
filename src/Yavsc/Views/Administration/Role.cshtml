@@ -5,14 +5,14 @@
 
 <h2>@ViewBag.Title</h2>
 <p>
-<a asp-action="Enroll" asp-route-RoleName="@Model.Name" class="btn btn-default" >@SR["Enroll"]</a>
+<a asp-action="Enroll" asp-route-RoleName="@Model.Name" class="btn btn-default" >Enroll</a>
 </p>
 
 <ul>
 <table class="table">
     <tr>
         <th>
-            @SR["User"]
+            User"]
         </th>
         <th>
         </th>
@@ -26,7 +26,7 @@
         </td>
             <td>
             <a asp-action="Fire" asp-route-RoleName="@Model.Name" asp-route-UserId="@user.UserId" class="btn btn-success" >
-            <img src="~/images/ptcroix.png" /> @SR["Fire"] </a>
+            <img src="~/images/ptcroix.png" /> Fire </a>
             </td>
     </tr>
 }

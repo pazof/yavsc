@@ -1,33 +1,33 @@
 @model IndexViewModel
 @using System.Security.Claims
 @{
-    ViewData["Title"] = @SR["Manage your account"];
+    ViewData["Title"] = Manage your account;
 }
 
 <h2>@ViewData["Title"]</h2>
 <p class="text-success">@ViewData["StatusMessage"]</p>
 <div>
-    <h4>@SR["Your account settings"]</h4>
+    <h4>Your account settings</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>@SR["UserName"]:</dt>
+        <dt>UserName:</dt>
       
         <dd> 
             @Model.UserName
         </dd>
 
-        <dt>@SR["EMail"]:</dt>
+        <dt>EMail:</dt>
       
         <dd> 
             @Model.EMail
 
             @if (Model.EmailConfirmed) {
-                <text>(@SR["Adresse E-mail confirmée"])</text>
+                <text>(Adresse E-mail confirmée"])</text>
             } else {
                 <text>
-                  <i>  (@SR["Adresse non confirmée."])</i>
+                  <i>  (Adresse non confirmée."])</i>
             <form asp-action="SendConfirationEmail" asp-controller="Account" enctype="multipart/form-data">
-                <input type="submit" value="@SR["Confirmer cette adresse"]"/>
+                <input type="submit" value="Confirmer cette adresse"]"/>
             </form>
                 </text>
             }
@@ -35,7 +35,7 @@
 
         <dd>
             <dl>
-                <dt>@SR["AllowMonthlyEmail"]:</dt>
+                <dt>AllowMonthlyEmail:</dt>
                 <dd>
                     <a asp-action="ProfileEMailUsage"> @Html.DisplayFor(m=>m.AllowMonthlyEmail) [modifier]
                     </a>
@@ -44,81 +44,81 @@
         </dd>
 
 
-        <dt>@SR["FullName"]:</dt>
+        <dt>FullName:</dt>
         <dd> 
             @Html.DisplayFor(m=>m.FullName)  <a asp-action="SetFullName">[modifier]</a>
         </dd>
 
         @if (Model.Roles.Count()>0) {
-        <dt>@SR["Roles"]:</dt>
+        <dt>Roles:</dt>
         <dd> 
             @string.Join(", ",Model.Roles)
         </dd>}
-        <dt>@SR["Password"]:</dt>
+        <dt>Password:</dt>
         <dd>[@if (Model.HasPassword)
             {<a asp-controller="Manage" 
-            asp-action="ChangePassword">@SR["Change"]</a>}
+            asp-action="ChangePassword">Change</a>}
             else
             {<a asp-controller="Manage" 
-            asp-action="SetPassword">@SR["Create"]</a>}]</dd>
+            asp-action="SetPassword">Create</a>}]</dd>
 
-        <dt>@SR["External Logins"]:</dt>
+        <dt>External Logins:</dt>
         <dd>
-            @Model.Logins.Count [<a asp-controller="Manage" asp-action="ManageLogins">@SR["Manage"]</a>]
+            @Model.Logins.Count [<a asp-controller="Manage" asp-action="ManageLogins">Manage</a>]
         </dd>
 
-        <dt>@SR["Full name"]:</dt>
+        <dt>Full name:</dt>
         <dd>@Model.FullName  [<a asp-controller="Manage" asp-action="SetFullName"
-            >@SR[@Model.FullName==null?"Set":"Modify"]</a>]</dd>
+            >@Model.FullName==null?"Set":"Modify"</a>]</dd>
 
-        <dt>@SR["Address"]:</dt>
+        <dt>Address:</dt>
         <dd>@Model.PostalAddress
             [<a asp-controller="Manage" asp-action="SetAddress"
-            >@SR[@Model.PostalAddress==null?"Set":"Modify"]</a>]
+            >@Model.PostalAddress==null?"Set":"Modify"</a>]
         </dd>
         
-        <dt>@SR["Avatar"]:</dt>
+        <dt>Avatar:</dt>
         <dd>
                    <img src="/Avatars/@(User.GetUserName()+".s").png" asp-append-version="true" class="smalltofhol" />
             [<a asp-controller="Manage" asp-action="SetAvatar"
-            >@SR["Modify"]</a>]
+            >Modify</a>]
         </dd> 
 
-        <dt>@SR["Vos cercles"]</dt>
-        <dd> (WIP) <a asp-action="Index" asp-controller="Circle">[@SR["Ajouter suprimer des cercles"]]</a>
-            <a asp-action="Index" asp-controller="CircleMembers">[@SR["Gérer les membres de vos cercles"]]</a>
+        <dt>Vos cercles</dt>
+        <dd> (WIP) <a asp-action="Index" asp-controller="Circle">[Ajouter suprimer des cercles"]]</a>
+            <a asp-action="Index" asp-controller="CircleMembers">[Gérer les membres de vos cercles"]]</a>
         </dd>
 
-        <dt>@SR["Professional settings"]:</dt>
+        <dt>Professional settings:</dt>
         <dd>
             @Html.DisplayFor(model => model.HaveProfessionalSettings)
             [<a asp-controller="Manage" asp-action="SetActivity"
-            >@SR[Model.HaveProfessionalSettings?"Modify settings":"Set"]</a>]
+            >Model.HaveProfessionalSettings?"Modify settings":"Set"</a>]
         </dd>
 @if (Model.HaveProfessionalSettings) {
-        <dt>@SR["Activities"]:</dt>
+        <dt>Activities:</dt>
         <dd>
            @string.Join(", ",Model.Activity.Select( u=> u.Does.Name ).ToArray())
             [<a asp-controller="Do" asp-action="Index"
-            >@SR[@Model.Activity==null?"Set":"Modify settings"]</a>]
+            >@Model.Activity==null?"Set":"Modify settings"</a>]
         </dd>
 }
-        <dt>@SR["Bank info"]:</dt>
+        <dt>Bank info:</dt>
         <dd>@Html.DisplayFor(m => m.BankInfo)  [<a asp-controller="Manage" asp-action="AddBankInfo"
-            >@SR[@Model.BankInfo==null?"Set":"Modify"]</a>]</dd>
+            >@Model.BankInfo==null?"Set":"Modify"</a>]</dd>
 
-        <dt><a href="/Blog/@Model.UserName">@SR["Your posts"]:</a></dt>
+        <dt><a href="/Blog/@Model.UserName">Your posts:</a></dt>
         <dd>@Model.PostsCounter</dd>
        
-      <dt>@SR["TwoFactorAuthentication"]:</dt> 
+      <dt>TwoFactorAuthentication:</dt> 
       <dd>
          @if (Model.TwoFactor)
          {
             using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
             {
                @Html.AntiForgeryToken()
-               <text>@SR["Enabled"]
-                  <input type="submit" value="[@SR["Disable"]]" class="btn btn-link" />
+               <text>Enabled
+                  <input type="submit" value="[Disable"]]" class="btn btn-link" />
                </text>
             }
          }
@@ -127,25 +127,25 @@
             using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
             {
                @Html.AntiForgeryToken()
-               <text>@SR["Disabled"]
-                  <input type="submit" value="[@SR["Enable"]]" class="btn btn-link" />
+               <text>Disabled
+                  <input type="submit" value="[Enable"]]" class="btn btn-link" />
                </text>
             }
          }
       </dd>
-       <dt>@SR["Calendar"]</dt> 
+       <dt>Calendar</dt> 
       <dd> 
-          @SR[Model.HasDedicatedCalendar?"Yes":"No"] 
+          @Model.HasDedicatedCalendar?"Yes":"No" 
           @if (Model.HasDedicatedCalendar) { 
              <text> : @Model.DedicatedCalendarId </text>
           }
-              [<a asp-action="SetGoogleCalendar">@SR["Select a Google calendar"]</a>]
+              [<a asp-action="SetGoogleCalendar">Select a Google calendar</a>]
       </dd>
       <environment names="Development">
        <dt>Credits:</dt> 
       <dd> 
           @(Model.Balance?.Credits ?? 0) &euro;
-              [<a asp-action="Credits">@SR["Manage"]</a>]
+              [<a asp-action="Credits">Manage</a>]
       </dd>
       </environment>
 
@@ -167,6 +167,6 @@
       </dd>
     </dl>
     <h4>
-      <a asp-controller="Account" asp-action="Delete" >@SR["Unregister"]</a>
+      <a asp-controller="Account" asp-action="Delete" >Unregister</a>
     </h4>
 </div>

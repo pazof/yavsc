@@ -118,10 +118,10 @@
     @Html.Partial("_ValidationScriptsPartial")
 
 }
-<h2 > @SR["Blog post edition"] </h2>
+<h2 > Blog post edition </h2>
                 <label><input type="checkbox" id="vcbtn" />Editer le code source Markdown</label>
 
-<div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+<div asp-validation-summary="All" class="text-danger"></div>
 
 
 <div id="Titletoolbar" class="hidden ql-snow ql-toolbar">
@@ -168,7 +168,7 @@
 
         <hr />
         <p class="text-success">@ViewData["StatusMessage"]</p>
-        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="AuthorId" />
       
@@ -238,6 +238,6 @@
     @{ await Html.RenderPartialAsync("_PostFilesPartial"); }
    </div>
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 

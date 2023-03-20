@@ -1,10 +1,10 @@
 @model Yavsc.Models.Musical.Profiles.GeneralSettings
 
 @{
-    ViewData["Title"] = @SR["Details"];
+    ViewData["Title"] = "Details";
 }
 
-<h2>@SR["Details"]</h2>
+<h2>Details</h2>
 
 <div>
     <h4>GeneralSettings</h4>
@@ -13,13 +13,13 @@
     <dl class="dl-horizontal">
     </dl>
 <p>
-     <a asp-action="Delete" asp-route-id="@Model.UserId">@SR["Delete"]</a>
+     <a asp-action="Delete" asp-route-id="@Model.UserId">Delete</a>
 </p>
     }
     else {
     <p>
-        @SR["Aucun profile renseigné"]
-        <a asp-action="Create" class="btn btn-success">@SR["Renseigner ce paramêtrage"]</a> 
+        Aucun profile renseigné"]
+        <a asp-action="Create" class="btn btn-success">Renseigner ce paramêtrage"]</a> 
     </p>
     }
 </div>
