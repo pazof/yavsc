@@ -89,6 +89,7 @@ namespace Yavsc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
 
             // Database connection
 
@@ -241,26 +242,21 @@ namespace Yavsc
                 options.ResourcesPath = "Resources";
             });
         }
-        static ApplicationDbContext _dbContext;
-        private UserManager<ApplicationUser> _usermanager;
 
         public static IServiceProvider Services { get; private set; }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
-            IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env,
-            ApplicationDbContext dbContext, IOptions<SiteSettings> siteSettings,
-        IOptions<RequestLocalizationOptions> localizationOptions,
+            IApplicationBuilder app, 
+            IOptions<SiteSettings> siteSettings,
         IAuthorizationService authorizationService,
         IOptions<PayPalSettings> payPalSettings,
         IOptions<GoogleAuthSettings> googleSettings,
         IStringLocalizer<Yavsc.YavscLocalisation> localizer,
-        UserManager<ApplicationUser> usermanager,
-         ILoggerFactory loggerFactory)
+         ILoggerFactory loggerFactory,
+         IWebHostEnvironment env)
         {
             Services = app.ApplicationServices;
-            _dbContext = dbContext;
-            _usermanager = usermanager;
             GoogleSettings = googleSettings.Value;
             ResourcesHelpers.GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
@@ -319,7 +315,7 @@ namespace Yavsc
             // before fixing the security protocol, let beleive our lib it's done with it.
             var cxmgr = PayPal.Manager.ConnectionManager.Instance;
             // then, fix it.
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xC00; // Tls12, required by PayPal
+            // ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xC00; // Tls12, required by PayPal
 
 
             app.UseSession();
@@ -335,35 +331,13 @@ namespace Yavsc
             _logger.LogInformation("LocalApplicationData: " + Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
             
             CheckApp(env, loggerFactory);
-        }
-
-        // Entry point for the application.
-        public static void Main(string[] args) {
-            var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddSignalR();
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            app.UseEndpoints(endpoints =>
             {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.MapRazorPages();
-            app.MapHub<ChatHub>("/chatHub");
-
-            app.Run();
+                endpoints.MapHub<ChatHub>("/chat");
+            });
 
         }
+
     }
 }
 //

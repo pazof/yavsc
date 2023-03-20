@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Attributes.Validation;
 using Yavsc.Models;
 using Yavsc.Models.Calendar;
+using Yavsc.Server.Models.Calendar;
 
 namespace Yavsc.Server.Models.EMailing
 {

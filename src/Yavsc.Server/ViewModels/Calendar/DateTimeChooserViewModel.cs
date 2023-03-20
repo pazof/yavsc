@@ -1,6 +1,6 @@
 using System;
 using Yavsc.Models.Calendar;
-
+using Yavsc.Server.Models.Calendar;
 
 namespace Yavsc.ViewModels.Calendar
 {

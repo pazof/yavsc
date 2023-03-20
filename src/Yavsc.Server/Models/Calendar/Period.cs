@@ -22,7 +22,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Yavsc.Models.Calendar
+namespace Yavsc.Server.Models.Calendar
 {
 	/// <summary>
 	/// Hollydays.

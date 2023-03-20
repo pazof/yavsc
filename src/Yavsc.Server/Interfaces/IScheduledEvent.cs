@@ -19,6 +19,8 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using Yavsc.Server.Models.Calendar;
+
 namespace Yavsc.Models.Calendar
 {
     public interface IScheduledEvent

@@ -9,7 +9,7 @@ namespace Yavsc
     public partial class Startup
     {
 
-        public void CheckApp(Microsoft.AspNetCore.Hosting.IHostingEnvironment env,
+        public void CheckApp(IWebHostEnvironment env,
                 ILoggerFactory loggerFactory)
         {
 

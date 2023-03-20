@@ -9,20 +9,20 @@
     else if (Model.IsLayoutPageSelected)
     {
 @:@@{
-    @:ViewData["Title"] = @@SR["@Model.ViewName"];
+    @:ViewData["Title"] = @@Model.ViewName"];
         if (!string.IsNullOrEmpty(Model.LayoutPageFile))
         {
     @:Layout = "@Model.LayoutPageFile";
         }
 @:}
 @:
-@:<h2>@@SR["@Model.ViewName"]</h2>
+@:<h2>@@Model.ViewName"]</h2>
 @:
     }
     else
     {
 @:@@{
-    @:Layout = null;
+    @:Layout = "null";
 @:}
 @:
 @:<!DOCTYPE html>
@@ -30,13 +30,13 @@
 @:<html>
 @:<head>
     @:<meta name="viewport" content="width=device-width" />
-    @:<title>@@SR["@Model.ViewName"]</title>
+    @:<title>@@Model.ViewName"]</title>
 @:</head>
 @:<body>
         //    PushIndent("    ");
     }
 @:<p>
-    @:<a asp-action="Create">@@SR["Create New"]</a>
+    @:<a asp-action="Create">Create New</a>
 @:</p>
 @:<table class="table">
     @:<tr>
@@ -69,17 +69,17 @@
     if (pkName != null)
     {
         @:<td>
-            @:<a asp-action="Edit" asp-route-id="@@item.@pkName">@@SR["Edit"]</a> |
-            @:<a asp-action="Details" asp-route-id="@@item.@pkName">@@SR["Details"]</a> |
-            @:<a asp-action="Delete" asp-route-id="@@item.@pkName">@@SR["Delete"]</a>
+            @:<a asp-action="Edit" asp-route-id="@@item.@pkName">@Edit</a> |
+            @:<a asp-action="Details" asp-route-id="@@item.@pkName">@Details</a> |
+            @:<a asp-action="Delete" asp-route-id="@@item.@pkName">@Delete</a>
         @:</td>
     }
     else
     {
         <td>
-            @@Html.ActionLink(SR["Edit"], "Edit",new { /* id=item.PrimaryKey */ }) |
-            @@Html.ActionLink(SR["Details"], "Details", new { /* id=item.PrimaryKey */ }) |
-            @@Html.ActionLink(SR["Delete"], "Delete", new { /* id=item.PrimaryKey */ })
+            @@Html.ActionLink("Edit", "Edit",new { /* id=item.PrimaryKey */ }) |
+            @@Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @@Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
         </td>
     }
     @:</tr>
