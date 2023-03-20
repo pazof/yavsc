@@ -9,7 +9,7 @@
         <dt>
             @Html.DisplayNameFor(model => model.Gender)
         </dt>
-        <dd>@SR[Model.Gender.ToString()]</dd>
+        <dd>@Model.Gender.ToString()</dd>
         @if ((int)Model.Gender<1) {
         <dt>
             @Html.DisplayNameFor(model => model.Length)
@@ -33,7 +33,7 @@
             @Html.DisplayNameFor(model => model.Tech)
         </dt>
         <dd>
-            @SR[Model.Tech.ToString()]
+            @Model.Tech.ToString()
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Dressing)

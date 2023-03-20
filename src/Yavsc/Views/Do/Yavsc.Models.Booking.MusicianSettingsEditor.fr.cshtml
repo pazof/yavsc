@@ -1,23 +1,9 @@
 @model Instrumentation
-@{
-     ViewBag.YetAvailableInstruments = _context.Instrument.Where(i=> !_context.MusicianSettings.Any(s=>s.UserId==id && s.Instrumentation.Any(j=>j.Id == i.Id)))
-      .Select(k=>new SelectListItem { Text = k.Name });
 
-}
-<ul>
-@foreach (var instrument in Model)
-{
-    <li>@instrument.Name 
-<a asp-action="RemoveInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId" asp-action-name="@instrument.Name" />
+<h2>@Model.Intrument.Name</h2>
 
-        </li>
+<a asp-action="RemoveInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId" asp-action-name="@Model.Intrument.Name" >
 
-
-}
-</ul>
-
-        <form asp-action="AddInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId"  >
-        
-            <select name="Name" value="" placeholder="Séléctionnez votre instrument" asp-items=@ViewBag.YetAvailableInstruments>
-            </select>
-        </form>
+<form asp-action="AddInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId"  >
+    <select name="Name" value="" placeholder="Séléctionnez votre instrument" ></select>
+</form>

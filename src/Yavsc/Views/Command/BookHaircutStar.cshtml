@@ -1,6 +1,5 @@
 
-@{ ViewData["Title"] = "Proposition de rendez-vous "+
-to"]+" " ["+SR[ViewBag.Activity.Code]+"]"; } 
+@{ ViewData["Title"] = "Proposition de rendez-vous ["+ViewBag.Activity.Code+"]"; } 
 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
@@ -144,8 +143,7 @@ to"]+" " ["+SR[ViewBag.Activity.Code]+"]"; }
                         });
                     });
                 </script>
-        <span asp-validation-for="EventDate" class="text-danger">
-                </span>
+        <span asp-validation-for="EventDate" class="text-danger" ></span>
         </div>
     </div>
 </div>
@@ -157,8 +155,8 @@ to"]+" " ["+SR[ViewBag.Activity.Code]+"]"; }
                         <div class="row">
                             <div class='col-sm-6'>
                                 <div  >
-    <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address" class="form-control" data-val-required=@SR[
-        "SpecifyPlace"] data-val-remote= "GoogleDidntGeoLocalized">
+    <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address" 
+    class="form-control" data-val-required="SpecifyPlace" data-val-remote= "GoogleDidntGeoLocalized">
     <span asp-validation-for="Location.Address" class="text-danger" id="valloc"></span>
     <ul id="loccomb">
     </ul>
@@ -181,8 +179,8 @@ to"]+" " ["+SR[ViewBag.Activity.Code]+"]"; }
                                 <div id='reason1'>
 <textarea rows="15" asp-for="Reason" type="text" name="Reason" id="Reason" maxlength="4096" class="form-control"></textarea>
 <span asp-validation-for="Reason" class="text-danger"></span> 
-@Html.HiddenFor(model=>model.Location.Latitude)
- @Html.HiddenFor(model=>model.Location.Longitude)
+@Html.HiddenFor("Latitude")
+ @Html.HiddenFor("Longitude")
 </div>
         </div>
         </div>
@@ -196,8 +194,8 @@ to"]+" " ["+SR[ViewBag.Activity.Code]+"]"; }
     </div>
 </div>
 @Html.HiddenFor("ClientId") 
-@Html.HiddenFor(model=>model.PerformerId) 
-@Html.HiddenFor(model=>model.ActivityCode)
+@Html.HiddenFor("PerformerId") 
+@Html.HiddenFor("ActivityCode")
 </div>
 
 

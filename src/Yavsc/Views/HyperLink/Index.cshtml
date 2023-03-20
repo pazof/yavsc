@@ -41,9 +41,9 @@
             @Html.DisplayFor(modelItem => item.Rel)
         </td>
         <td>
-            @Html.ActionLink(SR["Edit"], "Edit", new { hRef=item.HRef, method = item.Method }) |
-            @Html.ActionLink(SR["Details"], "Details", new { hRef=item.HRef, method = item.Method }) |
-            @Html.ActionLink(SR["Delete"], "Delete", new { hRef=item.HRef, method = item.Method })
+            @Html.ActionLink("Edit", "Edit", new { hRef=item.HRef, method = item.Method }) |
+            @Html.ActionLink("Details", "Details", new { hRef=item.HRef, method = item.Method }) |
+            @Html.ActionLink("Delete", "Delete", new { hRef=item.HRef, method = item.Method })
         </td>
     </tr>
 }

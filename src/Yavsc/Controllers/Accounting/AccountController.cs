@@ -9,13 +9,13 @@ using Yavsc.Services;
 using Yavsc.ViewModels.Account;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Yavsc.Helpers;
+using Yavsc.Abstract.Manage;
 
 namespace Yavsc.Controllers
 {
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Options;
-    using Yavsc.Abstract.Manage;
-    using Yavsc.Helpers;
 
     public class AccountController : Controller
     {
@@ -59,6 +59,8 @@ namespace Yavsc.Controllers
         [Authorize(Roles = Constants.AdminGroupName)]
         public IActionResult Index()
         {
+            IViewComponentHelper h;
+           
             return View();
         }
 
