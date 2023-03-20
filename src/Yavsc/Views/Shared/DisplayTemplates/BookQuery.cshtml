@@ -34,12 +34,7 @@
             ValidationDate"]
         </dt>
         <dd>
-            @if (Model.ValidationDate==null) {
-                NonValidee"]
-            }
-            else { 
-                @Html.DisplayFor(model => model.ValidationDate)
-            }
+            @((Model.ValidationDate==null)?"NonValidee":Html.DisplayFor(model => model.ValidationDate))
         </dd>
         
     </dl>
