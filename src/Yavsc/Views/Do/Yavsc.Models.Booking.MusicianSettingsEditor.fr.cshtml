@@ -3,7 +3,7 @@
 <h2>@Model.Tool.Name</h2>
 
 <a asp-action="RemoveInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId" asp-action-name="@Model.Tool.Name" >
-
+Remove Instrument</a>
 <form asp-action="AddInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId"  >
     <select name="Name" value="" placeholder="Séléctionnez votre instrument" ></select>
 </form>
