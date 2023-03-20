@@ -1,8 +1,8 @@
 @model Instrumentation
 
-<h2>@Model.Intrument.Name</h2>
+<h2>@Model.Tool.Name</h2>
 
-<a asp-action="RemoveInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId" asp-action-name="@Model.Intrument.Name" >
+<a asp-action="RemoveInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId" asp-action-name="@Model.Tool.Name" >
 
 <form asp-action="AddInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId"  >
     <select name="Name" value="" placeholder="Séléctionnez votre instrument" ></select>
