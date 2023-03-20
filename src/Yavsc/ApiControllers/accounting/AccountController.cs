@@ -1,24 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
+using Yavsc.Models;
+using Yavsc.Models.Account;
+using Yavsc.ViewModels.Account;
+using Yavsc.Helpers;
+using Yavsc.Abstract.Identity;
 
 namespace Yavsc.WebApi.Controllers
 {
-    using Models;
-    using Models.Account;
-    using ViewModels.Account;
-    using Yavsc.Helpers;
-    using System.Linq;
-    using Yavsc.Abstract.Identity;
-    using Microsoft.EntityFrameworkCore;
 
     [Authorize(),Route("~/api/account")]
     public class ApiAccountController : Controller
     {
-        
         private UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         readonly ApplicationDbContext _dbContext;
@@ -31,6 +28,7 @@ namespace Yavsc.WebApi.Controllers
             _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger("ApiAuth");
             _dbContext = dbContext;
+            IViewComponentHelper h;
         }
 
         public UserManager<ApplicationUser> UserManager

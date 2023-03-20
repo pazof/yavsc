@@ -22,11 +22,11 @@
 </dd>
 <dt>La facture
 </dt>
-<dd>@await Component.InvokeAsync("Bill", "Brush", Model, OutputFormat.Html, true)
+<dd>@await Component.InvokeAsync("Bill", Model)
 </dd>
 <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
 <dd> 
-    @Component.Invoke("PayPalButton", Model, "haircut", "HairCutCommand" )
+    @await Component.InvokeAsync("PayPalButton", Model)
  </dd>
 </dl>
 

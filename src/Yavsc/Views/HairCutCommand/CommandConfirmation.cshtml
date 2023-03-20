@@ -1,6 +1,6 @@
 @model HairCutQuery
 @{
-    ViewData["Title"] = SR["Command confirmation"]+" "+ViewBag.Activity.Name;
+    ViewData["Title"] = "Command confirmation"+" "+ViewBag.Activity.Name;
 }
 @section header {
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
@@ -83,11 +83,11 @@
 
         <dt>La facture
         </dt>
-        <dd>@await Component.InvokeAsync("Bill", "Brush", Model, OutputFormat.Html, false )
+        <dd>@await Component.InvokeAsync("Bill", Model)
         </dd>
         
         <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
-        <dd> @Component.Invoke("PayPalButton", Model, "haircut", "HairCutCommand" )
+        <dd> @await Component.InvokeAsync("PayPalButton", Model)
         </dd>
      </dl>
     

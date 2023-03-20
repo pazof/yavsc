@@ -2,8 +2,8 @@
 @model Instrumentation
 
 @{
-    ViewBag.SettingLabel = SR["Yavsc.Models.Musical.Profiles.Instrumentation"];
-    ViewData["Title"] = SR[ViewBag.SettingLabel] + "[" +SR["Set"] + "]" ;
+    ViewBag.SettingLabel = "Yavsc.Models.Musical.Profiles.Instrumentation";
+    ViewData["Title"] = ViewBag.SettingLabel + "[" +"Set" + "]" ;
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -17,7 +17,7 @@
         <input asp-for="UserId" type="hidden">
         <div class="form-group">
             <div class="col-md-10">
-            @System.Globalization.CultureInfo.CurrentUICulture.TextInfo.ToTitleCase(SR["nouvel instrument"])
+            @System.Globalization.CultureInfo.CurrentUICulture.TextInfo.ToTitleCase("nouvel instrument")
     
         <select asp-for="InstrumentId" asp-items=@ViewBag.YetAvailableInstruments>
         </select>

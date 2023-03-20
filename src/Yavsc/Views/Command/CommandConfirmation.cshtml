@@ -1,7 +1,7 @@
 @model RdvQuery
 @using Yavsc.Models.Google.Messaging
 @{
-    ViewData["Title"] = SR["Command confirmation"]+" "+ViewBag.Activity.Name;
+    ViewData["Title"] = "Command confirmation"+" "+ViewBag.Activity.Name;
 }
 <h2>@ViewData["Title"]</h2>
     <div class="form-horizontal">
@@ -29,7 +29,7 @@
         @if (ViewBag.EmailSent!=null)
          {
 if (ViewBag.EmailSent.Sent) {
-                <h4>@String.Format(SR["EmailSentToPerformer"],User.GetUserName())</h4>
+                <h4>@String.Format("EmailSentToPerformer",User.GetUserName())</h4>
 } else {
   var sent = ViewBag.EmailSent;
 

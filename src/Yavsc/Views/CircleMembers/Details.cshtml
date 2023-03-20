@@ -12,6 +12,6 @@
         @Html.DisplayFor(m=>Model.Member)
 </div>
 <p>
-    @Html.ActionLink(SR["Delete"], "Delete", new { id = Model.CircleId }) |
+    @Html.ActionLink("Delete", "Delete", new { id = Model.CircleId }) |
     <a asp-action="Index">Back to List</a>
 </p>
