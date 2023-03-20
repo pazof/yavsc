@@ -1,23 +1,23 @@
+@model RdvQuery
 
 @{ ViewData["Title"] = "Proposition de rendez-vous ["+ViewBag.Activity.Code+"]"; } 
-
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
 @section header {
 <style>
-      #map {
-        width: 100%;
-        height: 250px;
-      }
-      #Location_combo li {
-          cursor: pointer;
-      }
-      #Location_combo li:hover {
-          text-decoration: underline;
-      }
-    </style>
+    #map {
+    width: 100%;
+    height: 250px;
+    }
+    #Location_combo li {
+        cursor: pointer;
+    }
+    #Location_combo li:hover {
+        text-decoration: underline;
+    }
+</style>
 } 
 @section scripts{
 <script>
@@ -136,69 +136,63 @@
                                 </div>
                             </div>
                             <script type="text/javascript">
-                    $(function () {
-                        $('#datetimepicker2').datetimepicker({
-                            locale: 'fr',
-                            format: "YYYY/MM/DD hh:mm"
-                        });
-                    });
-                </script>
-        <span asp-validation-for="EventDate" class="text-danger" ></span>
-        </div>
-    </div>
-</div>
-<label for="Location_Address" class="col-md-2 control-label">
-                Location"]
-                </label>
-<div class="col-md-10">
+                                $(function () {
+                                    $('#datetimepicker2').datetimepicker({
+                                        locale: 'fr',
+                                        format: "YYYY/MM/DD hh:mm"
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="EventDate" class="text-danger" ></span>
+                <label for="Location_Address" class="col-md-2 control-label">Location</label>
+                <div class="col-md-10">
                     <div class="container">
                         <div class="row">
                             <div class='col-sm-6'>
-                                <div  >
-    <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address" 
-    class="form-control" data-val-required="SpecifyPlace" data-val-remote= "GoogleDidntGeoLocalized">
-    <span asp-validation-for="Location.Address" class="text-danger" id="valloc"></span>
-    <ul id="loccomb">
-    </ul>
-    <div id="map"></div>
-        </div>
-        </div>
-        </div>
-        </div>
+                                <div>
+                                    <input asp-for="Location.Address" type="text" name="Location.Address" id="Location_Address" 
+                                    class="form-control" data-val-required="SpecifyPlace" data-val-remote= "GoogleDidntGeoLocalized">
+                                    <span asp-validation-for="Location.Address" class="text-danger" id="valloc"></span>
+                                    <ul id="loccomb">
+                                    </ul>
+                                <div id="map"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-</div>
-
-<label for="Reason" class="col-md-2 control-label">
-                Ci-après, Vous pouvez ajouter des détails au sujet de vos souhaits
-                concernant cette prestation
+                <label for="Reason" class="col-md-2 control-label">
+                    Ci-après, Vous pouvez ajouter des détails au sujet de vos souhaits
+                    concernant cette prestation
                 </label>
                 <div class="col-md-10">
                     <div class="container">
                         <div class="row">
                             <div class='col-sm-6'>
                                 <div id='reason1'>
-<textarea rows="15" asp-for="Reason" type="text" name="Reason" id="Reason" maxlength="4096" class="form-control"></textarea>
-<span asp-validation-for="Reason" class="text-danger"></span> 
-@Html.HiddenFor("Latitude")
- @Html.HiddenFor("Longitude")
-</div>
+                                    <textarea rows="15" asp-for="Reason" type="text" name="Reason" id="Reason" maxlength="4096" class="form-control"></textarea>
+                                    <span asp-validation-for="Reason" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
         </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value=" Create "]" class="btn btn-default" />
+            </div>
         </div>
-        </div>
-        </div>
-</fieldset>
-</div>
-<div class="form-group">
-    <div class="col-md-offset-2 col-md-10">
-        <input type="submit" value=" Create "]" class="btn btn-default" />
     </div>
-</div>
-@Html.HiddenFor("ClientId") 
-@Html.HiddenFor("PerformerId") 
-@Html.HiddenFor("ActivityCode")
-</div>
-
-
+    @Html.HiddenFor(model=>model.ClientId) 
+    @Html.HiddenFor(model=>model.PerformerId) 
+    @Html.HiddenFor(model=>model.ActivityCode)
+    @Html.HiddenFor(model=>model.Location.Latitude)
+    @Html.HiddenFor(model=>model.Location.Longitude)
 </form>
 
 @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
