@@ -9,20 +9,20 @@
     else if (Model.IsLayoutPageSelected)
     {
 @:@@{
-    @:ViewData["Title"] = @@SR["@Model.ViewName"];
+    @:ViewData["Title"] = @@Model.ViewName"];
         if (!string.IsNullOrEmpty(Model.LayoutPageFile))
         {
     @:Layout = "@Model.LayoutPageFile";
         }
 @:}
 @:
-@:<h2>@@SR["@Model.ViewName"]</h2>
+@:<h2>@@Model.ViewName"]</h2>
 @:
     }
     else
     {
 @:@@{
-    @:Layout = null;
+    @:Layout = "null";
 @:}
 @:
 @:<!DOCTYPE html>
@@ -30,16 +30,16 @@
 @:<html>
 @:<head>
     @:<meta name="viewport" content="width=device-width" />
-    @:<title>@@SR[@Model.ViewName]</title>
+    @:<title>@@@Model.ViewName</title>
 @:</head>
 @:<body>
 @:
         //    PushIndent("    ");
     }
 }
-<h3>@@SR["AreYourSureYouWantToDeleteThis"]</h3>
+<h3>@AreYourSureYouWantToDeleteThis</h3>
 <div>
-    <h4>@@SR[@Model.ViewDataTypeShortName]</h4>
+    <h4>@@@Model.ViewDataTypeShortName</h4>
     <hr />
     <dl class="dl-horizontal">
 @{
@@ -59,8 +59,8 @@
     @:
     @:<form asp-action="@Model.ViewName">
         @:<div class="form-actions no-color">
-            @:<input type="submit" value="@@SR["Delete"]" class="btn btn-default" /> |
-            @:<a asp-action="Index">@@SR["Back to List"]</a>
+            @:<input type="submit" value="@Delete" class="btn btn-default" /> |
+            @:<a asp-action="Index">Back to List</a>
         @:</div>
     @:</form>
 @:</div>

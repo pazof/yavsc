@@ -9,20 +9,20 @@
     else if (Model.IsLayoutPageSelected)
     {
 @:@@{
-    @:ViewData["Title"] = @@SR["@Model.ViewName"];
+    @:ViewData["Title"] = @@Model.ViewName"];
         if (!string.IsNullOrEmpty(Model.LayoutPageFile))
         {
     @:Layout = "@Model.LayoutPageFile";
         }
 @:}
 @:
-@:<h2>@@SR["@Model.ViewName"]</h2>
+@:<h2>@@Model.ViewName"]</h2>
 @:
     }
     else
     {
 @:@@{
-    @:Layout = null;
+    @:Layout = "null";
 @:}
 @:
 @:<!DOCTYPE html>
@@ -61,13 +61,13 @@
     string pkName = GetPrimaryKeyName();
     if (pkName != null)
     {
-    @:<a asp-action="Edit" asp-route-id="@@Model.@pkName">@@SR["Edit"]</a> |
-    @:<a asp-action="Index">@@SR["Back to List"]</a>
+    @:<a asp-action="Edit" asp-route-id="@@Model.@pkName">@Edit</a> |
+    @:<a asp-action="Index">Back to List</a>
     }
     else
     {
-    @:@@Html.ActionLink(@@SR["Edit"], "Edit", new { /* id = Model.PrimaryKey */ }) |
-    @:<a asp-action="Index">@@SR["Back to List"]</a>
+    @:@@Html.ActionLink(@Edit, "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @:<a asp-action="Index">Back to List</a>
     }
 }</p>
 @{

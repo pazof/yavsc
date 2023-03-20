@@ -42,7 +42,7 @@ namespace Yavsc
         static IAuthorizationService AuthorizationService { get; set; }
 
         public void ConfigureFileServerApp(IApplicationBuilder app,
-                SiteSettings siteSettings, Microsoft.AspNetCore.Hosting.IHostingEnvironment env,
+                SiteSettings siteSettings, IWebHostEnvironment env,
                  IAuthorizationService authorizationService)
         {
             AuthorizationService = authorizationService;
