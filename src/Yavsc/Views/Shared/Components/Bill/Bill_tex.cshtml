@@ -76,7 +76,7 @@
 \def\FactureObjet    {@(new HtmlString(isestimate?"Devis":"Facture")) en @TeXHelpers.ToTeX(activity)}    % Objet du document
 % Description de la facture
 \def\FactureDescr    {
-   @TeXHelpers.ToTeX(Model.GetDescription())
+   @TeXHelpers.ToTeX(Model.Description)
 }
 
 % Infos Client
