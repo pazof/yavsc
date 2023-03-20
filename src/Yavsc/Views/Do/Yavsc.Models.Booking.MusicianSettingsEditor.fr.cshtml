@@ -5,7 +5,7 @@
 
 }
 <ul>
-@foreach (var instrument in Model.Instrumentation)
+@foreach (var instrument in Model)
 {
     <li>@instrument.Name 
 <a asp-action="RemoveInstrument" asp-controller="Instrumentation" asp-action-id="Model.UserId" asp-action-name="@instrument.Name" />

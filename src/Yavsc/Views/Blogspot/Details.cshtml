@@ -84,7 +84,7 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
 
     @Html.DisplayFor(model => model.DateCreated) 
 
-    @Component.Invoke("Tagger",Model)
+    @Component.Invoke("Tagger",Model, null, null)
 </div>
 
 <div id="comments">
