@@ -27,10 +27,10 @@ namespace Yavsc.Models.Workflow
 
         [YaStringLength(512)]
         [Display(Name = "Code du parent")]
+        [ForeignKey("Parent")]
         public string ParentCode { get; set; }
 
-        [ForeignKey("ParentCode"), JsonIgnore]
-        [Display(Name = "Activité parent")]
+        [Display(Name = "Activité parent"), JsonIgnore]
         public virtual Activity Parent { get; set; }
 
         [InverseProperty("Parent"), JsonIgnore]

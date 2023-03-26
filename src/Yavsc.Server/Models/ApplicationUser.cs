@@ -1,19 +1,14 @@
-
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using Yavsc.Models.Relationship;
- using Yavsc.Models.Relationship;
-    using Yavsc.Models.Identity;
-    using Yavsc.Models.Chat;
-    using Yavsc.Models.Bank;
-    using Yavsc.Models.Access;
+using Yavsc.Models.Identity;
+using Yavsc.Models.Chat;
+using Yavsc.Models.Bank;
+using Yavsc.Models.Access;
 namespace Yavsc.Models
 {
-
     public class ApplicationUser : IdentityUser, IBaseTrackedEntity
     {
 

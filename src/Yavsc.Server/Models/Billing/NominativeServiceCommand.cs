@@ -97,10 +97,11 @@ namespace Yavsc.Models.Billing
             return $"facture-{bcode}-{Id}{ack}";
         }
         
-        [Display(Name = "PaymentId")]
+        [ForeignKey("Regularisation")]
+     
         public string PaymentId { get; set; }
 
-        [ForeignKey("PaymentId"), Display(Name = "Acquittement de la facture")]
+        [Display(Name = "Acquittement de la facture")]
         public virtual PayPalPayment Regularisation { get; set; }
 
     }

@@ -77,6 +77,7 @@ namespace Yavsc.Models
             }
 
             builder.Entity<Activity>().Property(a=>a.ParentCode).IsRequired(false);
+            builder.Entity<BlogPost>().HasOne(p => p.Author).WithMany(a => a.Posts);
         }
 
         // this is not a failback procedure.
