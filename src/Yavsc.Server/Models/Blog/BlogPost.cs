@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Yavsc.Abstract.Identity.Security;
 using Yavsc.Attributes.Validation;
@@ -34,11 +35,11 @@ namespace Yavsc.Models.Blog
         public string Title { get; set; }
 
         [Display(Name="Identifiant de l'auteur")]
+        [ForeignKey("Author")]
         public string AuthorId { get; set; }
 
         [Display(Name="Auteur")]
-        [ForeignKey("AuthorId"),JsonIgnore]
-        public ApplicationUser Author { set; get; }
+        public virtual ApplicationUser Author { set; get; }
 
         [Display(Name="Visible")]
         public bool Visible { get; set; }

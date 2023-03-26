@@ -36,25 +36,30 @@ namespace Yavsc.Migrations
                 name: "FK_BlogTag_Tag_TagId",
                 table: "BlogTag");
 
-             migrationBuilder.DropPrimaryKey(
-                name: "PK_Blog",
-                table: "BlogPost");
+            
+           
             
             migrationBuilder.DropForeignKey(
                 name: "FK_Activity_Activity_ParentCode",
                 table: "Activity");
-                
-           /* migrationBuilder.DropForeignKey(
+            migrationBuilder.DropForeignKey(
+                name: "FK_AspNetUsers_Location_PostalAddressId",
+                table: "AspNetUsers");
+           /*  migrationBuilder.DropPrimaryKey(
+                name: "PK_Blog",
+                table: "BlogPost");
+              
+                migrationBuilder.DropForeignKey(
                 name: "FK_AccountBalance_AspNetUsers_UserId",
-                table: "AccountBalance"); */
+                table: "AccountBalance");   */
 
-           /* migrationBuilder.DropForeignKey(
+            migrationBuilder.DropForeignKey(
                 name: "FK_Announce_AspNetUsers_OwnerId",
-                table: "Announce"); 
+                table: "Announce");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                table: "AspNetRoleClaims");
+                table: "AspNetRoleClaims"); 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_AspNetUserClaims_AspNetUsers_UserId",
@@ -76,16 +81,27 @@ namespace Yavsc.Migrations
                 name: "FK_AspNetUsers_BankIdentity_BankInfoId",
                 table: "AspNetUsers");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_Location_PostalAddressId",
-                table: "AspNetUsers");
+           
             migrationBuilder.DropForeignKey(
                 name: "FK_Ban_AspNetUsers_TargetId",
-                table: "Ban");*/
+                table: "Ban");
+            migrationBuilder.DropForeignKey(
+                name: "FK_BalanceImpact_AccountBalance_BalanceId",
+                table: "BalanceImpact");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_BlackListed_AspNetUsers_OwnerId",
+                table: "BlackListed"); 
+            migrationBuilder.DropForeignKey(
+                name: "FK_BlackListed_AspNetUsers_UserId",
+                table: "BlackListed");
+            migrationBuilder.DropForeignKey(
+                name: "FK_BlogPost_AspNetUsers_AuthorId",
+                table: "BlogPost");
+
+        /*    migrationBuilder.DropForeignKey(
                 name: "FK_ApplicationUser_BankIdentity_BankInfoId",
-                table: "AspNetUsers");
+                table: "AspNetUsers"); 
             migrationBuilder.DropForeignKey(
                 name: "FK_ApplicationUser_Location_PostalAddressId",
                 table: "AspNetUsers");
@@ -93,28 +109,11 @@ namespace Yavsc.Migrations
                 name: "FK_Ban_ApplicationUser_TargetId",
                 table: "Ban");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_BalanceImpact_AccountBalance_BalanceId",
-                table: "BalanceImpact");
+*/
 
-/*
-            migrationBuilder.DropForeignKey(
-                name: "FK_BlackListed_AspNetUsers_OwnerId",
-                table: "BlackListed"); 
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_BlackListed_AspNetUsers_UserId",
-                table: "BlackListed");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_BlogPost_AspNetUsers_AuthorId",
-                table: "BlogPost");*/
-
-          
-/*
             migrationBuilder.DropForeignKey(
                 name: "FK_BlogTrad_AspNetUsers_TraducerId",
-                table: "BlogTrad");*/
+                table: "BlogTrad");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_BrusherProfile_PerformerProfile_UserId",
@@ -126,27 +125,25 @@ namespace Yavsc.Migrations
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Bug_Feature_FeatureId",
-                table: "Bug");
-/*
+                table: "Bug"); 
             migrationBuilder.DropForeignKey(
                 name: "FK_ChatConnection_AspNetUsers_ApplicationUserId",
                 table: "ChatConnection");
-
             migrationBuilder.DropForeignKey(
                 name: "FK_ChatRoom_AspNetUsers_OwnerId",
                 table: "ChatRoom");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ChatRoomAccess_AspNetUsers_UserId",
-                table: "ChatRoomAccess");*/
+                table: "ChatRoomAccess");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ChatRoomAccess_ChatRoom_ChannelName",
                 table: "ChatRoomAccess");
 
-           /* migrationBuilder.DropForeignKey(
+            migrationBuilder.DropForeignKey(
                 name: "FK_CircleMember_AspNetUsers_MemberId",
-                table: "CircleMember"); */
+                table: "CircleMember"); 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_CircleMember_Circle_CircleId",
@@ -163,39 +160,39 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_CommandLine_Estimate_EstimateId",
                 table: "CommandLine");
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_Comment_AspNetUsers_AuthorId",
-                table: "Comment");*/
+                table: "Comment");
 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Contact_PostalAddress_AddressId",
                 table: "Contact");
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_CoWorking_AspNetUsers_WorkingForId",
-                table: "CoWorking");*/
+                table: "CoWorking");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_CoWorking_PerformerProfile_PerformerId",
                 table: "CoWorking");
 
-            /* migrationBuilder.DropForeignKey(
+            migrationBuilder.DropForeignKey(
                 name: "FK_DeviceDeclaration_AspNetUsers_DeviceOwnerId",
                 table: "DeviceDeclaration"); 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_DimissClicked_AspNetUsers_UserId",
-                table: "DimissClicked");*/
+                table: "DimissClicked");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_DimissClicked_Notification_NotificationId",
                 table: "DimissClicked");
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_Estimate_AspNetUsers_ClientId",
-                table: "Estimate");*/
+                table: "Estimate");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Estimate_PerformerProfile_OwnerId",
@@ -205,17 +202,17 @@ namespace Yavsc.Migrations
                 name: "FK_Estimate_RdvQuery_CommandId",
                 table: "Estimate");
 
-           /* migrationBuilder.DropForeignKey(
+           migrationBuilder.DropForeignKey(
                 name: "FK_GitRepositoryReference_AspNetUsers_OwnerId",
-                table: "GitRepositoryReference"); */
+                table: "GitRepositoryReference"); 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_HairCutQuery_Activity_ActivityCode",
                 table: "HairCutQuery");
 
-            /* migrationBuilder.DropForeignKey(
+            migrationBuilder.DropForeignKey(
                 name: "FK_HairCutQuery_AspNetUsers_ClientId",
-                table: "HairCutQuery"); */
+                table: "HairCutQuery"); 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_HairCutQuery_BrusherProfile_SelectedProfileUserId",
@@ -229,10 +226,10 @@ namespace Yavsc.Migrations
                 name: "FK_HairCutQuery_Location_LocationId",
                 table: "HairCutQuery");
 
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_HairCutQuery_PayPalPayment_PaymentId",
-                table: "HairCutQuery"); */
+                table: "HairCutQuery"); 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_HairCutQuery_PerformerProfile_PerformerId",
@@ -242,17 +239,17 @@ namespace Yavsc.Migrations
                 name: "FK_HairMultiCutQuery_Activity_ActivityCode",
                 table: "HairMultiCutQuery");
 
-            /* migrationBuilder.DropForeignKey(
+             migrationBuilder.DropForeignKey(
                 name: "FK_HairMultiCutQuery_AspNetUsers_ClientId",
-                table: "HairMultiCutQuery"); */
+                table: "HairMultiCutQuery"); 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_HairMultiCutQuery_Location_LocationId",
                 table: "HairMultiCutQuery");
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_HairMultiCutQuery_PayPalPayment_PaymentId",
-                table: "HairMultiCutQuery"); */
+                table: "HairMultiCutQuery");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_HairMultiCutQuery_PerformerProfile_PerformerId",
@@ -293,7 +290,7 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_InstrumentRating_PerformerProfile_OwnerId",
                 table: "InstrumentRating");
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_LiveFlow_AspNetUsers_OwnerId",
                 table: "LiveFlow"); 
@@ -304,7 +301,7 @@ namespace Yavsc.Migrations
 
             migrationBuilder.DropForeignKey(
                 name: "FK_PerformerProfile_AspNetUsers_PerformerId",
-                table: "PerformerProfile");*/
+                table: "PerformerProfile");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_PerformerProfile_Location_OrganizationAddressId",
@@ -313,10 +310,10 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Project_Activity_ActivityCode",
                 table: "Project");
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_Project_AspNetUsers_ClientId",
-                table: "Project"); */
+                table: "Project");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Project_GitRepositoryReference_GitId",
@@ -337,26 +334,26 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_RdvQuery_Activity_ActivityCode",
                 table: "RdvQuery");
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_RdvQuery_AspNetUsers_ClientId",
-                table: "RdvQuery"); */
+                table: "RdvQuery"); 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_RdvQuery_Location_LocationId",
                 table: "RdvQuery");
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_RdvQuery_PayPalPayment_PaymentId",
-                table: "RdvQuery"); */
+                table: "RdvQuery"); 
 
             migrationBuilder.DropForeignKey(
                 name: "FK_RdvQuery_PerformerProfile_PerformerId",
                 table: "RdvQuery");
-/*
+
             migrationBuilder.DropForeignKey(
                 name: "FK_Schedule_AspNetUsers_OwnerId",
-                table: "Schedule"); */
+                table: "Schedule");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ScheduledEvent_Period_PeriodStart_PeriodEnd",
@@ -2438,7 +2435,7 @@ namespace Yavsc.Migrations
                 name: "UserModified",
                 table: "Blogspot",
                 type: "text",
-                nullable: false,
+                nullable: true,
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -2448,7 +2445,7 @@ namespace Yavsc.Migrations
                 name: "UserCreated",
                 table: "Blogspot",
                 type: "text",
-                nullable: false,
+                nullable: true,
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -2458,7 +2455,7 @@ namespace Yavsc.Migrations
                 name: "Title",
                 table: "Blogspot",
                 type: "text",
-                nullable: false,
+                nullable: true,
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -2468,7 +2465,7 @@ namespace Yavsc.Migrations
                 name: "Photo",
                 table: "Blogspot",
                 type: "text",
-                nullable: false,
+                nullable: true,
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -2478,7 +2475,7 @@ namespace Yavsc.Migrations
                 name: "Lang",
                 table: "Blogspot",
                 type: "text",
-                nullable: false,
+                nullable: true,
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "text",
@@ -2499,7 +2496,7 @@ namespace Yavsc.Migrations
                 table: "Blogspot",
                 type: "text",
                 nullable: true,
-                defaultValue: "",
+                defaultValue: null,
                 oldClrType: typeof(string),
                 oldType: "text",
                 oldNullable: true);
@@ -2681,7 +2678,10 @@ namespace Yavsc.Migrations
                 name: "PK_CircleMembers",
                 table: "CircleMembers",
                 columns: new[] { "MemberId", "CircleId" });
-
+            migrationBuilder.DropPrimaryKey(
+                "PK_BlogPost","Blogspot"
+            );
+             
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Blogspot",
                 table: "Blogspot",
