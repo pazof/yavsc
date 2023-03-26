@@ -75,6 +75,8 @@ namespace Yavsc.Models
                 if (et.ClrType.GetInterface("IBaseTrackedEntity") != null)
                     et.FindProperty("DateCreated").SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             }
+
+            builder.Entity<Activity>().Property(a=>a.ParentCode).IsRequired(false);
         }
 
         // this is not a failback procedure.

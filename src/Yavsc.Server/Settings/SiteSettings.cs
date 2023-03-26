@@ -7,21 +7,21 @@ namespace Yavsc
         public string Title { get; set; }
         public string Slogan { get; set; }
 
-        public string StyleSheet { get; set; }
-        public string FavIcon { get; set; }
-        public string Logo { get; set; }
+        public string StyleSheet { get; set; }
+        public string FavIcon { get; set; }
+        public string Logo { get; set; }
         /// <summary>
         /// Conceptually,
         /// This authorisation server only has this present site as unique audience.
         /// </summary>
         /// <returns></returns>
-        public string Audience { get; set; }
+        public string Audience { get; set; }
         /// <summary>
         /// it's a very small company, with one domaine name only,
         /// so let it be the same as in the Audience field.
         /// </summary>
         /// <returns></returns>
-        public string Authority { get; set; }
+        public string Authority { get; set; }
         /// <summary>
         /// Owner's email
         /// </summary>
@@ -34,16 +34,16 @@ namespace Yavsc
         public Contact Admin { get; set; }
 
         public string DataDir { get; set; }
-            public string Avatars { get; set; }
-            public long Quota { get; set; }
-            public string Blog { get; set; }
-            public string Bills { get; set; }
+        public string Avatars { get; set; } = "avatars";
+        public long Quota { get; set; }
+        public string Blog { get; set; } = "blogs";
+        public string Bills { get; set; } = "bills";
         public string GitRepository { get; set; } = "sources";
 
-        public string BusinessName { get; set; }
-        public string Street { get; set; }
-        public string PostalCode { get; set; }
-        public string CountryCode { get; set; }
+        public string BusinessName { get; set; }
+        public string Street { get; set; }
+        public string PostalCode { get; set; }
+        public string CountryCode { get; set; }
 
         public string HomeViewName { get; set; }
         /// <summary>
@@ -51,7 +51,7 @@ namespace Yavsc
         /// generated pdf files using pandoc
         ///  </summary>
         /// <returns>The temporary directory to use</returns>
-        public string TempDir { get; set; } = "Temp";
+        public string TempDir { get; set; } = "temp";
 
         /// <summary>
         /// Only one performer will capture payments

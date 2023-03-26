@@ -8,20 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
-using System.Net;
 using Google.Apis.Util.Store;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Yavsc.Helpers;
-using static System.Environment;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Yavsc.Models;
+using Yavsc.Services;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Yavsc
 {
-    using Microsoft.AspNetCore.Mvc.Authorization;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Options;
-    using Models;
-    using Services;
 
     public partial class Startup
     {
@@ -50,15 +48,16 @@ namespace Yavsc
             HostingFullName = $"{env.EnvironmentName} [{prodtag}/{devtag}/{stagetag}]";
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
             var auth = Configuration["Site:Authority"];
             var cxstr = Configuration["ConnectionStrings:Default"];
+            
             ConnectionString = cxstr;
 
             AppDomain.CurrentDomain.SetData(Constants.YavscConnectionStringEnvName, ConnectionString);
@@ -185,6 +184,15 @@ namespace Yavsc
                 options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
             });
 
+            services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
+            {
+                options.Authority = siteSettings.GetValue<string>("ExternalUrl");
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false
+                };
+            });
+
         /* FIXME    services.AddSingleton<IAuthorizationHandler, HasBadgeHandler>();
             services.AddSingleton<IAuthorizationHandler, HasTemporaryPassHandler>();
             services.AddSingleton<IAuthorizationHandler, BlogEditHandler>();
@@ -201,13 +209,14 @@ namespace Yavsc
 
             services.AddMvc(config =>
             {
-                var policy = new AuthorizationPolicyBuilder()
+                /* var policy = new AuthorizationPolicyBuilder()
                   .RequireAuthenticatedUser()
                     .Build();
-                config.Filters.Add(new AuthorizeFilter(policy));
+                config.Filters.Add(new AuthorizeFilter(policy)); */
                 config.Filters.Add(new ProducesAttribute("application/json"));
                 // config.ModelBinders.Insert(0,new MyDateTimeModelBinder());
                 // config.ModelBinders.Insert(0,new MyDecimalModelBinder());
+                config.EnableEndpointRouting = false;
             }).AddFormatterMappings(
                 config => config.SetMediaTypeMappingForFormat("text/pdf",
                 new MediaTypeHeaderValue("text/pdf"))
@@ -298,7 +307,7 @@ namespace Yavsc
                     using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
                             .CreateScope())
                     {
-                        serviceScope.ServiceProvider.GetService<ApplicationDbContext>()
+                        serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
                                 .Database.Migrate();
                     }
                 }
@@ -328,14 +337,13 @@ namespace Yavsc
             ConfigureWebSocketsApp(app);
 
            
-            _logger.LogInformation("LocalApplicationData: " + Environment.GetFolderPath(SpecialFolder.LocalApplicationData, SpecialFolderOption.DoNotVerify));
+            _logger.LogInformation("LocalApplicationData: " + Environment.GetFolderPath(
+Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.DoNotVerify));
             
             CheckApp(env, loggerFactory);
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHub<ChatHub>("/chat");
-            });
-
+            
+            app.UseStatusCodePages().UseStaticFiles().UseAuthentication();
+            app.UseMvcWithDefaultRoute();
         }
 
     }

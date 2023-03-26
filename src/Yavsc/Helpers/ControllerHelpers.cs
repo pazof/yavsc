@@ -16,7 +16,8 @@ namespace Yavsc.Helpers
             var notifs = SetupNotificationList(controller);
             notifs.Add(new Notification { title = title, body = body });
         }
-         public static void Notify(this Controller controller, IEnumerable<Notification> notes)
+        
+        public static void Notify(this Controller controller, IEnumerable<Notification> notes)
         {
             var notifs = SetupNotificationList(controller);
             notifs.AddRange(notes);
