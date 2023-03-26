@@ -54,7 +54,7 @@ $("#cam").change(function(){
     if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({audio: true, video: false}, function(stream) {
         if ("srcObject" in video) {
-    video.srcObject = stream;
+    video.srcObject = "stream";
   } else {
     // Avoid using this in new browsers, as it is going away.
     video.src = window.URL.createObjectURL(stream);

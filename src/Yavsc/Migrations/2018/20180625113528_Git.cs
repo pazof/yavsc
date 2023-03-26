@@ -99,7 +99,7 @@ namespace Yavsc.Migrations
                         column: x => x.PaymentId,
                         principalTable: "PayPalPayment",
                         principalColumn: "CreationToken",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Project_PerformerProfile_PerformerId",
                         column: x => x.PerformerId,
