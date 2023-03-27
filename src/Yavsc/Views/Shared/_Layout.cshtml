@@ -1,53 +1,78 @@
-﻿<!DOCTYPE html>
+﻿@using Yavsc.Models.Messaging;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Yavsc</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/yavsc.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/main/bootstrap.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/main/dropzone.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/main/jquery-ui.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/main/quill.snow.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/dark/site.css" asp-append-version="true" />
-    @await RenderSectionAsync("header")
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/quill.js" asp-append-version="true"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+        <link rel="icon" href="@SiteSettings.Value.FavIcon" asp-append-version="true" />
+        <title>@ViewData["Title"] - @SiteSettings.Value.Title</title>
+            <script src="~/js/jquery-2.2.4.js" ></script>
+            <link rel="stylesheet" href="~/css/main/bootstrap.css" />
+            <script src="~/js/bootstrap.js"></script>
+            <link rel="stylesheet" href="~/css/main/site.css" asp-append-version="true"/>
+            <link rel="stylesheet" href="~/css/main/jquery-ui.css" asp-append-version="true"/>
+            <link rel="stylesheet" title="Dark" href="~/css/dark/site.css" asp-append-version="true" />
+            <link rel="alternate stylesheet" title="Clear" href="~/css/clear/site.css" asp-append-version="true" />
+            <script src="~/js/jquery-ui.js" asp-append-version="true"></script>
+            <script src="~/js/jquery.signalR-2.2.1.js" asp-append-version="true"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+            <link rel="stylesheet" href="@Startup.SiteSetup.StyleSheet" asp-append-version="true"/>
+
+    @await RenderSectionAsync("header", false)
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Yavsc</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a asp-controller="Home" asp-action="Index" asp-route-id="" class="navbar-brand">
+                    <img src="@SiteSettings.Value.Logo" alt="@SiteSettings.Value.Title" asp-append-version="true"/></a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        @RenderSection("ctxmenu", required: false)
+                        <li><a asp-controller="Blogspot" asp-action="Index" class="navbar-link">@SR["Blogs"]</a></li>
+                        <li><a asp-controller="Home" asp-action="Chat" class="navbar-link">@SR["Chat"]</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact" class="navbar-link">@SR["Contact"]</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="navbar-link">@SR["About"] @SiteSettings.Value.Title</a> </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle navbar-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span> @System.Globalization.CultureInfo.CurrentUICulture.DisplayName </span> 
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a onclick="setUiCult('fr')" style="cursor:pointer" >@SR["Français"]</a></li>
+                                <li><a onclick="setUiCult('en')" style="cursor:pointer">@SR["Anglais"]</a></li>
+                                <li><a onclick="setUiCult('pt')" style="cursor:pointer">@SR["Portugais"]</a></li>
+                            </ul>
                         </li>
                     </ul>
+                    @await Html.PartialAsync("_LoginPartial")
                 </div>
             </div>
         </nav>
     </header> 
-    @await RenderSectionAsync("subbanner")
-    <div class="container">
-     @await RenderSectionAsync("ctxmenu") 
+     @if (ViewData ["Notify"] != null) {
+    foreach (Notification n in ViewData ["Notify"] as IEnumerable<Notification>) {
+    <div class="alert alert-info alert-dismissable">
+    <img src="~/images/Notifications/@(n.icon).png" style="max-height:3em; float: left; margin:1em;"/> <h2 markdown="@n.title"></h2>
+    <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action==null)?SR["Fermer"]:SR[n.click_action])</a>
+    <markdown>@n.body</markdown>
+    </div>}
+        }
 
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    @await RenderSectionAsync("subbanner")
+  
+    <main class="container body-content" role="main" class="pb-3">
+        @RenderBody()
+    </main>
 
     <footer class="border-top footer text-muted">
         <div class="container">
@@ -55,6 +80,6 @@
             &copy; 2023 - Yavsc - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    @await RenderSectionAsync("scripts")
+    @await RenderSectionAsync("scripts", false)
 </body>
 </html>
