@@ -11,56 +11,22 @@ C'est une application mettant en oeuvre une prise de contact entre un demandeur 
 
 ## Construction
 
-Le code est du c sharp, dont les librairies sont restorées et le tout compilé avec les librairies DNX de M$, téléchargeable en executant le script d'installation suivant (c.f. `/.travis.yml`):
-
 ```bash
-    curl --insecure -sSL https://lua.pschneider.fr/files/Paul/dnx-install.sh | bash && DNX_USER_HOME=`pwd -P`/dnx . ./dnx/dnvm/dnvm.sh && cd Yavsc && dnu restore
+ dotnet build
 ```
 
-Une fois l'environnement ainsi pollué, executer, depuis le sous dossier `Yavsc`:
-
-```bash
-    dnu build
-```
-
-L'utilisation du serveur web, avec un runtime Mono, échoura dans ses version récentes (à peu près supérieure ou égale à 4.7).
-
-La version 4.6.2 de mono convient:
-
-```
-    [monoperso] ~/workspace/yavsc/Yavsc @ mono --version
-    Mono JIT compiler version 4.6.2 (Stable 4.6.2.7/08fd525 jeudi 18 janvier 2018, 13:10:54 (UTC+0100))
-        TLS:           __thread
-        SIGSEGV:       altstack
-        Notifications: epoll
-        Architecture:  amd64
-        Disabled:      none
-        Misc:          softdebug 
-        LLVM:          supported, not enabled.
-        GC:            sgen
-```
 
 et, pour execution en environement de développement
 
 ```
-    [monoperso] ~/workspace/yavsc/Yavsc @ ASPNET_ENV=Development dnx web
-    warn: Yavsc.Startup[0]
-      AppData was not found in environment variables
-    warn: Yavsc.Startup[0]
-      It has been set to : /home/paul/workspace/yavsc/Yavsc/AppDataDevelopment
-    Hosting environment: Development
-    Now listening on: http://*:5000
-    Application started. Press Ctrl+C to shut down.
+    [monoperso] ~/workspace/yavsc/Yavsc @ ASPNETCORE_ENV=Development dotnet run
 ```
-
-Si vous êtes arrivé jusqu'ici, vous devriez pouvoir visiter la home page :
- <http://localhost:5000>.
 
 ## Tests
 
 Utilisez GNU/Makefile (et visitez le code, dans le dossier `test` ):
 
-Depuis le répertoire racine:
+[TOREDO] Depuis le répertoire racine:
 
 ```bash
 make test
@@ -71,21 +37,6 @@ make test
 ### les services kestrel et kestrel-pre
 
 [TODO]
-
-### la configuration Apache 2
-
-[TODO]
-
-### la mise en pré-production
-
-Pour déployer le tout en production, on peut d'abord déployer en "pré-production",
-Afin de pouvoir tester manuellement quelque dernier développement :
-
-```bash
-cd Yavsc
-make pushInPre # arrete kestrel-pre, pousse tout dans DESTDIR=/srv/www/yavscpre avec rsync,
-               # et redemarre kestrel-pre 
-```
 
 ### La Prod
 
