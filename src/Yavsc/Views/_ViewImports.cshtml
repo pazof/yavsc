@@ -25,6 +25,7 @@
 @using Microsoft.AspNetCore.Authorization;;
 @using Microsoft.AspNetCore.Mvc;
 @using Microsoft.AspNetCore.Html;
+@using Microsoft.AspNetCore.Identity;
 @using Yavsc.Helpers;
 
 @using PayPal.PayPalAPIInterfaceService.Model;
@@ -33,3 +34,5 @@
 @inject IAuthorizationService AuthorizationService
 @inject Microsoft.AspNetCore.Mvc.Localization.IHtmlLocalizer<Yavsc.Startup> SR
 @inject Microsoft.Extensions.Options.IOptions<SiteSettings> SiteSettings
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager

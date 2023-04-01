@@ -32,19 +32,17 @@ namespace Yavsc.Services
         public static IDecidableQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId ) =>  Billing[billingCode](context, queryId);
         public async Task<ISpecializationSettings> GetPerformerSettingsAsync(string activityCode, string userId)
         {
-            return await (await GetPerformersSettingsAsync(activityCode)).SingleOrDefaultAsync(s=> s.UserId == userId);
+            return (await  GetPerformersSettingsAsync(activityCode)).SingleOrDefault(s=> s.UserId == userId);
         }
 
-        public async Task<IQueryable<ISpecializationSettings>> GetPerformersSettingsAsync(string activityCode)
+        public async Task<IEnumerable<ISpecializationSettings>> GetPerformersSettingsAsync(string activityCode)
         {
             var activity = await DbContext.Activities.SingleAsync(a=>a.Code == activityCode);
            
             if (activity.SettingsClassName==null) return null;
-            var dbSetPropInfo = UserSettings.SingleOrDefault(s => s.PropertyType.GenericTypeArguments[0].FullName == activity.SettingsClassName);
-  
-            if (dbSetPropInfo == null) return null;
 
-            return (IQueryable<ISpecializationSettings>) dbSetPropInfo.GetValue(DbContext);
+            return UserSettings.Where(s => s.PropertyType.GenericTypeArguments[0].FullName == activity.SettingsClassName)
+            .Cast<ISpecializationSettings>();
         }
     }
 }

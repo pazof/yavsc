@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Yavsc.Models;
 using Yavsc.Services;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 
 namespace Yavsc
 {
@@ -250,6 +251,12 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             });
+
+            services.AddIdentity<ApplicationUser, IdentityRole>() 
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddControllersWithViews();
+
         }
 
         public static IServiceProvider Services { get; private set; }

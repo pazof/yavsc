@@ -2,8 +2,8 @@
 
 <div class="performer @(Model.Active?"active":"inactive")">
     @Html.DisplayFor(m=>m.UserName)
-    @if (Model.SettingsClassName!=null)
-      {  await Html.RenderPartialAsync( Model.SettingsClassName,Model.Settings); }
+    @if (!string.IsNullOrWhiteSpace(Model.SettingsClassName))
+      {  await Html.RenderPartialAsync(Model.SettingsClassName, Model.Settings); }
     
     @if (Model.WebSite!=null) { 
         <a target="yaext" href="@Model.WebSite" class="btn btn-info">WebSite: @Model.WebSite</a>

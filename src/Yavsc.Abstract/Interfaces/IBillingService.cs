@@ -9,7 +9,7 @@ namespace Yavsc.Services
   {
     // TODO ensure a default value at using this:
     /// <summary>
-    /// maps a command type name to a bolling code, used to get bill assets
+    /// maps a command type name to a billing code, used to get bill assets
     /// </summary>
     /// <returns></returns>
     Dictionary<string,string> BillingMap { get; }
@@ -33,7 +33,7 @@ namespace Yavsc.Services
     /// </summary>
     /// <param name="activityCode"></param>
     /// <returns></returns>
-    Task<IQueryable<ISpecializationSettings>>  GetPerformersSettingsAsync(string activityCode);
+    Task<IEnumerable<ISpecializationSettings>>  GetPerformersSettingsAsync(string activityCode);
 
     /// <summary>
     /// Perfomer settings for the specified performer in the activity 
