@@ -43,7 +43,7 @@ namespace cli.Commands
                     var mailer = app.Services.GetService<EMailer>();
                     var loggerFactory = app.Services.GetService<ILoggerFactory>();
                     var logger = loggerFactory.CreateLogger<Program>();
-                    var userManager = app.Services.GetService<UserManager<ApplicationUser>>();
+                    var userManager = app.Services.GetService<UserManager<ApplicationDbContext>>();
                     ApplicationDbContext dbContext = app.Services.GetService<ApplicationDbContext>();
                     Func<ApplicationUser, bool> criteria = UserPolicies.Criterias["user-to-remove"];
 

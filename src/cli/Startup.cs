@@ -158,7 +158,6 @@ namespace cli
                 }
             );
 
-
             services.AddTransient(typeof(CompilationEngine),
               svs => {
                   var logger =  svs.GetService<ILoggerFactory>().CreateLogger<Startup>();
@@ -175,6 +174,7 @@ namespace cli
                 PlatformServices.Default.Runtime,
                 PlatformServices.Default.AssemblyLoadContextAccessor.Default, new CompilationCache()));
               });
+
             services.AddTransient(typeof(IFrameworkReferenceResolver),
                     svs => new FrameworkReferenceResolver());
 

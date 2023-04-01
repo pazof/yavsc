@@ -28,7 +28,6 @@ namespace Yavsc.WebApi.Controllers
             _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger("ApiAuth");
             _dbContext = dbContext;
-            IViewComponentHelper h;
         }
 
         public UserManager<ApplicationUser> UserManager
