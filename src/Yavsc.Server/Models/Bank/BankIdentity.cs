@@ -58,6 +58,21 @@ namespace Yavsc.Models.Bank
         [DisplayName("Clé RIB")]
         public int BankedKey { get; set; }
 
+        public virtual ApplicationUser User { get; set; }
+
+        public string UserId {  get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj==null) return false;
+            if (! typeof(BankIdentity).IsAssignableFrom(obj.GetType())) return false;
+            BankIdentity tobj = (BankIdentity)obj;
+            return tobj.IBAN == IBAN && 
+                tobj.BIC == BIC &&
+                tobj.AccountNumber == AccountNumber &&
+                tobj.BankedKey == BankedKey;
+        }
+
     }
 
 

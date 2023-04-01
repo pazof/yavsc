@@ -163,9 +163,9 @@
     Facture acquittée.
 }{ </text>
 
-    var bi = from.BankInfo;
-    if (bi!=null) {
+    if (from.BankInfo!=null) foreach (var bi in from.BankInfo){
         <text>À régler par chèque ou par virement bancaire :
+
 
     \begin{center}
         \begin{tabular}{|c c c c|}

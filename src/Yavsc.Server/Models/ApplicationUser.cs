@@ -72,8 +72,8 @@ namespace Yavsc.Models
         /// Billing postal address
         /// </summary>
         /// <returns></returns>
-        [ForeignKeyAttribute("PostalAddressId")]
-        public virtual Location PostalAddress { get; set; }
+        [ForeignKey("PostalAddressId")]
+        public virtual Location? PostalAddress { get; set; }
         public long? PostalAddressId { get; set; }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Yavsc.Models
             return this.Id + " " + this.AccountBalance?.Credits.ToString() + this.Email + " " + this.UserName + " $" + this.AccountBalance?.Credits.ToString();
         }
 
-        public BankIdentity BankInfo { get; set; }
+        public virtual List<BankIdentity> BankInfo { get; set; }
 
         public long DiskQuota { get; set; } = 512 * 1024 * 1024;
         public long DiskUsage { get; set; } = 0;

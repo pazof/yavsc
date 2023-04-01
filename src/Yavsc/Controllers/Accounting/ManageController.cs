@@ -332,17 +332,15 @@ namespace Yavsc.Controllers
                 var user = _dbContext.Users.Include(u=>u.BankInfo)
                     .Single(u=>u.Id == uid);
 
-                if (user.BankInfo != null)
-                 {
-                     model.Id = user.BankInfo.Id;
-                     _dbContext.Entry(user.BankInfo).State = EntityState.Detached;
-                     _dbContext.Update(model);
-                 }
-                 else {
-                     user.BankInfo = model;
-                     _dbContext.Update(user);
-                 }
-                 await _dbContext.SaveChangesAsync();
+                if (user.BankInfo.Any(
+                    bi => bi.Equals(model)
+                )) return BadRequest(new { message = "data already present" });
+
+                user.BankInfo.Add(model);
+                
+                _dbContext.Update(user);
+               
+                await _dbContext.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetBankInfoSuccess });
         }

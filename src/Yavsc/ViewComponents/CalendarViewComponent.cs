@@ -18,7 +18,7 @@ namespace Yavsc.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync (
             string htmlFieldName,
-            string calId = null)
+            string calId )
         {
             var minDate = DateTime.Now;
             var maxDate = minDate.AddDays(20);
@@ -30,18 +30,6 @@ namespace Yavsc.ViewComponents
 
             return View(model);
         }
-        public async Task<IViewComponentResult> InvokeAsync (
-            string htmlFieldName)
-        {
-            var minDate = DateTime.Now;
-            var maxDate = minDate.AddDays(20);
-
-            var model = await _manager.CreateViewModelAsync(
-                htmlFieldName,
-                null, minDate, maxDate
-            );
-
-            return View(model);
-        }
+       
     }
 }

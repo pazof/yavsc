@@ -41,7 +41,7 @@ namespace Yavsc.Helpers
                 b => b.Author
                 ).Where(x => x.Author.Id == posterId && x.Visible);
                 // BlogIndexKey
-            return  result.OrderByDescending(p => p.DateCreated);
+            return  result;
         }
     }
 }
