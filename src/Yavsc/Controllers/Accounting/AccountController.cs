@@ -99,7 +99,6 @@ namespace Yavsc.Controllers
             return View(new SignInViewModel
             {
                 ReturnUrl = returnUrl ?? "/",
-                ExternalProviders = HttpContext.GetExternalProviders()
             });
             /* 
             Note: When using an external login provider, redirect the query  :
@@ -173,10 +172,10 @@ namespace Yavsc.Controllers
                         else
                         {
                             ModelState.AddModelError(string.Empty, $"Invalid login attempt. ({model.UserName}, {model.Password})");
-                            model.ExternalProviders = HttpContext.GetExternalProviders();
                             return this.ViewOk(model);
                         }
                     }
+                   
 
                     // If we got this far, something failed, redisplay form
                     ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
@@ -212,7 +211,6 @@ namespace Yavsc.Controllers
 
                 }
             }
-            model.ExternalProviders = HttpContext.GetExternalProviders();
             return View(model);
         }
 

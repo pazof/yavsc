@@ -91,7 +91,7 @@ namespace Yavsc
             app.UseFileServer(UserFilesOptions);
 
             app.UseFileServer(AvatarsOptions);
-
+ 
             app.UseFileServer(GitOptions);
             app.UseStaticFiles();
         }

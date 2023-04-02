@@ -5,6 +5,7 @@ using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ViewModels.Account
 {
+     // TODO external autentication providers
     public class SignInViewModel
     {
         /// <summary>
