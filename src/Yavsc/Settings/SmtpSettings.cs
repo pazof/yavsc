@@ -1,15 +1,13 @@
-
-namespace  Yavsc
+namespace Yavsc.Settings
 {
     public class SmtpSettings
     {
-        public string Host { get; set; }
+        public string Server { get; set; }
         public int Port { get; set; }
+
+        public string SenderName { get; set; }
+        public string SenderEmail { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public string Domain { get; set; }
-
-        public bool EnableSSL { get; set; }
     }
-
 }

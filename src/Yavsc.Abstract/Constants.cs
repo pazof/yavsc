@@ -19,10 +19,10 @@ namespace Yavsc
         public const string CompanyClaimType = "https://schemas.pschneider.fr/identity/claims/Company";
         public const string UserNameRegExp = @"^[a-zA-Z][a-zA-Z0-9._-]*$";
         public const string UserFileNamePatternRegExp = @"^([a-zA-Z0-9._-]*/)*[a-zA-Z0-9._-]+$";
-        public const string AuthorizePath = "~/authorize";
-        public const string TokenPath = "~/token";
-        public const string LoginPath = "~/signin";
-        public const string LogoutPath = "~/signout";
+        public const string AuthorizePath = "/authorize";
+        public const string TokenPath = "/token";
+        public const string LoginPath = "/signin";
+        public const string LogoutPath = "/signout";
 
 
         public const string SignalRPath = "/api/signalr";

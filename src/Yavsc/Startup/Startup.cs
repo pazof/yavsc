@@ -11,13 +11,15 @@ using Newtonsoft.Json;
 using Google.Apis.Util.Store;
 using Microsoft.Extensions.Localization;
 using Yavsc.Helpers;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Yavsc.Models;
 using Yavsc.Services;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using Yavsc.Interface;
+using Yavsc.Settings;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace Yavsc
 {
@@ -29,6 +31,7 @@ namespace Yavsc
         public static string Authority { get; private set; }
         public static string Temp { get; set; }
         public static SiteSettings SiteSetup { get; private set; }
+        public SmtpSettings SmtpSetup { get; private set; }
         public static GoogleServiceAccount GServiceAccount { get; private set; }
 
         public static string HostingFullName { get; set; }
@@ -38,38 +41,39 @@ namespace Yavsc
 
 
 
-        public Startup( IWebHostEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnHandledException;
 
-            var devtag = env.IsDevelopment() ? "D" : "";
-            var prodtag = env.IsProduction() ? "P" : "";
-            var stagetag = env.IsStaging() ? "S" : "";
+            string devtag = env.IsDevelopment() ? "D" : "";
+            string prodtag = env.IsProduction() ? "P" : "";
+            string stagetag = env.IsStaging() ? "S" : "";
 
             HostingFullName = $"{env.EnvironmentName} [{prodtag}/{devtag}/{stagetag}]";
             // Set up configuration sources.
-            var builder = new ConfigurationBuilder()
+            IConfigurationBuilder builder = new ConfigurationBuilder()
             .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
-            builder.AddEnvironmentVariables();
+            _ = builder.AddEnvironmentVariables();
             Configuration = builder.Build();
 
-            var auth = Configuration["Site:Authority"];
-            var cxstr = Configuration["ConnectionStrings:Default"];
-            
-            ConnectionString = cxstr;
+       
+            ConnectionString = Configuration["ConnectionStrings:Default"];
 
             AppDomain.CurrentDomain.SetData(Constants.YavscConnectionStringEnvName, ConnectionString);
 
-            var googleClientFile = Configuration["Authentication:Google:GoogleWebClientJson"];
-            var googleServiceAccountJsonFile = Configuration["Authentication:Google:GoogleServiceAccountJson"];
+            string? googleClientFile = Configuration["Authentication:Google:GoogleWebClientJson"];
+            string? googleServiceAccountJsonFile = Configuration["Authentication:Google:GoogleServiceAccountJson"];
             if (googleClientFile != null)
+            {
                 GoogleWebClientConfiguration = new ConfigurationBuilder().AddJsonFile(googleClientFile).Build();
+            }
+
             if (googleServiceAccountJsonFile != null)
             {
-                var safile = new FileInfo(googleServiceAccountJsonFile);
+                FileInfo safile = new FileInfo(googleServiceAccountJsonFile);
                 GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
             }
         }
@@ -89,23 +93,24 @@ namespace Yavsc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSignalR();
 
-            // Database connection
 
-            services.AddOptions();
-            var siteSettings = Configuration.GetSection("Site");
-            services.Configure<SiteSettings>(siteSettings);
-            var smtpSettings = Configuration.GetSection("Smtp");
-            services.Configure<SmtpSettings>(smtpSettings);
-            var googleSettings = Configuration.GetSection("Authentication").GetSection("Google");
-            services.Configure<GoogleAuthSettings>(googleSettings);
-            var cinfoSettings = Configuration.GetSection("Authentication").GetSection("Societeinfo");
-            services.Configure<CompanyInfoSettings>(cinfoSettings);
-            var oauthFacebookSettings = Configuration.GetSection("Authentication").GetSection("Facebook");
-            services.Configure<FacebookOAuth2AppSettings>(oauthFacebookSettings);
-            var paypalSettings = Configuration.GetSection("Authentication").GetSection("PayPal");
-            services.Configure<PayPalSettings>(paypalSettings);
+            IConfigurationSection siteSettings = Configuration.GetSection("Site");
+            _ = services.Configure<SiteSettings>(siteSettings);
+            IConfigurationSection smtpSettings = Configuration.GetSection("Smtp");
+            _ = services.Configure<SmtpSettings>(smtpSettings);
+            IConfigurationSection protectionSettings = Configuration.GetSection("DataProtection");
+            _ = services.Configure<DataProtectionSettings>(smtpSettings);
+
+            IConfigurationSection googleSettings = Configuration.GetSection("Authentication").GetSection("Google");
+            _ = services.Configure<GoogleAuthSettings>(googleSettings);
+            IConfigurationSection cinfoSettings = Configuration.GetSection("Authentication").GetSection("Societeinfo");
+            _ = services.Configure<CompanyInfoSettings>(cinfoSettings);
+            IConfigurationSection oauthFacebookSettings = Configuration.GetSection("Authentication").GetSection("Facebook");
+            _ = services.Configure<FacebookOAuth2AppSettings>(oauthFacebookSettings);
+            IConfigurationSection paypalSettings = Configuration.GetSection("Authentication").GetSection("PayPal");
+            _ = services.Configure<PayPalSettings>(paypalSettings);
+            
 
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SiteSettings>), typeof(OptionsManager<SiteSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<SmtpSettings>), typeof(OptionsManager<SmtpSettings>)));
@@ -113,17 +118,17 @@ namespace Yavsc
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<CompanyInfoSettings>), typeof(OptionsManager<CompanyInfoSettings>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IOptions<RequestLocalizationOptions>), typeof(OptionsManager<RequestLocalizationOptions>)));
             services.Add(ServiceDescriptor.Singleton(typeof(IDiskUsageTracker), typeof(DiskUsageTracker)));
-            
-            services.Configure<RequestLocalizationOptions>(options =>
+
+            _ = services.Configure<RequestLocalizationOptions>(options =>
             {
-                var supportedCultures = new[]
+                CultureInfo[] supportedCultures = new[]
                 {
                     new CultureInfo("en"),
                     new CultureInfo("fr"),
                     new CultureInfo("pt")
                 };
 
-                var supportedUICultures = new[]
+                CultureInfo[] supportedUICultures = new[]
                 {
                     new CultureInfo("fr"),
                     new CultureInfo("en"),
@@ -145,56 +150,36 @@ namespace Yavsc
                     };
             });
 
-            // Add framework services.
-            services.AddEntityFrameworkNpgsql()
-              .AddDbContext<ApplicationDbContext>();
+            services.AddSignalR();
+            
+            services.AddOptions();
 
-
-            services.AddCors(
-
-            options =>
-            {
-                options.AddPolicy("CorsPolicy", builder =>
+            _ = services.AddCors(options =>
                 {
-                    builder.WithOrigins("*");
+                    options.AddPolicy("CorsPolicy", builder =>
+                    {
+                        _ = builder.WithOrigins("*");
+                    });
                 });
-            }
 
-            );
-
-            // Add session related services.
-            services.AddSession();
 
             // Add the system clock service
-            services.AddSingleton<ISystemClock, SystemClock>();
+            _ = services.AddSingleton<ISystemClock, SystemClock>();
 
-            services.AddAuthorization(options =>
-            {
+           _ = services.AddSingleton<IConnexionManager, HubConnectionManager>();
+            _ = services.AddSingleton<ILiveProcessor, LiveProcessor>();
+            _ = services.AddSingleton<IFileSystemAuthManager, FileSystemAuthManager>();
 
-                options.AddPolicy("AdministratorOnly", policy =>
-                {
-                    policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
-                });
 
-                options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
-                options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes("yavsc")
-                    .RequireAuthenticatedUser().Build());
-                // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
-                // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
-                options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
-            });
 
-            services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
-            {
-                options.Authority = siteSettings.GetValue<string>("ExternalUrl");
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false
-                };
-            });
+          // Add framework services.
+          
 
-        /* FIXME    services.AddSingleton<IAuthorizationHandler, HasBadgeHandler>();
+            /*services.AddSingleton<IAuthorizationHandler, HasBadgeHandler>();
+
+
+            
+            
             services.AddSingleton<IAuthorizationHandler, HasTemporaryPassHandler>();
             services.AddSingleton<IAuthorizationHandler, BlogEditHandler>();
             services.AddSingleton<IAuthorizationHandler, BlogViewHandler>();
@@ -202,13 +187,18 @@ namespace Yavsc
             services.AddSingleton<IAuthorizationHandler, BillViewHandler>();
             services.AddSingleton<IAuthorizationHandler, PostUserFileHandler>();
             services.AddSingleton<IAuthorizationHandler, ViewFileHandler>();
-            services.AddSingleton<IAuthorizationHandler, SendMessageHandler>(); */
+            services.AddSingleton<IAuthorizationHandler, SendMessageHandler>();*/
+  _ = services.AddDbContext<ApplicationDbContext>()
+            .AddIdentity<ApplicationUser, IdentityRole>()
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddSignInManager()
+            .AddDefaultUI()
+            .AddDefaultTokenProviders();
 
-            services.AddSingleton<IConnexionManager, HubConnectionManager>();
-            services.AddSingleton<ILiveProcessor, LiveProcessor>();
-            services.AddSingleton<IFileSystemAuthManager, FileSystemAuthManager>();
-
-            services.AddMvc(config =>
+           
+           
+            _ = services.AddMvc(config =>
             {
                 /* var policy = new AuthorizationPolicyBuilder()
                   .RequireAuthenticatedUser()
@@ -231,31 +221,64 @@ namespace Yavsc
                 options.ResourcesPath = "Resources";
             }).AddDataAnnotationsLocalization();
 
+           
+
             // services.AddScoped<LanguageActionFilter>();
 
             // Inject ticket formatting
-            services.AddTransient(typeof(ISecureDataFormat<>), typeof(SecureDataFormat<>));
-            services.AddTransient<ISecureDataFormat<AuthenticationTicket>, SecureDataFormat<AuthenticationTicket>>();
-            services.AddTransient<ISecureDataFormat<AuthenticationTicket>, TicketDataFormat>();
+            //   services.AddTransient(typeof(ISecureDataFormat<>), typeof(SecureDataFormat<>));
+            //  services.AddTransient<ISecureDataFormat<AuthenticationTicket>, SecureDataFormat<AuthenticationTicket>>();
+            //  services.AddTransient<ISecureDataFormat<AuthenticationTicket>, TicketDataFormat>();
 
             // Add application services.
-            services.AddTransient<IEmailSender, MailSender>();
-            services.AddTransient<IYavscMessageSender, YavscMessageSender>();
-            services.AddTransient<IBillingService, BillingService>();
-            services.AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false));
-            services.AddTransient<ICalendarManager, CalendarManager>();
+            _ = services.AddTransient<ITrueEmailSender, MailSender>();
+            _ = services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>();
+            _ = services.AddTransient<IYavscMessageSender, YavscMessageSender>();
+            _ = services.AddTransient<IBillingService, BillingService>();
+            _ = services.AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false));
+            _ = services.AddTransient<ICalendarManager, CalendarManager>();
+            
 
             // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
 
-            services.AddLocalization(options =>
+            _ = services.AddLocalization(options =>
             {
                 options.ResourcesPath = "Resources";
             });
+            var datadi = new DirectoryInfo(protectionSettings.GetSection("Keys").GetValue<string>("Dir"));
+            // Add session related services.
+            services.AddSession();
+            services.AddDataProtection().PersistKeysToFileSystem(datadi);
 
-            services.AddIdentity<ApplicationUser, IdentityRole>() 
-                .AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();
+            services.AddAuthorization(options =>
+            {
+
+                options.AddPolicy("AdministratorOnly", policy =>
+                {
+                    _ = policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
+                });
+
+                options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
+                options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes("Bearer")
+                    .RequireAuthenticatedUser().Build());
+                // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
+                // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
+                options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
+            });
+
+            services.AddAuthentication("Bearer")
+            .AddJwtBearer("Bearer", options =>
+            {
+                options.Authority = siteSettings.GetValue<string>("Authority");
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false
+                };
+            });
+
+            _ = services.AddControllersWithViews()
+            .AddNewtonsoftJson();
 
         }
 
@@ -263,12 +286,13 @@ namespace Yavsc
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
-            IApplicationBuilder app, 
+            IApplicationBuilder app,
             IOptions<SiteSettings> siteSettings,
+             IOptions<SmtpSettings> smtpSettings,
         IAuthorizationService authorizationService,
         IOptions<PayPalSettings> payPalSettings,
         IOptions<GoogleAuthSettings> googleSettings,
-        IStringLocalizer<Yavsc.YavscLocalisation> localizer,
+        IStringLocalizer<YavscLocalisation> localizer,
          ILoggerFactory loggerFactory,
          IWebHostEnvironment env)
         {
@@ -276,47 +300,52 @@ namespace Yavsc
             GoogleSettings = googleSettings.Value;
             ResourcesHelpers.GlobalLocalizer = localizer;
             SiteSetup = siteSettings.Value;
+            SmtpSetup = smtpSettings.Value;
             Authority = siteSettings.Value.Authority;
-            var blogsDir = siteSettings.Value.Blog;
-            if (blogsDir == null) throw new Exception("blogsDir is not set.");
-            var billsDir = siteSettings.Value.Bills;
-            if (billsDir == null) throw new Exception("billsDir is not set.");
-
+            string blogsDir = siteSettings.Value.Blog ?? throw new Exception("blogsDir is not set.");
+            string billsDir = siteSettings.Value.Bills ?? throw new Exception("billsDir is not set.");
             AbstractFileSystemHelpers.UserFilesDirName = new DirectoryInfo(blogsDir).FullName;
             AbstractFileSystemHelpers.UserBillsDirName = new DirectoryInfo(billsDir).FullName;
             Temp = siteSettings.Value.TempDir;
             PayPalSettings = payPalSettings.Value;
 
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
             // TODO implement an installation & upgrade procedure
             // Create required directories
             foreach (string dir in new string[] { AbstractFileSystemHelpers.UserFilesDirName, AbstractFileSystemHelpers.UserBillsDirName, SiteSetup.TempDir })
             {
-                if (dir == null) throw new Exception(nameof(dir));
+                if (dir == null)
+                {
+                    throw new Exception(nameof(dir));
+                }
 
-                DirectoryInfo di = new DirectoryInfo(dir);
-                if (!di.Exists) di.Create();
+                DirectoryInfo di = new(dir);
+                if (!di.Exists)
+                {
+                    di.Create();
+                }
             }
 
             _logger = loggerFactory.CreateLogger<Startup>();
-            app.UseStatusCodePagesWithReExecute("/Home/Status/{0}");
+            _ = app.UseStatusCodePagesWithReExecute("/Home/Status/{0}");
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseWelcomePage("/welcome");
+                _ = app.UseDeveloperExceptionPage();
+                _ = app.UseWelcomePage("/welcome");
+                app.UseMigrationsEndPoint();
             }
             else
             {
                 // For more details on creating database during deployment see http://go.microsoft.com/fwlink/?LinkID=615859
 
-                app.UseExceptionHandler("/Home/Error");
+                _ = app.UseExceptionHandler("/Home/Error");
                 try
                 {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
-                            .CreateScope())
-                    {
-                        serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
-                                .Database.Migrate();
-                    }
+                    using IServiceScope serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>()
+                            .CreateScope();
+                    serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
+                            .Database.Migrate();
                 }
                 catch (TargetInvocationException ex)
                 {
@@ -325,32 +354,38 @@ namespace Yavsc
                     {
                         // TODO (or not) Hit the developper
                     }
-                    else throw ex;
+                    else
+                    {
+                        throw ex;
+                    }
                 }
             }
             // before fixing the security protocol, let beleive our lib it's done with it.
-            var cxmgr = PayPal.Manager.ConnectionManager.Instance;
+            // _ = PayPal.Manager.ConnectionManager.Instance;
             // then, fix it.
             // ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xC00; // Tls12, required by PayPal
 
 
-            app.UseSession();
+            // _ = app.UseSession();
 
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
-            
-            app.UseRequestLocalization();
+
+            _ = app.UseRequestLocalization();
 
             ConfigureWorkflow();
             ConfigureWebSocketsApp(app);
 
-           
+
             _logger.LogInformation("LocalApplicationData: " + Environment.GetFolderPath(
 Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.DoNotVerify));
-            
+
             CheckApp(env, loggerFactory);
-            
-            app.UseStatusCodePages().UseStaticFiles().UseAuthentication();
-            app.UseMvcWithDefaultRoute();
+
+            app.UseSession();
+
+            _ = app.UseStatusCodePages().UseStaticFiles().UseAuthentication();
+            _ = app.UseMvcWithDefaultRoute();
+
         }
 
     }

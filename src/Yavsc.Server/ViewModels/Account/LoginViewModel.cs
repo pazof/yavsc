@@ -6,14 +6,15 @@ using Yavsc.Attributes.Validation;
 namespace Yavsc.ViewModels.Account
 {
      // TODO external autentication providers
-    public class SignInViewModel
+
+    public class SignInModel
     {
-        /// <summary>
+           /// <summary>
         /// Local user's name.
         /// </summary>
         /// <returns></returns>
         [YaRequired]
-        public string UserName { get; set; }
+        public string EMail { get; set; }
 
         /// <summary>
         /// Local user's password .
@@ -46,11 +47,6 @@ namespace Yavsc.ViewModels.Account
         /// <returns></returns>
         public string ReturnUrl { get; set; }
 
-        /// <summary>
-        /// Lists external identity provider descriptions.
-        /// </summary>
-        /// <returns>an enumeration of the descriptions.</returns>
-        public IEnumerable<YaAuthenticationDescription> ExternalProviders { get; set; }
     }
 
     public class YaAuthenticationDescription {

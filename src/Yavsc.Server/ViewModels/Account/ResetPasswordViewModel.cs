@@ -18,7 +18,5 @@ namespace Yavsc.ViewModels.Account
         [Display(Name = "Confirmer le mot de passe")]
         [Compare("Password", ErrorMessage = "Le mot de passe et sa confirmation ne sont pas les mêmes.")]
         public string ConfirmPassword { get; set; }
-
-        public string Code { get; set; }
     }
 }

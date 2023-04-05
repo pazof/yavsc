@@ -15,6 +15,7 @@ using System.Reflection;
 using Yavsc.Abstract.Templates;
 using Microsoft.AspNetCore.Identity;
 using RazorEngine.Configuration;
+using Yavsc.Interface;
 
 namespace Yavsc.Lib
 {
@@ -30,16 +31,14 @@ namespace Yavsc.Lib
 
         readonly IStringLocalizer<EMailer> stringLocalizer;
         readonly ApplicationDbContext dbContext;
-        readonly IEmailSender mailSender;
 
         readonly ILogger logger;
 
-        public EMailer(ApplicationDbContext context, IEmailSender sender,
+        public EMailer(ApplicationDbContext context, 
                        IStringLocalizer<EMailer> localizer,
                        ILoggerFactory loggerFactory)
         {
             stringLocalizer = localizer;
-            mailSender = sender;
 
             logger = loggerFactory.CreateLogger<EMailer>();
 

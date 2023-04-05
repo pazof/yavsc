@@ -24,20 +24,20 @@ namespace Yavsc.Controllers
 
         // GET: api/ApplicationUserApi
         [HttpGet]
-        public IEnumerable<UserInfo> GetApplicationUser()
+        public IEnumerable<UserInfo> GetApplicationUser(int skip=0, int take = 25)
         {
-            return _context.Users.OrderByDescending(u => u.DateModified).Take(25)
-            .Select(u=> new UserInfo { 
+            return _context.Users.Skip(skip).Take(take)
+            .Select(u=> new UserInfo{ 
             UserId = u.Id,
             UserName = u.UserName,
-            Avatar = u.Avatar   });
+            Avatar = u.Avatar});
         }
 
         [HttpGet("search/{pattern}")]
-        public IEnumerable<UserInfo> SearchApplicationUser(string pattern)
+        public IEnumerable<UserInfo> SearchApplicationUser(string pattern, int skip=0, int take = 25)
         {
             return _context.Users.Where(u => u.UserName.Contains(pattern))
-            .OrderByDescending(u => u.DateModified).Take(25)
+            .Skip(skip).Take(take)
             .Select(u=> new UserInfo { 
             UserId = u.Id,
             UserName = u.UserName,

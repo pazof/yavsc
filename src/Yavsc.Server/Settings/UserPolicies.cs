@@ -10,8 +10,7 @@ namespace Yavsc.Server.Settings
             new Dictionary<string, Func<ApplicationUser, bool>>
             {
                 { "allow-monthly", u => u.AllowMonthlyEmail },
-                { "email-not-confirmed", u => !u.EmailConfirmed && u.DateCreated < DateTime.Now.AddDays(-7) },
-                { "user-to-remove", u => !u.EmailConfirmed && u.DateCreated < DateTime.Now.AddDays(-14) }
+                { "email-not-confirmed", u => !u.EmailConfirmed }
             };
     }
 }
