@@ -22,6 +22,9 @@ namespace Yavsc.Controllers
     using PayPal.PayPalAPIInterfaceService.Model;
     using Microsoft.Extensions.Options;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Identity.UI.Services;
+    using Yavsc.Interface;
+    using Yavsc.Settings;
 
     public class HairCutCommandController : CommandController
     {
@@ -32,7 +35,7 @@ namespace Yavsc.Controllers
           IYavscMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
           IStringLocalizer<Yavsc.YavscLocalisation> localizer,
-          IEmailSender emailSender,
+          ITrueEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,
           ICalendarManager calManager,

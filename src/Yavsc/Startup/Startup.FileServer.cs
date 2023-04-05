@@ -7,30 +7,6 @@ using Yavsc.ViewModels.Auth;
 namespace Yavsc
 {
 
-    public static class YaFileSServerExtenstions 
-    {
-        public static IApplicationBuilder UseYaFileServer(this IApplicationBuilder builder, FileServerOptions options)
-        {
-            if (options == null)
-            {
-                throw new ArgumentNullException("options");
-            }
-            if (options.EnableDefaultFiles)
-            {
-                builder = builder.UseDefaultFiles(options.DefaultFilesOptions);
-            }
-            if (options.EnableDirectoryBrowsing)
-            {
-                builder = builder.UseDirectoryBrowser(options.DirectoryBrowserOptions);
-            }
-            return builder.UseYaSendFileFallback().UseStaticFiles(options.StaticFileOptions);
-        }
-
-        public static IApplicationBuilder UseYaSendFileFallback(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<YaSendFileMiddleware>(new object[0]);
-        }
-    }
 
     public partial class Startup
     {

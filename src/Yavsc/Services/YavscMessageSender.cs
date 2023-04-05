@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Yavsc.Interface;
 using Yavsc.Interfaces.Workflow;
 using Yavsc.Models;
 using Yavsc.Models.Google.Messaging;
@@ -12,7 +14,7 @@ namespace Yavsc.Services
     public class YavscMessageSender : IYavscMessageSender
     {
         private readonly ILogger _logger;
-        readonly IEmailSender _emailSender;
+        readonly ITrueEmailSender _emailSender;
         readonly SiteSettings siteSettings;
         readonly ApplicationDbContext _dbContext;
         readonly IConnexionManager _cxManager;
@@ -21,7 +23,7 @@ namespace Yavsc.Services
         public YavscMessageSender(
             ILoggerFactory loggerFactory,
             IOptions<SiteSettings> sitesOptions,
-            IEmailSender emailSender,
+            ITrueEmailSender emailSender,
             ApplicationDbContext dbContext,
             IConnexionManager cxManager,
             IHubContext<ChatHub> hubContext
@@ -90,24 +92,12 @@ namespace Yavsc.Services
 
 
                     _logger.LogDebug($"Sending to {user.UserName} <{user.Email}> : {body}");
-                    var mailSent = await _emailSender.SendEmailAsync(
-                    user.UserName,
-                    user.Email,
+                    
+                        result.message_id = await _emailSender.SendEmailAsync(user.UserName, user.Email,
                         $"{ev.Sender} (un client) vous demande un rendez-vous",
-                    body + Environment.NewLine
-                );
-
-                    if (!mailSent.Sent)
-                    {
-                        result.message_id = mailSent.MessageId;
-                        result.error = mailSent.ErrorMessage;
-                        response.failure++;
-                    }
-                    else
-                    {
-                        result.message_id = mailSent.MessageId;
+                    body + Environment.NewLine);
                         response.success++;
-                    }
+                  
                     var cxids = _cxManager.GetConnexionIds(user.UserName);
                     if (cxids == null)
                     {

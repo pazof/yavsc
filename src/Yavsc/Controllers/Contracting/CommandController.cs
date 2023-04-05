@@ -7,6 +7,7 @@ using Microsoft.Extensions.Localization;
 namespace Yavsc.Controllers
 {
     using Helpers;
+    using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Options;
     using Models;
@@ -14,6 +15,8 @@ namespace Yavsc.Controllers
     using Models.Relationship;
     using Models.Workflow;
     using Services;
+    using Yavsc.Interface;
+    using Yavsc.Settings;
 
     public class CommandController : Controller
     {
@@ -21,7 +24,7 @@ namespace Yavsc.Controllers
         protected ApplicationDbContext _context;
         protected GoogleAuthSettings _googleSettings;
         protected IYavscMessageSender _MessageSender;
-        protected IEmailSender _emailSender;
+        protected ITrueEmailSender _emailSender;
         protected IStringLocalizer _localizer;
         protected SiteSettings _siteSettings;
         protected SmtpSettings _smtpSettings;
@@ -33,7 +36,7 @@ namespace Yavsc.Controllers
           UserManager<ApplicationUser> userManager,
           ICalendarManager calendarManager,
           IStringLocalizer<Yavsc.YavscLocalisation> localizer,
-          IEmailSender emailSender,
+          ITrueEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,
           ILoggerFactory loggerFactory)

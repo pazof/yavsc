@@ -9,11 +9,11 @@ using Yavsc.Models.Bank;
 using Yavsc.Models.Access;
 namespace Yavsc.Models
 {
-    public class ApplicationUser : IdentityUser, IBaseTrackedEntity
+    [Table("AspNetUsers")]
+    public class ApplicationUser : IdentityUser
     {
-
-        /// <summary>
-        /// Another me, as a byte array.
+        /// <summary> 
+        /// Another me, as a byte array.TG7@Eu%80rufzkhbb
         /// This value points a picture that may be used
         /// to present the user
         /// </summary>
@@ -113,24 +113,5 @@ namespace Yavsc.Models
         [InverseProperty("Member")]
         public virtual List<CircleMember> Membership { get; set; }
 
-        public DateTime DateCreated
-        {
-            get; set;
-        }
-
-        public string UserCreated
-        {
-            get; set;
-        }
-
-        public DateTime DateModified
-        {
-            get; set;
-        }
-
-        public string UserModified
-        {
-            get; set;
-        }
     }
 }

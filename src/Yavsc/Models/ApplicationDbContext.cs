@@ -52,10 +52,14 @@ namespace Yavsc.Models
             builder.Entity<DeviceDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<BlogTag>().HasKey(x => new { x.PostId, x.TagId });
           
+            builder.Entity<ApplicationUser>().Property(u => u.FullName).IsRequired(false);
+            builder.Entity<ApplicationUser>().Property(u => u.DedicatedGoogleCalendar).IsRequired(false);
             builder.Entity<ApplicationUser>().HasMany<ChatConnection>(c => c.Connections);
             builder.Entity<ApplicationUser>().Property(u => u.Avatar).HasDefaultValue(Constants.DefaultAvatar);
             builder.Entity<ApplicationUser>().Property(u => u.DiskQuota).HasDefaultValue(Constants.DefaultFSQ);
-           
+            builder.Entity<ApplicationUser>().HasAlternateKey(u => u.Email);
+            builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.User);
+            builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.Owner);
             builder.Entity<UserActivity>().HasKey(u => new { u.DoesCode, u.UserId });
             builder.Entity<Instrumentation>().HasKey(u => new { u.InstrumentId, u.UserId });
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a => new { a.CircleId, a.BlogPostId });
@@ -67,8 +71,6 @@ namespace Yavsc.Models
             builder.Entity<Models.Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
             builder.Entity<ChatRoomAccess>().HasKey(p => new { room = p.ChannelName, user = p.UserId });
-            builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.User);
-            builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.Owner);
             builder.Entity<BlogTrad>().HasKey(tr => new { post = tr.PostId, lang = tr.Lang });
             builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument= i.InstrumentId, owner = i.OwnerId });
 
