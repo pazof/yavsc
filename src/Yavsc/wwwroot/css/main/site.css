@@ -1,13 +1,24 @@
 .navbar-link,
-.navbar-nav .dropdown>a {
+.navbar-nav .dropdown>a,
+.navbar-nav .dropdown>button
+ {
     background-color: rgba(0, 0, 0, .2);
+    color: #9d9d9d;
     border-radius: 2em;
+    padding: 1em;
 }
 
 .navbar-link:hover,
-.navbar-link:focus {
+.navbar-link:focus,
+.navbar-nav .dropdown>a:hover,
+.navbar-nav .dropdown>button:hover,
+.navbar-nav .dropdown>a:focus,
+.navbar-nav .dropdown>button:focus
+{
     background-color: rgba(0, 0, 0, .4);
+    color: yellow;
 }
+
 .navbar .navbar-nav li a:hover,
 .navbar-inverse .navbar-nav li a:hover {
     color: #fff;
@@ -21,20 +32,24 @@
 }
 
 .navbar .navbar-brand {
-    background-color: unset;
+    background-color: black; 
+    color: white;
 }
 
 .navbar .navbar-brand:focus {
-    background-color: unset;
+    background-color: #aaa; 
+    color: black;
 }
 
 
 .navbar-inverse .navbar-brand {
-    background-color: unset;
+    background-color: black;
+    color: white;
 }
 
 .navbar-inverse .navbar-brand:focus {
-    background-color: unset;
+    background-color: #9d9d9d;
+    color: white;
 }
 
 .ql-editor {

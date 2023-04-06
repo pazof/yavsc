@@ -2,16 +2,10 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-       <li>
-            <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
-                <img src="/Avatars/@(User.GetUserName()).xs.png" asp-append-version="true" class="smalltofhol" />
-            </a>
-        </li>
         <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <a class="dropdown-toggle navbar-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 Plateforme <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
@@ -36,27 +30,27 @@
                 <li><a asp-controller="MailingTemplate" asp-action="Index">Emailing</a></li>
             </ul>
         </li>}
-            
-
-    <li class="nav-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
+    <li>
+        <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
+            <img src="/avatars/@(User.GetUserName()).xs.png" asp-append-version="true" class="smalltofhol" />
+        </a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-controller="ApiKeys" asp-action="Index" title="Api Keys">Your API keys</a>
+    <li>
+        <a class="navbar-link"asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+          Hello @UserManager.GetUserName(User)!</a>
     </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link">Logout</button>
+    <li>
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="navbar-link">Logout</button>
         </form>
     </li>
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    <li>
+        <a class="navbar-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    <li class="navbar-link">
+        <a class="navbar-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
     </li>
 }
-</ul>
