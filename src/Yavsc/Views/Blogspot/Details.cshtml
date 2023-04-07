@@ -69,8 +69,8 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
 <h1 class="blogtitle" ismarkdown>@Model.Title</h1>
 <img class="blogphoto" alt="" src="@Model.Photo" >
 <div class="blogpost">
-   
-    <div markdown="@Model.Content" class="blog"></div>
+   @Html.AsciiDocFor(model => model.Content)
+    <p class="blog" asp-for="Content"></p>
    <hr/>
 
 <div class="meta"> 
