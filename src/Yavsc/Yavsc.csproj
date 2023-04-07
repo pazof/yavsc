@@ -33,10 +33,11 @@
     <PackageReference Include="RazorEngine.NetCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.5" />
     
-  <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Antiforgery" Version="2.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.4" IncludeAssets="All" />
+    <PackageReference Include="AsciiDocNet" Version="1.0.0-alpha6" />
   </ItemGroup>
 
   <ItemGroup>
