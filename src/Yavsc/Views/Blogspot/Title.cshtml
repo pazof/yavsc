@@ -30,7 +30,7 @@
        <img src="@item.Photo" class="blogphoto"></a>
         </td>
         <td>
-            <markdown>@((item.Content?.Length > 256) ? item.Content.Substring(0, 256) + " ..." : item.Content)</markdown>
+            <asciidoc>@((item.Content?.Length > 256) ? item.Content.Substring(0, 256) + " ..." : item.Content)</asciidoc>
             <span style="font-size:x-small;">(@item.Author.UserName </span>,
             <span style="font-size:xx-small;">
             posté le @item.DateCreated.ToString("dddd d MMM yyyy à H:mm")
