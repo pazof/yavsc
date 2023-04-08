@@ -9,8 +9,9 @@ namespace Yavsc.Helpers
         public override async Task ProcessAsync (TagHelperContext context, TagHelperOutput output)
         {
             var content = await output.GetChildContentAsync();
-       
-            Document document = Document.Parse(content.GetContent());
+            string text = content.GetContent();
+            if (string.IsNullOrWhiteSpace(text)) return;
+            Document document = Document.Parse(text);
             var html = document.ToHtml(4);
             using var stringWriter = new StringWriter();
             html.WriteTo(stringWriter, HtmlEncoder.Default);

@@ -1,7 +1,7 @@
 @model Comment
 <div data-type="blogcomment" data-id="@Model.Id" data-allow-edit="@(User.GetUserId()==Model.AuthorId?"true":"false")" 
         data-allow-moderate="@ViewData["moderatoFlag"]" data-date="@Html.Raw(Model.DateCreated)" data-username="@Model.Author.UserName" >
-        <markdown>@Model.Content</markdown>
+        <asciidoc>@Model.Content</asciidoc>
         <div class="subcomments">
  @if (Model.Children!=null && Model.Children.Count>0) {
             foreach (var comment in Model.Children) {

@@ -32,7 +32,7 @@
          <img src="@item.Photo" class="blogphoto"></a>
           </td>
           <td>
-              <markdown summary="256">@item.Content</markdown>
+              <asciidoc summary="256">@item.Content</asciidoc>
               @if (trunked) { <a asp-action="Details" asp-route-id="@item.Id" class="bloglink">...</a> }
               <span style="font-size:x-small;">(@item.Author.UserName </span>,
               <span style="font-size:xx-small;">
