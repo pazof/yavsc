@@ -1,17 +1,19 @@
 @{
-    ViewData["Title"] = @SR["About"]+" "+@SiteSettings.Value.Title;
+    ViewData["Title"] = SR["About"] + " " + SiteSettings.Value.Title;
 }
 <h1>@ViewData["Title"]</h1>
-<environment names="Development">
-**Version de Development**
-<markdown>
 
-## L'objectif
+**Version de Development**
+
+<asciidoc>
+= À propos de Yavsc
+
+== L'objectif
 
 Cette application est construite pour mettre en relation des artistes
 du domaine musical avec leur public.
 
-## Le fonctionnement
+== Le fonctionnement
 
 Les utilisateurs du site sont soit artiste, soit client, soit administrateur. ils ont tous droit à leur blog.
 Pour les artistes, c'est un moyen de promouvoir leur activité.
@@ -53,7 +55,7 @@ Une fois sa prestation associée exécutée, les paiements relatifs sont effectu
 Pour un contrat exécuté et non honoré par le client, le processus de poursuite en recouvrement est engagé, sinon, le contrat est archivé,
 des attestations de paiement sont disponibles pour l'artiste et la facture est marquée payée, puis repostée au client.
 
-### Pour l'artiste
+=== Pour l'artiste
 
 L'artiste choisit plusieurs paramètres qui vont faire son profil :
 
@@ -66,7 +68,7 @@ L'artiste choisit plusieurs paramètres qui vont faire son profil :
 * Des paramètres supplémentaires en fonctions de son type d'activité par exemple, pour
   les ensembles, leur taille, le cas échéant, leur répertoire ou des indications sur le style de leur musique)
 
-### Pour le client
+=== Pour le client
 
 Il choisit un lieu et une date pour déclarer un événement avenir
 (il peut bien-sûr en programmer autant qu'il le veut).
@@ -76,7 +78,7 @@ sur la base d'un de ses projets événementiel, la négociation d'un contrat de 
 
 Il a accès à la connaissance des journées connues comme libres des artistes par le système.
 
-## La confidentialité
+== La confidentialité
 
 À aucun moment, aucune adresse postale, aucune adresse e-mail ni aucun numéro de téléphone
 ne sont transmis ni aux clients, ni aux artistes. Seul le système a accès à ces informations.
@@ -87,77 +89,7 @@ qui désactive immédiatement les publications associées à leurs informations,
 et programme la suppression complète de ces dites informations dans les quinze jours
 à compter de la demande, sauf demande contradictoire.
 L'opération est annulable, jusqu'à deux semaines après sa programmation.
-
-</markdown>
-</environment>
-
-<environment names="Lua,Development">
-<markdown>
-C'est mon site pérso, une configuration de _Yavsc_ (encore une autre très petite entreprise).
-
-* [README](https://github.com/pazof/yavsc/blob/vnext/README.md)
-* [license: GNU GPL v3](https://github.com/pazof/yavsc/blob/vnext/LICENSE)
-
-Autres installations: 
-</markdown>
-<markdown>
-* [Yavsc](http://yavsc.pschneider.fr)
-</markdown>
-</environment>
-
-<environment names="Yavsc,Development">
-<markdown>
-   Yet Another Very Small Company ...
-
-* [README](https://github.com/pazof/yavsc/blob/vnext/README.md)
-* [license: GNU FPL v3](https://github.com/pazof/yavsc/blob/vnext/LICENSE)
-
-</markdown>
-</environment>
-
-<environment names="YavscPre,Development">
-<markdown>
-## Yet Another Very Small Company : 
-* [README](https://github.com/pazof/yavsc/blob/vnext/README.md)
-* [license: GNU FPL v3](https://github.com/pazof/yavsc/blob/vnext/LICENSE)
-
-En production:
-   
-* [Lua](https://lua.pschneider.fr)
-* [Yavsc](https://yavsc.pschneider.fr)
-
-</markdown>
-</environment>
-
-
-<environment names="coiffure,Development">
-<markdown>
-Vous êtes sur le site de commande en coiffure à domicile de Soraya Boudjouraf, 
-un as de la coiffure, qui oeuvre en région parisienne.
-
-En validant un formulaire de commande ici, c'est à elle que vous notifiez votre demande. 
-
-Vous pouvez ![lui laisser votre numéro de téléphone](/HairCutCommand/HairCut?activityCode=Brush&performerId=1bd841ab-c305-4971-940d-7ddca818310c)
- et/ou des détails sur votre demande, 
-elle vous rappelera.</markdown>
-</environment>
-
-<environment names="Development">
-<markdown>
-## Ceci est un site de développement.
-
-Cette présente ressource ne concerne que le développement du logiciel qui la met en oeuvre.
-Elle est éphémère, et pratiquement en permanence force de codes 500.
-
-Veuillez excuser l'équipe de développement pour vous avoir fait part de cette adresse et pour la gêne occasionnnée.
-
-La "pré-production" affiche les sites suivants: 
-
-* [Yavsc](https://yavsc.pschneider.fr)
-* [Lua](https://lua.pschneider.fr)
-
-</markdown>
-</environment>
+</asciidoc>
 <p>
 @Model
 </p>
