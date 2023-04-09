@@ -1,11 +1,11 @@
 #!/bin/bash 
 ### BEGIN INIT INFO
-# Provides:          kestrel-pre
+# Provides:          yavsc
 # Required-Start:    $local_fs $network $named $time $syslog $postgresql
 # Required-Stop:     $local_fs $network $named $time $syslog $postgresql
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Description:       Script to run asp.net 5 application in background
+# Description:       Script to run yavsc
 ### END INIT INFO
 
 # Author: Ivan Derevianko aka druss <drussilla7@gmail.com>
@@ -14,8 +14,9 @@
 . /lib/init/vars.sh
 . /lib/lsb/init-functions
 
+NAME=yavsc
+
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-CONFIGS="/etc/kestrel/*.prewebenv"
 
 TMP_SAVE_runlevel_VAR=$runlevel
 unset runlevel
@@ -33,47 +34,34 @@ running() {
 }
 
 
-setdnxenv() {
-    env=$1
-    . $env
-    # reset all except the name to default values
-	export ASPNET_ENV=$NAME
-	export WWW_USER=www-data
-	YAVSCBIN=/usr/local/bin/yavscd-pre
-	PROJECT=approot/Web
-	CONFIGURATION=Release
-	ROOT=/srv/www/yavscpre
-    DESC="$NAME"
-    PIDFILE=/var/run/kestrel-${NAME}.pid
-    LOGDIR=/var/log
-    # reset to specified values
-    . $env
-}
-
+export WWW_USER=www-data
+export ROOT=/srv/www/${NAME}
+export DESC="$NAME"
+export PIDFILE=/var/run/kestrel-${NAME}.pid
+export LOGDIR=/var/log
+export DOTNET_CLI_HOME=$ROOT
+export ASPDOTNETCORE_ENVIRONMENT=Production
+export ASPDOTNETCORE_LOGLEVEL=Information
 status() {
-  for env in $CONFIGS
-  do
-    setdnxenv "$env"
 	if running;
 	then
 		echo "Service running $DESC ($NAME; pid: $PID)"
 	else
 		echo "Service stopped $DESC ($NAME)"
 	fi
-  done
+    echo WWW_USER: $WWW_USER ROOT:$ROOT DESC: $DESC NAME: $NAME PIDFILE: $PIDFILE LOGDIR=$LOGDIR
 }
 
 
 start() {
-  for env in $CONFIGS
-  do
-    setdnxenv "$env"
 	if running; then
 		echo "Service already running $DESC" "$NAME"
 		log_end_msg 0  
 	else
+        cd $ROOT
+        sleep 4
 		log_daemon_msg "Starting service $NAME for user $WWW_USER"
-		if ! start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -g www-data -x $YAVSCBIN -- --project $PROJECT --configuration $CONFIGURATION $NAME > "${LOGDIR}/kestrel-${NAME}.log"
+		if ! start-stop-daemon -SbmCv -u $WWW_USER -p $PIDFILE -d $ROOT -g www-data -x yavsc  > "${LOGDIR}/kestrel-${NAME}.log"
         then 
 			log_daemon_msg "Could not start $NAME : $?, see ${LOGDIR}/kestrel-${NAME}.log"
 			log_end_msg 2
@@ -82,14 +70,10 @@ start() {
 			log_end_msg 0  
 		fi
 	fi
-  done
 
 }
 
 stop() {
-  for env in $CONFIGS
-  do
-    setdnxenv "$env"
 	if running
 	then
 		log_daemon_msg "Stopping service $NAME"
@@ -100,7 +84,6 @@ stop() {
 		log_daemon_msg "$DESC Service not running"
 	    log_end_msg 1  
 	fi
-  done
 }
 
 
@@ -113,7 +96,6 @@ case "$1" in
     ;;
   restart)
     stop
-	sleep 1
     start
     ;;
   status)
