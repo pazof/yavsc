@@ -85,10 +85,10 @@ namespace Yavsc
             _logger.LogError(JsonConvert.SerializeObject(e.ExceptionObject));
         }
 
-        public static string ConnectionString { get; set; }
-        public static GoogleAuthSettings GoogleSettings { get; set; }
-        public IConfigurationRoot Configuration { get; set; }
-        public static IConfigurationRoot GoogleWebClientConfiguration { get; set; }
+        public static string? ConnectionString { get; private set; }
+        public static GoogleAuthSettings? GoogleSettings { get; private set; }
+        public IConfigurationRoot Configuration { get; private set; }
+        public static IConfigurationRoot? GoogleWebClientConfiguration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -245,7 +245,7 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             });
-            var datadi = new DirectoryInfo(protectionSettings.GetSection("Keys").GetValue<string>("Dir"));
+            var datadi = new DirectoryInfo(Configuration["Keys:Dir"]);
             // Add session related services.
             services.AddSession();
             services.AddDataProtection().PersistKeysToFileSystem(datadi);
