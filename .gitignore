@@ -31,7 +31,7 @@ DataProtection/
 /src/Yavsc/Temp-*/
 /src/Yavsc/*-Avatars/
 /src/Yavsc/bower_components/
-/src/Yavsc/AppData*/
+/src/Yavsc/Data-Dev/
 /src/test/testingrepo/
 connectionsettings.Development.json
 appsettings.Development.json
@@ -42,3 +42,4 @@ builds/
 /test/yavscTests/test-results.html
 /binaries/Debug/yavscd
 yavsc-pre
+
