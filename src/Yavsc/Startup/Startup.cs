@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Identity;
 using Yavsc.Interface;
 using Yavsc.Settings;
 using Microsoft.AspNetCore.DataProtection;
+using Duende.IdentityServer;
 
 namespace Yavsc
 {
@@ -93,7 +94,7 @@ namespace Yavsc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddRazorPages();
 
             IConfigurationSection siteSettings = Configuration.GetSection("Site");
             _ = services.Configure<SiteSettings>(siteSettings);
@@ -245,7 +246,7 @@ namespace Yavsc
             {
                 options.ResourcesPath = "Resources";
             });
-            var datadi = new DirectoryInfo(Configuration["Keys:Dir"]);
+            var datadi = new DirectoryInfo(Configuration["Site:DataDir"]);
             // Add session related services.
             services.AddSession();
             services.AddDataProtection().PersistKeysToFileSystem(datadi);
@@ -267,19 +268,37 @@ namespace Yavsc
                 options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
             });
 
-            services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
-            {
-                options.Authority = siteSettings.GetValue<string>("Authority");
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false
-                };
-            });
+           
 
             _ = services.AddControllersWithViews()
             .AddNewtonsoftJson();
 
+            services.AddIdentityServer(options =>
+            {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+
+                // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
+                options.EmitStaticAudienceClaim = true;
+            })
+            .AddInMemoryIdentityResources(Config.IdentityResources)
+            .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryClients(Config.Clients)
+            .AddAspNetIdentity<ApplicationUser>();
+        
+        services.AddAuthentication()
+            .AddGoogle(options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+                // register your IdentityServer with Google at https://console.developers.google.com
+                // enable the Google+ API
+                // set the redirect URI to https://localhost:5001/signin-google
+                options.ClientId = "copy client ID from Google here";
+                options.ClientSecret = "copy client secret from Google here";
+            });
         }
 
         public static IServiceProvider Services { get; private set; }
@@ -383,8 +402,13 @@ Environment.SpecialFolder.LocalApplicationData, Environment.SpecialFolderOption.
 
             app.UseSession();
 
-            _ = app.UseStatusCodePages().UseStaticFiles().UseAuthentication();
-            _ = app.UseMvcWithDefaultRoute();
+            _ = app.UseStatusCodePages();
+            
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseIdentityServer();
+            app.UseAuthorization();
+            app.UseMvcWithDefaultRoute();
 
         }
 
