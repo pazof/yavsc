@@ -21,6 +21,8 @@ RSA-Params.json
 appsettings.*.json
 omnisharp.json
 
+DataProtection/
+
 /packages/
 /src/Yavsc/Avatars-*/
 /src/Yavsc/Blog-*/
