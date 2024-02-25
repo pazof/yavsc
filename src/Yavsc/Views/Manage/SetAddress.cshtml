@@ -36,7 +36,7 @@
     $(document).ready(function(){
     $("#Address").googlegeocode({
         culture: '@System.Globalization.CultureInfo.CurrentCulture.Name',
-        mapsApiKey: '@Startup.GoogleSettings.BrowserApiKey',
+        mapsApiKey: '@Config.GoogleSettings.BrowserApiKey',
         mapId: 'amap',
         longId: 'Longitude',
         latId: 'Latitude',

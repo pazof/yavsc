@@ -1,0 +1,40 @@
+﻿@using Yavsc
+@using Yavsc.Pages
+@using Yavsc.Models
+@using Yavsc.Models.Musical
+@using Yavsc.Models.Drawing
+@using Yavsc.Models.Haircut
+@using Yavsc.Models.Blog
+@using Yavsc.Models.Billing
+@using Yavsc.Models.Workflow
+@using Yavsc.Models.Relationship
+@using Yavsc.Models.Musical.Profiles
+@using Yavsc.Models.Auth
+@using Yavsc.Models.Identity
+@using Yavsc.Models.Access
+@using Yavsc.Billing
+@using Yavsc.Server.Models.Calendar
+@using Yavsc.ViewModels.Haircut
+@using Yavsc.ViewModels.Administration
+@using Yavsc.ViewModels.Account
+@using Yavsc.ViewModels.Manage
+@using Yavsc.ViewModels.FrontOffice
+@using Yavsc.ViewModels.Calendar
+@using Yavsc.ViewModels.Relationship
+@using Yavsc.ViewModels.Workflow
+@using Yavsc.ViewModels.Auth
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Identity
+@using Yavsc.Helpers
+
+@using PayPal.PayPalAPIInterfaceService.Model
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Yavsc
+
+@inject IAuthorizationService AuthorizationService
+@inject Microsoft.AspNetCore.Mvc.Localization.IHtmlLocalizer<Yavsc.Startup> SR
+@inject Microsoft.Extensions.Options.IOptions<SiteSettings> SiteSettings
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager

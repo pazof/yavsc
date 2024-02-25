@@ -13,7 +13,7 @@ namespace Yavsc.Models.Billing
     using Yavsc.Abstract.Workflow;
     using Yavsc.Services;
 
-    public abstract class NominativeServiceCommand : IBaseTrackedEntity, IDecidableQuery, IIdentified<long>
+    public abstract class NominativeServiceCommand : IDecidableQuery, IIdentified<long>
   {
         public string GetInvoiceId() { return GetType().Name +  "/" + Id;  }
 
@@ -78,9 +78,8 @@ namespace Yavsc.Models.Billing
         [ForeignKey("ActivityCode"),JsonIgnore,Display(Name="Domaine d'activité")]
         public virtual Activity Context  { get; set ; }
 
-        public bool Rejected { get; set; }
+        public bool Decided { get; set; }
 
-        public DateTime RejectedAt { get; set; }
 
         public abstract System.Collections.Generic.List<IBillItem> GetBillItems();
 
@@ -103,6 +102,6 @@ namespace Yavsc.Models.Billing
 
         [Display(Name = "Acquittement de la facture")]
         public virtual PayPalPayment Regularisation { get; set; }
-
+        public bool Accepted { get; set; }
     }
 }

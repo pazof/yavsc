@@ -102,7 +102,7 @@ namespace Yavsc.Controllers
             var youAreAdmin = await _userManager.IsInRoleAsync(
                 await _userManager.FindByIdAsync(User.GetUserId()),
                 Constants.AdminGroupName);
-                throw new NotImplementedException();
+           
             var roles = _roleManager.Roles.Select(x => new RoleInfo {
                 Id = x.Id,
                 Name = x.Name
@@ -110,7 +110,6 @@ namespace Yavsc.Controllers
             var assembly = GetType().Assembly;
            ViewBag.ThisAssembly = assembly.FullName;
            ViewBag.RunTimeVersion = assembly.ImageRuntimeVersion;
-            ViewBag.HostContextFullName = Startup.HostingFullName;
             return View(new AdminViewModel
             {
                 Roles = roles.ToArray(),
@@ -119,7 +118,6 @@ namespace Yavsc.Controllers
                 UserCount = userCount
             });
         }
-
 
         [Authorize("AdministratorOnly")]
         public IActionResult Enroll(string roleName)

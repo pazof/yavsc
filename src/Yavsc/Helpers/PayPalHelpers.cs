@@ -22,22 +22,23 @@ namespace Yavsc.Helpers
             if (payPalProperties==null) {
 
                 payPalProperties = new Dictionary<string,string>();
+                var paypalSettings = Config.PayPalSettings;
                 // Don't do:
                 //  payPalProperties.Add("mode", Startup.PayPalSettings.Mode);
                 // Instead, set the endpoint parameter.
-                if (Startup.PayPalSettings.Mode == "production") {
+                if (paypalSettings.Mode == "production") {
                     // use nvp end point: https://api-3t.paypal.com/nvp
                     payPalProperties.Add("endpoint", "https://api-3t.paypal.com/nvp");
 
                 } else {
                     payPalProperties.Add("endpoint", "https://api-3t.sandbox.paypal.com/nvp");
                 }
-                payPalProperties.Add("clientId", Startup.PayPalSettings.ClientId);
-                payPalProperties.Add("clientSecret", Startup.PayPalSettings.ClientSecret);
+                payPalProperties.Add("clientId", paypalSettings.ClientId);
+                payPalProperties.Add("clientSecret", paypalSettings.ClientSecret);
 
                 int numClient = 0;
-                if (Startup.PayPalSettings.Accounts!=null)
-                foreach (var account in Startup.PayPalSettings.Accounts) {
+                if (paypalSettings.Accounts!=null)
+                foreach (var account in paypalSettings.Accounts) {
                     numClient++;
                     payPalProperties.Add ($"account{numClient}.apiUsername",account.ApiUsername);
                     payPalProperties.Add ($"account{numClient}.apiPassword",account.ApiPassword);
@@ -106,8 +107,8 @@ namespace Yavsc.Helpers
 
             var d = new SetExpressCheckoutRequestDetailsType();
 
-            logger.LogInformation($"Creating express checkout for {Startup.PayPalSettings.MerchantAccountUserName} : "+JsonConvert.SerializeObject(coreq));
-            var response = PayPalService.SetExpressCheckout( coreq, Startup.PayPalSettings.MerchantAccountUserName );
+            logger.LogInformation($"Creating express checkout for {Config.PayPalSettings.MerchantAccountUserName} : "+JsonConvert.SerializeObject(coreq));
+            var response = PayPalService.SetExpressCheckout( coreq, Config.PayPalSettings.MerchantAccountUserName );
 
             return response;
         }
@@ -125,7 +126,7 @@ namespace Yavsc.Helpers
                 Token = token
                }
             };
-            return  PayPalService.GetExpressCheckoutDetails(req,Startup.PayPalSettings.Accounts[0].ApiUsername);
+            return  PayPalService.GetExpressCheckoutDetails(req,Config.PayPalSettings.Accounts[0].ApiUsername);
         }
         public static async Task<PaymentInfo> ConfirmPayment(
              this ApplicationDbContext context,

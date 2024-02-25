@@ -49,7 +49,7 @@ namespace Yavsc.Controllers
         IOptions<GoogleAuthSettings> googleSettings,
         IOptions<PayPalSettings> paypalSettings,
         IOptions<CompanyInfoSettings> cinfoSettings,
-        IStringLocalizer<Yavsc.YavscLocalisation> SR,
+        IStringLocalizer<Yavsc.YavscLocalization> SR,
         ICalendarManager calendarManager,
         ILoggerFactory loggerFactory)
         {

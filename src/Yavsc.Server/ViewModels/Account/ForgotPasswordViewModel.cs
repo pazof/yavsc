@@ -8,6 +8,6 @@ namespace Yavsc.ViewModels.Account
     {
         [YaRequired]
         [YaStringLength(512)]
-        public string LoginOrEmail { get; set; }
+        public string? LoginOrEmail { get; set; }
     }
 }

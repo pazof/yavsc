@@ -122,7 +122,7 @@ namespace Yavsc.Helpers
         {
             string errorMsg = null;
             var billdir = Model.DestDir;
-            var tempdir = Startup.SiteSetup.TempDir;
+            var tempdir = Config.SiteSetup.TempDir;
             string name = Model.BaseFileName;
             string fullname = new FileInfo(
                  System.IO.Path.Combine(tempdir, name)).FullName;

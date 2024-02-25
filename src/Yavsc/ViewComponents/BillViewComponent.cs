@@ -15,10 +15,10 @@ namespace Yavsc.ViewComponents
     {
         readonly ApplicationDbContext dbContext;
         readonly IBillingService billing;
-        readonly IStringLocalizer<Yavsc.YavscLocalisation> localizer;
+        readonly IStringLocalizer<Yavsc.YavscLocalization> localizer;
 
         public BillViewComponent(ApplicationDbContext dbContext, 
-            IStringLocalizer<Yavsc.YavscLocalisation> localizer,
+            IStringLocalizer<Yavsc.YavscLocalization> localizer,
             IBillingService billing)
         {
             this.billing = billing;
@@ -28,8 +28,8 @@ namespace Yavsc.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync(string code, IBillable billable, OutputFormat format, bool asBill)
         {
-            var di = new DirectoryInfo(Startup.SiteSetup.Bills); 
-            var dia = new DirectoryInfo(Startup.SiteSetup.Avatars); 
+            var di = new DirectoryInfo(Config.SiteSetup.Bills); 
+            var dia = new DirectoryInfo(Config.SiteSetup.Avatars); 
             ViewBag.BillsDir = di.FullName;
             ViewBag.AvatarsDir = dia.FullName;
             ViewBag.AsBill = asBill; // vrai pour une facture, sinon, c'est un devis
@@ -77,7 +77,7 @@ namespace Yavsc.ViewComponents
                     
                     var genrtrData = new PdfGenerationViewModel
                     { 
-                            Temp = Startup.Temp,
+                            Temp = Config.Temp,
                             TeXSource = tex, 
                             DestDir = AbstractFileSystemHelpers.UserBillsDirName,
                             BaseFileName = billable.GetFileBaseName(billing)

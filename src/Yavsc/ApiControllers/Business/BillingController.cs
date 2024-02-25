@@ -32,7 +32,7 @@ namespace Yavsc.ApiControllers
         public BillingController(
             IAuthorizationService authorizationService,
             ILoggerFactory loggerFactory,
-            IStringLocalizer<Yavsc.YavscLocalisation> SR,
+            IStringLocalizer<Yavsc.YavscLocalization> SR,
             ApplicationDbContext context,
             IOptions<GoogleAuthSettings> googleSettings,
             IYavscMessageSender GCMSender,

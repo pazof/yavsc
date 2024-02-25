@@ -44,17 +44,15 @@ namespace Yavsc
 
         public HubInputValidator InputValidator { get; }
 
-        public ChatHub()
+        public ChatHub(ApplicationDbContext dbContext, 
+        ILoggerFactory loggerFactory, 
+        IStringLocalizerFactory stringLocalizerFactory, 
+        IConnexionManager connexionManager)
         {
-            var scope = Startup.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-
-            _dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
-            var loggerFactory = scope.ServiceProvider.GetService<ILoggerFactory>();
-
-            var stringLocFactory = scope.ServiceProvider.GetService<IStringLocalizerFactory>();
-            _localizer = stringLocFactory.Create(typeof(ChatHub));
+            _dbContext = dbContext;
+            _localizer = stringLocalizerFactory.Create(typeof(ChatHub));
             
-            _cxManager =  scope.ServiceProvider.GetService<IConnexionManager>();
+            _cxManager =  connexionManager;
              _cxManager.SetErrorHandler ((context, error) => 
              {
                  NotifyUser(NotificationTypes.Error, context, error);

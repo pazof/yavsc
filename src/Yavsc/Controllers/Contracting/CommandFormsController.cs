@@ -49,7 +49,7 @@ namespace Yavsc.Controllers
         private void SetViewBag(CommandForm commandForm = null)
         {
             ViewBag.ActivityCode = new SelectList(_context.Activities, "Code", "Name", commandForm?.ActivityCode);
-            ViewBag.ActionName = Startup.Forms.Select(c => new SelectListItem { Value = c, Text = c, Selected = (commandForm?.ActionName == c) });
+            ViewBag.ActionName = _context.CommandForm.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Title, Selected = commandForm.Id == c.Id });
         }
         // POST: CommandForms/Create
         [HttpPost]

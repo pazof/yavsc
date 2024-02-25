@@ -49,7 +49,7 @@ namespace Yavsc.ApiControllers
             
             string url = string.Format(
                 "{0}/{1}/{2}",
-                Startup.UserFilesOptions.RequestPath.ToUriComponent(),
+                Config.UserFilesOptions.RequestPath.ToUriComponent(),
                 userName,
                 filename
             );

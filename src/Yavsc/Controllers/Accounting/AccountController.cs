@@ -1,20 +1,17 @@
 using System.Web;
-
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Yavsc.Models;
-using Yavsc.Services;
-using Yavsc.ViewModels.Account;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Yavsc.Models;
+using Yavsc.ViewModels.Account;
 using Yavsc.Helpers;
 using Yavsc.Abstract.Manage;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Yavsc.Interface;
 
 namespace Yavsc.Controllers
@@ -37,7 +34,6 @@ namespace Yavsc.Controllers
         //  TwilioSettings _twilioSettings;
 
         readonly ApplicationDbContext _dbContext;
-        
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -45,7 +41,7 @@ namespace Yavsc.Controllers
             ITrueEmailSender emailSender,
             IOptions<SiteSettings> siteSettings,
             ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings,
-            IStringLocalizer<Yavsc.YavscLocalisation> localizer,
+            IStringLocalizer<Yavsc.YavscLocalization> localizer,
             ApplicationDbContext dbContext)
         {
             _userManager = userManager;
@@ -205,7 +201,7 @@ namespace Yavsc.Controllers
                         return BadRequest();
                     }
                     // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
-                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { model.ReturnUrl }, protocol:"https", host: Startup.Authority);
+                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { model.ReturnUrl }, protocol:"https", host: Config.Authority);
                     var properties = _signInManager.ConfigureExternalAuthenticationProperties(model.Provider, redirectUrl);
                     // var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
                     return new ChallengeResult(model.Provider, properties);
@@ -238,14 +234,14 @@ namespace Yavsc.Controllers
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(3, "User created a new account with password.");
-                    await _emailSender.SendEmailAsync(Startup.SiteSetup.Owner.Name, Startup.SiteSetup.Owner.EMail,
+                    await _emailSender.SendEmailAsync(Config.SiteSetup.Owner.Name, Config.SiteSetup.Owner.EMail,
                      $"[{_siteSettings.Title}] Inscription avec mot de passe: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
 
                     // TODO user.DiskQuota = Startup.SiteSetup.UserFiles.Quota;
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol:  "https", host: Startup.Authority);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol:  "https", host: Config.Authority);
                     await _emailSender.SendEmailAsync(model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
                       string.Format(_localizer["ConfirmYourAccountBody"], _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
                    // No, wait for more than a login pass submission:
@@ -292,7 +288,7 @@ namespace Yavsc.Controllers
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account",
-            new { userId = user.Id, code }, protocol: "https", host: Startup.Authority);
+            new { userId = user.Id, code }, protocol: "https", host: Config.Authority);
             var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, 
             this._localizer["ConfirmYourAccountTitle"],
             string.Format(this._localizer["ConfirmYourAccountBody"],
@@ -305,7 +301,7 @@ namespace Yavsc.Controllers
         {
             var code = await _userManager.GenerateTwoFactorTokenAsync(user, provider);
             var callbackUrl = Url.Action("VerifyCode", "Account",
-            new { userId = user.Id, code, provider }, protocol: "https", host: Startup.Authority);
+            new { userId = user.Id, code, provider }, protocol: "https", host: Config.Authority);
             var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, 
             this._localizer["AccountEmailFactorTitle"],
             string.Format(this._localizer["AccountEmailFactorBody"],
@@ -416,8 +412,8 @@ namespace Yavsc.Controllers
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                     throw new NotImplementedException();
-                   // info.ProviderDisplayName = info.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+                    
+                    info.ProviderDisplayName = info.Principal.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
 
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
@@ -425,7 +421,7 @@ namespace Yavsc.Controllers
                         await _signInManager.SignInAsync(user, isPersistent: false);
 
 
-                        await _emailSender.SendEmailAsync(Startup.SiteSetup.Owner.Name, Startup.SiteSetup.Owner.EMail,
+                        await _emailSender.SendEmailAsync(Config.SiteSetup.Owner.Name, Config.SiteSetup.Owner.EMail,
                          $"[{_siteSettings.Title}] Inscription via {info.LoginProvider}: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
 
                         _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);

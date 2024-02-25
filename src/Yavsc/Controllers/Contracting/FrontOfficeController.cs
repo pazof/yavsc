@@ -24,7 +24,7 @@ namespace Yavsc.Controllers
             UserManager<ApplicationUser> userManager,
             IBillingService billing,
             ILoggerFactory loggerFactory,
-        IStringLocalizer<Yavsc.YavscLocalisation> SR)
+        IStringLocalizer<Yavsc.YavscLocalization> SR)
         {
             _context = context;
             _userManager = userManager;
@@ -92,7 +92,7 @@ namespace Yavsc.Controllers
         [Authorize, Route("Estimate-{id}.pdf")]
         public IActionResult EstimatePdf(long id)
         {
-            ViewBag.TempDir = Startup.SiteSetup.TempDir;
+            ViewBag.TempDir = Config.SiteSetup.TempDir;
             ViewBag.BillsDir = AbstractFileSystemHelpers.UserBillsDirName;
             var estimate = _context.Estimates.Include(x => x.Query)
             .Include(x => x.Query.Client)
