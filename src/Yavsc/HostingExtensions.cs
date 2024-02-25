@@ -149,17 +149,18 @@ internal static class HostingExtensions
                 Config.GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
             }
             
+var services = builder.Services;
 
-        builder.Services.AddRazorPages();
+        services.AddRazorPages();
 
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+        services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-        builder.Services
+        services
             .AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;
@@ -175,7 +176,7 @@ internal static class HostingExtensions
             .AddInMemoryClients(Config.Clients)
             .AddAspNetIdentity<ApplicationUser>().AddServerSideSessions();
         
-        builder.Services.AddAuthentication()
+        services.AddAuthentication()
             .AddGoogle(options =>
             {
                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
@@ -186,7 +187,7 @@ internal static class HostingExtensions
                 options.ClientId = "325408689282-6bekh7p3guj4k0f3301a6frf025cnrk1.apps.googleusercontent.com";
                 options.ClientSecret = "XV1DLrq8cQE2JI4gZP3h6d8y";
             });
-builder.Services.Configure<RequestLocalizationOptions>(options =>
+            services.Configure<RequestLocalizationOptions>(options =>
             {
                 CultureInfo[] supportedCultures = new[]
                 {
@@ -217,11 +218,11 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
                     };
             });
 
-            builder.Services.AddSignalR();
+            services.AddSignalR();
             
-            builder.Services.AddOptions();
+            services.AddOptions();
 
-            _ = builder.Services.AddCors(options =>
+            _ = services.AddCors(options =>
                 {
                     options.AddPolicy("CorsPolicy", builder =>
                     {
@@ -231,13 +232,13 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
 
             // Add the system clock service
-            _ = builder.Services.AddSingleton<ISystemClock, SystemClock>();
+            _ = services.AddSingleton<ISystemClock, SystemClock>();
 
-           _ = builder.Services.AddSingleton<IConnexionManager, HubConnectionManager>();
-            _ = builder.Services.AddSingleton<ILiveProcessor, LiveProcessor>();
-            _ = builder.Services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
+           _ = services.AddSingleton<IConnexionManager, HubConnectionManager>();
+            _ = services.AddSingleton<ILiveProcessor, LiveProcessor>();
+            _ = services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
 
-builder.Services.AddMvc(config =>
+            services.AddMvc(config =>
             {
                 /* var policy = new AuthorizationPolicyBuilder()
                   .RequireAuthenticatedUser()
@@ -260,9 +261,8 @@ builder.Services.AddMvc(config =>
                 options.ResourcesPath = "Resources";
             }).AddDataAnnotationsLocalization();
 
-var services = builder.Services;
 
-  _ = services.AddTransient<ITrueEmailSender, MailSender>();
+            _ = services.AddTransient<ITrueEmailSender, MailSender>();
             _ = services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>();
             _ = services.AddTransient<IYavscMessageSender, YavscMessageSender>();
             _ = services.AddTransient<IBillingService, BillingService>();
@@ -299,7 +299,6 @@ var services = builder.Services;
             _ = services.AddControllersWithViews()
             .AddNewtonsoftJson();
             LoadGoogleConfig(configuration);
-
             
         return builder.Build();
     }
@@ -314,6 +313,9 @@ var services = builder.Services;
         app.UseRouting();
         app.UseIdentityServer();
         app.UseAuthorization();
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
         app.MapRazorPages()
         .RequireAuthorization();
         ConfigureWorkflow();
@@ -329,6 +331,7 @@ var services = builder.Services;
             payPalSettings, googleAuthSettings, localization, loggerFactory,
             app.Environment.EnvironmentName );
         app.ConfigureFileServerApp();
+        
         return app;
     }
 

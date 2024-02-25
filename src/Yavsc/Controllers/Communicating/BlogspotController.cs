@@ -48,7 +48,7 @@ namespace Yavsc.Controllers
             return View();
         }
 
-        [Route("/Title/{id?}")]
+        [Route("~/Title/{id?}")]
         [AllowAnonymous]
         public IActionResult Title(string id)
         {
@@ -61,7 +61,7 @@ namespace Yavsc.Controllers
             ).ToList());
         }
 
-        [Route("/Blog/{userName}/{pageLen?}/{pageNum?}")]
+        [Route("~/Blog/{userName}/{pageLen?}/{pageNum?}")]
         [AllowAnonymous]
         public async Task<IActionResult> UserPosts(string userName, int pageLen=10, int pageNum=0)
         {
