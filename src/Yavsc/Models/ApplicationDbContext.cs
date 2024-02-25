@@ -42,6 +42,14 @@ namespace Yavsc.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public ApplicationDbContext()
+        {
+
+        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+
+        }  
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -89,15 +97,7 @@ namespace Yavsc.Models
        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!string.IsNullOrWhiteSpace(Startup.ConnectionString))
-                {
-                    optionsBuilder.UseNpgsql(Startup.ConnectionString);
-                    return;
-                }
-
             var appSetup = (string) AppDomain.CurrentDomain.GetData(Constants.YavscConnectionStringEnvName);
-
-            
             if (!string.IsNullOrWhiteSpace(appSetup)) 
             {
                 optionsBuilder.UseNpgsql(appSetup);

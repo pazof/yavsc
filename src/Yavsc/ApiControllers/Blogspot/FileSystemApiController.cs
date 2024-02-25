@@ -130,7 +130,7 @@ namespace Yavsc.ApiControllers
                 u => u.Id == uid
             );
             try {
-                if (Startup.UserFilesOptions.FileProvider.GetFileInfo(Path.Combine(user.UserName, query.id)).Exists)
+                if (Config.UserFilesOptions.FileProvider.GetFileInfo(Path.Combine(user.UserName, query.id)).Exists)
                 {
                     var result = user.MoveUserFile(query.id, query.to);
                     if (!result.Done) return new BadRequestObjectResult(result);

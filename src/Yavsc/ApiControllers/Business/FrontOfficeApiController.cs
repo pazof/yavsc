@@ -34,10 +34,23 @@ namespace Yavsc.ApiControllers
             if (queryId == 0) return BadRequest("queryId");
             var billing = BillingService.GetBillable(dbContext, billingCode, queryId);
             if (billing == null) return BadRequest();
-            billing.Rejected = true;
-            billing.RejectedAt = DateTime.Now;
+            billing.Decided = true;
+            billing.Accepted = false;
             dbContext.SaveChanges();
             return Ok();
+        }
+         [HttpPost("query/reject")]
+        public IActionResult AcceptQuery(string billingCode, long queryId)
+        {
+            if (billingCode == null) return BadRequest("billingCode");
+            if (queryId == 0) return BadRequest("queryId");
+            var billing = BillingService.GetBillable(dbContext, billingCode, queryId);
+            if (billing == null) return BadRequest();
+            billing.Accepted = true;
+            billing.Decided = true;
+            dbContext.SaveChanges();
+            return Ok();
+
         }
     }
 }

@@ -2,9 +2,10 @@ using System;
 
 namespace Yavsc.Abstract.Workflow
 {
-    public interface IDecidableQuery: IQuery
+    public interface IDecidableQuery: IBaseTrackedEntity, IQuery
     {
-         bool Rejected { get; set; }
-         DateTime RejectedAt { get; set; }
+         bool Decided { get; set; }
+         bool Accepted { get; set; }
+         
     }
 }

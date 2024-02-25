@@ -50,9 +50,10 @@ namespace Yavsc.Services
         readonly ApplicationDbContext _dbContext;
         readonly IStringLocalizer _localizer;
 
-        public HubConnectionManager()
+        public HubConnectionManager(IServiceScopeFactory ssf )
         {
-            var scope = Startup.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            
+            var scope = ssf.CreateScope();
             _dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
             var loggerFactory = scope.ServiceProvider.GetService<ILoggerFactory>();
             _logger = loggerFactory.CreateLogger<HubConnectionManager>();

@@ -7,14 +7,11 @@ namespace Yavsc
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
-        }
-
-        public static IWebHost BuildWebHost(string[] args)  {
-            return WebHost.CreateDefaultBuilder(args).UseStartup<Startup>().Build();
+            var builder = WebApplication.CreateBuilder(args);
+            var app = builder
+                .ConfigureServices()
+                .ConfigurePipeline();
+            app.Run();
         }
     }
 }
-
-
-

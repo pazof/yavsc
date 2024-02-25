@@ -50,7 +50,7 @@ namespace Yavsc.Helpers
         }
         public static string GetSender(this ApplicationUser user)
         {
-            return user.UserName+" ["+user.Id+"@"+Startup.Authority+"]";
+            return user.UserName+" ["+user.Id+"@"+Config.Authority+"]";
         }
         public static HairCutQueryEvent CreateEvent(this HairMultiCutQuery query,
         IStringLocalizer SR, BrusherProfile bpr)

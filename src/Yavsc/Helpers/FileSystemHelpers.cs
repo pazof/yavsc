@@ -21,7 +21,7 @@ namespace Yavsc.Helpers
                 FileName = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, estimateId)
             };
 
-            var destFileName = Path.Combine(Startup.SiteSetup.Bills, item.FileName);
+            var destFileName = Path.Combine(Config.SiteSetup.Bills, item.FileName);
 
             var fi = new FileInfo(destFileName);
             if (fi.Exists) item.Overriden = true;
@@ -44,7 +44,7 @@ namespace Yavsc.Helpers
         /// <param name="source"></param>
         private static void CreateAvatars(this ApplicationUser user, Bitmap source)
         {
-            var dir = Startup.SiteSetup.Avatars;
+            var dir = Config.SiteSetup.Avatars;
             var name = user.UserName + ".png";
             var smallname = user.UserName + ".s.png";
             var xsmallname = user.UserName + ".xs.png";
@@ -235,12 +235,12 @@ namespace Yavsc.Helpers
         public static HtmlString FileLink(this RemoteFileInfo info, string username, string subpath)
         {
             return new HtmlString( 
-                $"{Startup.UserFilesOptions.RequestPath}/{username}/{subpath}/{info.Name}" );
+                $"{Config.UserFilesOptions.RequestPath}/{username}/{subpath}/{info.Name}" );
         }
 
         public static RemoteFileInfo FileInfo(this ApplicationUser user, string path)
         {
-            IFileInfo info = Startup.UserFilesOptions.FileProvider.GetFileInfo($"{user.UserName}/{path}");
+            IFileInfo info = Config.UserFilesOptions.FileProvider.GetFileInfo($"{user.UserName}/{path}");
             if (!info.Exists) return null;
             return new RemoteFileInfo{ Name = info.Name, Size = info.Length, LastModified = info.LastModified.UtcDateTime };
 
@@ -253,7 +253,7 @@ namespace Yavsc.Helpers
                 FileName = user.UserName + ".png"
             };
 
-            var destFileName = Path.Combine(Startup.SiteSetup.Avatars, item.FileName);
+            var destFileName = Path.Combine(Config.SiteSetup.Avatars, item.FileName);
 
             var fi = new FileInfo(destFileName);
             if (fi.Exists) item.Overriden = true;
@@ -289,7 +289,7 @@ namespace Yavsc.Helpers
                 }
 
             }
-            item.DestDir = Startup.AvatarsOptions.RequestPath.ToUriComponent();
+            item.DestDir = Config.AvatarsOptions.RequestPath.ToUriComponent();
             user.Avatar = $"{item.DestDir}/{item.FileName}";
             return item;
         }
@@ -298,7 +298,7 @@ namespace Yavsc.Helpers
         {
             if (flow.DifferedFileName==null) return null;
             // no server-side backup for this stream
-            return $"{Startup.UserFilesOptions.RequestPath}/{flow.Owner.UserName}/live/"+GetFileName(flow);
+            return $"{Config.UserFilesOptions.RequestPath}/{flow.Owner.UserName}/live/"+GetFileName(flow);
         }
         
         public static string GetFileName (this LiveFlow flow)

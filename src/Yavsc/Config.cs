@@ -1,9 +1,37 @@
 ﻿using Duende.IdentityServer.Models;
+using Yavsc.Settings;
 
 namespace Yavsc;
 
 public static class Config
 {
+        public static string Authority { get;  set; }
+
+        public static IConfigurationRoot? GoogleWebClientConfiguration { get;  set; }
+        public static GoogleServiceAccount? GServiceAccount { get;  set; }
+
+        public static SiteSettings SiteSetup { get;  set; }
+        public static FileServerOptions UserFilesOptions { get; set; }
+        public static FileServerOptions GitOptions { get; set; }
+        public static string AvatarsDirName {  set; get; }
+        public static string GitDirName {  set; get; }
+
+    public static GoogleAuthSettings GoogleSettings { get;  set; }
+    public static SmtpSettings SmtpSetup { get;  set; }
+    public static string Temp { get;  set; }
+        public static FileServerOptions AvatarsOptions { get; set; }
+        public static string UserBillsDirName {  set; get; }
+        public static string UserFilesDirName {  set; get; }
+
+
+
+        /// <summary>
+        /// Lists Available user profile classes,
+        /// populated at startup, using reflexion.
+        /// </summary>
+        public static List<Type> ProfileTypes = new List<Type>();
+
+
     public static IEnumerable<IdentityResource> IdentityResources =>
         new IdentityResource[]
         {
@@ -41,12 +69,14 @@ public static class Config
 
                 AllowedGrantTypes = GrantTypes.Code,
 
-                RedirectUris = { "https://localhost:5001/signin-oidc" },
-                FrontChannelLogoutUri = "https://localhost:5001/signout-oidc",
-                PostLogoutRedirectUris = { "https://localhost:5001/signout-callback-oidc" },
+                RedirectUris = { "https://localhost:5003/signin-oidc" },
+                FrontChannelLogoutUri = "https://localhost:5003/signout-oidc",
+                PostLogoutRedirectUris = { "https://localhost:5003/signout-callback-oidc" },
 
                 AllowOfflineAccess = true,
                 AllowedScopes = { "openid", "profile", "scope2" }
             },
         };
+
+    public static PayPalSettings PayPalSettings { get; set; }
 }

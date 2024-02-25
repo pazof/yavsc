@@ -14,11 +14,11 @@ namespace Yavsc.Controllers
     public class ActivityController : Controller
     {
         private readonly ApplicationDbContext _context;
-        readonly IStringLocalizer<Yavsc.YavscLocalisation> SR;
+        readonly IStringLocalizer<Yavsc.YavscLocalization> SR;
         readonly ILogger logger;
 
         public ActivityController(ApplicationDbContext context, 
-        IStringLocalizer<Yavsc.YavscLocalisation> SR,
+        IStringLocalizer<Yavsc.YavscLocalization> SR,
         ILoggerFactory loggerFactory)
         {
             _context = context;
@@ -35,7 +35,7 @@ namespace Yavsc.Controllers
 
         private void SetSettingClasseInfo(string currentCode = null)
         {
-            var items = Startup.ProfileTypes.Select(
+            var items = Config.ProfileTypes.Select(
                 pt => new SelectListItem
                 {
                     Text = SR[pt.FullName],

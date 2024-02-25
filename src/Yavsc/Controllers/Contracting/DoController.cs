@@ -60,7 +60,7 @@ namespace Yavsc.Controllers
             }
             bool hasConfigurableSettings = (userActivity.Does.SettingsClassName != null);
             var settings = await billing.GetPerformerSettingsAsync(activityCode,id);
-            ViewBag.ProfileType = Startup.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName);
+            ViewBag.ProfileType = Config.ProfileTypes.Single(t=>t.FullName==userActivity.Does.SettingsClassName);
              
             var gift = new UserActivityViewModel {
                     Declaration = userActivity,

@@ -97,7 +97,7 @@
     $(document).ready(function(){
     $("#Location_Address").googlegeocode({
         culture: '@System.Globalization.CultureInfo.CurrentCulture.Name',
-        mapsApiKey: '@Startup.GoogleSettings.BrowserApiKey',
+        mapsApiKey: '@Config.GoogleSettings.BrowserApiKey',
         mapId: 'map',
         longId: 'Location_Longitude',
         latId: 'Location_Latitude',

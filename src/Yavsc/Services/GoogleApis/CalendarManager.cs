@@ -48,8 +48,8 @@ namespace Yavsc.Services
 
         public CalendarManager(ILoggerFactory loggerFactory)
         {
-            _client_id = Startup.GoogleWebClientConfiguration["web:cient_id"];
-            _client_secret = Startup.GoogleWebClientConfiguration["web:cient_secret"];
+            _client_id = Config.GoogleWebClientConfiguration["web:cient_id"];
+            _client_secret = Config.GoogleWebClientConfiguration["web:cient_secret"];
             _logger = loggerFactory.CreateLogger<CalendarManager>();
         }
 

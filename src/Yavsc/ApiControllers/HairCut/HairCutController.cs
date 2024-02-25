@@ -166,7 +166,7 @@ namespace Yavsc.ApiControllers
 
             if (payment==null) {
                 _logger.LogError("Error doing SetExpressCheckout, aborting.");
-                _logger.LogError(JsonConvert.SerializeObject(Startup.PayPalSettings));
+                _logger.LogError(JsonConvert.SerializeObject(Config.PayPalSettings));
                 return new StatusCodeResult(500);
             }
             switch (payment.Ack)

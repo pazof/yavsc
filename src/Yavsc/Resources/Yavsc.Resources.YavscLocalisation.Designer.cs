@@ -16,7 +16,7 @@ namespace Yavsc {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class YavscLocalisation {
+    public partial class YavscLocalization {
         
         private static System.Resources.ResourceManager resourceMan;
         
@@ -26,7 +26,7 @@ namespace Yavsc {
         public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
-                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager(("Yavsc.Resources." + "Yavsc.YavscLocalisation"), typeof(YavscLocalisation).GetTypeInfo().Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager(("Yavsc.Resources." + "Yavsc.YavscLocalisation"), typeof(YavscLocalization).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -34,7 +34,7 @@ namespace Yavsc.Controllers
           IOptions<GoogleAuthSettings> googleSettings,
           IYavscMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
-          IStringLocalizer<Yavsc.YavscLocalisation> localizer,
+          IStringLocalizer<Yavsc.YavscLocalization> localizer,
           ITrueEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,

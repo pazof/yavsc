@@ -33,7 +33,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             } 
             */
-            var info = Startup.GitOptions.FileProvider.GetFileInfo(path);
+            var info = Config.GitOptions.FileProvider.GetFileInfo(path);
             if (!info.Exists)
                 return NotFound();
             var stream = info.CreateReadStream();

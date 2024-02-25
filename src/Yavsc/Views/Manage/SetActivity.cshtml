@@ -125,7 +125,7 @@
     $(document).ready(function(){
     $("#OrganizationAddress_Address").googlegeocode({
         culture: '@System.Globalization.CultureInfo.CurrentCulture.Name',
-        mapsApiKey: '@Startup.GoogleSettings.BrowserApiKey',
+        mapsApiKey: '@Config.GoogleSettings.BrowserApiKey',
         mapId: 'map',
         longId: 'OrganizationAddress_Longitude',
         latId: 'OrganizationAddress_Latitude',
