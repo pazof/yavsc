@@ -11,9 +11,11 @@ namespace Yavsc.Helpers {
         public static List<SelectListItem> ActivityItems(
             this ApplicationDbContext _dbContext, List<UserActivity> activity)
         {
+            var activities = activity.ToArray();
+
             List<SelectListItem> items = _dbContext.Activities.Select(
             x=> new SelectListItem() {
-                Value = x.Code, Text = x.Name, Selected = activity.Any(a=>a.DoesCode == x.Code)
+                Value = x.Code, Text = x.Name, Selected = activities.Any(a=>a.DoesCode == x.Code)
                 } ).ToList();
            
             return items;

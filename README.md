@@ -15,11 +15,10 @@ C'est une application mettant en oeuvre une prise de contact entre un demandeur 
  dotnet build
 ```
 
-
 et, pour execution en environement de développement
 
 ```
-    [monoperso] ~/workspace/yavsc/Yavsc @ ASPNETCORE_ENV=Development dotnet run
+   ~/workspace/yavsc/Yavsc @ ASPNETCORE_ENV=Development dotnet run
 ```
 
 ## Tests

@@ -57,29 +57,29 @@ window.ChatHubHandler = (function ($) {
       addChatUser(username);
     };
 
-    var chat = $.connection.chatHub;
-    // Create a function that the hub can call back to display messages.
-    chat.client.addMessage = function (name, room, message) {
-      // Add the message to the page.
-      var $userTag = $('<a>' + htmlEncode(name) + '</a>').click(function () {
-        buildPv(name);
+    var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub")
+    .configureLogging(signalR.LogLevel.Debug).build();
+
+    connection.on('ReceiveMessage',   (m) => {
+      var $userTag = $('<a>' + htmlEncode(m.name) + '</a>').click(function () {
+        buildPv(m.name);
       });
       var $li = $('<li class="discussion"></li>');
       $userTag.appendTo($li);
-      $li.append(' ' + htmlEncode(message));
-      $li.appendTo($('#r' + room));
-    };
-
-    chat.client.addPV = function (name, message) {
+      $li.append(' ' + htmlEncode(m.message));
+      $li.appendTo($('#r' + m.room));
+    });
+ 
+    connection.on("addPV",  (name, message) => {
       if (!$('#mute').prop('checked')) {
         audio.play();
       }
       buildPv(name);
       // Add the pv to the page.
       $('#u' + name).append('<li class="pv"><strong>' + htmlEncode(name) + '</strong>: ' + htmlEncode(message) + '</li>');
-    };
+    });
 
-    chat.client.notifyRoom = function (tag, targetid, message) {
+    connection.on("notifyRoom", (tag, targetid, message) => {
       // Add the notification to the page.
       if (tag === 'connected' || tag === 'reconnected') {
         onUserConnected(targetid, message);
@@ -91,9 +91,9 @@ window.ChatHubHandler = (function ($) {
       // eslint-disable-next-line no-warning-comments
       // TODO reconnected userpart userjoin deniedpv
       $('<li></li>').addClass(tag).append(tag + ': ').append(message).addClass(tag).appendTo($('#room_' + targetid));
-    };
+    });
 
-    chat.client.notifyUser = function (tag, targetid, message) {
+    connection.on("notifyUser", (tag, targetid, message) => {
       // Add the notification to the page.
       if (tag === 'connected' || tag === 'reconnected') {
         onUserConnected(targetid, message);
@@ -103,22 +103,22 @@ window.ChatHubHandler = (function ($) {
         return;
       }
       $('<li></li>').append(tag + ': ' + targetid + ': ').append(message).addClass(tag).appendTo(notifications);
-    };
+    });
 
-    chat.client.notifyUserInRoom = function (tag, room, message) {
+    connection.on("notifyUserInRoom", (tag, room, message) => {
       $('<li></li>').append(tag + ': ').append(message).addClass(tag).appendTo($('#room_' + room));
-    };
+    });
 
-    chat.client.addPublicStream = function (pubStrInfo) {
+    connection.on("addPublicStream", (pubStrInfo) => {
       $('<li></li>').append(pubStrInfo.sender + ': ')
         .append('<a href="' + pubStrInfo.url + '">' + pubStrInfo.title + '</a>').append('[' + pubStrInfo.mediaType + ']').addClass('streaminfo').appendTo(notifications);
-    };
+    });
 
-    chat.client.push = function (what, data) {
+    connection.on("push", (what, data) => {
       $('<li></li>').append(what + ': ')
         .append(data).addClass('event').appendTo(notifications);
-    };
-
+    });
+    
     var setChanInfo = function (chanInfo) {
       if (chanInfo) {
         var chanId = 'r' + chanInfo.Name;
@@ -139,13 +139,16 @@ window.ChatHubHandler = (function ($) {
       }
     };
 
+    connection.on("joint",  (chatInfo) => {
+        setChanInfo(chatInfo);
+        setActiveChan('r' + chatInfo.Name);
+    }); 
+
     var join = function (roomName) {
-      chat.server.join(roomName).done(function (chatInfo) {
-        if (chatInfo) {
-          setChanInfo(chatInfo);
-          setActiveChan('r' + chatInfo.Name);
-        }
-      });
+      connection.invoke("join", roomName)
+      .catch(function (err) {
+        return console.error(err.toString());
+    });
     };
 
     var chatbar = $('<div class="chatbar form-group"></div>');
@@ -191,7 +194,7 @@ window.ChatHubHandler = (function ($) {
         .keydown(function (ev) {
           if (ev.which == 13) {
             if (this.value.length == 0) return;
-            sendCmd(chanName, this.value);
+            connection.invoke(sendCmd, chanName, this.value);
             this.value = '';
           }
         }).appendTo(roomview);
@@ -202,7 +205,7 @@ window.ChatHubHandler = (function ($) {
 
     var buildRoom = function (roomName) {
       if (!chans.some(function (cname) { return cname == roomName; })) {
-        buildChan('#', 'r', roomName, chat.server.send);
+        buildChan('#', 'r', roomName, "send");
       }
     };
 
@@ -216,8 +219,8 @@ window.ChatHubHandler = (function ($) {
 
     var buildPv = function (userName) {
       if (!userlist.some(function (uname) { return uname == userName; })) {
-        if (userName[0] == '?') buildChan('@?', 'a', userName.slice(1), chat.server.sendPV);
-        else buildChan('@', 'u', userName, chat.server.sendPV);
+        if (userName[0] == '?') buildChan('@?', 'a', userName.slice(1), "sendPV");
+        else buildChan('@', 'u', userName, "sendPV");
       }
     };
 
@@ -247,19 +250,14 @@ window.ChatHubHandler = (function ($) {
     }
 
 
-    // Start the connection.
-    $.connection.hub.start().done(function () {
-      onCx();
+    connection.onclose(function () {
+      onDisCx();
+      setTimeout(startCx, 30000); // Re-start connection after 30 seconds
     });
 
-    $.connection.hub.disconnected(function () {
-      onDisCx();
-      setTimeout(function () {
-        $.connection.hub.start().done(function () {
-          onCx();
-        });
-      }, 30000); // Re-start connection after 30 seconds
-    });
+    var startCx = function(){connection.start().then(onCx)};
+
+    startCx();
 
     chanName.keydown(function (event) {
       if (event.which == 13) {
@@ -306,7 +304,7 @@ window.ChatHubHandler = (function ($) {
       return encodedValue;
     }
 
-    $(window).unload(function () { $.connection.hub.stop() });
+    $(window).on("unload", function () { connection.stop() });
 
   };
 

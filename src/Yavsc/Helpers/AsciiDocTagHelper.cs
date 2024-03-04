@@ -8,14 +8,16 @@ namespace Yavsc.Helpers
     {
         public override async Task ProcessAsync (TagHelperContext context, TagHelperOutput output)
         {
+            await base.ProcessAsync(context, output);
             var content = await output.GetChildContentAsync();
             string text = content.GetContent();
             if (string.IsNullOrWhiteSpace(text)) return;
             Document document = Document.Parse(text);
-            var html = document.ToHtml(4);
+            var html = document.ToHtml(2);
             using var stringWriter = new StringWriter();
             html.WriteTo(stringWriter, HtmlEncoder.Default);
-            output.Content.AppendHtml(stringWriter.ToString());
+            var processedHere = stringWriter.ToString();
+            output.Content.AppendHtml(processedHere);
         }
     }
 }

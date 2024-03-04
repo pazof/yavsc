@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/lib/jquery"
+    },
+    {
+      "library": "jquery-ui-bootstrap@0.5pre",
+      "destination": "wwwroot/lib/jquery-ui-bootstrap"
+    },
+    {
+      "library": "jquery-ui-map@3.0-rc1",
+      "destination": "wwwroot/lib/jquery-ui-map"
+    },
+    {
+      "library": "bootstrap@5.3.3",
+      "destination": "wwwroot/lib/bootstrap"
+    },
+    {
+      "library": "popper.js@2.11.8",
+      "destination": "wwwroot/lib/popper.js"
+    },
+    {
+      "library": "dropzone@5.9.3",
+      "destination": "wwwroot/lib/dropzone"
+    },
+    {
+      "library": "eonasdan-bootstrap-datetimepicker@4.17.49",
+      "destination": "wwwroot/lib/eonasdan-bootstrap-datetimepicker"
+    },
+    {
+      "library": "bootstrap-datepicker@1.10.0",
+      "destination": "wwwroot/lib/bootstrap-datepicker"
+    },
+    {
+      "library": "signalr.js@2.4.3",
+      "destination": "wwwroot/lib/signalr.js"
+    },
+    {
+      "library": "microsoft-signalr@8.0.0",
+      "destination": "wwwroot/lib/microsoft-signalr"
+    }
+  ]
+}
