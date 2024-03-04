@@ -149,9 +149,13 @@ internal static class HostingExtensions
                 Config.GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
             }
             
-var services = builder.Services;
+        var services = builder.Services;
 
         services.AddRazorPages();
+        services.AddSignalR(o =>
+        {
+            o.EnableDetailedErrors = true;
+        });
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
@@ -218,8 +222,6 @@ var services = builder.Services;
                     };
             });
 
-            services.AddSignalR();
-            
             services.AddOptions();
 
             _ = services.AddCors(options =>
@@ -312,12 +314,15 @@ var services = builder.Services;
         app.UseStaticFiles();
         app.UseRouting();
         app.UseIdentityServer();
+        //app.UseSignalR();
         app.UseAuthorization();
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
         app.MapRazorPages()
         .RequireAuthorization();
+        app.MapHub<ChatHub>("/chatHub");
+        app.MapAreaControllerRoute("api", "api", "~/api/{controller}/{action}/{id?}");
         ConfigureWorkflow();
         var services = app.Services;
         ILoggerFactory loggerFactory = services.GetRequiredService<ILoggerFactory>();

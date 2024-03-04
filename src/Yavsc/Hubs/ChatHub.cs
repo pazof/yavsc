@@ -68,7 +68,7 @@ namespace Yavsc
 
         public override async Task OnConnectedAsync()
         {
-            bool isAuth = (Context.User != null);
+            bool isAuth = Context.User?.Identity?.IsAuthenticated ?? false;
             bool isCop = false;
             string userName = setUserName();
             if (isAuth)
@@ -80,7 +80,7 @@ namespace Yavsc
                 await Groups.AddToGroupAsync(Context.ConnectionId, group);
                 _logger.LogInformation(_localizer.GetString(ChatHubConstants.LabAuthChatUser));
 
-                var userId = _dbContext.Users.First(u => u.UserName == userName).Id;
+                var userId = _dbContext.Users.First(u => u.UserName == Context.User.Identity.Name).Id;
 
                 await Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).SendAsync("notifyUser",  NotificationTypes.Connected, userName, null);
                 isCop = Context.User.IsInRole(Constants.AdminGroupName) ;
@@ -111,8 +111,6 @@ namespace Yavsc
                     return Context.User.Identity.Name;
                 }
             anonymousSequence++;
-
-
             var aname = $"{ChatHubConstants.AnonymousUserNamePrefix}{queryUname}{anonymousSequence}";
             SetUserName(Context.ConnectionId, aname);
             return aname;
@@ -180,6 +178,7 @@ namespace Yavsc
             } 
 
             _logger.LogInformation($"returning chan info"); 
+            await Clients.Caller.SendAsync("joint", chanInfo);
             return chanInfo;
         }
 
@@ -313,7 +312,9 @@ namespace Yavsc
                 NotifyUserInRoom(NotificationTypes.Error, roomName, notSentMsg);
                 return;
             }
-            await Clients.Group(groupname).SendAsync("addMessage", userName, roomName, message);
+            var group = Clients.Group(groupname);
+            var msg = new { Name = userName, Room = roomName, Message = message};
+            await group.SendAsync("ReceiveMessage", msg);
         }
 
         async Task NotifyUser(string type, string targetId, string message)
@@ -385,6 +386,5 @@ namespace Yavsc
             await cli.SendAsync("addStreamInfo", sender, streamId, message);
         }
 
-        
     }
 }

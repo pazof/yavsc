@@ -12,7 +12,7 @@ namespace Yavsc.Helpers
 
         public static string GetUserId(this ClaimsPrincipal user)
         {
-            return user.FindFirstValue(ClaimTypes.NameIdentifier);
+            return user.FindFirstValue("sub");
         }
         
         public static string GetUserName(this ClaimsPrincipal user)

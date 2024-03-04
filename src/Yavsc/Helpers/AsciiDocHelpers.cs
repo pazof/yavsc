@@ -60,6 +60,14 @@ namespace Yavsc.Helpers
             }
         }
 
+        public static string GetValidHRef(this Link link)
+        {
+            if (link.Href.StartsWith("link:\\"))
+                return link.Href.Substring(7);
+            if (link.Href.StartsWith("link:"))
+                return link.Href.Substring(5);
+            return link.Href;
+        }
 
         static void ToHtml(this IInlineElement elt, IHtmlContentBuilder sb)
         {
@@ -67,11 +75,26 @@ namespace Yavsc.Helpers
             {
                 case "AsciiDocNet.Link":
                     Link link = (Link)elt;
-                    sb.AppendFormat("<a href=\"{0}\">{1}</a> ", link.Href, link.Text);
+                    Uri uri;
+                    if (Uri.TryCreate(link.Href,
+                    UriKind.RelativeOrAbsolute
+                    , out uri))
+                    {
+                        if (string.IsNullOrEmpty(link.Text))
+                        {
+                            link.Text = $"{uri.Host}({uri.LocalPath})"; 
+                        }
+                    }
+                    sb.AppendFormat("<a href=\"{0}\">{1}</a> ", link.GetValidHRef(), link.Text);
                     break;
 
                 case "AsciiDocNet.TextLiteral":
-                    sb.Append(elt.ToString());
+                    var tl = elt as TextLiteral;
+                   if (tl.Attributes.Anchor!=null)
+                   {
+                         sb.AppendFormat("<a name=\"{0}\">{1}</a> ", tl.Attributes.Anchor.Id, tl.Attributes.Anchor.XRefLabel);
+                   }
+                    sb.Append(tl.Text);
                     break;
 
                 case "AsciiDocNet.Emphasis":
@@ -89,6 +112,10 @@ namespace Yavsc.Helpers
                         stritem.ToHtml(sb);
                     }
                     sb.AppendHtml("</b>");
+                    break;
+                case "AsciiDocNet.InternalAnchor":
+                    InternalAnchor a = (InternalAnchor) elt;
+                    sb.AppendFormat("<a name=\"{0}\">{1}</a> ", a.Id, a.XRefLabel);
                     break;
 
                 default:

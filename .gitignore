@@ -7,7 +7,7 @@
 .paket/
 .vscode/
 .vs/
-.dnx/
+.sass-cache/
 
 bin
 obj

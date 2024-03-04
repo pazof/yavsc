@@ -6,7 +6,6 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 
 ## Jalon 1
 
-	☐ Redirection vers la Page d'accueil à la validation du second facteur (evitera l'erreur Anti-forgery token) 
 	☐ Des spécifications détaillées du coeur de l'application
 	✔ Acces (publique) aux Blogs. @done (August 13th 2016, 0:51)
 	✔ Accès aux profiles des intervenants. @done (August 13th 2016, 0:57)

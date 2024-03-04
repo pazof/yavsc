@@ -2,55 +2,60 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+@{
+    #nullable enable
+    string? name = null;
+    if (Context.User!=null)
+    {
+        name = Context.User.GetUserName();
+    }
+}
+
 @if (SignInManager.IsSignedIn(User))
 {
-        <li class="dropdown">
-            <a class="dropdown-toggle navbar-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Plateforme <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li><a asp-controller="Bug" asp-action="Index">Bugs</a></li>
-                <li><a asp-controller="HyperLink" asp-action="Index">HyperLink</a></li>
-                <li><a asp-controller="LiveFlow" asp-action="Index">LiveFlow</a></li>
-                <li><a asp-controller="Feature" asp-action="Index">Features</a></li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Plateforme</a>
+            <ul class="dropdown-menu" aria-labelledby="dropdown04">
+                <li><a class="dropdown-item" asp-controller="Bug" asp-action="Index">Bugs</a></li>
+                <li><a class="dropdown-item" asp-controller="HyperLink" asp-action="Index">HyperLink</a></li>
+                <li><a class="dropdown-item" asp-controller="LiveFlow" asp-action="Index">LiveFlow</a></li>
+                <li><a class="dropdown-item" asp-controller="Feature" asp-action="Index">Features</a></li>
             </ul>
         </li>
         @if (User.IsInRole(Constants.AdminGroupName)) {
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                Administration <span class="caret"></span>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">
+                Administration
             </a>
             <ul class="dropdown-menu">
-                <li><a asp-controller="Administration" asp-action="Index">Index</a></li>
-                <li><a asp-controller="Activity" asp-action="Index">Activités</a></li>
-                <li><a asp-controller="CommandForms" asp-action="Index">Formulaires</a></li>
-                <li><a asp-controller="Notifications" asp-action="Index">Notifications</a></li>
-                <li><a asp-controller="SIRENExceptions" asp-action="Index">Excéptions au numéro de SIREN</a></li>
-                <li><a asp-controller="Client" asp-action="Index">Accès API</a></li>
-                <li><a asp-controller="MailingTemplate" asp-action="Index">Emailing</a></li>
+                <li><a class="dropdown-item" asp-controller="Administration" asp-action="Index">Index</a></li>
+                <li><a class="dropdown-item" asp-controller="Activity" asp-action="Index">Activités</a></li>
+                <li><a class="dropdown-item" asp-controller="CommandForms" asp-action="Index">Formulaires</a></li>
+                <li><a class="dropdown-item" asp-controller="Notifications" asp-action="Index">Notifications</a></li>
+                <li><a class="dropdown-item" asp-controller="SIRENExceptions" asp-action="Index">Excéptions au numéro de SIREN</a></li>
+                <li><a class="dropdown-item" asp-controller="Client" asp-action="Index">Accès API</a></li>
+                <li><a class="dropdown-item" asp-controller="MailingTemplate" asp-action="Index">Emailing</a></li>
             </ul>
         </li>}
-    <li>
-        <a asp-controller="Manage" class="navbar-link" asp-action="Index" title="Manage">
+    <li class="nav-item dropdown">
+         <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Hello @UserManager.GetUserName(User)!</a>
+        <ul class="dropdown-menu">
+            <li>
+        <a class="dropdown-item" asp-controller="Account" asp-action="Manage" title="Manage">
             <img src="/avatars/@(User.GetUserName()).xs.png" asp-append-version="true" class="smalltofhol" />
+            Manage your account
         </a>
-    </li>
-    <li>
-        <a class="navbar-link"asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-          Hello @UserManager.GetUserName(User)!</a>
-    </li>
-    <li>
-        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button type="submit" class="navbar-link">Logout</button>
-        </form>
+            </li>
+            <li> <a class="dropdown-item" asp-page="/Account/Logout/Index">Logout</a></li>
+        </ul>
     </li>
 }
 else
 {
-    <li>
-        <a class="navbar-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    <li class="dropdown-item">
+        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li>
-    <li class="navbar-link">
-        <a class="navbar-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    <li class="dropdown-item">
+        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
     </li>
 }
