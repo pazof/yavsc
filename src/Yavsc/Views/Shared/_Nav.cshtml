@@ -1,6 +1,6 @@
 
-<nav class="navbar navbar-dark bg-dark" aria-label="Yavsc">
-    <div class="container-fluid">
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark" aria-label="Yavsc">
+   
       <a href="~/" class="navbar-brand"><img src="~/images/it/free-sofware.svg" class="icon-banner" alt="Lua"></a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
@@ -10,22 +10,16 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbar">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a asp-controller="Blogspot" asp-action="Index" class="nav-link">@SR["Blogs"]</a>
-          </li>
+        <ul class="navbar-nav me-auto" >
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
+          <li class="nav-item"><a asp-controller="Blogspot" asp-action="Index" class="nav-link">@SR["Blogs"]</a></li>
           <li class="nav-item"><a asp-controller="Home" asp-action="Chat" class="nav-link">@SR["Chat"]</a></li>
           <li class="nav-item"><a asp-controller="Home" asp-action="Contact" class="nav-link">@SR["Contact"]</a></li>
-          <li>
-            <a asp-controller="Home" asp-action="About" class="nav-link">@SR["About"]</a></li>
+          <li class="nav-item"><a asp-controller="Home" asp-action="About" class="nav-link">@SR["About"]</a></li>
             
-        <partial name="_LoginPartial" />
+          <partial name="_LoginPartial" />
 
         </ul>
       </div>
-    </div>
   </nav>
 

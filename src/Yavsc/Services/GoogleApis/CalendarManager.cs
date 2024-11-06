@@ -27,6 +27,7 @@ using Google.Apis.Auth.OAuth2.Responses;
 
 namespace Yavsc.Services
 {
+    using Microsoft.Extensions.Options;
     using Yavsc.Models.Calendar;
     using Yavsc.Server.Helpers;
     using Yavsc.Server.Models.Calendar;
@@ -46,10 +47,10 @@ namespace Yavsc.Services
         readonly string _client_id;
         readonly string _client_secret;
 
-        public CalendarManager(ILoggerFactory loggerFactory)
+        public CalendarManager(ILoggerFactory loggerFactory, IOptions<GoogleAuthSettings> googleAuthSettings)
         {
-            _client_id = Config.GoogleWebClientConfiguration["web:cient_id"];
-            _client_secret = Config.GoogleWebClientConfiguration["web:cient_secret"];
+            _client_id = googleAuthSettings.Value.ClientId;
+            _client_secret = googleAuthSettings.Value.ClientSecret;
             _logger = loggerFactory.CreateLogger<CalendarManager>();
         }
 
