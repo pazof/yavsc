@@ -52,7 +52,10 @@ namespace Yavsc.Controllers
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly RoleManager<IdentityRole> _roleManager;
+
         public AccountController(
+            RoleManager<IdentityRole> roleManager,
             IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
@@ -69,6 +72,7 @@ namespace Yavsc.Controllers
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _roleManager = roleManager;
 
             _userManager = userManager;
             _signInManager = signInManager;
@@ -106,6 +110,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginInputModel model, string button)
         {
+
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
 
@@ -143,8 +148,8 @@ namespace Yavsc.Controllers
                 if (user!=null) {
 
                
-                    var signin = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
-
+                   var signin = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
+     
                     // validate username/password against in-memory store
                     if (signin.Succeeded)
                     {
@@ -158,17 +163,34 @@ namespace Yavsc.Controllers
                             props = new AuthenticationProperties
                             {
                                 IsPersistent = true,
-                                ExpiresUtc = DateTimeOffset.UtcNow.Add(AccountOptions.RememberMeLoginDuration)
+                                ExpiresUtc = DateTimeOffset.UtcNow.Add(AccountOptions.RememberMeLoginDuration),
+                             //   Parameters = 
                             };
                         };
 
+                        // roles
+                        var roles = _dbContext.UserRoles.Where(r=>r.UserId == user.Id).ToArray();
+
                         // issue authentication cookie with subject ID and username
-                        var isuser = new IdentityServerUser(user.Id)
+
+                        List<Claim> additionalClaims = new List<Claim>();
+
+                        foreach (var role in roles)
                         {
-                            DisplayName = user.UserName
+                            var idRole = await _roleManager.Roles.SingleOrDefaultAsync(i=>i.Id == role.RoleId);
+                            if (idRole != null)
+                            {
+                                additionalClaims.Add(new Claim(ClaimTypes.Role, idRole.Name));
+                            }
+                        }
+                        additionalClaims.Add(new Claim(ClaimTypes.Name, user.UserName));
+                        var isUser = new IdentityServerUser(user.Id)
+                        {
+                            DisplayName = user.UserName,
+                            AdditionalClaims = additionalClaims.ToArray()
                         };
 
-                        await HttpContext.SignInAsync(isuser, props);
+                        await HttpContext.SignInAsync(isUser, props);
 
                         if (context != null)
                         {
