@@ -137,6 +137,8 @@ internal static class HostingExtensions
             var siteSection = builder.Configuration.GetSection("Site");
             var smtpSection = builder.Configuration.GetSection("Smtp");
             var paypalSection = builder.Configuration.GetSection("Authentication:PayPal");
+            // OAuth2AppSettings
+            var googleAuthSettings = builder.Configuration.GetSection("Authentication:Google");
             
             string? googleClientFile = builder.Configuration["Authentication:Google:GoogleWebClientJson"];
             string? googleServiceAccountJsonFile = builder.Configuration["Authentication:Google:GoogleServiceAccountJson"];
@@ -157,7 +159,8 @@ internal static class HostingExtensions
         services.Configure<SiteSettings>(siteSection);
         services.Configure<SmtpSettings>(smtpSection);
         services.Configure<PayPalSettings>(paypalSection);
-
+        services.Configure<GoogleAuthSettings>(googleAuthSettings);
+        
         services.AddRazorPages();
         services.AddSignalR(o =>
         {
