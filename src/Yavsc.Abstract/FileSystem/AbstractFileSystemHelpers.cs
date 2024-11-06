@@ -65,9 +65,9 @@ namespace Yavsc.Helpers
             return sb.ToString();
         }
 
-        public static UserDirectoryInfo GetUserFiles(string userName, string subdir)
+        public static UserDirectoryInfo GetUserFiles(string userId, string subdir)
         {
-            UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, userName, subdir);
+            UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, userId, subdir);
             return di;
         }
         public static bool IsRegularFile(string userName, string subdir)
@@ -82,7 +82,7 @@ namespace Yavsc.Helpers
 
         public static char[] AlfaNum = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
         // Only accept descent remote file names
-        public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. %#".ToCharArray();
+        public static char[] ValidFileNameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-=_~. %#@".ToCharArray();
 
         // Estimate signature file name format
         public static Func<string, string, long, string>

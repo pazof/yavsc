@@ -21,17 +21,17 @@ namespace Yavsc.Controllers
 
         // GET: api/DimissClicksApi
         [HttpGet]
-        public IEnumerable<DimissClicked> GetDimissClicked()
+        public IEnumerable<DismissClicked> GetDismissClicked()
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return _context.DimissClicked.Where(d=>d.UserId == uid);
+            return _context.DismissClicked.Where(d=>d.UserId == uid);
         }
 
         [HttpGet("click/{noteid}"),AllowAnonymous]
         public async Task<IActionResult> Click(long noteid )
         {
             if (User.IsSignedIn())
-            return await PostDimissClicked(new DimissClicked { NotificationId= noteid, UserId = User.GetUserId()});
+            return await PostDismissClicked(new DismissClicked { NotificationId= noteid, UserId = User.GetUserId()});
             await HttpContext.Session.LoadAsync();
             var clicked = HttpContext.Session.GetString("clicked");
             if (clicked == null) {
@@ -41,8 +41,8 @@ namespace Yavsc.Controllers
             return Ok();
         }
         // GET: api/DimissClicksApi/5
-        [HttpGet("{id}", Name = "GetDimissClicked")]
-        public async Task<IActionResult> GetDimissClicked([FromRoute] string id)
+        [HttpGet("{id}", Name = "GetDismissClicked")]
+        public async Task<IActionResult> GetDismissClicked([FromRoute] string id)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != id) return new ChallengeResult();
@@ -52,34 +52,34 @@ namespace Yavsc.Controllers
                 return BadRequest(ModelState);
             }
 
-            DimissClicked dimissClicked = await _context.DimissClicked.SingleAsync(m => m.UserId == id);
+            DismissClicked DismissClicked = await _context.DismissClicked.SingleAsync(m => m.UserId == id);
 
-            if (dimissClicked == null)
+            if (DismissClicked == null)
             {
                 return NotFound();
             }
 
-            return Ok(dimissClicked);
+            return Ok(DismissClicked);
         }
 
         // PUT: api/DimissClicksApi/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDimissClicked([FromRoute] string id, [FromBody] DimissClicked dimissClicked)
+        public async Task<IActionResult> PutDismissClicked([FromRoute] string id, [FromBody] DismissClicked DismissClicked)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (uid != id || uid != dimissClicked.UserId) return new ChallengeResult();
+            if (uid != id || uid != DismissClicked.UserId) return new ChallengeResult();
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != dimissClicked.UserId)
+            if (id != DismissClicked.UserId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(dimissClicked).State = EntityState.Modified;
+            _context.Entry(DismissClicked).State = EntityState.Modified;
 
             try
             {
@@ -87,7 +87,7 @@ namespace Yavsc.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!DimissClickedExists(id))
+                if (!DismissClickedExists(id))
                 {
                     return NotFound();
                 }
@@ -102,24 +102,24 @@ namespace Yavsc.Controllers
 
         // POST: api/DimissClicksApi
         [HttpPost]
-        public async Task<IActionResult> PostDimissClicked([FromBody] DimissClicked dimissClicked)
+        public async Task<IActionResult> PostDismissClicked([FromBody] DismissClicked DismissClicked)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (uid != dimissClicked.UserId) return new ChallengeResult();
+            if (uid != DismissClicked.UserId) return new ChallengeResult();
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.DimissClicked.Add(dimissClicked);
+            _context.DismissClicked.Add(DismissClicked);
             try
             {
                 await _context.SaveChangesAsync(User.GetUserId());
             }
             catch (DbUpdateException)
             {
-                if (DimissClickedExists(dimissClicked.UserId))
+                if (DismissClickedExists(DismissClicked.UserId))
                 {
                     return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -129,12 +129,12 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return CreatedAtRoute("GetDimissClicked", new { id = dimissClicked.UserId }, dimissClicked);
+            return CreatedAtRoute("GetDismissClicked", new { id = DismissClicked.UserId }, DismissClicked);
         }
 
         // DELETE: api/DimissClicksApi/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDimissClicked([FromRoute] string id)
+        public async Task<IActionResult> DeleteDismissClicked([FromRoute] string id)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!User.IsInRole("Administrator"))
@@ -145,16 +145,16 @@ namespace Yavsc.Controllers
                 return BadRequest(ModelState);
             }
 
-            DimissClicked dimissClicked = await _context.DimissClicked.SingleAsync(m => m.UserId == id);
-            if (dimissClicked == null)
+            DismissClicked DismissClicked = await _context.DismissClicked.SingleAsync(m => m.UserId == id);
+            if (DismissClicked == null)
             {
                 return NotFound();
             }
 
-            _context.DimissClicked.Remove(dimissClicked);
+            _context.DismissClicked.Remove(DismissClicked);
             await _context.SaveChangesAsync(User.GetUserId());
 
-            return Ok(dimissClicked);
+            return Ok(DismissClicked);
         }
 
         protected override void Dispose(bool disposing)
@@ -166,9 +166,9 @@ namespace Yavsc.Controllers
             base.Dispose(disposing);
         }
 
-        private bool DimissClickedExists(string id)
+        private bool DismissClickedExists(string id)
         {
-            return _context.DimissClicked.Count(e => e.UserId == id) > 0;
+            return _context.DismissClicked.Count(e => e.UserId == id) > 0;
         }
     }
 }

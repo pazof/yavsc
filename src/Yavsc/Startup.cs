@@ -61,14 +61,13 @@ public  class Startup
                     Config.SiteSetup.DataDir = "AppData"+environmentName;
                     logger.LogInformation("Using: "+Config.SiteSetup.DataDir);
                 } else logger.LogInformation("Using value from settings: "+Config.SiteSetup.DataDir);
-                    DirectoryInfo di = new DirectoryInfo(Config.SiteSetup.DataDir);
+                DirectoryInfo di = new DirectoryInfo(Config.SiteSetup.DataDir);
                 if (!di.Exists)
                 {
                     di.Create();
                     logger.LogWarning("Created dir : "+di.FullName);
                 }
-                else logger.LogInformation("Using existing directory: "+di.Name);
-                Config.SiteSetup.DataDir = Path.Combine(Directory.GetCurrentDirectory(),di.Name);
+                logger.LogInformation("Using existing directory: "+di.FullName);
                 Environment.SetEnvironmentVariable("APPDATA", Config.SiteSetup.DataDir);
                 logger.LogWarning("It has been set to : "+Environment.GetEnvironmentVariable("APPDATA"));
             }

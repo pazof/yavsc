@@ -7,10 +7,10 @@ namespace Yavsc.Models.Relationship
 {
     public class Contact: IContact
     {
-        [YaRequired()]
+        [Required()]
         public string UserId { get; set; }
 
-        [YaRequired()]
+        [Required()]
         public string OwnerId { get; set; }
 
         public string Name { get; set; }
@@ -22,10 +22,10 @@ namespace Yavsc.Models.Relationship
         public virtual PostalAddress PostalAddress { get; set; }
 
 
-        [ForeignKeyAttribute("OwnerId"),NotMapped]
+        [ForeignKey("OwnerId"),NotMapped]
         public virtual ApplicationUser Owner { get; set; }
 
-        [ForeignKeyAttribute("UserId"),NotMapped]
+        [ForeignKey("UserId"),NotMapped]
         public virtual ApplicationUser User { get; set; }
     }
 }

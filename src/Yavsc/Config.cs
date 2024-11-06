@@ -1,4 +1,5 @@
-﻿using Duende.IdentityServer.Models;
+﻿
+using IdentityServer4.Models;
 using Yavsc.Settings;
 
 namespace Yavsc;

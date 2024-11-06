@@ -5,7 +5,6 @@
         "tests"
     ],
     "sdk": {
-      "version": "8.0.200",  
       "runtime": "dotnet",
       "architecture": "x64"
     },

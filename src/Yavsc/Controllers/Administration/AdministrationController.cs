@@ -103,16 +103,23 @@ namespace Yavsc.Controllers
                 await _userManager.FindByIdAsync(User.GetUserId()),
                 Constants.AdminGroupName);
            
-            var roles = _roleManager.Roles.Select(x => new RoleInfo {
+            var roles = await _roleManager.Roles.Select(x => new RoleInfo {
                 Id = x.Id,
-                Name = x.Name
-            });
+                Name = x.Name            
+                }).ToArrayAsync();
+            foreach (var role in roles)
+            {
+                var uinrole = await _userManager.GetUsersInRoleAsync(role.Name);
+
+                role.UserCount = uinrole.Count();
+            }
             var assembly = GetType().Assembly;
            ViewBag.ThisAssembly = assembly.FullName;
            ViewBag.RunTimeVersion = assembly.ImageRuntimeVersion;
+           var rolesArray = roles.ToArray();
             return View(new AdminViewModel
             {
-                Roles = roles.ToArray(),
+                Roles = rolesArray,
                 AdminCount = adminCount.Count,
                 YouAreAdmin = youAreAdmin,
                 UserCount = userCount
