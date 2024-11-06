@@ -1,15 +1,14 @@
 namespace Yavsc.ViewModels.Account
 {
-    public class LoginViewModel
+    public class LoginViewModel : LoginInputModel
     {
-        public string UserName { get; set; }
+        public bool AllowRememberLogin { get; set; } = true;
+        public bool EnableLocalLogin { get; set; } = true;
 
-        public string Password { get; set; }
-        
-        public bool RememberMe { get; set; }
+        public IEnumerable<ExternalProvider> ExternalProviders { get; set; } = Enumerable.Empty<ExternalProvider>();
+        public IEnumerable<ExternalProvider> VisibleExternalProviders => ExternalProviders.Where(x => !String.IsNullOrWhiteSpace(x.DisplayName));
 
-        public string ReturnUrl { get; set; }
-        
-        public string Provider { get; set; }
+        public bool IsExternalLoginOnly => EnableLocalLogin == false && ExternalProviders?.Count() == 1;
+        public string ExternalLoginScheme => IsExternalLoginOnly ? ExternalProviders?.SingleOrDefault()?.AuthenticationScheme : null;
     }
 }

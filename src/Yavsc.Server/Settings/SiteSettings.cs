@@ -26,12 +26,12 @@ namespace Yavsc
         /// Owner's email
         /// </summary>
         /// <returns></returns>
-        public Contact Owner { get; set; }
+        public StaticContact Owner { get; set; }
         /// <summary>
         /// Administrator's email
         /// </summary>
         /// <returns></returns>
-        public Contact Admin { get; set; }
+        public StaticContact Admin { get; set; }
 
         public string DataDir { get; set; }
         public string Avatars { get; set; } = "avatars";

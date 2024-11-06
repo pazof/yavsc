@@ -8,7 +8,7 @@
 <h3>Rôles</h3>
 <ul>
 @foreach (var role in Model.Roles) {
-<li>@Html.ActionLink(role.Name,"Role",new { id=role.Id }) (@role.Users.Length membres)</li>
+<li>@Html.ActionLink(role.Name,"Role",new { id=role.Id }) (@role.UserCount membres)</li>
 }
 </ul>
 <h3>Administrateurs</h3>

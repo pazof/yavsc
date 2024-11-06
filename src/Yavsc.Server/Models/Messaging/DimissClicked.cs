@@ -4,7 +4,7 @@ using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Messaging
 {
-    public class DimissClicked
+    public class DismissClicked
     {
         [YaRequired]
         public string UserId { get; set; }

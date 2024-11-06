@@ -41,21 +41,21 @@
          <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Hello @UserManager.GetUserName(User)!</a>
         <ul class="dropdown-menu">
             <li>
-        <a class="dropdown-item" asp-controller="Account" asp-action="Manage" title="Manage">
+        <a class="dropdown-item" asp-controller="Manage" asp-action="Index" title="Manage">
             <img src="/avatars/@(User.GetUserName()).xs.png" asp-append-version="true" class="smalltofhol" />
             Manage your account
         </a>
             </li>
-            <li> <a class="dropdown-item" asp-page="/Account/Logout/Index">Logout</a></li>
+            <li> <a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
         </ul>
     </li>
 }
 else
 {
     <li class="dropdown-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="nav-link" asp-controller="Account" asp-action="Register" >Register</a>
     </li>
     <li class="dropdown-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="nav-link" asp-controller="Account" asp-action="Login" asp-route-ReturnUrl="~/" >Login</a>
     </li>
 }

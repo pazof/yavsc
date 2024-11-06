@@ -5,12 +5,18 @@ namespace Yavsc.ViewModels.Account
 {
     public class ResetPasswordViewModel
     {
-        [YaRequired]
+        [Required]
+        public string Id { get; set; }
+
+        [Required]
+        public string Code { get; set; }
+        
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
 
-        [YaRequired]
-        [YaStringLength(100, ErrorMessage = "Le {0} doit être long d'au moins {2} caractères.", MinimumLength = 6)]
+        [Required]
+        [StringLength(100, ErrorMessage = "Le {0} doit être long d'au moins {2} caractères.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

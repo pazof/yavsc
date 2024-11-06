@@ -37,12 +37,12 @@ namespace Yavsc.Controllers
             long[] clicked = null;
             if (uid == null)
             {
-                await HttpContext.Session.LoadAsync();
+                // await HttpContext.Session.LoadAsync();
                 var strclicked = HttpContext.Session.GetString("clicked");
                 if (strclicked != null) clicked = strclicked.Split(':').Select(c => long.Parse(c)).ToArray();
                 if (clicked == null) clicked = new long[0];
             }
-            else clicked = _dbContext.DimissClicked.Where(d => d.UserId == uid).Select(d => d.NotificationId).ToArray();
+            else clicked = _dbContext.DismissClicked.Where(d => d.UserId == uid).Select(d => d.NotificationId).ToArray();
             var notes = _dbContext.Notification.Where(
                 n => !clicked.Contains(n.Id)
             );

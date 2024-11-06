@@ -43,7 +43,7 @@ namespace Yavsc.ApiControllers
         { 
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             // _logger.LogInformation($"listing files from {User.Identity.Name}{subdir}");
-            var files = AbstractFileSystemHelpers.GetUserFiles(User.Identity.Name, subdir);
+            var files = AbstractFileSystemHelpers.GetUserFiles(User.GetUserId(), subdir);
             return Ok(files);
         }
 

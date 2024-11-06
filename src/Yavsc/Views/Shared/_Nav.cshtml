@@ -1,5 +1,5 @@
-@using Duende.IdentityServer.Extensions
-<nav class="navbar navbar-expand-md navbar-dark bg-dark" aria-label="Yavsc">
+
+<nav class="navbar navbar-dark bg-dark" aria-label="Yavsc">
     <div class="container-fluid">
       <a href="~/" class="navbar-brand"><img src="~/images/it/free-sofware.svg" class="icon-banner" alt="Lua"></a>
 
@@ -22,7 +22,7 @@
           <li>
             <a asp-controller="Home" asp-action="About" class="nav-link">@SR["About"]</a></li>
             
-        @await Html.PartialAsync("_LoginPartial")
+        <partial name="_LoginPartial" />
 
         </ul>
       </div>

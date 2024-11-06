@@ -6,7 +6,7 @@ public class Helper
     {
         public static string GetHash(string input)
         {
-            HashAlgorithm hashAlgorithm = new SHA256CryptoServiceProvider();
+            HashAlgorithm hashAlgorithm =  SHA256CryptoServiceProvider.Create();
        
             byte[] byteValue = System.Text.Encoding.UTF8.GetBytes(input);
 

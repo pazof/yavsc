@@ -15,7 +15,7 @@ namespace Yavsc.Controllers
             if (subdir !=null)
                 if (!subdir.IsValidYavscPath())
                     return new BadRequestResult();
-            var files = AbstractFileSystemHelpers.GetUserFiles(User.Identity.Name, subdir);
+            var files = AbstractFileSystemHelpers.GetUserFiles(User.GetUserId(), subdir);
             return View(files);
         }
     }

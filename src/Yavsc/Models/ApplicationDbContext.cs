@@ -72,7 +72,7 @@ namespace Yavsc.Models
             builder.Entity<Instrumentation>().HasKey(u => new { u.InstrumentId, u.UserId });
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a => new { a.CircleId, a.BlogPostId });
             builder.Entity<CircleMember>().HasKey(c => new { c.MemberId, c.CircleId });
-            builder.Entity<DimissClicked>().HasKey(c => new { uid = c.UserId, notid = c.NotificationId });
+            builder.Entity<DismissClicked>().HasKey(c => new { uid = c.UserId, notid = c.NotificationId });
             builder.Entity<HairTaintInstance>().HasKey(ti => new { ti.TaintId, ti.PrestationId });
             builder.Entity<HyperLink>().HasKey(l => new { l.HRef, l.Method });
             builder.Entity<Period>().HasKey(l => new { l.Start, l.End });
@@ -108,15 +108,16 @@ namespace Yavsc.Models
                 optionsBuilder.UseNpgsql(envSetup);
         }
 
-
         public DbSet<Client> Applications { get; set; }
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+
         /// <summary>
         /// Activities referenced on this site
         /// </summary>
         /// <returns></returns>
         public DbSet<Activity> Activities { get; set; }
+
         public DbSet<UserActivity> UserActivities { get; set; }
         /// <summary>
         /// Users posts
@@ -125,7 +126,7 @@ namespace Yavsc.Models
         public DbSet<Blog.BlogPost> Blogspot { get; set; }
 
         /// <summary>
-        /// Skills propulsed by this site
+        /// Skills powered by this site
         /// </summary>
         /// <returns></returns>
         public DbSet<Skill> SiteSkills { get; set; }
@@ -251,7 +252,7 @@ namespace Yavsc.Models
 
         public DbSet<Notification> Notification { get; set; }
 
-        public DbSet<DimissClicked> DimissClicked { get; set; }
+        public DbSet<DismissClicked> DismissClicked { get; set; }
 
 
         [ActivitySettings]
@@ -298,6 +299,8 @@ namespace Yavsc.Models
         public DbSet<ChatRoomAccess> ChatRoomAccess { get; set; }
 
         public DbSet<InstrumentRating> InstrumentRating { get; set; }
+
+        public DbSet<Scope> Scopes { get; set; }
 
     }
 }
