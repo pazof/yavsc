@@ -60,7 +60,7 @@ namespace Yavsc.Controllers
         {
             ViewBag.IsAdmin = User.IsInRole(Constants.AdminGroupName);
             ViewBag.IsPerformer = User.IsInRole(Constants.PerformerGroupName);
-            ViewBag.AllowEdit = announce==null || announce.Id<=0 || !_authorizationService.AuthorizeAsync(User,announce,new EditRequirement()).IsFaulted;
+            ViewBag.AllowEdit = announce==null || announce.Id<=0 || !_authorizationService.AuthorizeAsync(User,announce,new EditPermission()).IsFaulted;
             List<SelectListItem> dl = new List<SelectListItem>();
             var rnames = System.Enum.GetNames(typeof(Reason));
             var rvalues = System.Enum.GetValues(typeof(Reason));

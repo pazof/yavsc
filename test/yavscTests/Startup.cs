@@ -615,14 +615,14 @@ namespace yavscTests
 
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "google-secret.json");
 
-            /* TODO
+          
 
             ConfigureFileServerApp(app, SiteSetup, env, authorizationService);
 
             app.UseRequestLocalization(localizationOptions.Value, (RequestCulture)new RequestCulture((string)"en-US"));
 
             ConfigureWorkflow();
-            */
+           
 
             app.UseMvc(routes =>
             {

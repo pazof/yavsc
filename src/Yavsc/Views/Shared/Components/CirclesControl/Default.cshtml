@@ -1,6 +1,6 @@
 @model CirclesViewModel
-
-@foreach (var cb in ViewBag.Access) { 
+@if (ViewBag.Access!=null)
+foreach (var cb in ViewBag.Access) {
 <label><input type="checkbox" class="@(Model.TargetTypeName)cirle" checked="@cb.Checked" value="@cb.Text" 
  data-target-id="@Model.Target.Id" data-circle-id="@cb.Value" data-targe-type="">
  @cb.Text </label>

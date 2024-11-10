@@ -7,7 +7,8 @@ namespace Yavsc.ViewModels.Relationship
         public CirclesViewModel(ICircleAuthorized resource)
         {
             Target = resource;
-            TargetTypeName = resource.GetType().Name;
+            if (resource!=null)
+                TargetTypeName = resource.GetType().Name;
         }
         public ICircleAuthorized Target { get; set; }
         public string TargetTypeName { get; set; }
