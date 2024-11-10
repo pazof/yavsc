@@ -5,10 +5,14 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
-    <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico"  asp-append-version="true"/>
+    <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"  asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/site.css"  asp-append-version="true"/>
+    <!-- #region jQuery Slim
+    <script src="~/lib/jquery/dist/jquery.slim.min.js"></script>
+    -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     @await RenderSectionAsync("header", false)
 </head>
 <body>
@@ -38,10 +42,9 @@
             &copy; 2024 - Yavsc - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.slim.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     @await RenderSectionAsync("scripts", false)
+
 </body>
 </html>

@@ -10,10 +10,10 @@ namespace Yavsc
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Configuration
-                .AddEnvironmentVariables()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables().Build();
+                .AddEnvironmentVariables()
+                .Build();
             var app = builder.ConfigureServices().ConfigurePipeline();
             app.UseSession();
             app.Run();

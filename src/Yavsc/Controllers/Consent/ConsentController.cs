@@ -14,10 +14,10 @@ using System.Threading.Tasks;
 using IdentityServer4.Validation;
 using System.Collections.Generic;
 using System;
-using Yavsc.Models.Access;
+using Yavsc;
 using Yavsc.Extensions;
 
-namespace Yavsc.Controllers
+namespace IdentityServerHost.Quickstart.UI
 {
     /// <summary>
     /// This controller processes the consent UI
@@ -69,7 +69,6 @@ namespace Yavsc.Controllers
             if (result.IsRedirect)
             {
                 var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
-               
                 if (context?.IsNativeClient() == true)
                 {
                     // The client is native, so this change in how to
