@@ -8,62 +8,28 @@
 
 <link href="~/css/main/dropzone.css" rel="stylesheet">
 
-<style>
- .box__dragndrop,
-.box__uploading,
-.box__success,
-.box__error {
-  display: none;
-}
-
-.box.has-advanced-upload {
-  background-color: white;
-  outline: 2px dashed black;
-  outline-offset: -10px;
-}
-.box.has-advanced-upload .box__dragndrop {
-  display: inline;
-}
-.box.is-dragover {
-  background-color: grey;
-}
-.ql-snow.ql-toolbar {
-    border: outset grey 2px;
-}
-
-</style>
 <script src="~/js/dropzone.js"></script>
-
 
     @{ await Html.RenderPartialAsync("_FSScriptsPartial"); }
      
 }
 
-<h2 > Blog post edition </h2>
-                <label><input type="checkbox" id="vcbtn" />Editer le code source Markdown</label>
+<h2>Blog post</h2>
+    <label><input type="checkbox" id="vcbtn" />Editer le code source Markdown</label>
 
 <div asp-validation-summary="All" class="text-danger"></div>
-
-
-<div id="Titletoolbar" class="hidden ql-snow ql-toolbar">
-  <button class="ql-format-button ql-italic"></button>
-  <button class="ql-format-button ql-underline"></button>
-  <button class="ql-format-button ql-strike"></button>
-</div>
 
 <img class="blogphoto" alt="" src="@Model.Photo" title="Photo associée au post">
 <h2 title="Titre du post" class="blogtitle" id="titleview" >@Model.Title</h2>
 
-
 <div title="Contenu du post" id="contentview">@Model.Content</div>
 
 <hr>
-<form>
+<form asp-controller="Blogspot" asp-action="Create">
     <div class="form-horizontal">
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
      
-
         <div class="form-group mdcoding">
             <label asp-for="Title" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -105,7 +71,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <button  class="btn btn-primary" >Save</button>
             </div>
         </div>
     </div>
@@ -117,4 +83,3 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-

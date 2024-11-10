@@ -235,9 +235,16 @@ namespace Yavsc.Controllers
         /// <summary>
         /// Show logout page
         /// </summary>
-        [HttpGet]
+        [HttpGet][Authorize]
         public async Task<IActionResult> Logout(string logoutId)
         {
+            if (string.IsNullOrWhiteSpace(logoutId))
+                {
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        logoutId = User.GetUserId();
+                    }
+                }
             // build a model so the logout page knows what to display
             var vm = await BuildLogoutViewModelAsync(logoutId);
 
@@ -265,9 +272,11 @@ namespace Yavsc.Controllers
             {
                 // delete local authentication cookie
                 await HttpContext.SignOutAsync();
+                await _signInManager.SignOutAsync();
 
                 // raise the logout event
                 await _events.RaiseAsync(new UserLogoutSuccessEvent(User.GetSubjectId(), User.GetDisplayName()));
+
             }
 
             // check if we need to trigger sign-out at an upstream identity provider
@@ -281,6 +290,9 @@ namespace Yavsc.Controllers
                 // this triggers a redirect to the external provider for sign-out
                 return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
             }
+
+        
+
 
             return View("LoggedOut", vm);
         }

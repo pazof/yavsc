@@ -26,20 +26,6 @@
 
 /* bootstrap.css | http://localhost:5000/lib/bootstrap/css/bootstrap.css */
 
-.nav-link {
-  /* background-color: var(--bs-nav-tabs-link-active-bg); */
-  background-color: black;
-}
-
-.dropdown-item {
-  /* background-color: transparent; */
-  background-color: black;
-}
-
-.dropdown-menu {
-  /* background-color: var(--bs-dropdown-bg); */
-  background-color: black;
-}
 
 div.carousel-inner > div.item > div.carousel-caption-s {
   margin: .5em;
@@ -47,4 +33,9 @@ div.carousel-inner > div.item > div.carousel-caption-s {
   color: rgb(255,255,200);
   font-weight: bold;
   padding: .5em;
+}
+
+img.blogphoto {
+  max-width: 100%;
+  max-height: 100%;
 }

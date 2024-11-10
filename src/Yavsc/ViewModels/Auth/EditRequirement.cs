@@ -2,10 +2,25 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Yavsc.ViewModels.Auth
 {
-    public class EditRequirement : IAuthorizationRequirement
+    public class EditPermission : IAuthorizationRequirement
     {
-        public EditRequirement()
+        public EditPermission()
         {
         }
     }
+
+    public class ReadPermission: IAuthorizationRequirement
+    {
+        public ReadPermission()
+        {
+        }
+    }
+
+    public class DeletePermission: IAuthorizationRequirement
+    {
+        public DeletePermission()
+        {
+        }
+    }
+    
 }

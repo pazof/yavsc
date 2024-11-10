@@ -14,6 +14,8 @@ using Yavsc.Helpers;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using Yavsc.ViewModels.Blog;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -111,30 +113,35 @@ namespace Yavsc.Controllers
         [Authorize()]
         public IActionResult Create(string title)
         {
-            var result = new BlogPost{Title=title};
+            var result = new BlogPostInputViewModel{Title=title,Content=""};
             ViewData["PostTarget"]="Create";
             SetLangItems();
-            return View("Edit",result);
+            return View(result);
         }
 
         // POST: Blog/Create
         [HttpPost, Authorize, ValidateAntiForgeryToken]
-        public IActionResult Create(Models.Blog.BlogPost blog)
+        public IActionResult Create(BlogPostInputViewModel blogInput)
         {
-            blog.Rate = 0;
-            blog.AuthorId = User.GetUserId();
-            blog.Id=0;
             if (ModelState.IsValid)
             {
-
-                _context.Blogspot.Add(blog);
+                BlogPost post = new BlogPost
+                {
+                    Title = blogInput.Title,
+                    Content = blogInput.Content,
+                    Photo = blogInput.Photo,
+                    Rate = 0,
+                    AuthorId = User.GetUserId()
+                };
+                _context.Blogspot.Add(post);
                 _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
             ModelState.AddModelError("Unknown","Invalid Blog posted ...");
             ViewData["PostTarget"]="Create";
-            return View("Edit",blog);
+            return View("Edit",blogInput);
         }
+
         [Authorize()]
         // GET: Blog/Edit/5
         public async Task<IActionResult> Edit(long? id)
@@ -147,12 +154,11 @@ namespace Yavsc.Controllers
             ViewData["PostTarget"]="Edit";
             BlogPost blog = _context.Blogspot.Include(x => x.Author).Include(x => x.ACL).Single(m => m.Id == id);
 
-
             if (blog == null)
             {
                 return NotFound();
             }
-            if (!_authorizationService.AuthorizeAsync(User, blog, new EditRequirement()).IsFaulted)
+            if (!_authorizationService.AuthorizeAsync(User, blog, new EditPermission()).IsFaulted)
             {
                 ViewBag.ACL = _context.Circle.Where(
                 c=>c.OwnerId == blog.AuthorId)
@@ -180,7 +186,7 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var auth = _authorizationService.AuthorizeAsync(User, blog, new EditRequirement());
+                var auth = _authorizationService.AuthorizeAsync(User, blog, new EditPermission());
                 if (!auth.IsFaulted)
                 {
                     // saves the change

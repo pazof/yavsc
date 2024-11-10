@@ -35,7 +35,6 @@ namespace Yavsc.Models
     using Calendar;
     using Blog;
     using Yavsc.Abstract.Identity;
-    using Yavsc.Server.Models.Blog;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Yavsc.Server.Models.Calendar;
@@ -79,7 +78,6 @@ namespace Yavsc.Models
             builder.Entity<Models.Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
             builder.Entity<ChatRoomAccess>().HasKey(p => new { room = p.ChannelName, user = p.UserId });
-            builder.Entity<BlogTrad>().HasKey(tr => new { post = tr.PostId, lang = tr.Lang });
             builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument= i.InstrumentId, owner = i.OwnerId });
 
             foreach (var et in builder.Model.GetEntityTypes())
@@ -291,8 +289,6 @@ namespace Yavsc.Models
 
         public DbSet<Project> Project { get; set; }
         
-        public DbSet<BlogTrad> BlogTrad { get; set; }
-
         [Obsolete("use signaled flows")]
         public DbSet<LiveFlow> LiveFlow { get; set; }
 

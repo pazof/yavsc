@@ -20,6 +20,8 @@ namespace Yavsc.ViewComponents
 
         public IViewComponentResult Invoke (ICircleAuthorized target)
         {
+            if (target!=null)
+            {
             var oid = target.GetOwnerId();
             ViewBag.ACL = dbContext.Circle.Where(
                 c=>c.OwnerId == oid)
@@ -41,6 +43,8 @@ namespace Yavsc.ViewComponents
                         Checked  = target.AuthorizeCircle(c.Id),
                         Value = c.Id.ToString()
                     });
+            }
+           
             return View(new CirclesViewModel(target));
         }
     }

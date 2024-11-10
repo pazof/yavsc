@@ -65,7 +65,7 @@ namespace Yavsc.ApiControllers
             }
             _logger.LogInformation($"Receiving files, saved in '{destDir}' (specified as '{subdir}').");
             
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );

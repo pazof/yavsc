@@ -29,6 +29,7 @@ using Yavsc.Models.Market;
 using Yavsc.Models.Workflow;
 using Yavsc.Services;
 using Yavsc.Settings;
+using Yavsc.ViewModels.Auth;
 
 namespace Yavsc.Extensions;
 
@@ -308,7 +309,12 @@ internal static class HostingExtensions
                 // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
                 // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
                 options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
+                 options.AddPolicy("IsTheAuthor", policy =>
+                    policy.Requirements.Add(new EditPermission()));
             });
+           
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+
             _ = services.AddControllersWithViews()
             .AddNewtonsoftJson();
             LoadGoogleConfig(builder.Configuration);

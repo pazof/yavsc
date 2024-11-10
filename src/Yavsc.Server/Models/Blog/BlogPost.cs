@@ -10,29 +10,19 @@ using Yavsc.Attributes.Validation;
 using Yavsc.Interfaces;
 using Yavsc.Models.Access;
 using Yavsc.Models.Relationship;
+using Yavsc.ViewModels.Blog;
 
 namespace Yavsc.Models.Blog
 {
-    public class BlogPost : IBlogPost, ICircleAuthorized, ITaggable<long>, IIdentified<long>
+    public class BlogPost : BlogPostInputViewModel, IBlogPost, ICircleAuthorized, ITaggable<long>, IIdentified<long>
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name="Identifiant du post")]
         public long Id { get; set; }
 
-        [Display(Name="Contenu")][YaStringLength(56224)]
-        public string Content { get; set; }
-
-        [Display(Name="Photo")][YaStringLength(1024)]
-        public string Photo { get; set; }
-
-        [YaStringLength(8)]
-        public string Lang { get; set; }
-
         [Display(Name="Indice de qualité")]
         public int Rate { get; set; }
 
-        [Display(Name="Titre")][YaStringLength(1024)]
-        public string Title { get; set; }
 
         [Display(Name="Identifiant de l'auteur")]
         [ForeignKey("Author")]
@@ -41,8 +31,6 @@ namespace Yavsc.Models.Blog
         [Display(Name="Auteur")]
         public virtual ApplicationUser Author { set; get; }
 
-        [Display(Name="Visible")]
-        public bool Visible { get; set; }
 
         [Display(Name="Date de création")]
         public DateTime DateCreated
@@ -67,10 +55,6 @@ namespace Yavsc.Models.Blog
         {
             get; set;
         }
-
-        [InverseProperty("Target")]
-        [Display(Name="Liste de contrôle d'accès")]
-        public virtual List<CircleAuthorizationToBlogPost> ACL { get; set; }
 
         public bool AuthorizeCircle(long circleId)
         {

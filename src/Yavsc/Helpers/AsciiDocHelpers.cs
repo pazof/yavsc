@@ -117,7 +117,18 @@ namespace Yavsc.Helpers
                     InternalAnchor a = (InternalAnchor) elt;
                     sb.AppendFormat("<a name=\"{0}\">{1}</a> ", a.Id, a.XRefLabel);
                     break;
-
+                case "AsciiDocNet.Subscript":
+                 sb.AppendHtml("<sup>");
+                    Subscript sub = (Subscript)elt;
+                    sub.ToHtml(sb);
+                    sb.AppendHtml("</sup>");
+                    break;
+                case "AsciiDocNet.Superscript":
+                 sb.AppendHtml("<sup>");
+                    Superscript sup = (Superscript)elt;
+                    sup.ToHtml(sb);
+                    sb.AppendHtml("</sup>");
+                    break;
                 default:
                     string unsupportedType = elt.GetType().FullName;
                     throw new InvalidProgramException(unsupportedType);
