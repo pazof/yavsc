@@ -13,7 +13,6 @@ namespace Yavsc.Controllers
 {
     [Produces("application/json")]
     [Route("api/blog")]
-    [AllowAnonymous]
 
     public class BlogApiController : Controller
     {

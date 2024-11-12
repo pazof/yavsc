@@ -1,57 +1,39 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Extensions.WebEncoders;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
-using System.Security.Claims;
+using Microsoft.Extensions.Hosting;
+using System.IdentityModel.Tokens.Jwt;
 
-namespace testOauthClient
-{
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
-        {
-            // Set up configuration sources.
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
-        }
-
-        public IConfigurationRoot Configuration { get; set; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
 
-            services.Configure<SharedAuthenticationOptions>(options =>
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+            services.AddAuthentication(options =>
             {
-                options.SignInScheme = "Bearer";
+                options.DefaultScheme = "Cookies";
+                options.DefaultChallengeScheme = "Yavsc";
+            })
+            .AddCookie("Cookies")
+            .AddOpenIdConnect("Yavsc", options =>
+            {
+                options.Authority = "https://localhost:5001";
+
+                options.ClientId = "interactive";
+                options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
+                options.ResponseType = "code";
+                
+                options.Scope.Add("scope2");
+
+                options.SaveTokens = true;
             });
-
-            services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
-
-            services.AddAuthentication();
-
-            services.AddMvc();
-
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -60,83 +42,17 @@ namespace testOauthClient
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            app.UseIISPlatformHandler(options =>
-            {
-                options.AuthenticationDescriptions.Clear();
-            });
+
             app.UseStaticFiles();
-            var authConf = Configuration.GetSection("Authentication").GetSection("Yavsc");
-            var clientId = authConf.GetSection("ClientId").Value;
-            var clientSecret = authConf.GetSection("ClientSecret").Value;
-            var logger = loggerFactory.CreateLogger<Startup>();
-            logger.LogInformation($"## ClientId: {clientId} ClientSecret: {clientSecret}");
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
+
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true,
-                AuthenticationScheme = "Bearer",
-                CookieName = CookieAuthenticationDefaults.CookiePrefix + "Bearer",
-                ExpireTimeSpan = TimeSpan.FromMinutes(5),
-                LoginPath = new PathString("/signin"),
-                LogoutPath = new PathString("/signout")
-            });
-            var host =  "http://dev.pschneider.fr";
-            app.UseOAuthAuthentication(
-                options =>
-                {
-                    options.AuthenticationScheme = "Yavsc";
-                    options.AuthorizationEndpoint = $"{host}/authorize";
-                    options.TokenEndpoint = $"{host}/token";
-                    options.CallbackPath = new PathString("/signin-yavsc");
-                    options.DisplayName = "Yavsc dev";
-                    options.ClientId = clientId;
-                    options.ClientSecret = clientSecret;
-                    options.Scope.Add("profile");
-                    options.SaveTokensAsClaims = true;
-                    options.UserInformationEndpoint = $"{host}/api/me";
-                    
-                    options.Events = new OAuthEvents
-                    {
-                        OnCreatingTicket = async context =>
-                            {
-                                var request = new HttpRequestMessage(HttpMethod.Get, options.UserInformationEndpoint);
-                                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
-                                var response = await context.Backchannel.SendAsync(request);
-                                response.EnsureSuccessStatusCode();
-
-                                var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
-                                var identifier = payload.Value<string>("Id");
-                                var givenName = payload.Value<string>("UserName");
-                                var emails = payload.Value<JArray>("EMails");
-                                var roles = payload.Value<JArray>("Roles");
-                                string email = null;
-                                if (emails !=null)
-                                  email = emails.First?.Value<string>();
-                                if (identifier!=null)
-                                    context.Identity.AddClaim(
-                                        new Claim( ClaimTypes.NameIdentifier,identifier));
-                                if (givenName!=null)
-                                    context.Identity.AddClaim(
-                                        new Claim( ClaimTypes.Name,givenName));
-                                if (email!=null)
-                                    context.Identity.AddClaim(
-                                        new Claim( ClaimTypes.Email,email));
-                                    // TODO add all emails and roles
-
-                            }
-                    };
-                }
-            );
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute()
+                    .RequireAuthorization();
             });
         }
-
-        // Entry point for the application.
-        public static void Main(string[] args) => Microsoft.AspNet.Hosting.WebApplication.Run<Startup>(args);
     }
-}

@@ -14,7 +14,7 @@ using Yavsc.Models.Billing;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/estimate"), Authorize()]
+    [Route("api/estimate"), Authorize]
     public class EstimateApiController : Controller
     {
         private readonly ApplicationDbContext _context;
