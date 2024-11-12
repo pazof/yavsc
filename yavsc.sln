@@ -4,12 +4,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{503DDD6B-BE10-4235-9EBD-E9B1FA6067DF}"
+	ProjectSection(SolutionItems) = preProject
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc.Abstract", "src\Yavsc.Abstract\Yavsc.Abstract.csproj", "{5AFB6255-CF1B-4660-BB35-F24C8C75FECE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc.Server", "src\Yavsc.Server\Yavsc.Server.csproj", "{830F5A71-0192-4288-9F4D-D7849D958970}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc", "src\Yavsc\Yavsc.csproj", "{87DABC88-C38C-45DB-8F72-53B7C95ABC89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sampleWebAsWebApiClient", "src\sampleWebAsWebApiClient\sampleWebAsWebApiClient.csproj", "{38AA74FE-3932-49C3-A382-338E7C861BB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,10 +36,15 @@ Global
 		{87DABC88-C38C-45DB-8F72-53B7C95ABC89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87DABC88-C38C-45DB-8F72-53B7C95ABC89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87DABC88-C38C-45DB-8F72-53B7C95ABC89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38AA74FE-3932-49C3-A382-338E7C861BB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38AA74FE-3932-49C3-A382-338E7C861BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38AA74FE-3932-49C3-A382-338E7C861BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38AA74FE-3932-49C3-A382-338E7C861BB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5AFB6255-CF1B-4660-BB35-F24C8C75FECE} = {503DDD6B-BE10-4235-9EBD-E9B1FA6067DF}
 		{830F5A71-0192-4288-9F4D-D7849D958970} = {503DDD6B-BE10-4235-9EBD-E9B1FA6067DF}
 		{87DABC88-C38C-45DB-8F72-53B7C95ABC89} = {503DDD6B-BE10-4235-9EBD-E9B1FA6067DF}
+		{38AA74FE-3932-49C3-A382-338E7C861BB1} = {503DDD6B-BE10-4235-9EBD-E9B1FA6067DF}
 	EndGlobalSection
 EndGlobal

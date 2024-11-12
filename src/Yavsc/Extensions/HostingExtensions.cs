@@ -135,6 +135,8 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+
+          
             var siteSection = builder.Configuration.GetSection("Site");
             var smtpSection = builder.Configuration.GetSection("Smtp");
             var paypalSection = builder.Configuration.GetSection("Authentication:PayPal");
@@ -156,7 +158,10 @@ internal static class HostingExtensions
             string? googleClientId = builder.Configuration["Authentication:Google:ClientId"];
             string? googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
         var services = builder.Services;
-
+        _ = services.AddControllersWithViews()
+            .AddNewtonsoftJson();
+            LoadGoogleConfig(builder.Configuration);
+            
         services.Configure<SiteSettings>(siteSection);
         services.Configure<SmtpSettings>(smtpSection);
         services.Configure<PayPalSettings>(paypalSection);
@@ -189,8 +194,11 @@ internal static class HostingExtensions
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
+            .AddDeveloperSigningCredential()
             ;
         services.AddSession();
+
+
           // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
             
         
@@ -315,9 +323,6 @@ internal static class HostingExtensions
            
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
-            _ = services.AddControllersWithViews()
-            .AddNewtonsoftJson();
-            LoadGoogleConfig(builder.Configuration);
             
         return builder.Build();
     }
@@ -328,11 +333,14 @@ internal static class HostingExtensions
         {
             app.UseDeveloperExceptionPage();
         }
+        else 
+        {
+            app.UseExceptionHandler("/Home/Error");
+        }
         
         app.UseStaticFiles();
         app.UseRouting();
         app.UseIdentityServer();
-        //app.UseSignalR();
         app.UseAuthorization();
         app.MapControllerRoute(
             name: "default",
