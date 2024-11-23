@@ -1,16 +1,13 @@
-@{
-    ViewData["Title"] = @SR["About"]+" "+@SiteSettings.Value.Title;
-}
-<h1>@ViewData["Title"]</h1>
+<h1>@SiteSettings.Value.Title - objetivo</h1>
 <environment names="freefield,Development">
 
 <asciidoc>
-## O objetivo
+= O objetivo
 
 Esta aplicação é construída para conectar artistas
 do campo musical com seu público.
 
-## Operation
+== Operation
 
 Os usuários do site são artista, cliente ou administrador. Todos eles têm direito ao seu blog.
 Para artistas, é uma maneira de promover seus negócios.
@@ -52,7 +49,7 @@ Depois que o serviço associado tiver sido executado, os pagamentos relativos se
 Para um contrato executado e não honrado pelo cliente, o processo de processo de recuperação é contratado, caso contrário, o contrato é arquivado,
 Os certificados de pagamento estão disponíveis para o artista e a fatura é marcada como paga e depois repassada ao cliente.
 
-### Para o artista
+=== Para o artista
 
 O artista escolhe vários parâmetros que farão o seu perfil:
 
@@ -65,7 +62,7 @@ O artista escolhe vários parâmetros que farão o seu perfil:
 * Parâmetros adicionais dependendo do tipo de atividade, por exemplo, para
   conjuntos, seu tamanho, se houver, seu repertório ou indicações do estilo de sua música)
 
-### Para o cliente
+=== Para o cliente
 
 Ele escolhe um lugar e uma data para declarar um evento futuro
 (Ele pode programar o quanto quiser).
@@ -75,7 +72,7 @@ com base em um de seus projetos de eventos, a negociação de um contrato de ser
 
 Ele tem acesso ao conhecimento de dias conhecidos como artistas livres pelo sistema.
 
-## Confidencialidade
+== Confidencialidade
 
 Em nenhum momento, nenhum endereço de correspondência, nenhum endereço de e-mail e nenhum número de telefone
 não são transmitidos para clientes ou artistas. Apenas o sistema tem acesso a essas informações.
@@ -158,6 +155,4 @@ A "pré-produção" exibe os seguintes sites:
 </asciidoc>
 </environment>
 
-<p>
-@Model
-</p>
+<p>@Model</p>

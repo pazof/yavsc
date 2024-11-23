@@ -157,40 +157,7 @@ namespace Yavsc.Controllers
 
                         // only set explicit expiration here if user chooses "remember me". 
                         // otherwise we rely upon expiration configured in cookie middleware.
-                        AuthenticationProperties props = null;
-                        if (AccountOptions.AllowRememberLogin && model.RememberLogin)
-                        {
-                            props = new AuthenticationProperties
-                            {
-                                IsPersistent = true,
-                                ExpiresUtc = DateTimeOffset.UtcNow.Add(AccountOptions.RememberMeLoginDuration),
-                             //   Parameters = 
-                            };
-                        };
-
-                        // roles
-                        var roles = _dbContext.UserRoles.Where(r=>r.UserId == user.Id).ToArray();
-
-                        // issue authentication cookie with subject ID and username
-
-                        List<Claim> additionalClaims = new List<Claim>();
-
-                        foreach (var role in roles)
-                        {
-                            var idRole = await _roleManager.Roles.SingleOrDefaultAsync(i=>i.Id == role.RoleId);
-                            if (idRole != null)
-                            {
-                                additionalClaims.Add(new Claim(ClaimTypes.Role, idRole.Name));
-                            }
-                        }
-                        additionalClaims.Add(new Claim(ClaimTypes.Name, user.UserName));
-                        var isUser = new IdentityServerUser(user.Id)
-                        {
-                            DisplayName = user.UserName,
-                            AdditionalClaims = additionalClaims.ToArray()
-                        };
-
-                        await HttpContext.SignInAsync(isUser, props);
+                        await HttpContext.SignInAsync(user, _roleManager, model.RememberLogin,_dbContext);
 
                         if (context != null)
                         {
@@ -231,7 +198,6 @@ namespace Yavsc.Controllers
             return View(vm);
         }
 
-        
         /// <summary>
         /// Show logout page
         /// </summary>

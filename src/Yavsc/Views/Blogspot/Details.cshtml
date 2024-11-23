@@ -69,22 +69,7 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
 <h1 class="blogtitle" ismarkdown>@Model.Title</h1>
 <img class="blogphoto" alt="" src="@Model.Photo" >
 <div class="blogpost">
-   @Html.AsciiDocFor(model => model.Content)
-    <p class="blog" asp-for="Content"></p>
-   <hr/>
-
-<div class="meta"> 
-    @Html.DisplayFor(model => model.Author) 
-       
-    @Html.DisplayNameFor(model => model.DateModified) :
-
-    @Html.DisplayFor(model => model.DateModified) 
-
-    @Html.DisplayNameFor(model => model.DateCreated) :
-
-    @Html.DisplayFor(model => model.DateCreated) 
-
-    @await Component.InvokeAsync("Tagger",Model)
+    @Html.DisplayForModel()
 </div>
 
 <div id="comments">

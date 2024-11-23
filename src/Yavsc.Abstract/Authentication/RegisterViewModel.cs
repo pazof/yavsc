@@ -8,27 +8,28 @@ namespace Yavsc.ViewModels.Account
     public class RegisterModel
     {
 
-        [YaStringLength(2,Constants.MaxUserNameLength)]
-        [YaRegularExpression(Constants.UserNameRegExp)]
+        [StringLength(Constants.MaxUserNameLength)]
+        [RegularExpression(Constants.UserNameRegExp)]
+        [DataType(DataType.Text)]
+         [Display(Name = "UserName", Description = "User name")]
         public string UserName { get; set; }
 
-        [YaRequired()]
-        [YaStringLength(2,102)]
+        [Required()]
+        [StringLength( maximumLength:102, MinimumLength = 5)]
    //    [EmailAddress]
-        [Display(Name = "Email")]
+        [Display(Name = "Email", Description = "E-Mail")]
         public string Email { get; set; }
 
-        [YaStringLength(6,100)]
+        [StringLength(maximumLength:100, MinimumLength = 6,
+        ErrorMessage = "Le mot de passe doit contenir au moins 8 caratères")]
         [DataType(DataType.Password)]
-
-        // ErrorMessage = "Les mots de passe doivent contenir au moins un caractère spécial, qui ne soit ni une lettre ni un chiffre.")]
-        
+        [Display(Name = "Password")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
         [Compare("Password")]
+        [Display(Name = "ConfirmPassword", Description ="Password Confirmation")]
         public string ConfirmPassword { get; set; }
-
 
     }
 }

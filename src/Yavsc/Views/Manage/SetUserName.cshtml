@@ -1,19 +1,19 @@
-@model ChangeUserNameViewModel
+@model SetUserNameViewModel
 @{
     ViewData["Title"] = "Changer de nom d'utilisateur";
 }
 
 <h2>@ViewData["Title"].</h2>
 
-<form asp-controller="Manage" asp-action="ChangeUserName" method="post" class="form-horizontal" role="form">
+<form asp-controller="Manage" asp-action="SetUserName" method="post" class="form-horizontal" role="form">
     <h4>Change user name form</h4>
     <hr />
     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group">
-        <label asp-for="NewUserName" class="col-md-2 control-label"></label>
+        <label asp-for="UserName" class="col-md-2 control-label"></label>
         <div class="col-md-10">
-            <input asp-for="NewUserName" class="form-control" />
-            <span asp-validation-for="NewUserName" class="text-danger"></span>
+            <input asp-for="UserName" class="form-control" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
         </div>
     </div>
 </form>

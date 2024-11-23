@@ -19,23 +19,15 @@ namespace Yavsc
         public const string CompanyClaimType = "https://schemas.pschneider.fr/identity/claims/Company";
         public const string UserNameRegExp = @"^[a-zA-Z][a-zA-Z0-9._-]*$";
         public const string UserFileNamePatternRegExp = @"^([a-zA-Z0-9._-]*/)*[a-zA-Z0-9._-]+$";
-        public const string AuthorizePath = "/authorize";
-        public const string TokenPath = "/token";
+      
         public const string LoginPath = "/signin";
         public const string LogoutPath = "/signout";
 
-
-        public const string SignalRPath = "/api/signalr";
         public const string UserFilesPath = "/files";
         public const string AvatarsPath = "/avatars";
         public const string GitPath = "/sources";
-        public const string LiveUserPath = "live";
-
-        public const string ApplicationAuthenticationSheme = "ServerCookie";
-        public const string ExternalAuthenticationSheme = "ExternalCookie";
         public const string DefaultFactor = "Default";
         public const string MobileAppFactor = "Mobile Application";
-        public const string EMailFactor = "Email";
         public const string SMSFactor = "SMS";
         public const string AdminGroupName = "Administrator";
         public const string PerformerGroupName = "Performer";
