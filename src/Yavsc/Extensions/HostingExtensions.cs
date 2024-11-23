@@ -1,9 +1,6 @@
 using System.Globalization;
-using System.Security.Permissions;
-using Google.Apis.Auth.OAuth2;
 using Google.Apis.Util.Store;
 using IdentityServer4;
-using IdentityServer4.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -11,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
@@ -25,7 +21,6 @@ using Yavsc.Interface;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Haircut;
-using Yavsc.Models.Market;
 using Yavsc.Models.Workflow;
 using Yavsc.Services;
 using Yavsc.Settings;
@@ -36,8 +31,7 @@ namespace Yavsc.Extensions;
 
 internal static class HostingExtensions
 {
-
-    public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
+     public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
                  bool enableDirectoryBrowsing = false)
         {
 
@@ -180,8 +174,9 @@ internal static class HostingExtensions
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-        services
-            .AddIdentityServer(options =>
+        
+
+        services.AddIdentityServer(options =>
             {
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
@@ -194,7 +189,7 @@ internal static class HostingExtensions
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
-            .AddDeveloperSigningCredential()
+            .AddAspNetIdentity<ApplicationUser>()
             ;
         services.AddSession();
 

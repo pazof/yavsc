@@ -392,13 +392,13 @@ namespace Yavsc.Controllers
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
         }
 
-        public IActionResult ChangeUserName()
+        public IActionResult SetUserName()
         {
-            return View(new ChangeUserNameViewModel() { NewUserName = User.Identity.Name });
+            return View(new SetUserNameViewModel() { UserName = User.Identity.Name });
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangeUserName(ChangeUserNameViewModel model)
+        public async Task<IActionResult> SetUserName(SetUserNameViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -409,7 +409,7 @@ namespace Yavsc.Controllers
             {
                 var oldUserName = user.UserName;
 
-                var result = await this._userManager.SetUserNameAsync(user, model.NewUserName);
+                var result = await this._userManager.SetUserNameAsync(user, model.UserName);
 
                 if (result.Succeeded)
                 {
@@ -418,7 +418,7 @@ namespace Yavsc.Controllers
                        Path.Combine(_siteSettings.Blog,
                         oldUserName));
                     var newdir = Path.Combine(_siteSettings.Blog,
-                       model.NewUserName);
+                       model.UserName);
                     if (userdirinfo.Exists)
                         userdirinfo.MoveTo(newdir);
                     // Renames the Avatars files
@@ -429,7 +429,7 @@ namespace Yavsc.Controllers
                             oldUserName+s));
                         if (fi.Exists)
                             fi.MoveTo(Path.Combine(_siteSettings.Avatars,
-                            model.NewUserName+s));
+                            model.UserName+s));
                     }
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User changed his user name successfully.");

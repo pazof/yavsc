@@ -14,18 +14,19 @@
       
         <dd> 
             @Model.UserName
+            <a asp-action="SetUserName">[modifier]</a>
         </dd>
 
-        <dt>EMail:</dt>
+        <dt>E-mail</dt>
       
         <dd> 
             @Model.EMail
 
             @if (Model.EmailConfirmed) {
-                <text>(Adresse E-mail confirmée"])</text>
+                <text>(Adresse E-mail confirmée)</text>
             } else {
                 <text>
-                  <i>  (Adresse non confirmée."])</i>
+                  <i>  (Adresse non confirmée.)</i>
             <form asp-action="SendConfirationEmail" asp-controller="Account" enctype="multipart/form-data">
                 <input type="submit" value="Confirmer cette adresse"]"/>
             </form>
@@ -35,7 +36,7 @@
 
         <dd>
             <dl>
-                <dt>AllowMonthlyEmail:</dt>
+                <dt>Allow Monthly Email</dt>
                 <dd>
                     <a asp-action="ProfileEMailUsage"> @Html.DisplayFor(m=>m.AllowMonthlyEmail) [modifier]
                     </a>
@@ -46,7 +47,8 @@
 
         <dt>FullName:</dt>
         <dd> 
-            @Html.DisplayFor(m=>m.FullName)  <a asp-action="SetFullName">[modifier]</a>
+            @Html.DisplayFor(m=>m.FullName) 
+             <a asp-action="SetFullName">[modifier]</a>
         </dd>
 
         @if (Model.Roles.Count()>0) {

@@ -152,10 +152,6 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            
-            ViewBag.Files =  Yavsc.Helpers.FileSystemHelpers.GetFileName(null);
-            
-            // Yavsc.Helpers.GetUserFiles(User, null);
 
             return View(estimate);
         }

@@ -1,0 +1,8 @@
+@model RegisterModel
+
+<partial name="_ValidationSummary" />
+<form method="post">
+    @Html.EditorForModel()
+    <button class="btn btn-primary" name="button" 
+    value="Register">Register</button>
+</form>

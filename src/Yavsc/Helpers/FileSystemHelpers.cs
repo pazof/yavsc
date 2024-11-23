@@ -65,6 +65,11 @@ namespace Yavsc.Helpers
             }
         }
 
+        public static string GetAvatarUri(this ApplicationUser user)
+        {
+            return $"/{Config.SiteSetup.Avatars}/{user.UserName}.png";
+        }
+
         public static string InitPostToFileSystem(
             this ClaimsPrincipal user,
             string subpath)
