@@ -1,6 +1,5 @@
 
-using System.Drawing;
-using System.Drawing.Imaging;
+
 using System.Security.Claims;
 using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.FileProviders;
@@ -9,6 +8,8 @@ using Yavsc.Models;
 using Yavsc.Models.FileSystem;
 using Yavsc.Models.Streaming;
 using Yavsc.ViewModels;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace Yavsc.Helpers
 {
@@ -28,41 +29,10 @@ namespace Yavsc.Helpers
 
             using (var org = formFile.OpenReadStream())
             {
-                Image i = Image.FromStream(org);
-                using (Bitmap source = new Bitmap(i))
-                {
-                    source.Save(destFileName, ImageFormat.Png);
-                }
+                using Image image = Image.Load(org);
+                image.Save(destFileName);
             }
             return item;
-        }
-
-        /// <summary>
-        /// Create avatars
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="source"></param>
-        private static void CreateAvatars(this ApplicationUser user, Bitmap source)
-        {
-            var dir = Config.SiteSetup.Avatars;
-            var name = user.UserName + ".png";
-            var smallname = user.UserName + ".s.png";
-            var xsmallname = user.UserName + ".xs.png";
-            using (Bitmap newBMP = new Bitmap(source, 128, 128))
-            {
-                newBMP.Save(Path.Combine(
-                    dir, name), ImageFormat.Png);
-            }
-            using (Bitmap newBMP = new Bitmap(source, 64, 64))
-            {
-                newBMP.Save(Path.Combine(
-                    dir, smallname), ImageFormat.Png);
-            }
-            using (Bitmap newBMP = new Bitmap(source, 32, 32))
-            {
-                newBMP.Save(Path.Combine(
-                    dir, xsmallname), ImageFormat.Png);
-            }
         }
 
         public static string GetAvatarUri(this ApplicationUser user)
@@ -257,42 +227,15 @@ namespace Yavsc.Helpers
             {
                 FileName = user.UserName + ".png"
             };
-
-            var destFileName = Path.Combine(Config.SiteSetup.Avatars, item.FileName);
-
-            var fi = new FileInfo(destFileName);
-            if (fi.Exists) item.Overriden = true;
-            Rectangle cropRect = new Rectangle();
-
             using (var org = formFile.OpenReadStream())
             {
-                Image i = Image.FromStream(org);
-                using (Bitmap source = new Bitmap(i))
-                {
-                    if (i.Width != i.Height)
-                    {
-                        if (i.Width > i.Height)
-                        {
-                            cropRect.X = (i.Width - i.Height) / 2;
-                            cropRect.Y = 0;
-                            cropRect.Width = i.Height;
-                            cropRect.Height = i.Height;
-                        }
-                        else
-                        {
-                            cropRect.X = 0;
-                            cropRect.Y = (i.Height - i.Width) / 2;
-                            cropRect.Width = i.Width;
-                            cropRect.Height = i.Width;
-                        }
-                        using (var cropped = source.Clone(cropRect, source.PixelFormat))
-                        {
-                            CreateAvatars(user,cropped);
-                        }
-                    }
-
-                }
-
+                using Image image = Image.Load(org);
+                image.Mutate(x=>x.Resize(128,128));
+                image.Save(Path.Combine(Config.SiteSetup.Avatars,item.FileName));
+                image.Mutate(x=>x.Resize(64,64));
+                image.Save(Path.Combine(Config.SiteSetup.Avatars,user.UserName + ".s.png"));
+                image.Mutate(x=>x.Resize(32,32));
+                image.Save(Path.Combine(Config.SiteSetup.Avatars,user.UserName + ".xs.png"));
             }
             item.DestDir = Config.AvatarsOptions.RequestPath.ToUriComponent();
             user.Avatar = $"{item.DestDir}/{item.FileName}";

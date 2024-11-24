@@ -69,10 +69,6 @@
             @Model.Logins.Count [<a asp-controller="Manage" asp-action="ManageLogins">Manage</a>]
         </dd>
 
-        <dt>Full name:</dt>
-        <dd>@Model.FullName  [<a asp-controller="Manage" asp-action="SetFullName"
-            >@Model.FullName==null?"Set":"Modify"</a>]</dd>
-
         <dt>Address:</dt>
         <dd>@Model.PostalAddress
             [<a asp-controller="Manage" asp-action="SetAddress"
