@@ -66,19 +66,20 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
     </style>
 }
 <div class="container">
-<h1 class="blogtitle" ismarkdown>@Model.Title</h1>
-<img class="blogphoto" alt="" src="@Model.Photo" >
-<div class="blogpost">
-    @Html.DisplayForModel()
-</div>
+    <div class="blogpost">
+        <h1 class="blogtitle" ismarkdown>@Model.Title</h1>
+        <img class="blogphoto" alt="" src="@Model.Photo" >
+        @Html.DisplayFor(m=>m.Author)
+        @Html.DisplayFor(m=>m.Content)
+    </div>
 
-<div id="comments">
-    @if (Model.Comments!=null) {
-        foreach (var comment in Model.Comments.Where(c=>c.ParentId==null)) {
-            @Html.DisplayFor(model=>comment,"Comment","Comment")
+    <div id="comments">
+        @if (Model.Comments!=null) {
+            foreach (var comment in Model.Comments.Where(c=>c.ParentId==null)) {
+                @Html.DisplayFor(model=>comment,"Comment","Comment")
+            }
         }
-    }
-</div>
+    </div>
 @if (User.GetUserId()!=null) {
     <div class="form-horizontal">
         <div class="input-group" >
@@ -96,9 +97,8 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
         <p><i>Vous devez être identifié pour commenter.</i> </p>
     }
     
-</div>
-@if ((await AuthorizationService.AuthorizeAsync(User, Model, new EditPermission())).Succeeded) {
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">Edit</a>
-}
-<a asp-action="Index" class="btn btn-link">Back to List</a>
+    @if ((await AuthorizationService.AuthorizeAsync(User, Model, new EditPermission())).Succeeded) {
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">Edit</a>
+    }
+    <a asp-action="Index" class="btn btn-link">Back to List</a>
 </div>
