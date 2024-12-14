@@ -118,7 +118,7 @@ namespace Yavsc.Controllers
             _context.Comment.Add(c);
             try
             {
-                await _context.SaveChangesAsync(User.GetUserId());
+                await _context.SaveChangesAsync(uid);
             }
             catch (DbUpdateException)
             {
