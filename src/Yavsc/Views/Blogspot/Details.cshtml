@@ -2,49 +2,46 @@
 @{
     ViewData["Title"]=Model.Title;
 }
-@section header {  
+@section scripts {
+   
     <script src="~/js/comment.js" asp-append-version="true"></script>
     <script>
         $.psc.blogcomment.prototype.options.lang = '@System.Globalization.CultureInfo.CurrentUICulture.Name';
-        $.psc.blogcomment.prototype.options.apictrlr = '@ViewData["apicmtctlr"]';
+        $.psc.blogcomment.prototype.options.apictrlr = '/api/blogcomments/PostComment';
         $.psc.blogcomment.prototype.options.authorId = '@User.GetUserId()';
         $.psc.blogcomment.prototype.options.authorName = '@User.GetUserName()';
         $(document).ready(function() {
             $('#cmtBtn').click(function() {
-                var receiverid = $(this).data('receiverid');
-                var comment = $('#Comment').val();
-                var data = { 
-                    Id:0,
-                    Content: comment, 
-                    PostId: receiverid,
-                    AuthorId: '@User.GetUserId()',
-                    Visible:true 
-                };
-
                 $.ajax({
                     async: true,
                     cache: false,
                     type: 'POST',
                     method: 'POST',
                     contentType:  "application/json",
-                    data: JSON.stringify(data),
+                    data: JSON.stringify({ 
+                        Content: $('#Comment').val(), 
+                        ReceiverId: @Model.Id
+                        }),
                     error: function(xhr,data) {
                         if (xhr.status=400)
                         {
-                            $('span.field-validation-valid[data-valmsg-for="Content"]').html(
+                            if (xhr.responseJSON)
+                            {
+                            $('#commentValidation').html(
                                 xhr.responseJSON.Content);
-                        } else {
-$('span.field-validation-valid[data-valmsg-for="Content"]').html(
+                            } else {
+$('#commentValidation').html(
                             "Une erreur est survenue : "+xhr.status+"<br/>"+
                             "<code><pre>"+xhr.responseText+"</pre></code>"
-                        )
+                            )
+                            }
                         }
                         
                     },
                     success: function (data) {
                         var comment = $('#Comment').val();
                         $('#Comment').val('');
-                        $('span.field-validation-valid[data-valmsg-for="Content"]').empty();
+                        $('#commentValidation').empty();
                         var htmlcmt = htmlize(comment);
                         var nnode = '<div data-type="blogcomment" data-id="'+data.Id+'" data-allow-edit="True" data-allow-moderate="@ViewData["moderatoFlag"]" data-date="'+data.DateCreated+'" data-username="@User.GetUserName()">'+htmlcmt+'</div>';
                         
@@ -83,10 +80,12 @@ $('span.field-validation-valid[data-valmsg-for="Content"]').html(
 @if (User.GetUserId()!=null) {
     <div class="form-horizontal">
         <div class="input-group" >
-            <input id="Comment" class="form-control" placeholder="DoCommentPlaceHolder"]"/>
+            <input name="Comment" id="Comment" class="form-control" placeholder="DoCommentPlaceHolder"]"/>
             <span class="input-group-btn">
+                <span id="commentValidation"></span>
+
                 <input type="button" value="DoComment"]" class="btn btn-secondary"
-                data-receiverid="@Model.Id" id="cmtBtn"
+                data-receiverId="@Model.Id" id="cmtBtn"
                  />
             </span> 
         </div>

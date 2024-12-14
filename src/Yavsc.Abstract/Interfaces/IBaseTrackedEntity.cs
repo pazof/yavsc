@@ -2,7 +2,7 @@ using System;
 
 namespace Yavsc
 {
-    public interface IBaseTrackedEntity
+    public interface ITrackedEntity
     {
         DateTime DateCreated { get; set; }
         string UserCreated { get; set; }

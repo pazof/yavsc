@@ -1,10 +1,4 @@
-if (typeof jQuery === 'undefined') {
-    throw new Error('Bootstrap\'s JavaScript requires jQuery')
-}
-
-+
-(function($) {
-    $.widget("psc.blogcomment", {
+$.widget("psc.blogcomment", {
         options: {
             apictrlr: null,
             authorId: null,
@@ -158,4 +152,4 @@ if (typeof jQuery === 'undefined') {
     $(document).ready(function() {
         $("[data-type='blogcomment']").blogcomment();
     })
-})(jQuery);
+
