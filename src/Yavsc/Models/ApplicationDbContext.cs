@@ -214,12 +214,12 @@ namespace Yavsc.Models
             {
                 if (entity.State == EntityState.Added)
                 {
-                    ((IBaseTrackedEntity)entity.Entity).DateCreated = DateTime.Now;
-                    ((IBaseTrackedEntity)entity.Entity).UserCreated = currentUsername;
+                    ((ITrackedEntity)entity.Entity).DateCreated = DateTime.Now;
+                    ((ITrackedEntity)entity.Entity).UserCreated = currentUsername;
                 }
 
-                ((IBaseTrackedEntity)entity.Entity).DateModified = DateTime.Now;
-                ((IBaseTrackedEntity)entity.Entity).UserModified = currentUsername;
+                ((ITrackedEntity)entity.Entity).DateModified = DateTime.Now;
+                ((ITrackedEntity)entity.Entity).UserModified = currentUsername;
             }
         }
         public int SaveChanges(string userId)

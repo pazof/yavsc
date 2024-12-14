@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Cratie
 {
-    public class Scrutin : IBaseTrackedEntity
+    public class Scrutin : ITrackedEntity
     {
         [Key]
         public string Code { get; set ; }

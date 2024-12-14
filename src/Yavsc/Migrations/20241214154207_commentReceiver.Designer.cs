@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Yavsc.Models;
@@ -11,9 +12,11 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241214154207_commentReceiver")]
+    partial class commentReceiver
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -791,6 +794,9 @@ namespace Yavsc.Migrations
                     b.Property<long?>("ParentId")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("PostId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("ReceiverId")
                         .HasColumnType("bigint");
 
@@ -811,7 +817,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.HasIndex("ReceiverId");
+                    b.HasIndex("PostId");
 
                     b.ToTable("Comment");
                 });
@@ -2772,7 +2778,7 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Models.Blog.BlogPost", "Post")
                         .WithMany("Comments")
-                        .HasForeignKey("ReceiverId")
+                        .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

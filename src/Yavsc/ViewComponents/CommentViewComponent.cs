@@ -15,7 +15,7 @@ namespace Yavsc.ViewComponents
         {
             // for a BlogPost, it results in the localization 'apiRouteCommentBlogPost': blogcomments
             ViewData["apictlr"] = "/api/"+localizer["apiRouteComment"+longCommentable.GetType().Name];
-            return View(longCommentable.GetType().Name, new Comment{ PostId = longCommentable.Id });
+            return View(longCommentable.GetType().Name, new Comment{ ReceiverId = longCommentable.Id });
         }
     }
 }

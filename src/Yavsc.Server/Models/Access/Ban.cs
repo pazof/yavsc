@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Yavsc.Models.Access
 {
     using Yavsc;
-    public class Ban : IBaseTrackedEntity
+    public class Ban : ITrackedEntity
     {
         public DateTime DateCreated
         {
