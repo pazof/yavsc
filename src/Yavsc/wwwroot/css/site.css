@@ -24,3 +24,8 @@ div.carousel-inner > div.item > div.carousel-caption-s {
 img.blogphoto {
   max-width: 100%;
   max-height: 100%; }
+
+.cmtdatetime {
+  font-style: italic;
+  font-size: x-small;
+  }

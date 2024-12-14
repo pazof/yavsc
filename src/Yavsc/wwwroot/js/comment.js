@@ -25,12 +25,12 @@ $.widget("psc.blogcomment", {
             var date = new Date(this.element.data("date"));
             var username = this.element.data("username");
             this.editable = this.element.data("allow-edit");
-            this.element.prepend('<div class="commentmeta"><div class="avatar"><img src="/Avatars/' + username + '.xs.png" class="smalltofhol" />' + username + '</div><div class="cmtdatetime">' +
+            this.element.prepend('<div class="commentmeta"><img class="avatar" src="/Avatars/' + username + '.xs.png" class="smalltofhol" title="' + username + '" /><div class="cmtdatetime">' +
                 date.toLocaleDateString(this.options.lang) + ' ' + date.toLocaleTimeString(this.options.lang) + '</div></div>')
             this.element.on("mouseenter", this.onMouseEnter);
             this.element.on("mouseleave", this.onMouseLeave);
 
-            this.ctlBtn = $('<button class="btn glyphicon-collapse-down"></button>').on("click", function(ev) { _this.toggleCollapse(_this, ev) }).appendTo(_this.element);
+            this.ctlBtn = $('<button class="btn"><span class="ui-icon ui-icon-plus"></span></button>').on("click", function(ev) { _this.toggleCollapse(_this, ev) }).appendTo(_this.element);
         },
         toggleCollapse: function(_this, ev) {
             _this.collapsed = !_this.collapsed;

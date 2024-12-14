@@ -80,11 +80,11 @@ $('#commentValidation').html(
 @if (User.GetUserId()!=null) {
     <div class="form-horizontal">
         <div class="input-group" >
-            <input name="Comment" id="Comment" class="form-control" placeholder="DoCommentPlaceHolder"]"/>
+            <input name="Comment" id="Comment" class="form-control" placeholder="..."/>
             <span class="input-group-btn">
                 <span id="commentValidation"></span>
 
-                <input type="button" value="DoComment"]" class="btn btn-secondary"
+                <input type="button" value="Comment" class="btn btn-secondary"
                 data-receiverId="@Model.Id" id="cmtBtn"
                  />
             </span> 
