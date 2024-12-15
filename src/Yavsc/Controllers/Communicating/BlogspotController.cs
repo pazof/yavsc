@@ -228,7 +228,8 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
-            BlogPost blog = _context.Blogspot.Single(m => m.Id == id && m.GetOwnerId()== User.GetUserId());
+            var uid = User.GetUserId();
+            BlogPost blog = _context.Blogspot.Single(m => m.Id == id && m.AuthorId == uid );
            
             _context.Blogspot.Remove(blog);
             _context.SaveChanges(User.GetUserId());

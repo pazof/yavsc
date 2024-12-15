@@ -107,13 +107,13 @@ $.widget("psc.blogcomment", {
             });
         },
         doCoC: function(_this, ev) {
-            var postid = $('#cmtBtn').data('receiverid');
+            var postId = this.element.data('receiver-id');
             var comment = _this.cmtInput.val();
-            var cmtid = $(_this.element).data("id");
+            var cmtId = $(_this.element).data("id");
             var data = {
                 Content: comment,
-                ReceiverId: postid,
-                ParentId: cmtid,
+                ReceiverId: postId,
+                ParentId: cmtId,
                 AuthorId: _this.options.authorId
             };
 
@@ -136,7 +136,7 @@ $.widget("psc.blogcomment", {
                 success: function(data) {
                     _this.cmtInput.val('');
                     $('span.field-validation-valid[data-valmsg-for="Content"]').empty();
-                    $('<div data-type="blogcomment" data-id="' + data.Id + '" data-allow-edit="True" data-date="' + data.DateCreated + '" data-username="' + _this.options.authorName + '">' + data.Content + '</div>')
+                    $('<div data-type="blogcomment" data-id="' + data.id + '" data-allow-edit="True" data-date="' + data.dateCreated + '" data-username="' + _this.options.authorName + '">' + data.content + '</div>')
                         .blogcomment().appendTo(_this.subCmts);
                 },
                 url: _this.options.apictrlr
