@@ -29,3 +29,9 @@ img.blogphoto {
   font-style: italic;
   font-size: x-small;
   }
+  
+.blogcomment {
+  display: inline-block;
+  padding: .3em;
+  border: solid black 1px;
+}
