@@ -34,12 +34,13 @@ $.widget("psc.blogcomment", {
         },
         toggleCollapse: function(_this, ev) {
             _this.collapsed = !_this.collapsed;
+            var icon = $(_this.ctlBtn).children().first();
             if (_this.collapsed) {
-                $(_this.ctlBtn).removeClass('glyphicon-collapse-down');
-                $(_this.ctlBtn).addClass('glyphicon-collapse-up');
+                icon.removeClass('ui-icon-plus');
+                icon.addClass('ui-icon-minus');
             } else {
-                $(_this.ctlBtn).removeClass('glyphicon-collapse-up');
-                $(_this.ctlBtn).addClass('glyphicon-collapse-down');
+                icon.removeClass('ui-icon-minus');
+                icon.addClass('ui-icon-plus');
             }
             if (_this.editable) {
                 _this.toggleEdit(_this, ev)
