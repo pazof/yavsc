@@ -21,14 +21,6 @@ namespace Yavsc.Controllers
             _context = context;
         }
 
-        // GET: api/CommentsApi
-        [HttpGet]
-        public IEnumerable<Comment> GetComment()
-        {
-            return _context.Comment;
-        }
-
-        // GET: api/CommentsApi/5
         [HttpGet("{id}", Name = "GetComment")]
         public async Task<IActionResult> GetComment([FromRoute] long id)
         {
@@ -46,45 +38,8 @@ namespace Yavsc.Controllers
 
             return Ok(comment);
         }
-
-        // PUT: api/CommentsApi/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment([FromRoute] long id, [FromBody] Comment comment)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != comment.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(comment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync(User.GetUserId());
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return new StatusCodeResult(StatusCodes.Status204NoContent);
-        }
-
-        // POST: api/CommentsApi
         [HttpPost]
-        public async Task<IActionResult> PostComment([FromBody] CommentPost post)
+        public async Task<IActionResult> Post([FromBody] CommentPost post)
         {
             if (!ModelState.IsValid)
             {
@@ -131,12 +86,12 @@ namespace Yavsc.Controllers
                     throw;
                 }
             }
-            return CreatedAtRoute("GetComment", new { id = c.Id }, post);
+            return CreatedAtRoute("GetComment", new { id = c.Id }, new { id = c.Id, dateCreated = c.DateCreated });
         }
 
         // DELETE: api/CommentsApi/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteComment([FromRoute] long id)
+        public async Task<IActionResult> Delete([FromRoute] long id)
         {
             if (!ModelState.IsValid)
             {

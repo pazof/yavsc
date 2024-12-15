@@ -90,8 +90,6 @@ $.widget("psc.blogcomment", {
             }, 400);
         },
         doDeleteComment: function(_this, ev) {
-            var cmtid = $(_this.element).data("id");
-            var cmtapi = _this.options.apictrlr;
             $.ajax({
                 async: true,
                 cache: false,
@@ -105,7 +103,7 @@ $.widget("psc.blogcomment", {
                 success: function(data) {
                     _this.element.remove()
                 },
-                url: cmtapi + '/' + cmtid
+                url: _this.options.apictrlr + '/' + $(_this.element).data("id")
             });
         },
         doCoC: function(_this, ev) {
@@ -114,7 +112,7 @@ $.widget("psc.blogcomment", {
             var cmtid = $(_this.element).data("id");
             var data = {
                 Content: comment,
-                PostId: postid,
+                ReceiverId: postid,
                 ParentId: cmtid,
                 AuthorId: _this.options.authorId
             };
@@ -136,11 +134,9 @@ $.widget("psc.blogcomment", {
                     )
                 },
                 success: function(data) {
-                    var comment = data.Content;
                     _this.cmtInput.val('');
                     $('span.field-validation-valid[data-valmsg-for="Content"]').empty();
-                    var htmlcmt = htmlize(comment);
-                    $('<div data-type="blogcomment" data-id="' + data.Id + '" data-allow-edit="True" data-date="' + data.DateCreated + '" data-username="' + _this.options.authorName + '">' + htmlcmt + '</div>')
+                    $('<div data-type="blogcomment" data-id="' + data.Id + '" data-allow-edit="True" data-date="' + data.DateCreated + '" data-username="' + _this.options.authorName + '">' + data.Content + '</div>')
                         .blogcomment().appendTo(_this.subCmts);
                 },
                 url: _this.options.apictrlr

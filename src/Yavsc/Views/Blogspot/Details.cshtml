@@ -7,7 +7,7 @@
     <script src="~/js/comment.js" asp-append-version="true"></script>
     <script>
         $.psc.blogcomment.prototype.options.lang = '@System.Globalization.CultureInfo.CurrentUICulture.Name';
-        $.psc.blogcomment.prototype.options.apictrlr = '/api/blogcomments/PostComment';
+        $.psc.blogcomment.prototype.options.apictrlr = '/api/blogcomments';
         $.psc.blogcomment.prototype.options.authorId = '@User.GetUserId()';
         $.psc.blogcomment.prototype.options.authorName = '@User.GetUserName()';
         $(document).ready(function() {
@@ -42,12 +42,10 @@ $('#commentValidation').html(
                         var comment = $('#Comment').val();
                         $('#Comment').val('');
                         $('#commentValidation').empty();
-                        var htmlcmt = htmlize(comment);
-                        var nnode = '<div data-type="blogcomment" data-id="'+data.Id+'" data-allow-edit="True" data-allow-moderate="@ViewData["moderatoFlag"]" data-date="'+data.DateCreated+'" data-username="@User.GetUserName()">'+htmlcmt+'</div>';
-                        
+                        var nnode = '<div data-type="blogcomment" data-id="'+data.id+'" data-allow-edit="True" data-allow-moderate="@ViewData["moderatoFlag"]" data-date="'+data.dateCreated+'" data-username="@User.GetUserName()">'+comment+'</div>';
                         $('#comments').append($(nnode).blogcomment())
                     },
-                    url:'@ViewData["apicmtctlr"]'
+                    url:'/api/blogcomments'
                     });
             });
         })
@@ -83,7 +81,6 @@ $('#commentValidation').html(
             <input name="Comment" id="Comment" class="form-control" placeholder="..."/>
             <span class="input-group-btn">
                 <span id="commentValidation"></span>
-
                 <input type="button" value="Comment" class="btn btn-secondary"
                 data-receiverId="@Model.Id" id="cmtBtn"
                  />
