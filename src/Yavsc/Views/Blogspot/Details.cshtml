@@ -65,13 +65,14 @@ $('#commentValidation').html(
         <h1 class="blogtitle" ismarkdown>@Model.Title</h1>
         <img class="blogphoto" alt="" src="@Model.Photo" >
         @Html.DisplayFor(m=>m.Author)
-        @Html.DisplayFor(m=>m.Content)
+        <asciidoc>@Html.DisplayFor(m=>m.Content)</asciidoc>
+        
     </div>
 
     <div id="comments">
         @if (Model.Comments!=null) {
             foreach (var comment in Model.Comments.Where(c=>c.ParentId==null)) {
-                @Html.DisplayFor(model=>comment,"Comment","Comment")
+                @await Component.InvokeAsync("Comment", new { id = comment.Id })
             }
         }
     </div>

@@ -17,7 +17,6 @@
     @await RenderSectionAsync("header", false)
 </head>
 <body>
-    <main>
         <partial name="_Nav" />
         @RenderSection("ctxmenu", required: false)
           @if (ViewData["Notify"] != null)
@@ -37,13 +36,11 @@
         <div class="container body-container">
             @RenderBody()
         </div>
-    </main>
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - Yavsc - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-   
 
 @await RenderSectionAsync("scripts", false)
 

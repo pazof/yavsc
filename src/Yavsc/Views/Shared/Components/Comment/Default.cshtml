@@ -1,6 +1,6 @@
 @model Comment
 
-<div data-type="blogcomment" data-id="@Model.Id" data-allow-edit="@(User.GetUserId()==Model.AuthorId?"true":"false")" 
+<div data-type="blogcomment" data-id="@Model.Id" data-receiver-id="@Model.ReceiverId" data-allow-edit="@(User.GetUserId()==Model.AuthorId?"true":"false")" 
         data-allow-moderate="@ViewData["moderatoFlag"]" data-date="@Model.DateCreated.ToString("yyyy-MM-dd hh:mm:ss")" data-username="@Model.Author.UserName" >
         <asciidoc>@Model.Content</asciidoc>
         
@@ -8,9 +8,9 @@
     <div class="subcomments">
             @foreach (var comment in Model.Children) 
             {
-                Html.DisplayFor(model=>comment,"Comment","Comment");
+                @await this.Component.InvokeAsync("Comment", new { id = comment.Id});
             }
     </div>
 }
-        
 </div>
+
