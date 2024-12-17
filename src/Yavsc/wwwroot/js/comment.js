@@ -136,7 +136,7 @@ $.widget("psc.blogcomment", {
                 success: function(data) {
                     _this.cmtInput.val('');
                     $('span.field-validation-valid[data-valmsg-for="Content"]').empty();
-                    $('<div data-type="blogcomment" data-id="' + data.id + '" data-allow-edit="True" data-date="' + data.dateCreated + '" data-username="' + _this.options.authorName + '">' + data.content + '</div>')
+                    $('<div data-type="blogcomment" data-receiver-id="'+ postId +'" data-id="' + data.id + '" data-allow-edit="True" data-date="' + data.dateCreated + '" data-username="' + _this.options.authorName + '">' + comment + '</div>')
                         .blogcomment().appendTo(_this.subCmts);
                 },
                 url: _this.options.apictrlr
