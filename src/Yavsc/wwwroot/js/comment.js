@@ -146,7 +146,8 @@ $.widget("psc.blogcomment", {
 
     });
 
-    $(document).ready(function() {
+    jQuery(function() {
         $("[data-type='blogcomment']").blogcomment();
     })
+    
 

@@ -27,9 +27,12 @@ namespace Yavsc.Controllers
         }
 
         // GET: Bug
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int skip = 0, int take = 25)
         {
-            return View(await _context.Bug.ToListAsync());
+            if (take > 50) return BadRequest();
+            ViewData["skip"]=skip;
+            ViewData["take"]=take;
+            return View(await _context.Bug.Skip(skip).Take(take).ToListAsync());
         }
 
         // GET: Bug/Details/5
@@ -135,6 +138,8 @@ namespace Yavsc.Controllers
             return View(bug);
         }
 
+
+
         // POST: Bug/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -168,10 +173,10 @@ namespace Yavsc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize("AdministratorOnly")]
-        public async Task<IActionResult> DeleteAllLikeConfirmed(long id)
+        public async Task<IActionResult> DeleteAllLikeConfirmed(long id, int prefixLen = 25)
         {
             Bug bug = await _context.Bug.SingleAsync(m => m.Id == id);
-            var bugs = await _context.Bug.Where(b => b.Description == bug.Description).ToArrayAsync();
+            var bugs = await _context.Bug.Where(b => b.Description.Substring(0, prefixLen) == bug.Description.Substring(0, prefixLen)).ToArrayAsync();
             foreach (var btd in bugs)
                 _context.Bug.Remove(btd);
             await _context.SaveChangesAsync();
