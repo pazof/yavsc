@@ -90,11 +90,11 @@ namespace Yavsc.Helpers
 
                 case "AsciiDocNet.TextLiteral":
                     var tl = elt as TextLiteral;
-                   if (tl.Attributes.Anchor!=null)
+                   if (tl?.Attributes.Anchor!=null)
                    {
                          sb.AppendFormat("<a name=\"{0}\">{1}</a> ", tl.Attributes.Anchor.Id, tl.Attributes.Anchor.XRefLabel);
                    }
-                    sb.Append(tl.Text);
+                   if (tl!=null) sb.Append(tl.Text);
                     break;
 
                 case "AsciiDocNet.Emphasis":
