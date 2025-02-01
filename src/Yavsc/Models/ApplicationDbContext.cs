@@ -38,6 +38,8 @@ namespace Yavsc.Models
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Yavsc.Server.Models.Calendar;
+    using Yavsc.Controllers;
+    using Microsoft.EntityFrameworkCore.ChangeTracking;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -87,8 +89,8 @@ namespace Yavsc.Models
             }
 
             builder.Entity<Activity>().Property(a=>a.ParentCode).IsRequired(false);
-            builder.Entity<BlogPost>().HasOne(p => p.Author).WithMany(a => a.Posts);
-
+            //builder.Entity<BlogPost>().HasOne(p => p.Author).WithMany(a => a.Posts);
+            
         }
 
         // this is not a failback procedure.
@@ -202,11 +204,11 @@ namespace Yavsc.Models
         public DbSet<GeneralSettings> GeneralSettings { get; set; }
         public DbSet<CoWorking> CoWorking { get; set; }
 
-        private void AddTimestamps(string currentUsername)
+        private void AddTimestamps(string userId)
         {
             var entities =
             ChangeTracker.Entries()
-            .Where(x => x.Entity.GetType().GetInterface("IBaseTrackedEntity") != null
+            .Where(x => x.Entity.GetType().GetInterface(nameof(ITrackedEntity)) != null
             && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
 
@@ -214,19 +216,22 @@ namespace Yavsc.Models
             {
                 if (entity.State == EntityState.Added)
                 {
-                    ((IBaseTrackedEntity)entity.Entity).DateCreated = DateTime.Now;
-                    ((IBaseTrackedEntity)entity.Entity).UserCreated = currentUsername;
+                    ((ITrackedEntity)entity.Entity).DateCreated = DateTime.Now;
+                    ((ITrackedEntity)entity.Entity).UserCreated = userId;
                 }
 
-                ((IBaseTrackedEntity)entity.Entity).DateModified = DateTime.Now;
-                ((IBaseTrackedEntity)entity.Entity).UserModified = currentUsername;
+                ((ITrackedEntity)entity.Entity).DateModified = DateTime.Now;
+                ((ITrackedEntity)entity.Entity).UserModified = userId;
             }
         }
+        
         public int SaveChanges(string userId)
         {
             AddTimestamps(userId);
             return base.SaveChanges();
         }
+
+    
 
         public async Task<int> SaveChangesAsync(string userId, CancellationToken ctoken = default(CancellationToken))
         {

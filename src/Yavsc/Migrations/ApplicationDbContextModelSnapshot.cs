@@ -712,7 +712,8 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(56224)
+                        .HasColumnType("character varying(56224)");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
@@ -720,20 +721,17 @@ namespace Yavsc.Migrations
                     b.Property<DateTime>("DateModified")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Lang")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Photo")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<int>("Rate")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("UserCreated")
                         .IsRequired()
@@ -793,7 +791,7 @@ namespace Yavsc.Migrations
                     b.Property<long?>("ParentId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("PostId")
+                    b.Property<long>("ReceiverId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("UserCreated")
@@ -813,7 +811,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("ReceiverId");
 
                     b.ToTable("Comment");
                 });
@@ -2354,33 +2352,6 @@ namespace Yavsc.Migrations
                     b.ToTable("UserActivities");
                 });
 
-            modelBuilder.Entity("Yavsc.Server.Models.Blog.BlogTrad", b =>
-                {
-                    b.Property<long>("PostId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Lang")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Body")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TraducerId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("PostId", "Lang");
-
-                    b.HasIndex("TraducerId");
-
-                    b.ToTable("BlogTrad");
-                });
-
             modelBuilder.Entity("Yavsc.Server.Models.Calendar.Period", b =>
                 {
                     b.Property<DateTime>("Start")
@@ -2801,7 +2772,7 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Models.Blog.BlogPost", "Post")
                         .WithMany("Comments")
-                        .HasForeignKey("PostId")
+                        .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3351,17 +3322,6 @@ namespace Yavsc.Migrations
                     b.Navigation("Does");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Yavsc.Server.Models.Blog.BlogTrad", b =>
-                {
-                    b.HasOne("Yavsc.Models.ApplicationUser", "Traducer")
-                        .WithMany()
-                        .HasForeignKey("TraducerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Traducer");
                 });
 
             modelBuilder.Entity("Yavsc.Server.Models.IT.Project", b =>

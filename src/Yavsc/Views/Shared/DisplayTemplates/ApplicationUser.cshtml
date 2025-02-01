@@ -1,14 +1,14 @@
 @model ApplicationUser
 @{
     var avuri = "/Avatars/"+Model.UserName+".s.png";
-    var userPosted = Model.Posts!=null && Model.Posts.Count()>1;
+    var userPosted = Model.Posts!=null && Model.Posts.Count()>=1;
 }
 <div class="userinfo">
-@if (userPosted) { <a asp-controller="Blogspot" asp-action="UserPosts" 
+@if (userPosted) { <a asp-controller="Blogspot" asp-action="Index" 
 asp-route-id="@Model.UserName" class="btn btn-primary">
-<img src="@avuri" asp-append-version="true" class="smalltofhol" alt="" title="@Model.UserName"/>
+<img src="@avuri" asp-append-version="true" class="smalltofhol" alt="@Model.UserName" title="@Model.UserName"/>
 </a>
-}else {
-    Html.LabelFor(m=>m.UserName);
+} else {
+    Html.DisplayFor(m=>m.UserName);
 }
 </div>

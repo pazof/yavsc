@@ -1,13 +1,13 @@
 @model PerformerProfile 
 @{ ViewData["Title"] = "Edit your avatar"; } 
 @section header{
-<link href="~/css/main/dropzone.css" rel="stylesheet"> 
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 } 
 @section scripts{
-<script src="~/js/dropzone.js"></script> 
 <script>
 $(document).ready(function() {
-    Dropzone.options.postavatar= {
+    Dropzone.options.postavatar = {
         maxFilesize: 2, // MB (an avatar)
         autoProcessQueue: true,
         accept: function(file, done) {
@@ -23,10 +23,10 @@ $(document).ready(function() {
 }
 <img src="~/avatars/@(User.Identity.Name).png">
 
-<form id="postavatar" class="dropzone" method="post" enctype="multipart/form-data">
+<form id="postavatar" action="/api/setavatar" class="dropzone" method="post" enctype="multipart/form-data">
     <div class="fallback">
         <input name="Avatar" type="file" id="Avatar" />
     </div>
-  (IconWebUploadSpecification"])
     @Html.AntiForgeryToken()
+
 </form>

@@ -11,7 +11,7 @@ namespace Yavsc.Models.Workflow
     using Yavsc;
     using Yavsc.Attributes.Validation;
 
-    public class Activity : IBaseTrackedEntity, IActivity
+    public class Activity : ITrackedEntity, IActivity
     {
 
         [YaStringLength(512), YaRequired, Key]

@@ -7,15 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <link rel="icon" type="image/x-icon" href="~/favicon.ico"  asp-append-version="true"/>
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"  asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/site.css"  asp-append-version="true"/>
-    <!-- #region jQuery Slim
-    <script src="~/lib/jquery/dist/jquery.slim.min.js"></script> -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="~/lib/jquery-ui/external/jquery/jquery.js"></script>
+    <script src="~/lib/jquery-ui/jquery-ui.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("header", false)
 </head>
 <body>
-    <main>
         <partial name="_Nav" />
         @RenderSection("ctxmenu", required: false)
           @if (ViewData["Notify"] != null)
@@ -35,15 +36,13 @@
         <div class="container body-container">
             @RenderBody()
         </div>
-    </main>
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - Yavsc - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("scripts", false)
+
+@await RenderSectionAsync("scripts", false)
 
 </body>
 </html>
