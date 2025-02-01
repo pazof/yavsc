@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using Yavsc.ViewModels.Blog;
+using System.Collections;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -45,7 +46,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Index(string id)
         {
             if (!string.IsNullOrEmpty(id)) {
-                return await UserPosts(id);
+                return View("UserPosts", await UserPosts(id));
             }
             return View();
         }
@@ -63,13 +64,10 @@ namespace Yavsc.Controllers
             ).ToList());
         }
 
-        [Route("~/Blog/{userName}/{pageLen?}/{pageNum?}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> UserPosts(string userName, int pageLen=10, int pageNum=0)
+        private async Task<IEnumerable<BlogPost>> UserPosts(string userName, int pageLen=10, int pageNum=0)
         {
             string posterId = (await _context.Users.SingleOrDefaultAsync(u=>u.UserName == userName))?.Id ?? null ;
-            var result = _context.UserPosts(posterId, User.Identity.Name);
-            return View("Index", result.ToArray().Skip(pageLen*pageNum).Take(pageLen).OrderByDescending(p => p.DateCreated).ToList().GroupBy(p=> p.Title ));
+            return _context.UserPosts(posterId, User.Identity.Name);
         }
         // GET: Blog/Details/5
         [AllowAnonymous]
@@ -230,7 +228,8 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
-            BlogPost blog = _context.Blogspot.Single(m => m.Id == id && m.GetOwnerId()== User.GetUserId());
+            var uid = User.GetUserId();
+            BlogPost blog = _context.Blogspot.Single(m => m.Id == id && m.AuthorId == uid );
            
             _context.Blogspot.Remove(blog);
             _context.SaveChanges(User.GetUserId());

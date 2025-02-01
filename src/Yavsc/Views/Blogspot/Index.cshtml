@@ -45,5 +45,5 @@
 }
 
 <div class="container">
-     @await Component.InvokeAsync("BlogIndex",new{ id = User.GetUserId() ?? "_anonymous_" })   
+     @await Component.InvokeAsync("BlogIndex",new{ viewerId = User.GetUserId() ?? "_anonymous_" })   
 </div>

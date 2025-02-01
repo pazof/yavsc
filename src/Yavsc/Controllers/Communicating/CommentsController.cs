@@ -47,7 +47,7 @@ namespace Yavsc.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
-            ViewData["PostId"] = new SelectList(_context.Blogspot, "Id", "Post");
+            ViewData["ReceiverId"] = new SelectList(_context.Blogspot, "Id", "Post");
             return View();
         }
 
@@ -64,7 +64,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["PostId"] = new SelectList(_context.Blogspot, "Id", "Post", comment.PostId);
+            ViewData["ReceiverId"] = new SelectList(_context.Blogspot, "Id", "Post", comment.ReceiverId);
             return View(comment);
         }
 
@@ -81,7 +81,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            ViewData["PostId"] = new SelectList(_context.Blogspot, "Id", "Post", comment.PostId);
+            ViewData["ReceiverId"] = new SelectList(_context.Blogspot, "Id", "Post", comment.ReceiverId);
             return View(comment);
         }
 
@@ -96,7 +96,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["PostId"] = new SelectList(_context.Blogspot, "Id", "Post", comment.PostId);
+            ViewData["ReceiverId"] = new SelectList(_context.Blogspot, "Id", "Post", comment.ReceiverId);
             return View(comment);
         }
 

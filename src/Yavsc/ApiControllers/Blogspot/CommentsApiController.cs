@@ -1,12 +1,15 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 
 namespace Yavsc.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/blogcomments")]
     public class CommentsApiController : Controller
@@ -18,14 +21,6 @@ namespace Yavsc.Controllers
             _context = context;
         }
 
-        // GET: api/CommentsApi
-        [HttpGet]
-        public IEnumerable<Comment> GetComment()
-        {
-            return _context.Comment;
-        }
-
-        // GET: api/CommentsApi/5
         [HttpGet("{id}", Name = "GetComment")]
         public async Task<IActionResult> GetComment([FromRoute] long id)
         {
@@ -43,65 +38,46 @@ namespace Yavsc.Controllers
 
             return Ok(comment);
         }
-
-        // PUT: api/CommentsApi/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment([FromRoute] long id, [FromBody] Comment comment)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != comment.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(comment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync(User.GetUserId());
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return new StatusCodeResult(StatusCodes.Status204NoContent);
-        }
-
-        // POST: api/CommentsApi
         [HttpPost]
-        public async Task<IActionResult> PostComment([FromBody] Comment comment)
+        public async Task<IActionResult> Post([FromBody] CommentPost post)
         {
             if (!ModelState.IsValid)
             {
                 return new BadRequestObjectResult(ModelState);
             }
-            if (!User.IsInRole(Constants.AdminGroupName))
+            var article = await _context.Blogspot.FirstOrDefaultAsync
+            (p=> p.Id == post.ReceiverId);
+
+            if (article==null) {
+                ModelState.AddModelError("ReceiverId", "not found");
+                return BadRequest(ModelState);
+                }
+            if (post.ParentId!=null)
             {
-                if (User.GetUserId()!=comment.AuthorId) {
-                    ModelState.AddModelError("Content","Vous ne pouvez pas poster au nom d'un autre.");
-                    return new BadRequestObjectResult(ModelState);
+                var parentExists = _context.Comment.Any(c => c.Id == post.ParentId);
+                if (!parentExists)
+                {
+                    ModelState.AddModelError("ParentId", "not found");
+                    return BadRequest(ModelState);
                 }
             }
-            _context.Comment.Add(comment);
+            string uid = User.GetUserId();
+            Comment c = new Comment{
+                ReceiverId = post.ReceiverId,
+                Content = post.Content,
+                ParentId = post.ParentId,
+                AuthorId = uid,
+                UserModified = uid
+            };
+
+            _context.Comment.Add(c);
             try
             {
-                await _context.SaveChangesAsync(User.GetUserId());
+                await _context.SaveChangesAsync(uid);
             }
             catch (DbUpdateException)
             {
-                if (CommentExists(comment.Id))
+                if (CommentExists(c.Id))
                 {
                     return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -110,12 +86,12 @@ namespace Yavsc.Controllers
                     throw;
                 }
             }
-            return CreatedAtRoute("GetComment", new { id = comment.Id }, comment);
+            return CreatedAtRoute("GetComment", new { id = c.Id }, new { id = c.Id, dateCreated = c.DateCreated });
         }
 
         // DELETE: api/CommentsApi/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteComment([FromRoute] long id)
+        public async Task<IActionResult> Delete([FromRoute] long id)
         {
             if (!ModelState.IsValid)
             {
@@ -135,7 +111,8 @@ namespace Yavsc.Controllers
         }
         private void RemoveRecursive (Comment comment)
         {
-            var children = _context.Comment.Where(c=>c.ParentId==comment.Id).ToList();
+            var children = _context.Comment.Where
+                (c=>c.ParentId==comment.Id).ToList();
             foreach (var child in children) {
                 RemoveRecursive(child);
             }
