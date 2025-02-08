@@ -13,8 +13,7 @@ using System.Diagnostics;
 
 namespace Yavsc.WebApi.Controllers
 {
-
-    [Authorize(),Route("~/api/account")]
+    [Authorize("ApiScope"),Route("~/api/account")]
     public class ApiAccountController : Controller
     {
         private UserManager<ApplicationUser> _userManager;
@@ -44,7 +43,7 @@ namespace Yavsc.WebApi.Controllers
         }
 
         // POST api/Account/ChangePassword
-        [Authorize]
+      
 		public async Task<IActionResult> ChangePassword(ChangePasswordBindingModel model)
         {
             if (!ModelState.IsValid)
@@ -66,7 +65,7 @@ namespace Yavsc.WebApi.Controllers
         }
 
         // POST api/Account/SetPassword
-        [Authorize]
+   
 		public async Task<IActionResult> SetPassword(SetPasswordBindingModel model)
         {
             if (!ModelState.IsValid)
@@ -123,7 +122,7 @@ namespace Yavsc.WebApi.Controllers
             base.Dispose(disposing);
         }
 
-        [HttpGet("~/api/me"),Authorize]
+        [HttpGet("~/api/otherme")]
         public async Task<IActionResult> Me ()
         {
             if (User==null) 
@@ -149,7 +148,7 @@ namespace Yavsc.WebApi.Controllers
             return Ok(user);
         }
 
-        [HttpGet("~/api/myhost"),Authorize]
+        [HttpGet("~/api/myhost")]
         public IActionResult MyHost ()
         {
             return Ok(new { host = Request.ForHost() });
@@ -160,7 +159,7 @@ namespace Yavsc.WebApi.Controllers
         /// </summary>
         /// <param name="me">MyUpdate containing the new user name </param>
         /// <returns>Ok when all is ok.</returns>
-        [HttpPut("~/api/me"),Authorize]
+        [HttpPut("~/api/me")]
         public async Task<IActionResult> UpdateMe(UserInfo me)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(
@@ -175,7 +174,7 @@ namespace Yavsc.WebApi.Controllers
         /// Updates the avatar
         /// </summary>
         /// <returns></returns>
-        [HttpPost("~/api/setavatar"),Authorize]
+        [HttpPost("~/api/setavatar")]
         public async Task<IActionResult> SetAvatar()
         {
             var root = User.InitPostToFileSystem(null);

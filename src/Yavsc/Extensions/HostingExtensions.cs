@@ -172,6 +172,17 @@ internal static class HostingExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
+services
+    .AddAuthorization(options =>
+    {
+        options.AddPolicy("ApiScope", policy =>
+        {
+            policy
+                .RequireAuthenticatedUser()
+                .RequireClaim("scope", "api1");
+        });
+    });
+
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
@@ -210,7 +221,14 @@ internal static class HostingExtensions
         // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
 
 
-        var authenticationBuilder = services.AddAuthentication();
+        var authenticationBuilder = services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "https://localhost:5001";
+        options.TokenValidationParameters =
+            new() { ValidateAudience = false };
+    });
+
         authenticationBuilder.AddGoogle(options =>
         {
             options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
@@ -313,7 +331,12 @@ internal static class HostingExtensions
         services.AddDataProtection().PersistKeysToFileSystem(dataDir);
         services.AddAuthorization(options =>
         {
-
+            options.AddPolicy("ApiScope", policy =>
+                    {
+                        policy
+                            .RequireAuthenticatedUser()
+                            .RequireClaim("scope", "scope2");
+                    });
             options.AddPolicy("AdministratorOnly", policy =>
             {
                 _ = policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
@@ -351,6 +374,9 @@ internal static class HostingExtensions
         app.UseRouting();
         app.UseIdentityServer();
         app.UseAuthorization();
+        app.MapGet("/api/me", (HttpContext context) =>
+            new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
+        ).RequireAuthorization("ApiScope");
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
