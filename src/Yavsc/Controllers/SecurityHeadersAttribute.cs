@@ -14,7 +14,8 @@ namespace Yavsc
             var result = context.Result;
             if (result is ViewResult)
             {
-                // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+#pragma warning disable ASP0019 // Suggest using IHeaderDictionary.Append or the indexer
+                 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
                 if (!context.HttpContext.Response.Headers.ContainsKey("X-Content-Type-Options"))
                 {
                     context.HttpContext.Response.Headers.Add("X-Content-Type-Options", "nosniff");
@@ -48,8 +49,10 @@ namespace Yavsc
                 var referrer_policy = "no-referrer";
                 if (!context.HttpContext.Response.Headers.ContainsKey("Referrer-Policy"))
                 {
-                    context.HttpContext.Response.Headers.Add("Referrer-Policy", referrer_policy);
+                           context.HttpContext.Response.Headers.Add("Referrer-Policy", referrer_policy);
                 }
+#pragma warning restore ASP0019 // Suggest using IHeaderDictionary.Append or the indexer
+  
             }
         }
     }

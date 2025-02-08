@@ -1,6 +1,6 @@
 
-using IdentityServer4.Models;
-using IdentityServer4.Stores;
+using IdentityServer8.Models;
+using IdentityServer8.Stores;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 

@@ -93,7 +93,7 @@ namespace Yavsc.Controllers
 
             var user = await GetCurrentUserAsync();
             
-            long pc = _dbContext.Blogspot.Count(x => x.AuthorId == user.Id);
+            long pc = _dbContext.BlogSpot.Count(x => x.AuthorId == user.Id);
            
            
 

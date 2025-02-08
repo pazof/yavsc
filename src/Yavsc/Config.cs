@@ -1,5 +1,6 @@
 ﻿
-using IdentityServer4.Models;
+using IdentityServer8;
+using IdentityServer8.Models;
 using Yavsc.Settings;
 
 namespace Yavsc;
@@ -65,17 +66,20 @@ public static class Config
             // interactive client using code flow + pkce
             new Client
             {
-                ClientId = "interactive",
+                ClientId = "mvc",
                 ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
 
                 AllowedGrantTypes = GrantTypes.Code,
 
-                RedirectUris = { "https://localhost:5003/signin-oidc" },
-                FrontChannelLogoutUri = "https://localhost:5003/signout-oidc",
+                RedirectUris = { "https://localhost:5003/signin-oidc",
+                "http://localhost:5002/signin-oidc"  },
                 PostLogoutRedirectUris = { "https://localhost:5003/signout-callback-oidc" },
 
                 AllowOfflineAccess = true,
-                AllowedScopes = { "openid", "profile", "scope2" }
+                AllowedScopes = { 
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "scope2" }
             },
         };
 
