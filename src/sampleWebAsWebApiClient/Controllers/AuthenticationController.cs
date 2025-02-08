@@ -14,11 +14,11 @@ using Microsoft.AspNetCore.Mvc;
             var properties = new AuthenticationProperties { RedirectUri = returnUrl };
             return new ChallengeResult("Yavsc", properties);
         }
-        
+
         [HttpGet("~/signout")]
         public async Task<IActionResult> SignOut(string returnUrl="/") {
-            await HttpContext.SignOutAsync("Yavsc");
-            return Redirect(returnUrl);
+            
+            return SignOut("Cookies", "Yavsc");
         }
 
     }

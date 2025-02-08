@@ -84,7 +84,7 @@ namespace testOauthClient.Controllers
 
         public IActionResult Logout()
         {
-            return SignOut("Cookies", "oidc");
+            return SignOut("Cookies", "Yavsc");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
