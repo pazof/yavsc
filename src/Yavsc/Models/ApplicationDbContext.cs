@@ -123,7 +123,7 @@ namespace Yavsc.Models
         /// Users posts
         /// </summary>
         /// <returns></returns>
-        public DbSet<Blog.BlogPost> Blogspot { get; set; }
+        public DbSet<Blog.BlogPost> BlogSpot { get; set; }
 
         /// <summary>
         /// Skills powered by this site

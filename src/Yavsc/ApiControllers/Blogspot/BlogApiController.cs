@@ -27,7 +27,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<BlogPost> GetBlogspot()
         {
-            return _context.Blogspot.Where(b => b.Visible).OrderByDescending(b => b.UserModified);
+            return _context.BlogSpot.Where(b => b.Visible).OrderByDescending(b => b.UserModified);
         }
 
         // GET: api/BlogApi/5
@@ -39,7 +39,7 @@ namespace Yavsc.Controllers
                 return BadRequest(ModelState);
             }
 
-            BlogPost blog = _context.Blogspot.Single(m => m.Id == id);
+            BlogPost blog = _context.BlogSpot.Single(m => m.Id == id);
 
             if (blog == null)
             {
@@ -93,7 +93,7 @@ namespace Yavsc.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Blogspot.Add(blog);
+            _context.BlogSpot.Add(blog);
             try
             {
                 _context.SaveChanges(User.GetUserId());
@@ -122,13 +122,13 @@ namespace Yavsc.Controllers
                 return BadRequest(ModelState);
             }
 
-            BlogPost blog = _context.Blogspot.Single(m => m.Id == id);
+            BlogPost blog = _context.BlogSpot.Single(m => m.Id == id);
             if (blog == null)
             {
                 return NotFound();
             }
 
-            _context.Blogspot.Remove(blog);
+            _context.BlogSpot.Remove(blog);
             _context.SaveChanges(User.GetUserId());
 
             return Ok(blog);
@@ -145,7 +145,7 @@ namespace Yavsc.Controllers
 
         private bool BlogExists(long id)
         {
-            return _context.Blogspot.Count(e => e.Id == id) > 0;
+            return _context.BlogSpot.Count(e => e.Id == id) > 0;
         }
     }
 }

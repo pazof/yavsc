@@ -9,6 +9,7 @@ using Yavsc.Models.Account;
 using Yavsc.ViewModels.Account;
 using Yavsc.Helpers;
 using Yavsc.Abstract.Identity;
+using System.Diagnostics;
 
 namespace Yavsc.WebApi.Controllers
 {
@@ -129,7 +130,7 @@ namespace Yavsc.WebApi.Controllers
             return new BadRequestObjectResult(
                     new { error = "user not found" });
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+            var uuid = User.GetUserId();
             var userData = await _dbContext.Users
                 .Include(u=>u.PostalAddress)
                 .Include(u=>u.AccountBalance)

@@ -27,7 +27,7 @@ namespace Yavsc.Controllers
                 return BadRequest(ModelState);
             }
 
-            Models.Blog.BlogPost blogpost = _context.Blogspot.Single(x=>x.Id == id);
+            Models.Blog.BlogPost blogpost = _context.BlogSpot.Single(x=>x.Id == id);
 
             if (blogpost == null)
             {
@@ -39,7 +39,6 @@ namespace Yavsc.Controllers
                 if (!User.IsInRole(Constants.AdminGroupName))
                     return BadRequest();
 
-            blogpost.Rate = rate;
             _context.SaveChanges(User.GetUserId());
 
             return Ok();

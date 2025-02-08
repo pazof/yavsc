@@ -45,7 +45,7 @@ namespace Yavsc.Controllers
             {
                 return new BadRequestObjectResult(ModelState);
             }
-            var article = await _context.Blogspot.FirstOrDefaultAsync
+            var article = await _context.BlogSpot.FirstOrDefaultAsync
             (p=> p.Id == post.ReceiverId);
 
             if (article==null) {

@@ -20,10 +20,6 @@ namespace Yavsc.Models.Blog
         [Display(Name="Identifiant du post")]
         public long Id { get; set; }
 
-        [Display(Name="Indice de qualité")]
-        public int Rate { get; set; }
-
-
         [Display(Name="Identifiant de l'auteur")]
         [ForeignKey("Author")]
         public string AuthorId { get; set; }
@@ -60,11 +56,6 @@ namespace Yavsc.Models.Blog
         {
             return ACL?.Any( i=>i.CircleId == circleId) ?? true;
         }
-        
-        public string GetOwnerId()
-        {
-            return AuthorId;
-        }
 
         public ICircleAuthorization[] GetACL()
         {
@@ -93,5 +84,8 @@ namespace Yavsc.Models.Blog
 
         [InverseProperty("Post")]
         public virtual List<Comment> Comments { get; set; }
+
+        [NotMapped]
+        public string OwnerId => AuthorId;
     }
 }

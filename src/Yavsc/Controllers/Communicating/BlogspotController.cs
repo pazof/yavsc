@@ -57,7 +57,7 @@ namespace Yavsc.Controllers
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewData["Title"] = id;
-            return View("Title", _context.Blogspot.Include(
+            return View("Title", _context.BlogSpot.Include(
                 b => b.Author
             ).Where(x => x.Title == id && (x.Visible || x.AuthorId == uid )).OrderByDescending(
                 x => x.DateCreated
@@ -78,7 +78,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            BlogPost blog = _context.Blogspot
+            BlogPost blog = _context.BlogSpot
             .Include(p => p.Author)
             .Include(p => p.Tags)
             .Include(p => p.Comments)
@@ -128,10 +128,9 @@ namespace Yavsc.Controllers
                     Title = blogInput.Title,
                     Content = blogInput.Content,
                     Photo = blogInput.Photo,
-                    Rate = 0,
                     AuthorId = User.GetUserId()
                 };
-                _context.Blogspot.Add(post);
+                _context.BlogSpot.Add(post);
                 _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
@@ -150,7 +149,7 @@ namespace Yavsc.Controllers
             }
 
             ViewData["PostTarget"]="Edit";
-            BlogPost blog = _context.Blogspot.Include(x => x.Author).Include(x => x.ACL).Single(m => m.Id == id);
+            BlogPost blog = _context.BlogSpot.Include(x => x.Author).Include(x => x.ACL).Single(m => m.Id == id);
 
             if (blog == null)
             {
@@ -212,7 +211,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            BlogPost blog = _context.Blogspot.Include(
+            BlogPost blog = _context.BlogSpot.Include(
                b => b.Author
            ).Single(m => m.Id == id);
             if (blog == null)
@@ -229,9 +228,9 @@ namespace Yavsc.Controllers
         public IActionResult DeleteConfirmed(long id)
         {
             var uid = User.GetUserId();
-            BlogPost blog = _context.Blogspot.Single(m => m.Id == id && m.AuthorId == uid );
+            BlogPost blog = _context.BlogSpot.Single(m => m.Id == id && m.AuthorId == uid );
            
-            _context.Blogspot.Remove(blog);
+            _context.BlogSpot.Remove(blog);
             _context.SaveChanges(User.GetUserId());
            
             return RedirectToAction("Index");

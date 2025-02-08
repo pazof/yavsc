@@ -29,7 +29,7 @@ namespace Yavsc.Helpers
         {
             if (readerId == null)
             {
-                var userPosts = dbContext.Blogspot.Include(
+                var userPosts = dbContext.BlogSpot.Include(
                 b => b.Author
                 ).Where(x => ((x.AuthorId == posterId) && (x.Visible))).ToArray();
                 return userPosts;
@@ -40,7 +40,7 @@ namespace Yavsc.Helpers
                 dbContext.Circle.Include(c => c.Members)
                 .Where(c => c.Members.Any(m => m.MemberId == readerId))
                 .Select(c => c.Id).ToArray();
-                return dbContext.Blogspot.Include(
+                return dbContext.BlogSpot.Include(
                               b => b.Author
                               ).Include(p => p.ACL).Where(x => x.Author.Id == posterId &&
                               (x.Visible &&
