@@ -39,6 +39,7 @@ public static class Config
         {
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
+            new IdentityResources.Email()
         };
 
     public static IEnumerable<ApiScope> ApiScopes =>
@@ -79,7 +80,7 @@ public static class Config
                 AllowedScopes = { 
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
-                    "scope2" }
+                    IdentityServerConstants.StandardScopes.Email }
             },
         };
 

@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Util.Store;
 using IdentityServer8;
+using IdentityServer8.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -33,6 +34,7 @@ namespace Yavsc.Extensions;
 
 internal static class HostingExtensions
 {
+    #region files config
     public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
                 bool enableDirectoryBrowsing = false)
     {
@@ -83,6 +85,9 @@ internal static class HostingExtensions
         app.UseStaticFiles();
         return app;
     }
+
+    #endregion
+
     public static void ConfigureWorkflow()
     {
         foreach (var a in System.AppDomain.CurrentDomain.GetAssemblies())
@@ -163,6 +168,7 @@ internal static class HostingExtensions
         services.Configure<PayPalSettings>(paypalSection);
         services.Configure<GoogleAuthSettings>(googleAuthSettings);
 
+
         services.AddRazorPages();
         services.AddSignalR(o =>
         {
@@ -197,12 +203,15 @@ services
 
                 // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
                 options.EmitStaticAudienceClaim = true;
+                options.EmitScopesAsSpaceDelimitedStringInJwt = true;
+                options.Endpoints.EnableUserInfoEndpoint = true;
             })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddAspNetIdentity<ApplicationUser>()
             ;
+        services.AddScoped<IProfileService, ProfileService>();
 
         if (builder.Environment.IsDevelopment())
         {
@@ -317,6 +326,7 @@ services
         _ = services.AddTransient<IBillingService, BillingService>();
         _ = services.AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false));
         _ = services.AddTransient<ICalendarManager, CalendarManager>();
+        services.AddTransient<IProfileService, ProfileService>();
 
 
         // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
@@ -333,9 +343,7 @@ services
         {
             options.AddPolicy("ApiScope", policy =>
                     {
-                        policy
-                            .RequireAuthenticatedUser()
-                            .RequireClaim("scope", "scope2");
+                        policy.RequireAuthenticatedUser();
                     });
             options.AddPolicy("AdministratorOnly", policy =>
             {
@@ -343,14 +351,11 @@ services
             });
 
             options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
-            options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
-                .AddAuthenticationSchemes("Bearer")
-                .RequireAuthenticatedUser().Build());
+          
             // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
             // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
             options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
-            options.AddPolicy("IsTheAuthor", policy =>
-                   policy.Requirements.Add(new EditPermission()));
+            options.AddPolicy("IsTheAuthor", policy => policy.Requirements.Add(new EditPermission()));
         });
 
         services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
