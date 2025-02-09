@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -36,38 +38,30 @@ namespace testOauthClient.Controllers
             return View();
         }
 
-    public async Task<IActionResult> CallApi()
-    {
-        var accessToken = await HttpContext.GetTokenAsync("access_token");
+        public async Task<IActionResult> CallApi()
+        {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
 
-        var client = new HttpClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-        var content = await client.GetStringAsync("https://localhost:5001/api/me");
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var content = await client.GetStringAsync("https://localhost:5001/api/account/me");
 
-        ViewBag.Json = content;
-        return View("json");
-    }
+            ViewBag.Json = content;
+            return View("json");
+        }
 
         [HttpPost]
         public async Task<IActionResult> GetUserInfo(CancellationToken cancellationToken)
         {
-             var accessToken = await HttpContext.GetTokenAsync("access_token");
-
-            using (var client = new HttpClient())
-            {
-                var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:5001/api/me");
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-
-                var response = await client.SendAsync(request, cancellationToken);
-                response.EnsureSuccessStatusCode();
-
-                return View("UserInfo", model: await response.Content.ReadAsStringAsync());
-            }
-
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            var content = await client.GetStringAsync("https://localhost:5001/api/account/me");
+            var obj = JsonSerializer.Deserialize<JsonElement>(content);
+            return View("UserInfo", obj.ToString());
         }
 
-   
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

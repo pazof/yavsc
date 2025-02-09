@@ -80,7 +80,8 @@ public static class Config
                 AllowedScopes = { 
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
-                    IdentityServerConstants.StandardScopes.Email }
+                    IdentityServerConstants.StandardScopes.Email,
+                    "scope2" }
             },
         };
 
