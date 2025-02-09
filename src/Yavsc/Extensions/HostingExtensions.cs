@@ -178,34 +178,11 @@ internal static class HostingExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
-services
-    .AddAuthorization(options =>
-    {
-        options.AddPolicy("ApiScope", policy =>
-        {
-            policy
-                .RequireAuthenticatedUser()
-                .RequireClaim("scope", "api1");
-        });
-    });
-
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-
-        var identityServerBuilder = services.AddIdentityServer(options =>
-            {
-                options.Events.RaiseErrorEvents = true;
-                options.Events.RaiseInformationEvents = true;
-                options.Events.RaiseFailureEvents = true;
-                options.Events.RaiseSuccessEvents = true;
-
-                // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
-                options.EmitStaticAudienceClaim = true;
-                options.EmitScopesAsSpaceDelimitedStringInJwt = true;
-                options.Endpoints.EnableUserInfoEndpoint = true;
-            })
+        var identityServerBuilder = services.AddIdentityServer()
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
@@ -230,13 +207,7 @@ services
         // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
 
 
-        var authenticationBuilder = services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = "https://localhost:5001";
-        options.TokenValidationParameters =
-            new() { ValidateAudience = false };
-    });
+        var authenticationBuilder = services.AddAuthentication();
 
         authenticationBuilder.AddGoogle(options =>
         {
@@ -326,7 +297,7 @@ services
         _ = services.AddTransient<IBillingService, BillingService>();
         _ = services.AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false));
         _ = services.AddTransient<ICalendarManager, CalendarManager>();
-        services.AddTransient<IProfileService, ProfileService>();
+        //services.AddTransient<IProfileService, ProfileService>();
 
 
         // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
@@ -343,8 +314,15 @@ services
         {
             options.AddPolicy("ApiScope", policy =>
                     {
-                        policy.RequireAuthenticatedUser();
+                        policy.RequireAuthenticatedUser()
+                        .RequireClaim("scope", "scope2");
                     });
+            options.AddPolicy("Performer", policy =>
+            {
+                policy
+                    .RequireAuthenticatedUser()
+                    .RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "Performer");
+            });
             options.AddPolicy("AdministratorOnly", policy =>
             {
                 _ = policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);

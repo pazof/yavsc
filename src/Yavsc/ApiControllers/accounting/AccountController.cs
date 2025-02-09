@@ -13,7 +13,8 @@ using System.Diagnostics;
 
 namespace Yavsc.WebApi.Controllers
 {
-    [Authorize("ApiScope"),Route("~/api/account")]
+    [Route("~/api/account")]
+    [Authorize("ApiScope")]
     public class ApiAccountController : Controller
     {
         private UserManager<ApplicationUser> _userManager;
@@ -22,9 +23,12 @@ namespace Yavsc.WebApi.Controllers
         private readonly ILogger _logger;
 
         public ApiAccountController(UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager, ILoggerFactory loggerFactory, ApplicationDbContext dbContext)
+        SignInManager<ApplicationUser> signInManager, 
+        RoleManager<IdentityRole> roleManager,
+        ILoggerFactory loggerFactory, ApplicationDbContext dbContext)
         {
             UserManager = userManager;
+            this.roleManager = roleManager;
             _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger("ApiAuth");
             _dbContext = dbContext;
@@ -42,9 +46,11 @@ namespace Yavsc.WebApi.Controllers
             }
         }
 
+        private readonly RoleManager<IdentityRole> roleManager;
+
         // POST api/Account/ChangePassword
-      
-		public async Task<IActionResult> ChangePassword(ChangePasswordBindingModel model)
+
+        public async Task<IActionResult> ChangePassword(ChangePasswordBindingModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -122,14 +128,14 @@ namespace Yavsc.WebApi.Controllers
             base.Dispose(disposing);
         }
 
-        [HttpGet("~/api/otherme")]
-        public async Task<IActionResult> Me ()
+        [HttpGet("me")]
+        public async Task<IActionResult> Me()
         {
             if (User==null) 
             return new BadRequestObjectResult(
                     new { error = "user not found" });
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var uuid = User.GetUserId();
+            var uid = User.GetUserId();
+            
             var userData = await _dbContext.Users
                 .Include(u=>u.PostalAddress)
                 .Include(u=>u.AccountBalance)
@@ -139,9 +145,9 @@ namespace Yavsc.WebApi.Controllers
             userData.Avatar , 
             userData.PostalAddress, userData.DedicatedGoogleCalendar );
 
-            var userRoles = _dbContext.UserRoles.Where(u=>u.UserId == uid).ToArray();
+            var userRoles = _dbContext.UserRoles.Where(u=>u.UserId == uid).Select(r => r.RoleId).ToArray();
 
-            IdentityRole [] roles = _dbContext.Roles.Where(r=>userRoles.Any(ur=>ur.RoleId==r.Id)).ToArray();
+            IdentityRole [] roles = _dbContext.Roles.Where(r=>userRoles.Contains(r.Id)).ToArray();
             
             user.Roles = roles.Select(r=>r.Name).ToArray();
 
