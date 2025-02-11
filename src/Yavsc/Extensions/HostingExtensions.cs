@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Util.Store;
 using IdentityServer8;
+using IdentityServer8.Hosting;
 using IdentityServer8.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -187,8 +188,9 @@ internal static class HostingExtensions
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddAspNetIdentity<ApplicationUser>()
+            .AddJwtBearerClientAuthentication()
             ;
-        services.AddScoped<IProfileService, ProfileService>();
+        //services.AddScoped<IProfileService, ProfileService>();
 
         if (builder.Environment.IsDevelopment())
         {
@@ -207,7 +209,15 @@ internal static class HostingExtensions
         // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
 
 
-        var authenticationBuilder = services.AddAuthentication();
+
+        var authenticationBuilder = services.AddAuthentication()
+            .AddJwtBearer("Bearer", options =>
+            {
+                options.IncludeErrorDetails=true;
+                options.Authority = "https://localhost:5001";
+                options.TokenValidationParameters =
+                    new() { ValidateAudience = false };
+            });
 
         authenticationBuilder.AddGoogle(options =>
         {
@@ -251,13 +261,7 @@ internal static class HostingExtensions
                 };
         });
 
-        services.AddCors(options =>
-        {
-            options.AddPolicy("CorsPolicy", builder =>
-            {
-                _ = builder.WithOrigins("*");
-            });
-        });
+       
 
 
         // Add the system clock service
@@ -313,10 +317,10 @@ internal static class HostingExtensions
         services.AddAuthorization(options =>
         {
             options.AddPolicy("ApiScope", policy =>
-                    {
-                        policy.RequireAuthenticatedUser()
-                        .RequireClaim("scope", "scope2");
-                    });
+            {
+                policy.RequireAuthenticatedUser()
+                .RequireClaim("scope", "scope2");
+            });
             options.AddPolicy("Performer", policy =>
             {
                 policy
@@ -334,10 +338,28 @@ internal static class HostingExtensions
             // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
             options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
             options.AddPolicy("IsTheAuthor", policy => policy.Requirements.Add(new EditPermission()));
+        })
+        .AddCors(options =>
+        {
+            options.AddPolicy("CorsPolicy", builder =>
+            {
+                _ = builder.WithOrigins("*")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+            });
+
+            options.AddPolicy("default", policy =>
+            {
+                policy.WithOrigins("https://localhost:5003")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
         });
 
         services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
+
+// accepts any access token issued by identity server
 
         return builder.Build();
     }
@@ -357,9 +379,6 @@ internal static class HostingExtensions
         app.UseRouting();
         app.UseIdentityServer();
         app.UseAuthorization();
-        app.MapGet("/api/me", (HttpContext context) =>
-            new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
-        ).RequireAuthorization("ApiScope");
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
