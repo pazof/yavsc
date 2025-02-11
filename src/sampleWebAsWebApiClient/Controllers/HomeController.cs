@@ -54,13 +54,30 @@ namespace testOauthClient.Controllers
         public async Task<IActionResult> GetUserInfo(CancellationToken cancellationToken)
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var client = new HttpClient(new HttpClientHandler(){ AllowAutoRedirect=false });
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-            var content = await client.GetStringAsync("https://localhost:5001/api/account/me");
-            var obj = JsonSerializer.Deserialize<JsonElement>(content);
+            client.SetBearerToken(accessToken);
+            var content = await client.GetAsync("https://localhost:5001/api/account/me");
+            content.EnsureSuccessStatusCode();
+            var json = await content.Content.ReadAsStreamAsync();
+            var obj = JsonSerializer.Deserialize<JsonElement>(json);
             return View("UserInfo", obj.ToString());
         }
+
+        [HttpPost]
+        public async Task<IActionResult> GetApiCall(CancellationToken cancellationToken)
+        {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var client = new HttpClient(new HttpClientHandler(){ AllowAutoRedirect=false });
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            client.SetBearerToken(accessToken);
+            var content = await client.GetAsync("https://localhost:6001/identity");
+            content.EnsureSuccessStatusCode();
+            var json = await content.Content.ReadAsStreamAsync();
+            var obj = JsonSerializer.Deserialize<JsonElement>(json);
+            return View("UserInfo", obj.ToString());
+        }
+
 
         public IActionResult About()
         {

@@ -23,7 +23,6 @@ public class Startup
         .AddOpenIdConnect("Yavsc", options =>
         {
             options.Authority = "https://localhost:5001";
-
             options.ClientId = "mvc";
             options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
             options.ResponseType = "code";
@@ -32,6 +31,8 @@ public class Startup
             options.Scope.Add("openid");
             options.Scope.Add("profile");
             options.Scope.Add("email");
+            options.Scope.Add("offline_access");
+            options.Scope.Add("scope2");
 
             options.GetClaimsFromUserInfoEndpoint = true;
             options.SaveTokens = true;
@@ -44,6 +45,7 @@ public class Startup
                 NameClaimType = "name",
                 RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
             };
+
         });
     }
 

@@ -8,11 +8,11 @@ using Yavsc.Models;
 
 namespace Yavsc.Services
 {
-    public class ProfileService : IProfileService
+    public class ProfileService : DefaultProfileService, IProfileService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         public ProfileService(
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager, ILogger<DefaultProfileService> logger) : base(logger)
         {
             _userManager = userManager;
         }
@@ -21,48 +21,54 @@ namespace Yavsc.Services
             ProfileDataRequestContext context,
             ApplicationUser user)
         {
+            var requestedApiResources = context.RequestedResources.Resources.ApiResources.Select(
+                r => r.Name
+            ).ToArray();
+            var requestedApiScopes = context.RequestedResources.Resources.ApiScopes.Select(
+                s => s.Name
+            ).ToArray();
 
-            var allowedScopes = context.Client.AllowedScopes
-            .Where(s => s != JwtClaimTypes.Subject)
+            var requestedScopes = context.Client.AllowedScopes
+            .Where(s => s != JwtClaimTypes.Subject
+            && requestedApiScopes.Contains(s))
             .ToList();
-            if (allowedScopes.Contains("profile"))
+
+            if (context.RequestedClaimTypes.Contains("profile"))
+            if (requestedScopes.Contains("profile"))
             {
-                allowedScopes.Remove("profile");
-                allowedScopes.Add(JwtClaimTypes.Name);
-                allowedScopes.Add(JwtClaimTypes.FamilyName);
-                allowedScopes.Add(JwtClaimTypes.Email);
-                allowedScopes.Add(JwtClaimTypes.PreferredUserName);
-                allowedScopes.Add("http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
+                requestedScopes.Remove("profile");
+                requestedScopes.Add(JwtClaimTypes.Name);
+                requestedScopes.Add(JwtClaimTypes.FamilyName);
+                requestedScopes.Add(JwtClaimTypes.Email);
+                requestedScopes.Add(JwtClaimTypes.PreferredUserName);
+                requestedScopes.Add(JwtClaimTypes.Role);
             }
 
             var claims = new List<Claim> {
                 new Claim(JwtClaimTypes.Subject,user.Id.ToString()),
             };
-
-            foreach (var subClaim in context.Subject.Claims)
+            if (requestedScopes.Contains(JwtClaimTypes.Name)||
+                requestedScopes.Contains(JwtClaimTypes.FamilyName))
             {
-                if (allowedScopes.Contains(subClaim.Type))
-                    claims.Add(subClaim);
+                claims.Add(new Claim(JwtClaimTypes.Name, user.FullName));
             }
 
-            AddClaims(allowedScopes, claims, JwtClaimTypes.Email, user.Email);
-            AddClaims(allowedScopes, claims, JwtClaimTypes.PreferredUserName, user.FullName);
-
-            foreach (var scope in context.Client.AllowedScopes)
+            if (requestedScopes.Contains(JwtClaimTypes.PreferredUserName) )
             {
-                claims.Add(new Claim("scope", scope));
+                claims.Add(new Claim(JwtClaimTypes.Name, user.UserName));
             }
-
+            if (requestedScopes.Contains(JwtClaimTypes.Email))
+                claims.Add(new Claim(JwtClaimTypes.Email, user.Email));
+            
+            if (requestedScopes.Contains(JwtClaimTypes.Role))
+            {
+                var roles = await this._userManager.GetRolesAsync(user);
+                if (roles.Count()>0)
+                {
+                    claims.Add(new Claim(JwtClaimTypes.Role,String.Join(" ",roles)));
+                }
+            }
             return claims;
-        }
-
-        private static void AddClaims(List<string> allowedScopes, List<Claim> claims,
-            string claimType, string claimValue
-        )
-        {
-            if (allowedScopes.Contains(claimType))
-                if (!claims.Any(c => c.Type == claimType))
-                    claims.Add(new Claim(claimType, claimValue));
         }
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
@@ -71,7 +77,6 @@ namespace Yavsc.Services
             var user = await _userManager.FindByIdAsync(subjectId);
             context.IssuedClaims = await GetClaimsFromUserAsync(context, user);
         }
-
 
         public async Task IsActiveAsync(IsActiveContext context)
         {
