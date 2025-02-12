@@ -341,19 +341,13 @@ internal static class HostingExtensions
         })
         .AddCors(options =>
         {
-            options.AddPolicy("CorsPolicy", builder =>
+            options.AddPolicy("default", builder =>
             {
                 _ = builder.WithOrigins("*")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
             });
 
-            options.AddPolicy("default", policy =>
-            {
-                policy.WithOrigins("https://localhost:5003")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
         });
 
         services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
@@ -379,6 +373,7 @@ internal static class HostingExtensions
         app.UseRouting();
         app.UseIdentityServer();
         app.UseAuthorization();
+        app.UseCors("default");
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -399,7 +394,7 @@ internal static class HostingExtensions
             payPalSettings, googleAuthSettings, localization, loggerFactory,
             app.Environment.EnvironmentName);
         app.ConfigureFileServerApp();
-
+       
         return app;
     }
 
