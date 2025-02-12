@@ -57,7 +57,7 @@ namespace testOauthClient.Controllers
             var client = new HttpClient(new HttpClientHandler(){ AllowAutoRedirect=false });
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             client.SetBearerToken(accessToken);
-            var content = await client.GetAsync("https://localhost:5001/api/account/me");
+            var content = await client.GetAsync("https://localhost:6001/api/account/me");
             content.EnsureSuccessStatusCode();
             var json = await content.Content.ReadAsStreamAsync();
             var obj = JsonSerializer.Deserialize<JsonElement>(json);

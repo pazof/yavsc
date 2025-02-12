@@ -30,7 +30,7 @@ namespace Yavsc.WebApi.Controllers
             UserManager = userManager;
             this.roleManager = roleManager;
             _signInManager = signInManager;
-            _logger = loggerFactory.CreateLogger("ApiAuth");
+            _logger = loggerFactory.CreateLogger(nameof(ApiAccountController));
             _dbContext = dbContext;
         }
 
@@ -154,7 +154,7 @@ namespace Yavsc.WebApi.Controllers
             return Ok(user);
         }
 
-        [HttpGet("~/api/myhost")]
+        [HttpGet("myhost")]
         public IActionResult MyHost ()
         {
             return Ok(new { host = Request.ForHost() });
@@ -165,7 +165,7 @@ namespace Yavsc.WebApi.Controllers
         /// </summary>
         /// <param name="me">MyUpdate containing the new user name </param>
         /// <returns>Ok when all is ok.</returns>
-        [HttpPut("~/api/me")]
+        [HttpPut("me")]
         public async Task<IActionResult> UpdateMe(UserInfo me)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(
