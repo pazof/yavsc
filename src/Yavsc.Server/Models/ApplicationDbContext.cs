@@ -38,7 +38,7 @@ namespace Yavsc.Models
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Yavsc.Server.Models.Calendar;
-    using Yavsc.Controllers;
+
     using Microsoft.EntityFrameworkCore.ChangeTracking;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -106,6 +106,7 @@ namespace Yavsc.Models
             var envSetup = Environment.GetEnvironmentVariable(Constants.YavscConnectionStringEnvName);
             if (envSetup!=null) 
                 optionsBuilder.UseNpgsql(envSetup);
+            else optionsBuilder.UseNpgsql();
         }
 
         public DbSet<Client> Applications { get; set; }

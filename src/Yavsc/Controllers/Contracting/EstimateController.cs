@@ -87,7 +87,7 @@ namespace Yavsc.Controllers
         // POST: Estimate/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Estimate estimate,
+        public async Task<IActionResult> Create(Estimate estimate,
          ICollection<IFormFile> newGraphics,
          ICollection<IFormFile> newFiles
          )
@@ -118,7 +118,7 @@ namespace Yavsc.Controllers
                 foreach (var gr in newGraphics)
                 {
                     ContentDisposition contentDisposition = new ContentDisposition(gr.ContentDisposition);
-                    gr.SaveAs(
+                    await gr.SaveAsAsync(
                         Path.Combine(
                         Path.Combine(billsdir, estimate.Id.ToString()),
                         contentDisposition.FileName));
@@ -126,7 +126,7 @@ namespace Yavsc.Controllers
                 foreach (var formFile in newFiles)
                 {
                     ContentDisposition contentDisposition = new ContentDisposition(formFile.ContentDisposition);
-                    formFile.SaveAs(
+                    await formFile.SaveAsAsync(
                         Path.Combine(
                         Path.Combine(billsdir, estimate.Id.ToString()),
                         contentDisposition.FileName));

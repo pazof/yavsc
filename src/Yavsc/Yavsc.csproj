@@ -1,22 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageLicenseExpression>WTFPL</PackageLicenseExpression>
+    <UserSecretsId>76e56fc2-1619-40d8-8393-365258b7a21d</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="popper.js" Version="1.16.1" >
+    <PackageReference Include="popper.js" Version="1.16.1">
      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="bootstrap" Version="5.3.3" >
+    <PackageReference Include="bootstrap" Version="5.3.3">
      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="HigginsSoft.IdentityServer8" Version="8.0.4" />
     <PackageReference Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="8.0.4" />
   
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.13" />
@@ -43,8 +42,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Antiforgery" Version="2.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="AsciiDocNet" Version="1.0.0-alpha6" />
-
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
+
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Yavsc.Server/Yavsc.Server.csproj" />

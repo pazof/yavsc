@@ -3,18 +3,27 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.FileProviders;
-using Yavsc.Exceptions;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
 using Yavsc.Models.Streaming;
 using Yavsc.ViewModels;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using Microsoft.AspNetCore.Http;
+using Yavsc.Exceptions;
 
 namespace Yavsc.Helpers
 {
     public static class FileSystemHelpers 
     {
+        public static async Task SaveAsAsync(this IFormFile formFile, string path)
+        {
+            if (formFile.Length > 0) {
+                using (Stream fileStream = new FileStream(path, FileMode.Create)) {
+                    await formFile.CopyToAsync(fileStream);
+                }
+            }
+        }
         public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signtype)
         {
             var item = new FileRecievedInfo
@@ -258,9 +267,5 @@ namespace Yavsc.Helpers
             return $"{basename}-{flow.SequenceNumber}{ext}";
         }
 
-        public static void SaveAs(this IFormFile file, string destFileName)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

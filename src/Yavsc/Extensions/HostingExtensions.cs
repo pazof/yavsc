@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Util.Store;
 using IdentityServer8;
-using IdentityServer8.Hosting;
 using IdentityServer8.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Yavsc.Abstract.Workflow;
@@ -33,7 +31,7 @@ using Yavsc.ViewModels.Auth;
 namespace Yavsc.Extensions;
 
 
-internal static class HostingExtensions
+public static class HostingExtensions
 {
     #region files config
     public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
@@ -135,10 +133,138 @@ internal static class HostingExtensions
         BillingService.GlobalBillingMap.Add(typeof(T).Name, code);
     }
 
-    public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
+    internal static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
+        IServiceCollection services = LoadConfiguration(builder);
+
+        services.AddRazorPages();
+
+        services.AddSignalR(o =>
+        {
+            o.EnableDetailedErrors = true;
+        });
+
+        AddIdentityDBAndStores(builder).AddDefaultTokenProviders();;
+
+        AddIdentityServer(builder);
+        //services.AddScoped<IProfileService, ProfileService>();
+
+        services.AddSession();
+
+        // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
+
+        AddAuthentication(services, builder.Configuration);
+
+        // Add the system clock service
+        _ = services.AddSingleton<ISystemClock, SystemClock>();
+        _ = services.AddSingleton<IConnexionManager, HubConnectionManager>();
+        _ = services.AddSingleton<ILiveProcessor, LiveProcessor>();
+        _ = services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
+
+        services.AddMvc(config =>
+        {
+            /* var policy = new AuthorizationPolicyBuilder()
+              .RequireAuthenticatedUser()
+                .Build();
+            config.Filters.Add(new AuthorizeFilter(policy)); */
+            config.Filters.Add(new ProducesAttribute("application/json"));
+            // config.ModelBinders.Insert(0,new MyDateTimeModelBinder());
+            // config.ModelBinders.Insert(0,new MyDecimalModelBinder());
+            config.EnableEndpointRouting = true;
+        }).AddFormatterMappings(
+            config => config.SetMediaTypeMappingForFormat("text/pdf",
+            new MediaTypeHeaderValue("text/pdf"))
+        ).AddFormatterMappings(
+            config => config.SetMediaTypeMappingForFormat("text/x-tex",
+            new MediaTypeHeaderValue("text/x-tex"))
+        )
+        .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix,
+        options =>
+        {
+            options.ResourcesPath = "Resources";
+        }).AddDataAnnotationsLocalization();
+
+        services.AddTransient<ITrueEmailSender, MailSender>()
+        .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>()
+        .AddTransient<IYavscMessageSender, YavscMessageSender>()
+        .AddTransient<IBillingService, BillingService>()
+        .AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false))
+        .AddTransient<ICalendarManager, CalendarManager>();
+
+        // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
+
+        _ = services.AddLocalization(options =>
+        {
+            options.ResourcesPath = "Resources";
+        });
+        var dataDirConfig = builder.Configuration["Site:DataDir"] ?? "DataDir";
+
+        var dataDir = new DirectoryInfo(dataDirConfig);
+        // Add session related services.
+
+        services.AddDataProtection().PersistKeysToFileSystem(dataDir);
+        AddYavscPolicies(services);
+
+        services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
 
+        // accepts any access token issued by identity server
+
+        return builder.Build();
+    }
+
+    public static IdentityBuilder AddIdentityDBAndStores(this WebApplicationBuilder builder)
+    {
+        IServiceCollection services = builder.Services;
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        return services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+            
+    }
+
+    private static void AddYavscPolicies(IServiceCollection services)
+    {
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("ApiScope", policy =>
+            {
+                policy.RequireAuthenticatedUser()
+                .RequireClaim("scope", "scope2");
+            });
+            options.AddPolicy("Performer", policy =>
+            {
+                policy
+                    .RequireAuthenticatedUser()
+                    .RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "Performer");
+            });
+            options.AddPolicy("AdministratorOnly", policy =>
+            {
+                _ = policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
+            });
+
+            options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
+
+            // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
+            // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
+            options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
+            options.AddPolicy("IsTheAuthor", policy => policy.Requirements.Add(new EditPermission()));
+        })
+        .AddCors(options =>
+        {
+            options.AddPolicy("default", builder =>
+            {
+                _ = builder.WithOrigins("*")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+            });
+
+        });
+    }
+
+    public static IServiceCollection LoadConfiguration(this WebApplicationBuilder builder)
+    {
         var siteSection = builder.Configuration.GetSection("Site");
         var smtpSection = builder.Configuration.GetSection("Smtp");
         var paypalSection = builder.Configuration.GetSection("Authentication:PayPal");
@@ -157,8 +283,6 @@ internal static class HostingExtensions
             FileInfo safile = new FileInfo(googleServiceAccountJsonFile);
             Config.GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
         }
-        string? googleClientId = builder.Configuration["Authentication:Google:ClientId"];
-        string? googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
         var services = builder.Services;
         _ = services.AddControllersWithViews()
             .AddNewtonsoftJson();
@@ -168,30 +292,19 @@ internal static class HostingExtensions
         services.Configure<SmtpSettings>(smtpSection);
         services.Configure<PayPalSettings>(paypalSection);
         services.Configure<GoogleAuthSettings>(googleAuthSettings);
+        ConfigureRequestLocalization(services);
 
+        return services;
+    }
 
-        services.AddRazorPages();
-        services.AddSignalR(o =>
-        {
-            o.EnableDetailedErrors = true;
-        });
-
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-
-        services.AddIdentity<ApplicationUser, IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
-
-        var identityServerBuilder = services.AddIdentityServer()
+    private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
+    {
+        var identityServerBuilder = builder.Services.AddIdentityServer()
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddAspNetIdentity<ApplicationUser>()
-            .AddJwtBearerClientAuthentication()
-            ;
-        //services.AddScoped<IProfileService, ProfileService>();
-
+            .AddJwtBearerClientAuthentication();
         if (builder.Environment.IsDevelopment())
         {
             identityServerBuilder.AddDeveloperSigningCredential();
@@ -203,33 +316,11 @@ internal static class HostingExtensions
             var cert = new X509Certificate2(pfxBytes, (string)null, X509KeyStorageFlags.MachineKeySet);
             identityServerBuilder.AddSigningCredential(cert);
         }
-        services.AddSession();
+        return identityServerBuilder;
+    }
 
-
-        // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
-
-
-
-        var authenticationBuilder = services.AddAuthentication()
-            .AddJwtBearer("Bearer", options =>
-            {
-                options.IncludeErrorDetails=true;
-                options.Authority = "https://localhost:5001";
-                options.TokenValidationParameters =
-                    new() { ValidateAudience = false };
-            });
-
-        authenticationBuilder.AddGoogle(options =>
-        {
-            options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-
-            // register your IdentityServer with Google at https://console.developers.google.com
-            // enable the Google+ API
-            // set the redirect URI to https://localhost:5001/signin-google
-            options.ClientId = googleClientId;
-            options.ClientSecret = googleClientSecret;
-        });
-
+    private static void ConfigureRequestLocalization(IServiceCollection services)
+    {
         services.Configure<RequestLocalizationOptions>(options =>
         {
             CultureInfo[] supportedCultures = new[]
@@ -260,103 +351,34 @@ internal static class HostingExtensions
                         new AcceptLanguageHeaderRequestCultureProvider { Options = options }
                 };
         });
-
-       
-
-
-        // Add the system clock service
-        _ = services.AddSingleton<ISystemClock, SystemClock>();
-
-        _ = services.AddSingleton<IConnexionManager, HubConnectionManager>();
-        _ = services.AddSingleton<ILiveProcessor, LiveProcessor>();
-        _ = services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
-
-        services.AddMvc(config =>
-        {
-            /* var policy = new AuthorizationPolicyBuilder()
-              .RequireAuthenticatedUser()
-                .Build();
-            config.Filters.Add(new AuthorizeFilter(policy)); */
-            config.Filters.Add(new ProducesAttribute("application/json"));
-            // config.ModelBinders.Insert(0,new MyDateTimeModelBinder());
-            // config.ModelBinders.Insert(0,new MyDecimalModelBinder());
-            config.EnableEndpointRouting = true;
-        }).AddFormatterMappings(
-            config => config.SetMediaTypeMappingForFormat("text/pdf",
-            new MediaTypeHeaderValue("text/pdf"))
-        ).AddFormatterMappings(
-            config => config.SetMediaTypeMappingForFormat("text/x-tex",
-            new MediaTypeHeaderValue("text/x-tex"))
-        )
-        .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix,
-        options =>
-        {
-            options.ResourcesPath = "Resources";
-        }).AddDataAnnotationsLocalization();
-
-
-        _ = services.AddTransient<ITrueEmailSender, MailSender>();
-        _ = services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>();
-        _ = services.AddTransient<IYavscMessageSender, YavscMessageSender>();
-        _ = services.AddTransient<IBillingService, BillingService>();
-        _ = services.AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false));
-        _ = services.AddTransient<ICalendarManager, CalendarManager>();
-        //services.AddTransient<IProfileService, ProfileService>();
-
-
-        // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
-
-        _ = services.AddLocalization(options =>
-        {
-            options.ResourcesPath = "Resources";
-        });
-        var dataDir = new DirectoryInfo(builder.Configuration["Site:DataDir"]);
-        // Add session related services.
-
-        services.AddDataProtection().PersistKeysToFileSystem(dataDir);
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy("ApiScope", policy =>
-            {
-                policy.RequireAuthenticatedUser()
-                .RequireClaim("scope", "scope2");
-            });
-            options.AddPolicy("Performer", policy =>
-            {
-                policy
-                    .RequireAuthenticatedUser()
-                    .RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "Performer");
-            });
-            options.AddPolicy("AdministratorOnly", policy =>
-            {
-                _ = policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
-            });
-
-            options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
-          
-            // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
-            // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
-            options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
-            options.AddPolicy("IsTheAuthor", policy => policy.Requirements.Add(new EditPermission()));
-        })
-        .AddCors(options =>
-        {
-            options.AddPolicy("default", builder =>
-            {
-                _ = builder.WithOrigins("*")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-            });
-
-        });
-
-        services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
-
-
-// accepts any access token issued by identity server
-
-        return builder.Build();
     }
+
+    private static void AddAuthentication(IServiceCollection services, IConfigurationRoot configurationRoot)
+    {
+           string? googleClientId = configurationRoot["Authentication:Google:ClientId"];
+        string? googleClientSecret = configurationRoot["Authentication:Google:ClientSecret"];
+     
+        var authenticationBuilder = services.AddAuthentication()
+            .AddJwtBearer("Bearer", options =>
+            {
+                options.IncludeErrorDetails = true;
+                options.Authority = "https://localhost:5001";
+                options.TokenValidationParameters =
+                    new() { ValidateAudience = false };
+            });
+
+        authenticationBuilder.AddGoogle(options =>
+        {
+            options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+            // register your IdentityServer with Google at https://console.developers.google.com
+            // enable the Google+ API
+            // set the redirect URI to https://localhost:5001/signin-google
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+        });
+    }
+
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
 
