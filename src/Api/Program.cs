@@ -10,7 +10,10 @@
  copies or substantial portions of the Software.
 */
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Models;
 
 internal class Program
 {
@@ -55,7 +58,16 @@ internal class Program
                      options.TokenValidationParameters =
                          new() { ValidateAudience = false };
                  });
-
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+        services.AddScoped<UserManager<ApplicationUser>>();
+        
+        builder.Services.AddSession();
+        
+        /*services.AddTransient<ITrueEmailSender, MailSender>()
+        .AddTransient<IYavscMessageSender, YavscMessageSender>()
+        .AddTransient<IBillingService, BillingService>()
+        .AddTransient<ICalendarManager, CalendarManager>();*/
         using (var app = builder.Build())
         {
             if (app.Environment.IsDevelopment())
@@ -66,20 +78,21 @@ internal class Program
                 .UseAuthentication()
                 .UseAuthorization().UseCors("default")
                 .UseEndpoints(endpoints =>
-                    {
-                        endpoints.MapDefaultControllerRoute()
-                            .RequireAuthorization();
-                    });
-                    
+                {
+                    endpoints.MapDefaultControllerRoute()
+                        .RequireAuthorization();
+                });
+
             app.MapGet("/identity", (HttpContext context) =>
                     new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
                 ).RequireAuthorization("ApiScope");
-           
+
+            app.UseSession();
             await app.RunAsync();
         };
-        
-            
-       
+
+
+
 
     }
 }

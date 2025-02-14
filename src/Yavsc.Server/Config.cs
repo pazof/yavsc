@@ -1,6 +1,8 @@
 ﻿
 using IdentityServer8;
 using IdentityServer8.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Yavsc.Settings;
 
 namespace Yavsc;

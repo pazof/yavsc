@@ -37,7 +37,7 @@ namespace Yavsc
         public const string FrontOfficeGroupName = "FrontOffice";
         public const string DefaultAvatar = "/images/Users/icon_user.png";
         public const string AnonAvatar = "/images/Users/icon_anon_user.png";
-        public const string YavscConnectionStringEnvName = "YAVSC_DB_CONNECTION";
+        public const string YavscConnectionStringEnvName = "DEFAULTCONNECTION_CONNECTIONSTRING";
 
         // at the end, let 4*4 bytes in peace
         public const int WebSocketsMaxBufLen = 4096;
