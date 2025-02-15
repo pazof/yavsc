@@ -27,6 +27,7 @@ using Google.Apis.Auth.OAuth2.Responses;
 
 namespace Yavsc.Services
 {
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Yavsc.Models.Calendar;
     using Yavsc.Server.Helpers;

@@ -3,6 +3,8 @@ using System.Net.WebSockets;
 using Yavsc.Models;
 using Yavsc.ViewModels.Streaming;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace Yavsc.Services
 {
