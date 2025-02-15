@@ -16,6 +16,7 @@ using Yavsc.Abstract.Templates;
 using Microsoft.AspNetCore.Identity;
 using RazorEngine.Configuration;
 using Yavsc.Interface;
+using Microsoft.Extensions.Logging;
 
 namespace Yavsc.Lib
 {

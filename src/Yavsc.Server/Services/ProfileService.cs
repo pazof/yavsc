@@ -4,6 +4,7 @@ using IdentityServer8.Models;
 using IdentityServer8.Services;
 using IdentityServer8.Stores;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Yavsc.Models;
 
 namespace Yavsc.Services
@@ -71,14 +72,14 @@ namespace Yavsc.Services
             return claims;
         }
 
-        public async Task GetProfileDataAsync(ProfileDataRequestContext context)
+        override public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var subjectId = context.Subject.Claims.FirstOrDefault(c => c.Type == "sub").Value;
             var user = await _userManager.FindByIdAsync(subjectId);
             context.IssuedClaims = await GetClaimsFromUserAsync(context, user);
         }
 
-        public async Task IsActiveAsync(IsActiveContext context)
+        override public async Task IsActiveAsync(IsActiveContext context)
         {
             var subjectId = context.Subject.Claims.FirstOrDefault(c => c.Type == "sub").Value;
             var user = await _userManager.FindByIdAsync(subjectId);

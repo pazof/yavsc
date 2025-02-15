@@ -11,9 +11,12 @@
 */
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Yavsc.Interface;
 using Yavsc.Models;
+using Yavsc.Services;
 
 internal class Program
 {
@@ -61,13 +64,18 @@ internal class Program
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
         services.AddScoped<UserManager<ApplicationUser>>();
-        
+        services.AddSingleton<IConnexionManager, HubConnectionManager>();
+        services.AddSingleton<ILiveProcessor, LiveProcessor>();
+        services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
+        services.AddIdentityApiEndpoints<ApplicationUser>();
         builder.Services.AddSession();
         
-        /*services.AddTransient<ITrueEmailSender, MailSender>()
-        .AddTransient<IYavscMessageSender, YavscMessageSender>()
+        services.AddTransient<ITrueEmailSender, MailSender>()
         .AddTransient<IBillingService, BillingService>()
-        .AddTransient<ICalendarManager, CalendarManager>();*/
+        .AddTransient<ICalendarManager, CalendarManager>()
+        .AddTransient<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>()
+        .AddTransient<DbContext>();
+
         using (var app = builder.Build())
         {
             if (app.Environment.IsDevelopment())
@@ -82,11 +90,7 @@ internal class Program
                     endpoints.MapDefaultControllerRoute()
                         .RequireAuthorization();
                 });
-
-            app.MapGet("/identity", (HttpContext context) =>
-                    new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
-                ).RequireAuthorization("ApiScope");
-
+            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope");
             app.UseSession();
             await app.RunAsync();
         };
