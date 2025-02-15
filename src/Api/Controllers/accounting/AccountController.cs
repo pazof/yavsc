@@ -191,5 +191,11 @@ namespace Yavsc.WebApi.Controllers
             await _userManager.UpdateAsync(user);
             return Ok(info);
         }
+
+        [HttpGet("identity")]
+        public async Task<IActionResult> Identity()
+        {
+            return Json(User.Claims.Select(c=>new {c.Type, c.Value}));
+        }
     }
 }

@@ -22,51 +22,39 @@ namespace Yavsc.Services
             ProfileDataRequestContext context,
             ApplicationUser user)
         {
-            var requestedApiResources = context.RequestedResources.Resources.ApiResources.Select(
-                r => r.Name
-            ).ToArray();
-            var requestedApiScopes = context.RequestedResources.Resources.ApiScopes.Select(
-                s => s.Name
-            ).ToArray();
-
-            var requestedScopes = context.Client.AllowedScopes
-            .Where(s => s != JwtClaimTypes.Subject
-            && requestedApiScopes.Contains(s))
-            .ToList();
-
-            if (context.RequestedClaimTypes.Contains("profile"))
-            if (requestedScopes.Contains("profile"))
-            {
-                requestedScopes.Remove("profile");
-                requestedScopes.Add(JwtClaimTypes.Name);
-                requestedScopes.Add(JwtClaimTypes.FamilyName);
-                requestedScopes.Add(JwtClaimTypes.Email);
-                requestedScopes.Add(JwtClaimTypes.PreferredUserName);
-                requestedScopes.Add(JwtClaimTypes.Role);
-            }
-
+            
             var claims = new List<Claim> {
                 new Claim(JwtClaimTypes.Subject,user.Id.ToString()),
             };
-            if (requestedScopes.Contains(JwtClaimTypes.Name)||
-                requestedScopes.Contains(JwtClaimTypes.FamilyName))
+            List<string> claimAdds = new List<string>();
+
+            foreach (var scope in context.RequestedResources.ParsedScopes)
             {
-                claims.Add(new Claim(JwtClaimTypes.Name, user.FullName));
+                claims.Add(new Claim(JwtClaimTypes.Scope, scope.ParsedName));
+                claimAdds.Add(scope.ParsedName);
+                // TODO scope has a ParsedParameter
             }
 
-            if (requestedScopes.Contains(JwtClaimTypes.PreferredUserName) )
+            if (claimAdds.Contains(JwtClaimTypes.Profile))
             {
-                claims.Add(new Claim(JwtClaimTypes.Name, user.UserName));
+                claimAdds.Remove("profile");
+                claimAdds.Add(JwtClaimTypes.Name);
+                claimAdds.Add(JwtClaimTypes.Email);
+                claimAdds.Add(JwtClaimTypes.Role);
             }
-            if (requestedScopes.Contains(JwtClaimTypes.Email))
+
+            if (claimAdds.Contains(JwtClaimTypes.Name))
+                claims.Add(new Claim(JwtClaimTypes.Name, user.FullName));
+
+            if (claimAdds.Contains(JwtClaimTypes.Email))
                 claims.Add(new Claim(JwtClaimTypes.Email, user.Email));
             
-            if (requestedScopes.Contains(JwtClaimTypes.Role))
+            if (claimAdds.Contains(JwtClaimTypes.Role))
             {
                 var roles = await this._userManager.GetRolesAsync(user);
                 if (roles.Count()>0)
                 {
-                    claims.Add(new Claim(JwtClaimTypes.Role,String.Join(" ",roles)));
+                    claims.Add(new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role",String.Join(" ",roles)));
                 }
             }
             return claims;
@@ -74,17 +62,28 @@ namespace Yavsc.Services
 
         override public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
-            var subjectId = context.Subject.Claims.FirstOrDefault(c => c.Type == "sub").Value;
+            var subjectId = GetSubjectId(context.Subject);
+            if (subjectId==null) return;
             var user = await _userManager.FindByIdAsync(subjectId);
+            if (user==null) return ;
             context.IssuedClaims = await GetClaimsFromUserAsync(context, user);
         }
 
         override public async Task IsActiveAsync(IsActiveContext context)
         {
-            var subjectId = context.Subject.Claims.FirstOrDefault(c => c.Type == "sub").Value;
+            string? subjectId = GetSubjectId(context.Subject);
+            if (subjectId == null)
+            {
+                context.IsActive = false;
+                return;
+            }
             var user = await _userManager.FindByIdAsync(subjectId);
             context.IsActive = user != null;
         }
 
+        private static string? GetSubjectId(ClaimsPrincipal claimsPrincipal)
+        {
+            return claimsPrincipal.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+        }
     }
 }
