@@ -45,7 +45,8 @@ internal class Program
                 // this defines a CORS policy called "default"
                 options.AddPolicy("default", policy =>
                 {
-                    policy.WithOrigins("https://localhost:5003")
+                    policy.WithOrigins("https://localhost:5003"
+                    ,"http://localhost:5002")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -53,7 +54,7 @@ internal class Program
             .AddControllersWithViews();
 
         // accepts any access token issued by identity server
-        var authenticationBuilder = services.AddAuthentication()
+        var authenticationBuilder = services.AddAuthentication("Bearer")
                  .AddJwtBearer("Bearer", options =>
                  {
                      options.IncludeErrorDetails = true;
@@ -84,19 +85,18 @@ internal class Program
             app
                 .UseRouting()
                 .UseAuthentication()
-                .UseAuthorization().UseCors("default")
+               .UseAuthorization().UseCors("default")
                 .UseEndpoints(endpoints =>
                 {
-                    endpoints.MapDefaultControllerRoute()
-                        .RequireAuthorization();
+                    endpoints.MapDefaultControllerRoute().RequireAuthorization("ApiScope");
                 });
-            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope");
-            app.UseSession();
+            //app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope");
+             app.MapGet("/identity", (HttpContext context) =>
+            new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
+        ).RequireAuthorization("ApiScope");
+
+            // app.UseSession();
             await app.RunAsync();
         };
-
-
-
-
     }
 }
