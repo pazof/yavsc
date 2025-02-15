@@ -76,7 +76,9 @@ public static class Config
 
                 RedirectUris = { "https://localhost:5003/signin-oidc",
                 "http://localhost:5002/signin-oidc"  },
-                PostLogoutRedirectUris = { "https://localhost:5003/signout-callback-oidc" },
+                PostLogoutRedirectUris = { 
+                    "http://localhost:5002/signout-callback-oidc",
+                    "https://localhost:5003/signout-callback-oidc" },
 
                 AllowOfflineAccess = true,
 
@@ -86,6 +88,10 @@ public static class Config
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.OfflineAccess,
                     "scope2" }
+                    ,
+                AllowedCorsOrigins=new string[]{"*"},
+                AllowRememberConsent=true
+                
             },
         };
 

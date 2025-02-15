@@ -44,7 +44,7 @@ namespace testOauthClient.Controllers
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var content = await client.GetStringAsync("https://localhost:6001/api/account/me");
+            var content = await client.GetStringAsync("https://localhost:6001/identity");
 
             ViewBag.Json = content;
             return View("json");

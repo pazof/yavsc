@@ -303,14 +303,14 @@ public static class HostingExtensions
         string? googleClientSecret = configurationRoot["Authentication:Google:ClientSecret"];
      
         var authenticationBuilder = services.AddAuthentication()
-            .AddJwtBearer("Bearer", options =>
+        .AddJwtBearer("Bearer", options =>
             {
                 options.IncludeErrorDetails = true;
                 options.Authority = "https://localhost:5001";
                 options.TokenValidationParameters =
                     new() { ValidateAudience = false };
             });
-
+            
         authenticationBuilder.AddGoogle(options =>
         {
             options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
@@ -329,7 +329,9 @@ public static class HostingExtensions
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddAspNetIdentity<ApplicationUser>()
-            .AddJwtBearerClientAuthentication();
+            .AddJwtBearerClientAuthentication()
+          //  .AddProfileService<ProfileService>()
+            ;
         if (builder.Environment.IsDevelopment())
         {
             identityServerBuilder.AddDeveloperSigningCredential();
