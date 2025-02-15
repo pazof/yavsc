@@ -10,6 +10,7 @@
  copies or substantial portions of the Software.
 */
 
+using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +28,11 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var services = builder.Services;
+        builder.Services.AddDistributedMemoryCache();
 
         // accepts any access token issued by identity server
-        // adds an authorization policy for scope 'api1'
+        // adds an authorization policy for scope 'scope1'
+        
         services
             .AddAuthorization(options =>
             {
@@ -37,7 +40,7 @@ internal class Program
                 {
                     policy
                         .RequireAuthenticatedUser()
-                        .RequireClaim("scope", "scope2");
+                        .RequireClaim(JwtClaimTypes.Scope, new string [] {"scope2"});
                 });
             })
             .AddCors(options =>
@@ -50,10 +53,10 @@ internal class Program
                         .AllowAnyMethod();
                 });
             })
-            .AddControllersWithViews();
+            .AddControllers();
 
         // accepts any access token issued by identity server
-        var authenticationBuilder = services.AddAuthentication()
+        var authenticationBuilder = services.AddAuthentication("Bearer")
                  .AddJwtBearer("Bearer", options =>
                  {
                      options.IncludeErrorDetails = true;
@@ -68,7 +71,7 @@ internal class Program
         services.AddSingleton<ILiveProcessor, LiveProcessor>();
         services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
         services.AddIdentityApiEndpoints<ApplicationUser>();
-        builder.Services.AddSession();
+        services.AddSession();
         
         services.AddTransient<ITrueEmailSender, MailSender>()
         .AddTransient<IBillingService, BillingService>()
@@ -90,8 +93,12 @@ internal class Program
                     endpoints.MapDefaultControllerRoute()
                         .RequireAuthorization();
                 });
-            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope");
-            app.UseSession();
+           app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
+           
+             app.MapGet("/identity", (HttpContext context) =>
+            new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
+        ).RequireAuthorization("ApiScope");
+            app.UseSession(); 
             await app.RunAsync();
         };
 
