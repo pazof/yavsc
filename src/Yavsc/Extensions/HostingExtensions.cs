@@ -297,6 +297,31 @@ public static class HostingExtensions
         return services;
     }
 
+    private static void AddAuthentication(IServiceCollection services, IConfigurationRoot configurationRoot)
+    {
+           string? googleClientId = configurationRoot["Authentication:Google:ClientId"];
+        string? googleClientSecret = configurationRoot["Authentication:Google:ClientSecret"];
+     
+        var authenticationBuilder = services.AddAuthentication()
+            .AddJwtBearer("Bearer", options =>
+            {
+                options.IncludeErrorDetails = true;
+                options.Authority = "https://localhost:5001";
+                options.TokenValidationParameters =
+                    new() { ValidateAudience = false };
+            });
+
+        authenticationBuilder.AddGoogle(options =>
+        {
+            options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+
+            // register your IdentityServer with Google at https://console.developers.google.com
+            // enable the Google+ API
+            // set the redirect URI to https://localhost:5001/signin-google
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+        });
+    }
     private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
         var identityServerBuilder = builder.Services.AddIdentityServer()
@@ -353,31 +378,6 @@ public static class HostingExtensions
         });
     }
 
-    private static void AddAuthentication(IServiceCollection services, IConfigurationRoot configurationRoot)
-    {
-           string? googleClientId = configurationRoot["Authentication:Google:ClientId"];
-        string? googleClientSecret = configurationRoot["Authentication:Google:ClientSecret"];
-     
-        var authenticationBuilder = services.AddAuthentication()
-            .AddJwtBearer("Bearer", options =>
-            {
-                options.IncludeErrorDetails = true;
-                options.Authority = "https://localhost:5001";
-                options.TokenValidationParameters =
-                    new() { ValidateAudience = false };
-            });
-
-        authenticationBuilder.AddGoogle(options =>
-        {
-            options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-
-            // register your IdentityServer with Google at https://console.developers.google.com
-            // enable the Google+ API
-            // set the redirect URI to https://localhost:5001/signin-google
-            options.ClientId = googleClientId;
-            options.ClientSecret = googleClientSecret;
-        });
-    }
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
