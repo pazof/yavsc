@@ -146,7 +146,7 @@ public static class HostingExtensions
 
         AddIdentityDBAndStores(builder).AddDefaultTokenProviders();;
 
-        AddIdentityServer(builder);
+        AddIdentityServer(builder).AddProfileService<ProfileService>();
         //services.AddScoped<IProfileService, ProfileService>();
 
         services.AddSession();

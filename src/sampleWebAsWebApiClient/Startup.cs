@@ -1,3 +1,4 @@
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Yavsc;
 
 public class Startup
 {
@@ -34,12 +36,11 @@ public class Startup
                 options.GetClaimsFromUserInfoEndpoint = true;
                 options.SaveTokens = true;
                 options.ClaimActions.MapUniqueJsonKey(
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
-                options.ClaimActions.MapUniqueJsonKey("role",
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
-                options.ClaimActions.MapUniqueJsonKey("roles",
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
+                    Constants.RoleClaimName,
+                    Constants.RoleClaimName);
+                options.ClaimActions.MapUniqueJsonKey(
+                    JwtClaimTypes.Scope,
+                    JwtClaimTypes.Scope);
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     NameClaimType = "name",

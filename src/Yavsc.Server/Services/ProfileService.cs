@@ -30,9 +30,11 @@ namespace Yavsc.Services
 
             foreach (var scope in context.RequestedResources.ParsedScopes)
             {
-                claims.Add(new Claim(JwtClaimTypes.Scope, scope.ParsedName));
-                claimAdds.Add(scope.ParsedName);
-                // TODO scope has a ParsedParameter
+                if (context.Client.AllowedScopes.Contains(scope.ParsedName))
+                {
+                    claims.Add(new Claim(JwtClaimTypes.Scope, scope.ParsedName));
+                    claimAdds.Add(scope.ParsedName);
+                }
             }
 
             if (claimAdds.Contains(JwtClaimTypes.Profile))
@@ -54,7 +56,7 @@ namespace Yavsc.Services
                 var roles = await this._userManager.GetRolesAsync(user);
                 if (roles.Count()>0)
                 {
-                    claims.Add(new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role",String.Join(" ",roles)));
+                    claims.AddRange(roles.Select(r => new Claim(Constants.RoleClaimName, r)));
                 }
             }
             return claims;
