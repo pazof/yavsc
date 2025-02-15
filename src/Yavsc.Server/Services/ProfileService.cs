@@ -9,16 +9,17 @@ using Yavsc.Models;
 
 namespace Yavsc.Services
 {
-    public class ProfileService : DefaultProfileService, IProfileService
+    public class ProfileService : IProfileService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         public ProfileService(
-            UserManager<ApplicationUser> userManager, ILogger<DefaultProfileService> logger) : base(logger)
+            UserManager<ApplicationUser> userManager, 
+            ILogger<DefaultProfileService> logger) 
         {
             _userManager = userManager;
         }
 
-        public async Task<List<Claim>> GetClaimsFromUserAsync(
+        private async Task<List<Claim>> GetClaimsFromUserAsync(
             ProfileDataRequestContext context,
             ApplicationUser user)
         {
@@ -62,7 +63,7 @@ namespace Yavsc.Services
             return claims;
         }
 
-        override public async Task GetProfileDataAsync(ProfileDataRequestContext context)
+         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var subjectId = GetSubjectId(context.Subject);
             if (subjectId==null) return;
@@ -71,7 +72,7 @@ namespace Yavsc.Services
             context.IssuedClaims = await GetClaimsFromUserAsync(context, user);
         }
 
-        override public async Task IsActiveAsync(IsActiveContext context)
+         public async Task IsActiveAsync(IsActiveContext context)
         {
             string? subjectId = GetSubjectId(context.Subject);
             if (subjectId == null)

@@ -47,8 +47,8 @@ public static class Config
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
         {
-            new ApiScope("scope1"),
-            new ApiScope("scope2"),
+            new ApiScope("scope1",new string[] {"scope1"}),
+            new ApiScope("scope2",new string[] {"scope2"}),
         };
 
     public static IEnumerable<Client> Clients =>
