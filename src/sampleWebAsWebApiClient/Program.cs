@@ -33,6 +33,8 @@ builder.Services
         options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
         options.ResponseType = "code";
 
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
         options.Scope.Add("scope2");
         
         options.SaveTokens = true;

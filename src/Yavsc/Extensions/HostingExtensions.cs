@@ -4,6 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Util.Store;
 using IdentityServer8;
 using IdentityServer8.Services;
+using IdentityServerHost.Quickstart.UI;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -138,28 +139,28 @@ public static class HostingExtensions
     {
         IServiceCollection services = LoadConfiguration(builder);
 
-        services.AddRazorPages();
+        //services.AddRazorPages();
 
-        services.AddSignalR(o =>
-        {
-            o.EnableDetailedErrors = true;
-        });
-
-        AddIdentityDBAndStores(builder).AddDefaultTokenProviders();
-        AddIdentityServer(builder);
-        
+      
         services.AddSession();
 
         // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
 
-        AddAuthentication(services, builder.Configuration);
 
         // Add the system clock service
         _ = services.AddSingleton<ISystemClock, SystemClock>();
         _ = services.AddSingleton<IConnexionManager, HubConnectionManager>();
         _ = services.AddSingleton<ILiveProcessor, LiveProcessor>();
         _ = services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
+        
+        AddIdentityDBAndStores(builder).AddDefaultTokenProviders();
+        AddIdentityServer(builder);
 
+        services.AddSignalR(o =>
+        {
+            o.EnableDetailedErrors = true;
+        });
+        
         services.AddMvc(config =>
         {
             /* var policy = new AuthorizationPolicyBuilder()
@@ -207,6 +208,7 @@ public static class HostingExtensions
         services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
 
+        AddAuthentication(builder);
         // accepts any access token issued by identity server
 
         return builder.Build();
@@ -296,20 +298,16 @@ public static class HostingExtensions
         return services;
     }
 
-    private static void AddAuthentication(IServiceCollection services, IConfigurationRoot configurationRoot)
+    private static void AddAuthentication(WebApplicationBuilder builder)
     {
-           string? googleClientId = configurationRoot["Authentication:Google:ClientId"];
+        IServiceCollection services=builder.Services;
+        IConfigurationRoot configurationRoot=builder.Configuration;
+        string? googleClientId = configurationRoot["Authentication:Google:ClientId"];
         string? googleClientSecret = configurationRoot["Authentication:Google:ClientSecret"];
      
-        var authenticationBuilder = services.AddAuthentication()
-            .AddJwtBearer("Bearer", options =>
-            {
-                options.IncludeErrorDetails = true;
-                options.Authority = "https://localhost:5001";
-                options.TokenValidationParameters =
-                    new() { ValidateAudience = false };
-            });
+        var authenticationBuilder = services.AddAuthentication();
 
+        if (googleClientId!=null && googleClientSecret!=null)
         authenticationBuilder.AddGoogle(options =>
         {
             options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
@@ -323,13 +321,23 @@ public static class HostingExtensions
     }
     private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
-        var identityServerBuilder = builder.Services.AddIdentityServer()
+        builder.Services.AddTransient<IProfileService,ProfileService>();
+        var identityServerBuilder = builder.Services.AddIdentityServer(options =>
+         {
+             options.Events.RaiseErrorEvents = true;
+             options.Events.RaiseInformationEvents = true;
+             options.Events.RaiseFailureEvents = true;
+             options.Events.RaiseSuccessEvents = true;
+
+             // see https://IdentityServer8.readthedocs.io/en/latest/topics/resources.html
+             options.EmitStaticAudienceClaim = true;
+         })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
+            
             .AddAspNetIdentity<ApplicationUser>()
-            // .AddProfileService<ProfileService>()
-            .AddJwtBearerClientAuthentication()
+            .AddProfileService<ProfileService>()
            ;
         if (builder.Environment.IsDevelopment())
         {
@@ -381,7 +389,7 @@ public static class HostingExtensions
     }
 
 
-    public static WebApplication ConfigurePipeline(this WebApplication app)
+    internal static WebApplication ConfigurePipeline(this WebApplication app)
     {
 
         if (app.Environment.IsDevelopment())
@@ -398,13 +406,10 @@ public static class HostingExtensions
         app.UseIdentityServer();
         app.UseAuthorization();
         app.UseCors("default");
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}");
-        app.MapRazorPages()
-        .RequireAuthorization();
+        app.MapDefaultControllerRoute();
+        //pp.MapRazorPages();
         app.MapHub<ChatHub>("/chatHub");
-        app.MapAreaControllerRoute("api", "api", "~/api/{controller}/{action}/{id?}");
+       
         ConfigureWorkflow();
         var services = app.Services;
         ILoggerFactory loggerFactory = services.GetRequiredService<ILoggerFactory>();
