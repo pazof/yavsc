@@ -87,17 +87,19 @@ internal class Program
             app
                 .UseRouting()
                 .UseAuthentication()
-                .UseAuthorization().UseCors("default")
+                .UseAuthorization()
+                .UseCors("default")
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapDefaultControllerRoute()
                         .RequireAuthorization();
                 });
-           app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
+            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
            
-             app.MapGet("/identity", (HttpContext context) =>
-            new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
-        ).RequireAuthorization("ApiScope");
+            app.MapGet("/identity", (HttpContext context) =>
+                new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
+        );
+
             app.UseSession(); 
             await app.RunAsync();
         };
