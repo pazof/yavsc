@@ -1,11 +1,6 @@
 {
-    "projects": [
-        "src",
-        "test"
-    ],
     "sdk": {
       "runtime": "dotnet",
       "version": "8.0.405"
-    },
-    "packages": "packages"
+    }
 }

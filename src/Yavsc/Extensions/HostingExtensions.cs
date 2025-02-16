@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Util.Store;
@@ -144,11 +145,9 @@ public static class HostingExtensions
             o.EnableDetailedErrors = true;
         });
 
-        AddIdentityDBAndStores(builder).AddDefaultTokenProviders();;
-
-        AddIdentityServer(builder).AddProfileService<ProfileService>();
-        //services.AddScoped<IProfileService, ProfileService>();
-
+        AddIdentityDBAndStores(builder).AddDefaultTokenProviders();
+        AddIdentityServer(builder);
+        
         services.AddSession();
 
         // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
@@ -329,14 +328,17 @@ public static class HostingExtensions
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddAspNetIdentity<ApplicationUser>()
-            .AddJwtBearerClientAuthentication();
+            // .AddProfileService<ProfileService>()
+            .AddJwtBearerClientAuthentication()
+           ;
         if (builder.Environment.IsDevelopment())
         {
             identityServerBuilder.AddDeveloperSigningCredential();
         }
         else
         {
-            var key = builder.Configuration["YOUR-KEY-NAME"];
+            var key = builder.Configuration["YavscSigningCert"];
+            Debug.Assert(key != null);
             var pfxBytes = Convert.FromBase64String(key);
             var cert = new X509Certificate2(pfxBytes, (string)null, X509KeyStorageFlags.MachineKeySet);
             identityServerBuilder.AddSigningCredential(cert);
