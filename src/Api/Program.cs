@@ -28,7 +28,7 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var services = builder.Services;
-        builder.Services.AddDistributedMemoryCache();
+        // builder.Services.AddDistributedMemoryCache();
 
         // accepts any access token issued by identity server
         // adds an authorization policy for scope 'scope1'
@@ -63,22 +63,21 @@ internal class Program
                      options.Authority = "https://localhost:5001";
                      options.TokenValidationParameters =
                          new() { ValidateAudience = false };
-                 });
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-        services.AddScoped<UserManager<ApplicationUser>>();
+                 }); 
+                 
+                 services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+                
+                 services.AddTransient<ITrueEmailSender, MailSender>()
+                    .AddTransient<IBillingService, BillingService>()
+                    .AddTransient<ICalendarManager, CalendarManager>();
+      /*
         services.AddSingleton<IConnexionManager, HubConnectionManager>();
         services.AddSingleton<ILiveProcessor, LiveProcessor>();
         services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
         services.AddIdentityApiEndpoints<ApplicationUser>();
         services.AddSession();
-        
-        services.AddTransient<ITrueEmailSender, MailSender>()
-        .AddTransient<IBillingService, BillingService>()
-        .AddTransient<ICalendarManager, CalendarManager>()
-        .AddTransient<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>()
-        .AddTransient<DbContext>();
-
+*/
         using (var app = builder.Build())
         {
             if (app.Environment.IsDevelopment())
@@ -89,18 +88,20 @@ internal class Program
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseCors("default")
-                .UseEndpoints(endpoints =>
+       /*         .UseEndpoints(endpoints =>
                 {
                     endpoints.MapDefaultControllerRoute()
                         .RequireAuthorization();
-                });
-            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
-           
+                })*/
+                
+                ;
+         //   app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
+            app.MapDefaultControllerRoute();
             app.MapGet("/identity", (HttpContext context) =>
                 new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
         );
 
-            app.UseSession(); 
+       //     app.UseSession(); 
             await app.RunAsync();
         };
 

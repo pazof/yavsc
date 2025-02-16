@@ -73,12 +73,12 @@ public static class Config
                 ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
 
                 AllowedGrantTypes = GrantTypes.Code,
+                AlwaysIncludeUserClaimsInIdToken = true,
 
                 RedirectUris = { "https://localhost:5003/signin-oidc",
                 "http://localhost:5002/signin-oidc"  },
                 PostLogoutRedirectUris = { "https://localhost:5003/signout-callback-oidc" },
 
-                AllowOfflineAccess = true,
 
                 AllowedScopes = { 
                     IdentityServerConstants.StandardScopes.OpenId,
