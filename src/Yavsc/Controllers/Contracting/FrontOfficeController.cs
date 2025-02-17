@@ -10,6 +10,7 @@ namespace Yavsc.Controllers
     using Microsoft.Extensions.Localization;
     using Models;
     using ViewModels.FrontOffice;
+    using Yavsc.Server.Helpers;
     using Yavsc.Services;
 
     public class FrontOfficeController : Controller
