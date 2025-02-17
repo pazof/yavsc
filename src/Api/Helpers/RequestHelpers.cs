@@ -8,7 +8,7 @@ using Yavsc.ViewModels;
 using Yavsc.Models;
 using System.Linq;
 
-namespace Yavsc.Helpers
+namespace Yavsc.Api.Helpers
 {
     public static class RequestHelpers
     {

@@ -14,6 +14,8 @@ namespace Yavsc.ApiControllers
     using Yavsc.Attributes.Validation;
     using System.IO;
     using Yavsc.Exceptions;
+    using Yavsc.Server.Helpers;
+    using Yavsc.Abstract.Helpers;
 
     [Authorize,Route("api/fs")]
     public partial class FileSystemApiController : Controller

@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Yavsc.Abstract.FileSystem;
-using Yavsc.Helpers;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.ViewModels.UserFiles
 {

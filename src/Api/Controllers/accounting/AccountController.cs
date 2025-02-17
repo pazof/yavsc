@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 
 using Yavsc.Models;
-using Yavsc.Models.Account;
-using Yavsc.ViewModels.Account;
-using Yavsc.Helpers;
-using Yavsc.Abstract.Identity;
-using System.Diagnostics;
+using Yavsc.Api.Helpers;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.WebApi.Controllers
 {
@@ -26,8 +22,6 @@ namespace Yavsc.WebApi.Controllers
             _logger = loggerFactory.CreateLogger(nameof(ApiAccountController));
             _dbContext = dbContext;
         }
-
-
 
         [HttpGet("me")]
         public async Task<IActionResult> Me()

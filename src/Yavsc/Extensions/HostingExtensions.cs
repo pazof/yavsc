@@ -29,6 +29,7 @@ using Yavsc.Models.Workflow;
 using Yavsc.Services;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Extensions;
 
@@ -335,7 +336,6 @@ public static class HostingExtensions
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
-            
             .AddAspNetIdentity<ApplicationUser>()
             .AddProfileService<ProfileService>()
            ;

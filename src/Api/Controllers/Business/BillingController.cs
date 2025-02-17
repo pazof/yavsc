@@ -15,6 +15,7 @@ namespace Yavsc.ApiControllers
     using Microsoft.Extensions.Options;
     using Microsoft.EntityFrameworkCore;
     using Yavsc.ViewModels.Auth;
+    using Yavsc.Server.Helpers;
 
     [Route("api/bill"), Authorize]
     public class BillingController : Controller

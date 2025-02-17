@@ -32,7 +32,7 @@ internal class Program
 
         // accepts any access token issued by identity server
         // adds an authorization policy for scope 'scope1'
-        
+
         services
             .AddAuthorization(options =>
             {
@@ -40,7 +40,7 @@ internal class Program
                 {
                     policy
                         .RequireAuthenticatedUser()
-                        .RequireClaim(JwtClaimTypes.Scope, new string [] {"scope2"});
+                        .RequireClaim(JwtClaimTypes.Scope, new string[] { "scope2" });
                 });
             })
             .AddCors(options =>
@@ -63,21 +63,21 @@ internal class Program
                      options.Authority = "https://localhost:5001";
                      options.TokenValidationParameters =
                          new() { ValidateAudience = false };
-                 }); 
-                 
-                 services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-                
-                 services.AddTransient<ITrueEmailSender, MailSender>()
-                    .AddTransient<IBillingService, BillingService>()
-                    .AddTransient<ICalendarManager, CalendarManager>();
-      /*
-        services.AddSingleton<IConnexionManager, HubConnectionManager>();
-        services.AddSingleton<ILiveProcessor, LiveProcessor>();
-        services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
-        services.AddIdentityApiEndpoints<ApplicationUser>();
-        services.AddSession();
-*/
+                 });
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+           options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddTransient<ITrueEmailSender, MailSender>()
+           .AddTransient<IBillingService, BillingService>()
+           .AddTransient<ICalendarManager, CalendarManager>();
+        /*
+          services.AddSingleton<IConnexionManager, HubConnectionManager>();
+          services.AddSingleton<ILiveProcessor, LiveProcessor>();
+          services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
+          services.AddIdentityApiEndpoints<ApplicationUser>();
+          services.AddSession();
+  */
         using (var app = builder.Build())
         {
             if (app.Environment.IsDevelopment())
@@ -88,22 +88,23 @@ internal class Program
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseCors("default")
-       /*         .UseEndpoints(endpoints =>
-                {
-                    endpoints.MapDefaultControllerRoute()
-                        .RequireAuthorization();
-                })*/
-                
+                /*         .UseEndpoints(endpoints =>
+                         {
+                             endpoints.MapDefaultControllerRoute()
+                                 .RequireAuthorization();
+                         })*/
+
                 ;
-         //   app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
+            //   app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
             app.MapDefaultControllerRoute();
             app.MapGet("/identity", (HttpContext context) =>
                 new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
         );
 
-       //     app.UseSession(); 
+            //     app.UseSession(); 
             await app.RunAsync();
-        };
+        }
+        ;
 
 
 
