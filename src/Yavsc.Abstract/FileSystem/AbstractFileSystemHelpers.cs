@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Yavsc.ViewModels.UserFiles;
 
-namespace Yavsc.Helpers
+namespace Yavsc.Server.Helpers
 {
     public static class AbstractFileSystemHelpers
     {

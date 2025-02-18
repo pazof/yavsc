@@ -1,4 +1,4 @@
-namespace Yavsc.Helpers
+namespace Yavsc.Abstract.Helpers
 {
     public enum ErrorCode {
         NotFound,

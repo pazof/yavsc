@@ -10,6 +10,7 @@
  copies or substantial portions of the Software.
 */
 
+using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +28,11 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var services = builder.Services;
+        // builder.Services.AddDistributedMemoryCache();
 
         // accepts any access token issued by identity server
-        // adds an authorization policy for scope 'api1'
+        // adds an authorization policy for scope 'scope1'
+
         services
             .AddAuthorization(options =>
             {
@@ -37,7 +40,7 @@ internal class Program
                 {
                     policy
                         .RequireAuthenticatedUser()
-                        .RequireClaim("scope", "scope2");
+                        .RequireClaim(JwtClaimTypes.Scope, new string[] { "scope2" });
                 });
             })
             .AddCors(options =>
@@ -45,13 +48,12 @@ internal class Program
                 // this defines a CORS policy called "default"
                 options.AddPolicy("default", policy =>
                 {
-                    policy.WithOrigins("https://localhost:5003"
-                    ,"http://localhost:5002")
+                    policy.WithOrigins("https://localhost:5003")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
             })
-            .AddControllersWithViews();
+            .AddControllers();
 
         // accepts any access token issued by identity server
         var authenticationBuilder = services.AddAuthentication("Bearer")
@@ -62,21 +64,20 @@ internal class Program
                      options.TokenValidationParameters =
                          new() { ValidateAudience = false };
                  });
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-        services.AddScoped<UserManager<ApplicationUser>>();
-        services.AddSingleton<IConnexionManager, HubConnectionManager>();
-        services.AddSingleton<ILiveProcessor, LiveProcessor>();
-        services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
-        services.AddIdentityApiEndpoints<ApplicationUser>();
-        builder.Services.AddSession();
-        
-        services.AddTransient<ITrueEmailSender, MailSender>()
-        .AddTransient<IBillingService, BillingService>()
-        .AddTransient<ICalendarManager, CalendarManager>()
-        .AddTransient<IUserStore<ApplicationUser>, UserStore<ApplicationUser>>()
-        .AddTransient<DbContext>();
 
+        services.AddDbContext<ApplicationDbContext>(options =>
+           options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddTransient<ITrueEmailSender, MailSender>()
+           .AddTransient<IBillingService, BillingService>()
+           .AddTransient<ICalendarManager, CalendarManager>();
+        /*
+          services.AddSingleton<IConnexionManager, HubConnectionManager>();
+          services.AddSingleton<ILiveProcessor, LiveProcessor>();
+          services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
+          services.AddIdentityApiEndpoints<ApplicationUser>();
+          services.AddSession();
+  */
         using (var app = builder.Build())
         {
             if (app.Environment.IsDevelopment())
@@ -85,18 +86,28 @@ internal class Program
             app
                 .UseRouting()
                 .UseAuthentication()
-               .UseAuthorization().UseCors("default")
-                .UseEndpoints(endpoints =>
-                {
-                    endpoints.MapDefaultControllerRoute().RequireAuthorization("ApiScope");
-                });
-            //app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope");
-             app.MapGet("/identity", (HttpContext context) =>
-            new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
-        ).RequireAuthorization("ApiScope");
+                .UseAuthorization()
+                .UseCors("default")
+                /*         .UseEndpoints(endpoints =>
+                         {
+                             endpoints.MapDefaultControllerRoute()
+                                 .RequireAuthorization();
+                         })*/
 
-            // app.UseSession();
+                ;
+            //   app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
+            app.MapDefaultControllerRoute();
+            app.MapGet("/identity", (HttpContext context) =>
+                new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
+        );
+
+            //     app.UseSession(); 
             await app.RunAsync();
-        };
+        }
+        ;
+
+
+
+
     }
 }

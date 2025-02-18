@@ -11,8 +11,9 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using Microsoft.AspNetCore.Http;
 using Yavsc.Exceptions;
-
-namespace Yavsc.Helpers
+using Yavsc.Helpers;
+using Yavsc.Abstract.Helpers;
+namespace Yavsc.Server.Helpers
 {
     public static class FileSystemHelpers 
     {

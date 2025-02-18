@@ -54,5 +54,7 @@ namespace Yavsc
         public const string LivePath = "/live/cast";
         
         public const string StreamingPath = "/api/stream/put";
+
+        public const string RoleClaimName = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
     }
 }
