@@ -1,7 +1,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using Yavsc.Helpers;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Attributes.Validation
 { 

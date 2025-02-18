@@ -15,10 +15,11 @@ using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.ViewModels.Manage;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Yavsc.Controllers
 {
-
+    [Authorize]
     public class ManageController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -91,7 +92,10 @@ namespace Yavsc.Controllers
                 : "";
 
             var user = await GetCurrentUserAsync();
-            long pc = _dbContext.Blogspot.Count(x => x.AuthorId == user.Id);
+            
+            long pc = _dbContext.BlogSpot.Count(x => x.AuthorId == user.Id);
+           
+           
 
             var model = new IndexViewModel
             {

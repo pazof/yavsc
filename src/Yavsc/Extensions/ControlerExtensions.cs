@@ -1,4 +1,4 @@
-using IdentityServer4.Models;
+using IdentityServer8.Models;
 using Microsoft.AspNetCore.Mvc;
 using Yavsc.Models.Access;
 

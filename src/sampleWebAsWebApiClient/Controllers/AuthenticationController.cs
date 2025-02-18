@@ -12,13 +12,13 @@ using Microsoft.AspNetCore.Mvc;
             // But, this redirect URI doesn't need to match the OAuth parameter, it's serialized in the query state,
             // to be used once the identification ends.
             var properties = new AuthenticationProperties { RedirectUri = returnUrl };
-            return new ChallengeResult("Bearer", properties);
-        }
-        [HttpGet("~/signout")]
-        public async Task<IActionResult> SignOut(string returnUrl="/") {
-            await HttpContext.SignOutAsync("Bearer");
-            return Redirect(returnUrl);
+            return new ChallengeResult("oidc", properties);
         }
 
+        [HttpGet("~/signout")]
+        public async Task<IActionResult> SignOut(string returnUrl="/") {
+            
+            return SignOut("Cookies", "oidc");
+        }
 
     }

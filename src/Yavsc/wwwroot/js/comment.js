@@ -1,10 +1,4 @@
-if (typeof jQuery === 'undefined') {
-    throw new Error('Bootstrap\'s JavaScript requires jQuery')
-}
-
-+
-(function($) {
-    $.widget("psc.blogcomment", {
+$.widget("psc.blogcomment", {
         options: {
             apictrlr: null,
             authorId: null,
@@ -31,21 +25,22 @@ if (typeof jQuery === 'undefined') {
             var date = new Date(this.element.data("date"));
             var username = this.element.data("username");
             this.editable = this.element.data("allow-edit");
-            this.element.prepend('<div class="commentmeta"><div class="avatar"><img src="/Avatars/' + username + '.xs.png" class="smalltofhol" />' + username + '</div><div class="cmtdatetime">' +
+            this.element.prepend('<div class="commentmeta"><img class="avatar" src="/Avatars/' + username + '.xs.png" class="smalltofhol" title="' + username + '" /><div class="cmtdatetime">' +
                 date.toLocaleDateString(this.options.lang) + ' ' + date.toLocaleTimeString(this.options.lang) + '</div></div>')
             this.element.on("mouseenter", this.onMouseEnter);
             this.element.on("mouseleave", this.onMouseLeave);
 
-            this.ctlBtn = $('<button class="btn glyphicon-collapse-down"></button>').on("click", function(ev) { _this.toggleCollapse(_this, ev) }).appendTo(_this.element);
+            this.ctlBtn = $('<button class="btn"><span class="ui-icon ui-icon-plus"></span></button>').on("click", function(ev) { _this.toggleCollapse(_this, ev) }).appendTo(_this.element);
         },
         toggleCollapse: function(_this, ev) {
             _this.collapsed = !_this.collapsed;
+            var icon = $(_this.ctlBtn).children().first();
             if (_this.collapsed) {
-                $(_this.ctlBtn).removeClass('glyphicon-collapse-down');
-                $(_this.ctlBtn).addClass('glyphicon-collapse-up');
+                icon.removeClass('ui-icon-plus');
+                icon.addClass('ui-icon-minus');
             } else {
-                $(_this.ctlBtn).removeClass('glyphicon-collapse-up');
-                $(_this.ctlBtn).addClass('glyphicon-collapse-down');
+                icon.removeClass('ui-icon-minus');
+                icon.addClass('ui-icon-plus');
             }
             if (_this.editable) {
                 _this.toggleEdit(_this, ev)
@@ -95,8 +90,6 @@ if (typeof jQuery === 'undefined') {
             }, 400);
         },
         doDeleteComment: function(_this, ev) {
-            var cmtid = $(_this.element).data("id");
-            var cmtapi = _this.options.apictrlr;
             $.ajax({
                 async: true,
                 cache: false,
@@ -110,17 +103,17 @@ if (typeof jQuery === 'undefined') {
                 success: function(data) {
                     _this.element.remove()
                 },
-                url: cmtapi + '/' + cmtid
+                url: _this.options.apictrlr + '/' + $(_this.element).data("id")
             });
         },
         doCoC: function(_this, ev) {
-            var postid = $('#cmtBtn').data('receiverid');
+            var postId = this.element.data('receiver-id');
             var comment = _this.cmtInput.val();
-            var cmtid = $(_this.element).data("id");
+            var cmtId = $(_this.element).data("id");
             var data = {
                 Content: comment,
-                PostId: postid,
-                ParentId: cmtid,
+                ReceiverId: postId,
+                ParentId: cmtId,
                 AuthorId: _this.options.authorId
             };
 
@@ -141,11 +134,9 @@ if (typeof jQuery === 'undefined') {
                     )
                 },
                 success: function(data) {
-                    var comment = data.Content;
                     _this.cmtInput.val('');
                     $('span.field-validation-valid[data-valmsg-for="Content"]').empty();
-                    var htmlcmt = htmlize(comment);
-                    $('<div data-type="blogcomment" data-id="' + data.Id + '" data-allow-edit="True" data-date="' + data.DateCreated + '" data-username="' + _this.options.authorName + '">' + htmlcmt + '</div>')
+                    $('<div data-type="blogcomment" data-receiver-id="'+ postId +'" data-id="' + data.id + '" data-allow-edit="True" data-date="' + data.dateCreated + '" data-username="' + _this.options.authorName + '">' + comment + '</div>')
                         .blogcomment().appendTo(_this.subCmts);
                 },
                 url: _this.options.apictrlr
@@ -155,7 +146,8 @@ if (typeof jQuery === 'undefined') {
 
     });
 
-    $(document).ready(function() {
+    jQuery(function() {
         $("[data-type='blogcomment']").blogcomment();
     })
-})(jQuery);
+    
+

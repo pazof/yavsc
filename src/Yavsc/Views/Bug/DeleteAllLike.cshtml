@@ -45,7 +45,9 @@
         <td>
             <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
             <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-            <a asp-action="DeleteAllLike" asp-route-id="@item.Id">Delete</a>
+           <form asp-action="DeleteAllLikeConfirmed" asp-route-id="@item.Id" method="POST">
+            <input class="btm btm-primary" type="submit" value="Delete"></input>
+           </form>
         </td>
     </tr>
 }

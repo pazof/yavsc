@@ -37,7 +37,7 @@ namespace Yavsc
         public const string FrontOfficeGroupName = "FrontOffice";
         public const string DefaultAvatar = "/images/Users/icon_user.png";
         public const string AnonAvatar = "/images/Users/icon_anon_user.png";
-        public const string YavscConnectionStringEnvName = "YAVSC_DB_CONNECTION";
+        public const string YavscConnectionStringEnvName = "DEFAULTCONNECTION_CONNECTIONSTRING";
 
         // at the end, let 4*4 bytes in peace
         public const int WebSocketsMaxBufLen = 4096;
@@ -54,5 +54,7 @@ namespace Yavsc
         public const string LivePath = "/live/cast";
         
         public const string StreamingPath = "/api/stream/put";
+
+        public const string RoleClaimName = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
     }
 }

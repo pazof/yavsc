@@ -1,12 +1,6 @@
 {
-    "projects": [
-        "src",
-        "scripts",
-        "tests"
-    ],
     "sdk": {
       "runtime": "dotnet",
-      "architecture": "x64"
-    },
-    "packages": "packages"
+      "version": "8.0.405"
+    }
 }
