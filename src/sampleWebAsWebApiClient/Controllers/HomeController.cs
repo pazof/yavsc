@@ -71,12 +71,11 @@ namespace testOauthClient.Controllers
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var client = new HttpClient(new HttpClientHandler(){ AllowAutoRedirect=false });
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-            client.SetBearerToken(accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var content = await client.GetAsync("https://localhost:6001/identity");
             content.EnsureSuccessStatusCode();
-            var json = await content.Content.ReadAsStreamAsync();
-            var obj = JsonSerializer.Deserialize<JsonElement>(json);
-            return View("UserInfo", obj.ToString());
+            var json = await content.Content.ReadAsStringAsync();
+            return View("UserInfo", json);
         }
 
 

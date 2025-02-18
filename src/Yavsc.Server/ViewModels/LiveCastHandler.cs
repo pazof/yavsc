@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.ViewModels.Streaming
 {

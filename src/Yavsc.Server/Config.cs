@@ -47,8 +47,8 @@ public static class Config
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
         {
-            new ApiScope("scope1"),
-            new ApiScope("scope2"),
+            new ApiScope("scope1",new string[] {"scope1"}),
+            new ApiScope("scope2",new string[] {"scope2"}),
         };
 
     public static IEnumerable<Client> Clients =>
@@ -73,6 +73,7 @@ public static class Config
                 ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
 
                 AllowedGrantTypes = GrantTypes.Code,
+                AlwaysIncludeUserClaimsInIdToken = true,
 
                 RedirectUris = { "https://localhost:5003/signin-oidc",
                 "http://localhost:5002/signin-oidc"  },
@@ -80,7 +81,6 @@ public static class Config
                     "http://localhost:5002/signout-callback-oidc",
                     "https://localhost:5003/signout-callback-oidc" },
 
-                AllowOfflineAccess = true,
 
                 AllowedScopes = { 
                     IdentityServerConstants.StandardScopes.OpenId,

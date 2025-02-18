@@ -9,16 +9,17 @@ using Yavsc.Models;
 
 namespace Yavsc.Services
 {
-    public class ProfileService : DefaultProfileService, IProfileService
+    public class ProfileService : IProfileService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         public ProfileService(
-            UserManager<ApplicationUser> userManager, ILogger<DefaultProfileService> logger) : base(logger)
+            UserManager<ApplicationUser> userManager, 
+            ILogger<DefaultProfileService> logger) 
         {
             _userManager = userManager;
         }
 
-        public async Task<List<Claim>> GetClaimsFromUserAsync(
+        private async Task<List<Claim>> GetClaimsFromUserAsync(
             ProfileDataRequestContext context,
             ApplicationUser user)
         {
@@ -30,9 +31,11 @@ namespace Yavsc.Services
 
             foreach (var scope in context.RequestedResources.ParsedScopes)
             {
-                claims.Add(new Claim(JwtClaimTypes.Scope, scope.ParsedName));
-                claimAdds.Add(scope.ParsedName);
-                // TODO scope has a ParsedParameter
+                if (context.Client.AllowedScopes.Contains(scope.ParsedName))
+                {
+                    claims.Add(new Claim(JwtClaimTypes.Scope, scope.ParsedName));
+                    claimAdds.Add(scope.ParsedName);
+                }
             }
 
             if (claimAdds.Contains(JwtClaimTypes.Profile))
@@ -54,13 +57,13 @@ namespace Yavsc.Services
                 var roles = await this._userManager.GetRolesAsync(user);
                 if (roles.Count()>0)
                 {
-                    claims.Add(new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role",String.Join(" ",roles)));
+                    claims.AddRange(roles.Select(r => new Claim(Constants.RoleClaimName, r)));
                 }
             }
             return claims;
         }
 
-        override public async Task GetProfileDataAsync(ProfileDataRequestContext context)
+         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var subjectId = GetSubjectId(context.Subject);
             if (subjectId==null) return;
@@ -69,7 +72,7 @@ namespace Yavsc.Services
             context.IssuedClaims = await GetClaimsFromUserAsync(context, user);
         }
 
-        override public async Task IsActiveAsync(IsActiveContext context)
+         public async Task IsActiveAsync(IsActiveContext context)
         {
             string? subjectId = GetSubjectId(context.Subject);
             if (subjectId == null)
