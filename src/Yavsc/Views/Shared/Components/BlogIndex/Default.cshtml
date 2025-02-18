@@ -1,18 +1,19 @@
 @model IEnumerable<IGrouping<string,BlogPost>>
 
 @if (User.IsSignedIn()) {
-
 <label>
 <input type="checkbox" id="_cbv" checked/>Invisibles, posts privés</label>
-    <script>
-        $("#_cbv").change(function() {
+    <script type="text/javascript">
+        
+        $('#_cbv').change(function() 
+        {
             if (this.checked) {
-                $("tr.hiddenpost").removeClass("hidden");
+                $('tr.hiddenpost').removeClass("hidden");
             } else {
-                $("tr.hiddenpost").addClass("hidden");
+                $('tr.hiddenpost').addClass("hidden");
             }
         });
-</script>
+    </script>
 }
 
 <table class="table">
@@ -34,7 +35,7 @@
           <td>
               <asciidoc summary="256">@item.Content</asciidoc>
               @if (trunked) { <a asp-action="Details" asp-route-id="@item.Id" class="bloglink">...</a> }
-              <span style="font-size:x-small;">(@Html.DisplayFor(m => item.Author)</span>,
+              <span style="font-size:x-small;">@Html.DisplayFor(m => item.Author)</span>
               <span style="font-size:xx-small;">
               posté le @item.DateCreated.ToString("dddd d MMM yyyy à H:mm")
               @if ((item.DateModified - item.DateCreated).Minutes > 0){ 

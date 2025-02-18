@@ -78,26 +78,6 @@ namespace yavscTests
                 throw;
             }
         }
-        
-        public static IEnumerable<object[]> GetLoginIntentData(int numTests)
-        {
-
-            var allData = new List<object[]>();
-
-
-            allData.Add(new object[] { "blouh", "profile",
-            "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
-                "http://localhost:5000/token", "http://localhost:5000/authorize"});
-        
-        
-
-            allData.Add(new object[] {  "blouh", "profile",
-            "http://localhost:5000/authorize", "http://localhost:5000/oauth/success",
-                "http://localhost:5000/token", "http://localhost:5000/authorize"});
-            
-            return allData.Take(numTests);;
-
-        }
 
     }
 }

@@ -8,7 +8,7 @@ namespace Yavsc.Models.Payment {
     using Relationship;
     using Yavsc.Attributes.Validation;
 
-    public class PayPalPayment : IBaseTrackedEntity
+    public class PayPalPayment : ITrackedEntity
     {
         [YaRequired,Key]
         public string CreationToken { get; set; }

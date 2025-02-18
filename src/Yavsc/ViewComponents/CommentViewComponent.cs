@@ -1,21 +1,35 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Yavsc.Models;
 using Yavsc.Models.Blog;
 
 namespace Yavsc.ViewComponents
 {
-    public partial class CommentViewComponent : ViewComponent
+    public class CommentViewComponent : ViewComponent
     {
+        private readonly ApplicationDbContext context;
         private readonly IStringLocalizer<CommentViewComponent> localizer;
-        public CommentViewComponent(IStringLocalizer<CommentViewComponent> localizer)
+        public CommentViewComponent(IStringLocalizer<CommentViewComponent> localizer,
+            ApplicationDbContext context
+        )
         {
+            this.context = context;
             this.localizer = localizer;
         }
-        public IViewComponentResult Invoke(IIdentified<long> longCommentable)
+        public async Task<IViewComponentResult> InvokeAsync(long id)
         {
-            // for a BlogPost, it results in the localization 'apiRouteCommentBlogPost': blogcomments
-            ViewData["apictlr"] = "/api/"+localizer["apiRouteComment"+longCommentable.GetType().Name];
-            return View(longCommentable.GetType().Name, new Comment{ PostId = longCommentable.Id });
+            var comment = await context.Comment.Include(c=>c.Children).FirstOrDefaultAsync(c => c.Id==id);
+            if (comment == null) 
+                throw new InvalidOperationException();
+            ViewData["apictlr"] = "/api/blogcomments";
+            return View("Default", comment);
+        }
+
+        private string GetDebuggerDisplay()
+        {
+            return ToString();
         }
     }
 }

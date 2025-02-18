@@ -9,7 +9,7 @@ using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Chat
 {
-    public class ChatRoom: IChatRoom<ChatRoomAccess>, IBaseTrackedEntity
+    public class ChatRoom: IChatRoom<ChatRoomAccess>, ITrackedEntity
     {
         public string Topic { get; set; }
 

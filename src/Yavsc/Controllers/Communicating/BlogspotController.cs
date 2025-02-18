@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using Yavsc.ViewModels.Blog;
+using System.Collections;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -45,7 +46,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Index(string id)
         {
             if (!string.IsNullOrEmpty(id)) {
-                return await UserPosts(id);
+                return View("UserPosts", await UserPosts(id));
             }
             return View();
         }
@@ -56,20 +57,17 @@ namespace Yavsc.Controllers
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             ViewData["Title"] = id;
-            return View("Title", _context.Blogspot.Include(
+            return View("Title", _context.BlogSpot.Include(
                 b => b.Author
             ).Where(x => x.Title == id && (x.Visible || x.AuthorId == uid )).OrderByDescending(
                 x => x.DateCreated
             ).ToList());
         }
 
-        [Route("~/Blog/{userName}/{pageLen?}/{pageNum?}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> UserPosts(string userName, int pageLen=10, int pageNum=0)
+        private async Task<IEnumerable<BlogPost>> UserPosts(string userName, int pageLen=10, int pageNum=0)
         {
             string posterId = (await _context.Users.SingleOrDefaultAsync(u=>u.UserName == userName))?.Id ?? null ;
-            var result = _context.UserPosts(posterId, User.Identity.Name);
-            return View("Index", result.ToArray().Skip(pageLen*pageNum).Take(pageLen).OrderByDescending(p => p.DateCreated).ToList().GroupBy(p=> p.Title ));
+            return _context.UserPosts(posterId, User.Identity.Name);
         }
         // GET: Blog/Details/5
         [AllowAnonymous]
@@ -80,7 +78,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            BlogPost blog = _context.Blogspot
+            BlogPost blog = _context.BlogSpot
             .Include(p => p.Author)
             .Include(p => p.Tags)
             .Include(p => p.Comments)
@@ -130,10 +128,9 @@ namespace Yavsc.Controllers
                     Title = blogInput.Title,
                     Content = blogInput.Content,
                     Photo = blogInput.Photo,
-                    Rate = 0,
                     AuthorId = User.GetUserId()
                 };
-                _context.Blogspot.Add(post);
+                _context.BlogSpot.Add(post);
                 _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
@@ -152,7 +149,7 @@ namespace Yavsc.Controllers
             }
 
             ViewData["PostTarget"]="Edit";
-            BlogPost blog = _context.Blogspot.Include(x => x.Author).Include(x => x.ACL).Single(m => m.Id == id);
+            BlogPost blog = _context.BlogSpot.Include(x => x.Author).Include(x => x.ACL).Single(m => m.Id == id);
 
             if (blog == null)
             {
@@ -214,7 +211,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            BlogPost blog = _context.Blogspot.Include(
+            BlogPost blog = _context.BlogSpot.Include(
                b => b.Author
            ).Single(m => m.Id == id);
             if (blog == null)
@@ -230,9 +227,10 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
-            BlogPost blog = _context.Blogspot.Single(m => m.Id == id && m.GetOwnerId()== User.GetUserId());
+            var uid = User.GetUserId();
+            BlogPost blog = _context.BlogSpot.Single(m => m.Id == id && m.AuthorId == uid );
            
-            _context.Blogspot.Remove(blog);
+            _context.BlogSpot.Remove(blog);
             _context.SaveChanges(User.GetUserId());
            
             return RedirectToAction("Index");

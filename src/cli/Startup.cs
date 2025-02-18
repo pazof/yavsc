@@ -130,7 +130,6 @@ namespace cli
             {
                 options.ResourcesPath = "Resources";
             });
-
             services.Configure<SharedAuthenticationOptions>(options =>
             {
                 options.SignInScheme = "Bearer";
@@ -138,7 +137,7 @@ namespace cli
 
             services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
 
-            services.AddAuthentication();
+            services.AddAuthentication("Bearer");
 
             services.AddSingleton(typeof(IApplicationEnvironment), svs => PlatformServices.Default.Application);
             services.AddSingleton(typeof(IRuntimeEnvironment), svs => PlatformServices.Default.Runtime);

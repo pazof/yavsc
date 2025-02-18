@@ -2,7 +2,7 @@ using System;
 
 namespace Yavsc.Models.Cratie
 {
-    public class Option: IBaseTrackedEntity
+    public class Option: ITrackedEntity
     {
         public string CodeScrutin { get; set; }
         public string Code { get; set ; }

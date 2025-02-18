@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+@using Microsoft.AspNetCore.Authentication
 
 <div class="jumbotron">
     @if (User?.Identity?.IsAuthenticated ?? false) {
@@ -20,6 +21,11 @@
         <form action="~/Home/GetUserInfo" method="post">
             <button class="btn btn-lg btn-warning" type="submit">Get user info</button>
         </form>
+        
+         <form action="~/Home/GetApiCall" method="post">
+            <button class="btn btn-lg btn-warning" type="submit">Api Call</button>
+        </form>
+        
         <form action="~/Home/PostDeviceInfo" method="post">
             <button class="btn btn-lg btn-warning" type="submit">Post device info</button>
         </form>
@@ -36,25 +42,3 @@
         <a class="btn btn-lg btn-success" href="/signin">Sign in</a>
     }
 </div>
-
-
-
-<h2>Claims</h2>
-
-<dl>
-    @foreach (var claim in User.Claims)
-    {
-        <dt>@claim.Type</dt>
-        <dd>@claim.Value</dd>
-    }
-</dl>
-
-<h2>Properties</h2>
-
-<dl>
-    @foreach (var prop in (await Context.AuthenticateAsync()).Properties.Items)
-    {
-        <dt>@prop.Key</dt>
-        <dd>@prop.Value</dd>
-    }
-</dl>

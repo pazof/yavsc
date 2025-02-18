@@ -24,7 +24,7 @@ namespace Yavsc.ViewComponents
             Where(c=>c.Members.Any(m=>m.MemberId == viewerId))
             .Select(c=>c.Id).ToArrayAsync();
 
-            var allposts = _context.Blogspot
+            var allposts = _context.BlogSpot
                 .Include(b => b.Author)
                 .Include(p=>p.ACL)
                 .Include(p=>p.Tags)

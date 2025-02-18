@@ -57,57 +57,61 @@
             @string.Join(", ",Model.Roles)
         </dd>}
         <dt>Password:</dt>
-        <dd>[@if (Model.HasPassword)
+        <dd>[@{if (Model.HasPassword)
             {<a asp-controller="Manage" 
             asp-action="ChangePassword">Change</a>}
             else
             {<a asp-controller="Manage" 
-            asp-action="SetPassword">Create</a>}]</dd>
+            asp-action="SetPassword">Create</a>}}]</dd>
 
         <dt>External Logins:</dt>
         <dd>
             @Model.Logins.Count [<a asp-controller="Manage" asp-action="ManageLogins">Manage</a>]
         </dd>
 
-        <dt>Full name:</dt>
-        <dd>@Model.FullName  [<a asp-controller="Manage" asp-action="SetFullName"
-            >@Model.FullName==null?"Set":"Modify"</a>]</dd>
-
         <dt>Address:</dt>
         <dd>@Model.PostalAddress
-            [<a asp-controller="Manage" asp-action="SetAddress"
-            >@Model.PostalAddress==null?"Set":"Modify"</a>]
+            [<a asp-controller="Manage" asp-action="SetAddress">
+            @{ if (Model.PostalAddress==null)
+            {
+                Html.DisplayText("Set");
+            }
+            else 
+            {
+Html.DisplayText("Modify");
+            }
+            }
+            </a>]
         </dd>
         
         <dt>Avatar:</dt>
         <dd>
                    <img src="/Avatars/@(User.GetUserName()+".s").png" asp-append-version="true" class="smalltofhol" />
-            [<a asp-controller="Manage" asp-action="SetAvatar"
-            >Modify</a>]
+            [<a asp-controller="Manage" asp-action="SetAvatar">Modify</a>]
         </dd> 
 
         <dt>Vos cercles</dt>
-        <dd> (WIP) <a asp-action="Index" asp-controller="Circle">[Ajouter suprimer des cercles"]]</a>
-            <a asp-action="Index" asp-controller="CircleMembers">[Gérer les membres de vos cercles"]]</a>
+        <dd> (WIP) <a asp-action="Index" asp-controller="Circle">Ajouter suprimer des cercles</a>
+            <a asp-action="Index" asp-controller="CircleMembers">Gérer les membres de vos cercles</a>
         </dd>
 
         <dt>Professional settings:</dt>
         <dd>
             @Html.DisplayFor(model => model.HaveProfessionalSettings)
             [<a asp-controller="Manage" asp-action="SetActivity"
-            >Model.HaveProfessionalSettings?"Modify settings":"Set"</a>]
+            >@(Model.HaveProfessionalSettings?"Modify settings":"Set")</a>]
         </dd>
 @if (Model.HaveProfessionalSettings) {
         <dt>Activities:</dt>
         <dd>
            @string.Join(", ",Model.Activity.Select( u=> u.Does.Name ).ToArray())
             [<a asp-controller="Do" asp-action="Index"
-            >@Model.Activity==null?"Set":"Modify settings"</a>]
+            >@(Model.Activity==null?"Set":"Modify settings")</a>]
         </dd>
 }
         <dt>Bank info:</dt>
         <dd>@Html.DisplayFor(m => m.BankInfo)  [<a asp-controller="Manage" asp-action="AddBankInfo"
-            >@Model.BankInfo==null?"Set":"Modify"</a>]</dd>
+            >@(Model.BankInfo==null?"Set":"Modify")</a>]</dd>
 
         <dt><a href="/Blog/@Model.UserName">Your posts:</a></dt>
         <dd>@Model.PostsCounter</dd>
@@ -137,11 +141,13 @@
       </dd>
        <dt>Calendar</dt> 
       <dd> 
-          @Model.HasDedicatedCalendar?"Yes":"No" 
-          @if (Model.HasDedicatedCalendar) { 
+          @Html.DisplayText(Model.HasDedicatedCalendar?"Yes":"No" )
+          @{
+            if (Model.HasDedicatedCalendar) { 
              <text> : @Model.DedicatedCalendarId </text>
           }
-              [<a asp-action="SetGoogleCalendar">Select a Google calendar</a>]
+          }
+        [<a asp-action="SetGoogleCalendar">Select a Google calendar</a>]
       </dd>
       <environment names="Development">
        <dt>Credits:</dt> 
@@ -159,9 +165,9 @@
                 @(((double)Model.DiskUsage/Model.DiskQuota).ToString("%#0")) : 
             </text>
           } 
-          <text>
+          <code>
           @(Model.DiskUsage.ToString("0,#")) / @(Model.DiskQuota.ToString("0,#"))
-          </text>
+          </code>
       </dd>
       <dt>Identifiant utilisateur</dt>
       <dd>

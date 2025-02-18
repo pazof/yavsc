@@ -8,7 +8,7 @@ using Yavsc.Server.Models.Calendar;
 
 namespace Yavsc.Server.Models.EMailing
 {
-    public class MailingTemplate : IBaseTrackedEntity
+    public class MailingTemplate : ITrackedEntity
     {
         /// <summary>
         /// Date Created
