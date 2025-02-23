@@ -1,9 +1,6 @@
-using System.Text;
+
 using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using AsciiDocNet;
-using Yavsc.Models.Blog;
-using System.Linq.Expressions;
 
 namespace Yavsc.Helpers
 {
@@ -51,7 +48,7 @@ namespace Yavsc.Helpers
                     Source source = (Source)elt;
                     // TODO syntact hilighting and fun js modules
                     contentbuilder.AppendHtmlLine("<pre><code>");
-                    contentbuilder.Append(source.Text);
+                    contentbuilder.AppendHtml(source.Text);
                     contentbuilder.AppendHtmlLine("</code></pre>");
                     break;
                 default:
@@ -95,7 +92,7 @@ namespace Yavsc.Helpers
                 case "AsciiDocNet.Emphasis":
                     sb.AppendHtml("<i>");
                     AsciiDocNet.Emphasis em = (Emphasis)elt;
-                    sb.Append(em.Text);
+                    sb.AppendHtml(em.Text);
                     sb.AppendHtml("</i>");
                     break;
 
@@ -150,9 +147,9 @@ namespace Yavsc.Helpers
             var tl = elt as TextLiteral;
             if (tl?.Attributes.Anchor != null)
             {
-                sb.AppendFormat("<a name=\"{0}\">{1}</a> ", tl.Attributes.Anchor.Id, tl.Attributes.Anchor.XRefLabel);
+                sb.AppendHtmlLine($"<a name=\"{tl.Attributes.Anchor.Id}\">{tl.Attributes.Anchor.XRefLabel}</a> ");
             }
-            if (tl != null) sb.Append(tl.Text);
+            if (tl != null) sb.AppendHtml(tl.Text);
         }
 
         public static IHtmlContent ToHtml(this Document doc, int doclevel = 4)
@@ -176,7 +173,7 @@ namespace Yavsc.Helpers
             return contentbuilder;
         }
 
-
+/*
         public static IHtmlContent AsciiDocFor<TModel>(this IHtmlHelper<TModel> html,
         Expression<Func<TModel, string>> expression)
         {
@@ -209,6 +206,6 @@ namespace Yavsc.Helpers
 
             // Render tag
             return builder.ToString();
-        }
+        } */
     }
 }

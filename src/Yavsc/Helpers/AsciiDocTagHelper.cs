@@ -8,6 +8,10 @@ namespace Yavsc.Helpers
     {
         public override async Task ProcessAsync (TagHelperContext context, TagHelperOutput output)
         {
+            if (context.AllAttributes.ContainsName ("summary"))
+            {
+                var summaryLength = context.AllAttributes["summary"].Value;
+            }
             await base.ProcessAsync(context, output);
             var content = await output.GetChildContentAsync();
             string text = content.GetContent();

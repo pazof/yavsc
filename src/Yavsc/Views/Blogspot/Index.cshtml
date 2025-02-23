@@ -51,17 +51,18 @@
     var title = group.Key ?? "@";
     string secondclass="";
     var first = group.First();
-   
+    int maxTextLen = 256;
+
   <tr><td colspan="3">
 <a asp-action="Title" asp-route-id="@group.Key" >@title</a></td></tr> 
   @foreach (var item in group) {
-     var trunked = item.Content?.Length > 256;
+     var trunked = item.Content?.Length > maxTextLen;
       <tr>
           <td><a asp-action="Details" asp-route-id="@item.Id" class="bloglink">
          <img src="@item.Photo" class="blogphoto"></a>
           </td>
           <td>
-              <asciidoc summary="256">@item.Content</asciidoc>
+              <asciidoc summary="@maxTextLen">@item.Content</asciidoc>
               @if (trunked) { <a asp-action="Details" asp-route-id="@item.Id" class="bloglink">...</a> }
               <span style="font-size:x-small;">@Html.DisplayFor(m => item.Author)</span>
               <span style="font-size:xx-small;">
