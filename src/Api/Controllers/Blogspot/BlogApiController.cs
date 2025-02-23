@@ -25,9 +25,10 @@ namespace Yavsc.Controllers
 
         // GET: api/BlogApi
         [HttpGet]
-        public IEnumerable<BlogPost> GetBlogspot()
+        public IEnumerable<BlogPost> GetBlogspot(int start=0, int take=25)
         {
-            return _context.BlogSpot.Where(b => b.Visible).OrderByDescending(b => b.UserModified);
+            return _context.BlogSpot.OrderByDescending(b => b.UserModified)
+            .Skip(start).Take(take);
         }
 
         // GET: api/BlogApi/5

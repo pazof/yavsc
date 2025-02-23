@@ -82,19 +82,14 @@ namespace Yavsc.Helpers
                     {
                         if (string.IsNullOrEmpty(link.Text))
                         {
-                            link.Text = $"{uri.Host}({uri.LocalPath})"; 
+                            link.Text = $"{uri.Host}({uri.LocalPath})";
                         }
                     }
                     sb.AppendFormat("<a href=\"{0}\">{1}</a> ", link.GetValidHRef(), link.Text);
                     break;
 
                 case "AsciiDocNet.TextLiteral":
-                    var tl = elt as TextLiteral;
-                   if (tl?.Attributes.Anchor!=null)
-                   {
-                         sb.AppendFormat("<a name=\"{0}\">{1}</a> ", tl.Attributes.Anchor.Id, tl.Attributes.Anchor.XRefLabel);
-                   }
-                   if (tl!=null) sb.Append(tl.Text);
+                    RenderLitteral(elt, sb);
                     break;
 
                 case "AsciiDocNet.Emphasis":
@@ -114,25 +109,50 @@ namespace Yavsc.Helpers
                     sb.AppendHtml("</b>");
                     break;
                 case "AsciiDocNet.InternalAnchor":
-                    InternalAnchor a = (InternalAnchor) elt;
+                    InternalAnchor a = (InternalAnchor)elt;
                     sb.AppendFormat("<a name=\"{0}\">{1}</a> ", a.Id, a.XRefLabel);
                     break;
                 case "AsciiDocNet.Subscript":
-                 sb.AppendHtml("<sup>");
+                    sb.AppendHtml("<sup>");
                     Subscript sub = (Subscript)elt;
-                    sub.ToHtml(sb);
+                    RenderLitteral(sub, sb);
                     sb.AppendHtml("</sup>");
                     break;
                 case "AsciiDocNet.Superscript":
-                 sb.AppendHtml("<sup>");
+                    sb.AppendHtml("<sup>");
                     Superscript sup = (Superscript)elt;
-                    sup.ToHtml(sb);
+                    RenderLitteral(sup, sb);
                     sb.AppendHtml("</sup>");
                     break;
+                case "AsciiDocNet.Mark":
+                    sb.AppendHtml("<em>");
+
+                    Mark mark = (Mark)elt;
+                    if (mark.DoubleDelimited)
+                    {
+                        sb.AppendHtml("<b>");
+                        RenderLitteral(mark, sb);
+                        sb.AppendHtml("</b>");
+                    }
+                    else
+                        RenderLitteral(mark, sb);
+                    sb.AppendHtml("</em>");
+                    break;
+
                 default:
                     string unsupportedType = elt.GetType().FullName;
                     throw new InvalidProgramException(unsupportedType);
             }
+        }
+
+        private static void RenderLitteral(IInlineElement elt, IHtmlContentBuilder sb)
+        {
+            var tl = elt as TextLiteral;
+            if (tl?.Attributes.Anchor != null)
+            {
+                sb.AppendFormat("<a name=\"{0}\">{1}</a> ", tl.Attributes.Anchor.Id, tl.Attributes.Anchor.XRefLabel);
+            }
+            if (tl != null) sb.Append(tl.Text);
         }
 
         public static IHtmlContent ToHtml(this Document doc, int doclevel = 4)

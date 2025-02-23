@@ -45,5 +45,55 @@
 }
 
 <div class="container">
-     @await Component.InvokeAsync("BlogIndex")   
+     
+<table class="table">
+@foreach (var group in Model) {
+    var title = group.Key ?? "@";
+    string secondclass="";
+    var first = group.First();
+   
+  <tr><td colspan="3">
+<a asp-action="Title" asp-route-id="@group.Key" >@title</a></td></tr> 
+  @foreach (var item in group) {
+     var trunked = item.Content?.Length > 256;
+      <tr>
+          <td><a asp-action="Details" asp-route-id="@item.Id" class="bloglink">
+         <img src="@item.Photo" class="blogphoto"></a>
+          </td>
+          <td>
+              <asciidoc summary="256">@item.Content</asciidoc>
+              @if (trunked) { <a asp-action="Details" asp-route-id="@item.Id" class="bloglink">...</a> }
+              <span style="font-size:x-small;">@Html.DisplayFor(m => item.Author)</span>
+              <span style="font-size:xx-small;">
+              posté le @item.DateCreated.ToString("dddd d MMM yyyy à H:mm")
+              @if ((item.DateModified - item.DateCreated).Minutes > 0){ 
+                  @:- Modifié le @item.DateModified.ToString("dddd d MMM yyyy à H:mm")
+               })
+              </span>
+          </td>
+          <td> 
+              <ul class="actiongroup">
+                  @if ((await AuthorizationService.AuthorizeAsync(User, item, new ReadPermission())).Succeeded) {
+                  <li>
+                      <a asp-action="Details" asp-route-id="@item.Id"  class="btn btn-lg">Details</a>
+                    </li>
+                  }
+                  else {
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-lg">Details DEBUG</a>
+                  }
+              @if ((await AuthorizationService.AuthorizeAsync(User, item, new EditPermission())).Succeeded) {
+              <li><a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-default">Edit</a>
+              </li>
+              <li><a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+              </li>
+              }
+              </ul>
+          </td>
+      </tr>
+  }
+}
+</table>
+
+
+
 </div>

@@ -23,7 +23,11 @@ public class PermissionHandler : IAuthorizationHandler
         {
             if (requirement is ReadPermission)
             {
-                if (IsOwner(context.User, context.Resource)
+                if (IsPublic(context.Resource))
+                {
+                    context.Succeed(requirement);
+                }
+                else if (IsOwner(context.User, context.Resource)
                     || IsSponsor(context.User, context.Resource))
                 {
                     context.Succeed(requirement);
@@ -39,6 +43,16 @@ public class PermissionHandler : IAuthorizationHandler
         }
 
         return Task.CompletedTask;
+    }
+
+    private bool IsPublic(object? resource)
+    {
+        if (resource is BlogPost blogPost)
+        {
+            if (blogPost.ACL.Count==0)
+                return true;
+        }
+        return false;
     }
 
     private static bool IsOwner(ClaimsPrincipal user, object? resource)

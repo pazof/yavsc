@@ -54,7 +54,7 @@ namespace Yavsc.ApiControllers
         {     
             var bill = await billingService.GetBillAsync(billingCode, id);
 
-            if ( authorizationService.AuthorizeAsync(User, bill, new ViewRequirement()).IsFaulted)
+            if ( authorizationService.AuthorizeAsync(User, bill, new ReadPermission()).IsFaulted)
             {
                 return new ChallengeResult();
             }
@@ -76,7 +76,7 @@ namespace Yavsc.ApiControllers
             }
             logger.LogTrace(JsonConvert.SerializeObject(bill));
 
-            if (!(await authorizationService.AuthorizeAsync(User, bill, new ViewRequirement())).Succeeded)
+            if (!(await authorizationService.AuthorizeAsync(User, bill, new ReadPermission())).Succeeded)
             {
                 return new ChallengeResult();
             }
@@ -107,7 +107,7 @@ namespace Yavsc.ApiControllers
             .FirstOrDefault(e=>e.Id == id);
             if (estimate == null)
                 return new BadRequestResult();
-            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement())).Succeeded)
+            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ReadPermission())).Succeeded)
 
           
             {
@@ -135,7 +135,7 @@ namespace Yavsc.ApiControllers
         {
             // For authorization purpose
             var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
-            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement())).Succeeded)
+            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ReadPermission())).Succeeded)
             
             {
                 return new ChallengeResult();
@@ -154,7 +154,7 @@ namespace Yavsc.ApiControllers
             var estimate = dbContext.Estimates.Include( e=>e.Query
             ).Include(e=>e.Owner).Include(e=>e.Owner.Performer).Include(e=>e.Client)
             .FirstOrDefault( e=> e.Id == id && e.Query.ClientId == uid );
-            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement())).Succeeded)
+            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ReadPermission())).Succeeded)
             {
                 return new ChallengeResult();
             }
@@ -171,7 +171,7 @@ namespace Yavsc.ApiControllers
         {
             // For authorization purpose
             var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
-            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement())).Succeeded)
+            if (!(await authorizationService.AuthorizeAsync(User, estimate, new ReadPermission())).Succeeded)
             {
                 return new ChallengeResult();
             }

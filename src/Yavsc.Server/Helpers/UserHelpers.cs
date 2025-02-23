@@ -30,7 +30,7 @@ namespace Yavsc.Helpers
             {
                 var userPosts = dbContext.BlogSpot.Include(
                 b => b.Author
-                ).Where(x => ((x.AuthorId == posterId) && (x.Visible))).ToArray();
+                ).Where(x => ((x.AuthorId == posterId))).ToArray();
                 return userPosts;
             }
             else
@@ -42,8 +42,7 @@ namespace Yavsc.Helpers
                 return dbContext.BlogSpot.Include(
                               b => b.Author
                               ).Include(p => p.ACL).Where(x => x.Author.Id == posterId &&
-                              (x.Visible &&
-                              (x.ACL.Count == 0 || x.ACL.Any(a => readerCirclesMemberships.Contains(a.CircleId)))));
+                              (x.ACL.Count == 0 || x.ACL.Any(a => readerCirclesMemberships.Contains(a.CircleId))));
 
 
             }

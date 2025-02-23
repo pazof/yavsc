@@ -206,7 +206,7 @@ public static class HostingExtensions
         services.AddDataProtection().PersistKeysToFileSystem(dataDir);
         AddYavscPolicies(services);
 
-        services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+        services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
 
         AddAuthentication(builder);
@@ -417,9 +417,8 @@ public static class HostingExtensions
         var smtpSettings = services.GetRequiredService<IOptions<SmtpSettings>>();
         var payPalSettings = services.GetRequiredService<IOptions<PayPalSettings>>();
         var googleAuthSettings = services.GetRequiredService<IOptions<GoogleAuthSettings>>();
-        var authorizationService = services.GetRequiredService<IAuthorizationService>();
         var localization = services.GetRequiredService<IStringLocalizer<YavscLocalization>>();
-        Startup.Configure(app, siteSettings, smtpSettings, authorizationService,
+        Startup.Configure(app, siteSettings, smtpSettings,
             payPalSettings, googleAuthSettings, localization, loggerFactory,
             app.Environment.EnvironmentName);
         app.ConfigureFileServerApp();

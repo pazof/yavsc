@@ -43,12 +43,44 @@ namespace Yavsc.Controllers
 
         // GET: Blog
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Index(string id, int skip=0, int take=25)
         {
             if (!string.IsNullOrEmpty(id)) {
                 return View("UserPosts", await UserPosts(id));
             }
-            return View();
+            IEnumerable<BlogPost> posts;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                string viewerId = User.GetUserId();
+                long[] usercircles = await _context.Circle.Include(c=>c.Members).
+                    Where(c=>c.Members.Any(m=>m.MemberId == viewerId))
+                    .Select(c=>c.Id).ToArrayAsync();
+                
+                posts = _context.BlogSpot
+                    .Include(b => b.Author)
+                    .Include(p=>p.ACL)
+                    .Include(p=>p.Tags)
+                    .Include(p=>p.Comments)
+                    .Where(p =>(p.ACL.Count == 0) 
+                    || (p.AuthorId == viewerId)
+                    || (usercircles != null && p.ACL.Any(a => usercircles.Contains(a.CircleId)))
+                    );
+            }
+            else 
+            {
+                 posts = _context.BlogSpot
+                .Include(b => b.Author)
+                .Include(p=>p.ACL)
+                .Include(p=>p.Tags)
+                .Include(p=>p.Comments)
+                .Where(p => p.ACL.Count == 0 ).ToArray();
+            }
+          
+            var data = posts.OrderByDescending( p=> p.DateCreated);
+            var grouped = data.GroupBy(p=> p.Title).Skip(skip).Take(take);
+
+            return View(grouped);
         }
 
         [Route("~/Title/{id?}")]
@@ -59,7 +91,7 @@ namespace Yavsc.Controllers
             ViewData["Title"] = id;
             return View("Title", _context.BlogSpot.Include(
                 b => b.Author
-            ).Where(x => x.Title == id && (x.Visible || x.AuthorId == uid )).OrderByDescending(
+            ).Where(x => x.Title == id && (x.AuthorId == uid )).OrderByDescending(
                 x => x.DateCreated
             ).ToList());
         }
@@ -88,7 +120,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            if ( _authorizationService.AuthorizeAsync(User, blog, new ViewRequirement()).IsFaulted)
+            if ( _authorizationService.AuthorizeAsync(User, blog, new ReadPermission()).IsFaulted)
             {
                 return new ChallengeResult();
             }
@@ -111,7 +143,8 @@ namespace Yavsc.Controllers
         [Authorize()]
         public IActionResult Create(string title)
         {
-            var result = new BlogPostInputViewModel{Title=title,Content=""};
+            var result = new BlogPostInputViewModel{Title=title
+            };
             ViewData["PostTarget"]="Create";
             SetLangItems();
             return View(result);
@@ -168,7 +201,14 @@ namespace Yavsc.Controllers
                     } 
                 );
                 SetLangItems();
-                return View(blog);
+                return View(new BlogPostEditViewModel
+                {
+                    Id = blog.Id,
+                    Title = blog.Title,
+                    Content = blog.Content,
+                    ACL = blog.ACL,
+                    Photo = blog.Photo
+            });
             }
             else
             {
@@ -179,27 +219,31 @@ namespace Yavsc.Controllers
         // POST: Blog/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken,Authorize()]
-        public IActionResult Edit(BlogPost blog)
+        public async Task<IActionResult> Edit(BlogPostEditViewModel blogEdit)
         {
             if (ModelState.IsValid)
             {
-                var auth = _authorizationService.AuthorizeAsync(User, blog, new EditPermission());
-                if (!auth.IsFaulted)
-                {
-                    // saves the change
-                    _context.Update(blog);
-                    _context.SaveChanges(User.GetUserId());
-                    ViewData["StatusMessage"] = "Post modified";
-                    return RedirectToAction("Index");
+                var blog = _context.BlogSpot.SingleOrDefault(b=>b.Id == blogEdit.Id);
+                if (blog == null) {
+                    ModelState.AddModelError("Id", "not found");
+                    return View();
                 }
-                else
-                {
+                if (!(await _authorizationService.AuthorizeAsync(User, blog, new EditPermission())).Succeeded) {
                     ViewData["StatusMessage"] = "Accès restreint";
                     return new ChallengeResult();
                 }
+                blog.Content=blogEdit.Content;
+                blog.Title = blogEdit.Title;
+                blog.Photo = blogEdit.Photo;
+                blog.ACL = blogEdit.ACL;
+                // saves the change
+                _context.Update(blog);
+                _context.SaveChanges(User.GetUserId());
+                ViewData["StatusMessage"] = "Post modified";
+                return RedirectToAction("Index");
             }
             ViewData["PostTarget"]="Edit";
-            return View(blog);
+            return View(blogEdit);
         }
 
         // GET: Blog/Delete/5
@@ -223,12 +267,12 @@ namespace Yavsc.Controllers
         }
 
         // POST: Blog/Delete/5
-        [HttpPost, ActionName("Delete"), Authorize()]
+        [HttpPost, ActionName("Delete"), Authorize("IsTheAuthor")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(long id)
         {
             var uid = User.GetUserId();
-            BlogPost blog = _context.BlogSpot.Single(m => m.Id == id && m.AuthorId == uid );
+            BlogPost blog = _context.BlogSpot.Single(m => m.Id == id);
            
             _context.BlogSpot.Remove(blog);
             _context.SaveChanges(User.GetUserId());
