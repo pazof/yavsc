@@ -3,11 +3,14 @@
 
 namespace Yavsc
 {
-    public interface IBlogPost : ITrackedEntity, IIdentified<long>, ITitle
-    {
-        string AuthorId { get; set; }
+    public interface IBlogPostPayLoad
+    {      
         string Content { get; set; }
         string Photo { get; set; }
-        bool Visible { get; set; }
+
+    }
+    public interface IBlogPost :IBlogPostPayLoad, ITrackedEntity, IIdentified<long>, ITitle
+    {
+        string AuthorId { get; set; }
     }
 }

@@ -13,7 +13,6 @@ public  class Startup
             IApplicationBuilder app,
             IOptions<SiteSettings> siteSettings,
              IOptions<SmtpSettings> smtpSettings,
-        IAuthorizationService authorizationService,
         IOptions<PayPalSettings> payPalSettings,
         IOptions<GoogleAuthSettings> googleSettings,
         IStringLocalizer<YavscLocalization> localizer,

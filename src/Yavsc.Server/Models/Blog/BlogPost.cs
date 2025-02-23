@@ -18,14 +18,14 @@ namespace Yavsc.Models.Blog
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name="Identifiant du post")]
-        public long Id { get; set; }
+        public  long Id { get; set; }
 
         [Display(Name="Identifiant de l'auteur")]
         [ForeignKey("Author")]
-        public string AuthorId { get; set; }
+        public  string AuthorId { get; set; }
 
         [Display(Name="Auteur")]
-        public virtual ApplicationUser Author { set; get; }
+        public  virtual ApplicationUser Author { set; get; }
 
 
         [Display(Name="Date de création")]
@@ -35,7 +35,7 @@ namespace Yavsc.Models.Blog
         }
 
         [Display(Name="Créateur")]
-        public string UserCreated
+        public  string UserCreated
         {
             get; set;
         }
@@ -47,7 +47,7 @@ namespace Yavsc.Models.Blog
         }
 
         [Display(Name="Utilisateur ayant modifé le dernier")]
-        public string UserModified
+        public  string UserModified
         {
             get; set;
         }
@@ -68,7 +68,7 @@ namespace Yavsc.Models.Blog
             if (existent==null) Tags.Add(new BlogTag { PostId = Id, Tag = tag } );
         }
 
-        public  void Detag(Tag tag)
+        public void DeTag(Tag tag)
         {
             var existent = Tags.SingleOrDefault(t => (( t.TagId == tag.Id) && t.PostId == Id));
             if (existent!=null) Tags.Remove(existent);
@@ -80,10 +80,10 @@ namespace Yavsc.Models.Blog
         }
 
         [InverseProperty("Post")]
-        public virtual List<BlogTag> Tags { get; set; }
+        public  virtual List<BlogTag> Tags { get; set; }
 
         [InverseProperty("Post")]
-        public virtual List<Comment> Comments { get; set; }
+        public  virtual List<Comment> Comments { get; set; }
 
         [NotMapped]
         public string OwnerId => AuthorId;

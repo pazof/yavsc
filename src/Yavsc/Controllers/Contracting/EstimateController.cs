@@ -64,7 +64,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            if (authorizationService.AuthorizeAsync(User, estimate, new ViewRequirement()).IsFaulted)
+            if (authorizationService.AuthorizeAsync(User, estimate, new ReadPermission()).IsFaulted)
             {
                 return new ChallengeResult();
             }
