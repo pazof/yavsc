@@ -29,19 +29,12 @@ namespace Yavsc.Services
     Task<IDecidableQuery> GetBillAsync(string billingCode, long queryId);
     
     /// <summary>
-    /// All performer setting in this activity
-    /// </summary>
-    /// <param name="activityCode"></param>
-    /// <returns></returns>
-    Task<IEnumerable<ISpecializationSettings>>  GetPerformersSettingsAsync(string activityCode);
-
-    /// <summary>
     /// Perfomer settings for the specified performer in the activity 
     /// </summary>
     /// <param name="activityCode">activityCode</param>
     /// <param name="userId">performer uid</param>
     /// <returns></returns>
-    Task<ISpecializationSettings> GetPerformerSettingsAsync(string activityCode, string userId);
+    Task<IUserSettings> GetPerformersSettingsAsync(string activityCode, string userId);
 
   }
 }

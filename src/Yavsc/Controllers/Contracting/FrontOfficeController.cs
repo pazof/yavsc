@@ -53,26 +53,26 @@ namespace Yavsc.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult Profiles(string id)
+        public async Task<ActionResult> Profiles(string id)
         {
             if (id == null)
             {
                 throw new NotImplementedException("No Activity code");
             }
-            ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == id);
-            var result = _context.ListPerformers(_billing, id);
+            ViewBag.Activity = await _context.Activities.FirstOrDefaultAsync(a => a.Code == id);
+            var result = await _context.ListPerformersAsync(_billing, id);
             return View(result);
         }
 
         [AllowAnonymous]
-        public ActionResult HairCut(string id)
+        public async Task <ActionResult> HairCut(string id)
         {
             if (id == null)
             {
                 throw new NotImplementedException("No Activity code");
             }
-            ViewBag.Activity = _context.Activities.FirstOrDefault(a => a.Code == id);
-            var result = _context.ListPerformers(_billing, id);
+            ViewBag.Activity = await _context.Activities.FirstOrDefaultAsync(a => a.Code == id);
+            var result = await _context.ListPerformersAsync(_billing, id);
             return View(result);
         }
 

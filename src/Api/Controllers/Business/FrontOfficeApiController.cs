@@ -22,9 +22,9 @@ namespace Yavsc.ApiControllers
         }
 
         [HttpGet("profiles/{actCode}")]
-        IEnumerable<PerformerProfileViewModel> Profiles(string actCode)
+        async Task <IEnumerable<PerformerProfileViewModel>> Profiles(string actCode)
         {
-            return dbContext.ListPerformers(billing, actCode);
+            return await dbContext.ListPerformersAsync(billing, actCode);
         }
 
         [HttpPost("query/reject")]
@@ -39,7 +39,8 @@ namespace Yavsc.ApiControllers
             dbContext.SaveChanges();
             return Ok();
         }
-         [HttpPost("query/reject")]
+
+        [HttpPost("query/reject")]
         public IActionResult AcceptQuery(string billingCode, long queryId)
         {
             if (billingCode == null) return BadRequest("billingCode");
