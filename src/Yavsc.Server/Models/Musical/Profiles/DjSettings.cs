@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Musical.Profiles
 {
-    public class DjSettings : ISpecializationSettings
+    public class DjSettings : IUserSettings
     {
 
         public string SoundCloudId { get; set; }

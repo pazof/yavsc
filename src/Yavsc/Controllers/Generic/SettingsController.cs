@@ -10,7 +10,7 @@ namespace Yavsc.Controllers.Generic
     using Yavsc.Services;
 
     [Authorize]
-    public abstract class SettingsController<TSettings> : Controller where TSettings : class, ISpecializationSettings, new()
+    public abstract class SettingsController<TSettings> : Controller where TSettings : class, IUserSettings, new()
     {
         protected ApplicationDbContext _context;
         DbSet<TSettings> dbSet=null;
@@ -21,10 +21,16 @@ namespace Yavsc.Controllers.Generic
             if (dbSet == null)  {
                 dbSet = (DbSet<TSettings>) BillingService.UserSettings.Single(s=>s.Name == typeof(TSettings).Name).GetValue(_context);
             }
-               
-           
             return dbSet;
         } }
+
+        virtual protected async Task<TSettings> GetSettingsAsync(
+            string userId
+        )
+        {
+            return await Settings.SingleOrDefaultAsync(p=>p.UserId == userId);
+        }
+
 
         public SettingsController(ApplicationDbContext context)
         {
@@ -33,8 +39,7 @@ namespace Yavsc.Controllers.Generic
         
         public async Task<IActionResult> Index()
         {
-            var existing = await this.Settings.SingleOrDefaultAsync(p=>p.UserId == User.GetUserId());
-            return View(existing);
+            return View(await GetSettingsAsync(User.GetUserId()));
         }
         // GET: BrusherProfile/Details/5
         public async Task<IActionResult> Details(string id)
@@ -44,7 +49,7 @@ namespace Yavsc.Controllers.Generic
                 id = User.GetUserId();
             }
 
-            var profile = await Settings.SingleAsync(m => m.UserId == id);
+            var profile = await GetSettingsAsync(id);
             if (profile == null)
             {
                 return NotFound();
@@ -68,7 +73,7 @@ namespace Yavsc.Controllers.Generic
                 id = User.GetUserId();
             }
 
-            TSettings setting = await Settings.SingleOrDefaultAsync(m => m.UserId == id);
+            TSettings setting = await GetSettingsAsync(id);
             if (setting == null)
             {
                 setting = new TSettings { };
@@ -87,13 +92,13 @@ namespace Yavsc.Controllers.Generic
                 return NotFound();
             }
 
-            var brusherProfile = await Settings.SingleAsync(m => m.UserId == id);
-            if (brusherProfile == null)
+            var profile = await GetSettingsAsync(id);
+            if (profile == null)
             {
                 return NotFound();
             }
 
-            return View(brusherProfile);
+            return View(profile);
         }
 
         // POST: FormationSettings/Create
@@ -135,8 +140,8 @@ namespace Yavsc.Controllers.Generic
         [ValidateAntiForgeryToken]
         public  async Task<IActionResult> DeleteConfirmed(string id)
         {
-            TSettings formationSettings = await Settings.SingleAsync(m => m.UserId == id);
-            Settings.Remove(formationSettings);
+            TSettings userSettings = await GetSettingsAsync(id);
+            Settings.Remove(userSettings);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }

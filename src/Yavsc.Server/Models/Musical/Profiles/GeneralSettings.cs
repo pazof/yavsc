@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.Models.Musical.Profiles
 {
-    public class GeneralSettings : ISpecializationSettings
+    public class GeneralSettings : IUserSettings
     {
         public virtual List<MusicalPreference> SoundColor { get; set; }
         [Key]

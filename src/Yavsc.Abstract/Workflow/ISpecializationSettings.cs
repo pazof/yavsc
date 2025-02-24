@@ -1,6 +1,6 @@
 namespace Yavsc
 {
-    public interface ISpecializationSettings
+    public interface IUserSettings
     {
         string UserId { get ; set ; }
     }

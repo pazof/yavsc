@@ -3,7 +3,7 @@ using Yavsc.Models.Workflow;
 
 namespace Yavsc.Models.Musical.Profiles
 {
-    public class Instrumentation : ISpecializationSettings
+    public class Instrumentation : IUserSettings
     {
         public string UserId
         {

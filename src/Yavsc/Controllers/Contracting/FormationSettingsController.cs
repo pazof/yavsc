@@ -9,6 +9,7 @@ namespace Yavsc.Controllers
 
         public FormationSettingsController(ApplicationDbContext context) : base(context)
         {
+            
         }
 
     }

@@ -57,9 +57,9 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet("doing/{id}"),AllowAnonymous]
-        public IActionResult ListPerformers(string id)
+        public async Task<IActionResult> ListPerformers(string id)
         {
-           return Ok(dbContext.ListPerformers(billing, id));
+           return Ok(await dbContext.ListPerformersAsync(billing, id));
         }
     }
 }

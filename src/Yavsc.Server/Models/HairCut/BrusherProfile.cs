@@ -31,7 +31,7 @@ namespace Yavsc.Models.Haircut
     using Relationship;
     using Calendar;
 
-    public class BrusherProfile : ISpecializationSettings
+    public class BrusherProfile : IUserSettings
     {
         public BrusherProfile()
         {

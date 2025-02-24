@@ -6,7 +6,7 @@ namespace Yavsc.Models.Workflow.Profiles
 {
     using Models.Workflow;
     using Yavsc;
-    public class FormationSettings : ISpecializationSettings
+    public class FormationSettings : IUserSettings
     {
         public virtual List<CoWorking> CoWorking { get; set; }
 

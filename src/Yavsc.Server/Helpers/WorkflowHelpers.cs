@@ -11,22 +11,23 @@ namespace Yavsc.Helpers
 
     public static class WorkflowHelpers
     {
-        public static List<PerformerProfileViewModel> ListPerformers(this ApplicationDbContext context, 
+        public static async Task<List<PerformerProfileViewModel>> ListPerformersAsync(this ApplicationDbContext context, 
         IBillingService billing,
         string actCode)
         {
-            var settings = billing.GetPerformersSettingsAsync(actCode).Result?.ToArray();
            
             var actors = context.Performers
            .Include(p=>p.Activity)
            .Include(p=>p.Performer)
-           .Include(p=>p.Performer.Posts)
-           .Include(p=>p.Performer.DeviceDeclaration)
            .Where(p => p.Active && p.Activity.Any(u=>u.DoesCode==actCode)).OrderBy( x => x.Rate )
            .ToArray();
-            List<PerformerProfileViewModel> result = new List<PerformerProfileViewModel> ();
-            result.AddRange(
-                    actors.Select(a=> new PerformerProfileViewModel(a, actCode, settings?.FirstOrDefault(s =>   s.UserId == a.PerformerId))));
+
+            List<PerformerProfileViewModel> result = new ();
+            foreach (var a in actors)
+            {
+                var settings = await billing.GetPerformersSettingsAsync(actCode, a.PerformerId);
+                result.Add(new PerformerProfileViewModel(a, actCode,settings));
+            }
 
             return result;
         }
