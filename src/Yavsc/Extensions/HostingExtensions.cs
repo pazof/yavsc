@@ -90,51 +90,6 @@ public static class HostingExtensions
 
     #endregion
 
-    public static void ConfigureWorkflow()
-    {
-        foreach (var a in System.AppDomain.CurrentDomain.GetAssemblies())
-        {
-            foreach (var c in a.GetTypes())
-            {
-                if (c.IsClass && !c.IsAbstract &&
-                    c.GetInterface("ISpecializationSettings") != null)
-                {
-                    Config.ProfileTypes.Add(c);
-                }
-            }
-        }
-
-        foreach (var propertyInfo in typeof(ApplicationDbContext).GetProperties())
-        {
-            foreach (var attr in propertyInfo.CustomAttributes)
-            {
-                // something like a DbSet?
-                if (typeof(Yavsc.Attributes.ActivitySettingsAttribute).IsAssignableFrom(attr.AttributeType))
-                {
-                    BillingService.UserSettings.Add(propertyInfo);
-                }
-            }
-        }
-
-        RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext, long, IDecidableQuery>
-        ((db, id) =>
-        {
-            var query = db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularisation).Single(q => q.Id == id);
-            query.SelectedProfile = db.BrusherProfile.Single(b => b.UserId == query.PerformerId);
-            return query;
-        }));
-
-        RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush, new Func<ApplicationDbContext, long, IDecidableQuery>
-        ((db, id) => db.HairMultiCutQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
-
-        RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext, long, IDecidableQuery>
-        ((db, id) => db.RdvQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
-    }
-    public static void RegisterBilling<T>(string code, Func<ApplicationDbContext, long, IDecidableQuery> getter) where T : IBillable
-    {
-        BillingService.Billing.Add(code, getter);
-        BillingService.GlobalBillingMap.Add(typeof(T).Name, code);
-    }
 
     internal static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
@@ -410,7 +365,8 @@ public static class HostingExtensions
         //pp.MapRazorPages();
         app.MapHub<ChatHub>("/chatHub");
        
-        ConfigureWorkflow();
+        WorkflowHelpers.ConfigureBillingService();
+        
         var services = app.Services;
         ILoggerFactory loggerFactory = services.GetRequiredService<ILoggerFactory>();
         var siteSettings = services.GetRequiredService<IOptions<SiteSettings>>();

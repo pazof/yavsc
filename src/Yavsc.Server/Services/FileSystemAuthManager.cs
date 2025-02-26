@@ -32,40 +32,29 @@ namespace Yavsc.Services
 
         private readonly SiteSettings SiteSettings;
 
-        private readonly string aclfileName;
-
         readonly RuleSetParser ruleSetParser;
 
         public FileSystemAuthManager(ApplicationDbContext dbContext, IOptions<SiteSettings> sitesOptions)
         {
             _dbContext = dbContext;
             SiteSettings = sitesOptions.Value;
-            aclfileName = SiteSettings.AccessListFileName;
             ruleSetParser = new RuleSetParser(false);
         }
 
-        public FileAccessRight GetFilePathAccess(ClaimsPrincipal user, IFileInfo file)
+        public FileAccessRight GetFilePathAccess(ClaimsPrincipal user, string fileRelativePath)
         {
-            var parts = file.PhysicalPath.Split(Path.DirectorySeparatorChar);
-            var cwd = Environment.CurrentDirectory.Split(Path.DirectorySeparatorChar).Length;
-
-            
-            // below 3 parts behind cwd, no file name.
-            if (parts.Length < cwd + 3) return FileAccessRight.None;
-
-            var fileDir = string.Join("/", parts.Take(parts.Length - 1));
-            var fileName = parts[parts.Length - 1];
-
+           
             var cusername = user.GetUserName();
-
-            var funame = parts[cwd+1];
-            if (funame == cusername)
+            FileInfo fi = new FileInfo(
+                Path.Combine(Config.UserFilesDirName, fileRelativePath));
+           
+            if (fileRelativePath.StartsWith(cusername+'/'))
             {
                 return FileAccessRight.Read | FileAccessRight.Write;
             }
+            var funame = fileRelativePath.Split('/')[0];
 
-            if (aclfileName == fileName)
-                return FileAccessRight.None;
+            // TODO Assert valid user name
 
             ruleSetParser.Reset();
             var cuserid = user.GetUserId();
@@ -81,15 +70,19 @@ namespace Yavsc.Services
                     ruleSetParser.Definitions.Add(circle.Name, In);
                 else ruleSetParser.Definitions.Add(circle.Name, Out);
             }
-
-            for (int dirlevel = parts.Length - 1; dirlevel > cwd + 1; dirlevel--)
+            var userFilesDir = new DirectoryInfo(
+                Path.Combine(Config.UserFilesDirName, funame));
+            var currentACLDir = fi.Directory;
+            do
             {
-                fileDir = string.Join(Path.DirectorySeparatorChar.ToString(), parts.Take(dirlevel));
-                var aclfin = Path.Combine(fileDir, aclfileName);
-                var aclfi = new FileInfo(aclfin);
-                if (!aclfi.Exists) continue;
-                ruleSetParser.ParseFile(aclfi.FullName);
-            }
+                var aclfileName = Path.Combine(currentACLDir.FullName, 
+                SiteSettings.AccessListFileName);
+                FileInfo accessFileInfo = new FileInfo(aclfileName);
+                if (accessFileInfo.Exists)
+                    ruleSetParser.ParseFile(accessFileInfo.FullName);
+                currentACLDir = currentACLDir.Parent;
+            } while (currentACLDir != userFilesDir);
+
 
             if (ruleSetParser.Rules.Allow(cusername))
             {

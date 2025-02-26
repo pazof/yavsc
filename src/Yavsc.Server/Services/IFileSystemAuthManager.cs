@@ -16,14 +16,12 @@ namespace Yavsc.Services
         string NormalizePath (string path);
 
         /// <summary>
-        /// A full path starts with a slash,
-        /// continues with a user name,
-        /// and returns true by the helper fonction : 
+        ///  
         /// </summary>
         /// <param name="user"></param>
         /// <param name="normalizedFullPath"></param>
         /// <returns></returns>
-        FileAccessRight GetFilePathAccess(ClaimsPrincipal user, IFileInfo file);
+        FileAccessRight GetFilePathAccess(ClaimsPrincipal user, string fileRelativePath);
 
         void SetAccess (long circleId, string normalizedFullPath, FileAccessRight access);
 
