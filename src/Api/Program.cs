@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Yavsc.Helpers;
 using Yavsc.Interface;
 using Yavsc.Models;
 using Yavsc.Services;
@@ -71,13 +72,14 @@ internal class Program
         services.AddTransient<ITrueEmailSender, MailSender>()
            .AddTransient<IBillingService, BillingService>()
            .AddTransient<ICalendarManager, CalendarManager>();
+        services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
         /*
           services.AddSingleton<IConnexionManager, HubConnectionManager>();
           services.AddSingleton<ILiveProcessor, LiveProcessor>();
-          services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
           services.AddIdentityApiEndpoints<ApplicationUser>();
           services.AddSession();
-  */
+        */
+        WorkflowHelpers.ConfigureBillingService();
         using (var app = builder.Build())
         {
             if (app.Environment.IsDevelopment())
