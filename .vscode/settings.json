@@ -1,0 +1,21 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "yavscdev",
+            "group": "yavsc",
+            "database": "YavscDev",
+            "username": "yavscdev",
+            "password": "admin"
+        }
+    ],
+    "cSpell.words": [
+        "appsettings",
+        "Newtonsoft",
+        "Npgsql",
+        "Yavsc"
+    ]
+}
