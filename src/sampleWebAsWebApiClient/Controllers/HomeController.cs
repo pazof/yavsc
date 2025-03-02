@@ -1,37 +1,15 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
+using Yavsc.WebApiClient.Helpers;
 
-namespace testOauthClient.Controllers
+namespace sampleWebAsWebApiClient.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(ILoggerFactory loggerFactory) : Controller
     {
-        readonly ILogger _logger;
+        readonly ILogger _logger = loggerFactory.CreateLogger<HomeController>();
 
-        public class GCMRegistrationRecord
-        {
-            public string GCMRegistrationId { get; set; } = "testGoogleRegistrationIdValue";
-            public string DeviceId { get; set; } = "TestDeviceId";
-            public string Model { get; set; } = "TestModel";
-            public string Platform { get; set; } = "External Web";
-            public string Version { get; set; } = "0.0.1-rc1";
-        }
-
-        public HomeController(ILoggerFactory loggerFactory)
-        {
-            _logger = loggerFactory.CreateLogger<HomeController>();
-        }
         [HttpGet]
         public IActionResult Index()
         {
@@ -49,35 +27,21 @@ namespace testOauthClient.Controllers
             ViewBag.Json = content;
             return View("json");
         }
-
         [HttpPost]
         public async Task<IActionResult> GetUserInfo(CancellationToken cancellationToken)
         {
-            
             var accessToken = await HttpContext.GetTokenAsync("access_token");
-            var client = new HttpClient(new HttpClientHandler(){ AllowAutoRedirect=false });
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var content = await client.GetAsync("https://localhost:6001/api/account/me");
-            content.EnsureSuccessStatusCode();
-            var json = await content.Content.ReadAsStreamAsync();
-            var obj = JsonSerializer.Deserialize<JsonElement>(json);
-            return View("UserInfo", obj.ToString());
-        }
 
-        [HttpPost]
-        public async Task<IActionResult> GetApiCall(CancellationToken cancellationToken)
-        {
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
-            var client = new HttpClient(new HttpClientHandler(){ AllowAutoRedirect=false });
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var content = await client.GetAsync("https://localhost:6001/identity");
-            content.EnsureSuccessStatusCode();
-            var json = await content.Content.ReadAsStringAsync();
+            string json = await HttpContext.GetJson("https://localhost:6001/api/account/me");
             return View("UserInfo", json);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetIdentity(CancellationToken cancellationToken)
+        {
+            string json = await HttpContext.GetJson("https://localhost:6001/identity");
+            return View("UserInfo", json);
+        }
 
         public IActionResult About()
         {
