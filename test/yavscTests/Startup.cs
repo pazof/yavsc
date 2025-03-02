@@ -2,15 +2,12 @@ using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.Extensions.PlatformAbstractions;
 using Yavsc;
 using Yavsc.Models;
 using Yavsc.Services;
-using Microsoft.Data.Entity;
 using Microsoft.Extensions.WebEncoders;
 using yavscTests.Settings;
 using Microsoft.AspNetCore.Diagnostics;
@@ -18,7 +15,6 @@ using System.Net;
 using Yavsc.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using OAuth.AspNet.Tokens;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.OAuth;
@@ -27,7 +23,6 @@ using Google.Apis.Util.Store;
 using System.Security.Claims;
 using Google.Apis.Auth.OAuth2.Responses;
 using Constants = Yavsc.Constants;
-using OAuth.AspNet.AuthServer;
 using Yavsc.Models.Auth;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Concurrent;
@@ -39,15 +34,14 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Yavsc.AuthorizationHandlers;
-using Yavsc.Formatters;
 using Microsoft.Net.Http.Headers;
 using static Yavsc.Startup;
 using Microsoft.AspNetCore.DataProtection.Infrastructure;
 using System.IO;
-using Microsoft.AspNetCore.Identity.EntityFramework;
-using Yavsc.Auth;
 using Yavsc.Lib;
+using Yavsc.Settings;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace yavscTests
 {
@@ -65,10 +59,7 @@ namespace yavscTests
         public static IConfigurationRoot GoogleWebClientConfiguration { get; set; }
 
         public static CookieAuthenticationOptions ExternalCookieAppOptions { get; private set; }
-        public MonoDataProtectionProvider ProtectionProvider { get; private set; }
-        public static OAuth.AspNet.AuthServer.OAuthAuthorizationServerOptions OAuthServerAppOptions { get; private set; }
-        public Yavsc.Auth.YavscGoogleOptions YavscGoogleAppOptions { get; private set; }
-        private static ILogger logger;
+               private static ILogger logger;
 
         public static string ApiKey { get; private set; }
 
@@ -112,10 +103,8 @@ namespace yavscTests
             var testingconf = Configuration.GetSection("Testing");
             services.Configure<TestingSetup>(testingconf);
 
-            services.AddInstance(typeof(ILoggerFactory), new LoggerFactory());
-            services.AddTransient(typeof(IEmailSender), typeof(MailSender));
+             services.AddTransient(typeof(IEmailSender), typeof(MailSender));
             services.AddEntityFramework().AddNpgsql().AddDbContext<ApplicationDbContext>();
-            services.AddTransient((s) => new RazorTemplateEngine(s.GetService<RazorEngineHost>()));
             services.AddLogging();
             services.AddTransient<ServerSideFixture>();
             services.AddTransient<MailSender>();
@@ -135,22 +124,16 @@ namespace yavscTests
             // Add the system clock service
             services.AddSingleton<ISystemClock, SystemClock>();
 
-            services.AddAuthorization(options =>
-            {
-
-                options.AddPolicy("AdministratorOnly", policy =>
+            services.AddAuthorizationBuilder()
+                .AddPolicy("AdministratorOnly", policy =>
                 {
                     policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
-                });
-
-                options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
-                options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                })
+                .AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName))
+                .AddPolicy("Bearer", new AuthorizationPolicyBuilder()
                     .AddAuthenticationSchemes("yavsc")
-                    .RequireAuthenticatedUser().Build());
-                // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
-                // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
-                options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
-            });
+                    .RequireAuthenticatedUser().Build())
+                .AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
 
             services.AddDataProtection();
             services.ConfigureDataProtection(configure =>
@@ -181,9 +164,7 @@ namespace yavscTests
             services.AddIdentity<ApplicationUser, IdentityRole>(
                  option =>
                  {
-                     IdentityAppOptions = option;
                      option.User.RequireUniqueEmail = true;
-                     option.Cookies.ApplicationCookie.LoginPath = "/signin";
                  }
              ).AddEntityFrameworkStores<ApplicationDbContext>()
              .AddTokenProvider<EmailTokenProvider<ApplicationUser>>(Constants.DefaultFactor)
@@ -221,21 +202,17 @@ namespace yavscTests
 
             // Inject ticket formatting
             services.AddTransient(typeof(ISecureDataFormat<>), typeof(SecureDataFormat<>));
-            services.AddTransient<Microsoft.AspNet.Authentication.ISecureDataFormat<AuthenticationTicket>, Microsoft.AspNet.Authentication.SecureDataFormat<AuthenticationTicket>>();
             services.AddTransient<ISecureDataFormat<AuthenticationTicket>, TicketDataFormat>();
 
             // Add application services.
-            services.AddTransient<IEmailSender, MailSender>();
+            services.AddTransient<IEmailSender<ApplicationUser>, MailSender>();
             services.AddTransient<IYavscMessageSender, YavscMessageSender>();
             services.AddTransient<IBillingService, BillingService>();
             services.AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false));
             services.AddTransient<ICalendarManager, CalendarManager>();
-            services.AddTransient<Microsoft.Extensions.WebEncoders.UrlEncoder, UrlEncoder>();
-
+      
         }
 
-
-        #region OAuth Methods
 
 
         private Client GetApplication(string clientId)
@@ -250,159 +227,6 @@ namespace yavscTests
             return app;
         }
 
-        private Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
-        {
-            if (context == null) throw new InvalidOperationException("context == null");
-            var app = GetApplication(context.ClientId);
-            if (app == null) return Task.FromResult(0);
-            Startup.logger.LogInformation($"ValidateClientRedirectUri: Validated ({app.RedirectUri})");
-            context.Validated(app.RedirectUri);
-            return Task.FromResult(0);
-        }
-
-        private Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
-        {
-            string clientId, clientSecret;
-
-            if (context.TryGetBasicCredentials(out clientId, out clientSecret) ||
-                context.TryGetFormCredentials(out clientId, out clientSecret))
-            {
-                logger.LogInformation($"ValidateClientAuthentication: Got id: ({clientId} secret: {clientSecret})");
-                var client = GetApplication(clientId);
-                if (client == null)
-                {
-                    context.SetError("invalid_clientId", "Client secret is invalid.");
-                    return Task.FromResult<object>(null);
-                }
-                else
-                if (client.Type == ApplicationTypes.NativeConfidential)
-                {
-                    logger.LogInformation($"NativeConfidential key");
-                    if (string.IsNullOrWhiteSpace(clientSecret))
-                    {
-                        logger.LogInformation($"invalid_clientId: Client secret should be sent.");
-                        context.SetError("invalid_clientId", "Client secret should be sent.");
-                        return Task.FromResult<object>(null);
-                    }
-                    else
-                    {
-                        //  if (client.Secret != Helper.GetHash(clientSecret))
-                        // TODO store a hash in db, not the pass
-                        if (client.Secret != clientSecret)
-                        {
-                            context.SetError("invalid_clientId", "Client secret is invalid.");
-                            logger.LogInformation($"invalid_clientId: Client secret is invalid.");
-                            return Task.FromResult<object>(null);
-                        }
-                    }
-                }
-
-                if (!client.Active)
-                {
-                    context.SetError("invalid_clientId", "Client is inactive.");
-                    logger.LogInformation($"invalid_clientId: Client is inactive.");
-                    return Task.FromResult<object>(null);
-                }
-
-                if (client != null && client.Secret == clientSecret)
-                {
-                    logger.LogInformation($"\\o/ ValidateClientAuthentication: Validated ({clientId})");
-                    context.Validated();
-                }
-                else logger.LogInformation($":'( ValidateClientAuthentication: KO ({clientId})");
-            }
-            else logger.LogWarning($"ValidateClientAuthentication: neither Basic nor Form credential were found");
-            return Task.FromResult(0);
-        }
-
-
-        private async Task<Task> GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
-        {
-            logger.LogWarning($"GrantResourceOwnerCredentials task ... {context.UserName}");
-
-            ApplicationUser user = null;
-            user = DbContext.Users.Include(u => u.Membership).First(u => u.UserName == context.UserName);
-
-
-            if (await _usermanager.CheckPasswordAsync(user, context.Password))
-            {
-
-                var claims = new List<Claim>(
-                        context.Scope.Select(x => new Claim("urn:oauth:scope", x))
-                )
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Email, user.Email)
-                };
-                claims.AddRange((await _usermanager.GetRolesAsync(user)).Select(
-                    r => new Claim(ClaimTypes.Role, r)
-                    ));
-                claims.AddRange(user.Membership.Select(
-                    m => new Claim(YavscClaimTypes.CircleMembership, m.CircleId.ToString())
-                    ));
-                ClaimsPrincipal principal = new ClaimsPrincipal(
-                    new ClaimsIdentity(
-                        new GenericIdentity(context.UserName, OAuthDefaults.AuthenticationType),
-                        claims)
-                        );
-                context.HttpContext.User = principal;
-                context.Validated(principal);
-            }
-#if USERMANAGER
-#endif
-            return Task.FromResult(0);
-        }
-        private Task GrantClientCredetails(OAuthGrantClientCredentialsContext context)
-        {
-            var id = new GenericIdentity(context.ClientId, OAuthDefaults.AuthenticationType);
-            var claims = context.Scope.Select(x => new Claim("urn:oauth:scope", x));
-            var cid = new ClaimsIdentity(id, claims);
-            ClaimsPrincipal principal = new ClaimsPrincipal(cid);
-
-            context.Validated(principal);
-
-            return Task.FromResult(0);
-        }
-        private readonly ConcurrentDictionary<string, string> _authenticationCodes = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
-
-        private void CreateAuthenticationCode(AuthenticationTokenCreateContext context)
-        {
-            logger.LogInformation("CreateAuthenticationCode");
-            context.SetToken(Guid.NewGuid().ToString("n") + Guid.NewGuid().ToString("n"));
-            _authenticationCodes[context.Token] = context.SerializeTicket();
-        }
-
-        private void ReceiveAuthenticationCode(AuthenticationTokenReceiveContext context)
-        {
-            string value;
-            if (_authenticationCodes.TryRemove(context.Token, out value))
-            {
-                context.DeserializeTicket(value);
-                logger.LogInformation("ReceiveAuthenticationCode: Success");
-            }
-        }
-
-        private void CreateRefreshToken(AuthenticationTokenCreateContext context)
-        {
-            var uid = context.Ticket.Principal.GetUserId();
-            logger.LogInformation($"CreateRefreshToken for {uid}");
-            foreach (var c in context.Ticket.Principal.Claims)
-                logger.LogInformation($"| User claim: {c.Type} {c.Value}");
-
-            context.SetToken(context.SerializeTicket());
-        }
-
-        private void ReceiveRefreshToken(AuthenticationTokenReceiveContext context)
-        {
-            var uid = context.Ticket.Principal.GetUserId();
-            logger.LogInformation($"ReceiveRefreshToken for {uid}");
-            foreach (var c in context.Ticket.Principal.Claims)
-                logger.LogInformation($"| User claim: {c.Type} {c.Value}");
-            context.DeserializeTicket(context.Token);
-        }
-
-        #endregion
-
 
         UserManager<ApplicationUser> _usermanager;
 
@@ -415,8 +239,6 @@ namespace yavscTests
             ILoggerFactory loggerFactory
             )
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
             logger = loggerFactory.CreateLogger<Startup>();
             logger.LogInformation(env.EnvironmentName);
             this.DbContext = dbContext;

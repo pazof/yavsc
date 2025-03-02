@@ -8,29 +8,40 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using Yavsc.Abstract.Manage;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Identity;
 using Yavsc.Interface;
 using Yavsc.Settings;
+using Yavsc.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Localization;
+using System.Web;
 
 namespace Yavsc.Services
 {
-    public class MailSender  : IEmailSender, ITrueEmailSender
+    public class MailSender  : IEmailSender<ApplicationUser>, IEmailSender, ITrueEmailSender
     {
+        private readonly IStringLocalizer<YavscLocalization> localizer;
         readonly SiteSettings siteSettings;
         readonly SmtpSettings smtpSettings;
         private readonly ILogger logger;
-
         public MailSender(
             IOptions<SiteSettings> sitesOptions, 
             IOptions<SmtpSettings> smtpOptions,
-            ILoggerFactory loggerFactory
+            ILoggerFactory loggerFactory,
+            IStringLocalizer<Yavsc.YavscLocalization> localizer
             )
         {
+            this.localizer = localizer;
             siteSettings = sitesOptions.Value;
             smtpSettings = smtpOptions.Value;
             logger = loggerFactory.CreateLogger<MailSender>();
         }
-        
+
+        public Task SendConfirmationLinkAsync(ApplicationUser user, string email, string confirmationLink)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         ///
         /// </summary>
@@ -40,7 +51,7 @@ namespace Yavsc.Services
         /// <returns>a MessageWithPayloadResponse,
         /// <c>bool somethingsent = (response.failure == 0 &amp;&amp; response.success > 0)</c>
         /// </returns>
-        
+
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
@@ -78,6 +89,26 @@ namespace Yavsc.Services
                 logger.LogInformation($"Sent : {msg.MessageId}");
             }
             return msg.MessageId;
+        }
+
+        public async Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode)
+        {
+            var callbackUrl = siteSettings.Audience + "/Account/ResetPassword/" + 
+                    HttpUtility.UrlEncode(user.Id) + "/" + HttpUtility.UrlEncode(resetCode);
+         
+            await SendEmailAsync(user.UserName, user.Email, 
+            localizer["Reset Password"],
+                    localizer["Please reset your password by "] + " <a href=\"" +
+                    callbackUrl + "\" >following this link</a>");
+            throw new NotImplementedException();
+        }
+
+        public async Task SendPasswordResetLinkAsync(ApplicationUser user, string email, string resetLink)
+        {
+           await SendEmailAsync(user.UserName, user.Email, 
+           localizer["Reset Password"],
+                    localizer["Please reset your password by "] + " <a href=\"" +
+                    resetLink + "\" >following this link</a>");
         }
     }
 }
