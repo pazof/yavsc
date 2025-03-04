@@ -1,10 +1,9 @@
-using cli.Model;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.OptionsModel;
-
+using cli.Model;
 using cli.Services;
 using cli.Settings;
 
@@ -19,7 +18,7 @@ namespace cli.Commands
 
         public CommandLineApplication Integrate(CommandLineApplication rootApp)
         {
-            CommandArgument nsarg=null;
+            CommandArgument nameSpaceArg=null;
             CommandArgument mdClass=null;
             CommandArgument ctrlName=null;
             CommandArgument rPath=null;
@@ -28,7 +27,7 @@ namespace cli.Commands
             var cmd = rootApp.Command("mvc", config => {
                 config.FullName = "mvc controller";
                 config.Description = "generates an mvc controller";
-                nsarg = config.Argument("ns","default name space");
+                nameSpaceArg = config.Argument("ns","default name space");
                 mdClass = config.Argument("mc","Model class name");
                 ctrlName = config.Argument("cn", "Controller name");
                 rPath = config.Argument("rp", "Relative path");
@@ -36,11 +35,11 @@ namespace cli.Commands
             });
             cmd.OnExecute(() => {
                 var host = new WebHostBuilder();
-                    var hostengnine = host.UseEnvironment("Development")
+                    var hostEngine = host.UseEnvironment("Development")
                         .UseServer("cli")
                         .UseStartup<Startup>()
                         .Build();
-                    var app = hostengnine.Start();
+                    var app = hostEngine.Start();
                     var mailer = app.Services.GetService<MvcGenerator>();
                     var loggerFactory = app.Services.GetService<ILoggerFactory>();
                     var logger = loggerFactory.CreateLogger<GenerationCommander>();
@@ -49,7 +48,7 @@ namespace cli.Commands
                     MvcGenerator generator = app.Services.GetService<MvcGenerator>();
 
                     var modelFullName = mdClass?.Value ?? options?.Value.ModelFullName;
-                    var nameSpace = nsarg?.Value?? options?.Value.NameSpace;
+                    var nameSpace = nameSpaceArg?.Value?? options?.Value.NameSpace;
                     var dbContext = dbCtx?.Value?? options?.Value.DbContextFullName;
                     var controllerName = ctrlName?.Value?? options?.Value.ControllerName;
                     var relativePath = rPath?.Value ?? options?.Value.RelativePath;

@@ -9,23 +9,23 @@ namespace Yavsc;
 
 public static class Config
 {
-        public static string Authority { get;  set; }
+        public static string? Authority { get;  set; }
 
         public static IConfigurationRoot? GoogleWebClientConfiguration { get;  set; }
         public static GoogleServiceAccount? GServiceAccount { get;  set; }
 
-        public static SiteSettings SiteSetup { get;  set; }
-        public static FileServerOptions UserFilesOptions { get; set; }
-        public static FileServerOptions GitOptions { get; set; }
-        public static string AvatarsDirName {  set; get; }
-        public static string GitDirName {  set; get; }
+        public static SiteSettings SiteSetup { get;  set; } = new SiteSettings();
+        public static FileServerOptions? UserFilesOptions { get; set; }
+        public static FileServerOptions? GitOptions { get; set; }
+        public static string AvatarsDirName {  set; get; } = "Avatars";
+        public static string GitDirName {  set; get; } = "Git";
 
-    public static GoogleAuthSettings GoogleSettings { get;  set; }
-    public static SmtpSettings SmtpSetup { get;  set; }
-    public static string Temp { get;  set; }
-        public static FileServerOptions AvatarsOptions { get; set; }
-        public static string UserBillsDirName {  set; get; }
-        public static string UserFilesDirName {  set; get; }
+    public static GoogleAuthSettings? GoogleSettings { get;  set; }
+    public static SmtpSettings? SmtpSetup { get;  set; }
+    public static string? Temp { get;  set; }
+        public static FileServerOptions? AvatarsOptions { get; set; }
+        public static string UserBillsDirName {  set; get; } = "Bills";
+        public static string UserFilesDirName {  set; get; } = "Files";
 
 
 
@@ -89,5 +89,5 @@ public static class Config
             },
         };
 
-    public static PayPalSettings PayPalSettings { get; set; }
+    public static PayPalSettings? PayPalSettings { get; set; }
 }

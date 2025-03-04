@@ -25,18 +25,30 @@ using Yavsc.Abstract.FileSystem;
 
 namespace Yavsc.Models.FileSystem
 {
-    public class FileRecievedInfo : IFileRecievedInfo
+    public class FileReceivedInfo : IFileReceivedInfo
     {
-        public FileRecievedInfo()
+        public FileReceivedInfo(string destDir, string fileName, bool quotaOffense=false) 
         {
-            QuotaOffensed = Overriden = false;
-            DestDir = FileName = null;
+            this.DestDir = destDir;
+            this.FileName = fileName;
+            this.QuotaOffense = quotaOffense;
+        }
+        public static FileReceivedInfo FromPath(string filePath)
+        {
+            FileInfo fi = new FileInfo(filePath);
+            return new FileReceivedInfo(
+                fi.Directory.FullName,
+                fi.Name
+            );
         }
 
         public string DestDir { get; set; }
+        
         public string FileName { get; set; }
-        public bool Overriden { get; set; }
+        public bool Overridden { get; set; }
 
-        public bool QuotaOffensed { get; set; }
+        public bool QuotaOffense { get; set; }
+        public string FullName { get => Path.Combine(DestDir, FileName); }
+
     }
 }
