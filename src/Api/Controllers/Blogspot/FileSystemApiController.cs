@@ -54,7 +54,7 @@ namespace Yavsc.ApiControllers
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             string destDir = null;
-            List<FileRecievedInfo> received = new List<FileRecievedInfo>();
+            List<FileReceivedInfo> received = new List<FileReceivedInfo>();
             InvalidPathException pathex = null;
             try {
                 destDir = User.InitPostToFileSystem(subdir);
@@ -80,7 +80,7 @@ namespace Yavsc.ApiControllers
                 dbContext.SaveChanges(User.GetUserId());
                 received.Add(item);
                 _logger.LogInformation($"Received  '{item.FileName}'.");
-                if (item.QuotaOffensed)
+                if (item.QuotaOffense)
                     break;
                 i++;
             };

@@ -38,23 +38,22 @@ namespace Yavsc.ViewModels.Streaming
         {
         }
 
-        public async Task<FileRecievedInfo> ReceiveUserFile(ApplicationUser user, ILogger logger, string root, Queue<ArraySegment<byte>> queue, string destFileName, Func<bool> isEndOfInput)
+        public async Task<FileReceivedInfo> ReceiveUserFile(ApplicationUser user, ILogger logger, string root, Queue<ArraySegment<byte>> queue, string destFileName, Func<bool> isEndOfInput)
         {
             // TODO lock user's disk usage for this scope,
             // this process is not safe at concurrent access.
             long usage = user.DiskUsage;
 
-            var item = new FileRecievedInfo
-            {
-                FileName = AbstractFileSystemHelpers.FilterFileName(destFileName),
-                DestDir = root
-            };
+            var item = new FileReceivedInfo
+            (root, AbstractFileSystemHelpers.FilterFileName(destFileName));
+
             var fi = new FileInfo(Path.Combine(root, item.FileName));
             if (fi.Exists)
             {
-                item.Overriden = true;
+                item.Overridden = true;
                 usage -= fi.Length;
             }
+            
             logger.LogInformation("Opening the file");
             using (var dest = fi.Open(FileMode.Create, FileAccess.Write, FileShare.Read))
             {
@@ -82,7 +81,7 @@ namespace Yavsc.ViewModels.Streaming
             }
             if (usage >= user.DiskQuota)
             {
-                item.QuotaOffensed = true;
+                item.QuotaOffense = true;
             }
             user.DiskUsage = usage;
             return item;

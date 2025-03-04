@@ -17,5 +17,10 @@
         "Newtonsoft",
         "Npgsql",
         "Yavsc"
-    ]
+    ],
+    "cSpell.dictionaries": [
+        "fr"
+    ],
+    "cSpell.reportUnknownWords": true,
+    "cSpell.language": "fr,fr-FR,en,en-GB"
 }

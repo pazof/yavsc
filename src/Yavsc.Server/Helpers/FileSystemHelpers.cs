@@ -25,22 +25,19 @@ namespace Yavsc.Server.Helpers
                 }
             }
         }
-        public static FileRecievedInfo ReceiveProSignature(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signtype)
+        public static FileReceivedInfo ReceiveProSignature(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signType)
         {
-            var item = new FileRecievedInfo
-            {
-                FileName = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, estimateId)
-            };
+            var item = new FileReceivedInfo(
+                Config.SiteSetup.Bills, 
+                AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, estimateId));
 
-            var destFileName = Path.Combine(Config.SiteSetup.Bills, item.FileName);
-
-            var fi = new FileInfo(destFileName);
-            if (fi.Exists) item.Overriden = true;
+            var fi = new FileInfo(item.FullName);
+            if (fi.Exists) item.Overridden = true;
 
             using (var org = formFile.OpenReadStream())
             {
                 using Image image = Image.Load(org);
-                image.Save(destFileName);
+                image.Save(fi.FullName);
             }
             return item;
         }
@@ -170,26 +167,23 @@ namespace Yavsc.Server.Helpers
         {
             user.DiskQuota += quota;
         }
-        public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f, string destFileName = null)
+        public static FileReceivedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f, string destFileName = null)
         {
             return ReceiveUserFile(user, root, f.OpenReadStream(), destFileName ?? ParseFileNameFromDisposition(f.ContentDisposition), f.ContentType, CancellationToken.None);
         }
         
-        public static FileRecievedInfo ReceiveUserFile(this ApplicationUser user, string root, Stream inputStream, string destFileName, string contentType, CancellationToken token)
+        public static FileReceivedInfo ReceiveUserFile(this ApplicationUser user, string root, Stream inputStream, string destFileName, string contentType, CancellationToken token)
         {
             // TODO lock user's disk usage for this scope,
             // this process is not safe at concurrent access.
             long usage = user.DiskUsage;
 
-            var item = new FileRecievedInfo
-            {
-                FileName = AbstractFileSystemHelpers.FilterFileName(destFileName),
-                DestDir = root
-            };
+            var item = new FileReceivedInfo
+            (root, AbstractFileSystemHelpers.FilterFileName(destFileName));
             var fi = new FileInfo(Path.Combine(root, item.FileName));
             if (fi.Exists)
             {
-                item.Overriden = true;
+                item.Overridden = true;
                 usage -= fi.Length;
             } 
             using (var dest = fi.OpenWrite())
@@ -211,7 +205,7 @@ namespace Yavsc.Server.Helpers
                 }
             }
             if (usage >= user.DiskQuota) {
-                item.QuotaOffensed = true;
+                item.QuotaOffense = true;
             }
             user.DiskUsage = usage;
             return item;
@@ -231,12 +225,12 @@ namespace Yavsc.Server.Helpers
 
         }
 
-        public static FileRecievedInfo ReceiveAvatar(this ApplicationUser user, IFormFile formFile)
+        public static FileReceivedInfo ReceiveAvatar(this ApplicationUser user, IFormFile formFile)
         {
-            var item = new FileRecievedInfo
-            {
-                FileName = user.UserName + ".png"
-            };
+            var item = new FileReceivedInfo
+            (Config.AvatarsOptions.RequestPath.ToUriComponent(),
+               user.UserName + ".png");
+
             using (var org = formFile.OpenReadStream())
             {
                 using Image image = Image.Load(org);
@@ -247,14 +241,12 @@ namespace Yavsc.Server.Helpers
                 image.Mutate(x=>x.Resize(32,32));
                 image.Save(Path.Combine(Config.SiteSetup.Avatars,user.UserName + ".xs.png"));
             }
-            item.DestDir = Config.AvatarsOptions.RequestPath.ToUriComponent();
             user.Avatar = $"{item.DestDir}/{item.FileName}";
             return item;
         }
 
         public static string GetFileUrl (this LiveFlow flow)
         {
-            if (flow.DifferedFileName==null) return null;
             // no server-side backup for this stream
             return $"{Config.UserFilesOptions.RequestPath}/{flow.Owner.UserName}/live/"+GetFileName(flow);
         }

@@ -1,14 +1,14 @@
 namespace Yavsc.Abstract.FileSystem
 {
-    public interface IFileRecievedInfo
+    public interface IFileReceivedInfo
     {
         
         string DestDir { get; set; }
 
         string FileName { get; set; }
 
-        bool Overriden { get; set; }
+        bool Overridden { get; set; }
 
-        bool QuotaOffensed { get; set; }
+        bool QuotaOffense { get; set; }
     }
 }
