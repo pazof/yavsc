@@ -2,9 +2,9 @@
 
 namespace cli
 {
-    public class YaRazorEngineHost: RazorEngineHost
+    public class YaRazorEngineHost
     {
-        public YaRazorEngineHost(): base()
+        public YaRazorEngineHost()
         {
         }
     }

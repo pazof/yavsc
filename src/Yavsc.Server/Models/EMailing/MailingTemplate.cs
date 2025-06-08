@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using RazorEngine.Templating;
 using Yavsc.Attributes.Validation;
 using Yavsc.Models;
 using Yavsc.Models.Calendar;
@@ -8,7 +9,7 @@ using Yavsc.Server.Models.Calendar;
 
 namespace Yavsc.Server.Models.EMailing
 {
-    public class MailingTemplate : ITrackedEntity
+    public class MailingTemplate : ITrackedEntity, ITemplateSource
     {
         /// <summary>
         /// Date Created
@@ -41,7 +42,6 @@ namespace Yavsc.Server.Models.EMailing
         [EmailAddress()]
         public string ReplyToAddress { get; set; }
 
-
         public Periodicity ToSend { get; set; }
         
         public string UserCreated
@@ -54,6 +54,14 @@ namespace Yavsc.Server.Models.EMailing
         {
             get;
             set;
+        }
+
+        public string Template => Body;
+        public string TemplateFile { get => Id; }
+
+        public TextReader GetTemplateReader()
+        {
+            return new StringReader(Body);
         }
     }
 }

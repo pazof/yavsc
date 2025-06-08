@@ -11,6 +11,13 @@ namespace cli
 {
     public class SendMailCommandProvider : ICommander
     {
+        EMailer emailer;
+        private ILogger<SendMailCommandProvider> logger;
+        public SendMailCommandProvider(EMailer emailer, ILoggerFactory loggerFactory)
+        {
+            this.emailer = emailer;
+            this.logger = loggerFactory.CreateLogger<SendMailCommandProvider>();
+        }
         public CommandLineApplication Integrate(CommandLineApplication rootApp)
         {
             CommandArgument critCommandArg = null;
@@ -40,12 +47,10 @@ namespace cli
                         .UseServer("cli")
                         .UseStartup<Startup>()
                         .Build();
-                    var app = hostengnine.Start();
-                    var mailer = app.Services.GetService<EMailer>();
-                    var loggerFactory = app.Services.GetService<ILoggerFactory>();
-                    var logger = loggerFactory.CreateLogger<Program>();
+                    
+                   
                     logger.LogInformation("Starting emailling");
-                    mailer.SendEmailFromCriteria(critCommandArg.Value);
+                    emailer.SendEmailFromCriteria(critCommandArg.Value);
                     logger.LogInformation("Finished emailling");
                 }
                 else

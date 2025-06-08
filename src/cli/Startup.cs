@@ -1,34 +1,10 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Razor;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.Extensions.PlatformAbstractions;
-using Microsoft.Extensions.WebEncoders;
-using Microsoft.Dnx.Compilation;
+
 using Yavsc;
-using Yavsc.Models;
-using Yavsc.Services;
 using cli.Services;
 using cli.Settings;
-using Microsoft.Extensions.CodeGeneration;
-using Microsoft.Dnx.Runtime.Compilation;
-using Microsoft.Dnx.Runtime;
-using Microsoft.Dnx.Compilation.Caching;
-using Microsoft.Dnx.Host;
-using System.IO;
 using System.Runtime.Versioning;
-using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.CodeGeneration.EntityFramework;
-using System.Linq;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFramework;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace cli
 {
@@ -43,15 +19,14 @@ namespace cli
 
         public static UserConnectionSettings UserConnectionSettings { get; set; }
         
-        public static IConfiguration Configuration { get; set; }
+
 
         public static string HostingFullName { get; private set; }
 
-        public static IServiceCollection Services { get; private set; }
 
         public static string EnvironmentName { get; private set; }
         public static Microsoft.Extensions.Logging.ILogger Logger { get; private set; }
-        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+        public Startup()
         {
             var devtag = env.IsDevelopment() ? "D" : "";
             var prodtag = env.IsProduction() ? "P" : "";

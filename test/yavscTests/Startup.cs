@@ -64,7 +64,7 @@ namespace yavscTests
         public static string ApiKey { get; private set; }
 
 
-        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+        public Startup(IHostingEnvironment env)
         {
             var devtag = env.IsDevelopment() ? "D" : "";
             var prodtag = env.IsProduction() ? "P" : "";
