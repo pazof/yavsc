@@ -8,6 +8,7 @@
 .vs/
 .sass-cache/
 
+/out
 bin
 obj
 bower_components
