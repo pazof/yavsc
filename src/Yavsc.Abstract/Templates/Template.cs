@@ -26,8 +26,6 @@ namespace Yavsc.Abstract.Templates
     public virtual void Init() {
        _buffer = new StringBuilder();
     }
-    
-    public abstract Task ExecuteAsync();
 
   }
 }

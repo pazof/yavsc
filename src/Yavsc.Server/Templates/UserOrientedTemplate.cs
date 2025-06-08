@@ -5,8 +5,11 @@ using Yavsc.Models;
 
 namespace Yavsc.Templates
 {
-    public abstract class UserOrientedTemplate: Template
+    public  class UserOrientedTemplate: Template
     {
         public ApplicationUser User { get; set; }
+
     }
+
+    
 }
