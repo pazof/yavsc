@@ -5,7 +5,8 @@
     "version": "0.2.0",
     "configurations": [
         
-     /*  {
+        
+   /*   {
             "name": ".NET Core Launch (web-client)",
             "type": "coreclr",
             "request": "launch",
@@ -24,7 +25,7 @@
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
             }
-        },
+        }, 
         {
             "name": ".NET Core Launch (Api)",
             "type": "coreclr",
@@ -36,11 +37,12 @@
             "stopAtEntry": false,
             "console": "internalConsole"
         },
-        {
+       */
+         {
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-web",
+            "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net8.0/Yavsc.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Yavsc",
@@ -55,8 +57,7 @@
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
             }
-        },*/
-        
+        },
         {
             "name": "webApi",
             "type": "dotnet",

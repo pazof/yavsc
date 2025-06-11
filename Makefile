@@ -1,6 +1,7 @@
 
 CONFIG=Debug
 FRAMEWORK=net8.0
+DESTDIR=/tmp/yavsc
 
 clean: 
 	dotnet clean
@@ -22,5 +23,13 @@ src/Yavsc.Server/bin/$(CONFIG)/$(FRAMEWORK)/Yavsc.Server.dll:
 
 src/Yavsc/bin/$(CONFIG)/$(FRAMEWORK)/Yavsc.dll:
 	dotnet build -p:Configuration=$(CONFIG) --project src/Yavsc/Yavsc.csproj
+
+
+publish:
+	dotnet publish src/Yavsc/Yavsc.csproj -c Release -o $(DESTDIR)/srv/www/yavsc
+
+install: publish
+	chown -R www-data $(DESTDIR)/srv/www/yavsc
+	chgrp -R www-data $(DESTDIR)/srv/www/yavsc
 
 .PHONY: 

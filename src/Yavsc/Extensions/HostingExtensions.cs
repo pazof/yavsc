@@ -30,6 +30,8 @@ using Yavsc.Services;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
 using Yavsc.Server.Helpers;
+using System.Security.Cryptography;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Yavsc.Extensions;
 
@@ -300,13 +302,18 @@ public static class HostingExtensions
         }
         else
         {
-            var path = builder.Configuration["Kestrel:Endpoints:Https:KeyPath"];
-            var pass = builder.Configuration["Kestrel:Endpoints:Https:Password"];
+            var path = builder.Configuration["SigningCert:Path"];
+            var pass = builder.Configuration["SigningCert:Password"];
             Debug.Assert(path != null);
             FileInfo certFileInfo = new FileInfo(path);
             Debug.Assert(certFileInfo.Exists);
-            var cert = new X509Certificate2(path, pass);
-            identityServerBuilder.AddSigningCredential(cert);
+            RSA rsa = RSA.Create();
+            rsa.ImportFromPem(File.ReadAllText(certFileInfo.FullName));
+            var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256)
+        {
+          CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
+        };
+            identityServerBuilder.AddSigningCredential(signingCredentials);
         }
         return identityServerBuilder;
     }
