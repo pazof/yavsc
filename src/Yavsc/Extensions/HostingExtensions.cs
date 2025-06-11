@@ -300,10 +300,12 @@ public static class HostingExtensions
         }
         else
         {
-            var key = builder.Configuration["YavscSigningCert"];
-            Debug.Assert(key != null);
-            var pfxBytes = Convert.FromBase64String(key);
-            var cert = new X509Certificate2(pfxBytes, (string)null, X509KeyStorageFlags.MachineKeySet);
+            var path = builder.Configuration["Kestrel:Endpoints:Https:KeyPath"];
+            var pass = builder.Configuration["Kestrel:Endpoints:Https:Password"];
+            Debug.Assert(path != null);
+            FileInfo certFileInfo = new FileInfo(path);
+            Debug.Assert(certFileInfo.Exists);
+            var cert = new X509Certificate2(path, pass);
             identityServerBuilder.AddSigningCredential(cert);
         }
         return identityServerBuilder;
