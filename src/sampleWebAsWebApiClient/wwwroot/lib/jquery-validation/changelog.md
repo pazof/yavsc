@@ -1,3 +1,320 @@
+1.20.1 / 2024-06-13
+===================
+
+## Core
+  * Fix remote validation when input is the same as in aborted request [#2481](https://github.com/jquery-validation/jquery-validation/pull/2481)
+
+## Localisation
+  * Update Arabic translations [#2485](https://github.com/jquery-validation/jquery-validation/pull/2485)
+
+1.20.0 / 2023-10-10
+===================
+
+## Additional
+  * Fixed vinUS validation failing on valid vin numbers [#2460](https://github.com/jquery-validation/jquery-validation/pull/2460)
+
+## Core
+  * Fixed race condition in remote validation rules [#2435](https://github.com/jquery-validation/jquery-validation/pull/2435)
+  * Removed pending class from fields with an aborted request [#2436](https://github.com/jquery-validation/jquery-validation/pull/2436)
+  * Fixed remote validation error tracking [#2242](https://github.com/jquery-validation/jquery-validation/pull/2242)
+  * Added escapeHtml option to avoid XSS attacks via showLabel method [#2462](https://github.com/jquery-validation/jquery-validation/pull/2462)
+
+## Demo
+  * Fixed minlength validation in ajaxSubmit-integration-demo.html [#2454](https://github.com/jquery-validation/jquery-validation/pull/2454)
+
+## Localisation
+  * Improved required translation in pt_BR [#2445](https://github.com/jquery-validation/jquery-validation/pull/2445)
+  * Added Hindi translation [#2453](https://github.com/jquery-validation/jquery-validation/pull/2453)
+  * Added French currency translation [#2471](https://github.com/jquery-validation/jquery-validation/pull/2471)
+
+1.19.5 / 2022-07-01
+===================
+
+## Chore
+  * Add CodeQL analysis [3d3c1fb](https://github.com/jquery-validation/jquery-validation/commit/3d3c1fb880c3c623da334e9b6b32a861a16efeb8)
+
+## Core
+  * Fixed jQuery .submit() event shorthand deprecation notice [#2430](https://github.com/jquery-validation/jquery-validation/pull/2430)
+  * Fixed ReDos vulnerability in url, and url2 validation [5bbd80d](https://github.com/jquery-validation/jquery-validation/commit/5bbd80d27fc6b607d2f7f106c89522051a9fb0dd)
+
+## Localisation
+  * Added periods to messages [#2266](https://github.com/jquery-validation/jquery-validation/pull/2266)
+
+1.19.4 / 2022-05-19
+===================
+
+## Build
+  * Add License.md to zip tarball (#2386)
+
+## Chore
+  * Updated build status badges (#2424)
+  * Enabled stable bot (#2425)
+
+## Core
+  * Fixed validation for input type="date" (#2360)
+  * Wait for pendingRequests to finish before submitting form (#2369)
+  * Fixed bug for Html Editors (#2154) (#2422)
+  * Fixed ReDoS vulnerability in URL2 validation (#2428)
+
+## Test
+  * Switch from Travis to GitHub workflows (#2423)
+
+1.19.3 / 2021-01-09
+===================
+
+## Core
+  * CVE-2021-21252: fixed Regular Expression Denial of Service vulnerability (#2371)
+  * Replaced deprecated jQuery functions (#2335)
+
+## Chore
+  * Add Accessibility section to Readme (#2149)
+
+## Localization
+  * Add "pattern" translation for French (#2363)
+  * add phone validate translate for Turkish translation (#2343)
+
+1.19.2 / 2020-05-23
+===================
+
+## Core
+  * Core: Fixes deprecated calls to jQuery trim for compat with newer jQuery core versions (#2328)
+
+1.19.1 / 2019-06-15
+===================
+
+## Core
+  * Change focus() to trigger("focus") (#2243)
+
+## Build
+  * Set jQuery as a peer dependency (#2248)
+
+## Localization
+  * Add zh_TW translation for step message (#2245)
+  * Adding Serbian translation for step method message (#2251)
+
+1.19.0 / 2018-11-28
+===================
+
+## Subresource Integrity hashes
+
+As of 1.18.0, we started to provide Subresource Integrity hashes of all distribution files.
+
+The hashes for the 1.19.0 release can be found in the file [`jquery-validation-sri.json`](https://raw.githubusercontent.com/jquery-validation/jquery-validation/1.19.0/dist/jquery-validation-sri.json) under `dist` folder.
+
+## Additional
+  * Don't fail when field is optional in CNPJBR & CPFBR rules (#2236)
+  * Add validation rule for mobile number of Russia Federation (#2207)
+  * Add Brazillian CNPJ validation rule (#2222)
+  * Add Brazillian CNH number (Carteira Nacional de Habilitacao) (#2234)
+  * Add ABA Routing Number Validation (#2216)
+
+## Core
+  * Fix contenteditable detection's regression introduced in #2142 (#2235)
+
+## Localization
+  * Add Swedish translation for pattern (#2227)
+
+1.18.0 / 2018-09-09
+===================
+
+## Additional
+  * Add Brazillian PIS/NIS number validation method (#2204)
+  * Add validation method for Polish telephone number (#2136)
+  * Updated link to EAN docs in creditcard.js (#2120)
+  * Allow N11 exchange for non-geo US phone (#2098)
+  * Add new BIN range for MasterCard (#2088)
+  * Add maxfiles, maxsize and maxsizetotal methods (#2087)
+  * Add greaterThan and lessThan methods (#2061)
+
+## Build
+  * Test on node 6.x and drop node 0.12.x (#2133)
+  * Generate sub-resource integrity hashes of the distribution files (#2082)
+  * Include localization files in tagged releases (#2057)
+  * Include minified version of additional methods in npm package (#2057)
+
+## Core
+  * Don't call submitHandler when in debug mode (#2193)
+  * Cast empty data attributes to 'true' (#2182)
+  * Ignore elements that belong to other/nested forms (#2147)
+  * Use element.isContentEditable instead of hasAttribute (#2142)
+  * Add deprecation warning to 'date' method (#2138)
+  * Allow the normalizer to return any value (#2054)
+  * Guard against null & undefined values in required method (#2053)
+
+## Demo
+  * Add sample code for Bootstrap 4 usage (#2173)
+
+## Localization
+  * Added Czech and Slovak translations for STEP method (#2197)
+  * Add localized methods for italian culture (it) (#2195)
+  * Add step validation string to message_zh (#2177)
+  * Fix typo in pt-BR localization file (#2139)
+  * Add message for phonePL method (#2136)
+  * Update Norwegian language file (#2132)
+  * Update Persian language file (#2122)
+  * Update German language file (#2115)
+  * Fix meaning in Bulgarian sentence (#2112)
+  * Add remote translation to no (#2097)
+  * Fixed wrong placeholder in vi translation (#2085)
+  * Add missing format method in message_{fr,tr}.js files (#2075)
+  * Fix typos in messages_pt_BR.js (#2073)
+  * Add new danish translations (#2067)
+  * Add Swedish validation message for remote (#2066)
+
+## Test
+  * Cast empty data attributes to 'true' (#2182)
+  * Ignore elements that belong to other/nested forms (#2147)
+  * Add tests for phonePL method (#2136)
+  * Add missing description to a test (#2055)
+  * Required method should return false for null & undefined values (#2053)
+
+1.17.0 / 2017-07-20
+==================
+
+## Core
+  * Pass on the value of the used submit button for scripted submits (#2019)
+  * Removed aria-required attribute (#2012)
+  * Assign rules to contenteditable via `.validate()` and `.rules()` (#1947)
+  * Count invalid fields with empty message in `numberOfInvalids()` (#1942)
+  * Added support for button elements with descendants (#1901)
+  * Add support for defining a global normalizer (#1905)
+
+## Additional
+  * Add localized number validation to methods_nl.js (#2014)
+  * Remove unreachable return from `cifES.js` (#1994)
+  * Add optional support to cifES, nifES and nieES (#1966)
+  * Add netmask validation method (#1955)
+  * Add Polish tax id validation method (#1850)
+  * Fixed validation for specific case for Spanish NIFs (#1914)
+
+## Localization
+  * Added Step Range Validation  to messages_ja (#1936)
+  * Add hungarian step message (#1888)
+  * Add Sindhi locale (#1900)
+  * Added norsk step translation (#1918)
+  * Add missing french step translation (#1928)
+  * Added nl- translation for "step" property (#1902)
+  * Add French translation for notEqualTo method (#2033)
+
+## Readme
+  * Add note about trimming whitespaces inside required method (#2028)
+
+## Tests
+  * Pass on the value of the used submit button for scripted submits (#2019)
+  * Use assert#pushResult instead of assert#push (#2018)
+
+## All
+  * Fix links after move to organization
+  * Use https
+
+## Build
+  * Upgrade QUnit to 2.3.3 (#2018)
+
+1.16.0 / 2016-12-01
+==================
+
+## Additional
+  * Refine cifES and nieES algorithms. Closes #1826
+
+## Build
+  * Include Minified Version in NPM Package
+  * Bump dev-dependencies to latest versions
+
+## Core
+  * Add binding for input with button type. Closes #1891
+  * Support jquery3. Closes #1866
+  * Change jQuery alias 'expr[":"]' to 'expr.pseudos'
+
+## Localisation
+  * Add Urdu translation. Closes #1873.
+
+## Localization
+  * Fixed wrong file-extension for az translation. Closes #1890.
+  * Added missing translation in pt-BR (Closes #1897)
+  * Fixed typo in arabien language file.
+
+## Tests
+  * Upgrade QUnit to 2.0.
+
+## UMD
+  * Better support for CommonJS.
+
+1.15.1 / 2016-07-22
+==================
+
+## Additional
+  * Fix multiple mime-type validation
+  * IBAN require at least 5 chars (Closes #1797, Fixes #1674)
+  * Correct notEqualTo jQuery reference
+
+## Core
+  * Added failing test for #1805
+  * Fix group validation with 3 and more fields
+  * Fix regressions introduced in #1644 and #1657 (Closes #1800)
+  * Update step validation to handle floating points correctly
+  * Fix error when calling $.fn.rules() on a non-form element
+  * Call `errorPlacement` in validator scope
+  * Fixed issue with contenteditable elements in forms where events for single input validation would cause exceptions
+
+## Demo
+  * Add links to Bootstrap and Semantic-UI demos to index.html
+  * Use `.on()` instead of `.validateDelegate()`
+
+## Localization
+  * Added Azeri language
+
+## Tests
+  * Added regression unit tests for PR #1760
+
+1.15.0 / 2016-02-24
+==================
+
+## All
+  * Fixed code style issues
+
+## Core
+  * `resetForm` should also remove `valid` class from elements.
+  * Unhighlighting field if already highlighted when using remote rule.
+  * Bind the `blur` event just once in `equalTo` rule
+  * Fixed error when calling .rules() on empty jquery set.
+  * Fix handling of error messages with input groups.
+  * Fix TypeError in `showLabel` when using `groups` settings
+  * Adding a way to pass method name to remote
+  * Validation fails to trigger when next field is already filled out (Fixes #1508)
+  * Required rule take precedence over number & digits rules
+  * Error hidden but input error class not removed
+  * Remote validation uses wrong error messages
+  * Fixed field highlighting with remote validation.
+  * Fixed `:filled` selector for multiple select elements.
+  * Added doc reference to jQuery.validator.methods
+  * Move message processing from `formatAndAdd` to `defaultMessage`
+  * ErrorList should contain only the errors that it should
+  * Extract the file name without including "C:\fakepath\"
+  * HTML5 step attribute support. Fixes #1295
+  * Added support for "pending" class on outstanding requests
+  * Added normalizer (#1602)
+  * Split out `creditcard` method
+  * Escape errorID for use in the regex, not to build aria-describedby
+  * Escape single quotes in names avoiding a Sizzle Error being thrown
+  * Instead of using validating field's value to skip api call, use the serialized data object of the request
+  * Add support for contentEditable tags
+
+## Additional
+  * BIC: allow digits 1-9 in second place of location
+  * Accept method regex should be escaped properly.
+  * Case-insensitive check for BIC
+  * Correct postalCodeCA to exclude invalid combinations
+  * Make postalCodeCA method more lenient
+
+## Localization
+  * Added Macedonian localization.
+  * Added missing pattern message in Polish (adamwojtkiewicz)
+  * Fixed Persian translation of min/max message.
+  * Updated messages_sk.js
+  * Update Malay translation
+  * Included messages from additional methods
+  * Improving pt_BR translation and fixing a typo on the 'cifES' key.
+
 1.14.0 / 2015-06-30
 ==================
 
