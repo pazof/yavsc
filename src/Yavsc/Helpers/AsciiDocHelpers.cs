@@ -70,6 +70,11 @@ namespace Yavsc.Helpers
         {
             switch (elt.GetType().FullName)
             {
+                case "AsciiDocNet.Monospace":
+                    sb.AppendHtml("<code>");
+                    Monospace mono = (Monospace)elt;
+                    AllItemsToHtml(sb, mono);
+                    break;
                 case "AsciiDocNet.Link":
                     Link link = (Link)elt;
                     Uri uri;
@@ -98,11 +103,8 @@ namespace Yavsc.Helpers
 
                 case "AsciiDocNet.Strong":
                     sb.AppendHtml("<b>");
-                    AsciiDocNet.Strong str = (Strong)elt;
-                    foreach (var stritem in str)
-                    {
-                        stritem.ToHtml(sb);
-                    }
+                    Strong str = (Strong)elt;
+                    AllItemsToHtml(sb, str);
                     sb.AppendHtml("</b>");
                     break;
                 case "AsciiDocNet.InternalAnchor":
@@ -138,8 +140,33 @@ namespace Yavsc.Helpers
 
                 default:
                     string unsupportedType = elt.GetType().FullName;
-                    throw new InvalidProgramException(unsupportedType);
+                    if (elt is InlineContainer inlineContainer)
+                    {
+                        sb.AppendHtml($"<span title=\"E NOT SUPPORTED : {unsupportedType}\">");
+                        AllItemsToHtml(sb, inlineContainer);
+                        sb.AppendHtml("</span>");
+                    }
+                    else if (elt is IInlineElement inlineElement)
+                    {
+                        sb.AppendHtml($"<span title=\"E NOT SUPPORTED : {unsupportedType}\">");
+                        RenderLitteral(inlineElement, sb);
+                        sb.AppendHtml("</span>");
+                    }
+                    else
+                    {
+                        throw new InvalidProgramException(unsupportedType);
+                    }
+                    break;
             }
+        }
+
+        private static void AllItemsToHtml(IHtmlContentBuilder sb, InlineContainer mono)
+        {
+            foreach (var item in mono)
+            {
+                item.ToHtml(sb);
+            }
+            sb.AppendHtml("</code>");
         }
 
         private static void RenderLitteral(IInlineElement elt, IHtmlContentBuilder sb)
@@ -173,39 +200,39 @@ namespace Yavsc.Helpers
             return contentbuilder;
         }
 
-/*
-        public static IHtmlContent AsciiDocFor<TModel>(this IHtmlHelper<TModel> html,
-        Expression<Func<TModel, string>> expression)
-        {
-            string ascii = html.ValueFor<string>(expression, "{0}");
-            if (string.IsNullOrWhiteSpace(ascii))
-                return new HtmlString(string.Empty);
-            Document document = Document.Parse(ascii);
-            var htmlDoc = document.ToHtml();
-            var span = new TagBuilder("p") { TagRenderMode = TagRenderMode.SelfClosing };
-            span.InnerHtml.AppendHtml(htmlDoc);
-            return span.RenderBody();
-        }
+        /*
+                public static IHtmlContent AsciiDocFor<TModel>(this IHtmlHelper<TModel> html,
+                Expression<Func<TModel, string>> expression)
+                {
+                    string ascii = html.ValueFor<string>(expression, "{0}");
+                    if (string.IsNullOrWhiteSpace(ascii))
+                        return new HtmlString(string.Empty);
+                    Document document = Document.Parse(ascii);
+                    var htmlDoc = document.ToHtml();
+                    var span = new TagBuilder("p") { TagRenderMode = TagRenderMode.SelfClosing };
+                    span.InnerHtml.AppendHtml(htmlDoc);
+                    return span.RenderBody();
+                }
 
-        public static string AsciiDoc(IHtmlHelper<BlogPost> htmlHelper, string text)
-        {
-            return AsciiDoc(htmlHelper, text, null);
-        }
+                public static string AsciiDoc(IHtmlHelper<BlogPost> htmlHelper, string text)
+                {
+                    return AsciiDoc(htmlHelper, text, null);
+                }
 
-        private static string AsciiDoc(IHtmlHelper<BlogPost> htmlHelper, string text, object htmlAttributes)
-        {
-            // Create tag builder
-            var builder = new TagBuilder("div");
-            var document = Document.Parse(text);
+                private static string AsciiDoc(IHtmlHelper<BlogPost> htmlHelper, string text, object htmlAttributes)
+                {
+                    // Create tag builder
+                    var builder = new TagBuilder("div");
+                    var document = Document.Parse(text);
 
-            // builder.InnerHtml = .
+                    // builder.InnerHtml = .
 
-            // Add attributes
-            builder.MergeAttribute("class", "ascii");
-            builder.MergeAttributes(new RouteValueDictionary(htmlAttributes));
+                    // Add attributes
+                    builder.MergeAttribute("class", "ascii");
+                    builder.MergeAttributes(new RouteValueDictionary(htmlAttributes));
 
-            // Render tag
-            return builder.ToString();
-        } */
+                    // Render tag
+                    return builder.ToString();
+                } */
     }
 }

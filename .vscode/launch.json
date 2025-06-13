@@ -43,7 +43,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net8.0/Yavsc.dll",
+            "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net9.0/Yavsc.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Yavsc",
             "stopAtEntry": false,

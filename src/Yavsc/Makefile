@@ -1,36 +1,33 @@
 DESTDIR=/srv/www/yavsc
-HOSTING=localhost
-ASPNET_LOG_LEVEL=debug
-SOURCE_DIR=../..
+CONFIGURATION=Release
 USER=www-data
-HOSTING_PRE=yavsv.pschneider.fr
-CONFIGURATION=Debug
-SERVICE_PRE=Yavsc
+SERVICE_PROD=yavsc
+DOTNET_FRAMEWORK=net9.0
 
 all:
 	dotnet build
 
 showConfig:
-	@echo HOSTING_PRE: $(USER)@$(HOSTING_PRE)
 	@echo CONFIGURATION: $(CONFIGURATION)
 	@echo DESTDIR: $(DESTDIR)
-	@echo SERVICE_PRE: $(SERVICE_PRE)
+	@echo SERVICE_PROD: $(SERVICE_PROD)
 
 publish:
 	ASPNETCORE_ENV=$(CONFIGURATION) dotnet publish
 
-pushInPre: publish
-	sudo service $(SERVICE_PRE) stop
-	sudo cp -a bin/Debug/net7.0/publish/* $(DESTDIR)
+install_service:
+	sudo cp ../../contrib/yavsc.service /etc/systemd/system
+	sudo systemctl enable yavsc
+
+pushInProd: publish
+	sudo systemctl stop $(SERVICE_PROD) 
+	sudo cp -a bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/* $(DESTDIR)
 	sudo chown -R $(USER) $(DESTDIR)
 	sudo sync
-	sudo service $(SERVICE_PRE) start
+	sudo systemctl start $(SERVICE_PROD)
 
 %.min.js: %.js
 	jsmin < $^ > $@
 
 %.min.css: %.css
 	jsmin < $^ > $@
-
-%.Designer.cs: %.resx
-	strongresbuildercli -l -p -t -r "Yavsc.Resources." $^

@@ -80,11 +80,6 @@
     <li><a asp-controller="Announces" class="badge" >
         <img src="@SiteSettings.Value.Logo" alt="announces" title="Annonces @SiteSettings.Value.Title" /></a></li>
     }
-    @if ((int)ViewData["HaircutCommandCount"]>0) {
-    <li><a asp-controller="HairCutCommand" class="badge" >
-        <img src="~/images/shoppingcart.svg" alt="basket" title="Vos bons de commande" />(@ViewData["HaircutCommandCount"])</a></li>
-    }
-
 }
 @section header {
      <script src="~/lib/bootstrap/js/carousel.js" asp-append-version="true"></script> 

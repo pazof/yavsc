@@ -17,7 +17,7 @@ namespace Yavsc.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "9.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -181,6 +181,56 @@ namespace Yavsc.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("ClientProviderInfo");
+                });
+
+            modelBuilder.Entity("Yavsc.Abstract.Models.Messaging.Notification", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Target")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("body")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("click_action")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("color")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("icon")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasDefaultValue("exclam");
+
+                    b.Property<string>("sound")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("tag")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("title")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notification");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Access.Ban", b =>
@@ -711,7 +761,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasMaxLength(56224)
                         .HasColumnType("character varying(56224)");
 
@@ -731,15 +780,10 @@ namespace Yavsc.Migrations
                         .HasColumnType("character varying(1024)");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<bool>("Visible")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -1602,61 +1646,6 @@ namespace Yavsc.Migrations
                     b.ToTable("DismissClicked");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Messaging.Notification", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Target")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("body")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("click_action")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("color")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("icon")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
-                        .HasDefaultValue("exclam");
-
-                    b.Property<string>("sound")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("tag")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("title")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Notification");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Musical.Instrument", b =>
                 {
                     b.Property<long>("Id")
@@ -2092,7 +2081,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("ModeratorGroupName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -2103,22 +2091,18 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Photo")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Rate")
                         .HasColumnType("integer");
 
                     b.Property<string>("SettingsClassName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Code");
@@ -3057,7 +3041,7 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("Yavsc.Models.Messaging.DismissClicked", b =>
                 {
-                    b.HasOne("Yavsc.Models.Messaging.Notification", "Notified")
+                    b.HasOne("Yavsc.Abstract.Models.Messaging.Notification", "Notified")
                         .WithMany()
                         .HasForeignKey("NotificationId")
                         .OnDelete(DeleteBehavior.Cascade)

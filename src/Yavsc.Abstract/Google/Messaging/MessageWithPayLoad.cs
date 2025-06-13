@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using Yavsc.Abstract.Models.Messaging;
 using Yavsc.Models.Messaging;
 
 namespace Yavsc.Models.Google.Messaging

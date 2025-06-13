@@ -48,9 +48,6 @@ namespace Yavsc.Controllers
             );
             if (notes.Any()) this.Notify(notes);
 
-            ViewData["HaircutCommandCount"] = _dbContext.HairCutQueries.Where(
-                q => q.ClientId == uid && q.Status < QueryStatus.Failed
-            ).Count();
             var toShow = _dbContext.Activities
                .Include(a => a.Forms)
                .Include(a => a.Parent)

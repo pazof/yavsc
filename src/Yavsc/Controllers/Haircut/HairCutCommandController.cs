@@ -25,6 +25,7 @@ namespace Yavsc.Controllers
     using Microsoft.AspNetCore.Identity.UI.Services;
     using Yavsc.Interface;
     using Yavsc.Settings;
+    using Yavsc.Abstract.Models.Messaging;
 
     public class HairCutCommandController : CommandController
     {
