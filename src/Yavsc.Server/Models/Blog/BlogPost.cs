@@ -35,7 +35,7 @@ namespace Yavsc.Models.Blog
         }
 
         [Display(Name="Créateur")]
-        public  string UserCreated
+        public string? UserCreated
         {
             get; set;
         }
@@ -47,7 +47,7 @@ namespace Yavsc.Models.Blog
         }
 
         [Display(Name="Utilisateur ayant modifé le dernier")]
-        public  string UserModified
+        public  string? UserModified
         {
             get; set;
         }

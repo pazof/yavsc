@@ -32,6 +32,7 @@ using Yavsc.ViewModels.Auth;
 using Yavsc.Server.Helpers;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Protocols.Configuration;
 
 namespace Yavsc.Extensions;
 
@@ -304,7 +305,8 @@ public static class HostingExtensions
         {
             var path = builder.Configuration["SigningCert:Path"];
             var pass = builder.Configuration["SigningCert:Password"];
-            Debug.Assert(path != null);
+            if (path == null)
+                throw new InvalidConfigurationException("No signing cert path");
             FileInfo certFileInfo = new FileInfo(path);
             Debug.Assert(certFileInfo.Exists);
             RSA rsa = RSA.Create();

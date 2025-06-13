@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Yavsc.Models.Messaging
+namespace Yavsc.Abstract.Models.Messaging
 {
     /// <summary>
     /// A Notification, that mocks the one sent to Google,
@@ -29,25 +29,25 @@ namespace Yavsc.Models.Messaging
         /// </summary>
         [StringLength(512)]
         [Display(Name = "Icône")]
-        public string icon { get; set; } 
+        public string? icon { get; set; } 
         /// <summary>
         /// The sound.
         /// </summary>
         [StringLength(512)]
         [Display(Name = "Son")]
-        public string sound { get; set; }
+        public string? sound { get; set; }
         /// <summary>
         /// The tag.
         /// </summary>
         [StringLength(512)]
         [Display(Name = "Tag")]
-        public string tag { get; set; }
+        public string? tag { get; set; }
         /// <summary>
         /// The color.
         /// </summary>
         [StringLength(512)]
         [Display(Name = "Couleur")]
-        public  string color { get; set; }
+        public  string? color { get; set; }
         /// <summary>
         /// The click action.
         /// </summary>
@@ -63,7 +63,7 @@ namespace Yavsc.Models.Messaging
         /// </summary>
         /// <returns></returns>
         [StringLength(512)]
-        public string Target { get; set; }
+        public string? Target { get; set; }
 
         public Notification()
         {

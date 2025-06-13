@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Yavsc.Models.Messaging;
+using Yavsc.Abstract.Models.Messaging;
 
 namespace Yavsc.Helpers
 {
