@@ -17,15 +17,15 @@ C'est une application mettant en oeuvre une prise de contact entre un demandeur 
 
 et, pour execution en environement de développement
 
-```
-   ~/workspace/yavsc/Yavsc @ ASPNETCORE_ENV=Development dotnet run
+```bash
+~/workspace/yavsc/Yavsc @ ASPNETCORE_ENV=Development dotnet run
 ```
 
 ## Tests
 
 Utilisez GNU/Makefile (et visitez le code, dans le dossier `test` ):
 
-[TOREDO] Depuis le répertoire racine:
+[TODO] Depuis le répertoire racine:
 
 ```bash
 make test
@@ -33,13 +33,14 @@ make test
 
 ## Installation / Déploiment / Développement 
 
-### les services kestrel et kestrel-pre
-
-[TODO]
+### les services et l'API
 
 ### La Prod
 
-Une fois sûr de vous, et une fois que Git dit propre votre copie de travail, depuis le répertoire `Yavsc`, lancez `make pushInProd`.
+`cd srv/Yavsc` : `make pushInProd CONFIGURATION=Release`.
+
+puis, pour une première installation
+`make install_service`.
 
 ## Fonctionalités (encore en cours de développement)
 

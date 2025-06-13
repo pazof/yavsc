@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Yavsc.Models;
@@ -11,9 +12,11 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613122253_notificationTarget")]
+    partial class notificationTarget
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,20 +209,24 @@ namespace Yavsc.Migrations
                         .HasColumnType("character varying(512)");
 
                     b.Property<string>("color")
+                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
                     b.Property<string>("icon")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)")
                         .HasDefaultValue("exclam");
 
                     b.Property<string>("sound")
+                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
                     b.Property<string>("tag")
+                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
@@ -761,6 +768,7 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Content")
+                        .IsRequired()
                         .HasMaxLength(56224)
                         .HasColumnType("character varying(56224)");
 
@@ -780,9 +788,11 @@ namespace Yavsc.Migrations
                         .HasColumnType("character varying(1024)");
 
                     b.Property<string>("UserCreated")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");

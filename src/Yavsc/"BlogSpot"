@@ -1,0 +1,169 @@
+\dt
+select user,password from users;
+select user,passwd from users;
+select user from users;
+select username,pwd from users;
+select username,passwd from users;
+select username,password from users;
+\dT users
+\d users
+select username,passwd from users;
+select username,passd from users;
+\d users
+select username,passw from users;
+\d profiledata
+select gregid from profiledata;
+select uniqueid,gregid from profiledata;
+select uniqueid,username from profile;
+select uniqueid,username from profiles;
+select uniqueid,gregid from profiledata;
+select uniqueid,username from profiles;
+select uniqueid,gregid from profiledata;
+select uniqueid,gregid from profiledata;
+select uniqueid,gregid from profiledata;
+select uniqueid,gregid from profiledata;
+select uniqueid,gregid from profiledata;
+drop table GitRepositoryReference;
+\use YavscDev
+\use 
+\?
+\use \?
+\dt 
+drop table "GitRepositoryReference";
+drop table "GitRepositoryReference" CASCADE;
+exit;
+\q
+delete from "Project"
+;
+\q
+create database dotnetmvc
+;
+create user dotnetmvc ;
+grant CREATE on paul;
+grant admins TO paul;
+grant CREATE TO paul;
+grant postgres TO paul;
+grant paul TO postgres;
+commit;
+CREATE ROLE baget nocreatedb nocreaterole noreplication;
+CREATE ROLE baget nocreatedb nocreaterole noreplication;
+CREATE ROLE baget nocreatedb nocreaterole noreplication;
+DROP ROLE baget;
+commit;
+alter role baget with superuser
+;
+commit;
+\dT Project
+\dt Project
+\dt "Project"
+desc "Project"
+\?
+\d "Project"
+\d BlogSpot
+\d Blogspot
+\d "Blogspot"
+\d "BlogSpot"
+\d "BlogPost"
+\d "BlogPost"
+\d "BlogPost"
+\d "BlogPost"
+\d "BlogPost"
+\d AspNetUsers
+\d "AspNetUsers"
+\dT "AspNetUsers"
+update "AspNetUsers" set "LockoutEnable" = false;
+\d "AspNetUsers"
+\d "AspNetUsers"
+update "AspNetUsers" set "LockoutEnabled" = false;
+commit ;
+\quit
+update "AspNetUsers" set "LockoutEnabled" = true;
+\s
+\d
+\dT
+\?
+\dn
+\?
+\?
+\conninfo
+\h create database
+\h create user
+create user forgejo with login 'ogVZ)f#m85zx';
+create user forgejo with login;
+\h alter user
+alter user forgejo with PASSWORD 'ogVZ)f#m85zx';
+commit:
+commit;
+commit;
+\h create databse
+\h create databse
+create database forgejo with owner forgejo;
+create user woodpecker with password 'aormb%$98zv<U&@' ;'
+\sd
+\?d
+\dd
+\dT
+\dt
+\d
+\dd
+\?
+\dS
+\?
+\dD
+\?
+\dg
+\?
+\dn
+\?
+\l
+\dl
+\l
+\dg
+create database woodpecker with OWNER 'woodpecker';
+select count(*) from "Users"
+;
+select count(*) from "AspNetUsers";
+desc "AspNetUsers";
+\dT "AspNetUsers"
+\d "AspNetUsers"
+update "AspNetUsers" set "EmailConfirmed" = true;
+commit
+;
+select "UserName" from "AspNetUsers" ;
+desc "AspNetUsers"
+\d "AspNetUsers" 
+select "UserName", "Email" from "AspNetUsers" ;
+select "UserName", "Email" from "AspNetUsers" ;
+\d "AspNetUsers" 
+select "Id", "UserName", "Email" from "AspNetUsers" ;
+\d "AspNetUsers" 
+select "Id", "UserName", "Email", "ConfirmedEmail" from "AspNetUsers" ;
+\d "AspNetUsers" 
+select "Id", "UserName", "Email", "EmailConfirmed" from "AspNetUsers" ;
+select * from "AspNetUsers" ;
+\d "AspNetUsers" 
+select "Id", "UserName", "Email", "EmailConfirmed", "LockoutEnabe" from "AspNetUsers" ;
+\d "AspNetUsers" 
+select "Id", "UserName", "Email", "EmailConfirmed", "LockoutEnabled" from "AspNetUsers" ;
+upate AspNetUsers set LockoutEnabled = false;
+update AspNetUsers set LockoutEnabled = false;
+update "AspNetUsers" set "LockoutEnabled" = false;
+commit;
+select "Id", "UserName", "Email", "EmailConfirmed", "LockoutEnabled" from "AspNetUsers" ;
+SELECT a."Id", a."AccessFailedCount", a."AllowMonthlyEmail", a."Avatar", a."BankInfoId", a."ConcurrencyStamp", a."DedicatedGoogleCalendar", a."DiskQuota", a."DiskUsage", a."Email", a."EmailConfirmed", a."FullName", a."LockoutEnabled", a."LockoutEnd", a."MaxFileSize", a."NormalizedEmail", a."NormalizedUserName", a."PasswordHash", a."PhoneNumber", a."PhoneNumberConfirmed", a."PostalAddressId", a."SecurityStamp", a."TwoFactorEnabled", a."UserName"
+FROM "AspNetUsers" AS a
+WHERE a."Email" = 'paul@pschneider.fr';
+update "AspNetUsers" set "UserName" = 'Paul' where "Email" = 'paul@pschneider.fr';
+update "AspNetUsers" set "UserName" = 'PaulS' where "Email" = 'contact@pschneider.fr';
+update "AspNetUsers" set "UserName" = 'PaulSc' where "Email" = 'redienhcs.luap@gmail.com';
+delete from Users where "userName" = 'pa'
+;
+delete from "Users" where "UserName" = 'pa';
+delete from "AspNetUsers" where "UserName" = 'pa';
+select "Id", "UserName", "Email", "EmailConfirmed", "LockoutEnabled" from "AspNetUsers" ;
+\dT
+\d
+alter table "Activity" rename to "Activities";
+\d
+alter table "BlogPost" rename to "BlogSpot";
+\s "BlogSpot"

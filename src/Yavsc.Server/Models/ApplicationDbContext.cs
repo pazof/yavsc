@@ -40,6 +40,7 @@ namespace Yavsc.Models
     using Yavsc.Server.Models.Calendar;
 
     using Microsoft.EntityFrameworkCore.ChangeTracking;
+    using Yavsc.Abstract.Models.Messaging;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
