@@ -28,7 +28,7 @@ namespace Yavsc.Models.Workflow
         [YaStringLength(512)]
         [Display(Name = "Code du parent")]
         [ForeignKey("Parent")]
-        public string ParentCode { get; set; }
+        public string? ParentCode { get; set; }
 
         [Display(Name = "Activité parent"), JsonIgnore]
         public virtual Activity Parent { get; set; }
@@ -41,7 +41,7 @@ namespace Yavsc.Models.Workflow
         public string Description { get; set; }
 
         [Display(Name = "Photo")]
-        public string Photo { get; set; }
+        public string? Photo { get; set; }
 
         [InverseProperty("Context")]
         [DisplayAttribute(Name = "Services liés")]
@@ -52,7 +52,7 @@ namespace Yavsc.Models.Workflow
         /// </summary>
         /// <returns></returns>
         [DisplayAttribute(Name = "Groupe de modération")]
-        public string ModeratorGroupName { get; set; }
+        public string? ModeratorGroupName { get; set; }
 
         /// <summary>
         /// indice de recherche de cette activité
@@ -64,7 +64,7 @@ namespace Yavsc.Models.Workflow
         [DisplayFormatAttribute(DataFormatString="{0}%")]
         public int Rate { get; set; }
         [DisplayAttribute(Name = "Classe de paramétrage")]
-        public string SettingsClassName { get; set; }
+        public string? SettingsClassName { get; set; }
 
         [InverseProperty("Context")]
         [Display(Name="Formulaires de commande")]
@@ -77,7 +77,7 @@ namespace Yavsc.Models.Workflow
         }
 
         [Display(Name="Createur")]
-        public string UserCreated
+        public string? UserCreated
         {
             get; set;
         }
@@ -89,7 +89,7 @@ namespace Yavsc.Models.Workflow
         }
 
         [Display(Name="Utilisateur ayant modifié le dernier")]
-        public string UserModified
+        public string? UserModified
         {
             get; set;
         }
