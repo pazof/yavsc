@@ -1,8 +1,4 @@
 ﻿
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 using Yavsc.Models.Haircut;
 using Yavsc.Models.IT.Evolution;
 using Yavsc.Models.IT.Fixing;
@@ -10,7 +6,6 @@ using Yavsc.Server.Models.EMailing;
 using Yavsc.Server.Models.IT.SourceCode;
 using Yavsc.Server.Models.IT;
 using Yavsc.Models.Streaming;
-using Yavsc.Models.Musical;
 
 namespace Yavsc.Models
 {
@@ -32,7 +27,6 @@ namespace Yavsc.Models
     using Attributes;
     using Bank;
     using Payment;
-    using Calendar;
     using Blog;
     using Yavsc.Abstract.Identity;
     using Microsoft.EntityFrameworkCore;
@@ -41,6 +35,7 @@ namespace Yavsc.Models
 
     using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Yavsc.Abstract.Models.Messaging;
+    using Org.BouncyCastle.Asn1.Crmf;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -51,7 +46,7 @@ namespace Yavsc.Models
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
-        }  
+        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -61,7 +56,7 @@ namespace Yavsc.Models
             builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
             builder.Entity<DeviceDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
             builder.Entity<BlogTag>().HasKey(x => new { x.PostId, x.TagId });
-          
+
             builder.Entity<ApplicationUser>().Property(u => u.FullName).IsRequired(false);
             builder.Entity<ApplicationUser>().Property(u => u.DedicatedGoogleCalendar).IsRequired(false);
             builder.Entity<ApplicationUser>().HasMany<ChatConnection>(c => c.Connections);
@@ -81,7 +76,7 @@ namespace Yavsc.Models
             builder.Entity<Models.Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
             builder.Entity<ChatRoomAccess>().HasKey(p => new { room = p.ChannelName, user = p.UserId });
-            builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument= i.InstrumentId, owner = i.OwnerId });
+            builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument = i.InstrumentId, owner = i.OwnerId });
 
             foreach (var et in builder.Model.GetEntityTypes())
             {
@@ -89,23 +84,23 @@ namespace Yavsc.Models
                     et.FindProperty("DateCreated").SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             }
 
-            builder.Entity<Activity>().Property(a=>a.ParentCode).IsRequired(false);
+            builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
             //builder.Entity<BlogPost>().HasOne(p => p.Author).WithMany(a => a.Posts);
-            
+
         }
 
         // this is not a failback procedure.
-       
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var appSetup = (string) AppDomain.CurrentDomain.GetData(Constants.YavscConnectionStringEnvName);
-            if (!string.IsNullOrWhiteSpace(appSetup)) 
+            var appSetup = (string)AppDomain.CurrentDomain.GetData(Constants.YavscConnectionStringEnvName);
+            if (!string.IsNullOrWhiteSpace(appSetup))
             {
                 optionsBuilder.UseNpgsql(appSetup);
                 return;
             }
             var envSetup = Environment.GetEnvironmentVariable(Constants.YavscConnectionStringEnvName);
-            if (envSetup!=null) 
+            if (envSetup != null)
                 optionsBuilder.UseNpgsql(envSetup);
             else optionsBuilder.UseNpgsql();
         }
@@ -125,7 +120,7 @@ namespace Yavsc.Models
         /// Users posts
         /// </summary>
         /// <returns></returns>
-        public DbSet<Blog.BlogPost> BlogSpot { get; set; }
+        public DbSet<BlogPost> BlogSpot { get; set; }
 
         /// <summary>
         /// Skills powered by this site
@@ -226,14 +221,14 @@ namespace Yavsc.Models
                 ((ITrackedEntity)entity.Entity).UserModified = userId;
             }
         }
-        
+
         public int SaveChanges(string userId)
         {
             AddTimestamps(userId);
             return base.SaveChanges();
         }
 
-    
+
 
         public async Task<int> SaveChangesAsync(string userId, CancellationToken ctoken = default(CancellationToken))
         {
@@ -282,7 +277,7 @@ namespace Yavsc.Models
         public DbSet<Comment> Comment { get; set; }
 
         public DbSet<Announce> Announce { get; set; }
-        
+
         // TODO remove and opt for for memory only storing,
         // as long as it must be set empty each time the service is restarted,
         // and that chatting should be kept as must as possible independent from db context
@@ -295,7 +290,7 @@ namespace Yavsc.Models
         public DbSet<GitRepositoryReference> GitRepositoryReference { get; set; }
 
         public DbSet<Project> Project { get; set; }
-        
+
         [Obsolete("use signaled flows")]
         public DbSet<LiveFlow> LiveFlow { get; set; }
 
@@ -304,6 +299,8 @@ namespace Yavsc.Models
         public DbSet<InstrumentRating> InstrumentRating { get; set; }
 
         public DbSet<Scope> Scopes { get; set; }
+        
+        public DbSet<BlogspotPublication> blogspotPublications{ get; set; }
 
     }
 }
