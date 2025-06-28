@@ -1,22 +1,14 @@
-
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Yavsc.Models;
 using Yavsc.ViewModels.Auth;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models.Blog;
 using Yavsc.Helpers;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using Yavsc.ViewModels.Blog;
-using System.Collections;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -69,12 +61,13 @@ namespace Yavsc.Controllers
             }
             else 
             {
-                 posts = _context.BlogSpot
-                .Include(b => b.Author)
-                .Include(p=>p.ACL)
-                .Include(p=>p.Tags)
-                .Include(p=>p.Comments)
-                .Where(p => p.ACL.Count == 0 ).ToArray();
+                 posts = _context.blogspotPublications
+                 .Include(p=>p.BlogPost)
+                .Include(b => b.BlogPost.Author)
+                .Include(p=>p.BlogPost.ACL)
+                .Include(p=>p.BlogPost.Tags)
+                .Include(p=>p.BlogPost.Comments)
+                .Where(p => p.BlogPost.ACL.Count == 0 ).Select(p=>p.BlogPost).ToArray();
             }
           
             var data = posts.OrderByDescending( p=> p.DateCreated);
