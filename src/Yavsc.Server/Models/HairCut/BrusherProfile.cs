@@ -60,7 +60,7 @@ namespace Yavsc.Models.Haircut
 
         [DisplayFormat(ConvertEmptyStringToNull = true, NullDisplayText = "[Pas d'emploi du temps spécifié]")]
         [Display(Name="Emploi du temps")]
-        public virtual Schedule Schedule { get; set; }
+        public virtual Schedule? Schedule { get; set; }
 
         [Display(Name="Coupe femme cheveux longs"),DisplayFormat(DataFormatString="{0:C}")]
 
