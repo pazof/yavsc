@@ -203,7 +203,7 @@ public static class HostingExtensions
             // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
             // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
             options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
-            options.AddPolicy("IsTheAuthor", policy => policy.Requirements.Add(new EditPermission()));
+            options.AddPolicy("TheAuthor", policy => policy.Requirements.Add(new EditPermission()));
         })
         .AddCors(options =>
         {

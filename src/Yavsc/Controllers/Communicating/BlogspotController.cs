@@ -173,7 +173,7 @@ namespace Yavsc.Controllers
         }
 
         // POST: Blog/Delete/5
-        [HttpPost, ActionName("Delete"), Authorize("IsTheAuthor")]
+        [HttpPost, ActionName("Delete"), Authorize("TheAuthor")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
