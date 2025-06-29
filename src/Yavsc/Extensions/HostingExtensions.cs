@@ -39,7 +39,6 @@ namespace Yavsc.Extensions;
 
 public static class HostingExtensions
 {
-    #region files config
     public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
                 bool enableDirectoryBrowsing = false)
     {
@@ -91,16 +90,10 @@ public static class HostingExtensions
         return app;
     }
 
-    #endregion
-
-
     internal static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
         IServiceCollection services = LoadConfiguration(builder);
 
-        //services.AddRazorPages();
-
-      
         services.AddSession();
 
         // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
@@ -148,7 +141,8 @@ public static class HostingExtensions
         .AddTransient<IYavscMessageSender, YavscMessageSender>()
         .AddTransient<IBillingService, BillingService>()
         .AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false))
-        .AddTransient<ICalendarManager, CalendarManager>();
+        .AddTransient<ICalendarManager, CalendarManager>()
+        .AddTransient<BlogSpotService>();
 
         // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
 

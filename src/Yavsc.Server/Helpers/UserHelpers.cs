@@ -24,7 +24,7 @@ namespace Yavsc.Helpers
             return user.Identity.IsAuthenticated;
         }
 
-        public static IEnumerable<BlogPost> UserPosts(this ApplicationDbContext dbContext, string posterId, string readerId)
+        public static IEnumerable<BlogPost> UserPosts(this ApplicationDbContext dbContext, string posterId, string? readerId)
         {
             if (readerId == null)
             {
