@@ -47,7 +47,7 @@ namespace Yavsc.Controllers
                 await blogSpotService.UserPosts(id, User.GetUserId(),
                 skip, take));
             }
-            var byTitle = await this.blogSpotService.IndexByTitle(User, id, skip, take);
+            IEnumerable<IGrouping<string,IBlogPost>> byTitle = await this.blogSpotService.IndexByTitle(User, id, skip, take);
             return View(byTitle);
         }
 

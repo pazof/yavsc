@@ -85,7 +85,7 @@ public class PermissionHandler : IAuthorizationHandler
         {
             return applicationDbContext.CircleMembers
             .Include(c => c.Circle)
-            .Where(m=>m.MemberId==user.GetUserId() && m.Circle.OwnerId == blogPost.OwnerId)
+            .Where(m=>m.MemberId==user.GetUserId() && m.Circle.OwnerId == blogPost.AuthorId)
             .Any();
         }
         return true;

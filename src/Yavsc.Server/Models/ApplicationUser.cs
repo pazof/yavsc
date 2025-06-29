@@ -7,10 +7,12 @@ using Yavsc.Models.Identity;
 using Yavsc.Models.Chat;
 using Yavsc.Models.Bank;
 using Yavsc.Models.Access;
+using Yavsc.Abstract.Identity;
+
 namespace Yavsc.Models
 {
     [Table("AspNetUsers")]
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser, IApplicationUser
     {
         /// <summary> 
         /// Another me, as a byte array.TG7@Eu%80rufzkhbb
@@ -22,10 +24,10 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         [MaxLength(512)]
-        public string Avatar { get; set; }
+        public string? Avatar { get; set; }
 
         [MaxLength(512)]
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
 
 
         /// <summary>
@@ -33,7 +35,7 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         [Display(Name = "Account balance")]
-        public virtual AccountBalance AccountBalance { get; set; }
+        public virtual AccountBalance? AccountBalance { get; set; }
 
         /// <summary>
         /// User's posts
@@ -113,5 +115,8 @@ namespace Yavsc.Models
         [InverseProperty("Member")]
         public virtual List<CircleMember> Membership { get; set; }
 
+        IAccountBalance? IApplicationUser.AccountBalance => AccountBalance;
+
+        ILocation? IApplicationUser.PostalAddress { get => PostalAddress; }
     }
 }

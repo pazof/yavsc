@@ -8,10 +8,10 @@ namespace Yavsc.Models.societe.com
     public class CompanyInfoMessage
     {
         public bool success { get; set; }
-        public string errorType { get; set; }
-        public string errorCode { get; set; }
-        public string errorMessage { get; set; }
-        public CompanyInfo result { get; set; }
+        public string? errorType { get; set; }
+        public string? errorCode { get; set; }
+        public string? errorMessage { get; set; }
+        public CompanyInfo? result { get; set; }
 
     }
 

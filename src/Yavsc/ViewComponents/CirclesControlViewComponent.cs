@@ -22,7 +22,7 @@ namespace Yavsc.ViewComponents
         {
             if (target!=null)
             {
-            var oid = target.OwnerId;
+            var oid = target.AuthorId;
             ViewBag.ACL = dbContext.Circle.Where(
                 c=>c.OwnerId == oid)
                 .Select(

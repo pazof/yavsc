@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Yavsc;
+using Yavsc.Abstract.Identity;
 using Yavsc.Abstract.Identity.Security;
 using Yavsc.Attributes.Validation;
 using Yavsc.Interfaces;
@@ -86,7 +88,6 @@ namespace Yavsc.Models.Blog
         [InverseProperty("Post")]
         public  virtual List<Comment> Comments { get; set; }
 
-        [NotMapped]
-        public string OwnerId => AuthorId;
+        IApplicationUser IBlogPost.Author { get => this.Author; }
     }
 }

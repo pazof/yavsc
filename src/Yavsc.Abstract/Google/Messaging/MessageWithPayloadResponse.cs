@@ -54,7 +54,7 @@ namespace Yavsc.Models.Google.Messaging
 			/// <summary>
 			/// The error.
 			/// </summary>
-			public string error;
+			public string? error;
 		}
 
 		/// <summary>
