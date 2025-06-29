@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Yavsc.Models;
@@ -11,9 +12,11 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250620185047_BrusherProfileSchedulerId")]
+    partial class BrusherProfileSchedulerId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -855,16 +858,6 @@ namespace Yavsc.Migrations
                     b.HasIndex("ReceiverId");
 
                     b.ToTable("Comment");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.BlogspotPublication", b =>
-                {
-                    b.Property<long>("BlogpostId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("BlogpostId");
-
-                    b.ToTable("blogspotPublications");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Calendar.Schedule", b =>
@@ -2771,17 +2764,6 @@ namespace Yavsc.Migrations
                     b.Navigation("Parent");
 
                     b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.BlogspotPublication", b =>
-                {
-                    b.HasOne("Yavsc.Models.Blog.BlogPost", "BlogPost")
-                        .WithMany()
-                        .HasForeignKey("BlogpostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BlogPost");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Calendar.Schedule", b =>

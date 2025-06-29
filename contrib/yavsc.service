@@ -15,14 +15,16 @@ WorkingDirectory=/srv/www/yavsc/
 ExecStart=/srv/www/yavsc/Yavsc
 Restart=always
 Environment="HOME=/srv/www/yavsc"
-Environment="ASPNETCORE_ENVIRONMENT=lua"
-Environment="ASPNETCORE_ConnectionStrings__DefaultConnection=Server=localhost;Port=5432;Database=lua;Username=lua;Password=f3s-*Vx$;"
+
+Environment="ASPNETCORE_ENVIRONMENT=Production"
+Environment="ASPNETCORE_ConnectionStrings__DefaultConnection=YOUR Postgresql CONNECTION STRING"
+
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=isnd
+
+SyslogIdentifier=yavsc
 
 [Install]
 WantedBy=multi-user.target
-

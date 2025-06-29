@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Yavsc.Models;
@@ -11,9 +12,11 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613181510_ActivityNulls")]
+    partial class ActivityNulls
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -857,16 +860,6 @@ namespace Yavsc.Migrations
                     b.ToTable("Comment");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.BlogspotPublication", b =>
-                {
-                    b.Property<long>("BlogpostId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("BlogpostId");
-
-                    b.ToTable("blogspotPublications");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Calendar.Schedule", b =>
                 {
                     b.Property<string>("OwnerId")
@@ -1133,6 +1126,7 @@ namespace Yavsc.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("ScheduleOwnerId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<decimal>("ShampooPrice")
@@ -2773,17 +2767,6 @@ namespace Yavsc.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.BlogspotPublication", b =>
-                {
-                    b.HasOne("Yavsc.Models.Blog.BlogPost", "BlogPost")
-                        .WithMany()
-                        .HasForeignKey("BlogpostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BlogPost");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Calendar.Schedule", b =>
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser", "Owner")
@@ -2855,7 +2838,9 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.Calendar.Schedule", "Schedule")
                         .WithMany()
-                        .HasForeignKey("ScheduleOwnerId");
+                        .HasForeignKey("ScheduleOwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Yavsc.Models.Workflow.PerformerProfile", "BaseProfile")
                         .WithMany()

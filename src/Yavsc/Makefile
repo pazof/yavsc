@@ -1,6 +1,7 @@
 DESTDIR=/srv/www/yavsc
 CONFIGURATION=Release
-USER=www-data
+
+USER_AND_GROUP=www-data:www-data
 SERVICE_PROD=yavsc
 DOTNET_FRAMEWORK=net9.0
 
@@ -22,7 +23,7 @@ install_service:
 pushInProd: publish
 	sudo systemctl stop $(SERVICE_PROD) 
 	sudo cp -a bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/* $(DESTDIR)
-	sudo chown -R $(USER) $(DESTDIR)
+	sudo chown -R $(USER_AND_GROUP) $(DESTDIR)
 	sudo sync
 	sudo systemctl start $(SERVICE_PROD)
 

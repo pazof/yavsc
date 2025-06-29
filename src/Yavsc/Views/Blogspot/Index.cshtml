@@ -47,6 +47,7 @@
 <div class="container">
      
 <table class="table">
+    
 @foreach (var group in Model) {
     var title = group.Key ?? "@";
     string secondclass="";
@@ -95,6 +96,6 @@
 }
 </table>
 
-
+@if(Model.Count()==0){<p>Néant</p>}
 
 </div>

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
@@ -55,11 +56,25 @@ public class PermissionHandler : IAuthorizationHandler
         return false;
     }
 
-    private static bool IsOwner(ClaimsPrincipal user, object? resource)
+    private  bool IsOwner(ClaimsPrincipal user, object? resource)
     {
         if (resource is BlogPost blogPost)
         {
             return blogPost.AuthorId == user.GetUserId();
+        }
+        else
+        if (resource is DefaultHttpContext httpContext)
+        {
+            if (httpContext.Request.Path.StartsWithSegments("/blogpost/Delete", StringComparison.OrdinalIgnoreCase))
+            {
+                string postId = (string)httpContext.GetRouteValue("id");
+                if (long.TryParse(postId, out long id))
+                {
+                BlogPost b = applicationDbContext.BlogSpot.FirstOrDefault(b => b.Id == id && b.AuthorId == user.GetUserId());
+                return b != null;
+
+                }
+            }
         }
         return false;
     }

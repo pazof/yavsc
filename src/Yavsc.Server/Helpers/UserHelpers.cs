@@ -24,13 +24,14 @@ namespace Yavsc.Helpers
             return user.Identity.IsAuthenticated;
         }
 
-        public static IEnumerable<BlogPost> UserPosts(this ApplicationDbContext dbContext, string posterId, string readerId)
+        public static IEnumerable<BlogPost> UserPosts(this ApplicationDbContext dbContext, string posterId, string? readerId)
         {
             if (readerId == null)
             {
-                var userPosts = dbContext.BlogSpot.Include(
-                b => b.Author
-                ).Where(x => ((x.AuthorId == posterId))).ToArray();
+                var userPosts = dbContext.blogspotPublications.Include(
+                b => b.BlogPost
+                ).Where(x => x.BlogPost.AuthorId == posterId)
+                .Select(x=>x.BlogPost).ToArray();
                 return userPosts;
             }
             else

@@ -39,7 +39,6 @@ namespace Yavsc.Extensions;
 
 public static class HostingExtensions
 {
-    #region files config
     public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
                 bool enableDirectoryBrowsing = false)
     {
@@ -91,16 +90,10 @@ public static class HostingExtensions
         return app;
     }
 
-    #endregion
-
-
     internal static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
         IServiceCollection services = LoadConfiguration(builder);
 
-        //services.AddRazorPages();
-
-      
         services.AddSession();
 
         // TODO .AddServerSideSessionStore<YavscServerSideSessionStore>()
@@ -148,7 +141,8 @@ public static class HostingExtensions
         .AddTransient<IYavscMessageSender, YavscMessageSender>()
         .AddTransient<IBillingService, BillingService>()
         .AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false))
-        .AddTransient<ICalendarManager, CalendarManager>();
+        .AddTransient<ICalendarManager, CalendarManager>()
+        .AddTransient<BlogSpotService>();
 
         // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
 
@@ -209,7 +203,7 @@ public static class HostingExtensions
             // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
             // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
             options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
-            options.AddPolicy("IsTheAuthor", policy => policy.Requirements.Add(new EditPermission()));
+            options.AddPolicy("TheAuthor", policy => policy.Requirements.Add(new EditPermission()));
         })
         .AddCors(options =>
         {
@@ -355,7 +349,7 @@ public static class HostingExtensions
     }
 
 
-    internal static WebApplication ConfigurePipeline(this WebApplication app)
+    internal async static Task<WebApplication> ConfigurePipeline(this WebApplication app)
     {
 
         if (app.Environment.IsDevelopment())
@@ -365,6 +359,11 @@ public static class HostingExtensions
         else
         {
             app.UseExceptionHandler("/Home/Error");
+             using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await db.Database.MigrateAsync();
+            }
         }
 
         app.UseStaticFiles();
