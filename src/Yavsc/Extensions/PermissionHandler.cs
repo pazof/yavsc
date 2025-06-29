@@ -65,7 +65,7 @@ public class PermissionHandler : IAuthorizationHandler
         else
         if (resource is DefaultHttpContext httpContext)
         {
-            if (httpContext.Request.Path.StartsWithSegments("/Blogspot/Delete", StringComparison.OrdinalIgnoreCase))
+            if (httpContext.Request.Path.StartsWithSegments("/blogpost/Delete", StringComparison.OrdinalIgnoreCase))
             {
                 string postId = (string)httpContext.GetRouteValue("id");
                 if (long.TryParse(postId, out long id))
