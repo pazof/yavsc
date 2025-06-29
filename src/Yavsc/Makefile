@@ -1,5 +1,6 @@
 DESTDIR=/srv/www/yavsc
 CONFIGURATION=Release
+
 USER_AND_GROUP=www-data:www-data
 SERVICE_PROD=yavsc
 DOTNET_FRAMEWORK=net9.0

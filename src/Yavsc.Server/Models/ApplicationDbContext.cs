@@ -35,7 +35,9 @@ namespace Yavsc.Models
 
     using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Yavsc.Abstract.Models.Messaging;
+
     using Org.BouncyCastle.Asn1.Crmf;
+
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
