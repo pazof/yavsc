@@ -40,7 +40,7 @@ namespace Yavsc.ApiControllers
             return Ok();
         }
 
-        [HttpPost("query/reject")]
+        [HttpPost("query/accept")]
         public IActionResult AcceptQuery(string billingCode, long queryId)
         {
             if (billingCode == null) return BadRequest("billingCode");
@@ -51,7 +51,6 @@ namespace Yavsc.ApiControllers
             billing.Decided = true;
             dbContext.SaveChanges();
             return Ok();
-
         }
     }
 }
