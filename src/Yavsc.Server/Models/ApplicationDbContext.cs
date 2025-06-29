@@ -300,7 +300,7 @@ namespace Yavsc.Models
 
         public DbSet<Scope> Scopes { get; set; }
         
-        public DbSet<BlogspotPublication> blogspotPublications{ get; set; }
+        public DbSet<BlogSpotPublication> blogSpotPublications{ get; set; }
 
     }
 }

@@ -1,4 +1,4 @@
-@model Yavsc.ViewModels.Blog.BlogPostInputViewModel
+@model Yavsc.ViewModels.Blog.BlogPostBase
 
 @{
    ViewData["Title"] = "Blog post edition";
@@ -47,6 +47,7 @@
                 </span>
             </div>
         </div>
+
         <div class="form-group mdcoding">
             <label asp-for="Content" class="col-md-2 control-label" ></label>
             <div class="col-md-10">
@@ -56,10 +57,18 @@
                 </span>
             </div>
         </div>
+
         <div class="form-group">
             <label asp-for="ACL" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                @await Component.InvokeAsync("CirclesControl", Model)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Publish" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Publish" class="form-control" />
             </div>
         </div>
 

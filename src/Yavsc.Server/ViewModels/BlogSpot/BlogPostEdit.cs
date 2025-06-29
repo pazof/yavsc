@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.ViewModels.Blog;
 
-public class BlogPostEditViewModel : BlogPostInputViewModel
+public class BlogPostEditViewModel : BlogPostBase
 {
 
     [Required]

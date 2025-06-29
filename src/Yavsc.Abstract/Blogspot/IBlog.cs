@@ -5,8 +5,8 @@ namespace Yavsc
 {
     public interface IBlogPostPayLoad
     {      
-        string Content { get; set; }
-        string Photo { get; set; }
+        string? Content { get; set; }
+        string? Photo { get; set; }
 
     }
     public interface IBlogPost :IBlogPostPayLoad, ITrackedEntity, IIdentified<long>, ITitle

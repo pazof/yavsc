@@ -14,7 +14,8 @@ using Yavsc.ViewModels.Blog;
 
 namespace Yavsc.Models.Blog
 {
-    public class BlogPost : BlogPostInputViewModel, IBlogPost, ICircleAuthorized, ITaggable<long>, IIdentified<long>
+    public class BlogPost : BlogPostBase,
+    IBlogPost, ICircleAuthorized, ITaggable<long>
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name="Identifiant du post")]

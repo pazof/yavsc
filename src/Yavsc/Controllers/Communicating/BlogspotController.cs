@@ -88,7 +88,7 @@ namespace Yavsc.Controllers
         [Authorize()]
         public IActionResult Create(string title)
         {
-            var result = new BlogPostInputViewModel
+            var result = new BlogPostBase
             {
                 Title = title
             };
@@ -98,7 +98,7 @@ namespace Yavsc.Controllers
 
         // POST: Blog/Create
         [HttpPost, Authorize, ValidateAntiForgeryToken]
-        public IActionResult Create(BlogPostInputViewModel blogInput)
+        public IActionResult Create(BlogPostBase blogInput)
         {
             if (ModelState.IsValid)
             {

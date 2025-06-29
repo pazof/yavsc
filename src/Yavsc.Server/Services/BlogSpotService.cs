@@ -3,10 +3,8 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Tls;
+using Yavsc;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
@@ -27,7 +25,7 @@ public class BlogSpotService
         _context = context;
     }
 
-    public BlogPost Create(string userId, BlogPostInputViewModel blogInput)
+    public BlogPost Create(string userId, BlogPostBase blogInput)
     {
         BlogPost post = new BlogPost
         {
@@ -91,17 +89,38 @@ public class BlogSpotService
         blog.ACL = blogEdit.ACL;
         // saves the change
         _context.Update(blog);
+        var publication = await _context.blogSpotPublications.SingleOrDefaultAsync
+        (p=>p.BlogpostId==blogEdit.Id);
+        if (publication != null)
+        {
+            if (!blogEdit.Publish)
+            {
+                _context.blogSpotPublications.Remove(publication);
+            }
+        }
+        else
+        {
+            if (blogEdit.Publish)
+            {
+                _context.blogSpotPublications.Add(
+                    new BlogSpotPublication
+                    {
+                        BlogpostId = blogEdit.Id
+                    }
+                );
+            }
+        }
         _context.SaveChanges(user.GetUserId());
     }
 
-    public async Task<IEnumerable<IGrouping<String, BlogPost>>> IndexByTitle(ClaimsPrincipal user, string id, int skip = 0, int take = 25)
+    public async Task<IEnumerable<IGrouping<string, IBlogPost>>> IndexByTitle(ClaimsPrincipal user, string id, int skip = 0, int take = 25)
     {
-        IEnumerable<BlogPost> posts;
+        IEnumerable<IBlogPost> posts;
 
         if (user.Identity.IsAuthenticated)
         {
             string viewerId = user.GetUserId();
-            long[] usercircles = await _context.Circle.Include(c => c.Members).
+            long[] userCircles = await _context.Circle.Include(c => c.Members).
                 Where(c => c.Members.Any(m => m.MemberId == viewerId))
                 .Select(c => c.Id).ToArrayAsync();
 
@@ -110,20 +129,24 @@ public class BlogSpotService
                 .Include(p => p.ACL)
                 .Include(p => p.Tags)
                 .Include(p => p.Comments)
-                .Where(p => (p.ACL.Count == 0)
+                .Where(p => p.ACL == null
+                || p.ACL.Count == 0
                 || (p.AuthorId == viewerId)
-                || (usercircles != null && p.ACL.Any(a => usercircles.Contains(a.CircleId)))
+                || (userCircles != null &&
+                    p.ACL.Any(a => userCircles.Contains(a.CircleId)))
                 );
         }
         else
         {
-            posts = _context.blogspotPublications
+            posts = _context.blogSpotPublications
             .Include(p => p.BlogPost)
            .Include(b => b.BlogPost.Author)
            .Include(p => p.BlogPost.ACL)
            .Include(p => p.BlogPost.Tags)
            .Include(p => p.BlogPost.Comments)
-           .Where(p => p.BlogPost.ACL.Count == 0).Select(p => p.BlogPost).ToArray();
+           .Where(p => p.BlogPost.ACL == null
+           || p.BlogPost.ACL.Count == 0)
+           .Select(p => p.BlogPost).ToArray();
         }
 
         var data = posts.OrderByDescending(p => p.DateCreated);

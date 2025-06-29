@@ -5,8 +5,8 @@ using Yavsc.Models.Access;
 
 namespace Yavsc.ViewModels.Blog
 {
-    public class BlogPostInputViewModel
-{
+    public class BlogPostBase
+    {
         [StringLength(1024)]
         public string? Photo { get; set; }
 
@@ -18,9 +18,10 @@ namespace Yavsc.ViewModels.Blog
         public string? Content { get; set; }
 
         [InverseProperty("Target")]
-        [Display(Name="Liste de contrôle d'accès")]
-        public virtual List<CircleAuthorizationToBlogPost>? ACL { get; set; }
+        [Display(Name = "Liste de contrôle d'accès")]
+        public virtual List<CircleAuthorizationToBlogPost>? ACL { get; set; }
 
+        public bool Publish { get; set; }
 
     }
 }

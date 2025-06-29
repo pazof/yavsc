@@ -4,7 +4,7 @@ using Yavsc.Models.Blog;
 
 namespace Yavsc.Models
 {
-    public class BlogspotPublication
+    public class BlogSpotPublication
     {
         [Key]
         public long BlogpostId { get; set; }
