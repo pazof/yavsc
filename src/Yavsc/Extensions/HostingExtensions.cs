@@ -355,7 +355,7 @@ public static class HostingExtensions
     }
 
 
-    internal static WebApplication ConfigurePipeline(this WebApplication app)
+    internal async static Task<WebApplication> ConfigurePipeline(this WebApplication app)
     {
 
         if (app.Environment.IsDevelopment())
@@ -365,6 +365,11 @@ public static class HostingExtensions
         else
         {
             app.UseExceptionHandler("/Home/Error");
+             using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await db.Database.MigrateAsync();
+            }
         }
 
         app.UseStaticFiles();
