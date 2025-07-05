@@ -61,7 +61,6 @@ namespace Yavsc.Models
         [InverseProperty("Owner"), JsonIgnore]
         public virtual List<ChatConnection> Connections { get; set; }
 
-
         /// <summary>
         /// User's circles
         /// </summary>

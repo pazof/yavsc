@@ -50,8 +50,9 @@ public class PermissionHandler : IAuthorizationHandler
     {
         if (resource is BlogPost blogPost)
         {
-            if (blogPost.ACL.Count==0)
-                return true;
+            return
+                applicationDbContext.blogSpotPublications
+                .Any(p=>p.BlogpostId == blogPost.Id);
         }
         return false;
     }

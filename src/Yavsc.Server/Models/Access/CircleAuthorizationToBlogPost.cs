@@ -8,8 +8,8 @@ namespace Yavsc.Models.Access
 
     public class CircleAuthorizationToBlogPost : ICircleAuthorization
     {
-        public long CircleId { get; set; }
-        public long BlogPostId { get; set; }
+        public long CircleId { get; set; }
+        public long BlogPostId { get; set; }
 
         [JsonIgnore]
         [ForeignKey("BlogPostId")]
@@ -17,7 +17,10 @@ namespace Yavsc.Models.Access
 
         [JsonIgnore]
         [ForeignKey("CircleId")]
-        public virtual Circle Allowed { get; set; }
+        public virtual Circle Allowed { get; set; }
+
+        public bool Comment { get; set; }
+        
 
     }
 }
