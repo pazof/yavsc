@@ -37,7 +37,7 @@ namespace Yavsc.Controllers
         }
         // GET: api/Estimate{?ownerId=User.GetUserId()}
         [HttpGet]
-        public IActionResult GetEstimates(string ownerId = null)
+        public IActionResult GetEstimates(string? ownerId = null)
         {
             if (ownerId == null) ownerId = User.GetUserId();
             else if (!UserIsAdminOrThis(ownerId)) // throw new Exception("Not authorized") ;

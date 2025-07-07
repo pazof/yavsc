@@ -1,8 +1,7 @@
 using Yavsc.Attributes.Validation;
 namespace Yavsc.Models.FileSystem
 {
-
-    public class MoveFileQuery
+    public class RenameFileQuery
     {
         [ValidRemoteUserFilePath]
         [YaStringLength(1, 512)]

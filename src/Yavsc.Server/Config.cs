@@ -80,12 +80,12 @@ public static class Config
                 PostLogoutRedirectUris = { "https://localhost:5003/signout-callback-oidc",
                  "http://localhost:5002/signout-callback-oidc" },
 
-                AllowedScopes = { 
+                AllowedScopes = {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.OfflineAccess,
-                    "scope2" }
+                    "scope2" },
             },
         };
 

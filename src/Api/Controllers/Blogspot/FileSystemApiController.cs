@@ -111,9 +111,9 @@ namespace Yavsc.ApiControllers
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
-            var info = user.MoveUserFileToDir(query.id, query.to);
+            var info = user.MoveUserFileToDir(query.Id, query.To);
             if (!info.Done) return new BadRequestObjectResult(info);
-            return Ok(new { moved = query.id });
+            return Ok(new { moved = query.Id });
         }
 
         [HttpPost]
@@ -124,21 +124,21 @@ namespace Yavsc.ApiControllers
             if (!ModelState.IsValid) {
                 var idvr = new ValidRemoteUserFilePathAttribute();
 
-                return this.BadRequest(new { id = idvr.IsValid(query.id), to = idvr.IsValid(query.to), errors = ModelState });
+                return this.BadRequest(new { id = idvr.IsValid(query.Id), to = idvr.IsValid(query.To), errors = ModelState });
             }
-            _logger.LogInformation($"Valid move query: {query.id} => {query.to}");
+            _logger.LogInformation($"Valid move query: {query.Id} => {query.To}");
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
             try {
-                if (Config.UserFilesOptions.FileProvider.GetFileInfo(Path.Combine(user.UserName, query.id)).Exists)
+                if (Config.UserFilesOptions.FileProvider.GetFileInfo(Path.Combine(user.UserName, query.Id)).Exists)
                 {
-                    var result = user.MoveUserFile(query.id, query.to);
+                    var result = user.MoveUserFile(query.Id, query.To);
                     if (!result.Done) return new BadRequestObjectResult(result);
                 }
                 else {
-                    var result = user.MoveUserDir(query.id, query.to);
+                    var result = user.MoveUserDir(query.Id, query.To);
                     if (!result.Done) return new BadRequestObjectResult(result);
                 }
             }

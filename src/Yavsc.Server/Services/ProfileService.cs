@@ -57,18 +57,18 @@ namespace Yavsc.Services
                 var roles = await this._userManager.GetRolesAsync(user);
                 if (roles.Count()>0)
                 {
-                    claims.AddRange(roles.Select(r => new Claim(Constants.RoleClaimName, r)));
+                    claims.AddRange(roles.Select(r => new Claim(JwtClaimTypes.Role, r)));
                 }
             }
             return claims;
         }
 
-         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
+        public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var subjectId = GetSubjectId(context.Subject);
-            if (subjectId==null) return;
+            if (subjectId == null) return;
             var user = await _userManager.FindByIdAsync(subjectId);
-            if (user==null) return ;
+            if (user == null) return;
             context.IssuedClaims = await GetClaimsFromUserAsync(context, user);
         }
 

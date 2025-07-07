@@ -33,12 +33,16 @@ using Yavsc.Server.Helpers;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Protocols.Configuration;
+using IdentityModel;
+using System.Security.Claims;
+using IdentityServer8.Security;
 
 namespace Yavsc.Extensions;
 
 
 public static class HostingExtensions
 {
+  
     public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
                 bool enableDirectoryBrowsing = false)
     {
@@ -191,11 +195,13 @@ public static class HostingExtensions
             {
                 policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "Performer");
+                    .RequireClaim(JwtClaimTypes.Role, "Performer");
             });
             options.AddPolicy("AdministratorOnly", policy =>
             {
-                _ = policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
+                _ = policy
+                    .RequireAuthenticatedUser()
+                    .RequireClaim(JwtClaimTypes.Role, Constants.AdminGroupName);
             });
 
             options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
@@ -284,12 +290,13 @@ public static class HostingExtensions
 
              // see https://IdentityServer8.readthedocs.io/en/latest/topics/resources.html
              options.EmitStaticAudienceClaim = true;
+             
          })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
-            .AddAspNetIdentity<ApplicationUser>()
             .AddProfileService<ProfileService>()
+            .AddAspNetIdentity<ApplicationUser>()
            ;
         if (builder.Environment.IsDevelopment())
         {
@@ -306,9 +313,9 @@ public static class HostingExtensions
             RSA rsa = RSA.Create();
             rsa.ImportFromPem(File.ReadAllText(certFileInfo.FullName));
             var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256)
-        {
-          CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
-        };
+            {
+                CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
+            };
             identityServerBuilder.AddSigningCredential(signingCredentials);
         }
         return identityServerBuilder;
@@ -372,7 +379,7 @@ public static class HostingExtensions
         app.UseAuthorization();
         app.UseCors("default");
         app.MapDefaultControllerRoute();
-        //pp.MapRazorPages();
+        //app.MapRazorPages();
         app.MapHub<ChatHub>("/chatHub");
        
         WorkflowHelpers.ConfigureBillingService();
@@ -406,5 +413,88 @@ public static class HostingExtensions
             FileInfo safile = new FileInfo(googleServiceAccountJsonFile);
             Config.GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
         }
+    }
+}
+
+public class MyIdentityStore : IUserClaimStore<IdentityUser>
+{
+    public Task AddClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IdentityResult> CreateAsync(IdentityUser user, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IdentityResult> DeleteAsync(IdentityUser user, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IdentityUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IdentityUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IList<Claim>> GetClaimsAsync(IdentityUser user, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<string?> GetNormalizedUserNameAsync(IdentityUser user, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<string> GetUserIdAsync(IdentityUser user, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<string?> GetUserNameAsync(IdentityUser user, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IList<IdentityUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task ReplaceClaimAsync(IdentityUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SetNormalizedUserNameAsync(IdentityUser user, string? normalizedName, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SetUserNameAsync(IdentityUser user, string? userName, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IdentityResult> UpdateAsync(IdentityUser user, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }

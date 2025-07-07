@@ -32,7 +32,8 @@ public class NativeConfidentialController : Controller
         [FromBody] DeviceDeclaration declaration)
     {
       var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+      if (uid == null)
+        throw new InvalidOperationException("no name identifier from claims");
       if (!ModelState.IsValid)
       {
         _logger.LogError("Invalid model for GCMD");

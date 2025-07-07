@@ -69,12 +69,19 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null) return this.NotFound();
+            try
+            {
+                var blog = await blogSpotService.Details(User, id.Value);
+                ViewData["apicmtctlr"] = "/api/blogcomments";
+                ViewData["moderatoFlag"] = User.IsInRole(Constants.BlogModeratorGroupName);
 
-            var blog = await blogSpotService.Details(User, id.Value);
-            ViewData["apicmtctlr"] = "/api/blogcomments";
-            ViewData["moderatoFlag"] = User.IsInRole(Constants.BlogModeratorGroupName);
+                return View(blog);
 
-            return View(blog);
+            }
+            catch (AuthorizationFailureException ex)
+            {
+                return Challenge();
+            }
         }
         void SetLangItems()
         {
@@ -98,12 +105,12 @@ namespace Yavsc.Controllers
 
         // POST: Blog/Create
         [HttpPost, Authorize, ValidateAntiForgeryToken]
-        public IActionResult Create(BlogPostBase blogInput)
+        public IActionResult Create(BlogPostEditViewModel blogInput)
         {
             if (ModelState.IsValid)
             {
                 BlogPost post = blogSpotService.Create(User.GetUserId(),
-                blogInput);
+                 BlogPostEditViewModel.FromViewModel(blogInput));
                 return RedirectToAction("Index");
             }
             return View("Edit", blogInput);
@@ -119,20 +126,13 @@ namespace Yavsc.Controllers
             }
             try
             {
-                BlogPost blog = await blogSpotService.GetPostForEdition(User, id.Value);
+                var blog = await blogSpotService.GetPostForEdition(User, id.Value);
                 if (blog == null)
                 {
                     return NotFound();
                 }
                 SetLangItems();
-                return View(new BlogPostEditViewModel
-                {
-                    Id = blog.Id,
-                    Title = blog.Title,
-                    Content = blog.Content,
-                    ACL = blog.ACL,
-                    Photo = blog.Photo
-                });
+                return View(blog);
 
             }
             catch (AuthorizationFailureException)
@@ -164,7 +164,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            BlogPost blog = await blogSpotService.GetPostForEdition(User, id.Value);
+            var blog = await blogSpotService.GetBlogPostAsync(id.Value);
             if (blog == null)
             {
                 return NotFound();

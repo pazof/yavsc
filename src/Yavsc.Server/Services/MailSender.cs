@@ -1,13 +1,9 @@
-using System.Text;
-using System;
 using System.Net;
-using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using Yavsc.Abstract.Manage;
 using Microsoft.AspNetCore.Identity;
 using Yavsc.Interface;
 using Yavsc.Settings;
@@ -27,8 +23,7 @@ namespace Yavsc.Services
         public MailSender(
             IOptions<SiteSettings> sitesOptions, 
             IOptions<SmtpSettings> smtpOptions,
-            ILoggerFactory loggerFactory,
-            IStringLocalizer<Yavsc.YavscLocalization> localizer
+            ILoggerFactory loggerFactory
             )
         {
             this.localizer = localizer;

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Api.Helpers;
 using Yavsc.Server.Helpers;
+using System.Diagnostics;
 
 namespace Yavsc.WebApi.Controllers
 {
@@ -30,9 +31,9 @@ namespace Yavsc.WebApi.Controllers
                 return new BadRequestObjectResult(
                         new { error = "user not found" });
             var uid = User.GetUserId();
-
+            Debug.Assert(uid != null, "uid is null");
             var userData = await GetUserData(uid);
-
+            Debug.Assert(userData != null, "userData is null");
             var user = new Yavsc.Models.Auth.Me(userData.Id, userData.UserName, userData.Email,
             userData.Avatar,
             userData.PostalAddress, userData.DedicatedGoogleCalendar);
@@ -57,7 +58,7 @@ namespace Yavsc.WebApi.Controllers
         [HttpGet("myhost")]
         public IActionResult MyHost ()
         {
-            return Ok(new { host = Request.ForHost() });
+            return Ok(new { host = Request.ForwardedFor() });
         }
 
       

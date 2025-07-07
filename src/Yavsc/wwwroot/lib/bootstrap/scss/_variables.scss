@@ -1607,6 +1607,7 @@ $list-group-action-active-color:    var(--#{$prefix}body-color) !default;
 $list-group-action-active-bg:       var(--#{$prefix}secondary-bg) !default;
 // scss-docs-end list-group-variables
 
+
 // Image thumbnails
 
 // scss-docs-start thumbnail-variables
@@ -1617,6 +1618,7 @@ $thumbnail-border-color:            var(--#{$prefix}border-color) !default;
 $thumbnail-border-radius:           var(--#{$prefix}border-radius) !default;
 $thumbnail-box-shadow:              var(--#{$prefix}box-shadow-sm) !default;
 // scss-docs-end thumbnail-variables
+
 
 // Figures
 
@@ -1745,3 +1747,5 @@ $kbd-bg:                            var(--#{$prefix}body-color) !default;
 $nested-kbd-font-weight:            null !default; // Deprecated in v5.2.0, removing in v6
 
 $pre-color:                         null !default;
+
+@import "variables-dark"; // TODO: can be removed safely in v6, only here to avoid breaking changes in v5.3

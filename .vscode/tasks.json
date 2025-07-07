@@ -9,8 +9,12 @@
             "args": [
                 "build",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+                "/consoleloggerparameters:NoSummary;ForceNoAlign",
+
             ],
+			"group": "build",
+			"isBuildCommand": true,
+			"isTestCommand": false,
             "problemMatcher": "$msCompile"
         },
 		{

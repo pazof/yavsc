@@ -29,11 +29,13 @@ using Microsoft.Extensions.Localization;
 
 namespace Yavsc
 {
+    using System.Diagnostics;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.EntityFrameworkCore;
     using Models;
     using Models.Chat;
     using Yavsc.Abstract.Chat;
+    using Yavsc.Helpers;
     using Yavsc.Services;
     public partial class ChatHub : Hub, IDisposable
     {
@@ -192,10 +194,11 @@ namespace Yavsc
                 NotifyUserInRoom(NotificationTypes.Error, room, "already registered.");
                 return;
             }
-            string userName = Context.User.Identity.Name;
+            Debug.Assert(Context.User != null);
+            string userName = Context.User.GetUserName();
             var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
 
-            var newroom = new ChatRoom { Name = room, OwnerId = user.Id };
+            var newroom = new ChatRoom { Name = room, OwnerId = Context.User.GetUserId() };
             ChatRoomInfo chanInfo;
             if (_cxManager.TryGetChanInfo(room, out chanInfo))
             {
@@ -319,7 +322,7 @@ namespace Yavsc
 
         async Task NotifyUser(string type, string targetId, string message)
         {
-            _logger.LogInformation("notifying user  {type} {targetId} : {message}");
+            _logger.LogInformation($"notifying user  {type} {targetId} : {message}");
             await Clients.Caller.SendAsync("notifyUser", type, targetId, message);
         }
 
@@ -331,6 +334,8 @@ namespace Yavsc
         [Authorize]
         public async Task SendPV(string userName,  string message)
         {
+            // Authorized code
+            Debug.Assert(Context.User != null);
             _logger.LogInformation($"Sending pv to {userName}");
 
             if (!InputValidator.ValidateUserName(userName)) 
@@ -344,19 +349,21 @@ namespace Yavsc
                 return ;
             }
             _logger.LogInformation($"Message form is validated.");
+                    var identityUserName = Context.User.GetUserName();
 
-            if (userName[0] != '?')
+            if (userName[0] != '?' && Context.User!=null)
                 if (!Context.User.IsInRole(Constants.AdminGroupName))
                 {
+
                     var bl = _dbContext.BlackListed
                         .Include(r => r.User)
                         .Include(r => r.Owner)
-                        .Where(r => r.User.UserName == Context.User.Identity.Name && r.Owner.UserName == userName)
+                        .Where(r => r.User.UserName == identityUserName && r.Owner.UserName == userName)
                         .Select(r => r.OwnerId);
 
                     if (bl.Count() > 0)
                     {
-                        _logger.LogError($"Black listed : {Context.User.Identity.Name}");
+                        _logger.LogError($"Black listed : {identityUserName}");
                         await NotifyUser(NotificationTypes.PrivateMessageDenied, userName, "you are black listed.");
                         return;
                     }
@@ -372,7 +379,7 @@ namespace Yavsc
                 _logger.LogInformation($"cx: {connectionId}");
                 var cli = Clients.Client(connectionId);
                 _logger.LogInformation($"cli: {cli.ToString()}");
-                await cli.SendAsync("addPV", Context.User.Identity.Name, message);
+                await cli.SendAsync("addPV", identityUserName, message);
                 _logger.LogInformation($"Sent pv to cx {connectionId}");
             }
         }
@@ -380,6 +387,9 @@ namespace Yavsc
         [Authorize]
         public async Task SendStream(string connectionId, long streamId,  string message)
         {
+            // Authorized code
+            Debug.Assert(Context.User != null);
+            Debug.Assert(Context.User.Identity != null);
             if (!InputValidator.ValidateMessage(message)) return;
             var sender = Context.User.Identity.Name;
             var cli = Clients.Client(connectionId);

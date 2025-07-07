@@ -35,3 +35,9 @@ img.blogphoto {
   padding: .3em;
   border: solid black 1px;
 }
+
+input[type='checkbox'] {
+  appearance: auto;
+  min-width: 1em;
+  min-height: 1em;
+}

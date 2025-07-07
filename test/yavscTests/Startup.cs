@@ -127,7 +127,7 @@ namespace yavscTests
             services.AddAuthorizationBuilder()
                 .AddPolicy("AdministratorOnly", policy =>
                 {
-                    policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", Constants.AdminGroupName);
+                    policy.RequireClaim(JwtClaimType.Role, Constants.AdminGroupName);
                 })
                 .AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName))
                 .AddPolicy("Bearer", new AuthorizationPolicyBuilder()

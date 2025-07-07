@@ -11,8 +11,6 @@
 */
 
 using IdentityModel;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Helpers;
@@ -63,7 +61,8 @@ internal class Program
                      options.IncludeErrorDetails = true;
                      options.Authority = "https://localhost:5001";
                      options.TokenValidationParameters =
-                         new() { ValidateAudience = false };
+                         new() { ValidateAudience = false, RoleClaimType = JwtClaimTypes.Role };
+                     options.MapInboundClaims = true;
                  });
 
         services.AddDbContext<ApplicationDbContext>(options =>
@@ -74,9 +73,9 @@ internal class Program
            .AddTransient<ICalendarManager, CalendarManager>();
         services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
         /*
+          services.AddIdentityApiEndpoints<ApplicationUser>();
           services.AddSingleton<IConnexionManager, HubConnectionManager>();
           services.AddSingleton<ILiveProcessor, LiveProcessor>();
-          services.AddIdentityApiEndpoints<ApplicationUser>();
           services.AddSession();
         */
         WorkflowHelpers.ConfigureBillingService();
@@ -101,15 +100,10 @@ internal class Program
             app.MapDefaultControllerRoute();
             app.MapGet("/identity", (HttpContext context) =>
                 new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
-        );
+            );
 
             //     app.UseSession(); 
             await app.RunAsync();
         }
-        ;
-
-
-
-
     }
 }

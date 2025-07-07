@@ -25,7 +25,7 @@ public class BlogSpotService
         _context = context;
     }
 
-    public BlogPost Create(string userId, BlogPostBase blogInput)
+    public BlogPost Create(string userId, BlogPostEditViewModel blogInput)
     {
         BlogPost post = new BlogPost
         {
@@ -38,7 +38,7 @@ public class BlogSpotService
         _context.SaveChanges(userId);
         return post;
     }
-    public async Task<BlogPost> GetPostForEdition(ClaimsPrincipal user, long blogPostId)
+    public async Task<BlogPostEditViewModel> GetPostForEdition(ClaimsPrincipal user, long blogPostId)
     {
         var blog = await _context.BlogSpot.Include(x => x.Author).Include(x => x.ACL).SingleAsync(m => m.Id == blogPostId);
         var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
@@ -46,7 +46,7 @@ public class BlogSpotService
         {
             throw new AuthorizationFailureException(auth);
         }
-        return blog;
+        return BlogPostEditViewModel.From(blog);
     }
 
     public async Task<BlogPost> Details(ClaimsPrincipal user, long blogPostId)
@@ -181,5 +181,13 @@ public class BlogSpotService
              ).Where(x => x.Title == title).OrderByDescending(
                  x => x.DateCreated
              ).ToList();
+    }
+
+    public async Task<BlogPost?> GetBlogPostAsync(long value)
+    {
+        return await _context.BlogSpot
+        .Include(b => b.Author)
+        .Include(b => b.ACL)
+        .SingleOrDefaultAsync(x => x.Id == value);
     }
 }

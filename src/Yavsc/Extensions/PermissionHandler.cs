@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 using Yavsc.Helpers;
+using Yavsc.Migrations;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.ViewModels.Auth;
@@ -30,6 +31,10 @@ public class PermissionHandler : IAuthorizationHandler
                 }
                 else if (IsOwner(context.User, context.Resource)
                     || IsSponsor(context.User, context.Resource))
+                {
+                    context.Succeed(requirement);
+                }
+                else if (context.User.IsInRole("Administrator"))
                 {
                     context.Succeed(requirement);
                 }

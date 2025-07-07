@@ -10,7 +10,6 @@
   @include rfs($nav-link-font-size, --#{$prefix}nav-link-font-size);
   --#{$prefix}nav-link-font-weight: #{$nav-link-font-weight};
   --#{$prefix}nav-link-color: #{$nav-link-color};
-  --#{$prefix}nav-link-background-color: #{$dropdown-dark-bg};
   --#{$prefix}nav-link-hover-color: #{$nav-link-hover-color};
   --#{$prefix}nav-link-disabled-color: #{$nav-link-disabled-color};
   // scss-docs-end nav-css-vars
@@ -28,9 +27,8 @@
   @include font-size(var(--#{$prefix}nav-link-font-size));
   font-weight: var(--#{$prefix}nav-link-font-weight);
   color: var(--#{$prefix}nav-link-color);
-  background-color: var(--#{$prefix}nav-link-background-color);
   text-decoration: if($link-decoration == none, null, none);
-  background-color: var(--#{$prefix}nav-tabs-link-active-bg);
+  background: none;
   border: 0;
   @include transition($nav-link-transition);
 

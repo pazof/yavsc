@@ -21,7 +21,6 @@ namespace Yavsc.ViewModels.Blog
         [Display(Name = "Liste de contrôle d'accès")]
         public virtual List<CircleAuthorizationToBlogPost>? ACL { get; set; }
 
-        public bool Publish { get; set; }
 
     }
 }

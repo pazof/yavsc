@@ -42,24 +42,24 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         [InverseProperty("Author"), JsonIgnore]
-        public virtual List<Blog.BlogPost> Posts { get; set; }
+        public virtual List<Blog.BlogPost>? Posts { get; set; }
 
         /// <summary>
         /// User's contact list
         /// </summary>
         /// <returns></returns>
         [InverseProperty("Owner"), JsonIgnore]
-        public virtual List<Contact> Book { get; set; }
+        public virtual List<Contact>? Book { get; set; }
 
         /// <summary>
         /// External devices using the API
         /// </summary>
         /// <returns></returns>
         [InverseProperty("DeviceOwner"), JsonIgnore]
-        public virtual List<DeviceDeclaration> DeviceDeclaration { get; set; }
+        public virtual List<DeviceDeclaration>? DeviceDeclaration { get; set; }
 
         [InverseProperty("Owner"), JsonIgnore]
-        public virtual List<ChatConnection> Connections { get; set; }
+        public virtual List<ChatConnection>? Connections { get; set; }
 
         /// <summary>
         /// User's circles
@@ -67,7 +67,7 @@ namespace Yavsc.Models
         /// <returns></returns>
         [InverseProperty("Owner"), JsonIgnore]
 
-        public virtual List<Circle> Circles { get; set; }
+        public virtual List<Circle>? Circles { get; set; }
 
         /// <summary>
         /// Billing postal address
@@ -82,14 +82,14 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         [MaxLength(512)]
-        public string DedicatedGoogleCalendar { get; set; }
+        public string? DedicatedGoogleCalendar { get; set; }
 
         public override string ToString()
         {
             return this.Id + " " + this.AccountBalance?.Credits.ToString() + this.Email + " " + this.UserName + " $" + this.AccountBalance?.Credits.ToString();
         }
 
-        public virtual List<BankIdentity> BankInfo { get; set; }
+        public virtual List<BankIdentity>? BankInfo { get; set; }
 
         public long DiskQuota { get; set; } = 512 * 1024 * 1024;
         public long DiskUsage { get; set; } = 0;
@@ -98,21 +98,21 @@ namespace Yavsc.Models
 
         [JsonIgnore]
         [InverseProperty("Owner")]
-        public virtual List<BlackListed> BlackList { get; set; }
+        public virtual List<BlackListed>? BlackList { get; set; }
 
         public bool AllowMonthlyEmail { get; set; } = false;
 
         [JsonIgnore]
         [InverseProperty("Owner")]
-        public virtual List<ChatRoom> Rooms { get; set; }
+        public virtual List<ChatRoom>? Rooms { get; set; }
 
         [JsonIgnore]
         [InverseProperty("User")]
-        public virtual List<ChatRoomAccess> RoomAccess { get; set; }
+        public virtual List<ChatRoomAccess>? RoomAccess { get; set; }
 
         [JsonIgnore]
         [InverseProperty("Member")]
-        public virtual List<CircleMember> Membership { get; set; }
+        public virtual List<CircleMember>? Membership { get; set; }
 
         IAccountBalance? IApplicationUser.AccountBalance => AccountBalance;
 
