@@ -20,11 +20,11 @@ install_service:
 	sudo systemctl enable yavsc
 
 pushInProd: publish
-	@sudo systemctl stop $(SERVICE_PROD) 
-	@sudo cp -a bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/* $(DESTDIR)
-	@sudo chown -R $(USER_AND_GROUP) $(DESTDIR)
-	@sudo sync
-	@sudo systemctl start $(SERVICE_PROD)
+	sudo systemctl stop $(SERVICE_PROD) 
+	sudo cp -a bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/* $(DESTDIR)
+	sudo chown -R $(USER_AND_GROUP) $(DESTDIR)
+	sudo sync
+	sudo systemctl start $(SERVICE_PROD)
 
 %.css: %.scss
 	scss $^ > $@
