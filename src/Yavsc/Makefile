@@ -26,8 +26,13 @@ pushInProd: publish
 	@sudo sync
 	@sudo systemctl start $(SERVICE_PROD)
 
+%.css: %.scss
+	scss $^ > $@
+
 %.min.js: %.js
 	jsmin < $^ > $@
 
 %.min.css: %.css
 	jsmin < $^ > $@
+
+css: wwwroot/css/site.css
