@@ -8,6 +8,7 @@ namespace Yavsc
         public string Title { get; set; } = "Yavsc";
         
         public string Slogan { get; set; } = "";
+        public string Banner { get; set; } = "";
 
         public string StyleSheet { get; set; } = "site.css";
         public string FavIcon { get; set; } = "favicon.ico";

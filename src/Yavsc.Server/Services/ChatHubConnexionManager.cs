@@ -130,7 +130,6 @@ namespace Yavsc.Services
         public bool Part(string cxId, string roomName, string reason)
         {
             ChatRoomInfo chanInfo;
-            var userName = ChatUserNames[cxId];
             if (Channels.TryGetValue(roomName, out chanInfo))
             {
                 if (!chanInfo.Users.Contains(cxId))

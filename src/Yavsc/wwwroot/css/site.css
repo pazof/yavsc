@@ -16,8 +16,9 @@
 /* bootstrap.css | http://localhost:5000/lib/bootstrap/css/bootstrap.css */
 div.carousel-inner > div.item > div.carousel-caption-s {
   margin: .5em;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #ffffc8;
+  background-color: #000000cf;
+  color:#ffffff;
+ 
   font-weight: bold;
   padding: .5em; }
 
@@ -40,4 +41,9 @@ input[type='checkbox'] {
   appearance: auto;
   min-width: 1em;
   min-height: 1em;
+}
+
+.container {
+  background-color: #000000cf;
+  color:#ffffff;
 }

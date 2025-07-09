@@ -16,7 +16,10 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("header", false)
 </head>
-<body>
+<body style="background-image: url('@Config.SiteSetup.Banner'); 
+background-position: 0%;
+background-attachment: fixed;
+">
         <partial name="_Nav" />
         @RenderSection("ctxmenu", required: false)
           @if (ViewData["Notify"] != null)

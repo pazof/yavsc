@@ -3,18 +3,23 @@ using Yavsc.Models.Blog;
 
 namespace Yavsc.ViewModels.Blog;
 
-public class BlogPostEditViewModel : BlogPostBase
+
+public class BlogPostCreateViewModel : BlogPostBase
+{
+    public bool Publish { get; set; }
+}
+
+public class BlogPostEditViewModel : BlogPostCreateViewModel
 {
 
     [Required]
 
-    public  required long Id { get; set; }
+    public required long Id { get; set; }
 
-    public bool Publish { get; set; }
 
     public BlogPostEditViewModel()
     {
-    
+
     }
 
 

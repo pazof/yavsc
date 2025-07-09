@@ -95,7 +95,7 @@ namespace Yavsc.Controllers
         [Authorize()]
         public IActionResult Create(string title)
         {
-            var result = new BlogPostBase
+            var result = new BlogPostCreateViewModel
             {
                 Title = title
             };
