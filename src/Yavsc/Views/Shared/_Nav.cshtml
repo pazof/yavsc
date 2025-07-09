@@ -1,15 +1,12 @@
-
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark" aria-label="Yavsc">
    
-      <a href="~/" class="navbar-brand"><img src="~/images/it/free-sofware.svg" class="icon-banner" alt="Lua"></a>
-
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
       data-bs-target="#navbar" aria-controls="navbar" 
       aria-expanded="true" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbar">
+      <div class="collapse navbar-collapse" id="navbar" style="background-image: @Config.SiteSetup.Banner;">
         <ul class="navbar-nav me-auto" >
           <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
           <li class="nav-item"><a asp-controller="Blogspot" asp-action="Index" class="nav-link">@SR["Blogs"]</a></li>

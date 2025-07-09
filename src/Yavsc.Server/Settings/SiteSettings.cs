@@ -6,6 +6,7 @@ namespace Yavsc
     public class SiteSettings
     {
         public string Title { get; set; } = "Yavsc";
+        
         public string Slogan { get; set; } = "";
 
         public string StyleSheet { get; set; } = "site.css";
