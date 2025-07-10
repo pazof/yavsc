@@ -314,7 +314,17 @@ public static class HostingExtensions
                 await db.Database.MigrateAsync();
             }
         }
-
+        app.Use(async (context, next) => {
+            if (context.Request.Path.StartsWithSegments("/robots.txt")) {
+                var robotsTxtPath = System.IO.Path.Combine(app.Environment.WebRootPath, $"robots.txt");
+                string output = "User-agent: *  \nDisallow: /";
+                if (File.Exists(robotsTxtPath)) {
+                    output = await File.ReadAllTextAsync(robotsTxtPath);
+                }
+                context.Response.ContentType = "text/plain";
+                await context.Response.WriteAsync(output);
+            } else await next();
+        });
         app.UseStaticFiles();
         app.UseRouting();
         app.UseIdentityServer();

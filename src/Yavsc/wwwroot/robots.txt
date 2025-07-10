@@ -1,5 +1,6 @@
 User-agent: *
 Disallow: /signin
+Disallow: /signin-google
 Disallow: /Account/Register
+Disallow: /External
 Disallow: /Command/Create
-
