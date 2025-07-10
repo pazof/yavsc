@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication;
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -28,8 +29,7 @@ builder.Services
     .AddCookie("Cookies")
     .AddOpenIdConnect("oidc", options =>
     {
-        options.Authority = "https://localhost:5001";
-
+        options.Authority = builder.Configuration.GetValue<String>("AuthIssuer");
         options.ClientId = "mvc";
         options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
         options.ResponseType = "code";
@@ -47,6 +47,7 @@ builder.Services
 
 using (var app = builder.Build())
 {
+
     if (app.Environment.IsDevelopment())
         app.UseDeveloperExceptionPage();
     else

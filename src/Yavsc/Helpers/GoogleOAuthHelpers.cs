@@ -74,7 +74,7 @@ namespace Yavsc.Helpers
             );
             return googleLogin;
         }
- public static async Task<UserCredential> GetGoogleCredential(GoogleAuthSettings googleAuthSettings, IDataStore store, string googleUserLoginKey)
+        public static async Task<UserCredential> GetGoogleCredential(GoogleAuthSettings googleAuthSettings, IDataStore store, string googleUserLoginKey)
        {
            if (string.IsNullOrEmpty(googleUserLoginKey))
                throw new InvalidOperationException("No Google login");
@@ -82,7 +82,7 @@ namespace Yavsc.Helpers
             var token = await store.GetAsync<TokenResponse>(googleUserLoginKey);
             // token != null
             var c = SystemClock.Default;
-            if (token.IsExpired(c)) {
+            if (token.IsStale) {
                 token = await RefreshToken(googleAuthSettings, token);
             }
             return new UserCredential(flow, googleUserLoginKey, token);

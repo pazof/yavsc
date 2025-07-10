@@ -43,57 +43,6 @@ namespace Yavsc.Extensions;
 public static class HostingExtensions
 {
   
-    public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
-                bool enableDirectoryBrowsing = false)
-    {
-
-        var userFilesDirInfo = new DirectoryInfo(Config.SiteSetup.Blog);
-        AbstractFileSystemHelpers.UserFilesDirName = userFilesDirInfo.FullName;
-
-        if (!userFilesDirInfo.Exists) userFilesDirInfo.Create();
-
-        Config.UserFilesOptions = new FileServerOptions()
-        {
-            FileProvider = new PhysicalFileProvider(AbstractFileSystemHelpers.UserFilesDirName),
-            RequestPath = PathString.FromUriComponent(Constants.UserFilesPath),
-            EnableDirectoryBrowsing = enableDirectoryBrowsing,
-        };
-        Config.UserFilesOptions.EnableDefaultFiles = true;
-        Config.UserFilesOptions.StaticFileOptions.ServeUnknownFileTypes = true;
-
-        var avatarsDirInfo = new DirectoryInfo(Config.SiteSetup.Avatars);
-        if (!avatarsDirInfo.Exists) avatarsDirInfo.Create();
-        Config.AvatarsDirName = avatarsDirInfo.FullName;
-
-        Config.AvatarsOptions = new FileServerOptions()
-        {
-            FileProvider = new PhysicalFileProvider(Config.AvatarsDirName),
-            RequestPath = PathString.FromUriComponent(Constants.AvatarsPath),
-            EnableDirectoryBrowsing = enableDirectoryBrowsing
-        };
-
-
-        var gitdirinfo = new DirectoryInfo(Config.SiteSetup.GitRepository);
-        Config.GitDirName = gitdirinfo.FullName;
-        if (!gitdirinfo.Exists) gitdirinfo.Create();
-        Config.GitOptions = new FileServerOptions()
-        {
-            FileProvider = new PhysicalFileProvider(Config.GitDirName),
-            RequestPath = PathString.FromUriComponent(Constants.GitPath),
-            EnableDirectoryBrowsing = enableDirectoryBrowsing,
-        };
-        Config.GitOptions.DefaultFilesOptions.DefaultFileNames.Add("index.md");
-        Config.GitOptions.StaticFileOptions.ServeUnknownFileTypes = true;
-
-        app.UseFileServer(Config.UserFilesOptions);
-
-        app.UseFileServer(Config.AvatarsOptions);
-
-        app.UseFileServer(Config.GitOptions);
-        app.UseStaticFiles();
-        return app;
-    }
-
     internal static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
         IServiceCollection services = LoadConfiguration(builder);
@@ -231,23 +180,13 @@ public static class HostingExtensions
         // OAuth2AppSettings
         var googleAuthSettings = builder.Configuration.GetSection("Authentication:Google");
 
-        string? googleClientFile = builder.Configuration["Authentication:Google:GoogleWebClientJson"];
-        string? googleServiceAccountJsonFile = builder.Configuration["Authentication:Google:GoogleServiceAccountJson"];
-        if (googleClientFile != null)
-        {
-            Config.GoogleWebClientConfiguration = new ConfigurationBuilder().AddJsonFile(googleClientFile).Build();
-        }
+        //LoadGoogleConfig(builder.Configuration);
 
-        if (googleServiceAccountJsonFile != null)
-        {
-            FileInfo safile = new FileInfo(googleServiceAccountJsonFile);
-            Config.GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
-        }
+        
         var services = builder.Services;
         _ = services.AddControllersWithViews()
             .AddNewtonsoftJson();
-        LoadGoogleConfig(builder.Configuration);
-
+       
         services.Configure<SiteSettings>(siteSection);
         services.Configure<SmtpSettings>(smtpSection);
         services.Configure<PayPalSettings>(paypalSection);
@@ -414,87 +353,57 @@ public static class HostingExtensions
             Config.GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
         }
     }
-}
-
-public class MyIdentityStore : IUserClaimStore<IdentityUser>
-{
-    public Task AddClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+  
+    public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
+                bool enableDirectoryBrowsing = false)
     {
-        throw new NotImplementedException();
+
+        var userFilesDirInfo = new DirectoryInfo(Config.SiteSetup.Blog);
+        AbstractFileSystemHelpers.UserFilesDirName = userFilesDirInfo.FullName;
+
+        if (!userFilesDirInfo.Exists) userFilesDirInfo.Create();
+
+        Config.UserFilesOptions = new FileServerOptions()
+        {
+            FileProvider = new PhysicalFileProvider(AbstractFileSystemHelpers.UserFilesDirName),
+            RequestPath = PathString.FromUriComponent(Constants.UserFilesPath),
+            EnableDirectoryBrowsing = enableDirectoryBrowsing,
+        };
+        Config.UserFilesOptions.EnableDefaultFiles = true;
+        Config.UserFilesOptions.StaticFileOptions.ServeUnknownFileTypes = true;
+
+        var avatarsDirInfo = new DirectoryInfo(Config.SiteSetup.Avatars);
+        if (!avatarsDirInfo.Exists) avatarsDirInfo.Create();
+        Config.AvatarsDirName = avatarsDirInfo.FullName;
+
+        Config.AvatarsOptions = new FileServerOptions()
+        {
+            FileProvider = new PhysicalFileProvider(Config.AvatarsDirName),
+            RequestPath = PathString.FromUriComponent(Constants.AvatarsPath),
+            EnableDirectoryBrowsing = enableDirectoryBrowsing
+        };
+
+
+        var gitdirinfo = new DirectoryInfo(Config.SiteSetup.GitRepository);
+        Config.GitDirName = gitdirinfo.FullName;
+        if (!gitdirinfo.Exists) gitdirinfo.Create();
+        Config.GitOptions = new FileServerOptions()
+        {
+            FileProvider = new PhysicalFileProvider(Config.GitDirName),
+            RequestPath = PathString.FromUriComponent(Constants.GitPath),
+            EnableDirectoryBrowsing = enableDirectoryBrowsing,
+        };
+        Config.GitOptions.DefaultFilesOptions.DefaultFileNames.Add("index.md");
+        Config.GitOptions.StaticFileOptions.ServeUnknownFileTypes = true;
+
+        app.UseFileServer(Config.UserFilesOptions);
+
+        app.UseFileServer(Config.AvatarsOptions);
+
+        app.UseFileServer(Config.GitOptions);
+        app.UseStaticFiles();
+        return app;
     }
 
-    public Task<IdentityResult> CreateAsync(IdentityUser user, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
 
-    public Task<IdentityResult> DeleteAsync(IdentityUser user, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Dispose()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IdentityUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IdentityUser?> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IList<Claim>> GetClaimsAsync(IdentityUser user, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string?> GetNormalizedUserNameAsync(IdentityUser user, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string> GetUserIdAsync(IdentityUser user, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string?> GetUserNameAsync(IdentityUser user, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IList<IdentityUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task RemoveClaimsAsync(IdentityUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task ReplaceClaimAsync(IdentityUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task SetNormalizedUserNameAsync(IdentityUser user, string? normalizedName, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task SetUserNameAsync(IdentityUser user, string? userName, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IdentityResult> UpdateAsync(IdentityUser user, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
 }
