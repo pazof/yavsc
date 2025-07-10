@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Interfaces;
 using Yavsc.Models;
@@ -6,10 +7,12 @@ using Yavsc.Models;
 public class ExternalIdentityManager : IExternalIdentityManager
 {
     private ApplicationDbContext _applicationDbContext;
+    private SignInManager<ApplicationUser> _signInManager;
 
-    public ExternalIdentityManager(ApplicationDbContext applicationDbContext)
+    public ExternalIdentityManager(ApplicationDbContext applicationDbContext, SignInManager<ApplicationUser> signInManager)
     {
         _applicationDbContext = applicationDbContext;
+        _signInManager = signInManager;
     }
     public ApplicationUser AutoProvisionUser(string provider, string providerUserId, List<Claim> claims)
     {
@@ -18,7 +21,8 @@ public class ExternalIdentityManager : IExternalIdentityManager
 
     public async Task<ApplicationUser?> FindByExternaleProviderAsync(string provider, string providerUserId)
     {
-        var user = await _applicationDbContext.AspNetUserLogins
+        
+        var user = await _applicationDbContext.UserLogins
          .FirstOrDefaultAsync(
              i => (i.LoginProvider == provider) && (i.ProviderKey == providerUserId)
          );

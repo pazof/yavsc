@@ -35,8 +35,6 @@ namespace Yavsc.Models
 
     using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Yavsc.Abstract.Models.Messaging;
-    using Org.BouncyCastle.Asn1.Crmf;
-    using Microsoft.AspNetCore.Identity;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -44,10 +42,12 @@ namespace Yavsc.Models
         {
 
         }
+        
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -86,7 +86,7 @@ namespace Yavsc.Models
             }
 
             builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
-            builder.Entity<IdentityUserLogin<String>>().HasKey(i=> new { i.LoginProvider, i.UserId, i.ProviderKey });
+            //    builder.Entity<IdentityUserLogin<String>>().HasKey(i=> new { i.LoginProvider, i.UserId, i.ProviderKey });
         }
 
         // this is not a failback procedure.
@@ -301,6 +301,6 @@ namespace Yavsc.Models
         public DbSet<Scope> Scopes { get; set; }
         
         public DbSet<BlogSpotPublication> blogSpotPublications{ get; set; }
-        public DbSet<IdentityUserLogin<String>> AspNetUserLogins { get; set; }
+       // public DbSet<IdentityUserLogin<String>> AspNetUserLogins { get; set; }
     }
 }
