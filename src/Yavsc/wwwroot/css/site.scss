@@ -45,6 +45,27 @@ input[type='checkbox'] {
 }
 
 .container {
-  background-color: #000000cf;
-  color:#ffffff;
+  background-color: #00000040;
+  color: #fff;
+  border-radius: 2em;
+}
+
+.post {
+  background-color: #000000dd;
+  color:#d1d1d1;
+  padding: 2.3em;
+  border-radius: 2em;
+  border: solid #441515a4 2pt;
+} 
+
+.actiongroup
+{
+  float: right;
+  margin:.5em;
+}
+
+.float-left
+{
+  float: left;
+  margin:.5em;
 }

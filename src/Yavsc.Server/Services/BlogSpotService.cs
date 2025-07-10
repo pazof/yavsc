@@ -113,7 +113,7 @@ public class BlogSpotService
         _context.SaveChanges(user.GetUserId());
     }
 
-    public async Task<IEnumerable<IGrouping<string, IBlogPost>>> IndexByTitle(ClaimsPrincipal user, string id, int skip = 0, int take = 25)
+    public async Task<IEnumerable<IBlogPost>> Index(ClaimsPrincipal user, string id, int skip = 0, int take = 25)
     {
         IEnumerable<IBlogPost> posts;
 
@@ -149,9 +149,8 @@ public class BlogSpotService
            .Select(p => p.BlogPost).ToArray();
         }
 
-        var data = posts.OrderByDescending(p => p.DateCreated);
-        var grouped = data.GroupBy(p => p.Title).Skip(skip).Take(take);
-        return grouped;
+        var data = posts.OrderByDescending(p => p.DateModified);
+        return data;
     }
 
     public async Task Delete(ClaimsPrincipal user, long id)
@@ -174,7 +173,7 @@ public class BlogSpotService
         return _context.UserPosts(posterId, readerId);
     }
 
-    public object? ByTitle(string title)
+    public object? GetTitle(string title)
     {
         return _context.BlogSpot.Include(
                  b => b.Author
@@ -190,4 +189,5 @@ public class BlogSpotService
         .Include(b => b.ACL)
         .SingleOrDefaultAsync(x => x.Id == value);
     }
+
 }

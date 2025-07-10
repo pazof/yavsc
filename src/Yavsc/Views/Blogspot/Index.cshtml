@@ -1,4 +1,4 @@
-@model IEnumerable<IGrouping<string,IBlogPost>>
+@model IEnumerable<IBlogPost>
 @{
     ViewData["Title"] = "Blogs, l'index";
 }
@@ -43,59 +43,51 @@
     <a asp-action="Create">Create a new article</a>
 </p>
 }
-
-<div class="container">
      
-<table class="table">
+<div class="blog">
+@{
+    int maxTextLen = 75;
+  foreach (var post in Model) {
+    <div class="post">
     
-@foreach (var group in Model) {
-    var title = group.Key ?? "@";
-    string secondclass="";
-    var first = group.First();
-    int maxTextLen = 256;
 
-  <tr><td colspan="3">
-<a asp-action="Title" asp-route-id="@group.Key" >@title</a></td></tr> 
-  @foreach (var item in group) {
-     var trunked = item.Content?.Length > maxTextLen;
-      <tr>
-          <td><a asp-action="Details" asp-route-id="@item.Id" class="bloglink">
-         <img src="@item.Photo" class="blogphoto"></a>
-          </td>
-          <td>
-              <asciidoc summary="@maxTextLen">@item.Content</asciidoc>
-              @if (trunked) { <a asp-action="Details" asp-route-id="@item.Id" class="bloglink">...</a> }
-              <span style="font-size:x-small;">@Html.DisplayFor(m => item.Author)</span>
-              <span style="font-size:xx-small;">
-              posté le @item.DateCreated.ToString("dddd d MMM yyyy à H:mm")
-              @if ((item.DateModified - item.DateCreated).Minutes > 0){ 
-                  @:- Modifié le @item.DateModified.ToString("dddd d MMM yyyy à H:mm")
-               })
-              </span>
-          </td>
-          <td> 
-              <ul class="actiongroup">
-                  @if ((await AuthorizationService.AuthorizeAsync(User, item, new ReadPermission())).Succeeded) {
-                  <li>
-                      <a asp-action="Details" asp-route-id="@item.Id"  class="btn btn-lg">Details</a>
-                    </li>
-                  }
-                  else {
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-lg">Details DEBUG</a>
-                  }
-              @if ((await AuthorizationService.AuthorizeAsync(User, item, new EditPermission())).Succeeded) {
-              <li><a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-default">Edit</a>
-              </li>
-              <li><a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-              </li>
-              }
-              </ul>
-          </td>
-      </tr>
+        <div class="float-left" >
+        <a asp-action="Details" asp-route-id="@post.Id" class="bloglink" style="display: float-left;">
+            <img src="@post.Photo" >
+        </a>
+        </div>
+        <h3>@post.Title</h3>
+        <div>
+          <a asp-action="Details" asp-route-id="@post.Id">
+            <asciidoc summary="@maxTextLen">@post.Content</asciidoc></a>
+            <span style="font-size:x-small;">@Html.DisplayFor(m => post.Author)</span>
+            <span style="font-size:xx-small;">
+            posté le @post.DateCreated.ToString("dddd d MMM yyyy à H:mm")
+            @if ((post.DateModified - post.DateCreated).Minutes > 0){ 
+                @:- Modifié le @post.DateModified.ToString("dddd d MMM yyyy à H:mm")
+            })
+            </span>
+        </div>
+        <div class="actiongroup">
+            @if ((await AuthorizationService.AuthorizeAsync(User, post, new ReadPermission())).Succeeded) 
+            {
+                <a asp-action="Details" asp-route-id="@post.Id"  class="btn btn-light">Details</a>
+            }
+            else 
+            {
+            <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-light">Details</a>
+            }
+            @if ((await AuthorizationService.AuthorizeAsync(User, post, new EditPermission())).Succeeded) 
+            {
+           <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-default">Edit</a>
+            
+            <a asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete</a>
+            
+            }
+        </div>
+    </div>
   }
 }
-</table>
+</div>
 
 @if(Model.Count()==0){<p>Néant</p>}
-
-</div>

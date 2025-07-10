@@ -47,8 +47,8 @@ namespace Yavsc.Controllers
                 await blogSpotService.UserPosts(id, User.GetUserId(),
                 skip, take));
             }
-            IEnumerable<IGrouping<string,IBlogPost>> byTitle = await this.blogSpotService.IndexByTitle(User, id, skip, take);
-            return View(byTitle);
+            IEnumerable<IBlogPost> index = await this.blogSpotService.Index(User, id, skip, take);
+            return View(index);
         }
 
         [Route("~/Title/{id?}")]
@@ -56,7 +56,7 @@ namespace Yavsc.Controllers
         public IActionResult Title(string id)
         {
             ViewData["Title"] = id;
-            return View("Title", blogSpotService.ByTitle(id));
+            return View("Title", blogSpotService.GetTitle(id));
         }
 
         private async Task<IEnumerable<BlogPost>> UserPosts(string userName, int pageLen = 10, int pageNum = 0)

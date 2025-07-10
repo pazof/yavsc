@@ -60,10 +60,14 @@ $('#commentValidation').html(
         }
     </style>
 }
-<div class="container">
-    <div class="blogpost">
-        <h1 class="blogtitle" ismarkdown>@Model.Title</h1>
-        <img class="blogphoto" alt="" src="@Model.Photo" >
+
+    <div class="post">
+        <div class="float-left">
+ <img alt="" src="@Model.Photo" >
+        </div>
+       
+        <h1 ismarkdown>@Model.Title</h1>
+        
         @Html.DisplayFor(m=>m.Author)
         <asciidoc>@Html.DisplayFor(m=>m.Content)</asciidoc>
         
@@ -98,4 +102,4 @@ $('#commentValidation').html(
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">Edit</a>
     }
     <a asp-action="Index" class="btn btn-link">Back to List</a>
-</div>
+

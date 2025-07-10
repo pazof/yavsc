@@ -1,5 +1,6 @@
 using System.Text.Encodings.Web;
 using AsciiDocNet;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Yavsc.Helpers
@@ -8,17 +9,28 @@ namespace Yavsc.Helpers
     {
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
-            if (context.AllAttributes.ContainsName("summary"))
-            {
-                var summaryLength = context.AllAttributes["summary"].Value;
-            }
+           
             await base.ProcessAsync(context, output);
             var content = await output.GetChildContentAsync();
             string text = content.GetContent();
             if (string.IsNullOrWhiteSpace(text)) return;
+
             try
             {
-
+                if (context.AllAttributes.ContainsName("summary"))
+                {
+                    var summaryLength = context.AllAttributes["summary"].Value;
+                    if (summaryLength is HtmlString sumLenStr)
+                    {
+                        if (int.TryParse(sumLenStr.Value, out var sumLen))
+                        {
+                            if (text.Length > sumLen)
+                            {
+                                text = text.Substring(0, sumLen) + "(...)";
+                            }
+                        }
+                    }
+                }
                 Document document = Document.Parse(text);
                 var html = document.ToHtml(2);
                 using var stringWriter = new StringWriter();
