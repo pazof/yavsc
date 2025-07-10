@@ -2,17 +2,10 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-@{
-    #nullable enable
-    string? name = null;
-    if (Context.User!=null)
-    {
-        name = Context.User.GetUserName();
-    }
-}
-
-@if (name!=null)
+@if (Context.User?.Identity?.IsAuthenticated ?? false)
 {
+    string userName = User.GetUserName();
+
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Plateforme</a>
             <ul class="dropdown-menu" aria-labelledby="dropdown04">
@@ -37,7 +30,7 @@
             </ul>
         </li>}
     <li class="nav-item dropdown">
-         <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Hello @UserManager.GetUserName(User)!</a>
+         <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Hello @userName!</a>
         <ul class="dropdown-menu">
             <li>
         <a class="dropdown-item" asp-controller="Manage" asp-action="Index" title="Manage">
@@ -61,3 +54,5 @@ else
         <a class="nav-link" asp-controller="Account" asp-action="Login" asp-route-ReturnUrl="~/" >Login</a>
     </li>
 }
+using IdentityServer8.Extensions;
+#line default

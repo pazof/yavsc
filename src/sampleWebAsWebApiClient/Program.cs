@@ -13,9 +13,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication;
 
-JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-
-
+JwtSecurityTokenHandler.DefaultMapInboundClaims = true;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,12 +36,10 @@ builder.Services
         options.Scope.Add("profile");
         options.Scope.Add("scope2");
         options.MapInboundClaims = true;
-        options.ClaimActions.MapUniqueJsonKey("preferred_username","preferred_username");
+        options.ClaimActions.MapUniqueJsonKey("preferred_username", "preferred_username");
         options.ClaimActions.MapUniqueJsonKey("gender", "gender");
- 
         options.SaveTokens = true;
     });
-
 
 using (var app = builder.Build())
 {

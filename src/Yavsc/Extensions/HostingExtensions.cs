@@ -36,6 +36,7 @@ using Microsoft.IdentityModel.Protocols.Configuration;
 using IdentityModel;
 using System.Security.Claims;
 using IdentityServer8.Security;
+using Yavsc.Interfaces;
 
 namespace Yavsc.Extensions;
 
@@ -112,6 +113,7 @@ public static class HostingExtensions
         AddYavscPolicies(services);
 
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+        services.AddTransient<IExternalIdentityManager, ExternalIdentityManager>();
 
 
         AddAuthentication(builder);
@@ -215,11 +217,12 @@ public static class HostingExtensions
             // set the redirect URI to https://localhost:5001/signin-google
             options.ClientId = googleClientId;
             options.ClientSecret = googleClientSecret;
+            
         });
     }
     private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<IProfileService,ProfileService>();
+        //builder.Services.AddTransient<IProfileService,ProfileService>();
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
          {
              options.Events.RaiseErrorEvents = true;
@@ -234,7 +237,7 @@ public static class HostingExtensions
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
-            .AddProfileService<ProfileService>()
+           // .AddProfileService<ProfileService>()
             .AddAspNetIdentity<ApplicationUser>()
            ;
         if (builder.Environment.IsDevelopment())

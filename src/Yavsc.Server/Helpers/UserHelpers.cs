@@ -16,7 +16,7 @@ namespace Yavsc.Helpers
 
         public static string GetUserName(this ClaimsPrincipal user)
         {
-            return user.FindFirstValue(ClaimTypes.Name);
+            return user.FindFirstValue("name");
         }
 
         public static bool IsSignedIn(this ClaimsPrincipal user)

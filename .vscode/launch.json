@@ -109,6 +109,11 @@
              "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "presentation": {
+                "hidden": false,
+                "group": "run",
+                "order": 1
             }
         },
         {
