@@ -128,7 +128,12 @@ public static class HostingExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        return services.AddIdentity<ApplicationUser, IdentityRole>()
+        return services.AddIdentity<ApplicationUser, IdentityRole>(
+            options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+            }
+        )
             .AddEntityFrameworkStores<ApplicationDbContext>();
             
     }

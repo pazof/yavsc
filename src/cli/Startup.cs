@@ -228,6 +228,7 @@ Microsoft.Extensions.CodeGeneration.ICodeGeneratorActionsService),
                     option =>
                     {
                         option.User.RequireUniqueEmail = true;
+                        option.SignIn.RequireConfirmedAccount = true;
                     }
                 ).AddEntityFrameworkStores<ApplicationDbContext>();
             Services = services;
