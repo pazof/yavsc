@@ -72,12 +72,7 @@ internal class Program
            .AddTransient<IBillingService, BillingService>()
            .AddTransient<ICalendarManager, CalendarManager>();
         services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
-        /*
-          services.AddIdentityApiEndpoints<ApplicationUser>();
-          services.AddSingleton<IConnexionManager, HubConnectionManager>();
-          services.AddSingleton<ILiveProcessor, LiveProcessor>();
-          services.AddSession();
-        */
+        
         WorkflowHelpers.ConfigureBillingService();
         using (var app = builder.Build())
         {
