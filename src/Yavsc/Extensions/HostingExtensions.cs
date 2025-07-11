@@ -222,7 +222,6 @@ public static class HostingExtensions
     }
     private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
-        //builder.Services.AddTransient<IProfileService,ProfileService>();
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
          {
              options.Events.RaiseErrorEvents = true;
@@ -232,12 +231,10 @@ public static class HostingExtensions
 
              // see https://IdentityServer8.readthedocs.io/en/latest/topics/resources.html
              options.EmitStaticAudienceClaim = true;
-             
          })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.Clients)
             .AddInMemoryApiScopes(Config.ApiScopes)
-           // .AddProfileService<ProfileService>()
             .AddAspNetIdentity<ApplicationUser>()
            ;
         if (builder.Environment.IsDevelopment())

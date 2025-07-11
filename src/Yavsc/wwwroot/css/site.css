@@ -30,9 +30,10 @@ input[type='checkbox'] {
   min-height: 1em; }
 
 .container {
-  background-color: #00000040;
+  background-color: #00000093;
   color: #fff;
-  border-radius: 2em; }
+  padding: .5em;
+  margin: .5em; }
 
 .post {
   background-color: #000000dd;
@@ -41,10 +42,10 @@ input[type='checkbox'] {
   border-radius: 2em;
   border: solid #441515a4 2pt; }
 
-div.actiongroup {
+.actiongroup {
   float: right;
   margin: .5em; }
 
-div.float-left {
+.float-left {
   float: left;
   margin: .5em; }
