@@ -79,7 +79,7 @@
             }
             @if ((await AuthorizationService.AuthorizeAsync(User, post, new EditPermission())).Succeeded) 
             {
-           <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-default">Edit</a>
+           <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-primary">Edit</a>
             
             <a asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete</a>
             
