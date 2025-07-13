@@ -2,33 +2,22 @@
 // /*
 // paul  21/06/2018 10:11 20182018 6 21
 // */
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.Extensions.PlatformAbstractions;
+using isnd.tests;
 using Xunit;
 using Xunit.Abstractions;
 using Yavsc.Authentication;
-using static OAuth.AspNet.AuthServer.Constants;
 
 namespace yavscTests
 {
     [Collection("Yavsc Work In Progress")]
     [Trait("regression", "oui")]
-    public class Remoting : BaseTestContext, IClassFixture<ServerSideFixture>
+    public class Remoting : BaseTestContext, IClassFixture<WebServerFixture>
     {
-        readonly RegiserAPI r;
-        public Remoting(ServerSideFixture serverFixture, ITestOutputHelper output)
+        public Remoting(WebServerFixture serverFixture, ITestOutputHelper output)
         : base(output, serverFixture)
         {
-            
-                r = new RegiserAPI(serverFixture, output);
+
         }
 
         [Theory]
@@ -45,23 +34,21 @@ namespace yavscTests
         {
             try
             {
-                r.EnsureWeb();
-
                 var oauthor = new OAuthenticator(clientId, clientSecret, scope,
                 new Uri(authorizeUrl), new Uri(redirectUrl), new Uri(accessTokenUrl));
                 var query = new Dictionary<string, string>
                 {
-                    [Parameters.Username] = Startup.TestingSetup.ValidCreds.UserName,
-                    [Parameters.Password] = Startup.TestingSetup.ValidCreds.Password,
-                    [Parameters.GrantType] = GrantTypes.Password
+                    ["Username"] = _serverFixture.TestingSetup.ValidCreds.UserName,
+                    ["Password"] = _serverFixture.TestingSetup.ValidCreds.Password,
+                    ["GrantType"] = "Password"
                 };
 
                 var result = await oauthor.RequestAccessTokenAsync(query);
                 Console.WriteLine(">> Got an output");
-                Console.WriteLine(Parameters.AccessToken + ": " + result[Parameters.AccessToken]);
-                Console.WriteLine(Parameters.TokenType + ": " + result[Parameters.TokenType]);
-                Console.WriteLine(Parameters.ExpiresIn + ": " + result[Parameters.ExpiresIn]);
-                Console.WriteLine(Parameters.RefreshToken + ": " + result[Parameters.RefreshToken]);
+                Console.WriteLine( "AccessToken " + result["AccessToken"]);
+                Console.WriteLine("TokenType " + result["TokenType"]);
+                Console.WriteLine("ExpiresIn " + result["ExpiresIn"]);
+                Console.WriteLine("RefreshToken : " + result["RefreshToken"]);
 
             }
             catch (Exception ex)
@@ -69,7 +56,7 @@ namespace yavscTests
                 var webex = ex as WebException;
                 if (webex != null && webex.Status == (WebExceptionStatus)400)
                 {
-                    if (Startup.TestingSetup.ValidCreds.UserName == "lame-user")
+                    if (_serverFixture.TestingSetup.ValidCreds.UserName == "lame-user")
                     {
                         Console.WriteLine("Bad pass joe!");
                         return;
@@ -79,5 +66,10 @@ namespace yavscTests
             }
         }
 
+        public static IEnumerable<object[]> GetLoginIntentData(int count)
+        {
+            return new object[][] {new object[]{ "", "", "", "", "", "" } };
+        }
+      
     }
 }

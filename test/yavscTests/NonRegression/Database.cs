@@ -1,4 +1,5 @@
 using System;
+using isnd.tests;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -7,11 +8,11 @@ namespace yavscTests.Mandatory
     [Collection("Database")]
     [Trait("regression", "II")]
     [Trait("dev", "wip")]
-    public class Database: IClassFixture<ServerSideFixture>, IDisposable
+    public class Database: IClassFixture<WebServerFixture>, IDisposable
     {
-        readonly ServerSideFixture _serverFixture;
+        readonly WebServerFixture _serverFixture;
         readonly ITestOutputHelper output;
-        public Database(ServerSideFixture serverFixture, ITestOutputHelper output)
+        public Database(WebServerFixture serverFixture, ITestOutputHelper output)
         {
             this.output = output;
             _serverFixture = serverFixture;
@@ -25,7 +26,7 @@ namespace yavscTests.Mandatory
             {
                 output.WriteLine("db not dropped");
             }
-            output.WriteLine($"Startup.Testing.ConnectionStrings.Default is {Startup.TestingSetup.ConnectionStrings.Default}");
+            output.WriteLine($"Startup.Testing.ConnectionStrings.Default is {_serverFixture.TestingSetup.ConnectionStrings.Default}");
         }
 
         /// <summary>
