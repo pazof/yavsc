@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -13,6 +14,8 @@ using Yavsc;
 using Yavsc.Models;
 using Yavsc.Services;
 using yavscTests.Settings;
+using Yavsc.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace isnd.tests
 {
@@ -20,12 +23,14 @@ namespace isnd.tests
     [CollectionDefinition("Web server collection")]
     public class WebServerFixture : IDisposable
     {
-        public IWebHost Host { get; private set;}
         public List<string> Addresses { get; private set; } = new List<string>();
         public Microsoft.Extensions.Logging.ILogger Logger { get; internal set; }
 
         private SiteSettings siteSettings;
 
+        public IConfigurationRoot Configuration { get; private set; }
+
+        private WebApplication app;
 
         public string TestingUserName { get; private set; }
         public string ProtectedTestingApiKey { get; internal set; }
@@ -38,34 +43,41 @@ namespace isnd.tests
 
         public WebServerFixture()
         {
-            SetupHost();
+            SetupHost().Wait();
         }
 
         public void Dispose()
         {
-            Host.StopAsync().Wait();
-            Host.Dispose();
+            if (app!=null)
+                app.StopAsync().Wait();
         }
 
-        public void SetupHost()
+        public async Task SetupHost()
         {
-            var builder = WebHost.CreateDefaultBuilder(new string[0]);
+            var builder = WebApplication.CreateBuilder();
+       
+            Configuration = builder.Configuration
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables()
+                .Build();
 
-            //    .UseContentRoot("../../../../../src/isnd")
-            builder.UseStartup(typeof(Startup))
-            .ConfigureAppConfiguration((builderContext, config) =>
+            this.app =  builder.ConfigureWebAppServices();
+            using (var migrationScope = app.Services.CreateScope())
             {
-                config.AddJsonFile("appsettings.json", true);
-                config.AddJsonFile("appsettings.Development.json", false);
-            });
+                var db = migrationScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await db.Database.MigrateAsync();
+            }
+            await app.ConfigurePipeline();
+            app.UseSession();
+            await app.StartAsync();
+            
+   
 
-            Host = builder.Build();
-
-            var logFactory = Host.Services.GetRequiredService<ILoggerFactory>();
+            var logFactory = app.Services.GetRequiredService<ILoggerFactory>();
             Logger = logFactory.CreateLogger<WebServerFixture>();
 
-            Host.Start(); //Starts listening on the configured addresses.
-            var server = Host.Services.GetRequiredService<IServer>();
+            var server = app.Services.GetRequiredService<IServer>();
 
             var addressFeatures = server.Features.Get<IServerAddressesFeature>();
 
@@ -73,12 +85,13 @@ namespace isnd.tests
             {
                 Addresses.Add(address);
             }
-            SiteSettings = Host.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
+            SiteSettings = app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
 
-            using IServiceScope scope = Host.Services.CreateScope();
+            using IServiceScope scope = app.Services.CreateScope();
             ApplicationDbContext dbContext =
                 scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
+            //dbContext.Database.EnsureCreated();
+            dbContext.Database.Migrate();
           
             TestingUserName = "Tester";
             TestingUser = dbContext.Users.FirstOrDefault(u => u.UserName == TestingUserName);
@@ -93,7 +106,7 @@ namespace isnd.tests
         {
             if (TestingUser == null)
             {
-                using IServiceScope scope = Host.Services.CreateScope();
+                using IServiceScope scope = app.Services.CreateScope();
 
                 var userManager  =
                 scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -114,19 +127,6 @@ namespace isnd.tests
             }
         }
 
-        internal void DropTestDb()
-        {
-            throw new NotImplementedException();
-        }
 
-        internal bool EnsureTestDb()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal int UpgradeDb()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

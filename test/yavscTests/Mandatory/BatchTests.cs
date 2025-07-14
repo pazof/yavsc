@@ -40,7 +40,6 @@ namespace yavscTests
         [Fact]
         public void GitClone()
         {
-            Assert.True(_serverFixture.EnsureTestDb());
             Assert.NotNull (_serverFixture.DbContext.Project);
             var firstProject = _serverFixture.DbContext.Project.Include(p=>p.Repository).FirstOrDefault();
             Assert.NotNull (firstProject);
@@ -54,8 +53,6 @@ namespace yavscTests
         string gitRepo=null;
         private IConfigurationRoot configurationRoot;
 
-   
-
 
         [Fact]
         public void HaveConfigurationRoot()
@@ -66,55 +63,12 @@ namespace yavscTests
             configurationRoot = builder.Build();
         }
 
-       
-
-        internal static IConfigurationRoot CreateConfiguration(string prjDir)
-        {
-            var builder = new ConfigurationBuilder();
-
-            builder.AddJsonFile(Path.Combine(prjDir, "appsettings.json"), false);
-            builder.AddJsonFile(Path.Combine(prjDir, "appsettings.Development.json"), true);
-            return builder.Build();
-        }
-        static IConfigurationRoot ConfigurationRoot;
-        internal static void ConfigureServices
-        (ServiceCollection serviceCollection, 
-         string prjDir,
-         out IConfigurationRoot configuration,
-         out IServiceProvider provider)
-        {
-            ConfigurationRoot = configuration = CreateConfiguration(prjDir);
-
-            serviceCollection.AddOptions();
-            var siteSettingsconf = configuration.GetSection("Site");
-            serviceCollection.Configure<SiteSettings>(siteSettingsconf);
-            var smtpSettingsconf = configuration.GetSection("Smtp");
-            serviceCollection.Configure<SmtpSettings>(smtpSettingsconf);
-            var locOptions = configuration.GetSection("Localization");
-            serviceCollection.Configure<LocalizationOptions>(locOptions);
-
-            serviceCollection.AddSingleton(typeof(ILoggerFactory), typeof(LoggerFactory));
-            serviceCollection.AddTransient(typeof(IEmailSender<ApplicationUser>), typeof(MailSender));
-        
-            serviceCollection.AddLogging();
-            serviceCollection.AddMvcCore();
-            serviceCollection.AddLocalization(options =>
-            {
-                options.ResourcesPath = "Resources";
-            });
-            serviceCollection.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(o => ConfigurationRoot.GetConnectionString("DefaultConnection")));
-            provider = serviceCollection.BuildServiceProvider();
-        }
-
-
         public void Dispose()
         {
             if (gitRepo!=null)
             {
                 Directory.Delete(Path.Combine(gitRepo,"yavsc"), true);
             }
-            _serverFixture.DropTestDb();
         }
     }
 }

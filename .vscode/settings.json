@@ -1,18 +1,6 @@
 {
-    "dotnet-test-explorer.testProjectPath": "**/*Tests.@(csproj|vbproj|fsproj)",
-    "sqltools.connections": [
-        {
-            "previewLimit": 50,
-            "server": "localhost",
-            "port": 5432,
-            "driver": "PostgreSQL",
-            "name": "yavscdev",
-            "group": "yavsc",
-            "database": "YavscDev",
-            "username": "yavscdev",
-            "password": "admin"
-        }
-    ],
+    "dotnet-test-explorer.testProjectPath": "test/**/*Tests.csproj",
+   
     "cSpell.words": [
         "appsettings",
         "Newtonsoft",

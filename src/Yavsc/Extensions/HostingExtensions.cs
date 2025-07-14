@@ -44,7 +44,7 @@ namespace Yavsc.Extensions;
 public static class HostingExtensions
 {
   
-    internal static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
+    public static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
         IServiceCollection services = LoadConfiguration(builder);
 
@@ -300,7 +300,7 @@ public static class HostingExtensions
     }
 
 
-    internal async static Task<WebApplication> ConfigurePipeline(this WebApplication app)
+    public async static Task<WebApplication> ConfigurePipeline(this WebApplication app)
     {
 
         if (app.Environment.IsDevelopment())

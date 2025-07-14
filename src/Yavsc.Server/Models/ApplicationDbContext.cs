@@ -35,17 +35,18 @@ namespace Yavsc.Models
 
     using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Yavsc.Abstract.Models.Messaging;
+    using Microsoft.Extensions.Logging;
+    using System.Configuration;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext()
-        {
+        private readonly ILogger<ApplicationDbContext> logger;
 
-        }
         
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(ILoggerFactory loggerFactory,
+        DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-
+            logger = loggerFactory.CreateLogger<ApplicationDbContext>();
         }
         
         protected override void OnModelCreating(ModelBuilder builder)
@@ -87,22 +88,6 @@ namespace Yavsc.Models
 
             builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
             //    builder.Entity<IdentityUserLogin<String>>().HasKey(i=> new { i.LoginProvider, i.UserId, i.ProviderKey });
-        }
-
-        // this is not a failback procedure.
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var appSetup = (string)AppDomain.CurrentDomain.GetData(Constants.YavscConnectionStringEnvName);
-            if (!string.IsNullOrWhiteSpace(appSetup))
-            {
-                optionsBuilder.UseNpgsql(appSetup);
-                return;
-            }
-            var envSetup = Environment.GetEnvironmentVariable(Constants.YavscConnectionStringEnvName);
-            if (envSetup != null)
-                optionsBuilder.UseNpgsql(envSetup);
-            else optionsBuilder.UseNpgsql();
         }
 
         public DbSet<Client> Applications { get; set; }

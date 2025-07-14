@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -7,41 +7,39 @@
     <UserSecretsId>76e56fc2-1619-40d8-8393-365258b7a21d</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="popper.js" Version="1.16.1">
-     <PrivateAssets>all</PrivateAssets>
+    <PackageReference Include="popper.js">
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="bootstrap" Version="5.3.7">
-     <PrivateAssets>all</PrivateAssets>
+    <PackageReference Include="bootstrap">
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="HigginsSoft.IdentityServer8" Version="8.0.5-preview-net9" />
-    <PackageReference Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="8.0.5-preview-net9" />
-  
-    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.7">
+    <PackageReference Include="HigginsSoft.IdentityServer8" />
+    <PackageReference Include="HigginsSoft.IdentityServer8.AspNetIdentity" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.7" />
-    <PackageReference Include="Google.Apis.Compute.v1" Version="1.70.0.3829" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor" Version="2.3.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Antiforgery" Version="2.3.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
-    <PackageReference Include="AsciiDocNet" Version="1.0.0-alpha6" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.7" />
-  
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    <PackageReference Include="Google.Apis.Compute.v1" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+    <PackageReference Include="Microsoft.AspNetCore.Antiforgery" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="AsciiDocNet" />
+    <PackageReference Include="SixLabors.ImageSharp" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Yavsc.Server/Yavsc.Server.csproj" />
