@@ -66,7 +66,7 @@ namespace Yavsc.Models
             builder.Entity<HairTaintInstance>().HasKey(ti => new { ti.TaintId, ti.PrestationId });
             builder.Entity<HyperLink>().HasKey(l => new { l.HRef, l.Method });
             builder.Entity<Period>().HasKey(l => new { l.Start, l.End });
-            builder.Entity<Models.Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
+            builder.Entity<Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
             builder.Entity<ChatRoomAccess>().HasKey(p => new { room = p.ChannelName, user = p.UserId });
             builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument = i.InstrumentId, owner = i.OwnerId });
@@ -89,7 +89,6 @@ namespace Yavsc.Models
         }
         public DbSet<Client> Applications { get; set; }
 
-        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         /// <summary>
         /// Activities referenced on this site
@@ -130,14 +129,7 @@ namespace Yavsc.Models
 
         public DbSet<Estimate> Estimates { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
-        public DbSet<BalanceImpact> BankBook { get; set; }
-
-        /// <summary>
-        /// Google Calendar offline
-        /// open auth tokens
-        /// </summary>
-        /// <returns>tokens</returns>
-        public DbSet<OAuth2Tokens> OAuth2Tokens { get; set; }
+        public DbSet<BalanceImpact> BalanceImpact { get; set; }
 
         /// <summary>
         /// References all declared external NativeConfidential devices
@@ -209,7 +201,6 @@ namespace Yavsc.Models
             AddTimestamps(userId);
             return base.SaveChanges();
         }
-
 
 
         public async Task<int> SaveChangesAsync(string userId, CancellationToken ctoken = default(CancellationToken))
