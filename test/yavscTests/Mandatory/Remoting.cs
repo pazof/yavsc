@@ -24,22 +24,20 @@ namespace yavscTests
         [MemberData(nameof(GetLoginIntentData), parameters: 1)]
         public async Task TestUserMayLogin
             (
-            string clientId,
-             string clientSecret,
-             string scope,
-             string authorizeUrl,
-             string redirectUrl,
-             string accessTokenUrl
+             string userName,
+             string password
             )
         {
             try
             {
+                String auth = _serverFixture.SiteSettings.Authority;
+
                 var oauthor = new OAuthenticator(clientId, clientSecret, scope,
                 new Uri(authorizeUrl), new Uri(redirectUrl), new Uri(accessTokenUrl));
                 var query = new Dictionary<string, string>
                 {
-                    ["Username"] = _serverFixture.TestingSetup.ValidCreds.UserName,
-                    ["Password"] = _serverFixture.TestingSetup.ValidCreds.Password,
+                    ["Username"] = userName,
+                    ["Password"] = password,
                     ["GrantType"] = "Password"
                 };
 
@@ -56,7 +54,7 @@ namespace yavscTests
                 var webex = ex as WebException;
                 if (webex != null && webex.Status == (WebExceptionStatus)400)
                 {
-                    if (_serverFixture.TestingSetup.ValidCreds.UserName == "lame-user")
+                    if (_serverFixture?.TestingSetup?.ValidCreds.UserName == "lame-user")
                     {
                         Console.WriteLine("Bad pass joe!");
                         return;
@@ -66,9 +64,17 @@ namespace yavscTests
             }
         }
 
-        public static IEnumerable<object[]> GetLoginIntentData(int count)
+        public static IEnumerable<object[]> GetLoginIntentData(int countFakes = 0)
         {
-            return new object[][] {new object[]{ "", "", "", "", "", "" } };
+            if (countFakes == 0)
+                return new object[][] { new object[] { "testuser", "test" } };
+
+            var fakUsers = new List<String[]>();
+            for (int i = 0; i < countFakes; i++)
+            {
+                fakUsers.Add(new String[] { "fakeTester" + i, "pass" + i });
+            }
+            return fakUsers;
         }
       
     }

@@ -31,38 +31,34 @@ public static class Config
 
         /// <summary>
         /// Lists Available user profile classes,
-        /// populated at startup, using reflexion.
+        /// populated at startup, using reflection.
         /// </summary>
         public static List<Type> ProfileTypes = new List<Type>();
 
 
     public static IEnumerable<IdentityResource> IdentityResources =>
-        new IdentityResource[]
-        {
+        [
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
             new IdentityResources.Email()
-        };
+        ];
 
-    public static IEnumerable<ApiScope> ApiScopes =>
-        new ApiScope[]
-        {
+    public static IEnumerable<ApiScope> TestingApiScopes =>
+        [
             new ApiScope("scope1",new string[] {"scope1"}),
             new ApiScope("scope2",new string[] {"scope2"}),
-        };
+        ];
 
-    public static IEnumerable<Client> Clients =>
-        new Client[]
-        {
+    public static IEnumerable<Client> TestingClients =>
+        [
             // m2m client credentials flow client
             new Client
             {
                 ClientId = "m2m.client",
                 ClientName = "Client Credentials Client",
-
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
                 ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
 
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
                 AllowedScopes = { "scope1" }
             },
 
@@ -87,7 +83,7 @@ public static class Config
                     IdentityServerConstants.StandardScopes.OfflineAccess,
                     "scope2" },
             },
-        };
+        ];
 
     public static PayPalSettings? PayPalSettings { get; set; }
 }

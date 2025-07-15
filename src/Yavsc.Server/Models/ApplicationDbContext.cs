@@ -1,17 +1,22 @@
 ﻿
-using Yavsc.Models.Haircut;
-using Yavsc.Models.IT.Evolution;
-using Yavsc.Models.IT.Fixing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Yavsc.Abstract.Models.Messaging;
 using Yavsc.Server.Models.EMailing;
 using Yavsc.Server.Models.IT.SourceCode;
 using Yavsc.Server.Models.IT;
-using Yavsc.Models.Streaming;
-
+using Yavsc.Abstract.Identity;
+using Yavsc.Server.Models.Calendar;
+    
 namespace Yavsc.Models
 {
+    using Haircut;
+    using IT.Evolution;
+    using IT.Fixing;
+    using Streaming;
     using Relationship;
     using Forms;
-    using Yavsc;
     using Auth;
     using Billing;
     using Musical;
@@ -28,18 +33,13 @@ namespace Yavsc.Models
     using Bank;
     using Payment;
     using Blog;
-    using Yavsc.Abstract.Identity;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-    using Yavsc.Server.Models.Calendar;
-
-    using Microsoft.EntityFrameworkCore.ChangeTracking;
-    using Yavsc.Abstract.Models.Messaging;
-    using Microsoft.Extensions.Logging;
-    using System.Configuration;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
-    { 
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -272,8 +272,8 @@ namespace Yavsc.Models
         public DbSet<InstrumentRating> InstrumentRating { get; set; }
 
         public DbSet<Scope> Scopes { get; set; }
-        
-        public DbSet<BlogSpotPublication> blogSpotPublications{ get; set; }
-       // public DbSet<IdentityUserLogin<String>> AspNetUserLogins { get; set; }
+
+        public DbSet<BlogSpotPublication> blogSpotPublications { get; set; }
+        public DbSet<Client> Client { get; set; }
     }
 }

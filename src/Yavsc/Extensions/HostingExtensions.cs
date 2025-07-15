@@ -1,10 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Util.Store;
 using IdentityServer8;
-using IdentityServer8.Services;
-using IdentityServerHost.Quickstart.UI;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -18,14 +15,9 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
-using Yavsc.Abstract.Workflow;
-using Yavsc.Billing;
 using Yavsc.Helpers;
 using Yavsc.Interface;
 using Yavsc.Models;
-using Yavsc.Models.Billing;
-using Yavsc.Models.Haircut;
-using Yavsc.Models.Workflow;
 using Yavsc.Services;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
@@ -34,8 +26,6 @@ using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using IdentityModel;
-using System.Security.Claims;
-using IdentityServer8.Security;
 using Yavsc.Interfaces;
 
 namespace Yavsc.Extensions;
@@ -238,8 +228,9 @@ public static class HostingExtensions
              options.EmitStaticAudienceClaim = true;
          })
             .AddInMemoryIdentityResources(Config.IdentityResources)
-            .AddInMemoryClients(Config.Clients)
-            .AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryClients(Config.TestingClients)
+            .AddClientStore<ClientStore>()
+            .AddInMemoryApiScopes(Config.TestingApiScopes)
             .AddAspNetIdentity<ApplicationUser>()
            ;
         if (builder.Environment.IsDevelopment())

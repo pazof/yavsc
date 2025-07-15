@@ -121,7 +121,7 @@ namespace isnd.tests
                     EmailConfirmed = true
                 };
 
-                var result = userManager.CreateAsync(TestingUser).Result;
+                var result = userManager.CreateAsync(TestingUser,"test").Result;
 
                 Assert.True(result.Succeeded);
 
