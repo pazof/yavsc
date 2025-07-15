@@ -26,6 +26,7 @@ namespace Yavsc.Controllers
     using Yavsc.Interface;
     using Yavsc.Settings;
     using Yavsc.Abstract.Models.Messaging;
+    using Yavsc.Server.Helpers;
 
     public class HairCutCommandController : CommandController
     {

@@ -49,10 +49,8 @@ namespace Yavsc.Services
         public static ConcurrentDictionary<string, ChatRoomInfo> Channels = new ConcurrentDictionary<string, ChatRoomInfo>();
         readonly ApplicationDbContext _dbContext;
         readonly IStringLocalizer _localizer;
-
         public HubConnectionManager(IServiceScopeFactory ssf )
         {
-            
             var scope = ssf.CreateScope();
             _dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
             var loggerFactory = scope.ServiceProvider.GetService<ILoggerFactory>();

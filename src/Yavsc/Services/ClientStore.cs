@@ -23,8 +23,15 @@ public class ClientStore : IClientStore
             ClientId = clientFromDb.Id,
             ClientName = clientFromDb.DisplayName,
             ClientSecrets = { new Secret(clientFromDb.Secret.Sha256()) },
-            AllowedGrantTypes =[ GrantType.ClientCredentials, GrantType.DeviceFlow],
-            AllowedScopes = ["openid", "profile", "scope1"]
+            AllowedGrantTypes = 
+            [ 
+                GrantType.AuthorizationCode,
+                GrantType.DeviceFlow,
+                GrantType.ClientCredentials
+            ],
+            AllowedScopes = ["openid", "profile", "scope1"],
+            AbsoluteRefreshTokenLifetime = clientFromDb.RefreshTokenLifeTime,
+            AccessTokenLifetime = clientFromDb.AccessTokenLifetime
         };
     }
 }

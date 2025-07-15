@@ -17,6 +17,7 @@ using yavscTests.Settings;
 using Yavsc.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Yavsc.Models.Auth;
 
 namespace isnd.tests
 {
@@ -32,6 +33,7 @@ namespace isnd.tests
         public IConfigurationRoot Configuration { get; private set; }
 
         private WebApplication app;
+        public string TestClientId { get; private set; }
 
         public IServiceProvider Services { get; private set; }
         public string TestingUserName { get; private set; }
@@ -41,6 +43,7 @@ namespace isnd.tests
         public SiteSettings SiteSettings { get => siteSettings; set => siteSettings = value; }
         public MailSender MailSender { get; internal set; }
         public TestingSetup? TestingSetup { get; internal set; }
+        public string TestClientSecret { get; private set; } = "TestClientSecret";
 
         public WebServerFixture()
         {
@@ -56,14 +59,14 @@ namespace isnd.tests
         public async Task SetupHost()
         {
             var builder = WebApplication.CreateBuilder();
-       
+
             Configuration = builder.Configuration
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables()
                 .Build();
 
-            this.app =  builder.ConfigureWebAppServices();
+            this.app = builder.ConfigureWebAppServices();
             Services = app.Services;
             using (var migrationScope = app.Services.CreateScope())
             {
@@ -73,8 +76,8 @@ namespace isnd.tests
             await app.ConfigurePipeline();
             app.UseSession();
             await app.StartAsync();
-            
-   
+
+
 
             var logFactory = app.Services.GetRequiredService<ILoggerFactory>();
             Logger = logFactory.CreateLogger<WebServerFixture>();
@@ -94,14 +97,28 @@ namespace isnd.tests
                 scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             //dbContext.Database.EnsureCreated();
             dbContext.Database.Migrate();
-          
-            TestingUserName = "Tester";
-            TestingUser = dbContext.Users.FirstOrDefault(u => u.UserName == TestingUserName);
-            EnsureUser(TestingUserName);
-          
-            ServicePointManager.ServerCertificateValidationCallback =
-    (sender, cert, chain, sslPolicyErrors) => true;
 
+            TestingUserName = "Tester";
+            TestClientId = "testClientId";
+            TestingUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
+            EnsureUser(TestingUserName);
+            // ensure a client
+            var testClient = await dbContext.Client.FirstOrDefaultAsync((c) => c.Id == TestClientId);
+            if (testClient == null)
+            {
+                testClient = new Yavsc.Models.Auth.Client
+                {
+                    Id = TestClientId,
+                    DisplayName = "Testing Client",
+                    Secret = TestClientSecret,
+                    Active = true,
+                    Type = ApplicationTypes.NativeConfidential,
+                    AccessTokenLifetime = 900,
+                    RefreshTokenLifeTime = 15000
+                };
+                dbContext.Client.Add(testClient);
+                dbContext.SaveChanges();
+            }
         }
 
         public void EnsureUser(string testingUserName)
@@ -113,7 +130,6 @@ namespace isnd.tests
                 var userManager  =
                 scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-          
                 TestingUser = new ApplicationUser
                 {
                     UserName = testingUserName,
@@ -130,7 +146,5 @@ namespace isnd.tests
                 TestingUser = dbContext.Users.FirstOrDefault(u => u.UserName == testingUserName);
             }
         }
-
-
     }
 }

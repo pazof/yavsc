@@ -30,10 +30,13 @@ namespace yavscTests
         {
             try
             {
+                var serverUrl = _serverFixture.Addresses.FirstOrDefault();
+
                 String auth = _serverFixture.SiteSettings.Authority;
 
-                var oauthor = new OAuthenticator(clientId, clientSecret, scope,
-                new Uri(authorizeUrl), new Uri(redirectUrl), new Uri(accessTokenUrl));
+                var oauthor = new OAuthenticator(_serverFixture.TestClientId, _serverFixture.TestClientSecret,
+                 "profile",
+                new Uri(serverUrl), new Uri(serverUrl), new Uri(serverUrl+"/connect/token"));
                 var query = new Dictionary<string, string>
                 {
                     ["Username"] = userName,

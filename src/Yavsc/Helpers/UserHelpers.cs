@@ -1,10 +1,32 @@
-using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using Yavsc.Models;
+using Yavsc.Models.Blog;
 
 namespace Yavsc.Helpers
 {
     public static class UserHelpers
     {
-
-        
+        public static IEnumerable<BlogPost> UserPosts(this ApplicationDbContext dbContext, string posterId, string? readerId)
+        {
+            if (readerId == null)
+            {
+                var userPosts = dbContext.blogSpotPublications.Include(
+                b => b.BlogPost
+                ).Where(x => x.BlogPost.AuthorId == posterId)
+                .Select(x => x.BlogPost).ToArray();
+                return userPosts;
+            }
+            else
+            {
+                long[] readerCirclesMemberships =
+                dbContext.Circle.Include(c => c.Members)
+                .Where(c => c.Members.Any(m => m.MemberId == readerId))
+                .Select(c => c.Id).ToArray();
+                return dbContext.BlogSpot.Include(
+                              b => b.Author
+                              ).Include(p => p.ACL).Where(x => x.Author.Id == posterId &&
+                              (x.ACL.Count == 0 || x.ACL.Any(a => readerCirclesMemberships.Contains(a.CircleId))));
+            }
+        }
     }
 }

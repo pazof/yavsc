@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Auth;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {

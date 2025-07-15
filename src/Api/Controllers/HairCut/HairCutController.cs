@@ -22,6 +22,7 @@ namespace Yavsc.ApiControllers
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Authorization;
+    using Yavsc.Server.Helpers;
 
     [Route("api/haircut")][Authorize]
     public class HairCutController : Controller

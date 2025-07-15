@@ -16,6 +16,7 @@ using Yavsc.Services;
 using Yavsc.ViewModels.Manage;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authorization;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -709,7 +710,8 @@ namespace Yavsc.Controllers
 
         private async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            return await _dbContext.Users.Include(u => u.PostalAddress).FirstOrDefaultAsync(u => u.Id == User.GetUserId());
+            return await _dbContext.Users.Include(u => u.PostalAddress)
+            .FirstOrDefaultAsync(u => u.Id == User.GetUserId());
         }
 
         #endregion

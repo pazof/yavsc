@@ -9,6 +9,7 @@ namespace Yavsc.Controllers
     using Models;
     using Models.Workflow;
     using Yavsc.Helpers;
+    using Yavsc.Server.Helpers;
 
     [Authorize("AdministratorOnly")]
     public class ActivityController : Controller

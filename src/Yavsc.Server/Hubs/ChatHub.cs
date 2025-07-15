@@ -36,6 +36,7 @@ namespace Yavsc
     using Models.Chat;
     using Yavsc.Abstract.Chat;
     using Yavsc.Helpers;
+    using Yavsc.Server.Helpers;
     using Yavsc.Services;
     public partial class ChatHub : Hub, IDisposable
     {

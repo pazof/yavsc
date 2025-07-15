@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Identity;
+using Yavsc.Server.Helpers;
 
 [Authorize, Route("~/api/gcm")]
 public class NativeConfidentialController : Controller
