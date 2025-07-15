@@ -98,7 +98,7 @@ namespace Yavsc.Models.Billing
         
         [ForeignKey("Regularisation")]
      
-        public string PaymentId { get; set; }
+        public string? PaymentId { get; set; }
 
         [Display(Name = "Acquittement de la facture")]
         public virtual PayPalPayment Regularisation { get; set; }

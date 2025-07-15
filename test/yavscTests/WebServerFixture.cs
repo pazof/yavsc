@@ -16,6 +16,7 @@ using Yavsc.Services;
 using yavscTests.Settings;
 using Yavsc.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace isnd.tests
 {
@@ -32,6 +33,7 @@ namespace isnd.tests
 
         private WebApplication app;
 
+        public IServiceProvider Services { get; private set; }
         public string TestingUserName { get; private set; }
         public string ProtectedTestingApiKey { get; internal set; }
         public ApplicationUser TestingUser { get; private set; }
@@ -39,7 +41,6 @@ namespace isnd.tests
         public SiteSettings SiteSettings { get => siteSettings; set => siteSettings = value; }
         public MailSender MailSender { get; internal set; }
         public TestingSetup? TestingSetup { get; internal set; }
-        public ApplicationDbContext DbContext { get; internal set; }
 
         public WebServerFixture()
         {
@@ -63,6 +64,7 @@ namespace isnd.tests
                 .Build();
 
             this.app =  builder.ConfigureWebAppServices();
+            Services = app.Services;
             using (var migrationScope = app.Services.CreateScope())
             {
                 var db = migrationScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -114,7 +116,9 @@ namespace isnd.tests
           
                 TestingUser = new ApplicationUser
                 {
-                    UserName = testingUserName
+                    UserName = testingUserName,
+                    Email = testingUserName + "@example.com",
+                    EmailConfirmed = true
                 };
 
                 var result = userManager.CreateAsync(TestingUser).Result;

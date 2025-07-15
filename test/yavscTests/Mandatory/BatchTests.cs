@@ -40,8 +40,10 @@ namespace yavscTests
         [Fact]
         public void GitClone()
         {
-            Assert.NotNull (_serverFixture.DbContext.Project);
-            var firstProject = _serverFixture.DbContext.Project.Include(p=>p.Repository).FirstOrDefault();
+            using var scope = _serverFixture.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            Assert.NotNull (dbContext.Project);
+            var firstProject = dbContext.Project.Include(p=>p.Repository).FirstOrDefault();
             Assert.NotNull (firstProject);
             var di = new DirectoryInfo(_serverFixture.SiteSettings.GitRepository);
             if (!di.Exists) di.Create();

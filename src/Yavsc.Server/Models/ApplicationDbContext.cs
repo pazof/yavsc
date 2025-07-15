@@ -39,16 +39,7 @@ namespace Yavsc.Models
     using System.Configuration;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
-    {
-        private readonly ILogger<ApplicationDbContext> logger;
-
-        
-        public ApplicationDbContext(ILoggerFactory loggerFactory,
-        DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-            logger = loggerFactory.CreateLogger<ApplicationDbContext>();
-        }
-        
+    { 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -89,7 +80,13 @@ namespace Yavsc.Models
             builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
             //    builder.Entity<IdentityUserLogin<String>>().HasKey(i=> new { i.LoginProvider, i.UserId, i.ProviderKey });
         }
-
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            string? envCxStr = Environment.GetEnvironmentVariable(Constants.YavscConnectionStringEnvName);
+            if (envCxStr != null)
+                optionsBuilder.UseNpgsql(envCxStr);
+            base.OnConfiguring(optionsBuilder);
+        }
         public DbSet<Client> Applications { get; set; }
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
