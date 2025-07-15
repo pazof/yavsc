@@ -1,11 +1,9 @@
-
-using System;
-using System.Collections.Generic;
 using System.Text;
 using cli.Model;
 using Microsoft.Extensions.CommandLineUtils;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Yavsc.Authentication;
+
 
 namespace cli.Commands
 {
@@ -42,10 +40,10 @@ namespace cli.Commands
                     });
                     loginCommand.OnExecute(async () =>
             {
-                string authUrl = Startup.ConnectionSettings.AuthorizeUrl;
-                string redirect = Startup.ConnectionSettings.RedirectUrl;
-                string tokenUrl = Startup.ConnectionSettings.AccessTokenUrl;
-
+                string? authUrl = Program.AppConfiguration.GetValue<String>("ConnectionSettings:ServerApi:Authority");
+             
+                throw new NotImplementedException();
+                /*
                 OAuthenticator oauthor = new OAuthenticator(_apiKey.HasValue() ? _apiKey.Value() : Startup.ConnectionSettings.ClientId,
                  _secret.HasValue() ? _secret.Value() : Startup.ConnectionSettings.ClientSecret,
                  _scope.HasValue() ? _scope.Value() : Startup.ConnectionSettings.Scope,
@@ -72,11 +70,11 @@ namespace cli.Commands
                     _logger.LogError(ex.Message);
                 }
 
-                return 0;
+                return 0; */
             });
                 }, false);
 
-            return authApp;
+            return authApp; 
         }
 
         public static string GetPassword(string userName)

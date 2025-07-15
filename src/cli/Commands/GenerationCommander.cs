@@ -1,11 +1,11 @@
-using Microsoft.Extensions.CommandLineUtils;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.OptionsModel;
+
 using cli.Model;
 using cli.Services;
 using cli.Settings;
+using Microsoft.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace cli.Commands
 {
@@ -34,18 +34,13 @@ namespace cli.Commands
                 config.HelpOption("-? | -h | --help");
             });
             cmd.OnExecute(() => {
-                var host = new WebHostBuilder();
-                    var hostEngine = host.UseEnvironment("Development")
-                        .UseServer("cli")
-                        .UseStartup<Startup>()
-                        .Build();
-                    var app = hostEngine.Start();
-                    var mailer = app.Services.GetService<MvcGenerator>();
-                    var loggerFactory = app.Services.GetService<ILoggerFactory>();
+             
+                    var mailer = Program.AppHost.Services.GetService<MvcGenerator>();
+                    var loggerFactory = Program.AppHost.Services.GetService<ILoggerFactory>();
                     var logger = loggerFactory.CreateLogger<GenerationCommander>();
-                    var options = app.Services.GetService<IOptions<GenMvcSettings>>();
+                    var options = Program.AppHost.Services.GetService<IOptions<GenMvcSettings>>();
 
-                    MvcGenerator generator = app.Services.GetService<MvcGenerator>();
+                    MvcGenerator generator = Program.AppHost.Services.GetService<MvcGenerator>();
 
                     var modelFullName = mdClass?.Value ?? options?.Value.ModelFullName;
                     var nameSpace = nameSpaceArg?.Value?? options?.Value.NameSpace;

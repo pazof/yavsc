@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using cli.Services;
 using Yavsc.Server.Settings;
 using Yavsc.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Linq;
-using System;
+using Yavsc.Services;
 
 namespace cli.Commands
 {
@@ -32,19 +30,13 @@ namespace cli.Commands
 
                 if (!showhelp)
                 {
-                    var host = new WebHostBuilder();
+                   
 
-                    var hostengnine = host.UseEnvironment(Program.HostingEnvironment.EnvironmentName)
-                        .UseServer("cli")
-                        .UseStartup<Startup>()
-                        .Build();
-                    var app = hostengnine.Start();
-
-                    var mailer = app.Services.GetService<EMailer>();
-                    var loggerFactory = app.Services.GetService<ILoggerFactory>();
+                    var mailer = Program.AppHost.Services.GetService<MailSender>();
+                    var loggerFactory = Program.AppHost.Services.GetService<ILoggerFactory>();
                     var logger = loggerFactory.CreateLogger<Program>();
-                    var userManager = app.Services.GetService<UserManager<ApplicationDbContext>>();
-                    ApplicationDbContext dbContext = app.Services.GetService<ApplicationDbContext>();
+                    var userManager = Program.AppHost.Services.GetService<UserManager<ApplicationUser>>();
+                    ApplicationDbContext dbContext = Program.AppHost.Services.GetService<ApplicationDbContext>();
                     Func<ApplicationUser, bool> criteria = UserPolicies.Criterias["user-to-remove"];
 
                     if (userManager==null)
@@ -54,12 +46,14 @@ namespace cli.Commands
                     }
 
                     logger.LogInformation("Starting emailling");
-                    try {
+                    try
+                    {
                         mailer.SendEmailFromCriteria("user-to-remove");
                     }
-                    catch (NoMaillingTemplateException ex)
+                    catch (Exception ex)
                     {
                         logger.LogWarning(ex.Message);
+                        throw;
                     }
                     ApplicationUser [] users = dbContext.ApplicationUser.Where(
                             u => criteria(u)).ToArray();

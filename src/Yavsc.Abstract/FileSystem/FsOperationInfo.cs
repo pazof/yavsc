@@ -12,7 +12,7 @@ namespace Yavsc.Abstract.Helpers
         public bool Done { get; set; } = false;
 
         public ErrorCode ErrorCode { get; set; }
-        public string ErrorMessage { get; set; }
+        public string? ErrorMessage { get; set; }
 
     }
 }

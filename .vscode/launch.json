@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "cli .NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/cli/bin/Debug/net9.0/cli.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
             "name": "C#: sampleWebAsWebApiClient Debug",
             "type": "dotnet",
             "request": "launch",
@@ -120,7 +131,7 @@
             "name": "web core",
             "type": "coreclr",
             "request": "launch",
-             "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net8.0/Yavsc.dll",
+             "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net9.0/Yavsc.dll",
              "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
              },

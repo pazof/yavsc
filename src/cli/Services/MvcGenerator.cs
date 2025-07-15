@@ -1,6 +1,6 @@
-using System;
-using Microsoft.Extensions.CodeGenerators.Mvc.Controller;
+
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Controller;
 
 namespace cli.Services
 {

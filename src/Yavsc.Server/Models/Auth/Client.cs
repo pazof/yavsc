@@ -17,7 +17,7 @@ namespace Yavsc.Models.Auth
         
 
         [MaxLength(512)]
-        public string LogoutRedirectUri { get; set; }
+        public string? LogoutRedirectUri { get; set; }
         [MaxLength(512)]
         public string Secret { get; set; }
         public ApplicationTypes Type { get; set; }

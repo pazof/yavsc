@@ -41,7 +41,6 @@ namespace isnd.tests
         public ApplicationUser TestingUser { get; private set; }
         public bool DbCreated { get; internal set; }
         public SiteSettings SiteSettings { get => siteSettings; set => siteSettings = value; }
-        public MailSender MailSender { get; internal set; }
         public TestingSetup? TestingSetup { get; internal set; }
         public string TestClientSecret { get; private set; } = "TestClientSecret";
 
@@ -118,6 +117,15 @@ namespace isnd.tests
                 };
                 dbContext.Client.Add(testClient);
                 dbContext.SaveChanges();
+            }
+            else
+            {
+                testClient.DisplayName = "Testing Client";
+                testClient.Secret = TestClientSecret;
+                testClient.Active = true;
+                testClient.Type = ApplicationTypes.NativeConfidential;
+                testClient.AccessTokenLifetime = 900;
+                testClient.RefreshTokenLifeTime = 1500;
             }
         }
 

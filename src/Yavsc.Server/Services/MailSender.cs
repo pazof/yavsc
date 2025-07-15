@@ -86,6 +86,11 @@ namespace Yavsc.Services
             return msg.MessageId;
         }
 
+        public void SendEmailFromCriteria(string Criteria)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode)
         {
             var callbackUrl = siteSettings.Audience + "/Account/ResetPassword/" + 

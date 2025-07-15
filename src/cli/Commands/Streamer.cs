@@ -1,13 +1,9 @@
-using System;
-using System.IO;
 using System.Net.WebSockets;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
 using cli.Model;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 
 namespace cli {
 

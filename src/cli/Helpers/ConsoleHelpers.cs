@@ -1,8 +1,6 @@
-using System;
 using System.Text;
 using cli.Model;
 using Microsoft.Extensions.CommandLineUtils;
-using Yavsc.Authentication;
 
 namespace cli.Helpers
 {
@@ -12,28 +10,6 @@ namespace cli.Helpers
         {
             return commander.Integrate(rootApp);
         }
-
-        public static OAuthenticator OAuthorInstance { get; private set; }
-        public static OAuthenticator InitAuthor(
-            this ConnectionSettings settings)
-        {
-            return OAuthorInstance = new OAuthenticator(settings.ClientId, 
-            settings.ClientSecret, 
-            settings.Scope,
-            new Uri(settings.AuthorizeUrl), new Uri(settings.RedirectUrl), new Uri(settings.AccessTokenUrl));
-        }
-        /* TODO add OAut console client
-
-        public static async Task<IDictionary<string, string>> GetAuthFromPass(
-            string login,
-            string pass)
-        {
-            var query = new Dictionary<string, string>();
-            query[Parameters.Username] = login;
-            query[Parameters.Password] = pass;
-            query[Parameters.GrantType] = GrantTypes.Password;
-            return await OAuthorInstance.RequestAccessTokenAsync(query);
-        }  */
 
         public static string GetPassword()
         {

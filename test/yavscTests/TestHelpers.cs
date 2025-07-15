@@ -4,11 +4,15 @@ using System.Threading.Tasks;
 namespace yavscTests {
 
 	public static class AssertAsync {
-
-		public static void CompletesIn(int timeout, Action action)
+		/// <summary>
+		/// Completes In 
+		/// </summary>
+		/// <param name="timeoutFromSecond"></param>
+		/// <param name="action"></param>
+		public static void CompletesIn(int timeoutFromSecond, Action action)
 		{
 			var task = Task.Run(action);
-			var completedInTime = Task.WaitAll(new[] { task }, TimeSpan.FromSeconds(timeout));
+			var completedInTime = Task.WaitAll(new[] { task }, TimeSpan.FromSeconds(timeoutFromSecond));
 
 			if (task.Exception != null)
 			{
@@ -22,7 +26,7 @@ namespace yavscTests {
 
 			if (!completedInTime)
 			{
-				throw new TimeoutException($"Task did not complete in {timeout} seconds.");
+				throw new TimeoutException($"Task did not complete in {timeoutFromSecond} seconds.");
 			}
 		}
 	}
