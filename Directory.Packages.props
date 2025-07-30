@@ -3,11 +3,12 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="IdentityModel.OidcClient" Version="6.0.0" />
     <PackageVersion Include="AsciiDocNet" Version="1.0.0" />
     <PackageVersion Include="bootstrap" Version="5.3.7" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Google.Apis.Calendar.v3" Version="1.69.0.3746" />
-    <PackageVersion Include="Google.Apis.Compute.v1" Version="1.70.0.3829" />
+    <PackageVersion Include="Google.Apis.Compute.v1" Version="1.70.0.3841" />
     <PackageVersion Include="HigginsSoft.IdentityServer8" Version="8.0.5-preview-net9" />
     <PackageVersion Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="8.0.5-preview-net9" />
     <PackageVersion Include="IdentityModel.AspNetCore" Version="4.3.0" />
@@ -30,8 +31,8 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.7" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.7" />
     <PackageVersion Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.7" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.7" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.7" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
