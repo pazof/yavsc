@@ -18,6 +18,9 @@ using Yavsc.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Yavsc.Models.Auth;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace isnd.tests
 {
@@ -37,6 +40,8 @@ namespace isnd.tests
 
         public IServiceProvider Services { get; private set; }
         public string TestingUserName { get; private set; }
+        public string TestingUserPassword { get; private set; }
+        
         public string ProtectedTestingApiKey { get; internal set; }
         public ApplicationUser TestingUser { get; private set; }
         public bool DbCreated { get; internal set; }
@@ -54,11 +59,27 @@ namespace isnd.tests
             if (app!=null)
                 app.StopAsync().Wait();
         }
-
+        void ConfigureLogger() => Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+            .MinimumLevel.Override("System", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+    // uncomment to write to Azure diagnostics stream
+    //.WriteTo.File(
+    //    @"D:\home\LogFiles\Application\identityserver.txt",
+    //    fileSizeLimitBytes: 1_000_000,
+    //    rollOnFileSizeLimit: true,
+    //    shared: true,
+    //    flushToDiskInterval: TimeSpan.FromSeconds(1))
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
+    .CreateLogger();
         public async Task SetupHost()
         {
-            var builder = WebApplication.CreateBuilder();
 
+            var builder = WebApplication.CreateBuilder();
+            ConfigureLogger();
             Configuration = builder.Configuration
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
@@ -98,9 +119,10 @@ namespace isnd.tests
             dbContext.Database.Migrate();
 
             TestingUserName = "Tester";
+            TestingUserPassword = "test";
             TestClientId = "testClientId";
             TestingUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
-            EnsureUser(TestingUserName);
+            EnsureUser(TestingUserName, TestingUserPassword);
             // ensure a client
             var testClient = await dbContext.Client.FirstOrDefaultAsync((c) => c.Id == TestClientId);
             if (testClient == null)
@@ -129,7 +151,7 @@ namespace isnd.tests
             }
         }
 
-        public void EnsureUser(string testingUserName)
+        public void EnsureUser(string testingUserName, string password)
         {
             if (TestingUser == null)
             {
@@ -145,7 +167,7 @@ namespace isnd.tests
                     EmailConfirmed = true
                 };
 
-                var result = userManager.CreateAsync(TestingUser,"test").Result;
+                var result = userManager.CreateAsync(TestingUser,password).Result;
 
                 Assert.True(result.Succeeded);
 
