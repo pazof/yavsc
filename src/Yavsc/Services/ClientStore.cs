@@ -16,8 +16,8 @@ public class ClientStore : IClientStore
 
     public async Task<Client> FindClientByIdAsync(string clientId)
     {
-        var clientFromDb = await ApplicationDbContext.Client.FirstAsync(c => c.Id == clientId);
-        
+        var clientFromDb = await ApplicationDbContext.Client.FirstOrDefaultAsync(c => c.Id == clientId);
+        if (clientFromDb == null) return null;
         return new Client
         {
             ClientId = clientFromDb.Id,
