@@ -26,9 +26,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/<target-framework>/<project-name.dll>",
+            "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net9.0/Yavsc.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/src/Yavsc",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
