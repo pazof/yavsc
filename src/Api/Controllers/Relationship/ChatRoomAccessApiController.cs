@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Chat;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -45,7 +46,7 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != chatRoomAccess.UserId && uid != chatRoomAccess.Room.OwnerId
-             && ! User.IsInRole(Constants.AdminGroupName))
+             && ! User.IsInMsRole(Constants.AdminGroupName))
            
             {
                 ModelState.AddModelError("UserId","get refused");
@@ -71,7 +72,7 @@ namespace Yavsc.Controllers
             }
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
 
-            if (uid != room.OwnerId && ! User.IsInRole(Constants.AdminGroupName))
+            if (uid != room.OwnerId && ! User.IsInMsRole(Constants.AdminGroupName))
             {
                 ModelState.AddModelError("ChannelName", "access put refused");
                 return BadRequest(ModelState);
@@ -109,7 +110,7 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
-            if (room == null || (uid != room.OwnerId && ! User.IsInRole(Constants.AdminGroupName)))
+            if (room == null || (uid != room.OwnerId && ! User.IsInMsRole(Constants.AdminGroupName)))
             {
                 ModelState.AddModelError("ChannelName", "access post refused");
                 return BadRequest(ModelState);
@@ -153,7 +154,7 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
-            if (room == null || (uid != room.OwnerId  && chatRoomAccess.UserId != uid && ! User.IsInRole(Constants.AdminGroupName)))
+            if (room == null || (uid != room.OwnerId  && chatRoomAccess.UserId != uid && ! User.IsInMsRole(Constants.AdminGroupName)))
             {
                 ModelState.AddModelError("UserId", "access drop refused");
                 return BadRequest(ModelState);

@@ -35,7 +35,7 @@ public class PermissionHandler : IAuthorizationHandler
                 {
                     context.Succeed(requirement);
                 }
-                else if (context.User.IsInRole("Administrator"))
+                else if (context.User.IsInMsRole("Administrator"))
                 {
                     context.Succeed(requirement);
                 }

@@ -90,7 +90,7 @@ namespace Yavsc.Controllers
         public IActionResult Create(UserActivity userActivity)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!User.IsInRole("Administrator"))
+            if (!User.IsInMsRole("Administrator"))
                if (uid != userActivity.UserId)
                     ModelState.AddModelError("User","You're not admin.");
             if (userActivity.UserId == null) userActivity.UserId = uid;
@@ -133,7 +133,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(UserActivity userActivity)
         {
-            if (!User.IsInRole("Administrator"))
+            if (!User.IsInMsRole("Administrator"))
                if (User.GetUserId() != userActivity.UserId)
                     ModelState.AddModelError("User","You're not admin.");
             if (ModelState.IsValid)
@@ -162,7 +162,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            if (!User.IsInRole("Administrator"))
+            if (!User.IsInMsRole("Administrator"))
                if (User.GetUserId() != userActivity.UserId)
                     ModelState.AddModelError("User","You're not admin.");
             return View(userActivity);
@@ -175,7 +175,7 @@ namespace Yavsc.Controllers
         {
             if (!ModelState.IsValid)
                 return new BadRequestObjectResult(ModelState);
-            if (!User.IsInRole("Administrator"))
+            if (!User.IsInMsRole("Administrator"))
                if (User.GetUserId() != userActivity.UserId) {
                     ModelState.AddModelError("User","You're not admin.");
                     return RedirectToAction("Index");

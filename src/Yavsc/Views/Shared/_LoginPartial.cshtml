@@ -14,13 +14,14 @@
                 <li><a class="dropdown-item" asp-controller="Feature" asp-action="Index">Features</a></li>
             </ul>
         </li>
-        @if (User.IsInRole(Constants.AdminGroupName)) {
+        @if (User.IsInMsRole(Constants.AdminGroupName)) {
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown05" data-bs-toggle="dropdown" aria-expanded="false">
                 Administration
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdown05">
                 <li><a class="dropdown-item" asp-controller="Administration" asp-action="Index">Index</a></li>
+                <li><a class="dropdown-item" asp-controller="Announces" asp-action="Index">Announces</a></li>
                 <li><a class="dropdown-item" asp-controller="Activity" asp-action="Index">Activités</a></li>
                 <li><a class="dropdown-item" asp-controller="CommandForms" asp-action="Index">Formulaires</a></li>
                 <li><a class="dropdown-item" asp-controller="Notifications" asp-action="Index">Notifications</a></li>

@@ -8,14 +8,11 @@
             "type": "process",
             "args": [
                 "build",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary;ForceNoAlign",
-
+                "/property:GenerateFullPaths=true"
             ],
 			"group": "build",
 			"isBuildCommand": true,
-			"isTestCommand": false,
-            "problemMatcher": "$msCompile"
+			"isTestCommand": false
         },
 		{
 			"label": "build-web",

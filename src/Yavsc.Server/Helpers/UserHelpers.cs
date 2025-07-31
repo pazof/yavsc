@@ -19,5 +19,10 @@ namespace Yavsc.Server.Helpers
             return user.Identity.IsAuthenticated;
         }
 
+        public static bool IsInMsRole(this ClaimsPrincipal user, string roleName)
+        {
+            return user.HasClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", roleName);
+        }
+
     }
 }

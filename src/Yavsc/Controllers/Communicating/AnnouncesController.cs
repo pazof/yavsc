@@ -8,6 +8,7 @@ using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -58,8 +59,8 @@ namespace Yavsc.Controllers
         }
         private async Task SetupView(Announce announce)
         {
-            ViewBag.IsAdmin = User.IsInRole(Constants.AdminGroupName);
-            ViewBag.IsPerformer = User.IsInRole(Constants.PerformerGroupName);
+            ViewBag.IsAdmin = User.IsInMsRole(Constants.AdminGroupName);
+            ViewBag.IsPerformer = User.IsInMsRole(Constants.PerformerGroupName);
             ViewBag.AllowEdit = announce==null || announce.Id<=0 || !_authorizationService.AuthorizeAsync(User,announce,new EditPermission()).IsFaulted;
             List<SelectListItem> dl = new List<SelectListItem>();
             var rnames = System.Enum.GetNames(typeof(Reason));
@@ -78,7 +79,6 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Announce announce)
         {
-            await SetupView(announce);
             if (ModelState.IsValid)
             {
                 // Only allow admin to create corporate annonces
@@ -99,6 +99,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
+            await SetupView(announce);
             return View(announce);
         }
 

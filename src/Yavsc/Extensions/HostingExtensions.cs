@@ -27,6 +27,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using IdentityModel;
 using Yavsc.Interfaces;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Yavsc.Extensions;
 
@@ -48,8 +49,9 @@ public static class HostingExtensions
         _ = services.AddSingleton<IConnexionManager, HubConnectionManager>();
         _ = services.AddSingleton<ILiveProcessor, LiveProcessor>();
         _ = services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
-        
-        AddIdentityDBAndStores(builder).AddDefaultTokenProviders();
+
+        AddIdentityDBAndStores(builder)
+        .AddDefaultTokenProviders();
         AddIdentityServer(builder);
 
         services.AddSignalR(o =>
@@ -107,7 +109,9 @@ public static class HostingExtensions
 
 
         AddAuthentication(builder);
-        // accepts any access token issued by identity server
+        
+        services.AddTransient<RoleManager<IdentityRole>>();
+        services.AddTransient<IRoleStore<IdentityRole>, RoleStore<IdentityRole, ApplicationDbContext>>();
 
         return builder.Build();
     }
@@ -118,13 +122,15 @@ public static class HostingExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        return services.AddIdentity<ApplicationUser, IdentityRole>(
+        return services.AddIdentity<ApplicationUser,IdentityRole>(
             options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
+                options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.PreferredUserName;
+                options.ClaimsIdentity.RoleClaimType = JwtClaimTypes.Role;
             }
         )
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+        .AddEntityFrameworkStores<ApplicationDbContext>();
             
     }
 
@@ -226,13 +232,16 @@ public static class HostingExtensions
 
              // see https://IdentityServer8.readthedocs.io/en/latest/topics/resources.html
              options.EmitStaticAudienceClaim = true;
+             
          })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.TestingClients)
             .AddClientStore<ClientStore>()
             .AddInMemoryApiScopes(Config.TestingApiScopes)
-            .AddAspNetIdentity<ApplicationUser>()
-           ;
+            .AddAspNetIdentity<ApplicationUser>();
+             
+           
+
         if (builder.Environment.IsDevelopment())
         {
             identityServerBuilder.AddDeveloperSigningCredential();

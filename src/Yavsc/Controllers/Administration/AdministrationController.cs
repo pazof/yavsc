@@ -68,7 +68,7 @@ namespace Yavsc.Controllers
             if (admins != null && admins.Count > 0) 
             {
                 // All is ok, nothing to do here.
-                if (User.IsInRole(Constants.AdminGroupName))
+                if (User.IsInMsRole(Constants.AdminGroupName))
                 {
                     
                     return Ok(new { message = "you already got it." });

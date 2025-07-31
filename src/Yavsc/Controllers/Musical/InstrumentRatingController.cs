@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Musical;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
@@ -60,7 +61,7 @@ namespace Yavsc.Controllers
             ViewBag.YetAvailableInstruments = _context.Instrument.Select(k=>new SelectListItem 
             { Text = k.Name, Value = k.Id.ToString(), Disabled = actual.Contains(k.Id) });
             
-            if (User.IsInRole("Administrator"))
+            if (User.IsInMsRole("Administrator"))
                 ViewBag.OwnerIds = new SelectList(_context.Performers, "PerformerId", "Profile");
             return View();
         }
