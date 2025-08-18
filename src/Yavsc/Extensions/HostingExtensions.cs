@@ -303,6 +303,8 @@ public static class HostingExtensions
 
     public async static Task<WebApplication> ConfigurePipeline(this WebApplication app)
     {
+        ILoggerFactory loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+        var logger = loggerFactory.CreateLogger<Program>();
 
         if (app.Environment.IsDevelopment())
         {
@@ -311,10 +313,17 @@ public static class HostingExtensions
         else
         {
             app.UseExceptionHandler("/Home/Error");
-            using (var scope = app.Services.CreateScope())
+            try
             {
-                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                await db.Database.MigrateAsync();
+                using (var scope = app.Services.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    await db.Database.MigrateAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error migrating the database : {0}", ex);
             }
         }
 
@@ -345,7 +354,6 @@ public static class HostingExtensions
         WorkflowHelpers.ConfigureBillingService();
 
         var services = app.Services;
-        ILoggerFactory loggerFactory = services.GetRequiredService<ILoggerFactory>();
         var siteSettings = services.GetRequiredService<IOptions<SiteSettings>>();
         var smtpSettings = services.GetRequiredService<IOptions<SmtpSettings>>();
         var payPalSettings = services.GetRequiredService<IOptions<PayPalSettings>>();
