@@ -12,7 +12,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
-    [Produces("application/json"),Authorize(Roles="Administrator")]
+    [Produces("application/json"),Authorize("AdministratorOnly")]
     [Route("api/users")]
     public class ApplicationUserApiController : Controller
     {

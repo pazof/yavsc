@@ -25,13 +25,13 @@ namespace Yavsc.Controllers
         public IActionResult GetBlog()
         {
             var data = applicationDbContext.BlogSpot.ToArray();
-            return Ok(JsonConvert.SerializeObject(data, Formatting.None));
+            return Ok(data);
         }
 
         public IActionResult GetUsers()
         {
             var data = applicationDbContext.Users.ToArray();
-            return Ok(JsonConvert.SerializeObject(data, Formatting.None));
+            return Ok(data);
         }
 
         public IActionResult ImportUsers(String usersJson)

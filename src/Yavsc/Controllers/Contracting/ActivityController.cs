@@ -50,9 +50,8 @@ namespace Yavsc.Controllers
         private List<SelectListItem> GetEligibleParent(string code)
         {
             // eligibles are those
-            // who are not in descendants
+            // who are not in descendence
 
-            //
             var acts = _context.Activities.Where(
                 a => a.Code != code
             ).Select(a => new SelectListItem
@@ -68,13 +67,13 @@ namespace Yavsc.Controllers
             var pi = acts.FirstOrDefault(i => i.Value == existing.ParentCode);
             if (pi!=null) pi.Selected = true; 
             else nullItem.Selected = true;
-            RecFilterChild(acts, existing); 
+            RecursivelyFilterChild(acts, existing); 
             return acts;
         }
 
         /// <summary>
         /// Filters a activity selection list
-        /// in order to exculde any descendant 
+        /// in order to exclude any descendant 
         /// from the eligible list at the <c>Parent</c> property.
         /// WARN! results in a infinite loop when
         /// data is corrupted and there is a circularity
@@ -82,21 +81,18 @@ namespace Yavsc.Controllers
         /// </summary>
         /// <param name="list"></param>
         /// <param name="activity"></param>
-        private static void RecFilterChild(List<SelectListItem> list, Activity activity)
+        private static void RecursivelyFilterChild(List<SelectListItem> list, Activity activity)
         {
             if (activity == null) return;
             if (activity.Children == null) return;
             if (list.Count == 0) return;
             foreach (var child in activity.Children)
             {
-                RecFilterChild(list, child);
+                RecursivelyFilterChild(list, child);
                 var rem = list.FirstOrDefault(i => i.Value == child.Code);
                 if (rem != null) list.Remove(rem);
             }
         }
-
-      
-
 
         // GET: Activity/Details/5
         public IActionResult Details(string id)

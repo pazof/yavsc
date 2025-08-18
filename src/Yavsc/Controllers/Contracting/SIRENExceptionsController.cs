@@ -7,7 +7,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
-    [Authorize(Roles="Administrator")]
+    [Authorize("AdministratorOnly")]
     public class SIRENExceptionsController : Controller
     {
         private readonly ApplicationDbContext _context;

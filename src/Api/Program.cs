@@ -13,6 +13,7 @@
 using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Yavsc;
 using Yavsc.Helpers;
 using Yavsc.Interface;
 using Yavsc.Models;
@@ -61,7 +62,7 @@ internal class Program
                      options.IncludeErrorDetails = true;
                      options.Authority = "https://localhost:5001";
                      options.TokenValidationParameters =
-                         new() { ValidateAudience = false, RoleClaimType = JwtClaimTypes.Role };
+                         new() { ValidateAudience = false, RoleClaimType = Constants.RoleClaimType };
                      options.MapInboundClaims = true;
                  });
 

@@ -43,7 +43,7 @@ namespace Yavsc.Services
                 claimAdds.Remove("profile");
                 claimAdds.Add(JwtClaimTypes.Name);
                 claimAdds.Add(JwtClaimTypes.Email);
-                claimAdds.Add(JwtClaimTypes.Role);
+                claimAdds.Add(Constants.RoleClaimType);
             }
 
             if (claimAdds.Contains(JwtClaimTypes.Name))
@@ -52,12 +52,12 @@ namespace Yavsc.Services
             if (claimAdds.Contains(JwtClaimTypes.Email))
                 claims.Add(new Claim(JwtClaimTypes.Email, user.Email));
             
-            if (claimAdds.Contains(JwtClaimTypes.Role))
+            if (claimAdds.Contains(Constants.RoleClaimType))
             {
                 var roles = await this._userManager.GetRolesAsync(user);
                 if (roles.Count()>0)
                 {
-                    claims.AddRange(roles.Select(r => new Claim(JwtClaimTypes.Role, r)));
+                    claims.AddRange(roles.Select(r => new Claim(Constants.RoleClaimType, r)));
                 }
             }
             return claims;

@@ -28,7 +28,7 @@ namespace Yavsc.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Roles="Performer"),HttpGet("{id}")]
+        [Authorize("Performer"),HttpGet("{id}")]
         public IActionResult Get(string id)
         {
             var pfr = dbContext.Performers.Include(

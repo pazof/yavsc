@@ -128,11 +128,10 @@ public static class HostingExtensions
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.PreferredUserName;
-                options.ClaimsIdentity.RoleClaimType = JwtClaimTypes.Role;
+                options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
             }
         )
         .AddEntityFrameworkStores<ApplicationDbContext>();
-
     }
 
     private static void AddYavscPolicies(IServiceCollection services)
@@ -144,17 +143,20 @@ public static class HostingExtensions
                 policy.RequireAuthenticatedUser()
                 .RequireClaim("scope", "scope2");
             });
+            
             options.AddPolicy("Performer", policy =>
             {
                 policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(JwtClaimTypes.Role, "Performer");
+                    .RequireClaim(Constants.RoleClaimType,
+                    new string[] {Constants.PerformerGroupName, Constants.AdminGroupName})
+                    ;
             });
             options.AddPolicy("AdministratorOnly", policy =>
             {
                 _ = policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(JwtClaimTypes.Role, Constants.AdminGroupName);
+                    .RequireClaim(Constants.RoleClaimType, Constants.AdminGroupName);
             });
 
             options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
@@ -241,7 +243,12 @@ public static class HostingExtensions
             .AddInMemoryApiScopes(Config.TestingApiScopes)
             .AddAspNetIdentity<ApplicationUser>();
 
-
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            options.ClaimsIdentity.UserIdClaimType = JwtClaimTypes.Subject;
+            options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.Name;
+            options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
+        });
 
         if (builder.Environment.IsDevelopment())
         {

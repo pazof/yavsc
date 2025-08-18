@@ -18,7 +18,7 @@ namespace Yavsc.Controllers
     using Yavsc.Server.Helpers;
 
     [Produces("application/json")]
-    [Route("api/bookquery"), Authorize(Roles = "Performer,Administrator")]
+    [Route("api/bookquery"), Authorize("Performer")]
     public class BookQueryApiController : Controller
     {
         private ApplicationDbContext _context;

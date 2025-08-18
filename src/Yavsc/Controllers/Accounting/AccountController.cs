@@ -403,7 +403,7 @@ namespace Yavsc.Controllers
         }
 
 
-        [Authorize(Roles = Constants.AdminGroupName)]
+        [Authorize("AdministratorOnly")]
         public IActionResult Index()
         {
             IViewComponentHelper h;
@@ -411,7 +411,7 @@ namespace Yavsc.Controllers
             return View();
         }
 
-        [Authorize(Roles = Constants.AdminGroupName)]
+        [Authorize("AdministratorOnly")]
         [Route("Account/UserList/{pageNum}/{len?}")]
         public async Task<IActionResult> UserList(int pageNum, int pageLen = defaultLen)
         {

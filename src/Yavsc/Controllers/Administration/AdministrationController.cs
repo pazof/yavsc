@@ -93,7 +93,7 @@ namespace Yavsc.Controllers
             return Ok(new { message = "you owned it." });
         }
 
-        [Authorize(Roles = Constants.AdminGroupName)]
+        [Authorize("AdministratorOnly")]
         [Produces("application/json")]
         public async Task<IActionResult> Index()
         {

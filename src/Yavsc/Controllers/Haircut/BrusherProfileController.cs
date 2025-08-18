@@ -5,7 +5,7 @@ using Yavsc.Controllers.Generic;
 
 namespace Yavsc.Controllers
 {
-    [Authorize(Roles="Performer")]
+    [Authorize("Performer")]
     public class BrusherProfileController : SettingsController<BrusherProfile>
     {
         public BrusherProfileController(ApplicationDbContext context) : base(context)
