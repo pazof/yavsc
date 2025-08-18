@@ -1,9 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using RazorEngine.Compilation.ImpromptuInterface.Optimization;
-using Yavsc.Helpers;
-using Yavsc.Migrations;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;

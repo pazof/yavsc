@@ -28,13 +28,14 @@ using Microsoft.IdentityModel.Protocols.Configuration;
 using IdentityModel;
 using Yavsc.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Npgsql;
 
 namespace Yavsc.Extensions;
 
 
 public static class HostingExtensions
 {
-  
+
     public static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
         IServiceCollection services = LoadConfiguration(builder);
@@ -58,7 +59,7 @@ public static class HostingExtensions
         {
             o.EnableDetailedErrors = true;
         });
-        
+
         services.AddMvc(config =>
         {
             /* var policy = new AuthorizationPolicyBuilder()
@@ -109,7 +110,7 @@ public static class HostingExtensions
 
 
         AddAuthentication(builder);
-        
+
         services.AddTransient<RoleManager<IdentityRole>>();
         services.AddTransient<IRoleStore<IdentityRole>, RoleStore<IdentityRole, ApplicationDbContext>>();
 
@@ -122,7 +123,7 @@ public static class HostingExtensions
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        return services.AddIdentity<ApplicationUser,IdentityRole>(
+        return services.AddIdentity<ApplicationUser, IdentityRole>(
             options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
@@ -131,7 +132,7 @@ public static class HostingExtensions
             }
         )
         .AddEntityFrameworkStores<ApplicationDbContext>();
-            
+
     }
 
     private static void AddYavscPolicies(IServiceCollection services)
@@ -185,11 +186,11 @@ public static class HostingExtensions
 
         //LoadGoogleConfig(builder.Configuration);
 
-        
+
         var services = builder.Services;
         _ = services.AddControllersWithViews()
             .AddNewtonsoftJson();
-       
+
         services.Configure<SiteSettings>(siteSection);
         services.Configure<SmtpSettings>(smtpSection);
         services.Configure<PayPalSettings>(paypalSection);
@@ -201,25 +202,25 @@ public static class HostingExtensions
 
     private static void AddAuthentication(WebApplicationBuilder builder)
     {
-        IServiceCollection services=builder.Services;
-        IConfigurationRoot configurationRoot=builder.Configuration;
+        IServiceCollection services = builder.Services;
+        IConfigurationRoot configurationRoot = builder.Configuration;
         string? googleClientId = configurationRoot["Authentication:Google:ClientId"];
         string? googleClientSecret = configurationRoot["Authentication:Google:ClientSecret"];
-     
+
         var authenticationBuilder = services.AddAuthentication();
 
-        if (googleClientId!=null && googleClientSecret!=null)
-        authenticationBuilder.AddGoogle(options =>
-        {
-            options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+        if (googleClientId != null && googleClientSecret != null)
+            authenticationBuilder.AddGoogle(options =>
+            {
+                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
 
-            // register your IdentityServer with Google at https://console.developers.google.com
-            // enable the Google+ API
-            // set the redirect URI to https://localhost:5001/signin-google
-            options.ClientId = googleClientId;
-            options.ClientSecret = googleClientSecret;
-            
-        });
+                // register your IdentityServer with Google at https://console.developers.google.com
+                // enable the Google+ API
+                // set the redirect URI to https://localhost:5001/signin-google
+                options.ClientId = googleClientId;
+                options.ClientSecret = googleClientSecret;
+
+            });
     }
     private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
@@ -232,15 +233,15 @@ public static class HostingExtensions
 
              // see https://IdentityServer8.readthedocs.io/en/latest/topics/resources.html
              options.EmitStaticAudienceClaim = true;
-             
+
          })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryClients(Config.TestingClients)
             .AddClientStore<ClientStore>()
             .AddInMemoryApiScopes(Config.TestingApiScopes)
             .AddAspNetIdentity<ApplicationUser>();
-             
-           
+
+
 
         if (builder.Environment.IsDevelopment())
         {
@@ -310,22 +311,27 @@ public static class HostingExtensions
         else
         {
             app.UseExceptionHandler("/Home/Error");
-             using (var scope = app.Services.CreateScope())
+            using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 await db.Database.MigrateAsync();
             }
         }
-        app.Use(async (context, next) => {
-            if (context.Request.Path.StartsWithSegments("/robots.txt")) {
+
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Path.StartsWithSegments("/robots.txt"))
+            {
                 var robotsTxtPath = System.IO.Path.Combine(app.Environment.WebRootPath, $"robots.txt");
                 string output = "User-agent: *  \nDisallow: /";
-                if (File.Exists(robotsTxtPath)) {
+                if (File.Exists(robotsTxtPath))
+                {
                     output = await File.ReadAllTextAsync(robotsTxtPath);
                 }
                 context.Response.ContentType = "text/plain";
                 await context.Response.WriteAsync(output);
-            } else await next();
+            }
+            else await next();
         });
         app.UseStaticFiles();
         app.UseRouting();
@@ -335,9 +341,9 @@ public static class HostingExtensions
         app.MapDefaultControllerRoute();
         //app.MapRazorPages();
         app.MapHub<ChatHub>("/chatHub");
-       
+
         WorkflowHelpers.ConfigureBillingService();
-        
+
         var services = app.Services;
         ILoggerFactory loggerFactory = services.GetRequiredService<ILoggerFactory>();
         var siteSettings = services.GetRequiredService<IOptions<SiteSettings>>();
@@ -349,7 +355,7 @@ public static class HostingExtensions
             payPalSettings, googleAuthSettings, localization, loggerFactory,
             app.Environment.EnvironmentName);
         app.ConfigureFileServerApp();
-       
+
         return app;
     }
 
@@ -368,7 +374,7 @@ public static class HostingExtensions
             Config.GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
         }
     }
-  
+
     public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
                 bool enableDirectoryBrowsing = false)
     {

@@ -8,7 +8,7 @@ using Yavsc.Models;
 
 #nullable disable
 
-namespace Yavsc.Migrations
+namespace Yavsc.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot

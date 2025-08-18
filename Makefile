@@ -29,7 +29,6 @@ publish:
 	dotnet publish src/Yavsc/Yavsc.csproj -c Release -o $(DESTDIR)/srv/www/yavsc
 
 install: publish
-	chown -R www-data $(DESTDIR)/srv/www/yavsc
-	chgrp -R www-data $(DESTDIR)/srv/www/yavsc
+	sudo chown -R www-data:www-data $(DESTDIR)/srv/www/yavsc
 
 .PHONY: 

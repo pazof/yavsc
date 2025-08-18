@@ -82,14 +82,14 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 // Only allow admin to create corporate annonces
-                if (announce.For == Reason.Corporate && ! ViewBag.IsAdmin)
+                if (announce.For == Reason.Corporate && ! User.IsInMsRole(Constants.AdminGroupName))
                 {
                     ModelState.AddModelError("For", _localizer["YourNotAdmin"]);
                     return View(announce);
                 }
 
                 // Only allow performers to create ServiceProposal 
-                if (announce.For == Reason.ServiceProposal && ! ViewBag.IsAdmin)
+                if (announce.For == Reason.ServiceProposal && ! User.IsInMsRole(Constants.PerformerGroupName))
                 {
                     ModelState.AddModelError("For", _localizer["YourNotAPerformer"]);
                     return View(announce);

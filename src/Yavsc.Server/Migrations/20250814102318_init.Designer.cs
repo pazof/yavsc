@@ -9,11 +9,11 @@ using Yavsc.Models;
 
 #nullable disable
 
-namespace Yavsc.Migrations
+namespace Yavsc.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250715211745_test")]
-    partial class test
+    [Migration("20250814102318_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -450,7 +450,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.Property<string>("LogoutRedirectUri")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 

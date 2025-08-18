@@ -25,10 +25,10 @@ namespace Yavsc.Models.Blog
 
         [Display(Name="Identifiant de l'auteur")]
         [ForeignKey("Author")]
-        public  string AuthorId { get; set; }
+        public string? AuthorId { get; set; }
 
         [Display(Name="Auteur")]
-        public  virtual ApplicationUser Author { set; get; }
+        public virtual ApplicationUser? Author { set; get; }
 
 
         [Display(Name="Date de création")]
