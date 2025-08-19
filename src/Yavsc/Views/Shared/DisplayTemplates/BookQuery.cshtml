@@ -3,38 +3,38 @@
 <dl class="dl-horizontal">
         
         <dt>
-            EventDate"]
+            EventDate
         </dt>
         <dd>
             @Html.DisplayFor(model => model.EventDate)
         </dd>
         
         <dt>
-            Client"]
+            Client
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Client.UserName)
         </dd>
        
         <dt>
-            Address"]
+            Address
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Location.Address)
         </dd>
         
         <dt>
-            Provider"]
+            Provider
         </dt>
         <dd>
             @Html.DisplayFor(model => model.PerformerProfile.Performer.UserName)
         </dd>
         
         <dt>
-            ValidationDate"]
+            ValidationDate
         </dt>
         <dd>
-            @((Model.ValidationDate==null)?"NonValidee":Html.DisplayFor(model => model.ValidationDate))
+            @((Model.ValidationDate==null)?"Non Validated":Html.DisplayFor(model => model.ValidationDate))
         </dd>
         
     </dl>

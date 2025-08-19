@@ -1,10 +1,22 @@
 @using Yavsc.Abstract.Identity
 @model IApplicationUser
 @{
-    var avuri = "/Avatars/" + Model.UserName + ".s.png";
+
+if (Model ==null || Model.UserName==null)
+{
+  if (Model !=null)
+  {
+    <span class="error">[E No user name]</span>
+  }
 }
+else {
+     string avuri = "/Avatars/" + Model.UserName + ".s.png";
+
 <div class="userinfo">
     <a title="Posts" asp-controller="Blogspot" asp-action="Index" asp-route-id="@Model.UserName" class="btn btn-primary">
         <img src="@avuri" asp-append-version="true" class="smalltofhol" alt="@Model.UserName" title="@Model.UserName" />
     </a>
 </div>
+}
+}
+
