@@ -3,6 +3,9 @@ CONFIG=Debug
 FRAMEWORK=net8.0
 DESTDIR=/tmp/yavsc
 
+all:
+	@dotnet build --nologo 2>/dev/null |grep error
+
 clean: 
 	dotnet clean
 

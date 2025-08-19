@@ -56,10 +56,10 @@ namespace Yavsc
             _localizer = stringLocalizerFactory.Create(typeof(ChatHub));
             
             _cxManager =  connexionManager;
-             _cxManager.SetErrorHandler ((context, error) => 
-             {
-                 NotifyUser(NotificationTypes.Error, context, error);
-             });
+            _cxManager.SetErrorHandler ((context, error) => 
+            {
+                NotifyUser(NotificationTypes.Error, context, error);
+            });
             _logger = loggerFactory.CreateLogger<ChatHub>();
             InputValidator = new HubInputValidator { NotifyUser = async (type, target, msg) => await this.NotifyUser(type, target, msg) };
         }

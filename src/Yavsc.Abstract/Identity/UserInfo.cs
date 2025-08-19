@@ -7,15 +7,17 @@ namespace  Yavsc.Abstract.Identity
 
         }
 
-        public UserInfo(string userId, string userName, string avatar)
+        public UserInfo(string userId, string userName, string email, string avatar)
         {
             UserId = userId;
             UserName = userName;
+            Email = email;
             Avatar = avatar;
         }
         public string UserId { get; set; }
 
-        public string UserName { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; }
         public string Avatar { get; set; }
     }
 }

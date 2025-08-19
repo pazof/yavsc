@@ -34,7 +34,7 @@ namespace Yavsc.ApiControllers.accounting
         public UserInfo[] GetUserHint(string name)
         {
             return _dbContext.Users.Where(u=>u.UserName.IndexOf(name)>0)
-            .Select(u=>new UserInfo(u.Id, u.UserName, u.Avatar))
+            .Select(u=>new UserInfo(u.Id, u.UserName, u.Email, u.Avatar))
             .Take(10).ToArray();
         }
     }

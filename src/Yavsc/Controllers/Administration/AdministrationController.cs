@@ -30,11 +30,26 @@ namespace Yavsc.Controllers
             this._dbContext = context;
         }
 
-        private async Task<bool> EnsureRoleList () {
+        public async Task<IActionResult> Role(string id)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null) return NotFound();
+            RoleUserCollection roleUserCollection = new RoleUserCollection
+            {
+                Id = id,
+                Name = role.Name,
+                Users = (await this._userManager.GetUsersInRoleAsync(role.Name))
+                .Select(u => new UserInfo (id, u.UserName, u.Email, u.Avatar)).ToArray()
+            };
+            return View(roleUserCollection);
+        }
+
+        private async Task<bool> EnsureRoleList()
+        {
             // ensure all roles existence
             foreach (string roleName in new string[] {
                 Constants.AdminGroupName,
-                Constants.StarGroupName, 
+                Constants.StarGroupName,
                 Constants.PerformerGroupName,
                 Constants.FrontOfficeGroupName,
                 Constants.StarHunterGroupName,
@@ -50,8 +65,8 @@ namespace Yavsc.Controllers
                         return false;
                     }
                 }
-                return true;
-        
+            return true;
+
         }
         /// <summary>
         /// Gives the (new if was not existing) administrator role
@@ -65,20 +80,21 @@ namespace Yavsc.Controllers
         {
             // If some amdin already exists, make this method disapear
             var admins = await _userManager.GetUsersInRoleAsync(Constants.AdminGroupName);
-            if (admins != null && admins.Count > 0) 
+            if (admins != null && admins.Count > 0)
             {
                 // All is ok, nothing to do here.
                 if (User.IsInMsRole(Constants.AdminGroupName))
                 {
-                    
+
                     return Ok(new { message = "you already got it." });
                 }
                 return NotFound();
             }
-            
+
             var user = await _userManager.FindByIdAsync(User.GetUserId());
             // check all user groups exist
-            if (!await EnsureRoleList()) {
+            if (!await EnsureRoleList())
+            {
                 ModelState.AddModelError(null, "Could not ensure role list existence. aborting.");
                 return new BadRequestObjectResult(ModelState);
             }
@@ -103,11 +119,12 @@ namespace Yavsc.Controllers
             var youAreAdmin = await _userManager.IsInRoleAsync(
                 await _userManager.FindByIdAsync(User.GetUserId()),
                 Constants.AdminGroupName);
-           
-            var roles = await _roleManager.Roles.Select(x => new RoleInfo {
+
+            var roles = await _roleManager.Roles.Select(x => new RoleInfo
+            {
                 Id = x.Id,
-                Name = x.Name            
-                }).ToArrayAsync();
+                Name = x.Name
+            }).ToArrayAsync();
             foreach (var role in roles)
             {
                 var uinrole = await _userManager.GetUsersInRoleAsync(role.Name);
@@ -115,9 +132,9 @@ namespace Yavsc.Controllers
                 role.UserCount = uinrole.Count();
             }
             var assembly = GetType().Assembly;
-           ViewBag.ThisAssembly = assembly.FullName;
-           ViewBag.RunTimeVersion = assembly.ImageRuntimeVersion;
-           var rolesArray = roles.ToArray();
+            ViewBag.ThisAssembly = assembly.FullName;
+            ViewBag.RunTimeVersion = assembly.ImageRuntimeVersion;
+            var rolesArray = roles.ToArray();
             return View(new AdminViewModel
             {
                 Roles = rolesArray,
@@ -131,7 +148,7 @@ namespace Yavsc.Controllers
         public IActionResult Enroll(string roleName)
         {
             ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "UserName");
-            return View(new EnrolerViewModel{ RoleName = roleName });
+            return View(new EnrolerViewModel { RoleName = roleName });
         }
 
         [Authorize("AdministratorOnly")]
@@ -140,8 +157,8 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var newAdmin  = await _dbContext.Users.FirstOrDefaultAsync(u=>u.Id==model.EnroledUserId);
-                if (newAdmin==null) return NotFound();
+                var newAdmin = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == model.EnroledUserId);
+                if (newAdmin == null) return NotFound();
                 var addToRoleResult = await _userManager.AddToRoleAsync(newAdmin, model.RoleName);
                 if (addToRoleResult.Succeeded)
                 {
@@ -156,10 +173,10 @@ namespace Yavsc.Controllers
         [Authorize("AdministratorOnly")]
         public async Task<IActionResult> Fire(string roleName, string userId)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u=>u.Id==userId);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return NotFound();
 
-            return View(new FireViewModel{ RoleName = roleName, EnroledUserId = userId, EnroledUserName = user.UserName });
+            return View(new FireViewModel { RoleName = roleName, EnroledUserId = userId, EnroledUserName = user.UserName });
         }
 
         [Authorize("AdministratorOnly")]
@@ -168,8 +185,8 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var oldEnroled  = await _dbContext.Users.FirstOrDefaultAsync(u=>u.Id==model.EnroledUserId);
-                if (oldEnroled==null) return NotFound();
+                var oldEnroled = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == model.EnroledUserId);
+                if (oldEnroled == null) return NotFound();
                 var removeFromRole = await _userManager.RemoveFromRoleAsync(oldEnroled, model.RoleName);
                 if (removeFromRole.Succeeded)
                 {

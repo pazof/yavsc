@@ -12,7 +12,7 @@
 <table class="table">
     <tr>
         <th>
-            User"]
+            User
         </th>
         <th>
         </th>
@@ -22,7 +22,7 @@
     <tr>
         <td>
             <img src="~/avatars/@(user.UserName).xs.png" alt="avatar"/>
-            <span> @user.UserName </span>
+            <span> @user.UserName &lt;@(user.Email)&gt; </span>
         </td>
             <td>
             <a asp-action="Fire" asp-route-RoleName="@Model.Name" asp-route-UserId="@user.UserId" class="btn btn-success" >

@@ -1,0 +1,68 @@
+@model ApplicationUser[]
+@{
+    ViewData["Title"] = "Liste des utilisateurs";
+}
+
+<h2>@ViewData["Title"].</h2>
+<table >
+    <thead>
+    <th>
+        @SR["Public info"]
+    </th>
+    <th>
+        @SR["AdminOnly"]
+    </th>
+        
+    </thead>
+@foreach (var user in Model)
+{
+    <tr style="border-width:2px;">
+    <td>
+        @Html.DisplayFor(m=>user) 
+    </td>
+    <td>
+        <dl>
+            <dt>
+                @SR["UserName"]
+            </dt>
+            <dd>
+                @Html.DisplayFor(m=>user.UserName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @SR["FullName"]
+            </dt>
+            <dd>
+                @Html.DisplayFor(m=>user.FullName)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @SR["PostalAddress"]
+            </dt>
+            <dd>
+                @Html.DisplayFor(m=>user.PostalAddress)
+            </dd>
+        </dl>
+        <dl>
+            <dt>
+                @SR["Email"]
+            </dt>
+            <dd>
+                @Html.DisplayFor(m=>user.Email)
+                @if (!user.EmailConfirmed) {
+                <a asp-action="AdminSendConfirationEmail" asp-route-id="@user.Id" >Envoyer une demande de confirmation</a>          
+                }
+                 <a asp-action="AdminDelete" asp-route-id="@user.Id" >Supprimer</a>
+            </dd>
+        </dl>
+    </td>
+    </tr>
+}
+</table>
+
+@if (ViewBag.hasNext)
+{
+    <a asp-route-page="@ViewBag.nextpage" asp-route-len="@ViewBag.pageLen">Next page</a>
+}

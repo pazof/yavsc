@@ -412,8 +412,8 @@ namespace Yavsc.Controllers
         }
 
         [Authorize("AdministratorOnly")]
-        [Route("Account/UserList/{pageNum}/{len?}")]
-        public async Task<IActionResult> UserList(int pageNum, int pageLen = defaultLen)
+        [Route("Account/UserList/{pageNum?}/{len?}")]
+        public async Task<IActionResult> UserList(int pageNum=0, int pageLen = defaultLen)
         {
             var users =  _dbContext.Users.OrderBy(u=>u.UserName);
             var shown = pageNum * pageLen;
@@ -423,8 +423,6 @@ namespace Yavsc.Controllers
             ViewBag.hasNext =  users.Count() > (toShow.Count() + shown);
             ViewBag.nextpage = pageNum+1;
             ViewBag.pageLen = pageLen;
-            // ApplicationUser user;
-            // user.EmailConfirmed
             return View(toShow.ToArray());
         }
 
