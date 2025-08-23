@@ -24,42 +24,44 @@ namespace Yavsc.Controllers
 
         public IActionResult GetBlog()
         {
-            var data = applicationDbContext.BlogSpot.ToArray();
-            return Ok(data);
+            return ReturnDbSet(applicationDbContext.BlogSpot);
         }
 
         public IActionResult GetUsers()
         {
-            var data = applicationDbContext.Users.ToArray();
-            return Ok(data);
+            return ReturnDbSet(applicationDbContext.Users);
+        }
+
+        public IActionResult GeActivities()
+        {
+            return ReturnDbSet(applicationDbContext.Activities);
         }
 
         public IActionResult ImportUsers(String usersJson)
         {
+            return DBSetImportFromJson(applicationDbContext.Users, usersJson);
+        }
+
+        public IActionResult ImportBlog(String blogJson)
+        {
+             return DBSetImportFromJson(applicationDbContext.BlogSpot, blogJson);
+        }
+
+        IActionResult ReturnDbSet<T>(DbSet<T> dbSet) where T : class
+        {
+            var data = dbSet.ToArray();
+            return Ok(data);
+        }
+
+        private IActionResult DBSetImportFromJson<T>(DbSet<T> dbSet, string usersJson) where T : class
+        {
             int failures = 0;
-            var input = JsonConvert.DeserializeObject<ApplicationUser[]>(usersJson);
+            var input = JsonConvert.DeserializeObject<T[]>(usersJson);
             foreach (var user in input)
             {
                 try
                 {
-                    applicationDbContext.Users.Add(user);
-                }
-                catch (Exception ex)
-                {
-                    failures++;
-                }
-            }
-            return Ok(failures);
-        }
-        public IActionResult ImportBlog(String blogJson)
-        {
-            int failures = 0;
-            var input = JsonConvert.DeserializeObject<BlogPost[]>(blogJson);
-            foreach (var post in input)
-            {
-                try
-                {
-                    applicationDbContext.BlogSpot.Add(post);
+                    dbSet.Add(user);
                 }
                 catch (Exception ex)
                 {
