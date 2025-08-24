@@ -91,8 +91,6 @@ namespace Yavsc.Models
                 optionsBuilder.UseNpgsql(envCxStr);
             base.OnConfiguring(optionsBuilder);
         }
-        public DbSet<Client> Applications { get; set; }
-
 
         /// <summary>
         /// Activities referenced on this site
@@ -278,6 +276,5 @@ namespace Yavsc.Models
         public DbSet<Scope> Scopes { get; set; }
 
         public DbSet<BlogSpotPublication> blogSpotPublications { get; set; }
-        public DbSet<Client> Client { get; set; }
     }
 }

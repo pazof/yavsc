@@ -123,32 +123,7 @@ namespace isnd.tests
             TestClientId = "testClientId";
             TestingUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
             EnsureUser(TestingUserName, TestingUserPassword);
-            // ensure a client
-            var testClient = await dbContext.Client.FirstOrDefaultAsync((c) => c.Id == TestClientId);
-            if (testClient == null)
-            {
-                testClient = new Yavsc.Models.Auth.Client
-                {
-                    Id = TestClientId,
-                    DisplayName = "Testing Client",
-                    Secret = TestClientSecret,
-                    Active = true,
-                    Type = ApplicationTypes.NativeConfidential,
-                    AccessTokenLifetime = 900,
-                    RefreshTokenLifeTime = 15000
-                };
-                dbContext.Client.Add(testClient);
-                dbContext.SaveChanges();
-            }
-            else
-            {
-                testClient.DisplayName = "Testing Client";
-                testClient.Secret = TestClientSecret;
-                testClient.Active = true;
-                testClient.Type = ApplicationTypes.NativeConfidential;
-                testClient.AccessTokenLifetime = 900;
-                testClient.RefreshTokenLifeTime = 1500;
-            }
+           
         }
 
         public void EnsureUser(string testingUserName, string password)

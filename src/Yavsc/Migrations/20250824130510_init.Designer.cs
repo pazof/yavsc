@@ -9,10 +9,10 @@ using Yavsc.Models;
 
 #nullable disable
 
-namespace Yavsc.Server.Migrations
+namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250814102318_init")]
+    [Migration("20250824130510_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -702,7 +702,6 @@ namespace Yavsc.Server.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AuthorId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Content")
@@ -2663,9 +2662,7 @@ namespace Yavsc.Server.Migrations
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser", "Author")
                         .WithMany("Posts")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AuthorId");
 
                     b.Navigation("Author");
                 });

@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Yavsc.Server.Migrations
+namespace Yavsc.Migrations
 {
     /// <inheritdoc />
     public partial class init : Migration
@@ -800,7 +800,7 @@ namespace Yavsc.Server.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AuthorId = table.Column<string>(type: "text", nullable: false),
+                    AuthorId = table.Column<string>(type: "text", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UserCreated = table.Column<string>(type: "text", nullable: true),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -816,8 +816,7 @@ namespace Yavsc.Server.Migrations
                         name: "FK_BlogSpot_AspNetUsers_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(

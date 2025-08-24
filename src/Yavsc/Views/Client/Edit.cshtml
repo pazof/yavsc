@@ -11,55 +11,62 @@
         <h4>Client</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ClientId" />
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <div class="checkbox">
-                    <input asp-for="Active" />
-                    <label asp-for="Active"></label>
+                    <input asp-for="Enabled" />
+                    <label asp-for="Enabled"></label>
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="DisplayName" class="col-md-2 control-label"></label>
+            <label asp-for="ClientName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="DisplayName" class="form-control" />
-                <span asp-validation-for="DisplayName" class="text-danger" ></span>
+                <input asp-for="ClientName" class="form-control" />
+                <span asp-validation-for="ClientName" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="LogoutRedirectUri" class="col-md-2 control-label"></label>
+            <label asp-for="FrontChannelLogoutUri" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="LogoutRedirectUri" class="form-control" />
-                <span asp-validation-for="LogoutRedirectUri" class="text-danger" ></span>
+                <input asp-for="FrontChannelLogoutUri" class="form-control" />
+                <span asp-validation-for="FrontChannelLogoutUri" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="RedirectUri" class="col-md-2 control-label"></label>
+            <label asp-for="RedirectUris" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="RedirectUri" class="form-control" />
-                <span asp-validation-for="RedirectUri" class="text-danger" ></span>
+                <input asp-for="RedirectUris" class="form-control" />
+                <span asp-validation-for="RedirectUris" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="RefreshTokenLifeTime" class="col-md-2 control-label"></label>
+            <label asp-for="IdentityTokenLifetime" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="RefreshTokenLifeTime" class="form-control" />
-                <span asp-validation-for="RefreshTokenLifeTime" class="text-danger" ></span>
+                <input asp-for="IdentityTokenLifetime" class="form-control" />
+                <span asp-validation-for="IdentityTokenLifetime" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Secret" class="col-md-2 control-label"></label>
+            <label asp-for="AbsoluteRefreshTokenLifetime" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="Secret" class="form-control" />
-                <span asp-validation-for="Secret" class="text-danger" ></span>
+                <input asp-for="AbsoluteRefreshTokenLifetime" class="form-control" />
+                <span asp-validation-for="AbsoluteRefreshTokenLifetime" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Type" class="col-md-2 control-label"></label>
+            <label asp-for="ClientSecrets" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ClientSecrets" class="form-control" />
+                <span asp-validation-for="ClientSecrets" class="text-danger" ></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AccessTokenType" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 @Html.DropDownList("Type")
-                <span asp-validation-for="Type" class="text-danger" ></span>
+                <span asp-validation-for="AccessTokenType" class="text-danger" ></span>
             </div>
         </div>
         <div class="form-group">

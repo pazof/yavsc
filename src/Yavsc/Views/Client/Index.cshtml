@@ -1,4 +1,5 @@
-@model IEnumerable<Client>
+@using IdentityServer8.Models
+@model IEnumerable<IdentityServer8.EntityFramework.Entities.Client>
 
 @{
     ViewData["Title"] = @SR["Index"];
@@ -12,25 +13,28 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Active)
+            @Html.DisplayNameFor(model => model.ClientId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DisplayName)
+            @Html.DisplayNameFor(model => model.Enabled)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.LogoutRedirectUri)
+            @Html.DisplayNameFor(model => model.ClientName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RedirectUri)
+            @Html.DisplayNameFor(model => model.FrontChannelLogoutUri)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RefreshTokenLifeTime)
+            @Html.DisplayNameFor(model => model.RedirectUris)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Secret)
+            @Html.DisplayNameFor(model => model.AbsoluteRefreshTokenLifetime)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Type)
+            @Html.DisplayNameFor(model => model.AllowedGrantTypes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AccessTokenType)
         </th>
         <th></th>
     </tr>
@@ -38,30 +42,39 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Active)
+            @Html.DisplayFor(modelItem => item.ClientId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.DisplayName)
+            @Html.DisplayFor(modelItem => item.Enabled)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.LogoutRedirectUri)
+            @Html.DisplayFor(modelItem => item.ClientName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.RedirectUri)
+            @Html.DisplayFor(modelItem => item.FrontChannelLogoutUri)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.RefreshTokenLifeTime)
+            <ul>
+            @foreach (var uri in item.RedirectUris)
+                { <li>@uri.RedirectUri</li> }
+            </ul>
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Secret)
+            @Html.DisplayFor(modelItem => item.AbsoluteRefreshTokenLifetime)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Type)
+          <ul>
+            @foreach (var t in item.AllowedGrantTypes)
+                { <li>@t.GrantType</li> }
+            </ul>
         </td>
         <td>
-            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        @Enum.GetName(typeof(AccessTokenType), item.AccessTokenType)
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.ClientId">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.ClientId">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.ClientId">Delete</a>
         </td>
     </tr>
 }

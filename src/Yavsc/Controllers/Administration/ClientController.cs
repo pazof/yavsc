@@ -1,3 +1,6 @@
+using IdentityServer8.EntityFramework.DbContexts;
+using IdentityServer8.EntityFramework.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -8,19 +11,21 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
+    [Authorize("AdministratorOnly")]
     public class ClientController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ConfigurationDbContext _context;
 
-        public ClientController(ApplicationDbContext context)
+        public ClientController(ConfigurationDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Client
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Applications.ToListAsync());
+            return View(await _context.Clients.Include(c=>c.AllowedGrantTypes)
+            .Include(c=>c.RedirectUris).ToListAsync());
         }
 
         // GET: Client/Details/5
@@ -31,7 +36,11 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            Client client = await _context.Applications.SingleAsync(m => m.Id == id);
+            Client client = await _context.Clients.Include(
+                c => c.ClientSecrets
+            ).Include(c=>c.AllowedGrantTypes)
+            .Include(c=>c.RedirectUris)
+            .SingleAsync(m => m.ClientId == id);
             if (client == null)
             {
                 return NotFound();
@@ -53,9 +62,10 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                client.Id = Guid.NewGuid().ToString();
-                _context.Applications.Add(client);
-                await _context.SaveChangesAsync(User.GetUserId());
+                if (string.IsNullOrWhiteSpace(client.ClientId))
+                    client.ClientId = Guid.NewGuid().ToString();
+                _context.Clients.Add(client);
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             SetAppTypesInputValues();
@@ -63,16 +73,16 @@ namespace Yavsc.Controllers
         }
         private void SetAppTypesInputValues()
         {
-            IEnumerable<SelectListItem> types =  new SelectListItem[] {
+            IEnumerable<SelectListItem> types = new SelectListItem[] {
                  new SelectListItem {
                      Text = ApplicationTypes.JavaScript.ToString(),
                      Value = ((int) ApplicationTypes.JavaScript).ToString() },
                  new SelectListItem {
                      Text = ApplicationTypes.NativeConfidential.ToString(),
-                     Value = ((int) ApplicationTypes.NativeConfidential).ToString() 
+                     Value = ((int) ApplicationTypes.NativeConfidential).ToString()
                      }
              };
-            ViewData["Type"] = types;
+            ViewData["AccessTokenType"] = types;
         }
         // GET: Client/Edit/5
         public async Task<IActionResult> Edit(string id)
@@ -82,7 +92,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            Client client = await _context.Applications.SingleAsync(m => m.Id == id);
+            Client client = await _context.Clients.SingleAsync(m => m.ClientId == id);
             if (client == null)
             {
                 return NotFound();
@@ -99,7 +109,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Update(client);
-                await _context.SaveChangesAsync(User.GetUserId());
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(client);
@@ -114,7 +124,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            Client client = await _context.Applications.SingleAsync(m => m.Id == id);
+            Client client = await _context.Clients.SingleAsync(m => m.ClientId == id);
             if (client == null)
             {
                 return NotFound();
@@ -128,9 +138,9 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            Client client = await _context.Applications.SingleAsync(m => m.Id == id);
-            _context.Applications.Remove(client);
-            await _context.SaveChangesAsync(User.GetUserId());
+            Client client = await _context.Clients.SingleAsync(m => m.ClientId == id);
+            _context.Clients.Remove(client);
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
     }

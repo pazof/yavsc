@@ -22,7 +22,7 @@ namespace Yavsc.Services
     {
         private readonly ILogger _logger;
 
-        private Action<string, string> _errorHandler;
+        private Action<string, string>? _errorHandler;
 
         /// <summary>
         /// by cx id

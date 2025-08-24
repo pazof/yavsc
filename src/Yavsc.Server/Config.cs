@@ -43,13 +43,13 @@ public static class Config
             new IdentityResources.Email()
         ];
 
-    public static IEnumerable<ApiScope> TestingApiScopes =>
+    public static IEnumerable<ApiScope> ApiScopes =>
         [
             new ApiScope("scope1",new string[] {"scope1"}),
             new ApiScope("scope2",new string[] {"scope2"}),
         ];
 
-    public static IEnumerable<Client> TestingClients =>
+    public static IEnumerable<Client> Clients =>
         [
             // m2m client credentials flow client
             new Client

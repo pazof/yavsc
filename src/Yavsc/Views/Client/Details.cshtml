@@ -11,52 +11,54 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Id)
+            @Html.DisplayNameFor(model => model.ClientId)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Id)
+            @Html.DisplayFor(model => model.ClientId)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Active)
+            @Html.DisplayNameFor(model => model.Enabled)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Active)
+            @Html.DisplayFor(model => model.Enabled)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.DisplayName)
+            @Html.DisplayNameFor(model => model.ClientName)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.DisplayName)
+            @Html.DisplayFor(model => model.ClientName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.LogoutRedirectUri)
+            @Html.DisplayNameFor(model => model.FrontChannelLogoutUri)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.LogoutRedirectUri)
+            @Html.DisplayFor(model => model.FrontChannelLogoutUri)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.RedirectUri)
+            @Html.DisplayNameFor(model => model.RedirectUris)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.RedirectUri)
+            <ul>
+            @foreach (var uri in Model.RedirectUris)
+                { <li>@uri.RedirectUri</li> }
+            </ul>
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.RefreshTokenLifeTime)
+            @Html.DisplayNameFor(model => model.AbsoluteRefreshTokenLifetime)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.RefreshTokenLifeTime)
+            @Html.DisplayFor(model => model.AbsoluteRefreshTokenLifetime)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Secret)
+            @Html.DisplayNameFor(model => model.ClientSecrets)
         </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Secret)
-        </dd>
+        <dd>Count : @Model.ClientSecrets.Count</dd>
+
         <dt>
-            @Html.DisplayNameFor(model => model.Type)
+            @Html.DisplayNameFor(model => model.AccessTokenType)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Type)
+            @Html.DisplayFor(model => model.AccessTokenType)
         </dd>
     </dl>
 </div>

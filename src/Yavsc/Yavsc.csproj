@@ -15,6 +15,10 @@
     </PackageReference>
     <PackageReference Include="HigginsSoft.IdentityServer8" />
     <PackageReference Include="HigginsSoft.IdentityServer8.AspNetIdentity" />
+    <PackageReference Include="HigginsSoft.IdentityServer8.EntityFramework" />
+    <PackageReference Include="HigginsSoft.IdentityServer8.EntityFramework.Storage" />
+    <PackageReference Include="HigginsSoft.IdentityServer8.Security" />
+    <PackageReference Include="HigginsSoft.IdentityServer8.Storage" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />

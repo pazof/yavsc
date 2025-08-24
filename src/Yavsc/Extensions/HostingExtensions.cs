@@ -2,6 +2,11 @@ using System.Diagnostics;
 using System.Globalization;
 using Google.Apis.Util.Store;
 using IdentityServer8;
+using Microsoft.Extensions.DependencyInjection;
+using IdentityServer8.Stores;
+using IdentityServer8.EntityFramework;
+using IdentityServer8.Extensions;
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -29,6 +34,9 @@ using IdentityModel;
 using Yavsc.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Npgsql;
+using System.Reflection;
+using IdentityServer8.EntityFramework.DbContexts;
+using IdentityServer8.EntityFramework.Mappers;
 
 namespace Yavsc.Extensions;
 
@@ -121,7 +129,12 @@ public static class HostingExtensions
     {
         IServiceCollection services = builder.Services;
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        {
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+             options => options.MigrationsAssembly("Yavsc")
+            );
+        }
+           );
 
         return services.AddIdentity<ApplicationUser, IdentityRole>(
             options =>
@@ -226,6 +239,9 @@ public static class HostingExtensions
     }
     private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
+        var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
          {
              options.Events.RaiseErrorEvents = true;
@@ -237,10 +253,19 @@ public static class HostingExtensions
              options.EmitStaticAudienceClaim = true;
 
          })
-            .AddInMemoryIdentityResources(Config.IdentityResources)
-            .AddInMemoryClients(Config.TestingClients)
-            .AddClientStore<ClientStore>()
-            .AddInMemoryApiScopes(Config.TestingApiScopes)
+            //.AddInMemoryIdentityResources(Config.IdentityResources)
+            //.AddInMemoryClients(Config.TestingClients)
+            //.AddInMemoryApiScopes(Config.TestingApiScopes)
+            .AddConfigurationStore(options =>
+            {
+                options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
+                    sql => sql.MigrationsAssembly(migrationsAssembly));
+            })
+            .AddOperationalStore(options =>
+            {
+                options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
+                    sql => sql.MigrationsAssembly(migrationsAssembly));
+            })
             .AddAspNetIdentity<ApplicationUser>();
 
         builder.Services.Configure<IdentityOptions>(options =>
@@ -370,9 +395,53 @@ public static class HostingExtensions
             payPalSettings, googleAuthSettings, localization, loggerFactory,
             app.Environment.EnvironmentName);
         app.ConfigureFileServerApp();
-
+        app.InitializeDatabase();
         return app;
     }
+private static void InitializeDatabase(this IApplicationBuilder app)
+{
+    using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+    {
+        serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+
+        var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+        try
+        {
+            context.Database.Migrate();
+        }
+        catch (Exception ex)
+        {
+        // TODO log
+        }
+       
+        if (!context.Clients.Any())
+        {
+            foreach (var client in Config.Clients)
+            {
+                context.Clients.Add(client.ToEntity());
+            }
+            context.SaveChanges();
+        }
+
+        if (!context.IdentityResources.Any())
+        {
+            foreach (var resource in Config.IdentityResources)
+            {
+                context.IdentityResources.Add(resource.ToEntity());
+            }
+            context.SaveChanges();
+        }
+
+        if (!context.ApiScopes.Any())
+        {
+            foreach (var resource in Config.ApiScopes)
+            {
+                context.ApiScopes.Add(resource.ToEntity());
+            }
+            context.SaveChanges();
+        }
+    }
+}
 
     static void LoadGoogleConfig(IConfigurationRoot configuration)
     {
