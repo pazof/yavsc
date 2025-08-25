@@ -156,13 +156,13 @@ public static class HostingExtensions
                 policy.RequireAuthenticatedUser()
                 .RequireClaim("scope", "scope2");
             });
-            
+
             options.AddPolicy("Performer", policy =>
             {
                 policy
                     .RequireAuthenticatedUser()
                     .RequireClaim(Constants.RoleClaimType,
-                    new string[] {Constants.PerformerGroupName, Constants.AdminGroupName})
+                    new string[] { Constants.PerformerGroupName, Constants.AdminGroupName })
                     ;
             });
             options.AddPolicy("AdministratorOnly", policy =>
@@ -398,50 +398,44 @@ public static class HostingExtensions
         app.InitializeDatabase();
         return app;
     }
-private static void InitializeDatabase(this IApplicationBuilder app)
-{
-    using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+    private static void InitializeDatabase(this IApplicationBuilder app)
     {
-        serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-
-        var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-        try
+        using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
         {
+            serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+
+            var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+
             context.Database.Migrate();
-        }
-        catch (Exception ex)
-        {
-        // TODO log
-        }
-       
-        if (!context.Clients.Any())
-        {
-            foreach (var client in Config.Clients)
-            {
-                context.Clients.Add(client.ToEntity());
-            }
-            context.SaveChanges();
-        }
 
-        if (!context.IdentityResources.Any())
-        {
-            foreach (var resource in Config.IdentityResources)
+            if (!context.Clients.Any())
             {
-                context.IdentityResources.Add(resource.ToEntity());
+                foreach (var client in Config.Clients)
+                {
+                    context.Clients.Add(client.ToEntity());
+                }
+                context.SaveChanges();
             }
-            context.SaveChanges();
-        }
 
-        if (!context.ApiScopes.Any())
-        {
-            foreach (var resource in Config.ApiScopes)
+            if (!context.IdentityResources.Any())
             {
-                context.ApiScopes.Add(resource.ToEntity());
+                foreach (var resource in Config.IdentityResources)
+                {
+                    context.IdentityResources.Add(resource.ToEntity());
+                }
+                context.SaveChanges();
             }
-            context.SaveChanges();
+
+            if (!context.ApiScopes.Any())
+            {
+                foreach (var resource in Config.ApiScopes)
+                {
+                    context.ApiScopes.Add(resource.ToEntity());
+                }
+                context.SaveChanges();
+            }
         }
     }
-}
 
     static void LoadGoogleConfig(IConfigurationRoot configuration)
     {

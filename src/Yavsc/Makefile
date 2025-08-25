@@ -4,7 +4,7 @@ USER_AND_GROUP=www-data:www-data
 SERVICE_PROD=yavsc
 DOTNET_FRAMEWORK=net9.0
 
-all:
+all: css js
 	dotnet build
 
 showConfig:
@@ -35,4 +35,6 @@ pushInProd: publish
 %.min.css: %.css
 	jsmin < $^ > $@
 
-css: wwwroot/css/site.css
+css: wwwroot/css/site.min.css
+
+js: wwwroot/js/site.min.js
