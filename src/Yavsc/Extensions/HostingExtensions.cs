@@ -406,33 +406,42 @@ public static class HostingExtensions
 
             var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
 
-            context.Database.Migrate();
-
-            if (!context.Clients.Any())
+            try
             {
-                foreach (var client in Config.Clients)
-                {
-                    context.Clients.Add(client.ToEntity());
-                }
-                context.SaveChanges();
-            }
 
-            if (!context.IdentityResources.Any())
-            {
-                foreach (var resource in Config.IdentityResources)
-                {
-                    context.IdentityResources.Add(resource.ToEntity());
-                }
-                context.SaveChanges();
-            }
 
-            if (!context.ApiScopes.Any())
-            {
-                foreach (var resource in Config.ApiScopes)
+                context.Database.Migrate();
+
+                if (!context.Clients.Any())
                 {
-                    context.ApiScopes.Add(resource.ToEntity());
+                    foreach (var client in Config.Clients)
+                    {
+                        context.Clients.Add(client.ToEntity());
+                    }
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
+
+                if (!context.IdentityResources.Any())
+                {
+                    foreach (var resource in Config.IdentityResources)
+                    {
+                        context.IdentityResources.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+
+                if (!context.ApiScopes.Any())
+                {
+                    foreach (var resource in Config.ApiScopes)
+                    {
+                        context.ApiScopes.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+             }
+            catch (InvalidOperationException ex)
+            {
+                app.Properties["DegradedDBContext"] = ex.Message;
             }
         }
     }

@@ -28,6 +28,7 @@ using System.Security.Cryptography;
 using System.Text.Unicode;
 using System.Text;
 using Yavsc.Server.Helpers;
+using System.Reflection;
 
 namespace Yavsc.Controllers
 {
@@ -45,6 +46,7 @@ namespace Yavsc.Controllers
         readonly TwilioSettings _twilioSettings;
 
         readonly IStringLocalizer _localizer;
+        private readonly IStringLocalizer _localizer2;
 
         //  TwilioSettings _twilioSettings;
 
@@ -66,7 +68,7 @@ namespace Yavsc.Controllers
             ITrueEmailSender emailSender,
             IOptions<SiteSettings> siteSettings,
             ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings,
-            IStringLocalizer<Yavsc.YavscLocalization> localizer,
+            IStringLocalizerFactory localizerFactory,
             ApplicationDbContext dbContext)
         {
             _interaction = interaction;
@@ -81,8 +83,13 @@ namespace Yavsc.Controllers
             _siteSettings = siteSettings.Value;
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
-            _localizer = localizer;
+            
             _dbContext = dbContext;
+               var type = typeof(Yavsc.YavscLocalization);
+        var assemblyName = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
+        _localizer = localizerFactory.Create(type);
+        _localizer2 = localizerFactory.Create("SharedResource", assemblyName.Name);
+ 
         }
 
 
