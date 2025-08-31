@@ -24,16 +24,7 @@ namespace Yavsc.Models.Haircut
         string _description = null;
         public override string Description
         {
-            get
-            {
-                string type = ResourcesHelpers.GlobalLocalizer[this.GetType().Name];
-                string gender = ResourcesHelpers.GlobalLocalizer[this.Prestation.Gender.ToString()];
-                return $"{_description} {type} ({gender})";
-            }
-            set
-            {
-                _description = value;
-            }
+           get; set;
         }
 
 

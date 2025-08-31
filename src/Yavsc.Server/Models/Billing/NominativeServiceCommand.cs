@@ -13,7 +13,7 @@ namespace Yavsc.Models.Billing
     using Yavsc.Abstract.Workflow;
     using Yavsc.Services;
 
-    public abstract class NominativeServiceCommand : IDecidableQuery, IIdentified<long>
+    public abstract class NominativeServiceCommand : IDecidableQuery, IIdentified<long>, IBillable
   {
         public string GetInvoiceId() { return GetType().Name +  "/" + Id;  }
 

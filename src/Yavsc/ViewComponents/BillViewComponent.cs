@@ -16,10 +16,10 @@ namespace Yavsc.ViewComponents
     {
         readonly ApplicationDbContext dbContext;
         readonly IBillingService billing;
-        readonly IStringLocalizer<Yavsc.YavscLocalization> localizer;
+        readonly IStringLocalizer<BillViewComponent> localizer;
 
         public BillViewComponent(ApplicationDbContext dbContext, 
-            IStringLocalizer<Yavsc.YavscLocalization> localizer,
+            IStringLocalizer<BillViewComponent> localizer,
             IBillingService billing)
         {
             this.billing = billing;

@@ -16,11 +16,11 @@ namespace Yavsc.Controllers
     public class ProjectController : Controller
     {
         private readonly ApplicationDbContext _context;
-        readonly IStringLocalizer<Yavsc.YavscLocalization> _localizer;
+        readonly IStringLocalizer<ProjectController> _localizer;
         readonly IStringLocalizer<BugController> _bugLocalizer;
           
         public ProjectController(ApplicationDbContext context,
-        IStringLocalizer<Yavsc.YavscLocalization> localizer,
+        IStringLocalizer<ProjectController> localizer,
         IStringLocalizer<BugController> bugLocalizer
         )
         {

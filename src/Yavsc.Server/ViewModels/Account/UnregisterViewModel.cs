@@ -5,10 +5,10 @@ namespace Yavsc.ViewModels.Account
 {
     public class UnregisterViewModel
     {
-        [YaRequired]
+        [Required]
         public string UserId { get; set; }
         
-        public string ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; }
 
     }
 }

@@ -16,6 +16,8 @@ namespace Yavsc.Controllers
     using Models.Workflow;
     using Services;
     using Yavsc.Interface;
+    using Yavsc.Models.Billing;
+    using Yavsc.Models.Haircut;
     using Yavsc.Server.Helpers;
     using Yavsc.Settings;
 
@@ -26,7 +28,7 @@ namespace Yavsc.Controllers
         protected GoogleAuthSettings _googleSettings;
         protected IYavscMessageSender _MessageSender;
         protected ITrueEmailSender _emailSender;
-        protected IStringLocalizer _localizer;
+        protected IStringLocalizer<CommandController> _localizer;
         protected SiteSettings _siteSettings;
         protected SmtpSettings _smtpSettings;
         protected ICalendarManager _calendarManager;
@@ -36,7 +38,7 @@ namespace Yavsc.Controllers
         IYavscMessageSender messageSender,
           UserManager<ApplicationUser> userManager,
           ICalendarManager calendarManager,
-          IStringLocalizer<YavscLocalization> localizer,
+          IStringLocalizer<CommandController> localizer,
           ITrueEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,

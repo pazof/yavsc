@@ -18,11 +18,9 @@ namespace Yavsc.Controllers
     using System.Globalization;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using System.Collections.Generic;
-    using Yavsc.Models.Messaging;
     using PayPal.PayPalAPIInterfaceService.Model;
     using Microsoft.Extensions.Options;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.AspNetCore.Identity.UI.Services;
     using Yavsc.Interface;
     using Yavsc.Settings;
     using Yavsc.Abstract.Models.Messaging;
@@ -31,12 +29,15 @@ namespace Yavsc.Controllers
     public class HairCutCommandController : CommandController
     {
         readonly PayPalSettings payPalSettings;
+        private readonly IStringLocalizer<HairCutQuery> haircutLocalizer;
+
         public HairCutCommandController(ApplicationDbContext context,
           IOptions<PayPalSettings> payPalSettings,
           IOptions<GoogleAuthSettings> googleSettings,
           IYavscMessageSender GCMSender,
           UserManager<ApplicationUser> userManager,
-          IStringLocalizer<Yavsc.YavscLocalization> localizer,
+          IStringLocalizer<HairCutQuery> haircutLocalizer,
+          IStringLocalizer<CommandController> localizer,
           ITrueEmailSender emailSender,
           IOptions<SmtpSettings> smtpSettings,
           IOptions<SiteSettings> siteSettings,
@@ -45,6 +46,7 @@ namespace Yavsc.Controllers
           calManager, localizer, emailSender, smtpSettings, siteSettings, loggerFactory)
         {
             this.payPalSettings = payPalSettings.Value;
+            this.haircutLocalizer = haircutLocalizer;
         }
 
         
@@ -263,7 +265,7 @@ namespace Yavsc.Controllers
                 model.SelectedProfile = brusherProfile;
                 model.Client = await _userManager.FindByIdAsync(uid);
                 _logger.LogInformation(JsonConvert.SerializeObject(model));
-                var yaev = model.CreateNewHairCutQueryEvent(_localizer);
+                var yaev = model.CreateNewHairCutQueryEvent(this.haircutLocalizer);
 
                 if (pro.AcceptPublicContact)
                 {

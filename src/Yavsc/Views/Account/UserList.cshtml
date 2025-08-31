@@ -52,9 +52,11 @@
             <dd>
                 @Html.DisplayFor(m=>user.Email)
                 @if (!user.EmailConfirmed) {
-                <a asp-action="AdminSendConfirationEmail" asp-route-id="@user.Id" >Envoyer une demande de confirmation</a>          
+                <a class="btn btn-primary" 
+                asp-action="AdminSendConfirationEmail" asp-route-id="@user.Id" >Envoyer une demande de confirmation</a>          
                 }
-                 <a asp-action="AdminDelete" asp-route-id="@user.Id" >Supprimer</a>
+                 <a asp-action="AdminDelete" asp-route-id="@user.Id" 
+                 class="btn btn-secondary">Supprimer</a>
             </dd>
         </dl>
     </td>

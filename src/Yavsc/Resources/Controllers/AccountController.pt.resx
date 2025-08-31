@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root"
+    xmlns=""
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -58,16 +61,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <!-- 
-    route name for the api controller used to tag the 'BlogPost' entity
-   -->
-  <data name="YourNotAdmin"><value>Vous n'êtes pas administrateur</value></data>
-  <data name="YourNotAPerformer"><value>Vous n'êtes pas prestataire</value></data>
-  <data name="Private"><value>Privée</value></data>
-  <data name="Corporate"><value>Corporate</value></data>
-  <data name="SearchingAPro"><value>Recherche d'un professionnel</value></data>
-  <data name="Selling"><value>Vente</value></data>
-  <data name="Buying"><value>Offre d'achat</value></data>
-  <data name="ServiceProposal">Offre de service<value></value></data>
-  <data name="For"><value>Pour</value></data>
 </root>

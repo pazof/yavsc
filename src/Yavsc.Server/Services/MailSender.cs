@@ -16,14 +16,15 @@ namespace Yavsc.Services
 {
     public class MailSender  : IEmailSender<ApplicationUser>, IEmailSender, ITrueEmailSender
     {
-        private readonly IStringLocalizer<YavscLocalization> localizer;
+        private readonly IStringLocalizer<MailSender> localizer;
         readonly SiteSettings siteSettings;
         readonly SmtpSettings smtpSettings;
         private readonly ILogger logger;
         public MailSender(
             IOptions<SiteSettings> sitesOptions, 
             IOptions<SmtpSettings> smtpOptions,
-            ILoggerFactory loggerFactory
+            ILoggerFactory loggerFactory,
+            IStringLocalizer<MailSender> localizer
             )
         {
             this.localizer = localizer;

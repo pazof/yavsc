@@ -46,7 +46,6 @@ namespace Yavsc.Controllers
         readonly TwilioSettings _twilioSettings;
 
         readonly IStringLocalizer _localizer;
-        private readonly IStringLocalizer _localizer2;
 
         //  TwilioSettings _twilioSettings;
 
@@ -83,13 +82,11 @@ namespace Yavsc.Controllers
             _siteSettings = siteSettings.Value;
             _twilioSettings = twilioSettings.Value;
             _logger = loggerFactory.CreateLogger<AccountController>();
-            
+
             _dbContext = dbContext;
-               var type = typeof(Yavsc.YavscLocalization);
-        var assemblyName = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
-        _localizer = localizerFactory.Create(type);
-        _localizer2 = localizerFactory.Create("SharedResource", assemblyName.Name);
- 
+            var type = typeof(AccountController);
+            var assemblyName = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
+            _localizer = localizerFactory.Create(type);
         }
 
 
@@ -898,6 +895,7 @@ namespace Yavsc.Controllers
                 var callbackUrl = _siteSettings.Audience + "/Account/ResetPassword/" + 
                     HttpUtility.UrlEncode(user.Id) + "/" + HttpUtility.UrlEncode(code);
                 
+                
                 var sent = await _emailSender.SendEmailAsync(user.UserName, user.Email, _localizer["Reset Password"],
                     _localizer["Please reset your password by "] + " <a href=\"" +
                     callbackUrl + "\" >following this link</a>");
@@ -1091,11 +1089,23 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet, Authorize("AdministratorOnly")]
-        public IActionResult AdminDelete(string id)
+        public IActionResult AdminDelete(string id, string? returnUrl=null)
         {
-            return View(new UnregisterViewModel { UserId = id });
+            return View(new UnregisterViewModel { UserId = id, ReturnUrl = returnUrl });
         }
 
+        [HttpPost, Authorize("AdministratorOnly")]
+        public async Task<IActionResult> AdminDelete(UnregisterViewModel model)
+        {
+            var result = await DeleteUser(model.UserId);
+
+            if (!result.Succeeded)
+            {
+                AddErrors(result);
+                return new BadRequestObjectResult(ModelState);
+            }
+            return View();
+        }
         [HttpPost, Authorize]
         public async Task<IActionResult> Delete(UnregisterViewModel model)
         {
@@ -1123,18 +1133,7 @@ namespace Yavsc.Controllers
             return await _userManager.DeleteAsync(user);
         }
 
-        [HttpPost, Authorize("AdministratorOnly")]
-        public async Task<IActionResult> AdminDelete(UnregisterViewModel model)
-        {
-            var result = await DeleteUser(model.UserId);
-
-            if (!result.Succeeded)
-            {
-                AddErrors(result);
-                return new BadRequestObjectResult(ModelState);
-            }
-            return View();
-        }
+    
 
         #region Helpers
 

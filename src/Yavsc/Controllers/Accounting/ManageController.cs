@@ -51,7 +51,7 @@ namespace Yavsc.Controllers
         IOptions<GoogleAuthSettings> googleSettings,
         IOptions<PayPalSettings> paypalSettings,
         IOptions<CompanyInfoSettings> cinfoSettings,
-        IStringLocalizer<Yavsc.YavscLocalization> SR,
+        IStringLocalizer<ManageController> SR,
         ICalendarManager calendarManager,
         ILoggerFactory loggerFactory)
         {

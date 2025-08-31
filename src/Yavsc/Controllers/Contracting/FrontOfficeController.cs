@@ -25,7 +25,7 @@ namespace Yavsc.Controllers
             UserManager<ApplicationUser> userManager,
             IBillingService billing,
             ILoggerFactory loggerFactory,
-        IStringLocalizer<Yavsc.YavscLocalization> SR)
+        IStringLocalizer<FrontOfficeController> SR)
         {
             _context = context;
             _userManager = userManager;

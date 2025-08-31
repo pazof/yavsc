@@ -34,7 +34,7 @@ namespace Yavsc.Helpers
 
 
         public static HairCutQueryEvent CreateNewHairCutQueryEvent(this HairCutQuery query,
-        IStringLocalizer SR)
+        IStringLocalizer<HairCutQuery> SR)
         {
             string evdate = query.EventDate?.ToString("dddd dd/MM/yyyy à hh:mm")??"[pas de date spécifiée]";
             string address = query.Location?.Address??"[pas de lieu spécifié]";
@@ -42,7 +42,7 @@ namespace Yavsc.Helpers
             string strprestation = query.Description;
 
             var yaev = query.CreateEvent("NewHairCutQuery",
-             string.Format(ResourcesHelpers.GlobalLocalizer["HairCutQueryValidation"],query.Client.UserName),
+             string.Format(SR["HairCutQueryValidation"],query.Client.UserName),
               $"{query.Client.Id}");
               
 

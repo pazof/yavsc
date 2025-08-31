@@ -13,7 +13,7 @@ public  class Startup
              IOptions<SmtpSettings> smtpSettings,
         IOptions<PayPalSettings> payPalSettings,
         IOptions<GoogleAuthSettings> googleSettings,
-        IStringLocalizer<YavscLocalization> localizer,
+        IStringLocalizer<Startup> localizer,
          ILoggerFactory loggerFactory,
          string environmentName)
         {

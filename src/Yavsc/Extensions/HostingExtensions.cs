@@ -390,7 +390,7 @@ public static class HostingExtensions
         var smtpSettings = services.GetRequiredService<IOptions<SmtpSettings>>();
         var payPalSettings = services.GetRequiredService<IOptions<PayPalSettings>>();
         var googleAuthSettings = services.GetRequiredService<IOptions<GoogleAuthSettings>>();
-        var localization = services.GetRequiredService<IStringLocalizer<YavscLocalization>>();
+        var localization = services.GetRequiredService<IStringLocalizer<Startup>>();
         Startup.Configure(app, siteSettings, smtpSettings,
             payPalSettings, googleAuthSettings, localization, loggerFactory,
             app.Environment.EnvironmentName);
