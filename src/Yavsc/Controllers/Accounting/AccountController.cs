@@ -894,8 +894,7 @@ namespace Yavsc.Controllers
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var f = this.HttpContext.Features;
                 var callbackUrl = _siteSettings.ExternalUrl + "/Account/ResetPassword/" +
-                    HttpUtility.UrlEncode(user.Id) + "/" + HttpUtility.UrlEncode(code);
-
+                HttpUtility.UrlEncode(user.Id) + "/" + HttpUtility.UrlEncode(code);
 
                 var sent = await _emailSender.SendEmailAsync(user.UserName, user.Email, _localizer["Reset Password"],
                     _localizer["Please reset your password by "] + " <a href=\"" +
@@ -926,8 +925,15 @@ namespace Yavsc.Controllers
             var user = await _userManager.FindByIdAsync(id);
             
             if (user==null) return new BadRequestResult();
+            if (!await _userManager.VerifyUserTokenAsync(user,
+            _userManager.Options.Tokens.PasswordResetTokenProvider,
+            "ResetPassword", code.Replace("%2f","/")))
+            {
+                return BadRequest("code");
+            }
             // We just serve the form to reset here.
-            return View(new ResetPasswordViewModel { 
+            return View(new ResetPasswordViewModel
+            {
                 Id = id,
                 Code = code,
                 Email = user.Email
@@ -952,9 +958,11 @@ namespace Yavsc.Controllers
                 // Don't reveal that the user does not exist
                 return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
             }
-        // code : "CfDJ8DmPlC3R8%2fNMqGlHZHZMwbjaXxgD3GW3H75Ubt+4Sbw%2fn%2fdg9X8Bll+CLIh%2fquI+Z96XEkx7bfrZiB+wpPb+b5%2ffgzgy+cQnKfX9J7%2fLNro+F3uE5JkXSlUc1WqVW2mVQrpWHjx1Dbn2n77TTGym3ttQoECsTR%2foo27dW9U11pmRJuTiwPBJZBOt0ffIRmgDDHh2f0VySTQEwjfRiLdCwctL%2fmh21ympJMKJl5PZnTVs"
+
+            if (user.Id != id) return BadRequest("userid");
+
             var result = await _userManager.ResetPasswordAsync(user,
-            HttpUtility.UrlDecode(code), model.Password);
+            code.Replace("%2f","/"), model.Password);
 
             if (result.Succeeded)
             {
