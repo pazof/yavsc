@@ -14,14 +14,14 @@ using System.Web;
 
 namespace Yavsc.Services
 {
-    public class MailSender  : IEmailSender<ApplicationUser>, IEmailSender, ITrueEmailSender
+    public class MailSender : IEmailSender<ApplicationUser>, IEmailSender, ITrueEmailSender
     {
         private readonly IStringLocalizer<MailSender> localizer;
         readonly SiteSettings siteSettings;
         readonly SmtpSettings smtpSettings;
         private readonly ILogger logger;
         public MailSender(
-            IOptions<SiteSettings> sitesOptions, 
+            IOptions<SiteSettings> sitesOptions,
             IOptions<SmtpSettings> smtpOptions,
             ILoggerFactory loggerFactory,
             IStringLocalizer<MailSender> localizer
@@ -47,17 +47,15 @@ namespace Yavsc.Services
         /// <returns>a MessageWithPayloadResponse,
         /// <c>bool somethingsent = (response.failure == 0 &amp;&amp; response.success > 0)</c>
         /// </returns>
-
-
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-           await SendEmailAsync("", email, subject, htmlMessage);
+            await SendEmailAsync("", email, subject, htmlMessage);
         }
 
         public async Task<string> SendEmailAsync(string name, string email, string subject, string htmlMessage)
         {
-             logger.LogInformation($"SendEmail for {email} : {subject}");
-            MimeMessage msg = new ();
+            logger.LogInformation($"SendEmail for {email} : {subject}");
+            MimeMessage msg = new();
             msg.From.Add(new MailboxAddress(siteSettings.Owner.Name,
             siteSettings.Owner.EMail));
             msg.To.Add(new MailboxAddress(name, email));
@@ -69,20 +67,22 @@ namespace Yavsc.Services
             msg.MessageId = MimeKit.Utils.MimeUtils.GenerateMessageId(
                 siteSettings.Authority
             );
-            using (SmtpClient sc = new ())
+            using (SmtpClient sc = new())
             {
                 sc.Connect(
                     smtpSettings.Server,
                     smtpSettings.Port,
-                    SecureSocketOptions.Auto);
-                
-                if (smtpSettings.UserName!=null) {
-                    NetworkCredential creds = new (
-                    smtpSettings.UserName, smtpSettings.Password);
-                    await sc.AuthenticateAsync(System.Text.Encoding.UTF8, creds, System.Threading.CancellationToken.None);
+                    SecureSocketOptions.Auto
+                    );
+
+                if (smtpSettings.UserName != null)
+                {
+                    sc.Authenticate(smtpSettings.UserName, smtpSettings.Password);
                 }
+
                 await sc.SendAsync(msg);
                 logger.LogInformation($"Sent : {msg.MessageId}");
+                sc.Disconnect(true);
             }
             return msg.MessageId;
         }
@@ -94,10 +94,10 @@ namespace Yavsc.Services
 
         public async Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode)
         {
-            var callbackUrl = siteSettings.Audience + "/Account/ResetPassword/" + 
+            var callbackUrl = siteSettings.Audience + "/Account/ResetPassword/" +
                     HttpUtility.UrlEncode(user.Id) + "/" + HttpUtility.UrlEncode(resetCode);
-         
-            await SendEmailAsync(user.UserName, user.Email, 
+
+            await SendEmailAsync(user.UserName, user.Email,
             localizer["Reset Password"],
                     localizer["Please reset your password by "] + " <a href=\"" +
                     callbackUrl + "\" >following this link</a>");
@@ -106,10 +106,10 @@ namespace Yavsc.Services
 
         public async Task SendPasswordResetLinkAsync(ApplicationUser user, string email, string resetLink)
         {
-           await SendEmailAsync(user.UserName, user.Email, 
-           localizer["Reset Password"],
-                    localizer["Please reset your password by "] + " <a href=\"" +
-                    resetLink + "\" >following this link</a>");
+            await SendEmailAsync(user.UserName, user.Email,
+            localizer["Reset Password"],
+                     localizer["Please reset your password by "] + " <a href=\"" +
+                     resetLink + "\" >following this link</a>");
         }
     }
 }

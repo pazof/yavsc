@@ -437,7 +437,6 @@
   <data name="ConfirmPassword"><value>Confirme sua senha</value></data>
   <data name="ErrorSendingEmailForConfirm"><value>O envio de e-mail para confirmação do endereço de e-mail falhou.</value></data>
   <data name="EmailSentForConfirm"><value>Um e-mail foi enviado para confirmação do endereço de e-mail.</value></data>
-  <data name="ConfirmYourAccountTitle"><value>Por favor, confirme seu endereço de e-mail</value></data>
   <data name="ConfirmYourAccountBody"><value>Você criou sua conta {0} com sucesso,
 mas o seu endereço de e-mail tem que ser confirmado.
 Para fazer isso, siga o seguinte link : &lt;{1}&gt;.

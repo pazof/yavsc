@@ -230,7 +230,6 @@ Votre code dáctivation est : {4}
 
 Vour pourrez cochez la case "Se souvenir de ce navigateur" pour conserver cette authorisation pour ce navigateur.
 {0} - {2} &lt;{3}&gt;</value></data>
-  <data name="ConfirmYourAccountTitle"><value>S'il vous plait, confirmez votre addresse e-mail</value></data>
   <data name="ConfirmYourAccountBody"><value>Vous avez créé avec succès votre compte {0},
 mais votre adresse e-mail reste à confirmer.
 

@@ -89,4 +89,6 @@ Vour pourrez cochez la case "Se souvenir de ce navigateur" pour conserver cette 
     <value>Un courrier a été envoyé pour confirmation de l'adresse e-mail .</value>
   </data>
 
+  <data name="Reset Password"><value>Ré-initialiser votre mot de passe</value></data>
+  <data name="Reset password confirmation"><value>Confirmation de ré-initialisation du mot de passe</value></data>
 </root>

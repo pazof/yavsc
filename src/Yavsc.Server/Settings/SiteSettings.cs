@@ -14,14 +14,17 @@ namespace Yavsc
         public string FavIcon { get; set; } = "favicon.ico";
         public string Logo { get; set; } = "logo.png";
         /// <summary>
-        /// Conceptually,
-        /// This authorisation server only has this present site as unique audience.
         /// </summary>
         /// <returns></returns>
         public string Audience { get; set; } = "lua.pschneider.fr";
+       
         /// <summary>
-        /// it's a very small company, with one domaine name only,
-        /// so let it be the same as in the Audience field.
+        /// External Url
+        /// </summary>
+        /// <value></value>
+        public string ExternalUrl { get; set; } = "http://lua.pschneider.fr";
+        /// <summary>
+        /// Must be a fqdn.
         /// </summary>
         /// <returns></returns>
         public string Authority { get; set; } = "lua.pschneider.fr";

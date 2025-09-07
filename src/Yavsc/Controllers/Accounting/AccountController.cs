@@ -84,9 +84,7 @@ namespace Yavsc.Controllers
             _logger = loggerFactory.CreateLogger<AccountController>();
 
             _dbContext = dbContext;
-            var type = typeof(AccountController);
-            var assemblyName = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
-            _localizer = localizerFactory.Create(type);
+            _localizer = localizerFactory.Create(typeof(AccountController));
         }
 
 
@@ -865,11 +863,13 @@ namespace Yavsc.Controllers
             {
                 ApplicationUser user;
                 // Username should not contain any '@'
-                if (model.LoginOrEmail.Contains('@')) {
+                if (model.LoginOrEmail.Contains('@'))
+                {
                     user = await _userManager.FindByEmailAsync(model.LoginOrEmail);
                 }
-                else {
-                    user = await _dbContext.Users.FirstOrDefaultAsync( u => u.UserName == model.LoginOrEmail);
+                else
+                {
+                    user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == model.LoginOrEmail);
                 }
 
                 // Don't reveal that the user does not exist or is not confirmed
@@ -892,14 +892,17 @@ namespace Yavsc.Controllers
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = _siteSettings.Audience + "/Account/ResetPassword/" + 
+                var f = this.HttpContext.Features;
+                var callbackUrl = _siteSettings.ExternalUrl + "/Account/ResetPassword/" +
                     HttpUtility.UrlEncode(user.Id) + "/" + HttpUtility.UrlEncode(code);
-                
-                
+
+
                 var sent = await _emailSender.SendEmailAsync(user.UserName, user.Email, _localizer["Reset Password"],
                     _localizer["Please reset your password by "] + " <a href=\"" +
                     callbackUrl + "\" >following this link</a>");
                 return View("ForgotPasswordConfirmation", sent);
+                
+                
             }
 
             // If we got this far, something failed, redisplay form
@@ -1133,10 +1136,6 @@ namespace Yavsc.Controllers
             return await _userManager.DeleteAsync(user);
         }
 
-    
-
-        #region Helpers
-
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -1145,15 +1144,5 @@ namespace Yavsc.Controllers
             }
         }
 
-        private async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return await GetCurrentUserAsync(HttpContext.User.GetUserId());
-        }
-        private async Task<ApplicationUser> GetCurrentUserAsync(string id)
-        {
-            return await _userManager.FindByIdAsync(id);
-        }
-
-        #endregion
     }
 }

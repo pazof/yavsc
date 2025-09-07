@@ -16,7 +16,7 @@
      <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="8.0.5-preview-net9" />
      <PackageVersion Include="HigginsSoft.IdentityServer8.Security" Version="8.0.5-preview-net9" />
     <PackageVersion Include="IdentityModel.AspNetCore" Version="4.3.0" />
-    <PackageVersion Include="MailKit" Version="4.13.0" />
+    <PackageVersion Include="MailKit" Version="4.8.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Antiforgery" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
@@ -42,7 +42,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.53.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
-    <PackageVersion Include="MimeKit" Version="4.13.0" />
+    <PackageVersion Include="MimeKit" Version="4.8.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageVersion Include="PayPalMerchantSDK" Version="2.16.250" />
