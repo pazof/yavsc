@@ -338,6 +338,9 @@ public static class HostingExtensions
         ILoggerFactory loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory.CreateLogger<Program>();
 
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();

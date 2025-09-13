@@ -129,6 +129,22 @@
             }
         },
         {
+            "name": "lua",
+            "type": "coreclr",
+            "request": "launch",
+             "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net9.0/Yavsc.dll",
+             "env": {
+                "ASPNETCORE_ENVIRONMENT": "luadev"
+             },
+             "cwd": "${workspaceFolder}/src/Yavsc",
+             "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            }
+            
+            
+        },
+        {
             "name": "web core",
             "type": "coreclr",
             "request": "launch",

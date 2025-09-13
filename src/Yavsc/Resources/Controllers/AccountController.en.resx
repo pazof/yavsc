@@ -64,7 +64,7 @@
   <data name="ConfirmYourAccountBody">
     <value>You successfully created your {0} account,
 but your e-mail address is not yet confirmed.
-Please, in order to validate it, follow this link &lt;{1}&gt;.
+Please, in order to validate it, follow this link &lt;a href="{1}"&gt;{1}&lt;/a&gt;..
 
 Thanks.
 -- 

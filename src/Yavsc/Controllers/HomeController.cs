@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
 using Yavsc.Server.Helpers;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 
 namespace Yavsc.Controllers
 {
@@ -100,7 +101,16 @@ namespace Yavsc.Controllers
         public IActionResult Error()
         {
             var feature = this.HttpContext.Features.Get<IExceptionHandlerFeature>();
-
+            if (feature == null) return View();
+            var errorType = feature?.Error;
+            if (errorType == null) return View();
+            if (errorType is NotSupportedException notSupported)
+            {
+                return View(new ErrorViewModel { 
+                    Description = notSupported.Message,
+                    RequestId = this.HttpContext.TraceIdentifier
+                });
+            }
             return View("~/Views/Shared/Error.cshtml", feature?.Error);
         }
         public IActionResult Status(int id)

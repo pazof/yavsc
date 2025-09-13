@@ -146,13 +146,14 @@ namespace Yavsc.Controllers
 
             if (ModelState.IsValid)
             {
-              
-                var user = await _userManager.FindByNameAsync(model.Username);
-                if (user!=null) {
 
-               
-                   var signin = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
-     
+                var user = await _userManager.FindByNameAsync(model.Username);
+                if (user != null)
+                {
+
+
+                    var signin = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
+
                     // validate username/password against in-memory store
                     if (signin.Succeeded)
                     {
@@ -160,7 +161,7 @@ namespace Yavsc.Controllers
 
                         // only set explicit expiration here if user chooses "remember me". 
                         // otherwise we rely upon expiration configured in cookie middleware.
-                        await HttpContext.SignInAsync(user, _roleManager, model.RememberLogin,_dbContext);
+                        await HttpContext.SignInAsync(user, _roleManager, model.RememberLogin, _dbContext);
 
                         if (context != null)
                         {
@@ -192,7 +193,7 @@ namespace Yavsc.Controllers
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId:context?.Client.ClientId));
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId: context?.Client.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
@@ -204,16 +205,17 @@ namespace Yavsc.Controllers
         /// <summary>
         /// Show logout page
         /// </summary>
-        [HttpGet][Authorize]
+        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Logout(string logoutId)
         {
             if (string.IsNullOrWhiteSpace(logoutId))
+            {
+                if (User.Identity.IsAuthenticated)
                 {
-                    if (User.Identity.IsAuthenticated)
-                    {
-                        logoutId = User.GetUserId();
-                    }
+                    logoutId = User.GetUserId();
                 }
+            }
             // build a model so the logout page knows what to display
             var vm = await BuildLogoutViewModelAsync(logoutId);
 
@@ -260,7 +262,7 @@ namespace Yavsc.Controllers
                 return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
             }
 
-        
+
 
 
             return View("LoggedOut", vm);
@@ -409,29 +411,30 @@ namespace Yavsc.Controllers
         public IActionResult Index()
         {
             IViewComponentHelper h;
-           
+
             return View();
         }
 
         [Authorize("AdministratorOnly")]
         [Route("Account/UserList/{pageNum?}/{len?}")]
-        public async Task<IActionResult> UserList(int pageNum=0, int pageLen = defaultLen)
+        public async Task<IActionResult> UserList(int pageNum = 0, int pageLen = defaultLen)
         {
-            var users =  _dbContext.Users.OrderBy(u=>u.UserName);
+            var users = _dbContext.Users.OrderBy(u => u.UserName);
             var shown = pageNum * pageLen;
             var toShow = users.Skip(shown).Take(pageLen);
 
             ViewBag.page = pageNum;
-            ViewBag.hasNext =  users.Count() > (toShow.Count() + shown);
-            ViewBag.nextpage = pageNum+1;
+            ViewBag.hasNext = users.Count() > (toShow.Count() + shown);
+            ViewBag.nextpage = pageNum + 1;
             ViewBag.pageLen = pageLen;
             return View(toShow.ToArray());
         }
 
-        string GeneratePageToken() {
+        string GeneratePageToken()
+        {
             return System.Guid.NewGuid().ToString();
         }
-        
+
         [AllowAnonymous]
         [HttpGet(Constants.LoginPath)]
         public ActionResult SignIn(string returnUrl = null)
@@ -456,7 +459,7 @@ namespace Yavsc.Controllers
         public ActionResult AccessDenied(string requestUrl = null)
         {
             ViewBag.UserIsSignedIn = User.Identity.IsAuthenticated;
-            
+
             if (string.IsNullOrWhiteSpace(requestUrl))
                 if (string.IsNullOrWhiteSpace(Request.Headers["Referer"]))
                     requestUrl = "/";
@@ -471,26 +474,27 @@ namespace Yavsc.Controllers
             if (Request.Method == "POST") // "hGbkk9B94NAae#aG"
 
             {
-                if (model.Provider ==null || model.Provider == "LOCAL")
+                if (model.Provider == null || model.Provider == "LOCAL")
                 {
                     if (ModelState.IsValid)
                     {
-                        var user = _dbContext.Users.Include(u=>u.Membership).FirstOrDefault(
-                            u=>u.Email == model.EMail);
-                       
+                        var user = _dbContext.Users.Include(u => u.Membership).FirstOrDefault(
+                            u => u.Email == model.EMail);
+
                         if (user != null)
                         {
                             if (!await _userManager.IsEmailConfirmedAsync(user))
                             {
-                                ModelState.AddModelError(string.Empty, 
+                                ModelState.AddModelError(string.Empty,
                                             "You must have a confirmed email to log in.");
                                 return this.ViewOk(model);
                             }
                         }
-                        else {
-                                ModelState.AddModelError(string.Empty, 
-                                            "No such user.");
-                                return this.ViewOk(model);
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty,
+                                        "No such user.");
+                            return this.ViewOk(model);
                         }
                         // This doesn't count login failures towards account lockout
                         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
@@ -520,7 +524,7 @@ namespace Yavsc.Controllers
                             return this.ViewOk(model);
                         }
                     }
-                   
+
 
                     // If we got this far, something failed, redisplay form
                     ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
@@ -549,7 +553,7 @@ namespace Yavsc.Controllers
                         return BadRequest();
                     }
                     // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
-                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { model.ReturnUrl }, protocol:"https", host: Config.Authority);
+                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { model.ReturnUrl }, protocol: "https", host: Config.Authority);
                     var properties = _signInManager.ConfigureExternalAuthenticationProperties(model.Provider, redirectUrl);
                     // var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
                     return new ChallengeResult(model.Provider, properties);
@@ -589,20 +593,21 @@ namespace Yavsc.Controllers
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol:  "https", host: Config.Authority);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: "https", host: Config.Authority);
                     await _emailSender.SendEmailAsync(model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
                       string.Format(_localizer["ConfirmYourAccountBody"], _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
-                   // No, wait for more than a login pass submission:
-                   // do not await _signInManager.SignInAsync(user, isPersistent: false);
-                    
-                        this.NotifyInfo(
-                             "E-mail confirmation",
-                             _localizer["EmailSentForConfirm"]
-                      );
+                    // No, wait for more than a login pass submission:
+                    // do not await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    this.NotifyInfo(
+                         "E-mail confirmation",
+                         _localizer["EmailSentForConfirm"]
+                  );
 
                     return View("AccountCreated");
                 }
-                else {
+                else
+                {
                     _logger.LogError("Error registering from a valid model.");
                     foreach (var error in result.Errors)
                     {
@@ -637,7 +642,7 @@ namespace Yavsc.Controllers
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account",
             new { userId = user.Id, code }, protocol: "https", host: Config.Authority);
-            var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, 
+            var res = await _emailSender.SendEmailAsync(user.UserName, user.Email,
             this._localizer["ConfirmYourAccountTitle"],
             string.Format(this._localizer["ConfirmYourAccountBody"],
                   _siteSettings.Title, callbackUrl, _siteSettings.Slogan,
@@ -650,12 +655,12 @@ namespace Yavsc.Controllers
             var code = await _userManager.GenerateTwoFactorTokenAsync(user, provider);
             var callbackUrl = Url.Action("VerifyCode", "Account",
             new { userId = user.Id, code, provider }, protocol: "https", host: Config.Authority);
-            var res = await _emailSender.SendEmailAsync(user.UserName, user.Email, 
+            var res = await _emailSender.SendEmailAsync(user.UserName, user.Email,
             this._localizer["AccountEmailFactorTitle"],
             string.Format(this._localizer["AccountEmailFactorBody"],
                   _siteSettings.Title, callbackUrl, _siteSettings.Slogan,
                    _siteSettings.Audience, code));
-            return new EmailSentViewModel { EMail = user.Email, Sent = true, MessageId = res };;
+            return new EmailSentViewModel { EMail = user.Email, Sent = true, MessageId = res }; ;
         }
         //
         // POST: /Account/LogOff
@@ -701,7 +706,7 @@ namespace Yavsc.Controllers
             }
             if (result.RequiresTwoFactor)
             {
-                return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe= true });
+                return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = true });
             }
             if (result.IsLockedOut)
             {
@@ -760,7 +765,7 @@ namespace Yavsc.Controllers
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    
+
                     info.ProviderDisplayName = info.Principal.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
 
                     result = await _userManager.AddLoginAsync(user, info);
@@ -798,8 +803,9 @@ namespace Yavsc.Controllers
             {
                 return View("Error");
             }
-            IdentityResult result=null;
-            try { 
+            IdentityResult result = null;
+            try
+            {
                 result = await _userManager.ConfirmEmailAsync(user, code);
                 _dbContext.SaveChanges(userId);
             }
@@ -825,8 +831,9 @@ namespace Yavsc.Controllers
             {
                 return View("Error");
             }
-            bool result=false;
-            try { 
+            bool result = false;
+            try
+            {
                 result = await _userManager.VerifyTwoFactorTokenAsync(user, Constants.DefaultFactor, code);
                 _dbContext.SaveChanges(userId);
             }
@@ -845,10 +852,10 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> ForgotPassword()
         {
             if (User.Identity.IsAuthenticated)
-              ViewBag.UserEmail = ( await _dbContext.Users.SingleAsync(
-                  u => u.Id == User.GetUserId()
-              ) ).Email;
-              
+                ViewBag.UserEmail = (await _dbContext.Users.SingleAsync(
+                    u => u.Id == User.GetUserId()
+                )).Email;
+
             return View();
         }
 
@@ -892,7 +899,6 @@ namespace Yavsc.Controllers
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var f = this.HttpContext.Features;
                 var callbackUrl = _siteSettings.ExternalUrl + "/Account/ResetPassword/" +
                 HttpUtility.UrlEncode(user.Id) + "/" + HttpUtility.UrlEncode(code);
 
@@ -900,8 +906,8 @@ namespace Yavsc.Controllers
                     _localizer["Please reset your password by "] + " <a href=\"" +
                     callbackUrl + "\" >following this link</a>");
                 return View("ForgotPasswordConfirmation", sent);
-                
-                
+
+
             }
 
             // If we got this far, something failed, redisplay form
@@ -923,11 +929,11 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> ResetPassword(string id, string code)
         {
             var user = await _userManager.FindByIdAsync(id);
-            
-            if (user==null) return new BadRequestResult();
+
+            if (user == null) return new BadRequestResult();
             if (!await _userManager.VerifyUserTokenAsync(user,
             _userManager.Options.Tokens.PasswordResetTokenProvider,
-            "ResetPassword", code.Replace("%2f","/")))
+            "ResetPassword", code.Replace("%2f", "/")))
             {
                 return BadRequest("code");
             }
@@ -944,8 +950,8 @@ namespace Yavsc.Controllers
         [HttpPost("/Account/ResetPassword/{id}/{code}")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword([FromRoute] string id, 
-        [FromRoute] string code, 
+        public async Task<IActionResult> ResetPassword([FromRoute] string id,
+        [FromRoute] string code,
          ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -962,16 +968,17 @@ namespace Yavsc.Controllers
             if (user.Id != id) return BadRequest("userid");
 
             var result = await _userManager.ResetPasswordAsync(user,
-            code.Replace("%2f","/"), model.Password);
+            code.Replace("%2f", "/"), model.Password);
 
             if (result.Succeeded)
             {
                 // when ok, the e-mail become validated.
-                if (!user.EmailConfirmed) {
-                    user.EmailConfirmed=true;
+                if (!user.EmailConfirmed)
+                {
+                    user.EmailConfirmed = true;
                     await _dbContext.SaveChangesAsync(nameof(ResetPassword));
                 }
-            _logger.LogInformation($"Password reset for {user.UserName}:{model.Password}");
+                _logger.LogInformation($"Password reset for {user.UserName}:{model.Password}");
                 return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), "Account");
             }
             _logger.LogInformation($"Password reset failed for {user.UserName}:{model.Password}");
@@ -1026,7 +1033,7 @@ namespace Yavsc.Controllers
             {
                 return View("Error", new Exception("No mobile app service was activated"));
             }
-            else 
+            else
             if (model.SelectedProvider == Constants.SMSFactor)
             {
                 return View("Error", new Exception("No SMS service was activated"));
@@ -1034,7 +1041,7 @@ namespace Yavsc.Controllers
             }
             else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
             {
-               var sent = await this.SendEMailFactorAsync(user, model.SelectedProvider);
+                var sent = await this.SendEMailFactorAsync(user, model.SelectedProvider);
             }
             return View("VerifyCode", new VerifyCodeViewModel { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
@@ -1043,7 +1050,7 @@ namespace Yavsc.Controllers
         // GET: /Account/VerifyCode
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> VerifyCode(string code, string provider, bool rememberMe=true, string returnUrl = null)
+        public async Task<IActionResult> VerifyCode(string code, string provider, bool rememberMe = true, string returnUrl = null)
         {
             // Require that the user has already logged in via username/password or external login
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
@@ -1077,9 +1084,9 @@ namespace Yavsc.Controllers
             {
                 ViewData["StatusMessage"] = "Your code was verified";
                 _logger.LogInformation($"Signed in. returning to {model.ReturnUrl}");
-                if (model.ReturnUrl!=null)
-                return Redirect(model.ReturnUrl);
-                else RedirectToAction("Index","Home");
+                if (model.ReturnUrl != null)
+                    return Redirect(model.ReturnUrl);
+                else RedirectToAction("Index", "Home");
             }
             if (result.IsLockedOut)
             {
@@ -1100,7 +1107,7 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet, Authorize("AdministratorOnly")]
-        public IActionResult AdminDelete(string id, string? returnUrl=null)
+        public IActionResult AdminDelete(string id, string? returnUrl = null)
         {
             return View(new UnregisterViewModel { UserId = id, ReturnUrl = returnUrl });
         }
@@ -1125,7 +1132,7 @@ namespace Yavsc.Controllers
                 return View(model);
             }
             var result = await DeleteUser(model.UserId);
-            
+
             if (!result.Succeeded)
             {
                 AddErrors(result);
@@ -1139,8 +1146,8 @@ namespace Yavsc.Controllers
         {
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
 
-            _dbContext.DeviceDeclaration.RemoveRange( _dbContext.DeviceDeclaration.Where(g => g.DeviceOwnerId == userId ));
-            
+            _dbContext.DeviceDeclaration.RemoveRange(_dbContext.DeviceDeclaration.Where(g => g.DeviceOwnerId == userId));
+
             return await _userManager.DeleteAsync(user);
         }
 
