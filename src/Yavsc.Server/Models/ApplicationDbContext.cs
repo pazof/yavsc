@@ -204,7 +204,6 @@ namespace Yavsc.Models
             return base.SaveChanges();
         }
 
-
         public async Task<int> SaveChangesAsync(string userId, CancellationToken ctoken = default(CancellationToken))
         {
             AddTimestamps(userId);

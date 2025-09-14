@@ -343,7 +343,8 @@ public static class HostingExtensions
 
         if (app.Environment.IsDevelopment())
         {
-            app.UseDeveloperExceptionPage();
+            // to fix Home/Error   app.UseDeveloperExceptionPage();
+            app.UseExceptionHandler("/Home/Error");
         }
         else
         {

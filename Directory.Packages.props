@@ -4,7 +4,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="IdentityModel.OidcClient" Version="6.0.0" />
-    <PackageVersion Include="AsciiDocNet" Version="1.0.0" />
+    <PackageVersion Include="AsciiDocSharp" Version="0.2.0" />
+    <PackageVersion Include="AsciiDocSharp.Converters.Html" Version="0.2.0" />
     <PackageVersion Include="bootstrap" Version="5.3.7" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Google.Apis.Calendar.v3" Version="1.69.0.3746" />

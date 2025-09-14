@@ -1,12 +1,12 @@
-$color: #f5f7db;
+$color: #ffffffab;
 $background-color: #000000;
-$post-color: #fff4ca;
+$post-color: #c4fbff;
 $post-background-color: #290505;
 $post-border-color: rgb(178, 158, 158);
 $card-border-color: rgb(253, 129, 52);
 $card-photo-border-color: #ffffffd4;
 $carousel-color: rgb(255, 255, 200);
-$carousel-background-color: #11415f4a;
+$carousel-background-color: #11415faa;
 $primary: #00c40d;
 $danger: #dc0505d5;
 
@@ -135,14 +135,15 @@ input[type='checkbox'] {
 .container {
   background-color: $background-color;
   color: $color;
-  padding: .5em;
-  margin: .5em;
+  padding: 0;
+  margin: 0;
 }
 
 .post {
   background-color: $post-background-color;
   color: $post-color;
-  padding: .7em;
+  padding: .3em;
+  margin: .3em;
   border-radius: 2em;
   border: solid $post-border-color 2pt;
 

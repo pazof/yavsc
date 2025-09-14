@@ -1,5 +1,7 @@
 using System.Text.Encodings.Web;
-using AsciiDocNet;
+using System.Web;
+using AsciiDocSharp;
+using AsciiDocSharp.Converters.Html;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
@@ -9,10 +11,11 @@ namespace Yavsc.Helpers
     {
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
-           
-            await base.ProcessAsync(context, output);
+
+            //await base.ProcessAsync(context, output);
             var content = await output.GetChildContentAsync();
-            string text = content.GetContent();
+            string text = HttpUtility.HtmlDecode(content.GetContent());
+
             if (string.IsNullOrWhiteSpace(text)) return;
 
             try
@@ -31,12 +34,14 @@ namespace Yavsc.Helpers
                         }
                     }
                 }
-                Document document = Document.Parse(text);
-                var html = document.ToHtml(2);
-                using var stringWriter = new StringWriter();
-                html.WriteTo(stringWriter, HtmlEncoder.Default);
-                var processedHere = stringWriter.ToString();
-                output.Content.AppendHtml(processedHere);
+                var processor = new AsciiDocProcessor();
+                var htmlConverter = new HtmlDocumentConverter();
+
+                var document = processor.ParseFromText(text);
+                var htmlResult = processor.ConvertDocument(document, htmlConverter);
+
+
+                output.Content.AppendHtml(htmlResult);
             }
             catch (ArgumentException ex)
             {

@@ -91,7 +91,14 @@ namespace isnd.tests
             using (var migrationScope = app.Services.CreateScope())
             {
                 var db = migrationScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                await db.Database.MigrateAsync();
+                db.Database.EnsureDeleted();
+                db.Database.EnsureCreated();
+                db.Database.Migrate();
+                TestingUserName = "Tester";
+                TestingUserPassword = "test";
+                TestClientId = "testClientId";
+                TestingUser = await db.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
+                EnsureUser(TestingUserName, TestingUserPassword);
             }
             await app.ConfigurePipeline();
             app.UseSession();
@@ -112,17 +119,8 @@ namespace isnd.tests
             }
             SiteSettings = app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
 
-            using IServiceScope scope = app.Services.CreateScope();
-            ApplicationDbContext dbContext =
-                scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            //dbContext.Database.EnsureCreated();
-            dbContext.Database.Migrate();
-
-            TestingUserName = "Tester";
-            TestingUserPassword = "test";
-            TestClientId = "testClientId";
-            TestingUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
-            EnsureUser(TestingUserName, TestingUserPassword);
+         
+        
            
         }
 

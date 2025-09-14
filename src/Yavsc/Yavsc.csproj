@@ -41,7 +41,8 @@
     <PackageReference Include="System.Security.Cryptography.Pkcs" />
     <PackageReference Include="Microsoft.AspNetCore.Antiforgery" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
-    <PackageReference Include="AsciiDocNet" />
+    <PackageReference Include="AsciiDocSharp" />
+    <PackageReference Include="AsciiDocSharp.Converters.Html" />
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
