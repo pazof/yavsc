@@ -37,6 +37,7 @@ using Npgsql;
 using System.Reflection;
 using IdentityServer8.EntityFramework.DbContexts;
 using IdentityServer8.EntityFramework.Mappers;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Yavsc.Extensions;
 
@@ -340,7 +341,7 @@ public static class HostingExtensions
 
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-
+        JwtSecurityTokenHandler.DefaultMapInboundClaims = true;
         if (app.Environment.IsDevelopment())
         {
             // to fix Home/Error   app.UseDeveloperExceptionPage();
@@ -349,18 +350,7 @@ public static class HostingExtensions
         else
         {
             app.UseExceptionHandler("/Home/Error");
-            try
-            {
-                using (var scope = app.Services.CreateScope())
-                {
-                    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                    await db.Database.MigrateAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error migrating the database : {0}", ex);
-            }
+            app.InitializeDatabase();
         }
 
         app.Use(async (context, next) =>
@@ -399,7 +389,6 @@ public static class HostingExtensions
             payPalSettings, googleAuthSettings, localization, loggerFactory,
             app.Environment.EnvironmentName);
         app.ConfigureFileServerApp();
-        app.InitializeDatabase();
         return app;
     }
     private static void InitializeDatabase(this IApplicationBuilder app)
@@ -412,37 +401,8 @@ public static class HostingExtensions
 
             try
             {
-
-
                 context.Database.Migrate();
-
-                if (!context.Clients.Any())
-                {
-                    foreach (var client in Config.Clients)
-                    {
-                        context.Clients.Add(client.ToEntity());
-                    }
-                    context.SaveChanges();
-                }
-
-                if (!context.IdentityResources.Any())
-                {
-                    foreach (var resource in Config.IdentityResources)
-                    {
-                        context.IdentityResources.Add(resource.ToEntity());
-                    }
-                    context.SaveChanges();
-                }
-
-                if (!context.ApiScopes.Any())
-                {
-                    foreach (var resource in Config.ApiScopes)
-                    {
-                        context.ApiScopes.Add(resource.ToEntity());
-                    }
-                    context.SaveChanges();
-                }
-             }
+            }
             catch (InvalidOperationException ex)
             {
                 app.Properties["DegradedDBContext"] = ex.Message;
