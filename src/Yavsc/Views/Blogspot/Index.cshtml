@@ -44,19 +44,17 @@
 </p>
 }
      
-<div class="blog">
+<div class="blog-index">
 @{
     int maxTextLen = 75;
   foreach (var post in Model) {
-    <div class="post">
+    <div class="post card">
     
 
-        <div class="float-left" >
-        <a asp-action="Details" asp-route-id="@post.Id" class="bloglink" style="display: float-left;">
-            <img src="@post.Photo" >
+        <a asp-action="Details" asp-route-id="@post.Id" class="bloglink" >
+            <div class="float-left"><img class="photo card-photo" src="@post.Photo" ></div>
+            <h3 class="index-post-title">@post.Title</h3>
         </a>
-        </div>
-        <h3>@post.Title</h3>
         <div>
           <a asp-action="Details" asp-route-id="@post.Id">
             <asciidoc summary="@maxTextLen">@post.Content</asciidoc></a>

@@ -15,7 +15,7 @@ src/Yavsc/bin/output/wwwroot:
 test:
 	dotnet test
 
-web:
+watch:
 	dotnet watch -p:Configuration=$(CONFIG) --project src/Yavsc/Yavsc.csproj
 
 src/Yavsc.Abstract/bin/$(CONFIG)/$(FRAMEWORK)/Yavsc.Abstract.dll:
