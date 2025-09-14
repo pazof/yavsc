@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Options;
 using Yavsc.Server.Helpers;
-using Org.BouncyCastle.Asn1.X509.Qualified;
 
 namespace Yavsc.Controllers
 {
@@ -79,7 +78,7 @@ namespace Yavsc.Controllers
 
         public IActionResult Contact()
         {
-            return View();
+            return View(siteSettings);
         }
         public IActionResult Dash()
         {

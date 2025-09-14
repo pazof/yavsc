@@ -30,17 +30,15 @@ input[type='checkbox'] {
   min-height: 1em; }
 
 .container {
-  background-color: #000000;
-  color: #fff;
   padding: .5em;
   margin: .5em; }
 
 .post {
   background-color: #290505;
-  color: #d1d1d1;
-  padding: 2.3em;
+  color: #c4fbff;
+  padding: .7em;
   border-radius: 2em;
-  border: solid #5d7f0ca4 2pt; }
+  border: solid #b29e9e 2pt; }
 
 .actiongroup {
   float: right;
@@ -55,6 +53,10 @@ a {
 
 a.close {
   cursor: pointer; }
+
+address {
+  padding: .2em;
+  margin: .2em; }
 
 .grants-page .card {
   margin-top: 20px;
@@ -92,7 +94,7 @@ input[type='checkbox'] {
 
 .container {
   background-color: #000000;
-  color: #ffffffab;
+  color: #e0e0e0;
   padding: 0;
   margin: 0; }
 
@@ -117,7 +119,7 @@ input[type='checkbox'] {
 
 body {
   font: 1rem/1.5 var(--font-family-sans-serif);
-  color: #ffffffab;
+  color: #e0e0e0;
   background-color: #000000; }
 
 .card {
@@ -130,3 +132,11 @@ body {
     max-width: 30em; }
   .card .index-post-title {
     display: inline; }
+
+.display-label {
+  display: inline;
+  font-style: italic;
+  font-weight: 300; }
+
+.display-field {
+  display: inline; }
