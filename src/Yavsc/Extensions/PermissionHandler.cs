@@ -73,10 +73,11 @@ public class PermissionHandler : IAuthorizationHandler
                 "/Blogspot/Delete",
                 StringComparison.OrdinalIgnoreCase))
             {
-                string postId = (string) httpContext.GetRouteValue("id");
+                string? postId = (string?) httpContext.GetRouteValue("id");
                 if (long.TryParse(postId, out long id))
                 {
-                    BlogPost b = applicationDbContext.BlogSpot.FirstOrDefault(b => b.Id == id && b.AuthorId == user.GetUserId());
+                    BlogPost? b = applicationDbContext.BlogSpot.FirstOrDefault
+                    (b => b.Id == id && b.AuthorId == user.GetUserId());
                     return b != null;
                 }
             }
