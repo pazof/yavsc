@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Yavsc.Attributes.Validation;
 namespace Yavsc.Models.FileSystem
 {
@@ -5,10 +6,10 @@ namespace Yavsc.Models.FileSystem
     public class MoveFileQuery
     {
         [ValidRemoteUserFilePath]
-        [YaStringLength(1, 512)]
+        [StringLength(512)]
         public required string Id { get; set; }
 
-        [YaStringLength(0, 512)]
+        [StringLength(512)]
         [ValidRemoteUserFilePath]
         public required string To { get; set; }
     }

@@ -47,14 +47,13 @@ namespace Yavsc.Server.Helpers
             return $"/{Config.SiteSetup.Avatars}/{user.UserName}.png";
         }
 
-        public static string InitPostToFileSystem(
+        public static string EnsureDestinationDirectory(
             this ClaimsPrincipal user,
             string subpath)
         {
             var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.Identity.Name);
-            var diRoot = new DirectoryInfo(root);
-            if (!diRoot.Exists) diRoot.Create();
-            if (!string.IsNullOrWhiteSpace(subpath)) {
+            if (!string.IsNullOrWhiteSpace(subpath))
+            {
                 if (!subpath.IsValidYavscPath())
                 {
                     throw new InvalidPathException();
@@ -230,7 +229,6 @@ namespace Yavsc.Server.Helpers
             var item = new FileReceivedInfo
             (Config.AvatarsOptions.RequestPath.ToUriComponent(),
                user.UserName + ".png");
-
             using (var org = formFile.OpenReadStream())
             {
                 using Image image = Image.Load(org);

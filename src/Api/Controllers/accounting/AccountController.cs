@@ -69,7 +69,6 @@ namespace Yavsc.WebApi.Controllers
         [HttpPost("~/api/setavatar")]
         public async Task<IActionResult> SetAvatar()
         {
-            var root = User.InitPostToFileSystem(null);
             var user =  await GetUserData(User.GetUserId());
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();

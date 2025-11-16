@@ -57,7 +57,7 @@ namespace Yavsc.ApiControllers
             List<FileReceivedInfo> received = new List<FileReceivedInfo>();
             InvalidPathException pathex = null;
             try {
-                destDir = User.InitPostToFileSystem(subdir);
+                destDir = User.EnsureDestinationDirectory(subdir);
             } catch (InvalidPathException ex) {
                 pathex = ex;
             }
