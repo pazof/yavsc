@@ -1,4 +1,4 @@
-using System.Text.Encodings.Web;
+
 using System.Web;
 using AsciiDocSharp;
 using AsciiDocSharp.Converters.Html;
@@ -34,7 +34,9 @@ namespace Yavsc.Helpers
                         }
                     }
                 }
-                var processor = new AsciiDocProcessor();
+                var processor = new AsciiDocProcessor(
+                    
+                );
                 var htmlConverter = new HtmlDocumentConverter();
 
                 var document = processor.ParseFromText(text);
