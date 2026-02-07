@@ -1,6 +1,6 @@
 
 CONFIG=Debug
-FRAMEWORK=net8.0
+FRAMEWORK=net9.0
 DESTDIR=/tmp/yavsc
 
 all:
@@ -33,5 +33,8 @@ publish:
 
 install: publish
 	sudo chown -R www-data:www-data $(DESTDIR)/srv/www/yavsc
+
+docker-image:
+	docker build .
 
 .PHONY: 
