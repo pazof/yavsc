@@ -29,10 +29,6 @@ input[type='checkbox'] {
   min-width: 1em;
   min-height: 1em; }
 
-.container {
-  padding: .5em;
-  margin: .5em; }
-
 .post {
   background-color: #290505;
   color: #c4fbff;
@@ -95,7 +91,7 @@ input[type='checkbox'] {
 .container {
   background-color: #000000;
   color: #e0e0e0;
-  padding: 0;
+  padding: .5em;
   margin: 0; }
 
 .post {
@@ -140,3 +136,6 @@ body {
 
 .display-field {
   display: inline; }
+
+.navbar-brand {
+  padding: .5em; }

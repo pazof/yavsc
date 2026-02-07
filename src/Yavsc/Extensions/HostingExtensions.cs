@@ -47,6 +47,8 @@ public static class HostingExtensions
 
     public static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddSwaggerGen();
+
         IServiceCollection services = LoadConfiguration(builder);
 
         services.AddSession();
@@ -55,7 +57,6 @@ public static class HostingExtensions
 
 
         // Add the system clock service
-        _ = services.AddSingleton<ISystemClock, SystemClock>();
         _ = services.AddSingleton<IConnexionManager, HubConnectionManager>();
         _ = services.AddSingleton<ILiveProcessor, LiveProcessor>();
         _ = services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
@@ -344,8 +345,7 @@ public static class HostingExtensions
         JwtSecurityTokenHandler.DefaultMapInboundClaims = true;
         if (app.Environment.IsDevelopment())
         {
-            // to fix Home/Error   app.UseDeveloperExceptionPage();
-            app.UseExceptionHandler("/Home/Error");
+            app.UseDeveloperExceptionPage();
         }
         else
         {
@@ -368,6 +368,9 @@ public static class HostingExtensions
             }
             else await next();
         });
+
+        app.UseSwagger(); 
+        app.UseSwaggerUI();
         app.UseStaticFiles();
         app.UseRouting();
         app.UseIdentityServer();
@@ -393,7 +396,7 @@ public static class HostingExtensions
     }
     private static void InitializeDatabase(this IApplicationBuilder app)
     {
-        using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+        using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
             serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
 

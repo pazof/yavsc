@@ -54,11 +54,6 @@ input[type='checkbox'] {
   min-height: 1em;
 }
 
-.container {
-  padding: .5em;
-  margin: .5em;
-}
-
 .post {
   background-color: $post-background-color;
   color: $post-color;
@@ -138,7 +133,7 @@ input[type='checkbox'] {
 .container {
   background-color: $background-color;
   color: $color;
-  padding: 0;
+  padding: .5em;
   margin: 0;
 }
 
@@ -198,3 +193,8 @@ body {
   .display-field {
     display: inline;
   }
+
+.navbar-brand
+{
+  padding: .5em;
+}
