@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Yavsc.Models;
@@ -11,9 +12,11 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260209004142_ApiScopeClaims")]
+    partial class ApiScopeClaims
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,7 +243,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ScopeId");
 
-                    b.ToTable("ApiScopeProperties");
+                    b.ToTable("ApiScopeProperty");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.Client", b =>

@@ -38,6 +38,9 @@ using System.Reflection;
 using IdentityServer8.EntityFramework.DbContexts;
 using IdentityServer8.EntityFramework.Mappers;
 using System.IdentityModel.Tokens.Jwt;
+using IdentityServer8.EntityFramework.Stores;
+using IdentityServer8.EntityFramework.Services;
+using IdentityServer8.EntityFramework.Interfaces;
 
 namespace Yavsc.Extensions;
 
@@ -255,6 +258,10 @@ public static class HostingExtensions
              options.EmitStaticAudienceClaim = true;
 
          })
+            .AddAspNetIdentity<ApplicationUser>()
+            .AddClientStore<ClientStore>()
+            .AddCorsPolicyService<CorsPolicyService>()
+            .AddResourceStore<ResourceStore>()
             //.AddInMemoryIdentityResources(Config.IdentityResources)
             //.AddInMemoryClients(Config.TestingClients)
             //.AddInMemoryApiScopes(Config.TestingApiScopes)
@@ -267,8 +274,7 @@ public static class HostingExtensions
             {
                 options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
                     sql => sql.MigrationsAssembly(migrationsAssembly));
-            })
-            .AddAspNetIdentity<ApplicationUser>();
+            });
 
         builder.Services.Configure<IdentityOptions>(options =>
         {
@@ -369,7 +375,7 @@ public static class HostingExtensions
             else await next();
         });
 
-        app.UseSwagger(); 
+        app.UseSwagger();
         app.UseSwaggerUI();
         app.UseStaticFiles();
         app.UseRouting();
@@ -392,6 +398,7 @@ public static class HostingExtensions
             payPalSettings, googleAuthSettings, localization, loggerFactory,
             app.Environment.EnvironmentName);
         app.ConfigureFileServerApp();
+        app.UseSession();
         return app;
     }
     private static void InitializeDatabase(this IApplicationBuilder app)

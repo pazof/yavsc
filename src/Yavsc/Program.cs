@@ -16,7 +16,6 @@ namespace Yavsc
                 .AddEnvironmentVariables()
                 .Build();
             var app = await builder.ConfigureWebAppServices().ConfigurePipeline();
-            app.UseSession();
             app.Run();
         }
     }

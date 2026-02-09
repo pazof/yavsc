@@ -13,8 +13,8 @@ namespace Yavsc.ViewModels.Account
         /// Local user's name.
         /// </summary>
         /// <returns></returns>
-        [YaRequired]
-        public string EMail { get; set; }
+        [Required]
+        public string UserName { get; set; }
 
         /// <summary>
         /// Local user's password .

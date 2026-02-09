@@ -20,40 +20,42 @@ namespace Yavsc.Controllers
         }
 
         [Route("~/Git/sources/{*path}")]
-        public IActionResult Sources (string path)
+        [HttpGet]
+        public IActionResult Sources(string path)
         {
             if (path == null)
             {
                 return NotFound();
             }
 
-           /*
-            GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Path == path);
-            if (gitRepositoryReference == null)
-            {
-                return NotFound();
-            } 
-            */
+            /*
+             GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Path == path);
+             if (gitRepositoryReference == null)
+             {
+                 return NotFound();
+             } 
+             */
             var info = Config.GitOptions.FileProvider.GetFileInfo(path);
             if (!info.Exists)
                 return NotFound();
             var stream = info.CreateReadStream();
-            if (path.EndsWith(".ansi.log")) 
+            if (path.EndsWith(".ansi.log"))
             {
                 var accept = Request.Headers["Accept"];
                 if (accept.Any(v => v.Split(',').Contains("text/html")))
                 {
-                     return File(AnsiToHtmlEncoder.GetStream(stream), "text/html");
+                    return File(AnsiToHtmlEncoder.GetStream(stream), "text/html");
                 }
-                return File(stream,"text/text");
+                return File(stream, "text/text");
             }
-            if (path.EndsWith(".html")) return File(stream,"text/html");
-            if (path.EndsWith(".cshtml")) return File(stream,"text/razor-html-csharp");
-            if (path.EndsWith(".cs")) return File(stream,"text/csharp");
-            return File(stream,"application/octet-stream");
+            if (path.EndsWith(".html")) return File(stream, "text/html");
+            if (path.EndsWith(".cshtml")) return File(stream, "text/razor-html-csharp");
+            if (path.EndsWith(".cs")) return File(stream, "text/csharp");
+            return File(stream, "application/octet-stream");
         }
 
         // GET: Git
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.GitRepositoryReference.Include(g => g.Owner);
@@ -61,6 +63,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Git/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(long id)
         {
 
@@ -74,6 +77,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Git/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -97,6 +101,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Git/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(long id)
         {
             GitRepositoryReference gitRepositoryReference = await _context.GitRepositoryReference.SingleAsync(m => m.Id == id);
@@ -125,6 +130,7 @@ namespace Yavsc.Controllers
 
         // GET: Git/Delete/5
         [ActionName("Delete")]
+        [HttpGet]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)

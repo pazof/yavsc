@@ -54,6 +54,7 @@ namespace Yavsc.Controllers
 
         [Route("~/Title/{id?}")]
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult Title(string id)
         {
             ViewData["Title"] = id;

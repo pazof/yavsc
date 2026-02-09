@@ -78,6 +78,7 @@ namespace Yavsc.Controllers
 
 
         [Produces("text/x-tex"), Authorize, Route("estimate-{id}.tex")]
+        [HttpGet]
         public ViewResult EstimateTex(long id)
         {
             var estimate = _context.Estimates.Include(x => x.Query)
@@ -91,6 +92,7 @@ namespace Yavsc.Controllers
         }
 
         [Authorize, Route("Estimate-{id}.pdf")]
+        [HttpGet]
         public IActionResult EstimatePdf(long id)
         {
             ViewBag.TempDir = Config.SiteSetup.TempDir;

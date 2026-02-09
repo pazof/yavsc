@@ -8,7 +8,7 @@ using Yavsc.Server.Models.IT.SourceCode;
 using Yavsc.Server.Models.IT;
 using Yavsc.Abstract.Identity;
 using Yavsc.Server.Models.Calendar;
-    
+
 namespace Yavsc.Models
 {
     using Haircut;
@@ -33,8 +33,10 @@ namespace Yavsc.Models
     using Bank;
     using Payment;
     using Blog;
+    using IdentityServer8.Models;
+    using IdentityServer8.EntityFramework.Entities;
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IdentityServer8.EntityFramework.Interfaces.IConfigurationDbContext
     {
         public ApplicationDbContext()
         {
@@ -275,5 +277,18 @@ namespace Yavsc.Models
         public DbSet<Scope> Scopes { get; set; }
 
         public DbSet<BlogSpotPublication> blogSpotPublications { get; set; }
+        public DbSet<IdentityServer8.EntityFramework.Entities.Client> Clients { get; set; }
+        public DbSet<ClientCorsOrigin> ClientCorsOrigins { get; set; }
+        public DbSet<IdentityServer8.EntityFramework.Entities.IdentityResource> IdentityResources { get; set; }
+        public DbSet<IdentityServer8.EntityFramework.Entities.ApiResource> ApiResources { get; set; }
+        public DbSet<IdentityServer8.EntityFramework.Entities.ApiScope> ApiScopes { get; set; }
+        public DbSet<IdentityResourceClaim> IdentityResourceClaims { get; set; }
+        public DbSet<IdentityResourceProperty> IdentityResourceProperties { get; set; }
+        public DbSet<ApiResourceSecret> ApiResourceSecrets { get; set; }
+        public DbSet<ApiResourceScope> ApiResourceScopes { get; set; }
+        public DbSet<ApiResourceClaim> ApiResourceClaims { get; set; }
+        public DbSet<ApiResourceProperty> ApiResourceProperties { get; set; }
+        public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
+        public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; }
     }
 }

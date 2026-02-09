@@ -6,7 +6,7 @@
     "configurations": [
         
         {
-            "name": "cli .NET Core Launch (console)",
+            "name": "cli",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -17,13 +17,7 @@
             "console": "internalConsole"
         },
         {
-            "name": "C#: sampleWebAsWebApiClient Debug",
-            "type": "dotnet",
-            "request": "launch",
-            "projectPath": "${workspaceFolder}/src/sampleWebAsWebApiClient/sampleWebAsWebApiClient.csproj"
-        },
-        {
-            "name": ".NET Core Launch (web)",
+            "name": "web",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -39,17 +33,16 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
+                "/Views": "${workspaceFolder}/src/Yavsc/Views"
             }
         },
         
-        
-   /*   {
-            "name": ".NET Core Launch (web-client)",
+        {
+            "name": "sample web",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/sampleWebAsWebApiClient/bin/Debug/net8.0/sampleWebAsWebApiClient.dll>",
+            "program": "${workspaceFolder}/src/sampleWebAsWebApiClient/bin/Debug/net9.0/sampleWebAsWebApiClient.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/sampleWebAsWebApiClient",
             "stopAtEntry": false,
@@ -61,11 +54,12 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
+                "/Views": "${workspaceFolder}/src/sampleWebAsWebApiClient/Views"
             }
-        }, 
-        {
-            "name": ".NET Core Launch (Api)",
+        },
+        
+         {
+            "name": "Api",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-webapi",
@@ -75,35 +69,8 @@
             "stopAtEntry": false,
             "console": "internalConsole"
         },
-       */
-         {
-            "name": ".NET Core Launch (web)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net9.0/Yavsc.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Yavsc",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            }
-        },
         {
-            "name": "webApi",
-            "type": "dotnet",
-            "request": "launch",
-            "projectPath": "${workspaceFolder}/src/Api/Api.csproj"
-        },
-        {
-            "name": "webClient",
+            "name": "dotnet webClient",
             "type": "dotnet",
             "request": "launch",
             //"projectPath": "${workspaceFolder}/src/Yavsc/Yavsc.csproj",
@@ -114,7 +81,7 @@
             }
         },
         {
-            "name": "web",
+            "name": "dotnet web",
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/src/Yavsc/Yavsc.csproj",
@@ -126,36 +93,6 @@
                 "hidden": false,
                 "group": "run",
                 "order": 1
-            }
-        },
-        {
-            "name": "lua",
-            "type": "coreclr",
-            "request": "launch",
-             "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net9.0/Yavsc.dll",
-             "env": {
-                "ASPNETCORE_ENVIRONMENT": "luadev"
-             },
-             "cwd": "${workspaceFolder}/src/Yavsc",
-             "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            }
-            
-            
-        },
-        {
-            "name": "web core",
-            "type": "coreclr",
-            "request": "launch",
-             "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net9.0/Yavsc.dll",
-             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-             },
-             "cwd": "${workspaceFolder}/src/Yavsc",
-             "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             }
         }
     ]

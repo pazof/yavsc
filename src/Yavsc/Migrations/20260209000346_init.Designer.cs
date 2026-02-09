@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Yavsc.Models;
@@ -11,9 +12,11 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260209000346_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,7 +86,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ApiResourceId");
 
-                    b.ToTable("ApiResourceClaims");
+                    b.ToTable("ApiResourceClaim");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceProperty", b =>
@@ -107,7 +110,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ApiResourceId");
 
-                    b.ToTable("ApiResourceProperties");
+                    b.ToTable("ApiResourceProperty");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceScope", b =>
@@ -128,7 +131,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ApiResourceId");
 
-                    b.ToTable("ApiResourceScopes");
+                    b.ToTable("ApiResourceScope");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceSecret", b =>
@@ -161,7 +164,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ApiResourceId");
 
-                    b.ToTable("ApiResourceSecrets");
+                    b.ToTable("ApiResourceSecret");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScope", b =>
@@ -216,7 +219,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ScopeId");
 
-                    b.ToTable("ApiScopeClaims");
+                    b.ToTable("ApiScopeClaim");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScopeProperty", b =>
@@ -240,7 +243,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ScopeId");
 
-                    b.ToTable("ApiScopeProperties");
+                    b.ToTable("ApiScopeProperty");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.Client", b =>
@@ -653,7 +656,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("IdentityResourceId");
 
-                    b.ToTable("IdentityResourceClaims");
+                    b.ToTable("IdentityResourceClaim");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.IdentityResourceProperty", b =>
@@ -677,7 +680,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("IdentityResourceId");
 
-                    b.ToTable("IdentityResourceProperties");
+                    b.ToTable("IdentityResourceProperty");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

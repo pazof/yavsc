@@ -417,6 +417,7 @@ namespace Yavsc.Controllers
 
         [Authorize("AdministratorOnly")]
         [Route("Account/UserList/{pageNum?}/{len?}")]
+        [HttpGet]
         public async Task<IActionResult> UserList(int pageNum = 0, int pageLen = defaultLen)
         {
             var users = _dbContext.Users.OrderBy(u => u.UserName);
@@ -478,34 +479,12 @@ namespace Yavsc.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        var user = _dbContext.Users.Include(u => u.Membership).FirstOrDefault(
-                            u => u.Email == model.EMail);
-
-                        if (user != null)
-                        {
-                            if (!await _userManager.IsEmailConfirmedAsync(user))
-                            {
-                                ModelState.AddModelError(string.Empty,
-                                            "You must have a confirmed email to log in.");
-                                return this.ViewOk(model);
-                            }
-                        }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty,
-                                        "No such user.");
-                            return this.ViewOk(model);
-                        }
                         // This doesn't count login failures towards account lockout
                         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                        var result = await _signInManager.PasswordSignInAsync(model.EMail, model.Password, model.RememberMe, lockoutOnFailure: false);
+                        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
 
                         if (result.Succeeded)
                         {
-                            // FIXME should be done at granting resources
-                            await _userManager.AddClaimsAsync(user, user.Membership.Select(
-                                m => new Claim(YavscClaimTypes.CircleMembership, m.CircleId.ToString())
-                             ));
                             return Redirect(model.ReturnUrl ?? "/");
                         }
 
@@ -520,7 +499,7 @@ namespace Yavsc.Controllers
                         }
                         else
                         {
-                            ModelState.AddModelError(string.Empty, $"Invalid login attempt. ({model.EMail}, {model.Password})");
+                            ModelState.AddModelError(string.Empty, $"Invalid login attempt. ({model.UserName}, {model.Password})");
                             return this.ViewOk(model);
                         }
                     }
