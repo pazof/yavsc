@@ -17,13 +17,13 @@
             "console": "internalConsole"
         },
         {
-            "name": "web",
+            "name": "org",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Yavsc/bin/Debug/net9.0/Yavsc.dll",
+            "program": "${workspaceFolder}/src/Org/bin/Debug/net9.0/Org.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/Yavsc",
+            "cwd": "${workspaceFolder}/src/Org",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
@@ -33,18 +33,18 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceFolder}/src/Yavsc/Views"
+                "/Views": "${workspaceFolder}/src/Org/Views"
             }
         },
         
         {
-            "name": "sample web",
+            "name": "Web",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/sampleWebAsWebApiClient/bin/Debug/net9.0/sampleWebAsWebApiClient.dll",
+            "program": "${workspaceFolder}/src/Web/bin/Debug/net9.0/Web.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/sampleWebAsWebApiClient",
+            "cwd": "${workspaceFolder}/src/Web",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
@@ -54,7 +54,7 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceFolder}/src/sampleWebAsWebApiClient/Views"
+                "/Views": "${workspaceFolder}/src/Web/Views"
             }
         },
         
@@ -62,29 +62,18 @@
             "name": "Api",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-webapi",
-            "program": "${workspaceFolder}/src/Api/bin/Debug/net8.0/Api.dll",
+            "preLaunchTask": "build-web",
+            "program": "${workspaceFolder}/src/Api/bin/Debug/net9.0/Api.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Api",
             "stopAtEntry": false,
             "console": "internalConsole"
         },
         {
-            "name": "dotnet webClient",
+            "name": "dotnet org",
             "type": "dotnet",
             "request": "launch",
-            //"projectPath": "${workspaceFolder}/src/Yavsc/Yavsc.csproj",
-            "projectPath": "${workspaceFolder}/src/sampleWebAsWebApiClient/sampleWebAsWebApiClient.csproj",
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            }
-        },
-        {
-            "name": "dotnet web",
-            "type": "dotnet",
-            "request": "launch",
-            "projectPath": "${workspaceFolder}/src/Yavsc/Yavsc.csproj",
+            "projectPath": "${workspaceFolder}/src/Org/Org.csproj",
              "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"

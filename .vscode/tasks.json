@@ -47,7 +47,7 @@
 			"isBackground": true
 		},
 		{
-			"label": "build-webclient",
+			"label": "build-web",
 			"type": "process",
 			"problemMatcher": ["$msCompile"],
 			"command": "dotnet",
@@ -57,7 +57,7 @@
 			"runOptions": {
 			},
 			"options": {
-				"cwd": "src/sampleWebAsWebApiClient"
+				"cwd": "src/Web"
 			},
 			"group": {
 				"kind": "build"

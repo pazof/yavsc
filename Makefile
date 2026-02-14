@@ -2,6 +2,8 @@
 CONFIG=Debug
 FRAMEWORK=net9.0
 DESTDIR=/tmp/yavsc
+APP_PATH=srv/www/yavsc
+APP_FULL_PATH=$(DESTDIR)/$(APP_PATH)
 
 all:
 	dotnet build --nologo
@@ -27,12 +29,14 @@ src/Yavsc.Server/bin/$(CONFIG)/$(FRAMEWORK)/Yavsc.Server.dll:
 src/Yavsc/bin/$(CONFIG)/$(FRAMEWORK)/Yavsc.dll:
 	dotnet build -p:Configuration=$(CONFIG) --project src/Yavsc/Yavsc.csproj
 
+$(DESTDIR): 
+	mkdir $(DESTDIR)
 
-publish:
-	dotnet publish src/Yavsc/Yavsc.csproj -c Release -o $(DESTDIR)/srv/www/yavsc
-
-install: publish
-	sudo chown -R www-data:www-data $(DESTDIR)/srv/www/yavsc
+install: $(DESTDIR)
+	dotnet publish src/Org/Org.csproj -c Release -o $(APP_FULL_PATH)
+	dotnet publish src/Api/Api.csproj -c Release -o $(APP_FULL_PATH)
+	dotnet publish src/Web/Web.csproj -c Release -o $(APP_FULL_PATH)
+	sudo chown -R www-data:www-data $(APP_FULL_PATH)
 
 docker-image:
 	docker build .
