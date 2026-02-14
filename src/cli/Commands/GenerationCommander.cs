@@ -11,9 +11,19 @@ namespace cli.Commands
 {
     public class GenerationCommander : ICommander
     {
+    private MvcGenerator mvcGenerator;
+    private ILoggerFactory loggerFactory;
+    private IOptions<GenMvcSettings> options;
 
-        public GenerationCommander()
+    public GenerationCommander(
+            MvcGenerator mvcGenerator,
+            ILoggerFactory loggerFactory,
+            IOptions<GenMvcSettings> options
+            )
         {
+            this.mvcGenerator = mvcGenerator;
+            this.loggerFactory = loggerFactory;
+            this.options = options;
         }
 
         public CommandLineApplication Integrate(CommandLineApplication rootApp)
@@ -35,13 +45,7 @@ namespace cli.Commands
             });
             cmd.OnExecute(() => {
              
-                    var mailer = Program.AppHost.Services.GetService<MvcGenerator>();
-                    var loggerFactory = Program.AppHost.Services.GetService<ILoggerFactory>();
                     var logger = loggerFactory.CreateLogger<GenerationCommander>();
-                    var options = Program.AppHost.Services.GetService<IOptions<GenMvcSettings>>();
-
-                    MvcGenerator generator = Program.AppHost.Services.GetService<MvcGenerator>();
-
                     var modelFullName = mdClass?.Value ?? options?.Value.ModelFullName;
                     var nameSpace = nameSpaceArg?.Value?? options?.Value.NameSpace;
                     var dbContext = dbCtx?.Value?? options?.Value.DbContextFullName;
@@ -51,7 +55,7 @@ namespace cli.Commands
                     logger.LogInformation("Starting generation");
                     logger.LogInformation($"Using parameters : modelFullName:{modelFullName} nameSpace:{nameSpace} dbContext:{dbContext} controllerName:{controllerName} relativePath:{relativePath}");
 
-                    generator.Generate(modelFullName,
+                    mvcGenerator.Generate(modelFullName,
                      dbContext, 
                      controllerName,
                      relativePath);

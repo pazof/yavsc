@@ -10,10 +10,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Language" />
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
-    <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj" />
+    <ProjectReference Include="..\Abstract\Abstract.csproj" />
+    <ProjectReference Include="..\Server\Server.csproj" />
   </ItemGroup>
 </Project>
