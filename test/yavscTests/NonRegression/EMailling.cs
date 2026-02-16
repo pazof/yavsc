@@ -1,12 +1,8 @@
 using isnd.tests;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Xunit;
 using Xunit.Abstractions;
-using Yavsc.Abstract.Manage;
 using Yavsc.Interface;
-using Yavsc.Models;
 
 namespace yavscTests
 {

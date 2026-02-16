@@ -30,6 +30,8 @@ namespace Yavsc.Controllers
             this._dbContext = context;
         }
 
+
+        [Authorize("AdministratorOnly")]
         public async Task<IActionResult> Role(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
@@ -39,7 +41,7 @@ namespace Yavsc.Controllers
                 Id = id,
                 Name = role.Name,
                 Users = (await this._userManager.GetUsersInRoleAsync(role.Name))
-                .Select(u => new UserInfo (id, u.UserName, u.Email, u.Avatar)).ToArray()
+                .Select(u => new UserInfo(id, u.UserName, u.Email, u.Avatar)).ToArray()
             };
             return View(roleUserCollection);
         }
@@ -62,17 +64,16 @@ namespace Yavsc.Controllers
                     if (!resultCreate.Succeeded)
                     {
                         AddErrors(resultCreate);
-                        return false;
                     }
                 }
+            if (ModelState.ErrorCount > 0) return false;
             return true;
-
         }
+
         /// <summary>
-        /// Gives the (new if was not existing) administrator role
-        /// to current authenticated user, when no existing
-        /// administrator was found.
-        /// When nothing is to do, it returns a 404.
+        /// Gives the new, when not existing, administrator role
+        /// to current authenticated user.
+        /// If nothing is to do, it returns a 404.
         /// </summary>
         /// <returns></returns>
         [Produces("application/json")]
@@ -110,7 +111,6 @@ namespace Yavsc.Controllers
         }
 
         [Authorize("AdministratorOnly")]
-        [Produces("application/json")]
         public async Task<IActionResult> Index()
         {
             var adminCount = await _userManager.GetUsersInRoleAsync(
@@ -197,6 +197,7 @@ namespace Yavsc.Controllers
             ViewBag.UserId = new SelectList(_dbContext.Users, "Id", "UserName");
             return View(model);
         }
+
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)

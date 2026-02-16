@@ -1,7 +1,4 @@
-using System.Net;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
@@ -9,15 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Xunit;
 using Yavsc;
 using Yavsc.Models;
-using Yavsc.Services;
-using yavscTests.Settings;
 using Yavsc.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
-using Yavsc.Models.Auth;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -46,7 +38,6 @@ namespace isnd.tests
         public ApplicationUser TestingUser { get; private set; }
         public bool DbCreated { get; internal set; }
         public SiteSettings SiteSettings { get => siteSettings; set => siteSettings = value; }
-        public TestingSetup? TestingSetup { get; internal set; }
         public string TestClientSecret { get; private set; } = "TestClientSecret";
 
         public WebServerFixture()
@@ -118,10 +109,7 @@ namespace isnd.tests
                 Addresses.Add(address);
             }
             SiteSettings = app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
-
-         
         
-           
         }
 
         public void EnsureUser(string testingUserName, string password)

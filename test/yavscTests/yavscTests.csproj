@@ -24,9 +24,9 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Yavsc\Yavsc.csproj" />
-    <ProjectReference Include="..\..\src\Yavsc.Abstract\Yavsc.Abstract.csproj" />
-    <ProjectReference Include="..\..\src\Yavsc.Server\Yavsc.Server.csproj" />
+    <ProjectReference Include="..\..\src\Org\Org.csproj" />
+    <ProjectReference Include="..\..\src\Abstract\Abstract.csproj" />
+    <ProjectReference Include="..\..\src\Server\Server.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />

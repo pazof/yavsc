@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Models;
 using Xunit.Abstractions;
 using Yavsc.Server.Models.IT.SourceCode;
-using yavscTests.Settings;
 using Microsoft.EntityFrameworkCore;
 using isnd.tests;
 
@@ -14,13 +13,11 @@ namespace yavscTests
     public class BaseTestContext:  IClassFixture<WebServerFixture>, IDisposable
     {
         public readonly WebServerFixture _serverFixture;
-        private readonly TestingSetup _testingOptions;
         private readonly ITestOutputHelper _output;
 
         public BaseTestContext(ITestOutputHelper output, WebServerFixture fixture)
         {
             this._serverFixture = fixture;
-            _testingOptions = fixture.TestingSetup;
             this._output = output;
         }
 

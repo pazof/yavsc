@@ -7,7 +7,7 @@ using Yavsc.Models;
 
 namespace Yavsc.Controllers
 {
-    [Authorize()]
+    [Authorize("AdministratorOnly")]
     public class DatabaseController : Controller
     {
         private readonly ILogger<DatabaseController> logger;

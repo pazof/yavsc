@@ -1,6 +1,4 @@
-using System;
 using isnd.tests;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace yavscTests.Mandatory
@@ -18,7 +16,6 @@ namespace yavscTests.Mandatory
             this.output = output;
             _serverFixture = serverFixture;
             
-            output.WriteLine($"Testing connection string is {_serverFixture?.TestingSetup?.ConnectionStrings.DefaultConnection}");
         }
 
         /// <summary>

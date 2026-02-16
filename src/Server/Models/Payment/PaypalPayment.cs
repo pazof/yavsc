@@ -15,6 +15,7 @@ namespace Yavsc.Models.Payment {
 
         [YaRequired]
         public string ExecutorId { get; set; }
+        
         [ForeignKey("ExecutorId")]
         public virtual ApplicationUser Executor { get; set; }
 

@@ -1,5 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Musical
@@ -17,7 +18,10 @@ namespace Yavsc.Models.Musical
     public int Rate { get; set; }
     
     [YaRequired]
-    public long TendencyId {get; set; }
+    public long TendencyId { get; set; }
+    
+    [ForeignKey("TendencyId")]
+    public virtual MusicalTendency MusicalTendency { get; set; } 
   } 
 
 }
