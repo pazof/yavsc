@@ -20,10 +20,10 @@ namespace Yavsc
         public const string UserNameRegExp = @"^[a-zA-Z][a-zA-Z0-9._-]*$";
         public const string UserFileNamePatternRegExp = @"^([a-zA-Z0-9._-]*/)*[a-zA-Z0-9._-]+$";
 
-        public const string LoginPath = "/signin";
-        public const string LogoutPath = "/signout";
+        public const string LoginPath = "~/signin";
+        public const string LogoutPath = "~/signout";
 
-        public const string AccessDeniedPath = "/Account/AccessDenied";
+        public const string AccessDeniedPath = "~/Account/AccessDenied";
 
         public const string UserFilesPath = "/files";
         public const string AvatarsPath = "/avatars";

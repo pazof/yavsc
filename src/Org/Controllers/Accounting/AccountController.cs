@@ -13,7 +13,6 @@ using Yavsc.ViewModels.Account;
 using Yavsc.Helpers;
 using Yavsc.Abstract.Manage;
 using Yavsc.Interface;
-using IdentityServer8.Test;
 using IdentityServer8.Services;
 using IdentityServer8.Stores;
 using Microsoft.AspNetCore.Authentication;
@@ -22,14 +21,8 @@ using IdentityServer8.Models;
 using Yavsc.Extensions;
 using IdentityServer8.Events;
 using IdentityServer8.Extensions;
-using IdentityServer8;
 using IdentityModel;
-using System.Security.Cryptography;
-using System.Text.Unicode;
-using System.Text;
 using Yavsc.Server.Helpers;
-using System.Reflection;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Yavsc.Controllers
 {
@@ -104,15 +97,16 @@ namespace Yavsc.Controllers
                 return RedirectToAction("Challenge", "External", new { scheme = vm.ExternalLoginScheme, returnUrl });
             }
 
-            return View(vm);
+            return View("Signin", vm);
         }
 
         /// <summary>
         /// Handle postback from username/password login
         /// </summary>
-        [HttpPost]
+        [HttpPost(Constants.LoginPath)]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginInputModel model, string button)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromForm] SignInModel model, [FromForm] string button)
         {
 
             // check if we are in the context of an authorization request
@@ -148,7 +142,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
 
-                var user = await _userManager.FindByNameAsync(model.Username);
+                var user = await _userManager.FindByNameAsync(model.UserName);
                 if (user != null)
                 {
 
@@ -162,7 +156,7 @@ namespace Yavsc.Controllers
 
                         // only set explicit expiration here if user chooses "remember me". 
                         // otherwise we rely upon expiration configured in cookie middleware.
-                        await HttpContext.SignInAsync(user, _roleManager, model.RememberLogin, _dbContext);
+                        await HttpContext.SignInAsync(user, _roleManager, model.RememberMe, _dbContext);
 
                         if (context != null)
                         {
@@ -194,13 +188,13 @@ namespace Yavsc.Controllers
                     }
                 }
 
-                await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials", clientId: context?.Client.ClientId));
+                await _events.RaiseAsync(new UserLoginFailureEvent(model.UserName, "invalid credentials", clientId: context?.Client.ClientId));
                 ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
             }
 
             // something went wrong, show form with error
             var vm = await BuildLoginViewModelAsync(model);
-            return View(vm);
+            return View("Signin", vm);
         }
 
         /// <summary>
@@ -279,7 +273,7 @@ namespace Yavsc.Controllers
         /*****************************************/
         /* helper APIs for the AccountController */
         /*****************************************/
-        private async Task<LoginViewModel> BuildLoginViewModelAsync(string returnUrl)
+        private async Task<SignInModel> BuildLoginViewModelAsync(string returnUrl)
         {
             var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
             if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
@@ -287,11 +281,12 @@ namespace Yavsc.Controllers
                 var local = context.IdP == IdentityServer8.IdentityServerConstants.LocalIdentityProvider;
 
                 // this is meant to short circuit the UI and only trigger the one external IdP
-                var vm = new LoginViewModel
+                var vm = new SignInModel
                 {
                     EnableLocalLogin = local,
                     ReturnUrl = returnUrl,
-                    Username = context?.LoginHint,
+                    UserName = context?.LoginHint,
+                    IsExternalLoginOnly = false
                 };
 
                 if (!local)
@@ -327,21 +322,21 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new LoginViewModel
+            return new SignInModel
             {
-                AllowRememberLogin = AccountOptions.AllowRememberLogin,
+                RememberMe = AccountOptions.AllowRememberLogin,
                 EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
                 ReturnUrl = returnUrl,
-                Username = context?.LoginHint,
+                UserName = context?.LoginHint,
                 ExternalProviders = providers.ToArray()
             };
         }
 
-        private async Task<LoginViewModel> BuildLoginViewModelAsync(LoginInputModel model)
+        private async Task<SignInModel> BuildLoginViewModelAsync(SignInModel model)
         {
             var vm = await BuildLoginViewModelAsync(model.ReturnUrl);
-            vm.Username = model.Username;
-            vm.RememberLogin = model.RememberLogin;
+            vm.UserName = model.UserName;
+            vm.RememberMe = model.RememberMe;
             return vm;
         }
 
@@ -448,6 +443,8 @@ namespace Yavsc.Controllers
             return View(new SignInModel
             {
                 ReturnUrl = returnUrl ?? "/",
+                ExternalProviders = [],
+                EnableLocalLogin = true
             });
             /* 
             Note: When using an external login provider, redirect the query  :
@@ -469,8 +466,6 @@ namespace Yavsc.Controllers
             return View("AccessDenied", requestUrl);
         }
 
-        [AllowAnonymous]
-        [HttpPost(Constants.LoginPath)]
         public async Task<IActionResult> SignIn(SignInModel model)
         {
             if (Request.Method == "POST") // "hGbkk9B94NAae#aG"
@@ -480,33 +475,63 @@ namespace Yavsc.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-                        // This doesn't count login failures towards account lockout
-                        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+                        var user = await _userManager.FindByNameAsync(model.UserName);
+                        var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+                        if (user != null)
+                        {
 
-                        if (result.Succeeded)
-                        {
-                            // Redirect to returnUrl (ensure it's local to prevent open redirects)
-                            return LocalRedirect(model.ReturnUrl); 
+
+                            var signin = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
+
+                            // validate username/password against in-memory store
+                            if (signin.Succeeded)
+                            {
+                                await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
+
+                                // only set explicit expiration here if user chooses "remember me". 
+                                // otherwise we rely upon expiration configured in cookie middleware.
+                                await HttpContext.SignInAsync(user, _roleManager, model.RememberMe, _dbContext);
+                                var authResult = await HttpContext.AuthenticateAsync();
+                                if (!authResult.Succeeded)
+                                {
+                                    return this.Unauthorized();
+                                }
+                                String bearer = await HttpContext.GetTokenAsync("Bearer", "Bearer");
+                                HttpContext.Response.Cookies.Append("Bearer", bearer);
+
+                                if (context != null)
+                                {
+                                    if (context.IsNativeClient())
+                                    {
+                                        // The client is native, so this change in how to
+                                        // return the response is for better UX for the end user.
+                                        return this.LoadingPage("Redirect", model.ReturnUrl);
+                                    }
+
+                                    // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                                    return Redirect(model.ReturnUrl);
+                                }
+
+                                // request for a local page
+                                if (Url.IsLocalUrl(model.ReturnUrl))
+                                {
+                                    return Redirect(model.ReturnUrl);
+                                }
+                                else if (string.IsNullOrEmpty(model.ReturnUrl))
+                                {
+                                    return Redirect("~/");
+                                }
+                                else
+                                {
+                                    // user might have clicked on a malicious link - should be logged
+                                    throw new Exception("invalid return URL");
+                                }
+                            }
                         }
 
-                        if (result.RequiresTwoFactor)
-                        {
-                            return RedirectToAction(nameof(SendCode), new { returnUrl = model.ReturnUrl, rememberMe = model.RememberMe });
-                        }
-                        if (result.IsLockedOut)
-                        {
-                            _logger.LogWarning(2, "User account locked out.");
-                            return this.ViewOk("Lockout");
-                        }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty, $"Invalid login attempt. ({model.UserName}, {model.Password})");
-                            return this.ViewOk(model);
-                        }
+                        await _events.RaiseAsync(new UserLoginFailureEvent(model.UserName, "invalid credentials", clientId: context?.Client.ClientId));
+                        ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
                     }
-                    // If we got this far, something failed, redisplay form
-                    ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
                 }
                 else
                 {
@@ -1013,15 +1038,15 @@ namespace Yavsc.Controllers
                 return View("Error", new Exception("No mobile app service was activated"));
             }
             else
-            if (model.SelectedProvider == Constants.SMSFactor)
-            {
-                return View("Error", new Exception("No SMS service was activated"));
-                // await _smsSender.SendSmsAsync(_twilioSettings, await _userManager.GetPhoneNumberAsync(user), message);
-            }
-            else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
-            {
-                var sent = await this.SendEMailFactorAsync(user, model.SelectedProvider);
-            }
+                if (model.SelectedProvider == Constants.SMSFactor)
+                {
+                    return View("Error", new Exception("No SMS service was activated"));
+                    // await _smsSender.SendSmsAsync(_twilioSettings, await _userManager.GetPhoneNumberAsync(user), message);
+                }
+                else // if (model.SelectedProvider == Constants.EMailFactor || model.SelectedProvider == "Default" )
+                {
+                    var sent = await this.SendEMailFactorAsync(user, model.SelectedProvider);
+                }
             return View("VerifyCode", new VerifyCodeViewModel { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
 

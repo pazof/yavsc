@@ -1,15 +1,16 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 using Yavsc.Attributes.Validation;
 
 namespace Yavsc.ViewModels.Account
 {
-     // TODO external autentication providers
+    // TODO external autentication providers
 
     public class SignInModel
     {
-           /// <summary>
+        /// <summary>
         /// Local user's name.
         /// </summary>
         /// <returns></returns>
@@ -20,7 +21,7 @@ namespace Yavsc.ViewModels.Account
         /// Local user's password .
         /// </summary>
         /// <returns></returns>
-        [YaRequired]
+        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
@@ -37,22 +38,28 @@ namespace Yavsc.ViewModels.Account
         /// and user password credentials.
         /// </summary>
         /// <returns></returns>
-        public string Provider { get; set; }
+        public string? Provider { get; set; }
 
-        
+
         /// <summary>
         /// This value does NOT indicate the OAuth client method recieving the code,
         /// but the one called once authorized.
         /// </summary>
         /// <returns></returns>
-        public string ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; }
+        public bool EnableLocalLogin { get; set; }
+        public ExternalProvider[]? ExternalProviders { get; set; }
+        public bool IsExternalLoginOnly { get; set; }
+        public String? ExternalLoginScheme { get; set; }
+        public bool AllowRememberLogin { get; set; }
 
     }
 
-    public class YaAuthenticationDescription {
+    public class YaAuthenticationDescription
+    {
         public string DisplayName { get; set; }
         public string AuthenticationScheme { get; set; }
 
-        public IDictionary<string,object> Items { get; set; }
+        public IDictionary<string, object> Items { get; set; }
     }
 }

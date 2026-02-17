@@ -123,7 +123,15 @@ public static class HostingExtensions
         services.AddTransient<IExternalIdentityManager, ExternalIdentityManager>();
 
 
-        AddAuthentication(builder);
+        services.AddAuthentication("Bearer")
+                 .AddJwtBearer("Bearer", options =>
+                 {
+                     options.IncludeErrorDetails = true;
+                     options.Authority = builder.Configuration.GetSection("Site")["Authority"];
+                     options.TokenValidationParameters =
+                         new() { ValidateAudience = false, RoleClaimType = Constants.RoleClaimType };
+                     options.MapInboundClaims = true;
+                 });
 
         services.AddTransient<RoleManager<IdentityRole>>();
         services.AddTransient<IRoleStore<IdentityRole>, RoleStore<IdentityRole, ApplicationDbContext>>();
@@ -199,6 +207,7 @@ public static class HostingExtensions
     public static IServiceCollection LoadConfiguration(this WebApplicationBuilder builder)
     {
         var siteSection = builder.Configuration.GetSection("Site");
+
         var smtpSection = builder.Configuration.GetSection("Smtp");
         var paypalSection = builder.Configuration.GetSection("Authentication:PayPal");
         // OAuth2AppSettings
@@ -276,19 +285,6 @@ public static class HostingExtensions
                     sql => sql.MigrationsAssembly(migrationsAssembly));
             });
 
-        builder.Services.AddAuthentication(
-            CookieAuthenticationDefaults.AuthenticationScheme)
-.AddCookie(options =>
-{
-    options.LoginPath = Constants.LoginPath; // Redirect here if unauthenticated
-    options.AccessDeniedPath = Constants.AccessDeniedPath;
-    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
-        ? CookieSecurePolicy.None
-        : CookieSecurePolicy.Always; // Use HTTPS in production
-    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax; // Allows cross-site top-level navigation
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Cookie expires in 30 mins
-    options.SlidingExpiration = true; // Renew cookie if user is active
-});
 
         builder.Services.Configure<IdentityOptions>(options =>
         {

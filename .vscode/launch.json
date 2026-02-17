@@ -25,6 +25,7 @@
             "args": [],
             "cwd": "${workspaceFolder}/src/Org",
             "stopAtEntry": false,
+            "justMyCode": false,
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
