@@ -23,6 +23,8 @@ namespace Yavsc
         public const string LoginPath = "/signin";
         public const string LogoutPath = "/signout";
 
+        public const string AccessDeniedPath = "/Account/AccessDenied";
+
         public const string UserFilesPath = "/files";
         public const string AvatarsPath = "/avatars";
         public const string GitPath = "/sources";
@@ -38,6 +40,7 @@ namespace Yavsc
         public const string DefaultAvatar = "/images/Users/icon_user.png";
         public const string AnonAvatar = "/images/Users/icon_anon_user.png";
         public const string YavscConnectionStringEnvName = "YAVSC_CONNECTION_STRING";
+        public const string YavscConnectionStringName = "YavscConnection";
 
         // at the end, let 4*4 bytes in peace
         public const int WebSocketsMaxBufLen = 4096;

@@ -41,6 +41,7 @@ using System.IdentityModel.Tokens.Jwt;
 using IdentityServer8.EntityFramework.Stores;
 using IdentityServer8.EntityFramework.Services;
 using IdentityServer8.EntityFramework.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Yavsc.Extensions;
 
@@ -135,16 +136,15 @@ public static class HostingExtensions
         IServiceCollection services = builder.Services;
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-             options => options.MigrationsAssembly("Yavsc")
-            );
-        }
-           );
+            options.UseNpgsql(builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName ),
+                options => options.MigrationsAssembly(typeof(Program).Assembly));
+        });
 
         return services.AddIdentity<ApplicationUser, IdentityRole>(
             options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedAccount = builder.Environment.IsEnvironment(
+                    builder.Environment.EnvironmentName);
                 options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.PreferredUserName;
                 options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
             }
@@ -204,7 +204,7 @@ public static class HostingExtensions
         // OAuth2AppSettings
         var googleAuthSettings = builder.Configuration.GetSection("Authentication:Google");
 
-        //LoadGoogleConfig(builder.Configuration);
+        LoadGoogleConfig(builder.Configuration);
 
 
         var services = builder.Services;
@@ -245,7 +245,7 @@ public static class HostingExtensions
     private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
         var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
 
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
          {
@@ -276,6 +276,20 @@ public static class HostingExtensions
                     sql => sql.MigrationsAssembly(migrationsAssembly));
             });
 
+        builder.Services.AddAuthentication(
+            CookieAuthenticationDefaults.AuthenticationScheme)
+.AddCookie(options =>
+{
+    options.LoginPath = Constants.LoginPath; // Redirect here if unauthenticated
+    options.AccessDeniedPath = Constants.AccessDeniedPath;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.None
+        : CookieSecurePolicy.Always; // Use HTTPS in production
+    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax; // Allows cross-site top-level navigation
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Cookie expires in 30 mins
+    options.SlidingExpiration = true; // Renew cookie if user is active
+});
+
         builder.Services.Configure<IdentityOptions>(options =>
         {
             options.ClaimsIdentity.UserIdClaimType = JwtClaimTypes.Subject;
@@ -290,7 +304,6 @@ public static class HostingExtensions
         else
         {
             var path = builder.Configuration["SigningCert:Path"];
-            var pass = builder.Configuration["SigningCert:Password"];
             if (path == null)
                 throw new InvalidConfigurationException("No signing cert path");
             FileInfo certFileInfo = new FileInfo(path);
@@ -312,16 +325,16 @@ public static class HostingExtensions
         {
             CultureInfo[] supportedCultures = new[]
             {
-                    new CultureInfo("en"),
-                    new CultureInfo("fr"),
-                    new CultureInfo("pt")
+                new CultureInfo("en"),
+                new CultureInfo("fr"),
+                new CultureInfo("pt")
             };
 
             CultureInfo[] supportedUICultures = new[]
             {
-                    new CultureInfo("fr"),
-                    new CultureInfo("en"),
-                    new CultureInfo("pt")
+                new CultureInfo("fr"),
+                new CultureInfo("en"),
+                new CultureInfo("pt")
             };
 
             // You must explicitly state which cultures your application supports.
@@ -332,11 +345,11 @@ public static class HostingExtensions
             options.SupportedUICultures = supportedUICultures;
 
             options.RequestCultureProviders = new List<IRequestCultureProvider>
-                {
-                        new QueryStringRequestCultureProvider { Options = options },
-                        new CookieRequestCultureProvider { Options = options, CookieName="ASPNET_CULTURE" },
-                        new AcceptLanguageHeaderRequestCultureProvider { Options = options }
-                };
+            {
+                new QueryStringRequestCultureProvider { Options = options },
+                new CookieRequestCultureProvider { Options = options, CookieName="ASPNET_CULTURE" },
+                new AcceptLanguageHeaderRequestCultureProvider { Options = options }
+            };
         });
     }
 

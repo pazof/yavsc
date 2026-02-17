@@ -86,13 +86,6 @@ namespace Yavsc.Models
             builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
             //    builder.Entity<IdentityUserLogin<String>>().HasKey(i=> new { i.LoginProvider, i.UserId, i.ProviderKey });
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            string? envCxStr = Environment.GetEnvironmentVariable(Constants.YavscConnectionStringEnvName);
-            if (envCxStr != null)
-                optionsBuilder.UseNpgsql(envCxStr);
-            base.OnConfiguring(optionsBuilder);
-        }
 
         /// <summary>
         /// Activities referenced on this site

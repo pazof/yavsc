@@ -29,6 +29,7 @@ using System.Text.Unicode;
 using System.Text;
 using Yavsc.Server.Helpers;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Yavsc.Controllers
 {
@@ -485,7 +486,8 @@ namespace Yavsc.Controllers
 
                         if (result.Succeeded)
                         {
-                            return Redirect(model.ReturnUrl ?? "/");
+                            // Redirect to returnUrl (ensure it's local to prevent open redirects)
+                            return LocalRedirect(model.ReturnUrl); 
                         }
 
                         if (result.RequiresTwoFactor)
@@ -503,8 +505,6 @@ namespace Yavsc.Controllers
                             return this.ViewOk(model);
                         }
                     }
-
-
                     // If we got this far, something failed, redisplay form
                     ModelState.AddModelError(string.Empty, "Unexpected behavior: something failed ... you could try again, or contact me ...");
                 }
