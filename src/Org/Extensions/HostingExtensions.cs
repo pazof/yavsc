@@ -128,8 +128,12 @@ public static class HostingExtensions
                  {
                      options.IncludeErrorDetails = true;
                      options.Authority = builder.Configuration.GetSection("Site")["Authority"];
+                     options.Audience = builder.Configuration.GetSection("Site")["Audience"];
                      options.TokenValidationParameters =
-                         new() { ValidateAudience = false, RoleClaimType = Constants.RoleClaimType };
+                         new() {
+                             ValidateAudience = false,
+                             RoleClaimType = Constants.RoleClaimType
+                         };
                      options.MapInboundClaims = true;
                  });
 
