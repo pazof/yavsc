@@ -130,7 +130,8 @@ public static class HostingExtensions
                      options.Authority = builder.Configuration.GetSection("Site")["Authority"];
                      options.Audience = builder.Configuration.GetSection("Site")["Audience"];
                      options.TokenValidationParameters =
-                         new() {
+                         new()
+                         {
                              ValidateAudience = false,
                              RoleClaimType = Constants.RoleClaimType
                          };
@@ -148,7 +149,7 @@ public static class HostingExtensions
         IServiceCollection services = builder.Services;
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName ),
+            options.UseNpgsql(builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName),
                 options => options.MigrationsAssembly(typeof(Program).Assembly));
         });
 
@@ -257,6 +258,12 @@ public static class HostingExtensions
     }
     private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            options.ClaimsIdentity.UserIdClaimType = JwtClaimTypes.Subject;
+            options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.Name;
+            options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
+        });
         var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
         var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
 
@@ -289,32 +296,9 @@ public static class HostingExtensions
                     sql => sql.MigrationsAssembly(migrationsAssembly));
             });
 
-
-        builder.Services.Configure<IdentityOptions>(options =>
-        {
-            options.ClaimsIdentity.UserIdClaimType = JwtClaimTypes.Subject;
-            options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.Name;
-            options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
-        });
-
         if (builder.Environment.IsDevelopment())
         {
             identityServerBuilder.AddDeveloperSigningCredential();
-        }
-        else
-        {
-            var path = builder.Configuration["SigningCert:Path"];
-            if (path == null)
-                throw new InvalidConfigurationException("No signing cert path");
-            FileInfo certFileInfo = new FileInfo(path);
-            Debug.Assert(certFileInfo.Exists);
-            RSA rsa = RSA.Create();
-            rsa.ImportFromPem(File.ReadAllText(certFileInfo.FullName));
-            var signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256)
-            {
-                CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false }
-            };
-            identityServerBuilder.AddSigningCredential(signingCredentials);
         }
         return identityServerBuilder;
     }
