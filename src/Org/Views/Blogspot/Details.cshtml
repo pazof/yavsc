@@ -19,7 +19,7 @@
                     method: 'POST',
                     contentType:  "application/json",
                     data: JSON.stringify({ 
-                        Content: $('#Comment').val(), 
+                        Article: $('#Comment').val(), 
                         ReceiverId: @Model.Id
                         }),
                     error: function(xhr,data) {
@@ -28,7 +28,7 @@
                             if (xhr.responseJSON)
                             {
                             $('#commentValidation').html(
-                                xhr.responseJSON.Content);
+                                xhr.responseJSON.Article);
                             } else {
 $('#commentValidation').html(
                             "Une erreur est survenue : "+xhr.status+"<br/>"+
@@ -69,7 +69,7 @@ $('#commentValidation').html(
         <h1 ismarkdown>@Model.Title</h1>
         
         @Html.DisplayFor(m=>m.Author)
-        <asciidoc>@Html.DisplayFor(m=>m.Content)</asciidoc>
+        <asciidoc>@Html.DisplayFor(m=>m.Article)</asciidoc>
         
     </div>
 
@@ -91,7 +91,7 @@ $('#commentValidation').html(
                  />
             </span> 
         </div>
-        <span asp-validation-for="Content" class="text-danger" ></span>
+        <span asp-validation-for="Article" class="text-danger" ></span>
     </div>
     }
     else {

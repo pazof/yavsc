@@ -172,7 +172,7 @@
   <data name="Comment"><value>comentário</value></data>
   <data name="Consultant"><value>consultor</value></data>
   <data name="ContactAPerformer"><value>Entre em contato com um inquilino</value></data>
-  <data name="Content"><value>conteúdo</value></data>
+  <data name="Article"><value>conteúdo</value></data>
   <data name="Count"><value>número</value></data>
   <data name="CouldNotConvertVToDouble"><value>A conversão de '{0}' para 'double' era impossível.</value></data>
   <data name="Create"><value>criar</value></data>

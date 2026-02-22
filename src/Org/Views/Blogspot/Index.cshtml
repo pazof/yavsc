@@ -57,7 +57,7 @@
         </a>
         <div>
           <a asp-action="Details" asp-route-id="@post.Id">
-            <asciidoc summary="@maxTextLen">@post.Content</asciidoc></a>
+            <asciidoc summary="@maxTextLen">@post.Article</asciidoc></a>
             <span style="font-size:x-small;">@Html.DisplayFor(m => post.Author)</span>
             <span style="font-size:xx-small;">
             posté le @post.DateCreated.ToString("dddd d MMM yyyy à H:mm")

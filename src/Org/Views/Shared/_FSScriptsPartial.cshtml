@@ -16,7 +16,7 @@
         for (var i = 0; i < response.length; i++) {
             var filer = response[i];
             $('<p><a href="/files/@User.GetUserName()/' + filer.FileName + '">' + filer.FileName + '</a></p>').appendTo('#ql-editor-2');
-            updateMD('Content', $('#contentview').html());
+            updateMD('Article', $('#contentview').html());
         }
     },
     url: '/api/fs'

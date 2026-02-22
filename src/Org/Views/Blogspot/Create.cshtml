@@ -22,7 +22,7 @@
 <img class="blogphoto" alt="" src="@Model.Photo" title="Photo associée au post">
 <h2 title="Titre du post" class="blogtitle" id="titleview" >@Model.Title</h2>
 
-<div title="Contenu du post" id="contentview">@Model.Content</div>
+<div title="Contenu du post" id="contentview">@Model.Article</div>
 
 <hr>
 <form asp-controller="Blogspot" asp-action="Create">
@@ -49,11 +49,11 @@
         </div>
 
         <div class="form-group mdcoding">
-            <label asp-for="Content" class="col-md-2 control-label" ></label>
+            <label asp-for="Article" class="col-md-2 control-label" ></label>
             <div class="col-md-10">
-                <textarea asp-for="Content" class="form-control" id="Content" data-from="contentview">
+                <textarea asp-for="Article" class="form-control" id="Article" data-from="contentview">
                 </textarea>
-                <span asp-validation-for="Content" class="text-danger" >
+                <span asp-validation-for="Article" class="text-danger" >
                 </span>
             </div>
         </div>

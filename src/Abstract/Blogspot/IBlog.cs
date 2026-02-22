@@ -7,7 +7,7 @@ namespace Yavsc
 {
     public interface IBlogPostPayLoad
     {      
-        string? Content { get; set; }
+        string? Article { get; set; }
         string? Photo { get; set; }
 
     }

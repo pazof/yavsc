@@ -74,7 +74,7 @@ public class BlogSpotService
         {
             throw new AuthorizationFailureException(auth);
         }
-        blog.Content = blogEdit.Content;
+        blog.Article = blogEdit.Article;
         blog.Title = blogEdit.Title;
         blog.Photo = blogEdit.Photo;
         blog.ACL = blogEdit.ACL;

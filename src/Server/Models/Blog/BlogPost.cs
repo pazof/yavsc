@@ -16,7 +16,7 @@ namespace Yavsc.Models.Blog
             Id = post.Id;
             AuthorId = post.AuthorId;
             ACL = post.ACL;
-            Content = post.Content;
+            Article = post.Article;
             Title = post.Title;
             Publish = publish;
         }
@@ -39,7 +39,7 @@ namespace Yavsc.Models.Blog
         public string Title { get; set; }
 
         [StringLength(56224)]
-        public string? Content { get; set; }
+        public string? Article { get; set; }
 
         [InverseProperty("Target")]
         [Display(Name = "Liste de contrôle d'accès")]

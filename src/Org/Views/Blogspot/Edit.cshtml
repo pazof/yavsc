@@ -80,12 +80,12 @@
             </div>
         </div>
         <div class="form-group mdcoding">
-            <label asp-for="Content" class="col-md-2 control-label" ></label>
+            <label asp-for="Article" class="col-md-2 control-label" ></label>
             <div class="col-md-10">
-                <textarea asp-for="Content" class="form-control" 
-                  id="Content" data-from="contentview">
+                <textarea asp-for="Article" class="form-control" 
+                  id="Article" data-from="contentview">
                 </textarea>
-                <span asp-validation-for="Content" class="text-danger" >
+                <span asp-validation-for="Article" class="text-danger" >
                 </span>
             </div>
         </div>
@@ -116,7 +116,7 @@
 <hr />
 
 <div id="prev">
-<asciidoc>@Model.Content</asciidoc>
+<asciidoc>@Model.Article</asciidoc>
 </div>
 
 <div >

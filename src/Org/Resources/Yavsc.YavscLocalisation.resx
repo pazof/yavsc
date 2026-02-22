@@ -175,7 +175,7 @@
   <data name="Comment"><value>Commentaire</value></data>
   <data name="Consultant"><value>Consultant</value></data>
   <data name="ContactAPerformer"><value>Contactez un préstataire</value></data>
-  <data name="Content"><value>Contenu</value></data>
+  <data name="Article"><value>Contenu</value></data>
   <data name="Count"><value>Nombre</value></data>
   <data name="CouldNotConvertVToDouble"><value>La convertion de '{0}' en 'double' a été impossible.</value></data>
   <data name="Create"><value>Créer</value></data>
