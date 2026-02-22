@@ -264,7 +264,7 @@ public static class HostingExtensions
             options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.Name;
             options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
         });
-        var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+        var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
         var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
 
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>

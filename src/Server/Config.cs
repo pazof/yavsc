@@ -9,7 +9,7 @@ namespace Yavsc;
 
 public static class Config
 {
-        public static string? Authority { get;  set; }
+        public static string Authority { get;  set; }
 
         public static IConfigurationRoot? GoogleWebClientConfiguration { get;  set; }
         public static GoogleServiceAccount? GServiceAccount { get;  set; }

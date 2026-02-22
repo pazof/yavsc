@@ -1,4 +1,5 @@
-﻿@using Yavsc
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using Yavsc
 @using Yavsc.Models
 @using Yavsc.Models.Musical;
 @using Yavsc.Models.Drawing;
@@ -36,8 +37,10 @@
 @addTagHelper *, Yavsc
 
 @inject IAuthorizationService AuthorizationService
-@inject Microsoft.AspNetCore.Mvc.Localization.IHtmlLocalizer<Startup> SR
+
 @inject Microsoft.Extensions.Options.IOptions<SiteSettings> SiteSettings
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+@inject IViewLocalizer Localizer
+@inject IHtmlLocalizer<Startup> SharedLocalizer

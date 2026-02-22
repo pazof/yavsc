@@ -79,7 +79,7 @@
         </div>
     </div>
 </form>
-@await Component.InvokeAsync("Directory","")
+@await Component.InvokeAsync(name: "Directory",arguments: new {subdir="."})
 <div >
     @{ await Html.RenderPartialAsync("_PostFilesPartial"); }
    </div>

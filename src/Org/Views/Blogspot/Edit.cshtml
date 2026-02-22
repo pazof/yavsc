@@ -53,9 +53,6 @@
 <img class="blogphoto" alt="" src="@Model.Photo" title="Photo associée au post">
 <h2 title="Titre du post" class="blogtitle" id="titleview" >@Model.Title</h2>
 
-
-
-<hr>
 <form asp-action="Edit">
     <div class="form-horizontal">
 
@@ -114,10 +111,6 @@
 
 
 <hr />
-
-<div id="prev">
-<asciidoc>@Model.Article</asciidoc>
-</div>
 
 <div >
     @{ await Html.RenderPartialAsync("_PostFilesPartial"); }

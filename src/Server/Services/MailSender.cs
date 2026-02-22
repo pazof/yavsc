@@ -59,10 +59,12 @@ namespace Yavsc.Services
             msg.From.Add(new MailboxAddress(siteSettings.Owner.Name,
             siteSettings.Owner.EMail));
             msg.To.Add(new MailboxAddress(name, email));
-            msg.Body = new TextPart("html")
+            TextPart text;
+            msg.Body = text = new TextPart("html")
             {
-                Text = htmlMessage
+                Text = $"<html><body>{htmlMessage}</body></html>"
             };
+
             msg.Subject = subject;
             msg.MessageId = MimeKit.Utils.MimeUtils.GenerateMessageId(
                 siteSettings.Authority

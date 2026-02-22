@@ -65,7 +65,7 @@ namespace Yavsc.Controllers
             string uid = User.GetUserId();
             Comment c = new Comment{
                 ReceiverId = post.ReceiverId,
-                Content = post.Content,
+                Article = post.Article,
                 ParentId = post.ParentId,
                 AuthorId = uid,
                 UserModified = uid

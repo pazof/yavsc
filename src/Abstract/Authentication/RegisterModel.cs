@@ -11,7 +11,7 @@ namespace Yavsc.ViewModels.Account
         [StringLength(Constants.MaxUserNameLength)]
         [RegularExpression(Constants.UserNameRegExp)]
         [DataType(DataType.Text)]
-         [Display(Name = "UserName", Description = "User name")]
+        [Display(Name = "UserName", Description = "User name")]
         public string UserName { get; set; }
 
         [Required()]

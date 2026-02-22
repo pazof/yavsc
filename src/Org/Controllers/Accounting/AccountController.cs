@@ -23,7 +23,8 @@ using IdentityServer8.Events;
 using IdentityServer8.Extensions;
 using IdentityModel;
 using Yavsc.Server.Helpers;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Mvc.Localization;
+using System.Diagnostics;
 
 namespace Yavsc.Controllers
 {
@@ -41,10 +42,11 @@ namespace Yavsc.Controllers
         readonly TwilioSettings _twilioSettings;
 
         readonly IStringLocalizer _localizer;
+    private readonly IStringLocalizer _sharedLocalizer;
 
-        //  TwilioSettings _twilioSettings;
+    //  TwilioSettings _twilioSettings;
 
-        readonly ApplicationDbContext _dbContext;
+    readonly ApplicationDbContext _dbContext;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
@@ -63,7 +65,9 @@ namespace Yavsc.Controllers
             IOptions<SiteSettings> siteSettings,
             ILoggerFactory loggerFactory, IOptions<TwilioSettings> twilioSettings,
             IStringLocalizerFactory localizerFactory,
-            ApplicationDbContext dbContext)
+IHtmlLocalizerFactory htmlLocalizerFactory,
+            ApplicationDbContext dbContext
+            )
         {
             _interaction = interaction;
             _clientStore = clientStore;
@@ -80,6 +84,13 @@ namespace Yavsc.Controllers
 
             _dbContext = dbContext;
             _localizer = localizerFactory.Create(typeof(AccountController));
+            _sharedLocalizer = localizerFactory.Create(typeof(Startup));
+            foreach (String name in new String[]{
+                "ConfirmYourAccountBody",
+                "ConfirmYourAccountTitle"
+                })
+                Debug.Assert(!_localizer[name].ResourceNotFound);
+            
         }
 
 
@@ -566,10 +577,20 @@ namespace Yavsc.Controllers
                     // TODO user.DiskQuota = Startup.SiteSetup.UserFiles.Quota;
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
+
+                    Uri authority = new Uri(Config.Authority);
+                    
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: "https", host: Config.Authority);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                    new { userId = user.Id, code },
+                    protocol: authority.Scheme,
+                     host: authority.Host+":"+authority.Port);
                     await _emailSender.SendEmailAsync(model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
-                      string.Format(_localizer["ConfirmYourAccountBody"], _siteSettings.Title, callbackUrl, _siteSettings.Slogan, _siteSettings.Audience));
+                      string.Format(_localizer["ConfirmYourAccountBody"],
+                       _siteSettings.Title,
+                       callbackUrl,
+                       _siteSettings.Slogan,
+                       _siteSettings.Audience));
                     // No, wait for more than a login pass submission:
                     // do not await _signInManager.SignInAsync(user, isPersistent: false);
 

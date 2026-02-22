@@ -8,9 +8,9 @@
       <div class="collapse navbar-collapse" id="navbar" style="background-image: @Config.SiteSetup.Banner;">
         <ul class="navbar-nav me-auto" >
           <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
-          <li class="nav-item"><a asp-controller="Blogspot" asp-action="Index" class="nav-link">@SR["Blogs"]</a></li>
-          <li class="nav-item"><a asp-controller="Home" asp-action="Contact" class="nav-link">@SR["Contact"]</a></li>
-          <li class="nav-item"><a asp-controller="Home" asp-action="About" class="nav-link">@SR["About"]</a></li>
+          <li class="nav-item"><a asp-controller="Blogspot" asp-action="Index" class="nav-link">@Localizer["Blogs"]</a></li>
+          <li class="nav-item"><a asp-controller="Home" asp-action="Contact" class="nav-link">@Localizer["Contact"]</a></li>
+          <li class="nav-item"><a asp-controller="Home" asp-action="About" class="nav-link">@Localizer["About"]</a></li>
           <partial name="_LoginPartial" />
         </ul>
       </div>

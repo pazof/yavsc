@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <xsd:schema id="root"
-    xmlns=""
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -61,22 +58,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ConfirmYourAccountBody">
-    <value>You successfully created your {0} account,
-but your e-mail address is not yet confirmed.
-Please, in order to validate it, follow this link &lt;a href="{1}"&gt;{1}&lt;/a&gt;..
-
-Thanks.
--- 
-{0} - {2} &lt;https://{3}&gt;</value>
-  </data>
-  <data name="EmailSentForConfirm">
-    <value>An email has been sent to confirm your addresse.</value>
-  </data>
-  <data name="ConfirmYourAccountTitle">
-    <value>Please, confirm your e-mail</value>
-  </data>
-
-  <data name="Reset Password"><value>Ré-initialiser votre mot de passe</value></data>
-  <data name="Reset password confirmation"><value>Confirmation de ré-initialisation du mot de passe</value></data>
+  <!-- 
+    route name for the api controller used to tag the 'BlogPost' entity
+   -->
+  <data name="UserName"><value>Nom d'utilisateur</value></data>
 </root>

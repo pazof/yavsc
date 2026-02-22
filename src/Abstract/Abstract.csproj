@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <Description> A shared model for a little client/server app, dealing about establishing some contract, between some human client and provider.
     </Description>
+    <RootNamespace>Yavsc.Abstract</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />

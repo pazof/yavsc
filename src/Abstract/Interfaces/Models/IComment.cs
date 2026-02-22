@@ -3,7 +3,7 @@ namespace Yavsc.Interfaces
     
     public interface IComment<TReceiverId> 
     {
-        string Content { get; set; }
+        string Article { get; set; }
         TReceiverId ReceiverId { get; set; }
     }
 }

@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageLicenseExpression>WTFPL</PackageLicenseExpression>
     <UserSecretsId>76e56fc2-1619-40d8-8393-365258b7a21d</UserSecretsId>
+    <RootNamespace>Yavsc</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="popper.js">

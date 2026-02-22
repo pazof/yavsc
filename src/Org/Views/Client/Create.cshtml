@@ -1,10 +1,10 @@
 @model Client
 
 @{
-    ViewData["Title"] = @SR["Create"];
+    ViewData["Title"] = @Localizer["Create"];
 }
 
-<h2>@SR["Create"]</h2>
+<h2>@Localizer["Create"]</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
@@ -78,6 +78,6 @@
 </form>
 
 <div>
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Index">@Localizer["Back to List"]</a>
 </div>
 

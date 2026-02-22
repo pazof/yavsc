@@ -20,7 +20,7 @@ namespace Yavsc.Controllers
 
         private SiteSettings siteSettings;
         public HomeController(ILogger<HomeController> logger, 
-        IHtmlLocalizer<Startup> localizer, 
+        IHtmlLocalizer<HomeController> localizer, 
         ApplicationDbContext context,
         IOptions<SiteSettings> settingsOptions)
         {

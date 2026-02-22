@@ -2,13 +2,13 @@
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.Client>
 
 @{
-    ViewData["Title"] = @SR["Index"];
+    ViewData["Title"] = @Localizer["Index"];
 }
 
-<h2>@SR["Index"]</h2>
+<h2>@Localizer["Index"]</h2>
 
 <p>
-    <a asp-action="Create">@SR["Create New"]</a>
+    <a asp-action="Create">@Localizer["Create New"]</a>
 </p>
 
 <table class="table">

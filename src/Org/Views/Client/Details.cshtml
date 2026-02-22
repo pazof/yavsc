@@ -1,10 +1,10 @@
 @model Client
 
 @{
-    ViewData["Title"] = @SR["Details"];
+    ViewData["Title"] = @Localizer["Details"];
 }
 
-<h2>@SR["Details"]</h2>
+<h2>@Localizer["Details"]</h2>
 
 <div>
     <h4>Client</h4>
@@ -63,6 +63,6 @@
     </dl>
 </div>
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.Id">@SR["Edit"]</a> |
-    <a asp-action="Index">@SR["Back to List"]</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@Localizer["Edit"]</a> |
+    <a asp-action="Index">@Localizer["Back to List"]</a>
 </p>

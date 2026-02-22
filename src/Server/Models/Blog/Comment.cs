@@ -14,7 +14,7 @@ namespace Yavsc.Models.Blog
         public long Id { get; set; }
 
         [YaStringLength(1024)]
-        public string Content { get; set; }
+        public string Article { get; set; }
         
         [ForeignKeyAttribute(nameof(ReceiverId))][JsonIgnore]
         public virtual BlogPost Post { get; set; }
