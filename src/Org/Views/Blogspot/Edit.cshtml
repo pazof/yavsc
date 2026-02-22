@@ -1,5 +1,4 @@
 @model BlogPostEditViewModel
-
 @{
    ViewData["Title"] = "Blog post edition";
 }
@@ -55,7 +54,6 @@
 <h2 title="Titre du post" class="blogtitle" id="titleview" >@Model.Title</h2>
 
 
-<div  title="Contenu du post" id="contentview"><asciidoc>@Model.Content</asciidoc></div>
 
 <hr>
 <form asp-action="Edit">
@@ -84,7 +82,8 @@
         <div class="form-group mdcoding">
             <label asp-for="Content" class="col-md-2 control-label" ></label>
             <div class="col-md-10">
-                <textarea asp-for="Content" class="form-control" id="Content" data-from="contentview">
+                <textarea asp-for="Content" class="form-control" 
+                  id="Content" data-from="contentview">
                 </textarea>
                 <span asp-validation-for="Content" class="text-danger" >
                 </span>
@@ -112,6 +111,14 @@
     </div>
 </form>
 @await Component.InvokeAsync("Directory","")
+
+
+<hr />
+
+<div id="prev">
+<asciidoc>@Model.Content</asciidoc>
+</div>
+
 <div >
     @{ await Html.RenderPartialAsync("_PostFilesPartial"); }
    </div>

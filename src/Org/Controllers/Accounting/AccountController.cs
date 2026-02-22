@@ -23,6 +23,7 @@ using IdentityServer8.Events;
 using IdentityServer8.Extensions;
 using IdentityModel;
 using Yavsc.Server.Helpers;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Yavsc.Controllers
 {
@@ -82,31 +83,134 @@ namespace Yavsc.Controllers
         }
 
 
+        public async Task<IActionResult> SignIn(SignInModel model, [FromForm] string button)
+        {
+            if (Request.Method == "POST") // "hGbkk9B94NAae#aG"
+
+            {
+                if (model.Provider == null || model.Provider == "LOCAL")
+                {
+                    if (ModelState.IsValid)
+                    {
+                        var user = await _userManager.FindByNameAsync(model.UserName);
+                        var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
+                        if (user != null)
+                        {
+
+
+                            var signin = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
+
+                            // validate username/password against in-memory store
+                            if (signin.Succeeded)
+                            {
+                                await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
+
+                                // only set explicit expiration here if user chooses "remember me". 
+                                // otherwise we rely upon expiration configured in cookie middleware.
+                                await HttpContext.SignInAsync(user, _roleManager, model.RememberMe, _dbContext);
+                                var authResult = await HttpContext.AuthenticateAsync();
+                                if (!authResult.Succeeded)
+                                {
+                                    return this.Unauthorized();
+                                }
+                                String bearer = await HttpContext.GetTokenAsync("Bearer", "Bearer");
+                                HttpContext.Response.Cookies.Append("Bearer", bearer);
+
+                                if (context != null)
+                                {
+                                    if (context.IsNativeClient())
+                                    {
+                                        // The client is native, so this change in how to
+                                        // return the response is for better UX for the end user.
+                                        return this.LoadingPage("Redirect", model.ReturnUrl);
+                                    }
+
+                                    // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+                                    return Redirect(model.ReturnUrl);
+                                }
+
+                                // request for a local page
+                                if (Url.IsLocalUrl(model.ReturnUrl))
+                                {
+                                    return Redirect(model.ReturnUrl);
+                                }
+                                else if (string.IsNullOrEmpty(model.ReturnUrl))
+                                {
+                                    return Redirect("~/");
+                                }
+                                else
+                                {
+                                    // user might have clicked on a malicious link - should be logged
+                                    throw new Exception("invalid return URL");
+                                }
+                            }
+                        }
+
+                        await _events.RaiseAsync(new UserLoginFailureEvent(model.UserName, "invalid credentials", clientId: context?.Client.ClientId));
+                        ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
+                    }
+                }
+                else
+                {
+
+                    // Note: the "provider" parameter corresponds to the external
+                    // authentication provider choosen by the user agent.
+                    if (string.IsNullOrEmpty(model.Provider))
+                    {
+                        _logger.LogWarning("Provider not specified");
+                        return BadRequest();
+                    }
+
+                    // Instruct the middleware corresponding to the requested external identity
+                    // provider to redirect the user agent to its own authorization endpoint.
+                    // Note: the authenticationScheme parameter must match the value configured in Startup.cs
+
+                    // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
+                    // will be redirected to after a successful authentication and not
+                    // the redirect_uri of the requesting client application.
+                    if (string.IsNullOrEmpty(model.ReturnUrl))
+                    {
+                        _logger.LogWarning("ReturnUrl not specified");
+                        return BadRequest();
+                    }
+                    // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
+                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { model.ReturnUrl }, protocol: "https", host: Config.Authority);
+                    var properties = _signInManager.ConfigureExternalAuthenticationProperties(model.Provider, redirectUrl);
+                    // var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
+                    return new ChallengeResult(model.Provider, properties);
+
+                }
+            }
+            return View(model);
+        }
+
         /// <summary>
         /// Entry point into the login workflow
         /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> Login(string returnUrl)
+        [HttpGet(Constants.SigninPath)]
+        public async Task<IActionResult> Signin(SignInModel model)
         {
             // build a model so we know what to show on the login page
-            var vm = await BuildLoginViewModelAsync(returnUrl);
+            var vm = await BuildLoginViewModelAsync(model);
 
             if (vm.IsExternalLoginOnly)
             {
                 // we only have one option for logging in and it's an external provider
-                return RedirectToAction("Challenge", "External", new { scheme = vm.ExternalLoginScheme, returnUrl });
+                return RedirectToAction("Challenge", "External", new { scheme = vm.ExternalLoginScheme, model.ReturnUrl });
             }
-
+            ModelState.Clear();
             return View("Signin", vm);
         }
 
         /// <summary>
         /// Handle postback from username/password login
         /// </summary>
-        [HttpPost(Constants.LoginPath)]
+        /// 
+        [HttpPost(Constants.SigninPath)]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromForm] SignInModel model, [FromForm] string button)
+  
+        public async Task<IActionResult> Signin([FromForm] SignInModel model, [FromForm] string button)
         {
 
             // check if we are in the context of an authorization request
@@ -273,28 +377,25 @@ namespace Yavsc.Controllers
         /*****************************************/
         /* helper APIs for the AccountController */
         /*****************************************/
-        private async Task<SignInModel> BuildLoginViewModelAsync(string returnUrl)
+        private async Task<SignInModel> BuildLoginViewModelAsync(SignInModel model)
         {
-            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+            var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
             if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
             {
                 var local = context.IdP == IdentityServer8.IdentityServerConstants.LocalIdentityProvider;
 
                 // this is meant to short circuit the UI and only trigger the one external IdP
-                var vm = new SignInModel
-                {
-                    EnableLocalLogin = local,
-                    ReturnUrl = returnUrl,
-                    UserName = context?.LoginHint,
-                    IsExternalLoginOnly = false
-                };
+                
+                model.EnableLocalLogin = local;
+                model.UserName = context?.LoginHint;
+                model.IsExternalLoginOnly = false;
 
                 if (!local)
                 {
-                    vm.ExternalProviders = new[] { new ExternalProvider { AuthenticationScheme = context.IdP } };
+                    model.ExternalProviders = new[] { new ExternalProvider { AuthenticationScheme = context.IdP } };
                 }
 
-                return vm;
+                return model;
             }
 
             var schemes = await _schemeProvider.GetAllSchemesAsync();
@@ -322,22 +423,12 @@ namespace Yavsc.Controllers
                 }
             }
 
-            return new SignInModel
-            {
-                RememberMe = AccountOptions.AllowRememberLogin,
-                EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
-                ReturnUrl = returnUrl,
-                UserName = context?.LoginHint,
-                ExternalProviders = providers.ToArray()
-            };
-        }
+            model.RememberMe = AccountOptions.AllowRememberLogin;
+            model.EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin;
+            model.UserName = context?.LoginHint;
+            model.ExternalProviders = providers.ToArray();
 
-        private async Task<SignInModel> BuildLoginViewModelAsync(SignInModel model)
-        {
-            var vm = await BuildLoginViewModelAsync(model.ReturnUrl);
-            vm.UserName = model.UserName;
-            vm.RememberMe = model.RememberMe;
-            return vm;
+            return model;
         }
 
         private async Task<LogoutViewModel> BuildLogoutViewModelAsync(string logoutId)
@@ -433,28 +524,6 @@ namespace Yavsc.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet(Constants.LoginPath)]
-        public ActionResult SignIn(string returnUrl = null)
-        {
-            // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
-            // will be redirected to after a successful authentication and not
-            // the redirect_uri of the requesting client application against the third
-            // party identity provider.
-            return View(new SignInModel
-            {
-                ReturnUrl = returnUrl ?? "/",
-                ExternalProviders = [],
-                EnableLocalLogin = true
-            });
-            /* 
-            Note: When using an external login provider, redirect the query  :
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(OpenIdConnectDefaults.AuthenticationScheme, returnUrl);
-            return new ChallengeResult(OpenIdConnectDefaults.AuthenticationScheme, properties);
-            */
-
-        }
-
-        [AllowAnonymous]
         public ActionResult AccessDenied(string requestUrl = null)
         {
             ViewBag.UserIsSignedIn = User.Identity.IsAuthenticated;
@@ -466,106 +535,7 @@ namespace Yavsc.Controllers
             return View("AccessDenied", requestUrl);
         }
 
-        public async Task<IActionResult> SignIn(SignInModel model)
-        {
-            if (Request.Method == "POST") // "hGbkk9B94NAae#aG"
 
-            {
-                if (model.Provider == null || model.Provider == "LOCAL")
-                {
-                    if (ModelState.IsValid)
-                    {
-                        var user = await _userManager.FindByNameAsync(model.UserName);
-                        var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
-                        if (user != null)
-                        {
-
-
-                            var signin = await _signInManager.CheckPasswordSignInAsync(user, model.Password, true);
-
-                            // validate username/password against in-memory store
-                            if (signin.Succeeded)
-                            {
-                                await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
-
-                                // only set explicit expiration here if user chooses "remember me". 
-                                // otherwise we rely upon expiration configured in cookie middleware.
-                                await HttpContext.SignInAsync(user, _roleManager, model.RememberMe, _dbContext);
-                                var authResult = await HttpContext.AuthenticateAsync();
-                                if (!authResult.Succeeded)
-                                {
-                                    return this.Unauthorized();
-                                }
-                                String bearer = await HttpContext.GetTokenAsync("Bearer", "Bearer");
-                                HttpContext.Response.Cookies.Append("Bearer", bearer);
-
-                                if (context != null)
-                                {
-                                    if (context.IsNativeClient())
-                                    {
-                                        // The client is native, so this change in how to
-                                        // return the response is for better UX for the end user.
-                                        return this.LoadingPage("Redirect", model.ReturnUrl);
-                                    }
-
-                                    // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                                    return Redirect(model.ReturnUrl);
-                                }
-
-                                // request for a local page
-                                if (Url.IsLocalUrl(model.ReturnUrl))
-                                {
-                                    return Redirect(model.ReturnUrl);
-                                }
-                                else if (string.IsNullOrEmpty(model.ReturnUrl))
-                                {
-                                    return Redirect("~/");
-                                }
-                                else
-                                {
-                                    // user might have clicked on a malicious link - should be logged
-                                    throw new Exception("invalid return URL");
-                                }
-                            }
-                        }
-
-                        await _events.RaiseAsync(new UserLoginFailureEvent(model.UserName, "invalid credentials", clientId: context?.Client.ClientId));
-                        ModelState.AddModelError(string.Empty, AccountOptions.InvalidCredentialsErrorMessage);
-                    }
-                }
-                else
-                {
-
-                    // Note: the "provider" parameter corresponds to the external
-                    // authentication provider choosen by the user agent.
-                    if (string.IsNullOrEmpty(model.Provider))
-                    {
-                        _logger.LogWarning("Provider not specified");
-                        return BadRequest();
-                    }
-
-                    // Instruct the middleware corresponding to the requested external identity
-                    // provider to redirect the user agent to its own authorization endpoint.
-                    // Note: the authenticationScheme parameter must match the value configured in Startup.cs
-
-                    // Note: the "returnUrl" parameter corresponds to the endpoint the user agent
-                    // will be redirected to after a successful authentication and not
-                    // the redirect_uri of the requesting client application.
-                    if (string.IsNullOrEmpty(model.ReturnUrl))
-                    {
-                        _logger.LogWarning("ReturnUrl not specified");
-                        return BadRequest();
-                    }
-                    // Note: this still is not the redirect uri given to the third party provider, at building the challenge.
-                    var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { model.ReturnUrl }, protocol: "https", host: Config.Authority);
-                    var properties = _signInManager.ConfigureExternalAuthenticationProperties(model.Provider, redirectUrl);
-                    // var properties = new AuthenticationProperties{RedirectUri=ReturnUrl};
-                    return new ChallengeResult(model.Provider, properties);
-
-                }
-            }
-            return View(model);
-        }
 
         //
         // GET: /Account/Register

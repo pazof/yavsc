@@ -40,7 +40,6 @@ namespace Yavsc.ViewModels.Account
         /// <returns></returns>
         public string? Provider { get; set; }
 
-
         /// <summary>
         /// This value does NOT indicate the OAuth client method recieving the code,
         /// but the one called once authorized.

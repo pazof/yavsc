@@ -1,5 +1,3 @@
-
-
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
@@ -11,13 +9,11 @@ using Yavsc.Models.Blog;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
 using Yavsc.ViewModels.Auth;
-using Yavsc.ViewModels.Blog;
 
 public class BlogSpotService
 {
     private readonly ApplicationDbContext _context;
     private readonly IAuthorizationService _authorizationService;
-
 
     public BlogSpotService(ApplicationDbContext context,
     IAuthorizationService authorizationService)
@@ -26,15 +22,8 @@ public class BlogSpotService
         _context = context;
     }
 
-    public BlogPost Create(string userId, BlogPostEditViewModel blogInput)
+    public BlogPost Create(string userId, BlogPost post)
     {
-        BlogPost post = new BlogPost
-        {
-            Title = blogInput.Title,
-            Content = blogInput.Content,
-            Photo = blogInput.Photo,
-            AuthorId = userId
-        };
         _context.BlogSpot.Add(post);
         _context.SaveChanges(userId);
         return post;
@@ -42,17 +31,18 @@ public class BlogSpotService
     public async Task<BlogPostEditViewModel> GetPostForEdition(ClaimsPrincipal user, long blogPostId)
     {
         var blog = await _context.BlogSpot.Include(x => x.Author).Include(x => x.ACL).SingleAsync(m => m.Id == blogPostId);
-        var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
+         var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
         if (!auth.Succeeded)
         {
             throw new AuthorizationFailureException(auth);
-        }
-        return BlogPostEditViewModel.From(blog);
+        }  
+        var pub = await _context.blogSpotPublications.AnyAsync(x => x.BlogpostId == blog.Id);
+     
+        return new BlogPostEditViewModel(blog, pub);
     }
 
     public async Task<BlogPost> Details(ClaimsPrincipal user, long blogPostId)
     {
-
         BlogPost blog = await _context.BlogSpot
        .Include(p => p.Author)
        .Include(p => p.Tags)
@@ -91,7 +81,7 @@ public class BlogSpotService
         // saves the change
         _context.Update(blog);
         var publication = await _context.blogSpotPublications.SingleOrDefaultAsync
-        (p=>p.BlogpostId==blogEdit.Id);
+        (p => p.BlogpostId == blogEdit.Id);
         if (publication != null)
         {
             if (!blogEdit.Publish)

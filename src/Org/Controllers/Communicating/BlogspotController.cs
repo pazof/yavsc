@@ -2,13 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Yavsc.Models;
-using Yavsc.ViewModels.Auth;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models.Blog;
-using Yavsc.Helpers;
 using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore;
-using Yavsc.ViewModels.Blog;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
 
@@ -97,22 +93,23 @@ namespace Yavsc.Controllers
         [Authorize()]
         public IActionResult Create(string title)
         {
-            var result = new BlogPostCreateViewModel
+            var result = new BlogPostEditViewModel
+            (new BlogPost
             {
                 Title = title
-            };
+            }, true);
             SetLangItems();
             return View(result);
         }
 
         // POST: Blog/Create
         [HttpPost, Authorize, ValidateAntiForgeryToken]
-        public IActionResult Create(BlogPostEditViewModel blogInput)
+        public IActionResult Create(BlogPost blogInput)
         {
             if (ModelState.IsValid)
             {
                 BlogPost post = blogSpotService.Create(User.GetUserId(),
-                 BlogPostEditViewModel.FromViewModel(blogInput));
+                 blogInput);
                 return RedirectToAction("Index");
             }
             return View("Edit", blogInput);
@@ -133,6 +130,8 @@ namespace Yavsc.Controllers
                 {
                     return NotFound();
                 }
+
+
                 SetLangItems();
                 return View(blog);
 
