@@ -48,7 +48,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../Server/Server.csproj" />
-    <ProjectReference Include="../Abstract/Abstract.csproj" />
+    <ProjectReference Include="../Yavsc.Server/Yavsc.Server.csproj" />
+    <ProjectReference Include="../Yavsc.Abstract/Yavsc.Abstract.csproj" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Abstract\Abstract.csproj" />
+    <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
     <PackageReference Include="IdentityModel.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>

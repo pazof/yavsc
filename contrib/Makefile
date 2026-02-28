@@ -21,12 +21,11 @@ rmep: build_publish
 	for f in Api Org; do
 		pushd $(SLNDIR)/src/$$prj
 		SOURCE_DIR=bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/
-		mv $(SOURCE_DIR)/appsettings.json $(SOURCE_DIR)/appsettings.new.json
 		sudo cp -a $(SOURCE_DIR)/* $(DESTDIR) 
 		sudo chown -R $(USER_AND_GROUP) $(DESTDIR)
-		sudo sync
 		popd
 	done
+	sudo sync
 	sudo systemctl start yavsc-org
 	sudo systemctl start yavsc-api
 	

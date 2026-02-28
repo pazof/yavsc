@@ -3,7 +3,6 @@
 all: css js
 	dotnet build
 
-
 %.css: %.scss
 	scss $^ > $@
 

@@ -29,6 +29,6 @@
     <PackageReference Include="pazof.rules" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../Abstract/Abstract.csproj" />
+    <ProjectReference Include="../Yavsc.Abstract/Yavsc.Abstract.csproj" />
   </ItemGroup>
 </Project>
