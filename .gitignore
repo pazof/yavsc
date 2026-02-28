@@ -42,3 +42,5 @@ builds/
 /binaries/Debug/yavscd
 yavsc-pre
 
+*.env
+generated/

@@ -61,7 +61,8 @@ namespace Yavsc.ApiControllers
             } catch (InvalidPathException ex) {
                 pathex = ex;
             }
-            if (pathex!=null) {
+            if (pathex!=null) 
+            {
                 _logger.LogError($"invalid sub path: '{subdir}'.");
                 return BadRequest(pathex);
             }

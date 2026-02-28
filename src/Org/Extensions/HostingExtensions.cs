@@ -282,9 +282,6 @@ public static class HostingExtensions
             .AddClientStore<ClientStore>()
             .AddCorsPolicyService<CorsPolicyService>()
             .AddResourceStore<ResourceStore>()
-            //.AddInMemoryIdentityResources(Config.IdentityResources)
-            //.AddInMemoryClients(Config.TestingClients)
-            //.AddInMemoryApiScopes(Config.TestingApiScopes)
             .AddConfigurationStore(options =>
             {
                 options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
@@ -402,13 +399,20 @@ public static class HostingExtensions
     {
         using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
-            serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-
-            var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
 
             try
             {
-                context.Database.Migrate();
+                foreach (Type contextType in new Type[]
+                {
+                    typeof(PersistedGrantDbContext),
+                    typeof(ConfigurationDbContext),
+                    typeof(ApplicationDbContext)
+                })
+                {
+                    ((DbContext)serviceScope.ServiceProvider
+                    .GetRequiredService(contextType))
+                    .Database.Migrate();
+                }
             }
             catch (InvalidOperationException ex)
             {

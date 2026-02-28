@@ -1,5 +1,5 @@
 [Unit]
-Description=Yavsc
+Description=yavsc-$APP_NAME
 After=syslog.target
 After=network.target
 
@@ -11,17 +11,17 @@ RestartSec=5s
 Type=simple
 User=www-data
 Group=www-data
-WorkingDirectory=/srv/www/yavsc/
-ExecStart=/srv/www/yavsc/Yavsc
+WorkingDirectory=$DESTDIR
+ExecStart=$DESTDIR/$APP_NAME
 Restart=always
-Environment="HOME=/srv/www/yavsc"
+Environment="HOME=$DESTDIR"
 Environment="ASPNETCORE_ENVIRONMENT=Production"
-Environment="ASPNETCORE_ConnectionStrings__DefaultConnection=YOUR Postgresql CONNECTION STRING"
+Environment="ASPNETCORE_ConnectionStrings__YavscConnection=Server=$YAVSC_CONNECTION_HOST;Port=$YAVSC_CONNECTION_PORT;Database=$YAVSC_CONNECTION_DATABASE;Username=$YAVSC_CONNECTION_USERNAME;Password=$YAVSC_CONNECTION_PASSWORD;"
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=yavsc
+SyslogIdentifier=$APP_NAME
 
 [Install]
 WantedBy=multi-user.target
