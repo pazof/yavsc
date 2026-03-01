@@ -171,6 +171,25 @@ namespace Yavsc.Server.Helpers
             return ReceiveUserFile(user, root, f.OpenReadStream(), destFileName ?? ParseFileNameFromDisposition(f.ContentDisposition), f.ContentType, CancellationToken.None);
         }
         
+        /// <summary>
+        /// Modifies the user's disk usage
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="root"></param>
+        /// <param name="inputStream"></param>
+        /// <param name="destFileName"></param>
+        /// <param name="contentType"></param>
+        /// <param name="token"></param>
+        /// <returns></returns> <summary>
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="root"></param>
+        /// <param name="inputStream"></param>
+        /// <param name="destFileName"></param>
+        /// <param name="contentType"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public static FileReceivedInfo ReceiveUserFile(this ApplicationUser user, string root, Stream inputStream, string destFileName, string contentType, CancellationToken token)
         {
             // TODO lock user's disk usage for this scope,
