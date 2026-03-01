@@ -109,7 +109,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 BlogPost post = blogSpotService.Create(User.GetUserId(),
-                 blogInput);
+                 blogInput, Request.Form.Files);
                 return RedirectToAction("Index");
             }
             return View("Edit", blogInput);

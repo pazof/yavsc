@@ -42,29 +42,33 @@ namespace Yavsc.Services
             ruleSetParser = new RuleSetParser(false);
         }
 
-        public FileAccessRight GetFilePathAccess(ClaimsPrincipal user, string fileRelativePath)
+        /// <summary>
+        /// Get the file access info, for a given user, to a given FS absolute path
+        /// </summary>
+        /// <param name="clientUser"></param>
+        /// <param name="providerUserFilePath"></param>
+        /// <returns></returns>
+        public FileAccessRight GetFilePathAccess(ClaimsPrincipal clientUser, string providerUserFilePath)
         {
-           
-            var cusername = user.GetUserName();
+
+            var clientUserName = clientUser.GetUserName();
             FileInfo fi = new FileInfo(
-                Path.Combine(Config.UserFilesDirName, fileRelativePath));
-           
-            if (fileRelativePath.StartsWith(cusername+'/'))
+                Path.Combine(Config.UserFilesDirName, providerUserFilePath));
+
+            if (providerUserFilePath.StartsWith(clientUserName + '/'))
             {
                 return FileAccessRight.Read | FileAccessRight.Write;
             }
-            var funame = fileRelativePath.Split('/')[0];
-
-            // TODO Assert valid user name
+            var providerUserName = providerUserFilePath.Split('/')[0];
 
             ruleSetParser.Reset();
-            var cuserid = user.GetUserId();
+            var cuserid = clientUser.GetUserId();
 
-            var fuserid = _dbContext.Users.SingleOrDefault(u => u.UserName == funame).Id;
+            var providerUserId = _dbContext.Users.SingleOrDefault(u => u.UserName == providerUserName).Id;
 
-            if (string.IsNullOrEmpty(fuserid)) return FileAccessRight.None;
+            if (string.IsNullOrEmpty(providerUserId)) return FileAccessRight.None;
 
-            var circles = _dbContext.Circle.Include(mb => mb.Members).Where(c => c.OwnerId == fuserid).ToArray();
+            var circles = _dbContext.Circle.Include(mb => mb.Members).Where(c => c.OwnerId == providerUserId).ToArray();
             foreach (var circle in circles)
             {
                 if (circle.Members.Any(m => m.MemberId == cuserid))
@@ -72,11 +76,11 @@ namespace Yavsc.Services
                 else ruleSetParser.Definitions.Add(circle.Name, Out);
             }
             var userFilesDir = new DirectoryInfo(
-                Path.Combine(Config.UserFilesDirName, funame));
+                Path.Combine(Config.UserFilesDirName, providerUserName));
             var currentACLDir = fi.Directory;
             do
             {
-                var aclfileName = Path.Combine(currentACLDir.FullName, 
+                var aclfileName = Path.Combine(currentACLDir.FullName,
                 SiteSettings.AccessListFileName);
                 FileInfo accessFileInfo = new FileInfo(aclfileName);
                 if (accessFileInfo.Exists)
@@ -85,18 +89,13 @@ namespace Yavsc.Services
             } while (currentACLDir != userFilesDir);
 
 
-            if (ruleSetParser.Rules.Allow(cusername))
+            if (ruleSetParser.Rules.Allow(clientUserName))
             {
                 return FileAccessRight.Read;
             }
-            return  FileAccessRight.None;
+            return FileAccessRight.None;
             // TODO default user scoped file access policy
 
-        }
-
-        public string NormalizePath(string path)
-        {
-            throw new NotImplementedException();
         }
 
         public void SetAccess(long circleId, string normalizedFullPath, FileAccessRight access)

@@ -17,36 +17,13 @@
             "console": "internalConsole"
         },
         {
-            "name": "org",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Org/bin/Debug/net9.0/Org.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Org",
-            "stopAtEntry": false,
-            "justMyCode": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
-                "killOnServerStop": true
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/src/Org/Views"
-            }
-        },
-        
-        {
             "name": "Web",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Web/bin/Debug/net9.0/Web.dll",
+            "program": "${workspaceFolder}/src/Yavsc.Web/bin/Debug/net9.0/Yavsc.Web.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/Web",
+            "cwd": "${workspaceFolder}/src/Yavsc.Web",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
@@ -64,7 +41,7 @@
             "name": "Api",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-web",
+            "preLaunchTask": "build-webapi",
             "program": "${workspaceFolder}/src/Api/bin/Debug/net9.0/Api.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Api",
@@ -72,10 +49,10 @@
             "console": "internalConsole"
         },
         {
-            "name": "dotnet org",
+            "name": "org",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/src/Org/Org.csproj",
+            "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj",
              "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
@@ -85,6 +62,7 @@
                 "group": "run",
                 "order": 1
             }
+
         }
     ]
 }

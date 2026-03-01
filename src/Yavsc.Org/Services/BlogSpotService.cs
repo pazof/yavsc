@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore;
 using Yavsc;
 using Yavsc.Helpers;
@@ -8,22 +9,29 @@ using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
+using Yavsc.Services;
 using Yavsc.ViewModels.Auth;
 
 public class BlogSpotService
 {
     private readonly ApplicationDbContext _context;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IFileSystemAuthManager fileSystemAuthManager;
 
     public BlogSpotService(ApplicationDbContext context,
-    IAuthorizationService authorizationService)
+    IAuthorizationService authorizationService,
+    IFileSystemAuthManager fileSystemAuthManager)
     {
         _authorizationService = authorizationService;
         _context = context;
+        this.fileSystemAuthManager = fileSystemAuthManager;
     }
 
-    public BlogPost Create(string userId, BlogPost post)
+    public BlogPost Create(string userId, BlogPost post, IFormFileCollection files)
     {
+        foreach (var file in files)
+        {
+        }
         _context.BlogSpot.Add(post);
         _context.SaveChanges(userId);
         return post;

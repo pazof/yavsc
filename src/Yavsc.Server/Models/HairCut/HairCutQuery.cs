@@ -20,8 +20,6 @@ namespace Yavsc.Models.Haircut
     public class HairCutQuery : NominativeServiceCommand
     {
 
-        // Bill description
-        string _description = null;
         public override string Description
         {
            get; set;
@@ -60,7 +58,6 @@ namespace Yavsc.Models.Haircut
         [Display(Name = "Informations complémentaires"), YaStringLength(512)]
         [DisplayFormat(ConvertEmptyStringToNull = true, NullDisplayText = "[pas d'informations complémentaires]")]
         public string AdditionalInfo { get; set; }
-
 
 
         public override List<IBillItem> GetBillItems()

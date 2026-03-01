@@ -5,7 +5,7 @@ using Microsoft.Extensions.FileProviders;
 namespace Yavsc.Services
 {
     [Flags]
-    public enum FileAccessRight {
+    public enum FileAccessRight : Byte {
         None = 0,
 
         Read = 1,
@@ -13,7 +13,6 @@ namespace Yavsc.Services
     }
 
     public interface IFileSystemAuthManager {
-        string NormalizePath (string path);
 
         /// <summary>
         ///  

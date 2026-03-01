@@ -76,7 +76,7 @@ namespace Yavsc.Models
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
             builder.Entity<ChatRoomAccess>().HasKey(p => new { room = p.ChannelName, user = p.UserId });
             builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument = i.InstrumentId, owner = i.OwnerId });
-
+            builder.Entity<BlogAttachedFile>().HasKey(i => new { i.FileId, i.PostId});
             foreach (var et in builder.Model.GetEntityTypes())
             {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity") != null)
@@ -283,5 +283,8 @@ namespace Yavsc.Models
         public DbSet<ApiResourceProperty> ApiResourceProperties { get; set; }
         public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
         public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; }
+        public DbSet<BlogAttachedFile> blogAttachedFiles { get; set; }
+        public DbSet<UploadedFile> UploadedFiles { get; set; }
+        
     }
 }
