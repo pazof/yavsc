@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>1c73094f-959f-4211-b1a1-6a69b236c283</UserSecretsId>
     <RootNamespace>Yavsc.Api</RootNamespace>
