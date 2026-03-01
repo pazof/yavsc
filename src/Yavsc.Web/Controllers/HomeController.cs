@@ -1,14 +1,21 @@
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Yavsc.WebApiClient.Helpers;
 
 namespace sampleWebAsWebApiClient.Controllers
 {
-    public class HomeController(ILoggerFactory loggerFactory) : Controller
+    public class HomeController(ILoggerFactory loggerFactory,
+        OpenIdConnectOptions options
+
+    ) : Controller
     {
         readonly ILogger _logger = loggerFactory.CreateLogger<HomeController>();
+        readonly OpenIdConnectOptions connectOptions = options;
 
         [HttpGet]
         public IActionResult Index()
@@ -22,7 +29,7 @@ namespace sampleWebAsWebApiClient.Controllers
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var content = await client.GetStringAsync("https://localhost:6001/identity");
+            var content = await client.GetStringAsync(connectOptions.Authority);
 
             ViewBag.Json = content;
             return View("json");
@@ -59,7 +66,7 @@ namespace sampleWebAsWebApiClient.Controllers
 
         public IActionResult Logout()
         {
-            return SignOut("Cookies", "Yavsc");
+            return SignOut(Constants.INTERNAL_SCHEME, Constants.EXTERNAL_SCHEME);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Yavsc.Abstract.Models.Messaging;
@@ -33,10 +32,8 @@ namespace Yavsc.Models
     using Bank;
     using Payment;
     using Blog;
-    using IdentityServer8.Models;
-    using IdentityServer8.EntityFramework.Entities;
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IdentityServer8.EntityFramework.Interfaces.IConfigurationDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
         {
@@ -271,8 +268,10 @@ namespace Yavsc.Models
         public DbSet<Scope> Scopes { get; set; }
 
         public DbSet<BlogSpotPublication> blogSpotPublications { get; set; }
-        public DbSet<IdentityServer8.EntityFramework.Entities.Client> Clients { get; set; }
+
+        /*
         public DbSet<ClientCorsOrigin> ClientCorsOrigins { get; set; }
+        public DbSet<IdentityServer8.EntityFramework.Entities.Client> Clients { get; set; }
         public DbSet<IdentityServer8.EntityFramework.Entities.IdentityResource> IdentityResources { get; set; }
         public DbSet<IdentityServer8.EntityFramework.Entities.ApiResource> ApiResources { get; set; }
         public DbSet<IdentityServer8.EntityFramework.Entities.ApiScope> ApiScopes { get; set; }
@@ -283,7 +282,7 @@ namespace Yavsc.Models
         public DbSet<ApiResourceClaim> ApiResourceClaims { get; set; }
         public DbSet<ApiResourceProperty> ApiResourceProperties { get; set; }
         public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
-        public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; }
+        public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; } */
         
     }
 }

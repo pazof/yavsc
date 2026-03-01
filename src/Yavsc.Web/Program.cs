@@ -17,20 +17,29 @@ JwtSecurityTokenHandler.DefaultMapInboundClaims = true;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var authSection = builder.Configuration.GetSection("Authentication");
+
+ var issuer = authSection.GetValue<String>("Issuer");
+var clientSection = authSection.GetSection("Client");
+var clientId = clientSection.GetValue<String>("Id");
+var clientSecret = clientSection.GetValue<String>("Secret");
+   
+   
 builder.Services.AddControllersWithViews();
+
 builder.Services
     .AddAuthentication(options =>
     {
-        options.DefaultScheme = "Cookies";
-        options.DefaultChallengeScheme = "oidc";
+        options.DefaultScheme = Constants.INTERNAL_SCHEME;
+        options.DefaultChallengeScheme = Constants.EXTERNAL_SCHEME;
     })
-    .AddCookie("Cookies")
-    .AddOpenIdConnect("oidc", options =>
+    .AddCookie(Constants.INTERNAL_SCHEME)
+    .AddOpenIdConnect(Constants.EXTERNAL_SCHEME, options =>
     {
-        options.Authority = builder.Configuration.GetValue<String>("AuthIssuer");
-        options.ClientId = "mvc";
-        options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";
-        options.ResponseType = "code";
+        options.Authority = issuer;
+        options.ClientId = clientId;
+        options.ClientSecret = clientSecret;
+        options.ResponseType = Constants.AUTHENTICATION_RESPONSE_TYPE;
 
         options.Scope.Add("openid");
         options.Scope.Add("profile");
@@ -43,7 +52,6 @@ builder.Services
 
 using (var app = builder.Build())
 {
-
     if (app.Environment.IsDevelopment())
         app.UseDeveloperExceptionPage();
     else

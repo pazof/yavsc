@@ -350,7 +350,7 @@ public static class HostingExtensions
         else
         {
             app.UseExceptionHandler("/Home/Error");
-            app.InitializeDatabase();
+            app.MigrateDatabase();
         }
 
         app.Use(async (context, next) =>
@@ -395,7 +395,7 @@ public static class HostingExtensions
         app.UseSession();
         return app;
     }
-    private static void InitializeDatabase(this IApplicationBuilder app)
+    private static void MigrateDatabase(this IApplicationBuilder app)
     {
         using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
