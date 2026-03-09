@@ -5,32 +5,32 @@ namespace Yavsc.ViewModels.Manage
 {
 
         public class DoDirectCreditViewModel {
-            [YaRequired]
+            [Required]
             public string PaymentType  { get; set;}
-            [YaRequired]
+            [Required]
             public string PayerName  { get; set;}
-            [YaRequired]
+            [Required]
             public string FirstName  { get; set;}
-            [YaRequired]
+            [Required]
             public string LastName  { get; set;}
-            [YaRequired]
+            [Required]
             public string CreditCardNumber  { get; set;}
             public string CreditCardType  { get; set;}
             public string Cvv2Number  { get; set;}
             public string CardExpiryDate  { get; set;}
             public string IpnNotificationUrl { get; set; }
-            [YaRequired]
+            [Required]
             public string Street1 { get; set; }
             public string Street2 { get; set; }
             public string City { get; set; }
             public string State { get; set; }
             public string Country { get; set; }
-            [YaRequired]
+            [Required]
             public string PostalCode { get; set; }
             public string Phone { get; set; }
-            [YaRequired]
+            [Required]
             public string CurrencyCode { get; set; }
-            [YaRequired]
+            [Required]
             public string Amount { get; set; }
         }
 }

@@ -10,7 +10,7 @@ namespace Yavsc.Server.Models.IT.SourceCode
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [YaRequired]
+        [Required]
         public string Path { get; set; }
 
         [YaStringLength(2048)]

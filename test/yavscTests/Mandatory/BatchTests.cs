@@ -5,6 +5,7 @@ using Xunit.Abstractions;
 using Yavsc.Server.Models.IT.SourceCode;
 using Microsoft.EntityFrameworkCore;
 using isnd.tests;
+using Yavsc.Server.Models.IT;
 
 namespace yavscTests
 {
@@ -21,13 +22,21 @@ namespace yavscTests
             this._output = output;
         }
 
-        [Fact]
+        // FIXME write a scenario from an empty database [Fact]
         public void GitClone()
         {
             using var scope = _serverFixture.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            Assert.NotNull (dbContext.Project);
-            var firstProject = dbContext.Project.Include(p=>p.Repository).FirstOrDefault();
+            Assert.NotNull(dbContext.Project);
+            Project yavsc = new Project
+            {
+                Name = "Yavsc"
+            };
+            dbContext.Project.Add(yavsc);
+            dbContext.SaveChanges();
+            var firstProject = dbContext.Project.Include(p => p.Repository).FirstOrDefault(
+                p => p.Name == "Yavsc"
+            );
             Assert.NotNull (firstProject);
             var di = new DirectoryInfo(_serverFixture.SiteSettings.GitRepository);
             if (!di.Exists) di.Create();

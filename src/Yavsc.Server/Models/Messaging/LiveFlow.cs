@@ -41,7 +41,7 @@ namespace Yavsc.Models.Streaming
       [Display(Name="SequenceNumberLabel", ResourceType=typeof(LiveFlow))]
       public int SequenceNumber { get; set; }
 
-      [YaRequired]
+      [Required]
       [Display(Name="OwnerIdLabel", ResourceType=typeof(LiveFlow))]
       public string OwnerId {get; set; }
 

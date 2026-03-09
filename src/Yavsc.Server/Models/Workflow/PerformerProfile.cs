@@ -21,13 +21,13 @@ namespace Yavsc.Models.Workflow
         [Display(Name="Activity"), JsonIgnore]
         public virtual List<UserActivity> Activity { get; set; }
 
-        [YaRequired,YaStringLength(14),Display(Name="SIREN"),
+        [Required,YaStringLength(14),Display(Name="SIREN"),
         RegularExpression(@"^[0-9]{9,14}$", ErrorMessage = "Only numbers are allowed here")]
         public string SIREN { get; set; }
 
         public long OrganizationAddressId { get; set; }
 
-        [YaRequired,Display(Name="Organization address"),ForeignKey("OrganizationAddressId")]
+        [Required,Display(Name="Organization address"),ForeignKey("OrganizationAddressId")]
         public virtual Location OrganizationAddress { get; set; }
 
         [Display(Name="Accept notifications on client query")]

@@ -5,10 +5,10 @@ namespace Yavsc.ViewModels.Account
 {
     public class VerifyCodeViewModel
     {
-        [YaRequired]
+        [Required]
         public string Provider { get; set; }
 
-        [YaRequired]
+        [Required]
         public string Code { get; set; }
 
         public string ReturnUrl { get; set; }

@@ -18,21 +18,21 @@ namespace Yavsc.Models.Workflow
         /// Event date
         /// </summary>
         /// <returns></returns>
-        [YaRequired(),Display(Name="EventDate")]
+        [Required(),Display(Name="EventDate")]
         public DateTime EventDate { get; set; }
 
         /// <summary>
         /// Location identifier
         /// </summary>
         /// <returns></returns>
-        [YaRequired]
+        [Required]
         public long LocationId { get; set; }
 
         /// <summary>
         /// A Location for this event
         /// </summary>
         /// <returns></returns>
-        [YaRequired(ErrorMessage="SpecifyPlace"),Display(Name="Location"),ForeignKey("LocationId")]
+        [Required(ErrorMessage="SpecifyPlace"),Display(Name="Location"),ForeignKey("LocationId")]
         public Location Location { get; set; }
 
     }

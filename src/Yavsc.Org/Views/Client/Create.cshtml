@@ -1,22 +1,21 @@
 @model Client
 
-@{
-    ViewData["Title"] = @Localizer["Create"];
-}
-
 <h2>@Localizer["Create"]</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
         <h4>Client</h4>
         <hr />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger"></div>
 
         <div class="form-group">
-            <label asp-for="ClientId" class="col-md-2 control-label"></label>
+            <label asp-for="ClientId"
+                   class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="ClientId" class="form-control" />
-                <span asp-validation-for="ClientId" class="text-danger" ></span>
+                <span asp-validation-for="ClientId"
+                      class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
@@ -28,50 +27,48 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="ClientName" class="col-md-2 control-label"></label>
+            <label asp-for="ClientName"
+                   class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="ClientName" class="form-control" />
-                <span asp-validation-for="ClientName" class="text-danger" ></span>
+                <span asp-validation-for="ClientName" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
             <label asp-for="FrontChannelLogoutUri" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="FrontChannelLogoutUri" class="form-control"></span>
-                <span asp-validation-for="FrontChannelLogoutUri" class="text-danger" ></span>
+                <input asp-for="FrontChannelLogoutUri"
+                       class="form-control"></span>
+                    <span asp-validation-for="FrontChannelLogoutUri"
+                          class="text-danger"></span>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="RedirectUris" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="RedirectUris" class="form-control" />
-                <span asp-validation-for="RedirectUris" class="text-danger" ></span>
+            <div class="form-group">
+                <label asp-for="RedirectUris" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="RedirectUris" class="form-control" />
+                    <span asp-validation-for="RedirectUris" class="text-danger"></span>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="AbsoluteRefreshTokenLifetime" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="AbsoluteRefreshTokenLifetime" class="form-control" ></span>
-                <span asp-validation-for="AbsoluteRefreshTokenLifetime" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="ClientSecrets" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ClientSecrets" class="form-control" />
-                <span asp-validation-for="ClientSecrets" class="text-danger" ></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="AccessTokenType" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                @Html.DropDownList("AccessTokenType")
-                <span asp-validation-for="AccessTokenType" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+            <div class="form-group">
+                <label asp-for="AbsoluteRefreshTokenLifetime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="AbsoluteRefreshTokenLifetime" class="form-control"></span>
+                        <span asp-validation-for="AbsoluteRefreshTokenLifetime" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="AccessTokenType" class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+                        @Html.DropDownList("AccessTokenType")
+                        <span asp-validation-for="AccessTokenType" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>

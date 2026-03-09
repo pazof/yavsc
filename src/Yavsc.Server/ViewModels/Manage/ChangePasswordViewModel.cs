@@ -5,12 +5,12 @@ namespace Yavsc.ViewModels.Manage
 {
     public class ChangePasswordViewModel
     {
-        [YaRequired]
+        [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Current password")]
         public string OldPassword { get; set; }
 
-        [YaRequired]
+        [Required]
         [YaStringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "New password")]

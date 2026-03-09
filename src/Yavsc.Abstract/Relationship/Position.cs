@@ -11,7 +11,7 @@ namespace Yavsc.Models.Relationship
 		/// <summary>
 		/// The longitude.
 		/// </summary>
-        [YaRequired(),Display(Name="Longitude")]
+        [Required(),Display(Name="Longitude")]
         [Range(-180, 360.0)]
 
 		public double Longitude { get; set; }
@@ -20,7 +20,7 @@ namespace Yavsc.Models.Relationship
 		///
 		/// The latitude.
 		/// </summary>
-        [YaRequired(),Display(Name="Latitude")]
+        [Required(),Display(Name="Latitude")]
         [Range(-90, 90 )]
 		public double Latitude { get; set; }
 

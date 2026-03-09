@@ -7,12 +7,12 @@ namespace Yavsc.ViewModels.Account
 {
     public class ExternalLoginConfirmationViewModel
     {
-        [YaRequired]
+        [Required]
         [YaStringLength(2,Constants.MaxUserNameLength)]
         [YaRegularExpression(Constants.UserNameRegExp)]
         public string Name { get; set; }
 
-        [YaRequired]
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
 

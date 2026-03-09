@@ -16,7 +16,7 @@ namespace Yavsc.Models.Workflow
 
         public string Title { get; set; }
 
-        [YaRequired]
+        [Required]
         public string ActivityCode { get; set; }
 
         [ForeignKey("ActivityCode"),JsonIgnore]

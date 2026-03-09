@@ -22,6 +22,805 @@ namespace Yavsc.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResource", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AllowedAccessTokenSigningAlgorithms")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastAccessed")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("NonEditable")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("ShowInDiscoveryDocument")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApiResources");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApiResourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ApiResourceId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApiResourceId");
+
+                    b.HasIndex("ApiResourceId1");
+
+                    b.ToTable("ApiResourceClaims");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceProperty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApiResourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ApiResourceId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApiResourceId");
+
+                    b.HasIndex("ApiResourceId1");
+
+                    b.ToTable("ApiResourceProperties");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceScope", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApiResourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ApiResourceId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Scope")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApiResourceId");
+
+                    b.HasIndex("ApiResourceId1");
+
+                    b.ToTable("ApiResourceScopes");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceSecret", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ApiResourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ApiResourceId1")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApiResourceId");
+
+                    b.HasIndex("ApiResourceId1");
+
+                    b.ToTable("ApiResourceSecrets");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScope", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Emphasize")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Required")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("ShowInDiscoveryDocument")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApiScopes");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScopeClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ScopeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ScopeId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScopeId");
+
+                    b.HasIndex("ScopeId1");
+
+                    b.ToTable("ApiScopeClaims");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScopeProperty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ScopeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ScopeId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScopeId");
+
+                    b.HasIndex("ScopeId1");
+
+                    b.ToTable("ApiScopeProperties");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AbsoluteRefreshTokenLifetime")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AccessTokenLifetime")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AccessTokenType")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("AllowAccessTokensViaBrowser")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowOfflineAccess")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowPlainTextPkce")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowRememberConsent")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("AllowedIdentityTokenSigningAlgorithms")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("AlwaysIncludeUserClaimsInIdToken")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AlwaysSendClientClaims")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("AuthorizationCodeLifetime")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("BackChannelLogoutSessionRequired")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("BackChannelLogoutUri")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientClaimsPrefix")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientUri")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ConsentLifetime")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DeviceCodeLifetime")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("EnableLocalLogin")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("FrontChannelLogoutSessionRequired")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("FrontChannelLogoutUri")
+                        .HasColumnType("text");
+
+                    b.Property<int>("IdentityTokenLifetime")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IncludeJwtId")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastAccessed")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LogoUri")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("NonEditable")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("PairWiseSubjectSalt")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProtocolType")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RefreshTokenExpiration")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RefreshTokenUsage")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("RequireClientSecret")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("RequireConsent")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("RequirePkce")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("RequireRequestObject")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SlidingRefreshTokenLifetime")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("UpdateAccessTokenClaimsOnRefresh")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserCodeType")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("UserSsoLifetime")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientClaims");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientCorsOrigin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Origin")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientCorsOrigins");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientGrantType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("GrantType")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientGrantTypes");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientIdPRestriction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Provider")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientIdPRestrictions");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientPostLogoutRedirectUri", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PostLogoutRedirectUri")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientPostLogoutRedirectUris");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientProperty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientProperties");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientRedirectUri", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RedirectUri")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientRedirectUris");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientScope", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Scope")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientScopes");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientSecret", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientSecrets");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.DeviceFlowCodes", b =>
+                {
+                    b.Property<string>("UserCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeviceCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserCode", "DeviceCode");
+
+                    b.ToTable("DeviceFlowCodes");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.IdentityResource", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Emphasize")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("NonEditable")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Required")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("ShowInDiscoveryDocument")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentityResources");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.IdentityResourceClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IdentityResourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdentityResourceId");
+
+                    b.ToTable("IdentityResourceClaims");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.IdentityResourceProperty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IdentityResourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdentityResourceId");
+
+                    b.ToTable("IdentityResourceProperties");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.PersistedGrant", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ConsumedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("PersistedGrants");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -421,21 +1220,6 @@ namespace Yavsc.Migrations
                     b.HasIndex("PostalAddressId");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Auth.Scope", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Scopes");
                 });
 
             modelBuilder.Entity("Yavsc.Models.BalanceImpact", b =>
@@ -1504,6 +2288,7 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -1576,6 +2361,7 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -1634,6 +2420,7 @@ namespace Yavsc.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ExecutorId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OrderReference")
@@ -1670,9 +2457,11 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("Public")
@@ -1767,6 +2556,7 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
@@ -1824,6 +2614,7 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -1865,6 +2656,7 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Pitch")
@@ -1904,6 +2696,7 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ParentCode")
@@ -1971,6 +2764,7 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ActivityCode")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
@@ -2010,6 +2804,7 @@ namespace Yavsc.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("SIREN")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("UseGeoLocalizationToReduceDistanceWithClients")
@@ -2225,6 +3020,7 @@ namespace Yavsc.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
@@ -2279,6 +3075,7 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<long>("ProjectId")
@@ -2306,6 +3103,7 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Path")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Url")
@@ -2316,6 +3114,249 @@ namespace Yavsc.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("GitRepositoryReference");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceClaim", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", null)
+                        .WithMany("UserClaims")
+                        .HasForeignKey("ApiResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                        .WithMany()
+                        .HasForeignKey("ApiResourceId1");
+
+                    b.Navigation("ApiResource");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceProperty", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", null)
+                        .WithMany("Properties")
+                        .HasForeignKey("ApiResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                        .WithMany()
+                        .HasForeignKey("ApiResourceId1");
+
+                    b.Navigation("ApiResource");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceScope", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", null)
+                        .WithMany("Scopes")
+                        .HasForeignKey("ApiResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                        .WithMany()
+                        .HasForeignKey("ApiResourceId1");
+
+                    b.Navigation("ApiResource");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceSecret", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", null)
+                        .WithMany("Secrets")
+                        .HasForeignKey("ApiResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                        .WithMany()
+                        .HasForeignKey("ApiResourceId1");
+
+                    b.Navigation("ApiResource");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScopeClaim", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", null)
+                        .WithMany("UserClaims")
+                        .HasForeignKey("ScopeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", "Scope")
+                        .WithMany()
+                        .HasForeignKey("ScopeId1");
+
+                    b.Navigation("Scope");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScopeProperty", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", null)
+                        .WithMany("Properties")
+                        .HasForeignKey("ScopeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", "Scope")
+                        .WithMany()
+                        .HasForeignKey("ScopeId1");
+
+                    b.Navigation("Scope");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientClaim", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany("Claims")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientCorsOrigin", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
+                        .WithMany("AllowedCorsOrigins")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientGrantType", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
+                        .WithMany("AllowedGrantTypes")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientIdPRestriction", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
+                        .WithMany("IdentityProviderRestrictions")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientPostLogoutRedirectUri", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
+                        .WithMany("PostLogoutRedirectUris")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientProperty", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
+                        .WithMany("Properties")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientRedirectUri", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
+                        .WithMany("RedirectUris")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientScope", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
+                        .WithMany("AllowedScopes")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientSecret", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
+                        .WithMany("ClientSecrets")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.IdentityResourceClaim", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.IdentityResource", "IdentityResource")
+                        .WithMany("UserClaims")
+                        .HasForeignKey("IdentityResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IdentityResource");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.IdentityResourceProperty", b =>
+                {
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.IdentityResource", "IdentityResource")
+                        .WithMany("Properties")
+                        .HasForeignKey("IdentityResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IdentityResource");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -2895,7 +3936,9 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser", "Executor")
                         .WithMany()
-                        .HasForeignKey("ExecutorId");
+                        .HasForeignKey("ExecutorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Executor");
                 });
@@ -2956,7 +3999,9 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Owner");
                 });
@@ -2993,7 +4038,9 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.Workflow.Activity", "Context")
                         .WithMany("Forms")
-                        .HasForeignKey("ActivityCode");
+                        .HasForeignKey("ActivityCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Context");
                 });
@@ -3134,6 +4181,52 @@ namespace Yavsc.Migrations
                         .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResource", b =>
+                {
+                    b.Navigation("Properties");
+
+                    b.Navigation("Scopes");
+
+                    b.Navigation("Secrets");
+
+                    b.Navigation("UserClaims");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScope", b =>
+                {
+                    b.Navigation("Properties");
+
+                    b.Navigation("UserClaims");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.Client", b =>
+                {
+                    b.Navigation("AllowedCorsOrigins");
+
+                    b.Navigation("AllowedGrantTypes");
+
+                    b.Navigation("AllowedScopes");
+
+                    b.Navigation("Claims");
+
+                    b.Navigation("ClientSecrets");
+
+                    b.Navigation("IdentityProviderRestrictions");
+
+                    b.Navigation("PostLogoutRedirectUris");
+
+                    b.Navigation("Properties");
+
+                    b.Navigation("RedirectUris");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.IdentityResource", b =>
+                {
+                    b.Navigation("Properties");
+
+                    b.Navigation("UserClaims");
                 });
 
             modelBuilder.Entity("Yavsc.Models.ApplicationUser", b =>

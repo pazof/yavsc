@@ -7,13 +7,13 @@ namespace Yavsc.Models.Workflow
 {
     public class UserActivity
     {
-        [YaRequired]
+        [Required]
         public string UserId { get; set; }
 
         [ForeignKey("UserId")]
         public virtual PerformerProfile User { get; set; }
         
-        [YaRequired]
+        [Required]
         public string DoesCode { get; set; }
 
         [ForeignKey("DoesCode")]

@@ -42,6 +42,7 @@ using IdentityServer8.EntityFramework.Stores;
 using IdentityServer8.EntityFramework.Services;
 using IdentityServer8.EntityFramework.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using IdentityServer8.Validation;
 
 namespace Yavsc.Extensions;
 
@@ -103,7 +104,8 @@ public static class HostingExtensions
         .AddTransient<IBillingService, BillingService>()
         .AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false))
         .AddTransient<ICalendarManager, CalendarManager>()
-        .AddTransient<BlogSpotService>();
+        .AddTransient<BlogSpotService>()
+        .AddTransient<ValidatingClientStore<ClientStore>>();
 
         // TODO for SMS: services.AddTransient<ISmsSender, AuthMessageSender>();
 
@@ -280,6 +282,7 @@ public static class HostingExtensions
          })
             .AddAspNetIdentity<ApplicationUser>()
             .AddClientStore<ClientStore>()
+            .AddClientConfigurationValidator<DefaultClientConfigurationValidator>()
             .AddCorsPolicyService<CorsPolicyService>()
             .AddResourceStore<ResourceStore>()
             .AddConfigurationStore(options =>
@@ -395,6 +398,7 @@ public static class HostingExtensions
         app.UseSession();
         return app;
     }
+    
     private static void MigrateDatabase(this IApplicationBuilder app)
     {
         using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -404,8 +408,6 @@ public static class HostingExtensions
             {
                 foreach (Type contextType in new Type[]
                 {
-                    typeof(PersistedGrantDbContext),
-                    typeof(ConfigurationDbContext),
                     typeof(ApplicationDbContext)
                 })
                 {

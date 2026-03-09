@@ -1,10 +1,6 @@
 @using IdentityServer8.Models
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.Client>
 
-@{
-    ViewData["Title"] = @Localizer["Index"];
-}
-
 <h2>@Localizer["Index"]</h2>
 
 <p>
@@ -40,43 +36,48 @@
         <th></th>
     </tr>
     
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ClientId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Enabled)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ClientName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FrontChannelLogoutUri)
-        </td>
-        <td>
-            <ul>
-            @foreach (var uri in item.RedirectUris)
-                { <li>@uri.RedirectUri</li> }
-            </ul>
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AbsoluteRefreshTokenLifetime)
-        </td>
-        <td>
-          <ul>
-            @foreach (var t in item.AllowedGrantTypes)
-                { <li>@t.GrantType</li> }
-            </ul>
-        </td>
-        <td>
-        @Enum.GetName(typeof(AccessTokenType), item.AccessTokenType)
-        </td>
-        <td>
-            <a asp-action="Edit" asp-route-id="@item.ClientId">Edit</a> |
-            <a asp-action="Details" asp-route-id="@item.ClientId">Details</a> |
-            <a asp-action="Delete" asp-route-id="@item.ClientId">Delete</a>
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClientId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Enabled)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClientName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FrontChannelLogoutUri)
+            </td>
+            <td>
+                <ul>
+                    @foreach (var uri in item.RedirectUris)
+                    {
+                        <li>@uri.RedirectUri</li>
+                    }
+                </ul>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AbsoluteRefreshTokenLifetime)
+            </td>
+            <td>
+                <ul>
+                    @foreach (var t in item.AllowedGrantTypes)
+                    {
+                        <li>@t.GrantType</li>
+                    }
+                </ul>
+            </td>
+            <td>
+                @Enum.GetName(typeof(AccessTokenType), item.AccessTokenType)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
 </table>

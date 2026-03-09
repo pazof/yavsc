@@ -7,13 +7,13 @@ namespace Yavsc.Models.Messaging
 {
     public class DismissClicked
     {
-        [YaRequired]
+        [Required]
         public string UserId { get; set; }
         
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }
 
-        [YaRequired]
+        [Required]
         public long NotificationId { get; set; }
 
         [ForeignKey("NotificationId")]

@@ -17,7 +17,7 @@ namespace Yavsc.Models.Musical
 
     public int Rate { get; set; }
     
-    [YaRequired]
+    [Required]
     public long TendencyId { get; set; }
     
     [ForeignKey("TendencyId")]

@@ -1,46 +1,54 @@
 using IdentityServer8.EntityFramework.DbContexts;
 using IdentityServer8.EntityFramework.Entities;
+using IdentityServer8.EntityFramework.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Auth;
-using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
     [Authorize("AdministratorOnly")]
     public class ClientController : Controller
     {
-        private readonly ConfigurationDbContext _context;
+        private readonly ApplicationDbContext context;
+        private readonly ClientStore clientStore;
 
-        public ClientController(ConfigurationDbContext context)
+        public ClientController(ApplicationDbContext context,
+    ClientStore clientStore,
+
+    IdentityServer8.Stores.ValidatingClientStore<ClientStore> validatingClientStore
+
+
+            )
         {
-            _context = context;
+            this.context = context;
+            this.clientStore = clientStore;
         }
 
         // GET: Client
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Clients.Include(c=>c.AllowedGrantTypes)
-            .Include(c=>c.RedirectUris).ToListAsync());
+            return View(await context.Clients.Include(c => c.AllowedGrantTypes)
+            .Include(c => c.RedirectUris).ToListAsync());
         }
 
         // GET: Client/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            Client client = await _context.Clients.Include(
+            Client client = await context.Clients.Include(
                 c => c.ClientSecrets
-            ).Include(c=>c.AllowedGrantTypes)
-            .Include(c=>c.RedirectUris)
-            .SingleAsync(m => m.ClientId == id);
+            ).Include(c => c.AllowedGrantTypes)
+            .Include(c => c.RedirectUris)
+            .Include(c=>c.ClientSecrets)
+            .Include(c=>c.AllowedCorsOrigins)
+            .Include(c=>c.AllowedScopes)
+            .Include(c=>c.IdentityProviderRestrictions)
+            .Include(c=>c.PostLogoutRedirectUris)
+            .SingleAsync(m => m.Id == id);
             if (client == null)
             {
                 return NotFound();
@@ -51,6 +59,8 @@ namespace Yavsc.Controllers
         // GET: Client/Create
         public IActionResult Create()
         {
+            Secret s;
+
             SetAppTypesInputValues();
             return View();
         }
@@ -62,15 +72,30 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (string.IsNullOrWhiteSpace(client.ClientId))
-                    client.ClientId = Guid.NewGuid().ToString();
-                _context.Clients.Add(client);
-                await _context.SaveChangesAsync();
+                var model = await clientStore.FindClientByIdAsync(client.ClientId);
+                if (model != null)
+                {
+                    ModelState.AddModelError("ClientId", "existent");
+                    return BadRequest(ModelState);
+                }
+
+                context.Clients.Add(client);
+                if (client.ClientSecrets != null)
+                {
+                    foreach (var secret in client.ClientSecrets)
+                    {
+                        context.ClientSecrets.Add(secret);
+                    }
+                }
+                await context.SaveChangesAsync();
+
+
                 return RedirectToAction("Index");
             }
             SetAppTypesInputValues();
             return View(client);
         }
+
         private void SetAppTypesInputValues()
         {
             IEnumerable<SelectListItem> types = new SelectListItem[] {
@@ -85,14 +110,9 @@ namespace Yavsc.Controllers
             ViewData["AccessTokenType"] = types;
         }
         // GET: Client/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Client client = await _context.Clients.SingleAsync(m => m.ClientId == id);
+            Client client = await context.Clients.SingleOrDefaultAsync(m => m.Id == id);
             if (client == null)
             {
                 return NotFound();
@@ -108,8 +128,16 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Update(client);
-                await _context.SaveChangesAsync();
+
+                if (client.ClientSecrets != null)
+                {
+                    foreach (var secret in client.ClientSecrets)
+                    {
+                        context.Update(secret);
+                    }
+                }
+                context.Update(client);
+                await context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(client);
@@ -117,14 +145,10 @@ namespace Yavsc.Controllers
 
         // GET: Client/Delete/5
         [ActionName("Delete")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            Client client = await _context.Clients.SingleAsync(m => m.ClientId == id);
+            Client client = await context.Clients.SingleOrDefaultAsync(m => m.Id == id);
             if (client == null)
             {
                 return NotFound();
@@ -136,11 +160,13 @@ namespace Yavsc.Controllers
         // POST: Client/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Client client = await _context.Clients.SingleAsync(m => m.ClientId == id);
-            _context.Clients.Remove(client);
-            await _context.SaveChangesAsync();
+            Client client = await context.Clients
+            .Include(client => client.ClientSecrets)
+            .SingleAsync(m => m.Id == id);
+            context.Clients.Remove(client);
+            await context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
     }

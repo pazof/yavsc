@@ -1,43 +1,46 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using IdentityServer8.EntityFramework.Entities;
+using IdentityServer8.EntityFramework.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Yavsc.Abstract.Models.Messaging;
-using Yavsc.Server.Models.EMailing;
-using Yavsc.Server.Models.IT.SourceCode;
-using Yavsc.Server.Models.IT;
-using Yavsc.Abstract.Identity;
-using Yavsc.Server.Models.Calendar;
 
 namespace Yavsc.Models
 {
+    using Abstract.Identity;
+    using Abstract.Models.Messaging;
+    using Access;
+    using Attributes;
+    using Auth;
+    using Bank;
+    using Billing;
+    using Blog;
+    using Chat;
+    using Drawing;
+    using Forms;
     using Haircut;
+    using Identity;
     using IT.Evolution;
     using IT.Fixing;
-    using Streaming;
-    using Relationship;
-    using Forms;
-    using Auth;
-    using Billing;
-    using Musical;
-    using Workflow;
-    using Identity;
     using Market;
-    using Chat;
     using Messaging;
-    using Access;
+  using Microsoft.AspNetCore.Http;
+  using Musical;
     using Musical.Profiles;
-    using Workflow.Profiles;
-    using Drawing;
-    using Attributes;
-    using Bank;
     using Payment;
-    using Blog;
+    using Relationship;
+    using Server.Models.Calendar;
+    using Server.Models.EMailing;
+    using Server.Models.IT;
+    using Server.Models.IT.SourceCode;
+    using Streaming;
+    using Workflow;
+    using Workflow.Profiles;
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>,
+    IConfigurationDbContext, IPersistedGrantDbContext
     {
         public ApplicationDbContext()
         {
-
         }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -46,6 +49,8 @@ namespace Yavsc.Models
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.UseIdentityByDefaultColumns();
+
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
@@ -72,16 +77,48 @@ namespace Yavsc.Models
             builder.Entity<Cratie.Option>().HasKey(o => new { o.Code, o.CodeScrutin });
             builder.Entity<Notification>().Property(n => n.icon).HasDefaultValue("exclam");
             builder.Entity<ChatRoomAccess>().HasKey(p => new { room = p.ChannelName, user = p.UserId });
-            builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument = i.InstrumentId, owner = i.OwnerId });
+            builder.Entity<InstrumentRating>().HasAlternateKey(i => new { Instrument = i.InstrumentId, owner = i.OwnerId })
+            ;
+
+            builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
             
+            builder.Entity<Client>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ClientSecret>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ClientScope>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ClientIdPRestriction>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ClientProperty>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ClientPostLogoutRedirectUri>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ClientRedirectUri>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ClientCorsOrigin>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ClientGrantType>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ClientClaim>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ApiResource>().Property("Id").UseIdentityAlwaysColumn();
+            builder.Entity<ApiScope>().Property("Id").UseIdentityAlwaysColumn();
+
+            builder.Entity<DeviceFlowCodes>().HasKey(e => new { e.UserCode, e.DeviceCode });
+            builder.Entity<PersistedGrant>().HasKey(e => e.Key);
+
+            //    builder.Entity<IdentityUserLogin<String>>().HasKey(i=> new { i.LoginProvider, i.UserId, i.ProviderKey });
+            builder.Entity<ClientSecret>().HasOne<Client>().WithMany(e => e.ClientSecrets).HasForeignKey(e => e.ClientId);
+            builder.Entity<ClientScope>().HasOne<Client>().WithMany(e => e.AllowedScopes).HasForeignKey(e => e.ClientId);
+            builder.Entity<ClientIdPRestriction>().HasOne<Client>().WithMany(e => e.IdentityProviderRestrictions).HasForeignKey(e => e.ClientId);
+            builder.Entity<ClientProperty>().HasOne<Client>().WithMany(e => e.Properties).HasForeignKey(e => e.ClientId);
+            builder.Entity<ClientPostLogoutRedirectUri>().HasOne<Client>().WithMany(e => e.PostLogoutRedirectUris).HasForeignKey(e => e.ClientId);
+            builder.Entity<ClientRedirectUri>().HasOne<Client>().WithMany(e => e.RedirectUris).HasForeignKey(e => e.ClientId);
+            builder.Entity<ClientCorsOrigin>().HasOne<Client>().WithMany(e => e.AllowedCorsOrigins).HasForeignKey(e => e.ClientId);
+            builder.Entity<ClientGrantType>().HasOne<Client>().WithMany(e => e.AllowedGrantTypes).HasForeignKey(e => e.ClientId);
+            builder.Entity<ApiResourceSecret>().HasOne<ApiResource>().WithMany(e => e.Secrets).HasForeignKey(e => e.ApiResourceId);
+            builder.Entity<ApiResourceScope>().HasOne<ApiResource>().WithMany(e => e.Scopes).HasForeignKey(e => e.ApiResourceId);
+            builder.Entity<ApiResourceClaim>().HasOne<ApiResource>().WithMany(e => e.UserClaims).HasForeignKey(e => e.ApiResourceId);
+            builder.Entity<ApiResourceProperty>().HasOne<ApiResource>().WithMany(e => e.Properties).HasForeignKey(e => e.ApiResourceId);
+            builder.Entity<ApiScopeClaim>().HasOne<ApiScope>().WithMany(e => e.UserClaims).HasForeignKey(e => e.ScopeId);
+            builder.Entity<ApiScopeProperty>().HasOne<ApiScope>().WithMany(e => e.Properties).HasForeignKey(e => e.ScopeId);
+
             foreach (var et in builder.Model.GetEntityTypes())
             {
                 if (et.ClrType.GetInterface("IBaseTrackedEntity") != null)
                     et.FindProperty("DateCreated").SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             }
-
-            builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
-            //    builder.Entity<IdentityUserLogin<String>>().HasKey(i=> new { i.LoginProvider, i.UserId, i.ProviderKey });
         }
 
         /// <summary>
@@ -91,7 +128,7 @@ namespace Yavsc.Models
         public DbSet<Activity> Activities { get; set; }
 
         public DbSet<UserActivity> UserActivities { get; set; }
-        
+
         /// <summary>
         /// Users posts
         /// </summary>
@@ -203,7 +240,12 @@ namespace Yavsc.Models
             return await base.SaveChangesAsync(ctoken);
         }
 
-        public DbSet<Circle> Circle { get; set; }
+    public Task<int> SaveChangesAsync()
+    {
+        return base.SaveChangesAsync();
+    }
+
+    public DbSet<Circle> Circle { get; set; }
 
         public DbSet<CircleAuthorizationToBlogPost> CircleAuthorizationToBlogPost { get; set; }
 
@@ -265,24 +307,39 @@ namespace Yavsc.Models
 
         public DbSet<InstrumentRating> InstrumentRating { get; set; }
 
-        public DbSet<Scope> Scopes { get; set; }
 
         public DbSet<BlogSpotPublication> blogSpotPublications { get; set; }
 
-        /*
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<ClientIdPRestriction> ClientIdPRestrictions { get; set; }
+        public DbSet<ClientProperty> ClientProperties { get; set; }
+
         public DbSet<ClientCorsOrigin> ClientCorsOrigins { get; set; }
-        public DbSet<IdentityServer8.EntityFramework.Entities.Client> Clients { get; set; }
-        public DbSet<IdentityServer8.EntityFramework.Entities.IdentityResource> IdentityResources { get; set; }
-        public DbSet<IdentityServer8.EntityFramework.Entities.ApiResource> ApiResources { get; set; }
-        public DbSet<IdentityServer8.EntityFramework.Entities.ApiScope> ApiScopes { get; set; }
+        public DbSet<ClientSecret> ClientSecrets { get; set; }
+        public DbSet<ClientScope> ClientScopes { get; set; }
+        public DbSet<ClientGrantType> ClientGrantTypes { get; set; }
+        public DbSet<ClientClaim> ClientClaims { get; set; }
+
+        public DbSet<ClientRedirectUri> ClientRedirectUris { get; set; }
+
+
+        public DbSet<ClientPostLogoutRedirectUri> ClientPostLogoutRedirectUris { get; set; }
+        public DbSet<IdentityResource> IdentityResources { get; set; }
         public DbSet<IdentityResourceClaim> IdentityResourceClaims { get; set; }
         public DbSet<IdentityResourceProperty> IdentityResourceProperties { get; set; }
+        public DbSet<ApiResource> ApiResources { get; set; }
         public DbSet<ApiResourceSecret> ApiResourceSecrets { get; set; }
         public DbSet<ApiResourceScope> ApiResourceScopes { get; set; }
         public DbSet<ApiResourceClaim> ApiResourceClaims { get; set; }
         public DbSet<ApiResourceProperty> ApiResourceProperties { get; set; }
+        public DbSet<ApiScope> ApiScopes { get; set; }
         public DbSet<ApiScopeClaim> ApiScopeClaims { get; set; }
-        public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; } */
-        
+        public DbSet<ApiScopeProperty> ApiScopeProperties { get; set; }
+        public DbSet<PersistedGrant> PersistedGrants { get; set; }
+        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
+
+
+
+
     }
 }

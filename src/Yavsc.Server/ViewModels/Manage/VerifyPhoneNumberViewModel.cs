@@ -5,10 +5,10 @@ namespace Yavsc.ViewModels.Manage
 {
     public class VerifyPhoneNumberViewModel
     {
-        [YaRequired]
+        [Required]
         public string Code { get; set; }
 
-        [YaRequired]
+        [Required]
         [Phone]
         [Display(Name = "Phone number")]
         public string PhoneNumber { get; set; }

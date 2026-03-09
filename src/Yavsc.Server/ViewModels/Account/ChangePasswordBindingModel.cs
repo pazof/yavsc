@@ -4,16 +4,16 @@ using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Account { 
     public class ChangePasswordBindingModel {
-        [YaRequired]
+        [Required]
         [DataType(DataType.Password)]
         public string OldPassword { get; set; }
 
-        [YaRequired]
+        [Required]
         [DataType(DataType.Password)]
         public string NewPassword { get; set; }
     }
     public class SetPasswordBindingModel {
-        [YaRequired]
+        [Required]
         [DataType(DataType.Password)]
         public string NewPassword { get; set; }
 

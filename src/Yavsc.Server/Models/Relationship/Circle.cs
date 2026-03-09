@@ -14,10 +14,10 @@ namespace Yavsc.Models.Relationship
 
         public bool Public { get; set; }
 
-        [YaRequired]
+        [Required]
         public string Name { get; set; }
         
-        [YaRequired]
+        [Required]
         public string OwnerId { get; set; }
 
         [ForeignKey("OwnerId"),JsonIgnore,NotMapped]

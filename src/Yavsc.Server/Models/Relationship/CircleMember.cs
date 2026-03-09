@@ -9,13 +9,13 @@ namespace Yavsc.Models.Relationship
     public partial class CircleMember
     {
 
-        [YaRequired]
+        [Required]
         public long CircleId { get; set; }
 
         [ForeignKey("CircleId")]
         public virtual Circle Circle { get; set; }
         
-        [YaRequired]
+        [Required]
         public string MemberId { get; set; }
 
         [ForeignKey("MemberId")]

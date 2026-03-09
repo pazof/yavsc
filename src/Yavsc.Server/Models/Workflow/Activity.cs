@@ -14,14 +14,14 @@ namespace Yavsc.Models.Workflow
     public class Activity : ITrackedEntity, IActivity
     {
 
-        [YaStringLength(512), YaRequired, Key]
+        [YaStringLength(512), Required, Key]
         [Display(Name = "Code")]
         public string Code { get; set; }
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        [YaStringLength(512), YaRequired()]
+        [YaStringLength(512), Required()]
         [Display(Name = "Nom")]
         public string Name { get; set; }
 

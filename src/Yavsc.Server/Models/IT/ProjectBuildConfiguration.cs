@@ -13,7 +13,7 @@ namespace Yavsc.Server.Models.IT
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [YaRequired]
+        [Required]
         public string Name { get; set; }
 
         public long ProjectId { get; set; }

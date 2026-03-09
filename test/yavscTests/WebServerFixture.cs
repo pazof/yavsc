@@ -13,6 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+using IdentityServer8.EntityFramework.Entities;
+using IdentityServer8.Models;
+using Client = IdentityServer8.EntityFramework.Entities.Client;
 
 namespace isnd.tests
 {
@@ -33,12 +36,12 @@ namespace isnd.tests
         public IServiceProvider Services { get; private set; }
         public string TestingUserName { get; private set; }
         public string TestingUserPassword { get; private set; }
-        
+
         public string ProtectedTestingApiKey { get; internal set; }
         public ApplicationUser TestingUser { get; private set; }
         public bool DbCreated { get; internal set; }
         public SiteSettings SiteSettings { get => siteSettings; set => siteSettings = value; }
-        public string TestClientSecret { get; private set; } = "TestClientSecret";
+        public string TestClientSecret { get; set; }
 
         public WebServerFixture()
         {
@@ -47,7 +50,7 @@ namespace isnd.tests
 
         public void Dispose()
         {
-            if (app!=null)
+            if (app != null)
                 app.StopAsync().Wait();
         }
         void ConfigureLogger() => Log.Logger = new LoggerConfiguration()
@@ -79,17 +82,20 @@ namespace isnd.tests
 
             this.app = builder.ConfigureWebAppServices();
             Services = app.Services;
+            SiteSettings = app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
+            
             using (var migrationScope = app.Services.CreateScope())
             {
                 var db = migrationScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
-                db.Database.Migrate();
                 TestingUserName = "Tester";
-                TestingUserPassword = "test";
+                TestingUserPassword = "tesT456+*";
                 TestClientId = "testClientId";
-                TestingUser = await db.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
+                TestClientSecret = Guid.CreateVersion7().ToString();
                 EnsureUser(TestingUserName, TestingUserPassword);
+                AddAuthorizedClient(TestClientId, TestClientSecret);
+                TestingUser = await db.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
             }
             await app.ConfigurePipeline();
             app.UseSession();
@@ -108,8 +114,73 @@ namespace isnd.tests
             {
                 Addresses.Add(address);
             }
-            SiteSettings = app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
-        
+
+        }
+
+        private void AddAuthorizedClient(string testClientId, string testClientSecret)
+        {
+            using (IServiceScope scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                Client testingClient = new Client
+                {
+                    ClientId = testClientId,
+                    AccessTokenLifetime = 3600000,
+                    AccessTokenType = 1,
+                    BackChannelLogoutUri = SiteSettings.Audience,
+                    ClientName = "Testing client",
+                    Enabled = true
+                };
+                db.Clients.Add(testingClient);
+                db.SaveChanges();
+                ClientSecret secret = new ClientSecret
+                {
+                    Value = testClientSecret.Sha256(),
+                    ClientId = testingClient.Id
+                };
+                db.ClientSecrets.Add(secret);
+
+                var testOrigin = new ClientCorsOrigin
+                {
+                    ClientId = testingClient.Id,
+                    Origin = SiteSettings.Audience
+
+                };
+                db.ClientCorsOrigins.Add(testOrigin);
+                db.ClientGrantTypes.Add(new ClientGrantType
+                {
+                    ClientId = testingClient.Id,
+                    GrantType = "client_credentials"
+                });
+                db.ClientGrantTypes.Add(new ClientGrantType
+                {
+                    ClientId = testingClient.Id,
+                    GrantType = "password"
+                });
+                db.ClientGrantTypes.Add(new ClientGrantType
+                {
+                    ClientId = testingClient.Id,
+                    GrantType = "code"
+                });
+                db.ClientScopes.Add(new ClientScope
+                {
+                    ClientId = testingClient.Id,
+                    Scope = "test"
+                });
+                db.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope
+                {
+                    Name = "test",
+                    Enabled = true
+                });
+                db.ClientRedirectUris.Add(new ClientRedirectUri
+                {
+                    ClientId = testingClient.Id,
+                    RedirectUri = SiteSettings.Audience
+
+                });
+
+                db.SaveChanges();
+            }
         }
 
         public void EnsureUser(string testingUserName, string password)
@@ -118,7 +189,7 @@ namespace isnd.tests
             {
                 using IServiceScope scope = app.Services.CreateScope();
 
-                var userManager  =
+                var userManager =
                 scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
                 TestingUser = new ApplicationUser
@@ -128,7 +199,7 @@ namespace isnd.tests
                     EmailConfirmed = true
                 };
 
-                var result = userManager.CreateAsync(TestingUser,password).Result;
+                var result = userManager.CreateAsync(TestingUser, password).Result;
 
                 Assert.True(result.Succeeded);
 

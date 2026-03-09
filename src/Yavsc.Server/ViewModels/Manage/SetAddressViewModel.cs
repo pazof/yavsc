@@ -5,13 +5,13 @@ namespace Yavsc.ViewModels.Manage
 {
     public class SetAddressViewModel
     {
-            [YaRequired]
+            [Required]
             public string Street1 { get; set; }
             public string Street2 { get; set; }
             public string City { get; set; }
             public string State { get; set; }
             public string Country { get; set; }
-            [YaRequired]
+            [Required]
             public string PostalCode { get; set; }
     }
 }

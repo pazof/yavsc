@@ -1,9 +1,5 @@
 @model Client
 
-@{
-    ViewData["Title"] = @Localizer["Details"];
-}
-
 <h2>@Localizer["Details"]</h2>
 
 <div>
@@ -31,7 +27,6 @@
         <dt>
             @Html.DisplayNameFor(model => model.FrontChannelLogoutUri)
         </dt>
-        <dd>
             @Html.DisplayFor(model => model.FrontChannelLogoutUri)
         </dd>
         <dt>
@@ -52,7 +47,14 @@
         <dt>
             @Html.DisplayNameFor(model => model.ClientSecrets)
         </dt>
-        <dd>Count : @Model.ClientSecrets.Count</dd>
+        <dd>
+            <ul>
+                @foreach(var secret in Model.ClientSecrets)
+                {
+                <li>@Html.DisplayForModel(secret)</li>
+                }
+            </ul>
+        </dd>
 
         <dt>
             @Html.DisplayNameFor(model => model.AccessTokenType)

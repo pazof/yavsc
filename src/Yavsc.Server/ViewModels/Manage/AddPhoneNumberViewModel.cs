@@ -5,7 +5,7 @@ namespace Yavsc.ViewModels.Manage
 {
     public class AddPhoneNumberViewModel
     {
-        [YaRequired]
+        [Required]
         [Phone]
         [Display(Name = "Phone number")]
         public string PhoneNumber { get; set; }

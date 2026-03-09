@@ -10,7 +10,7 @@ namespace Yavsc.Models.Musical
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id {get; set; }
 
-        [YaRequired]
+        [Required]
         public long InstrumentId { get; set; }
        
         [ForeignKey("InstrumentId")]

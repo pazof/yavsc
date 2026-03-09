@@ -19,7 +19,7 @@ namespace Yavsc.Migrations
                     Code = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     ParentCode = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     Photo = table.Column<string>(type: "text", nullable: true),
                     ModeratorGroupName = table.Column<string>(type: "text", nullable: true),
                     Rate = table.Column<int>(type: "integer", nullable: false),
@@ -45,7 +45,7 @@ namespace Yavsc.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Enabled = table.Column<bool>(type: "boolean", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     DisplayName = table.Column<string>(type: "text", nullable: true),
@@ -67,7 +67,7 @@ namespace Yavsc.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Enabled = table.Column<bool>(type: "boolean", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     DisplayName = table.Column<string>(type: "text", nullable: true),
@@ -100,10 +100,10 @@ namespace Yavsc.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    UserName = table.Column<string>(type: "text", nullable: false),
-                    Avatar = table.Column<string>(type: "text", nullable: false),
-                    EMail = table.Column<string>(type: "text", nullable: false),
-                    Phone = table.Column<string>(type: "text", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: true),
+                    Avatar = table.Column<string>(type: "text", nullable: true),
+                    EMail = table.Column<string>(type: "text", nullable: true),
+                    Phone = table.Column<string>(type: "text", nullable: true),
                     BillingAddressId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -116,7 +116,7 @@ namespace Yavsc.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Enabled = table.Column<bool>(type: "boolean", nullable: false),
                     ClientId = table.Column<string>(type: "text", nullable: true),
                     ProtocolType = table.Column<string>(type: "text", nullable: true),
@@ -175,7 +175,7 @@ namespace Yavsc.Migrations
                     Red = table.Column<byte>(type: "smallint", nullable: false),
                     Green = table.Column<byte>(type: "smallint", nullable: false),
                     Blue = table.Column<byte>(type: "smallint", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -183,11 +183,30 @@ namespace Yavsc.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DeviceFlowCodes",
+                columns: table => new
+                {
+                    DeviceCode = table.Column<string>(type: "text", nullable: false),
+                    UserCode = table.Column<string>(type: "text", nullable: false),
+                    SubjectId = table.Column<string>(type: "text", nullable: true),
+                    SessionId = table.Column<string>(type: "text", nullable: true),
+                    ClientId = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Expiration = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Data = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceFlowCodes", x => new { x.UserCode, x.DeviceCode });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DjSettings",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    SoundCloudId = table.Column<string>(type: "text", nullable: false)
+                    SoundCloudId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -200,8 +219,8 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Title = table.Column<string>(type: "text", nullable: true),
                     OwnerId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -226,8 +245,8 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ShortName = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    ShortName = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -240,7 +259,7 @@ namespace Yavsc.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Summary = table.Column<string>(type: "text", nullable: false)
+                    Summary = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -252,7 +271,7 @@ namespace Yavsc.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    DisplayName = table.Column<string>(type: "text", nullable: false)
+                    DisplayName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -346,12 +365,12 @@ namespace Yavsc.Migrations
                     Id = table.Column<string>(type: "text", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Topic = table.Column<string>(type: "text", nullable: false),
-                    Body = table.Column<string>(type: "character varying(65536)", maxLength: 65536, nullable: false),
-                    ReplyToAddress = table.Column<string>(type: "text", nullable: false),
+                    Topic = table.Column<string>(type: "text", nullable: true),
+                    Body = table.Column<string>(type: "character varying(65536)", maxLength: 65536, nullable: true),
+                    ReplyToAddress = table.Column<string>(type: "text", nullable: true),
                     ToSend = table.Column<int>(type: "integer", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false)
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
+                    UserModified = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -397,11 +416,11 @@ namespace Yavsc.Migrations
                 {
                     CodeScrutin = table.Column<string>(type: "text", nullable: false),
                     Code = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false)
+                    UserModified = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -421,18 +440,38 @@ namespace Yavsc.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PersistedGrants",
+                columns: table => new
+                {
+                    Key = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: true),
+                    SubjectId = table.Column<string>(type: "text", nullable: true),
+                    SessionId = table.Column<string>(type: "text", nullable: true),
+                    ClientId = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Expiration = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ConsumedTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Data = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersistedGrants", x => x.Key);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PostalAddress",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Street1 = table.Column<string>(type: "text", nullable: false),
-                    Street2 = table.Column<string>(type: "text", nullable: false),
-                    PostalCode = table.Column<string>(type: "text", nullable: false),
-                    City = table.Column<string>(type: "text", nullable: false),
-                    State = table.Column<string>(type: "text", nullable: false),
-                    Province = table.Column<string>(type: "text", nullable: false),
-                    Country = table.Column<string>(type: "text", nullable: false)
+                    Street1 = table.Column<string>(type: "text", nullable: true),
+                    Street2 = table.Column<string>(type: "text", nullable: true),
+                    PostalCode = table.Column<string>(type: "text", nullable: true),
+                    City = table.Column<string>(type: "text", nullable: true),
+                    State = table.Column<string>(type: "text", nullable: true),
+                    Province = table.Column<string>(type: "text", nullable: true),
+                    Country = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -450,8 +489,8 @@ namespace Yavsc.Migrations
                     Width = table.Column<decimal>(type: "numeric", nullable: false),
                     Depth = table.Column<decimal>(type: "numeric", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     Public = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -460,24 +499,12 @@ namespace Yavsc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Scopes",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Scopes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "SiteSkills",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
                     Rate = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -504,8 +531,8 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ActionName = table.Column<string>(type: "text", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
+                    ActionName = table.Column<string>(type: "text", nullable: true),
+                    Title = table.Column<string>(type: "text", nullable: true),
                     ActivityCode = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -525,9 +552,9 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ContextId = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    ContextId = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     Public = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -537,78 +564,96 @@ namespace Yavsc.Migrations
                         name: "FK_Services_Activities_ContextId",
                         column: x => x.ContextId,
                         principalTable: "Activities",
-                        principalColumn: "Code",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Code");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApiResourceClaim",
+                name: "ApiResourceClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ApiResourceId = table.Column<int>(type: "integer", nullable: false),
+                    ApiResourceId1 = table.Column<int>(type: "integer", nullable: true),
                     Type = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApiResourceClaim", x => x.Id);
+                    table.PrimaryKey("PK_ApiResourceClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ApiResourceClaim_ApiResources_ApiResourceId",
+                        name: "FK_ApiResourceClaims_ApiResources_ApiResourceId",
                         column: x => x.ApiResourceId,
                         principalTable: "ApiResources",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApiResourceClaims_ApiResources_ApiResourceId1",
+                        column: x => x.ApiResourceId1,
+                        principalTable: "ApiResources",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApiResourceProperty",
+                name: "ApiResourceProperties",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ApiResourceId = table.Column<int>(type: "integer", nullable: false),
+                    ApiResourceId1 = table.Column<int>(type: "integer", nullable: true),
                     Key = table.Column<string>(type: "text", nullable: true),
                     Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApiResourceProperty", x => x.Id);
+                    table.PrimaryKey("PK_ApiResourceProperties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ApiResourceProperty_ApiResources_ApiResourceId",
+                        name: "FK_ApiResourceProperties_ApiResources_ApiResourceId",
                         column: x => x.ApiResourceId,
                         principalTable: "ApiResources",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApiResourceProperties_ApiResources_ApiResourceId1",
+                        column: x => x.ApiResourceId1,
+                        principalTable: "ApiResources",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApiResourceScope",
+                name: "ApiResourceScopes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Scope = table.Column<string>(type: "text", nullable: true),
-                    ApiResourceId = table.Column<int>(type: "integer", nullable: false)
+                    ApiResourceId = table.Column<int>(type: "integer", nullable: false),
+                    ApiResourceId1 = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApiResourceScope", x => x.Id);
+                    table.PrimaryKey("PK_ApiResourceScopes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ApiResourceScope_ApiResources_ApiResourceId",
+                        name: "FK_ApiResourceScopes_ApiResources_ApiResourceId",
                         column: x => x.ApiResourceId,
                         principalTable: "ApiResources",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApiResourceScopes_ApiResources_ApiResourceId1",
+                        column: x => x.ApiResourceId1,
+                        principalTable: "ApiResources",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApiResourceSecret",
+                name: "ApiResourceSecrets",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ApiResourceId = table.Column<int>(type: "integer", nullable: false),
+                    ApiResourceId1 = table.Column<int>(type: "integer", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Value = table.Column<string>(type: "text", nullable: true),
                     Expiration = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -617,54 +662,71 @@ namespace Yavsc.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApiResourceSecret", x => x.Id);
+                    table.PrimaryKey("PK_ApiResourceSecrets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ApiResourceSecret_ApiResources_ApiResourceId",
+                        name: "FK_ApiResourceSecrets_ApiResources_ApiResourceId",
                         column: x => x.ApiResourceId,
                         principalTable: "ApiResources",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApiResourceSecrets_ApiResources_ApiResourceId1",
+                        column: x => x.ApiResourceId1,
+                        principalTable: "ApiResources",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApiScopeClaim",
+                name: "ApiScopeClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ScopeId = table.Column<int>(type: "integer", nullable: false),
+                    ScopeId1 = table.Column<int>(type: "integer", nullable: true),
                     Type = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApiScopeClaim", x => x.Id);
+                    table.PrimaryKey("PK_ApiScopeClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ApiScopeClaim_ApiScopes_ScopeId",
+                        name: "FK_ApiScopeClaims_ApiScopes_ScopeId",
                         column: x => x.ScopeId,
                         principalTable: "ApiScopes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApiScopeClaims_ApiScopes_ScopeId1",
+                        column: x => x.ScopeId1,
+                        principalTable: "ApiScopes",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApiScopeProperty",
+                name: "ApiScopeProperties",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ScopeId = table.Column<int>(type: "integer", nullable: false),
+                    ScopeId1 = table.Column<int>(type: "integer", nullable: true),
                     Key = table.Column<string>(type: "text", nullable: true),
                     Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApiScopeProperty", x => x.Id);
+                    table.PrimaryKey("PK_ApiScopeProperties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ApiScopeProperty_ApiScopes_ScopeId",
+                        name: "FK_ApiScopeProperties_ApiScopes_ScopeId",
                         column: x => x.ScopeId,
                         principalTable: "ApiScopes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApiScopeProperties_ApiScopes_ScopeId1",
+                        column: x => x.ScopeId1,
+                        principalTable: "ApiScopes",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -689,20 +751,20 @@ namespace Yavsc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientClaim",
+                name: "ClientClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Type = table.Column<string>(type: "text", nullable: true),
                     Value = table.Column<string>(type: "text", nullable: true),
                     ClientId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientClaim", x => x.Id);
+                    table.PrimaryKey("PK_ClientClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientClaim_Clients_ClientId",
+                        name: "FK_ClientClaims_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
@@ -714,9 +776,10 @@ namespace Yavsc.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Origin = table.Column<string>(type: "text", nullable: true),
-                    ClientId = table.Column<int>(type: "integer", nullable: false)
+                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    ClientId1 = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -727,136 +790,178 @@ namespace Yavsc.Migrations
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientCorsOrigins_Clients_ClientId1",
+                        column: x => x.ClientId1,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientGrantType",
+                name: "ClientGrantTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     GrantType = table.Column<string>(type: "text", nullable: true),
-                    ClientId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientGrantType", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientGrantType_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientIdPRestriction",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Provider = table.Column<string>(type: "text", nullable: true),
-                    ClientId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientIdPRestriction", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientIdPRestriction_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientPostLogoutRedirectUri",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PostLogoutRedirectUri = table.Column<string>(type: "text", nullable: true),
-                    ClientId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientPostLogoutRedirectUri", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientPostLogoutRedirectUri_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientProperty",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ClientId = table.Column<int>(type: "integer", nullable: false),
+                    ClientId1 = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientGrantTypes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientGrantTypes_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientGrantTypes_Clients_ClientId1",
+                        column: x => x.ClientId1,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientIdPRestrictions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    Provider = table.Column<string>(type: "text", nullable: true),
+                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    ClientId1 = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientIdPRestrictions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientIdPRestrictions_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientIdPRestrictions_Clients_ClientId1",
+                        column: x => x.ClientId1,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientPostLogoutRedirectUris",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    PostLogoutRedirectUri = table.Column<string>(type: "text", nullable: true),
+                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    ClientId1 = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientPostLogoutRedirectUris", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientPostLogoutRedirectUris_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientPostLogoutRedirectUris_Clients_ClientId1",
+                        column: x => x.ClientId1,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientProperties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    ClientId1 = table.Column<int>(type: "integer", nullable: true),
                     Key = table.Column<string>(type: "text", nullable: true),
                     Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientProperty", x => x.Id);
+                    table.PrimaryKey("PK_ClientProperties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientProperty_Clients_ClientId",
+                        name: "FK_ClientProperties_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientProperties_Clients_ClientId1",
+                        column: x => x.ClientId1,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ClientRedirectUri",
+                name: "ClientRedirectUris",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     RedirectUri = table.Column<string>(type: "text", nullable: true),
-                    ClientId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientRedirectUri", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientRedirectUri_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientScope",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Scope = table.Column<string>(type: "text", nullable: true),
-                    ClientId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClientScope", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClientScope_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClientSecret",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ClientId = table.Column<int>(type: "integer", nullable: false),
+                    ClientId1 = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientRedirectUris", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientRedirectUris_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientRedirectUris_Clients_ClientId1",
+                        column: x => x.ClientId1,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientScopes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    Scope = table.Column<string>(type: "text", nullable: true),
+                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    ClientId1 = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientScopes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientScopes_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientScopes_Clients_ClientId1",
+                        column: x => x.ClientId1,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientSecrets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    ClientId1 = table.Column<int>(type: "integer", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Value = table.Column<string>(type: "text", nullable: true),
                     Expiration = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -865,13 +970,18 @@ namespace Yavsc.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientSecret", x => x.Id);
+                    table.PrimaryKey("PK_ClientSecrets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientSecret_Clients_ClientId",
+                        name: "FK_ClientSecrets_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientSecrets_Clients_ClientId1",
+                        column: x => x.ClientId1,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -880,7 +990,7 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Brand = table.Column<string>(type: "text", nullable: false),
+                    Brand = table.Column<string>(type: "text", nullable: true),
                     ColorId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -901,8 +1011,8 @@ namespace Yavsc.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FeatureId = table.Column<long>(type: "bigint", nullable: true),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -916,32 +1026,7 @@ namespace Yavsc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MusicalPreference",
-                columns: table => new
-                {
-                    OwnerProfileId = table.Column<string>(type: "text", nullable: false),
-                    Rate = table.Column<int>(type: "integer", nullable: false),
-                    TendencyId = table.Column<long>(type: "bigint", nullable: false),
-                    DjSettingsUserId = table.Column<string>(type: "text", nullable: true),
-                    GeneralSettingsUserId = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MusicalPreference", x => x.OwnerProfileId);
-                    table.ForeignKey(
-                        name: "FK_MusicalPreference_DjSettings_DjSettingsUserId",
-                        column: x => x.DjSettingsUserId,
-                        principalTable: "DjSettings",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_MusicalPreference_GeneralSettings_GeneralSettingsUserId",
-                        column: x => x.GeneralSettingsUserId,
-                        principalTable: "GeneralSettings",
-                        principalColumn: "UserId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "IdentityResourceClaim",
+                name: "IdentityResourceClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -951,9 +1036,9 @@ namespace Yavsc.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_IdentityResourceClaim", x => x.Id);
+                    table.PrimaryKey("PK_IdentityResourceClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_IdentityResourceClaim_IdentityResources_IdentityResourceId",
+                        name: "FK_IdentityResourceClaims_IdentityResources_IdentityResourceId",
                         column: x => x.IdentityResourceId,
                         principalTable: "IdentityResources",
                         principalColumn: "Id",
@@ -961,7 +1046,7 @@ namespace Yavsc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "IdentityResourceProperty",
+                name: "IdentityResourceProperties",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -972,9 +1057,9 @@ namespace Yavsc.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_IdentityResourceProperty", x => x.Id);
+                    table.PrimaryKey("PK_IdentityResourceProperties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_IdentityResourceProperty_IdentityResources_IdentityResource~",
+                        name: "FK_IdentityResourceProperties_IdentityResources_IdentityResour~",
                         column: x => x.IdentityResourceId,
                         principalTable: "IdentityResources",
                         principalColumn: "Id",
@@ -1021,6 +1106,37 @@ namespace Yavsc.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MusicalPreference",
+                columns: table => new
+                {
+                    OwnerProfileId = table.Column<string>(type: "text", nullable: false),
+                    Rate = table.Column<int>(type: "integer", nullable: false),
+                    TendencyId = table.Column<long>(type: "bigint", nullable: false),
+                    DjSettingsUserId = table.Column<string>(type: "text", nullable: true),
+                    GeneralSettingsUserId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MusicalPreference", x => x.OwnerProfileId);
+                    table.ForeignKey(
+                        name: "FK_MusicalPreference_DjSettings_DjSettingsUserId",
+                        column: x => x.DjSettingsUserId,
+                        principalTable: "DjSettings",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_MusicalPreference_GeneralSettings_GeneralSettingsUserId",
+                        column: x => x.GeneralSettingsUserId,
+                        principalTable: "GeneralSettings",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_MusicalPreference_MusicalTendency_TendencyId",
+                        column: x => x.TendencyId,
+                        principalTable: "MusicalTendency",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HairTaintInstance",
                 columns: table => new
                 {
@@ -1051,10 +1167,10 @@ namespace Yavsc.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     For = table.Column<byte>(type: "smallint", nullable: false),
-                    OwnerId = table.Column<string>(type: "text", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false),
-                    Topic = table.Column<string>(type: "text", nullable: false),
-                    Sender = table.Column<string>(type: "text", nullable: false)
+                    OwnerId = table.Column<string>(type: "text", nullable: true),
+                    Message = table.Column<string>(type: "text", nullable: true),
+                    Topic = table.Column<string>(type: "text", nullable: true),
+                    Sender = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1063,8 +1179,7 @@ namespace Yavsc.Migrations
                         name: "FK_Announce_AspNetUsers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1160,8 +1275,8 @@ namespace Yavsc.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false),
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
+                    UserModified = table.Column<string>(type: "text", nullable: true),
                     TargetId = table.Column<string>(type: "text", nullable: false),
                     Reason = table.Column<string>(type: "text", nullable: false)
                 },
@@ -1182,13 +1297,13 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    BIC = table.Column<string>(type: "text", nullable: false),
-                    IBAN = table.Column<string>(type: "text", nullable: false),
-                    BankCode = table.Column<string>(type: "text", nullable: false),
-                    WicketCode = table.Column<string>(type: "text", nullable: false),
-                    AccountNumber = table.Column<string>(type: "text", nullable: false),
+                    BIC = table.Column<string>(type: "text", nullable: true),
+                    IBAN = table.Column<string>(type: "text", nullable: true),
+                    BankCode = table.Column<string>(type: "text", nullable: true),
+                    WicketCode = table.Column<string>(type: "text", nullable: true),
+                    AccountNumber = table.Column<string>(type: "text", nullable: true),
                     BankedKey = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1197,8 +1312,7 @@ namespace Yavsc.Migrations
                         name: "FK_BankIdentity_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1252,14 +1366,14 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Photo = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
+                    Title = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    Article = table.Column<string>(type: "character varying(56224)", maxLength: 56224, nullable: true),
                     AuthorId = table.Column<string>(type: "text", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UserCreated = table.Column<string>(type: "text", nullable: true),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: true),
-                    Photo = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
-                    Title = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    Content = table.Column<string>(type: "character varying(56224)", maxLength: 56224, nullable: true)
+                    UserModified = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1277,7 +1391,7 @@ namespace Yavsc.Migrations
                 {
                     ConnectionId = table.Column<string>(type: "text", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "text", nullable: false),
-                    UserAgent = table.Column<string>(type: "text", nullable: false),
+                    UserAgent = table.Column<string>(type: "text", nullable: true),
                     Connected = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -1296,13 +1410,13 @@ namespace Yavsc.Migrations
                 columns: table => new
                 {
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Topic = table.Column<string>(type: "text", nullable: false),
-                    OwnerId = table.Column<string>(type: "text", nullable: false),
+                    Topic = table.Column<string>(type: "text", nullable: true),
+                    OwnerId = table.Column<string>(type: "text", nullable: true),
                     LatestJoinPart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false)
+                    UserModified = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1311,8 +1425,7 @@ namespace Yavsc.Migrations
                         name: "FK_ChatRoom_AspNetUsers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1342,8 +1455,8 @@ namespace Yavsc.Migrations
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
                     OwnerId = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    EMail = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    EMail = table.Column<string>(type: "text", nullable: true),
                     AddressId = table.Column<long>(type: "bigint", nullable: false),
                     ApplicationUserId = table.Column<string>(type: "text", nullable: true)
                 },
@@ -1368,10 +1481,10 @@ namespace Yavsc.Migrations
                 columns: table => new
                 {
                     DeviceId = table.Column<string>(type: "text", nullable: false),
-                    Model = table.Column<string>(type: "text", nullable: false),
-                    Platform = table.Column<string>(type: "text", nullable: false),
-                    Version = table.Column<string>(type: "text", nullable: false),
-                    DeviceOwnerId = table.Column<string>(type: "text", nullable: false),
+                    Model = table.Column<string>(type: "text", nullable: true),
+                    Platform = table.Column<string>(type: "text", nullable: true),
+                    Version = table.Column<string>(type: "text", nullable: true),
+                    DeviceOwnerId = table.Column<string>(type: "text", nullable: true),
                     DeclarationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "LOCALTIMESTAMP"),
                     LatestActivityUpdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -1382,8 +1495,7 @@ namespace Yavsc.Migrations
                         name: "FK_DeviceDeclaration_AspNetUsers_DeviceOwnerId",
                         column: x => x.DeviceOwnerId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1417,9 +1529,9 @@ namespace Yavsc.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Path = table.Column<string>(type: "text", nullable: false),
-                    Url = table.Column<string>(type: "text", nullable: false),
-                    Branch = table.Column<string>(type: "text", nullable: false),
-                    OwnerId = table.Column<string>(type: "text", nullable: false)
+                    Url = table.Column<string>(type: "text", nullable: true),
+                    Branch = table.Column<string>(type: "text", nullable: true),
+                    OwnerId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1428,8 +1540,7 @@ namespace Yavsc.Migrations
                         name: "FK_GitRepositoryReference_AspNetUsers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1438,10 +1549,10 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Pitch = table.Column<string>(type: "text", nullable: false),
-                    MediaType = table.Column<string>(type: "text", nullable: false),
-                    DifferedFileName = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    Pitch = table.Column<string>(type: "text", nullable: true),
+                    MediaType = table.Column<string>(type: "text", nullable: true),
+                    DifferedFileName = table.Column<string>(type: "text", nullable: true),
                     SequenceNumber = table.Column<int>(type: "integer", nullable: false),
                     OwnerId = table.Column<string>(type: "text", nullable: false)
                 },
@@ -1462,13 +1573,13 @@ namespace Yavsc.Migrations
                 {
                     CreationToken = table.Column<string>(type: "text", nullable: false),
                     ExecutorId = table.Column<string>(type: "text", nullable: false),
-                    PaypalPayerId = table.Column<string>(type: "text", nullable: false),
-                    OrderReference = table.Column<string>(type: "text", nullable: false),
+                    PaypalPayerId = table.Column<string>(type: "text", nullable: true),
+                    OrderReference = table.Column<string>(type: "text", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false),
-                    State = table.Column<string>(type: "text", nullable: false)
+                    UserModified = table.Column<string>(type: "text", nullable: true),
+                    State = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1491,7 +1602,7 @@ namespace Yavsc.Migrations
                     AcceptNotifications = table.Column<bool>(type: "boolean", nullable: false),
                     AcceptPublicContact = table.Column<bool>(type: "boolean", nullable: false),
                     UseGeoLocalizationToReduceDistanceWithClients = table.Column<bool>(type: "boolean", nullable: false),
-                    WebSite = table.Column<string>(type: "text", nullable: false),
+                    WebSite = table.Column<string>(type: "text", nullable: true),
                     Active = table.Column<bool>(type: "boolean", nullable: false),
                     MaxDailyCost = table.Column<int>(type: "integer", nullable: true),
                     MinDailyCost = table.Column<int>(type: "integer", nullable: true),
@@ -1600,13 +1711,13 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Content = table.Column<string>(type: "text", nullable: false),
+                    Article = table.Column<string>(type: "text", nullable: true),
                     ReceiverId = table.Column<long>(type: "bigint", nullable: false),
                     Visible = table.Column<bool>(type: "boolean", nullable: false),
                     AuthorId = table.Column<string>(type: "text", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false),
+                    UserModified = table.Column<string>(type: "text", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ParentId = table.Column<long>(type: "bigint", nullable: true)
                 },
@@ -1714,8 +1825,8 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PerformerId = table.Column<string>(type: "text", nullable: false),
-                    WorkingForId = table.Column<string>(type: "text", nullable: false),
+                    PerformerId = table.Column<string>(type: "text", nullable: true),
+                    WorkingForId = table.Column<string>(type: "text", nullable: true),
                     FormationSettingsUserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -1725,8 +1836,7 @@ namespace Yavsc.Migrations
                         name: "FK_CoWorking_AspNetUsers_WorkingForId",
                         column: x => x.WorkingForId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CoWorking_FormationSettings_FormationSettingsUserId",
                         column: x => x.FormationSettingsUserId,
@@ -1736,8 +1846,7 @@ namespace Yavsc.Migrations
                         name: "FK_CoWorking_Performers_PerformerId",
                         column: x => x.PerformerId,
                         principalTable: "Performers",
-                        principalColumn: "PerformerId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "PerformerId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1746,14 +1855,14 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    LocationId = table.Column<long>(type: "bigint", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    LocationId = table.Column<long>(type: "bigint", nullable: true),
                     EventDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Consent = table.Column<bool>(type: "boolean", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false),
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
+                    UserModified = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     ClientId = table.Column<string>(type: "text", nullable: false),
                     PerformerId = table.Column<string>(type: "text", nullable: false),
@@ -1783,8 +1892,7 @@ namespace Yavsc.Migrations
                         name: "FK_HairMultiCutQueries_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_HairMultiCutQueries_PayPalPayment_PaymentId",
                         column: x => x.PaymentId,
@@ -1856,16 +1964,16 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OwnerId = table.Column<string>(type: "text", nullable: false),
+                    OwnerId = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Version = table.Column<string>(type: "text", nullable: false),
+                    Version = table.Column<string>(type: "text", nullable: true),
                     GitId = table.Column<long>(type: "bigint", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     Consent = table.Column<bool>(type: "boolean", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false),
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
+                    UserModified = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     ClientId = table.Column<string>(type: "text", nullable: false),
                     PerformerId = table.Column<string>(type: "text", nullable: false),
@@ -1917,15 +2025,15 @@ namespace Yavsc.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     EventDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LocationId = table.Column<long>(type: "bigint", nullable: false),
+                    LocationId = table.Column<long>(type: "bigint", nullable: true),
                     LocationType = table.Column<int>(type: "integer", nullable: false),
-                    Reason = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Reason = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     Consent = table.Column<bool>(type: "boolean", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false),
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
+                    UserModified = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     ClientId = table.Column<string>(type: "text", nullable: false),
                     PerformerId = table.Column<string>(type: "text", nullable: false),
@@ -1955,8 +2063,7 @@ namespace Yavsc.Migrations
                         name: "FK_RdvQueries_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_RdvQueries_PayPalPayment_PaymentId",
                         column: x => x.PaymentId,
@@ -2058,8 +2165,8 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PeriodStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PeriodEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PeriodStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    PeriodEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Reccurence = table.Column<int>(type: "integer", nullable: false),
                     ScheduleOwnerId = table.Column<string>(type: "text", nullable: true)
                 },
@@ -2070,8 +2177,7 @@ namespace Yavsc.Migrations
                         name: "FK_ScheduledEvent_Period_PeriodStart_PeriodEnd",
                         columns: x => new { x.PeriodStart, x.PeriodEnd },
                         principalTable: "Period",
-                        principalColumns: new[] { "Start", "End" },
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumns: new[] { "Start", "End" });
                     table.ForeignKey(
                         name: "FK_ScheduledEvent_Schedule_ScheduleOwnerId",
                         column: x => x.ScheduleOwnerId,
@@ -2132,11 +2238,11 @@ namespace Yavsc.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CommandId = table.Column<long>(type: "bigint", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    AttachedGraphicsString = table.Column<string>(type: "text", nullable: false),
-                    AttachedFilesString = table.Column<string>(type: "text", nullable: false),
-                    OwnerId = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    AttachedGraphicsString = table.Column<string>(type: "text", nullable: true),
+                    AttachedFilesString = table.Column<string>(type: "text", nullable: true),
+                    OwnerId = table.Column<string>(type: "text", nullable: true),
                     ClientId = table.Column<string>(type: "text", nullable: false),
                     CommandType = table.Column<string>(type: "text", nullable: false),
                     ProviderValidationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -2155,8 +2261,7 @@ namespace Yavsc.Migrations
                         name: "FK_Estimates_Performers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "Performers",
-                        principalColumn: "PerformerId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "PerformerId");
                     table.ForeignKey(
                         name: "FK_Estimates_RdvQueries_CommandId",
                         column: x => x.CommandId,
@@ -2170,17 +2275,17 @@ namespace Yavsc.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
                     PrestationId = table.Column<long>(type: "bigint", nullable: false),
                     EventDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LocationId = table.Column<long>(type: "bigint", nullable: true),
-                    AdditionalInfo = table.Column<string>(type: "text", nullable: false),
+                    AdditionalInfo = table.Column<string>(type: "text", nullable: true),
                     SelectedProfileUserId = table.Column<string>(type: "text", nullable: true),
                     Consent = table.Column<bool>(type: "boolean", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserCreated = table.Column<string>(type: "text", nullable: false),
-                    UserModified = table.Column<string>(type: "text", nullable: false),
+                    UserCreated = table.Column<string>(type: "text", nullable: true),
+                    UserModified = table.Column<string>(type: "text", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     ClientId = table.Column<string>(type: "text", nullable: false),
                     PerformerId = table.Column<string>(type: "text", nullable: false),
@@ -2241,8 +2346,8 @@ namespace Yavsc.Migrations
                 {
                     HRef = table.Column<string>(type: "text", nullable: false),
                     Method = table.Column<string>(type: "text", nullable: false),
-                    Rel = table.Column<string>(type: "text", nullable: false),
-                    ContentType = table.Column<string>(type: "text", nullable: false),
+                    Rel = table.Column<string>(type: "text", nullable: true),
+                    ContentType = table.Column<string>(type: "text", nullable: true),
                     BrusherProfileUserId = table.Column<string>(type: "text", nullable: true),
                     PayPalPaymentCreationToken = table.Column<string>(type: "text", nullable: true)
                 },
@@ -2272,7 +2377,7 @@ namespace Yavsc.Migrations
                     Count = table.Column<int>(type: "integer", nullable: false),
                     UnitaryCost = table.Column<decimal>(type: "numeric", nullable: false),
                     EstimateId = table.Column<long>(type: "bigint", nullable: false),
-                    Currency = table.Column<string>(type: "text", nullable: false),
+                    Currency = table.Column<string>(type: "text", nullable: true),
                     EstimateTemplateId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -2302,34 +2407,64 @@ namespace Yavsc.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApiResourceClaim_ApiResourceId",
-                table: "ApiResourceClaim",
+                name: "IX_ApiResourceClaims_ApiResourceId",
+                table: "ApiResourceClaims",
                 column: "ApiResourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApiResourceProperty_ApiResourceId",
-                table: "ApiResourceProperty",
+                name: "IX_ApiResourceClaims_ApiResourceId1",
+                table: "ApiResourceClaims",
+                column: "ApiResourceId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApiResourceProperties_ApiResourceId",
+                table: "ApiResourceProperties",
                 column: "ApiResourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApiResourceScope_ApiResourceId",
-                table: "ApiResourceScope",
+                name: "IX_ApiResourceProperties_ApiResourceId1",
+                table: "ApiResourceProperties",
+                column: "ApiResourceId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApiResourceScopes_ApiResourceId",
+                table: "ApiResourceScopes",
                 column: "ApiResourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApiResourceSecret_ApiResourceId",
-                table: "ApiResourceSecret",
+                name: "IX_ApiResourceScopes_ApiResourceId1",
+                table: "ApiResourceScopes",
+                column: "ApiResourceId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApiResourceSecrets_ApiResourceId",
+                table: "ApiResourceSecrets",
                 column: "ApiResourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApiScopeClaim_ScopeId",
-                table: "ApiScopeClaim",
+                name: "IX_ApiResourceSecrets_ApiResourceId1",
+                table: "ApiResourceSecrets",
+                column: "ApiResourceId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApiScopeClaims_ScopeId",
+                table: "ApiScopeClaims",
                 column: "ScopeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApiScopeProperty_ScopeId",
-                table: "ApiScopeProperty",
+                name: "IX_ApiScopeClaims_ScopeId1",
+                table: "ApiScopeClaims",
+                column: "ScopeId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApiScopeProperties_ScopeId",
+                table: "ApiScopeProperties",
                 column: "ScopeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApiScopeProperties_ScopeId1",
+                table: "ApiScopeProperties",
+                column: "ScopeId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -2449,8 +2584,8 @@ namespace Yavsc.Migrations
                 column: "CircleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientClaim_ClientId",
-                table: "ClientClaim",
+                name: "IX_ClientClaims_ClientId",
+                table: "ClientClaims",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
@@ -2459,39 +2594,79 @@ namespace Yavsc.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientGrantType_ClientId",
-                table: "ClientGrantType",
+                name: "IX_ClientCorsOrigins_ClientId1",
+                table: "ClientCorsOrigins",
+                column: "ClientId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientGrantTypes_ClientId",
+                table: "ClientGrantTypes",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientIdPRestriction_ClientId",
-                table: "ClientIdPRestriction",
+                name: "IX_ClientGrantTypes_ClientId1",
+                table: "ClientGrantTypes",
+                column: "ClientId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientIdPRestrictions_ClientId",
+                table: "ClientIdPRestrictions",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientPostLogoutRedirectUri_ClientId",
-                table: "ClientPostLogoutRedirectUri",
+                name: "IX_ClientIdPRestrictions_ClientId1",
+                table: "ClientIdPRestrictions",
+                column: "ClientId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientPostLogoutRedirectUris_ClientId",
+                table: "ClientPostLogoutRedirectUris",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientProperty_ClientId",
-                table: "ClientProperty",
+                name: "IX_ClientPostLogoutRedirectUris_ClientId1",
+                table: "ClientPostLogoutRedirectUris",
+                column: "ClientId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientProperties_ClientId",
+                table: "ClientProperties",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientRedirectUri_ClientId",
-                table: "ClientRedirectUri",
+                name: "IX_ClientProperties_ClientId1",
+                table: "ClientProperties",
+                column: "ClientId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientRedirectUris_ClientId",
+                table: "ClientRedirectUris",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientScope_ClientId",
-                table: "ClientScope",
+                name: "IX_ClientRedirectUris_ClientId1",
+                table: "ClientRedirectUris",
+                column: "ClientId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientScopes_ClientId",
+                table: "ClientScopes",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClientSecret_ClientId",
-                table: "ClientSecret",
+                name: "IX_ClientScopes_ClientId1",
+                table: "ClientScopes",
+                column: "ClientId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientSecrets_ClientId",
+                table: "ClientSecrets",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientSecrets_ClientId1",
+                table: "ClientSecrets",
+                column: "ClientId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CommandForm_ActivityCode",
@@ -2669,13 +2844,13 @@ namespace Yavsc.Migrations
                 column: "PayPalPaymentCreationToken");
 
             migrationBuilder.CreateIndex(
-                name: "IX_IdentityResourceClaim_IdentityResourceId",
-                table: "IdentityResourceClaim",
+                name: "IX_IdentityResourceClaims_IdentityResourceId",
+                table: "IdentityResourceClaims",
                 column: "IdentityResourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_IdentityResourceProperty_IdentityResourceId",
-                table: "IdentityResourceProperty",
+                name: "IX_IdentityResourceProperties_IdentityResourceId",
+                table: "IdentityResourceProperties",
                 column: "IdentityResourceId");
 
             migrationBuilder.CreateIndex(
@@ -2702,6 +2877,11 @@ namespace Yavsc.Migrations
                 name: "IX_MusicalPreference_GeneralSettingsUserId",
                 table: "MusicalPreference",
                 column: "GeneralSettingsUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MusicalPreference_TendencyId",
+                table: "MusicalPreference",
+                column: "TendencyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PayPalPayment_ExecutorId",
@@ -2796,22 +2976,22 @@ namespace Yavsc.Migrations
                 name: "Announce");
 
             migrationBuilder.DropTable(
-                name: "ApiResourceClaim");
+                name: "ApiResourceClaims");
 
             migrationBuilder.DropTable(
-                name: "ApiResourceProperty");
+                name: "ApiResourceProperties");
 
             migrationBuilder.DropTable(
-                name: "ApiResourceScope");
+                name: "ApiResourceScopes");
 
             migrationBuilder.DropTable(
-                name: "ApiResourceSecret");
+                name: "ApiResourceSecrets");
 
             migrationBuilder.DropTable(
-                name: "ApiScopeClaim");
+                name: "ApiScopeClaims");
 
             migrationBuilder.DropTable(
-                name: "ApiScopeProperty");
+                name: "ApiScopeProperties");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -2862,34 +3042,34 @@ namespace Yavsc.Migrations
                 name: "CircleMembers");
 
             migrationBuilder.DropTable(
-                name: "ClientClaim");
+                name: "ClientClaims");
 
             migrationBuilder.DropTable(
                 name: "ClientCorsOrigins");
 
             migrationBuilder.DropTable(
-                name: "ClientGrantType");
+                name: "ClientGrantTypes");
 
             migrationBuilder.DropTable(
-                name: "ClientIdPRestriction");
+                name: "ClientIdPRestrictions");
 
             migrationBuilder.DropTable(
-                name: "ClientPostLogoutRedirectUri");
+                name: "ClientPostLogoutRedirectUris");
 
             migrationBuilder.DropTable(
-                name: "ClientProperty");
+                name: "ClientProperties");
 
             migrationBuilder.DropTable(
                 name: "ClientProviderInfo");
 
             migrationBuilder.DropTable(
-                name: "ClientRedirectUri");
+                name: "ClientRedirectUris");
 
             migrationBuilder.DropTable(
-                name: "ClientScope");
+                name: "ClientScopes");
 
             migrationBuilder.DropTable(
-                name: "ClientSecret");
+                name: "ClientSecrets");
 
             migrationBuilder.DropTable(
                 name: "CommandForm");
@@ -2908,6 +3088,9 @@ namespace Yavsc.Migrations
 
             migrationBuilder.DropTable(
                 name: "DeviceDeclaration");
+
+            migrationBuilder.DropTable(
+                name: "DeviceFlowCodes");
 
             migrationBuilder.DropTable(
                 name: "DismissClicked");
@@ -2931,10 +3114,10 @@ namespace Yavsc.Migrations
                 name: "HyperLink");
 
             migrationBuilder.DropTable(
-                name: "IdentityResourceClaim");
+                name: "IdentityResourceClaims");
 
             migrationBuilder.DropTable(
-                name: "IdentityResourceProperty");
+                name: "IdentityResourceProperties");
 
             migrationBuilder.DropTable(
                 name: "Instrumentation");
@@ -2952,10 +3135,10 @@ namespace Yavsc.Migrations
                 name: "MusicalPreference");
 
             migrationBuilder.DropTable(
-                name: "MusicalTendency");
+                name: "Option");
 
             migrationBuilder.DropTable(
-                name: "Option");
+                name: "PersistedGrants");
 
             migrationBuilder.DropTable(
                 name: "Products");
@@ -2965,9 +3148,6 @@ namespace Yavsc.Migrations
 
             migrationBuilder.DropTable(
                 name: "ScheduledEvent");
-
-            migrationBuilder.DropTable(
-                name: "Scopes");
 
             migrationBuilder.DropTable(
                 name: "Services");
@@ -3046,6 +3226,9 @@ namespace Yavsc.Migrations
 
             migrationBuilder.DropTable(
                 name: "GeneralSettings");
+
+            migrationBuilder.DropTable(
+                name: "MusicalTendency");
 
             migrationBuilder.DropTable(
                 name: "Project");

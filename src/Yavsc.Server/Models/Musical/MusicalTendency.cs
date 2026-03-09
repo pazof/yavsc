@@ -9,7 +9,7 @@ namespace Yavsc.Models.Musical {
     [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id {get; set; }
     
-    [MaxLength(255),YaRequired]
+    [MaxLength(255),Required]
     public string Name { get ; set; }
       
   }

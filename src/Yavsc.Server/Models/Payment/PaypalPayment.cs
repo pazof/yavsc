@@ -10,10 +10,10 @@ namespace Yavsc.Models.Payment {
 
     public class PayPalPayment : ITrackedEntity
     {
-        [YaRequired,Key]
+        [Required,Key]
         public string CreationToken { get; set; }
 
-        [YaRequired]
+        [Required]
         public string ExecutorId { get; set; }
         
         [ForeignKey("ExecutorId")]

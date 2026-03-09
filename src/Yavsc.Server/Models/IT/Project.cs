@@ -24,7 +24,7 @@ namespace Yavsc.Server.Models.IT
         /// As a side effect, there's no project without valid git reference in db. 
         /// </summary>
         /// <returns></returns>
-        [YaRequired]
+        [Required]
         public string Name { get; set; }
 
         public string Version { get; set; }
@@ -33,7 +33,7 @@ namespace Yavsc.Server.Models.IT
         public virtual List<ProjectBuildConfiguration> Configurations { get; set; }
 
 
-        [YaRequired]
+        [Required]
         public long GitId { get; set; }
 
         [ForeignKey("GitId")]

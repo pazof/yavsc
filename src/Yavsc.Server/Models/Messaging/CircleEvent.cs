@@ -36,7 +36,7 @@ namespace Yavsc.Models.Messaging
 		/// Gets or sets the circles.
 		/// </summary>
 		/// <value>The circles.</value>
-		[YaRequired, Display(Name="Circles")]
+		[Required, Display(Name="Circles")]
 		public virtual List<Circle> Circles{ get; set; }
 
         public override string CreateBody()

@@ -1,6 +1,9 @@
 ﻿using isnd.tests;
 using Xunit.Abstractions;
 using IdentityModel.Client;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace yavscTests
 {
@@ -14,43 +17,39 @@ namespace yavscTests
 
         }
 
-        [Theory]
-        [MemberData(nameof(GetLoginIntentData))]
-        public async Task TestUserMayLogin
-            (
-             string userName,
-             string password
-            )
-        {
-
-        }
 
         [Fact]
         public async Task ObtainServiceToken()
-        {
-            var serverUrl = _serverFixture.Addresses.FirstOrDefault(
-                u => u.StartsWith("https:")
-            );
+    {
+      var serverUrl = _serverFixture.Addresses.FirstOrDefault(
+          u => u.StartsWith("https:")
+      );
 
-            String authority = _serverFixture.SiteSettings.Authority;
-            var client = new HttpClient();
-            var disco = await client.GetDiscoveryDocumentAsync(authority);
-            if (disco.IsError) throw new Exception(disco.Error);
+      String authority = _serverFixture.SiteSettings.Authority;
+      HttpClient client = NewHttpClient();
+      var disco = await client.GetDiscoveryDocumentAsync(authority);
+      if (disco.IsError) throw new Exception(disco.Error);
 
-            var response = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
-            {
-                Address = disco.TokenEndpoint,
+      var response = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+      {
+          Address = disco.TokenEndpoint,
+          ClientId = _serverFixture.TestClientId,
+          ClientSecret = _serverFixture.TestClientSecret,
+          Scope = "test",
+          GrantType = "client_credentials"
+      });
+      /*"mvc";
+              options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";*/
+      if (response.IsError) throw new Exception(response.Error);
 
-                ClientId = "m2m.client", // _serverFixture.TestClientId,
-                ClientSecret = "511536EF-F270-4058-80CA-1C89C192F69A" //_serverFixture.TestClientSecret,
-            });
-/*"mvc";
-        options.ClientSecret = "49C1A7E1-0C79-4A89-A3D6-A37998FB86B0";*/
-            if (response.IsError) throw new Exception(response.Error);
+    }
 
-        }
+    private static HttpClient NewHttpClient()
+    {
+      return new HttpClient(new BypassSslValidationHandler());
+    }
 
-   [Fact]
+    [Fact]
         public async Task ObtainResourceOwnerPasswordToken()
         {
             var serverUrl = _serverFixture.Addresses.FirstOrDefault(
@@ -58,7 +57,7 @@ namespace yavscTests
             );
 
             String authority = _serverFixture.SiteSettings.Authority;
-            var client = new HttpClient();
+            var client = NewHttpClient();
             var disco = await client.GetDiscoveryDocumentAsync(authority);
             if (disco.IsError) throw new Exception(disco.Error);
 
@@ -66,13 +65,13 @@ namespace yavscTests
     {
         Address = disco.TokenEndpoint,
 
-        ClientId = "m2m.client",
-        ClientSecret = "511536EF-F270-4058-80CA-1C89C192F69A",
+        ClientId = _serverFixture.TestClientId,
+        ClientSecret = _serverFixture.TestClientSecret,
 
         UserName = _serverFixture.TestingUserName,
         Password = _serverFixture.TestingUserPassword,
 
-        Scope = "scope1",
+        Scope = "test",
 
         Parameters =
                 {
@@ -90,4 +89,23 @@ namespace yavscTests
         }
 
     }
+
+  internal class   BypassSslValidationHandler : HttpClientHandler
+{
+    public BypassSslValidationHandler()
+    {
+        // Override validation for this handler only
+        ServerCertificateCustomValidationCallback = ValidateCertificate;
+    }
+ 
+    private bool ValidateCertificate(
+        HttpRequestMessage request, 
+        X509Certificate2 certificate, 
+        X509Chain chain, 
+        SslPolicyErrors errors)
+    {
+        // Accept all certificates (bypass validation)
+        return true; 
+    }
+}
 }

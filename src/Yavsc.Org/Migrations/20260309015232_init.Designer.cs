@@ -12,8 +12,8 @@ using Yavsc.Models;
 namespace Yavsc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260209001325_IdentityResourceProperties")]
-    partial class IdentityResourceProperties
+    [Migration("20260309015232_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,7 +31,7 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AllowedAccessTokenSigningAlgorithms")
                         .HasColumnType("text");
@@ -79,6 +79,9 @@ namespace Yavsc.Migrations
                     b.Property<int>("ApiResourceId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ApiResourceId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Type")
                         .HasColumnType("text");
 
@@ -86,7 +89,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ApiResourceId");
 
-                    b.ToTable("ApiResourceClaim");
+                    b.HasIndex("ApiResourceId1");
+
+                    b.ToTable("ApiResourceClaims");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceProperty", b =>
@@ -100,6 +105,9 @@ namespace Yavsc.Migrations
                     b.Property<int>("ApiResourceId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ApiResourceId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Key")
                         .HasColumnType("text");
 
@@ -110,7 +118,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ApiResourceId");
 
-                    b.ToTable("ApiResourceProperty");
+                    b.HasIndex("ApiResourceId1");
+
+                    b.ToTable("ApiResourceProperties");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceScope", b =>
@@ -124,6 +134,9 @@ namespace Yavsc.Migrations
                     b.Property<int>("ApiResourceId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ApiResourceId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Scope")
                         .HasColumnType("text");
 
@@ -131,7 +144,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ApiResourceId");
 
-                    b.ToTable("ApiResourceScope");
+                    b.HasIndex("ApiResourceId1");
+
+                    b.ToTable("ApiResourceScopes");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceSecret", b =>
@@ -143,6 +158,9 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ApiResourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ApiResourceId1")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Created")
@@ -164,7 +182,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ApiResourceId");
 
-                    b.ToTable("ApiResourceSecret");
+                    b.HasIndex("ApiResourceId1");
+
+                    b.ToTable("ApiResourceSecrets");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScope", b =>
@@ -173,7 +193,7 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -212,6 +232,9 @@ namespace Yavsc.Migrations
                     b.Property<int>("ScopeId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ScopeId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Type")
                         .HasColumnType("text");
 
@@ -219,7 +242,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ScopeId");
 
-                    b.ToTable("ApiScopeClaim");
+                    b.HasIndex("ScopeId1");
+
+                    b.ToTable("ApiScopeClaims");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScopeProperty", b =>
@@ -236,6 +261,9 @@ namespace Yavsc.Migrations
                     b.Property<int>("ScopeId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ScopeId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Value")
                         .HasColumnType("text");
 
@@ -243,7 +271,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ScopeId");
 
-                    b.ToTable("ApiScopeProperty");
+                    b.HasIndex("ScopeId1");
+
+                    b.ToTable("ApiScopeProperties");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.Client", b =>
@@ -252,7 +282,7 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AbsoluteRefreshTokenLifetime")
                         .HasColumnType("integer");
@@ -394,7 +424,7 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -409,7 +439,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientClaim");
+                    b.ToTable("ClientClaims");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientCorsOrigin", b =>
@@ -418,9 +448,12 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
                         .HasColumnType("integer");
 
                     b.Property<string>("Origin")
@@ -429,6 +462,8 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
 
                     b.ToTable("ClientCorsOrigins");
                 });
@@ -439,9 +474,12 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
                         .HasColumnType("integer");
 
                     b.Property<string>("GrantType")
@@ -451,7 +489,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientGrantType");
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientGrantTypes");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientIdPRestriction", b =>
@@ -460,9 +500,12 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
                         .HasColumnType("integer");
 
                     b.Property<string>("Provider")
@@ -472,7 +515,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientIdPRestriction");
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientIdPRestrictions");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientPostLogoutRedirectUri", b =>
@@ -481,9 +526,12 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
                         .HasColumnType("integer");
 
                     b.Property<string>("PostLogoutRedirectUri")
@@ -493,7 +541,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientPostLogoutRedirectUri");
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientPostLogoutRedirectUris");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientProperty", b =>
@@ -502,9 +552,12 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
                         .HasColumnType("integer");
 
                     b.Property<string>("Key")
@@ -517,7 +570,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientProperty");
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientProperties");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientRedirectUri", b =>
@@ -526,9 +581,12 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
                         .HasColumnType("integer");
 
                     b.Property<string>("RedirectUri")
@@ -538,7 +596,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientRedirectUri");
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientRedirectUris");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientScope", b =>
@@ -547,9 +607,12 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
                         .HasColumnType("integer");
 
                     b.Property<string>("Scope")
@@ -559,7 +622,9 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientScope");
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientScopes");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientSecret", b =>
@@ -568,9 +633,12 @@ namespace Yavsc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClientId1")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Created")
@@ -592,7 +660,43 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientSecret");
+                    b.HasIndex("ClientId1");
+
+                    b.ToTable("ClientSecrets");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.DeviceFlowCodes", b =>
+                {
+                    b.Property<string>("UserCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeviceCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserCode", "DeviceCode");
+
+                    b.ToTable("DeviceFlowCodes");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.IdentityResource", b =>
@@ -681,6 +785,43 @@ namespace Yavsc.Migrations
                     b.HasIndex("IdentityResourceId");
 
                     b.ToTable("IdentityResourceProperties");
+                });
+
+            modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.PersistedGrant", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ConsumedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SessionId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubjectId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("PersistedGrants");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -821,22 +962,18 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<long>("BillingAddressId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("EMail")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("UserId");
@@ -917,11 +1054,9 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -1090,21 +1225,6 @@ namespace Yavsc.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Auth.Scope", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Scopes");
-                });
-
             modelBuilder.Entity("Yavsc.Models.BalanceImpact", b =>
                 {
                     b.Property<long>("Id")
@@ -1143,30 +1263,24 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AccountNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("BIC")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("BankCode")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("BankedKey")
                         .HasColumnType("integer");
 
                     b.Property<string>("IBAN")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("WicketCode")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -1188,7 +1302,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Currency")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
@@ -1228,11 +1341,9 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AttachedFilesString")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("AttachedGraphicsString")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ClientId")
@@ -1250,18 +1361,15 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("ProviderValidationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -1284,7 +1392,6 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
@@ -1292,7 +1399,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -1318,12 +1424,12 @@ namespace Yavsc.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("AuthorId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Content")
+                    b.Property<string>("Article")
                         .HasMaxLength(56224)
                         .HasColumnType("character varying(56224)");
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
@@ -1376,11 +1482,10 @@ namespace Yavsc.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
+                    b.Property<string>("Article")
                         .HasColumnType("text");
 
-                    b.Property<string>("Content")
+                    b.Property<string>("AuthorId")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -1397,11 +1502,9 @@ namespace Yavsc.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("Visible")
@@ -1446,10 +1549,10 @@ namespace Yavsc.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("PeriodEnd")
+                    b.Property<DateTime?>("PeriodEnd")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("PeriodStart")
+                    b.Property<DateTime?>("PeriodStart")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Reccurence")
@@ -1480,7 +1583,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserAgent")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ConnectionId");
@@ -1505,19 +1607,15 @@ namespace Yavsc.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Topic")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Name");
@@ -1566,15 +1664,12 @@ namespace Yavsc.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Code", "CodeScrutin");
@@ -1597,7 +1692,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<byte>("Red")
@@ -1614,7 +1708,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Summary")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -1755,7 +1848,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("AdditionalInfo")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ClientId")
@@ -1775,7 +1867,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("EventDate")
@@ -1804,11 +1895,9 @@ namespace Yavsc.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ValidationDate")
@@ -1865,13 +1954,12 @@ namespace Yavsc.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("LocationId")
+                    b.Property<long?>("LocationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("PaymentId")
@@ -1888,11 +1976,9 @@ namespace Yavsc.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ValidationDate")
@@ -1979,7 +2065,6 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Brand")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<long>("ColorId")
@@ -2016,11 +2101,9 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ShortName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
@@ -2040,7 +2123,6 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<long?>("FeatureId")
@@ -2050,7 +2132,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -2071,22 +2152,18 @@ namespace Yavsc.Migrations
                         .HasDefaultValueSql("LOCALTIMESTAMP");
 
                     b.Property<string>("DeviceOwnerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("LatestActivityUpdate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Model")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Platform")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Version")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("DeviceId");
@@ -2108,14 +2185,12 @@ namespace Yavsc.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<decimal>("Height")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<decimal?>("Price")
@@ -2144,15 +2219,12 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ContextId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("Public")
@@ -2177,19 +2249,15 @@ namespace Yavsc.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Sender")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Topic")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -2282,6 +2350,8 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("GeneralSettingsUserId");
 
+                    b.HasIndex("TendencyId");
+
                     b.ToTable("MusicalPreference");
                 });
 
@@ -2309,7 +2379,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("SoundCloudId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("UserId");
@@ -2358,23 +2427,18 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("OrderReference")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PaypalPayerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("CreationToken");
@@ -2443,11 +2507,9 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("EMail")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("OwnerId", "UserId");
@@ -2471,14 +2533,12 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PayPalPaymentCreationToken")
                         .HasColumnType("text");
 
                     b.Property<string>("Rel")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("HRef", "Method");
@@ -2523,31 +2583,24 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PostalCode")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Province")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Street1")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Street2")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -2581,7 +2634,6 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Rate")
@@ -2601,11 +2653,9 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("DifferedFileName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("MediaType")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
@@ -2613,14 +2663,12 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Pitch")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("SequenceNumber")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -2642,7 +2690,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("Hidden")
@@ -2692,11 +2739,9 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PerformerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("WorkingForId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -2719,7 +2764,6 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ActionName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ActivityCode")
@@ -2727,7 +2771,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -2771,7 +2814,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("WebSite")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("PerformerId");
@@ -2787,7 +2829,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("DisplayName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("UserId");
@@ -2827,13 +2868,12 @@ namespace Yavsc.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("EventDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("LocationId")
+                    b.Property<long?>("LocationId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("LocationType")
@@ -2850,18 +2890,15 @@ namespace Yavsc.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<string>("Reason")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ValidationDate")
@@ -2919,7 +2956,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Body")
-                        .IsRequired()
                         .HasMaxLength(65536)
                         .HasColumnType("character varying(65536)");
 
@@ -2930,22 +2966,18 @@ namespace Yavsc.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ReplyToAddress")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("ToSend")
                         .HasColumnType("integer");
 
                     b.Property<string>("Topic")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -2985,7 +3017,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<long>("GitId")
@@ -2996,7 +3027,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PaymentId")
@@ -3013,18 +3043,15 @@ namespace Yavsc.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ValidationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Version")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -3073,11 +3100,9 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Branch")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Path")
@@ -3085,7 +3110,6 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -3097,66 +3121,90 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceClaim", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", null)
                         .WithMany("UserClaims")
                         .HasForeignKey("ApiResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                        .WithMany()
+                        .HasForeignKey("ApiResourceId1");
 
                     b.Navigation("ApiResource");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceProperty", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", null)
                         .WithMany("Properties")
                         .HasForeignKey("ApiResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                        .WithMany()
+                        .HasForeignKey("ApiResourceId1");
 
                     b.Navigation("ApiResource");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceScope", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", null)
                         .WithMany("Scopes")
                         .HasForeignKey("ApiResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                        .WithMany()
+                        .HasForeignKey("ApiResourceId1");
 
                     b.Navigation("ApiResource");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceSecret", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", null)
                         .WithMany("Secrets")
                         .HasForeignKey("ApiResourceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiResource", "ApiResource")
+                        .WithMany()
+                        .HasForeignKey("ApiResourceId1");
 
                     b.Navigation("ApiResource");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScopeClaim", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", "Scope")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", null)
                         .WithMany("UserClaims")
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", "Scope")
+                        .WithMany()
+                        .HasForeignKey("ScopeId1");
 
                     b.Navigation("Scope");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiScopeProperty", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", "Scope")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", null)
                         .WithMany("Properties")
                         .HasForeignKey("ScopeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.ApiScope", "Scope")
+                        .WithMany()
+                        .HasForeignKey("ScopeId1");
 
                     b.Navigation("Scope");
                 });
@@ -3174,88 +3222,120 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientCorsOrigin", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("AllowedCorsOrigins")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientGrantType", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("AllowedGrantTypes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientIdPRestriction", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("IdentityProviderRestrictions")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientPostLogoutRedirectUri", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("PostLogoutRedirectUris")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientProperty", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("Properties")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientRedirectUri", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("RedirectUris")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientScope", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("AllowedScopes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientSecret", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("ClientSecrets")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
@@ -3417,9 +3497,7 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser", "User")
                         .WithMany("BankInfo")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -3451,9 +3529,7 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Models.Workflow.PerformerProfile", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OwnerId");
 
                     b.Navigation("Client");
 
@@ -3545,9 +3621,7 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Server.Models.Calendar.Period", "Period")
                         .WithMany()
-                        .HasForeignKey("PeriodStart", "PeriodEnd")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PeriodStart", "PeriodEnd");
 
                     b.Navigation("Period");
                 });
@@ -3567,9 +3641,7 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser", "Owner")
                         .WithMany("Rooms")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
                 });
@@ -3679,9 +3751,7 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Models.Relationship.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularisation")
                         .WithMany()
@@ -3766,9 +3836,7 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser", "DeviceOwner")
                         .WithMany("DeviceDeclaration")
-                        .HasForeignKey("DeviceOwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DeviceOwnerId");
 
                     b.Navigation("DeviceOwner");
                 });
@@ -3777,9 +3845,7 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.Workflow.Activity", "Context")
                         .WithMany("Services")
-                        .HasForeignKey("ContextId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContextId");
 
                     b.Navigation("Context");
                 });
@@ -3788,9 +3854,7 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
                 });
@@ -3842,6 +3906,14 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.Musical.Profiles.GeneralSettings", null)
                         .WithMany("SoundColor")
                         .HasForeignKey("GeneralSettingsUserId");
+
+                    b.HasOne("Yavsc.Models.Musical.MusicalTendency", "MusicalTendency")
+                        .WithMany()
+                        .HasForeignKey("TendencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MusicalTendency");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Musical.Profiles.Instrumentation", b =>
@@ -3954,15 +4026,11 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Models.Workflow.PerformerProfile", "Performer")
                         .WithMany()
-                        .HasForeignKey("PerformerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PerformerId");
 
                     b.HasOne("Yavsc.Models.ApplicationUser", "WorkingFor")
                         .WithMany()
-                        .HasForeignKey("WorkingForId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WorkingForId");
 
                     b.Navigation("Performer");
 
@@ -4015,9 +4083,7 @@ namespace Yavsc.Migrations
 
                     b.HasOne("Yavsc.Models.Relationship.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularisation")
                         .WithMany()
@@ -4115,9 +4181,7 @@ namespace Yavsc.Migrations
                 {
                     b.HasOne("Yavsc.Models.ApplicationUser", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
                 });

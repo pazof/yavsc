@@ -12,7 +12,7 @@ namespace  Yavsc.Helpers
         string siren, CompanyInfoSettings api)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-            string.Format(ServerConstants.CompanyInfoUrl,siren,api.ApiKey))) {
+            string.Format(ServerConstants.CompanyInfoUrlFormat,siren,api.ApiKey))) {
                 using (var response = await web.SendAsync(request)) {
                     var payload = JObject.Parse(await response.Content.ReadAsStringAsync());
                     return payload.ToObject<CompanyInfoMessage>();

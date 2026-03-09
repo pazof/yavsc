@@ -9,7 +9,7 @@ namespace Yavsc.Models.Relationship
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-        [YaRequired()]
+        [Required()]
         public string Name { get; set; }
     }
 }

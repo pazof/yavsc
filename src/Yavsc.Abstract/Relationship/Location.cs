@@ -8,7 +8,7 @@ namespace Yavsc.Models.Relationship
     public class Location : Position, ILocation {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-        [YaRequired(),
+        [Required(),
         Display(Name="Address"),
         MaxLength(512)]
         public string Address { get; set; }

@@ -8,11 +8,11 @@ namespace Yavsc.ViewModels.Gen
     public class PdfGenerationViewModel
     {
         
-        [YaRequired]
+        [Required]
         public string TeXSource { get; set; }
-        [YaRequired]
+        [Required]
         public string BaseFileName { get; set; }
-        [YaRequired]
+        [Required]
         public string DestDir { get; set; }
         public bool Generated { get; set; }
         public HtmlString GenerationErrorMessage { get; set; }
