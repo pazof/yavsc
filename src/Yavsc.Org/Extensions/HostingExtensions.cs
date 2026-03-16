@@ -43,6 +43,7 @@ using IdentityServer8.EntityFramework.Services;
 using IdentityServer8.EntityFramework.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using IdentityServer8.Validation;
+using IdentityServer8.EntityFramework.Entities;
 
 namespace Yavsc.Extensions;
 
@@ -288,7 +289,20 @@ public static class HostingExtensions
             .AddConfigurationStore(options =>
             {
                 options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
-                    sql => sql.MigrationsAssembly(migrationsAssembly));
+                    sql => sql.MigrationsAssembly(migrationsAssembly))
+                    .UseSeeding((context, _) =>
+        {
+            foreach (String scope in new string[] { "blog", "admin", "contract", "com"})
+            {
+                var testBlog = context.Set<ApiScope>().FirstOrDefault(b => b.Name == scope);
+                if (testBlog == null)
+                {
+                    context.Set<ApiScope>().Add(new ApiScope { Name = scope });
+                    context.SaveChanges();
+                }
+            }
+
+        });
             })
             .AddOperationalStore(options =>
             {
@@ -398,7 +412,7 @@ public static class HostingExtensions
         app.UseSession();
         return app;
     }
-    
+
     private static void MigrateDatabase(this IApplicationBuilder app)
     {
         using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())

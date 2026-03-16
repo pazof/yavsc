@@ -1,4 +1,4 @@
-@using IdentityServer8.Models
+@using IdentityServer8.Models;
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.Client>
 
 <h2>@Localizer["Index"]</h2>
@@ -7,77 +7,85 @@
     <a asp-action="Create">@Localizer["Create New"]</a>
 </p>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ClientId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Enabled)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ClientName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FrontChannelLogoutUri)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RedirectUris)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AbsoluteRefreshTokenLifetime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AllowedGrantTypes)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AccessTokenType)
-        </th>
-        <th></th>
-    </tr>
-    
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClientId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Enabled)
-            </td>
-            <td>
+@foreach (var item in Model)
+{
+    <div class="list-item">
+        
+    <div class="card">
+    <h5 class="card-title">Identifier</h5>
+    <h6 class="card-subtitle mb-2 text-muted">and activation</h6>
+        <dl class="card-body">
+
+            <dt>
+                @Html.DisplayNameFor(modelItem => item.ClientName)
+            </dt>
+            <dd>
                 @Html.DisplayFor(modelItem => item.ClientName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FrontChannelLogoutUri)
-            </td>
-            <td>
-                <ul>
-                    @foreach (var uri in item.RedirectUris)
-                    {
-                        <li>@uri.RedirectUri</li>
-                    }
-                </ul>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AbsoluteRefreshTokenLifetime)
-            </td>
-            <td>
-                <ul>
-                    @foreach (var t in item.AllowedGrantTypes)
-                    {
-                        <li>@t.GrantType</li>
-                    }
-                </ul>
-            </td>
-            <td>
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(modelItem => item.ClientId)
+            </dt>
+            <dd>
+                @Html.DisplayFor(modelItem => item.ClientId)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(modelItem => item.Enabled)
+            </dt>
+            <dd>
+                @Html.DisplayFor(modelItem => item.Enabled)
+            </dd>
+        </dl>
+    </div>
+    
+    <div class="card">
+
+    <h5 class="card-title">Urls</h5>
+    <h6 class="card-subtitle mb-2 text-muted">login and logout, refresh token</h6>
+        <dl class="card-body">
+            <dt>
+                @Html.DisplayNameFor(model => model.FrontChannelLogoutUri)
+            </dt>
+            <dd> @Html.DisplayFor(model => item.FrontChannelLogoutUri)
+            </dd>
+            <dt>@Html.DisplayNameFor(model => model.RedirectUris)</dt>
+            <dd>
+                @foreach (var uri in item.RedirectUris)
+                {
+                    <li>@uri.RedirectUri</li>
+                }
+            </dd>
+            <dt>@Html.DisplayNameFor(model => model.AbsoluteRefreshTokenLifetime)</dt>
+            <dd>@Html.DisplayFor(model => item.AbsoluteRefreshTokenLifetime)</dd>
+                
+        </dl>
+    </div>
+
+    <div class="card">
+
+    <h5 class="card-title">Grants</h5>
+    <h6 class="card-subtitle mb-2 text-muted">and access type</h6>
+
+        <dl class="card-body">
+            <dt>@Html.DisplayNameFor(model => model.AllowedGrantTypes)</dt>
+            <dd> @foreach (var t in item.AllowedGrantTypes)
+                {
+                    <li>@t.GrantType</li>
+                }
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.AccessTokenType)
+            </dt>
+            <dd>
                 @Enum.GetName(typeof(AccessTokenType), item.AccessTokenType)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-    }
-</table>
+    
+            </dd>
+        </dl>
+    </div>
+
+    <a class="btn btn-primary btn-lg" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+    <a class="btn btn-secondary btn-lg" asp-action="Details" asp-route-id="@item.Id">Details</a>
+    <a class="btn btn-danger btn-lg" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+       
+    </div>
+}

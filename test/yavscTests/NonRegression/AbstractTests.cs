@@ -16,7 +16,7 @@ namespace yavscTests
             this.output = output;
         }
         [Fact]
-        public void UniquePathsAfterFileNameCleaning()
+        public void UniqueFilenameAfterCleaning()
         {
             var name1 = "content:///scanned_files/2020-06-02/00.11.02.JPG";
             var name2 = "content:///scanned_files/2020-06-02/00.11.03.JPG";

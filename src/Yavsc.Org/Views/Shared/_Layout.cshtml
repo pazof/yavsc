@@ -8,7 +8,7 @@
     <link rel="icon" type="image/x-icon" href="~/favicon.ico"  asp-append-version="true"/>
     <link rel="shortcut icon" type="image/x-icon" href="~/favicon.ico" asp-append-version="true"/>
     <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"  asp-append-version="true"/>
+    <link rel="stylesheet" href="~/lib/bootstrap.quartz.min.css"  asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/site.css"  asp-append-version="true"/>
     <script src="~/lib/jquery-ui/external/jquery/jquery.js"></script>
     <script src="~/lib/jquery-ui/jquery-ui.js"></script>
@@ -36,7 +36,7 @@ background-attachment: fixed;
         }
     }
     @await RenderSectionAsync("subbanner", false)
-        <div class="container body-container">
+        <div class="container py-4">
             @RenderBody()
         </div>
     <footer class="border-top footer text-muted">

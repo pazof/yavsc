@@ -1,5 +1,4 @@
 ﻿using IdentityServer8.EntityFramework.Entities;
-using IdentityServer8.EntityFramework.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -23,8 +22,8 @@ namespace Yavsc.Models
     using IT.Fixing;
     using Market;
     using Messaging;
-  using Microsoft.AspNetCore.Http;
-  using Musical;
+    using Microsoft.AspNetCore.Http;
+    using Musical;
     using Musical.Profiles;
     using Payment;
     using Relationship;
@@ -36,8 +35,7 @@ namespace Yavsc.Models
     using Workflow;
     using Workflow.Profiles;
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>,
-    IConfigurationDbContext, IPersistedGrantDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
         {
@@ -81,7 +79,7 @@ namespace Yavsc.Models
             ;
 
             builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
-            
+
             builder.Entity<Client>().Property("Id").UseIdentityAlwaysColumn();
             builder.Entity<ClientSecret>().Property("Id").UseIdentityAlwaysColumn();
             builder.Entity<ClientScope>().Property("Id").UseIdentityAlwaysColumn();
@@ -240,12 +238,12 @@ namespace Yavsc.Models
             return await base.SaveChangesAsync(ctoken);
         }
 
-    public Task<int> SaveChangesAsync()
-    {
-        return base.SaveChangesAsync();
-    }
+        public Task<int> SaveChangesAsync()
+        {
+            return base.SaveChangesAsync();
+        }
 
-    public DbSet<Circle> Circle { get; set; }
+        public DbSet<Circle> Circle { get; set; }
 
         public DbSet<CircleAuthorizationToBlogPost> CircleAuthorizationToBlogPost { get; set; }
 
@@ -338,8 +336,7 @@ namespace Yavsc.Models
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
         public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
 
-
-
+         public DbSet<YavscApiScope> YavscApiScopes { get; set; }
 
     }
 }
