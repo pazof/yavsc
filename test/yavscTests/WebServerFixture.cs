@@ -181,6 +181,54 @@ namespace isnd.tests
                 AddAuthorizedClient(migrationScope, TestClientId, TestClientSecret);
                 TestingUser = await db.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
             }
+
+            // Seed IdentityServer ConfigurationDbContext with API resources and scopes
+            using (var configScope = _app.Services.CreateScope())
+            {
+                try
+                {
+                    var configDbContext = configScope.ServiceProvider.GetService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
+                    if (configDbContext != null)
+                    {
+                        configDbContext.Database.EnsureCreated();
+                        
+                        // Add test API scope if it doesn't exist
+                        var testScope = configDbContext.ApiScopes.FirstOrDefault(s => s.Name == "test");
+                        if (testScope == null)
+                        {
+                            configDbContext.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope 
+                            { 
+                                Name = "test",
+                                Enabled = true,
+                                DisplayName = "Test API Scope"
+                            });
+                            
+                            // Add a basic API resource for the test scope
+                            var apiResource = new IdentityServer8.EntityFramework.Entities.ApiResource
+                            {
+                                Name = "testapi",
+                                DisplayName = "Test API",
+                                Enabled = true,
+                                Scopes = new List<IdentityServer8.EntityFramework.Entities.ApiResourceScope>
+                                {
+                                    new IdentityServer8.EntityFramework.Entities.ApiResourceScope
+                                    {
+                                        Scope = "test"
+                                    }
+                                }
+                            };
+                            configDbContext.ApiResources.Add(apiResource);
+                            configDbContext.SaveChanges();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _sharedLogger?.LogWarning($"Failed to seed ConfigurationDbContext: {ex.Message}");
+                    // Don't fail the fixture if seeding fails
+                }
+            }
+
             await _app!.ConfigurePipeline();
             _app.UseSession();
             await _app.StartAsync();
