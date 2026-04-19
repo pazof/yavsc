@@ -1,4 +1,4 @@
-using IdentityServer8.EntityFramework.DbContexts;
+
 using IdentityServer8.EntityFramework.Entities;
 using IdentityServer8.Models;
 using Microsoft.AspNetCore.Builder;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -137,28 +137,16 @@ namespace isnd.tests
 
             var builder = WebApplication.CreateBuilder();
             builder.Environment.EnvironmentName = "Development";
-            
             // Set ContentRoot to the Yavsc.Org project directory so WebRootPath resolves correctly
             var testAssemblyLocation = AppDomain.CurrentDomain.BaseDirectory;
             var yavscOrgPath = Path.GetFullPath(Path.Combine(testAssemblyLocation, "../../src/Yavsc.Org"));
             builder.Environment.ContentRootPath = yavscOrgPath;
             
             ConfigureLogger();
-            builder.Configuration
+            var config = builder.Configuration
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
-                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
-                .AddEnvironmentVariables()
-                .AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["UseInMemoryDatabase"] = "true",
-                    ["UseTestEmailSender"] = "true",
-                    ["Smtp:Host"] = "localhost",
-                    ["Smtp:Port"] = "25",
-                    ["Smtp:SenderName"] = "Yavsc Test",
-                    ["Smtp:SenderEmail"] = "test@example.com",
-                    ["Site:Audience"] = "https://localhost",
-                    ["Site:Authority"] = "https://localhost"
-                });
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
+                .AddEnvironmentVariables().Build();
 
             // Configure Kestrel for HTTPS with self-signed certificate on a dynamic port
             builder.WebHost.ConfigureKestrel(options =>
@@ -174,6 +162,7 @@ namespace isnd.tests
             _app = builder.ConfigureWebAppServices();
             Services = _app.Services;
             SiteSettings = _app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
+            String cxStr = config.GetConnectionString(Constants.YavscConnectionStringName) ?? throw new InvalidOperationException("DefaultConnection string is not configured.");
 
             using (var migrationScope = _app.Services.CreateScope())
             {
@@ -181,7 +170,7 @@ namespace isnd.tests
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
                 TestingUserName = "Tester";
-                TestingUserPassword = "tesT456+*";
+                TestingUserPassword = "Test123!";
                 TestClientId = "testClientId";
                 TestingUserEmail = "test@no-reply.com";
                 TestingUser = null;

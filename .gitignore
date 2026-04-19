@@ -45,3 +45,5 @@ yavsc-pre
 *.env
 generated/
 *.lscache
+*.Development.json
+*.log
