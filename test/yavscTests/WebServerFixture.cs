@@ -1,3 +1,4 @@
+using IdentityServer8.EntityFramework.DbContexts;
 using IdentityServer8.EntityFramework.Entities;
 using IdentityServer8.Models;
 using Microsoft.AspNetCore.Builder;
@@ -136,6 +137,12 @@ namespace isnd.tests
 
             var builder = WebApplication.CreateBuilder();
             builder.Environment.EnvironmentName = "Development";
+            
+            // Set ContentRoot to the Yavsc.Org project directory so WebRootPath resolves correctly
+            var testAssemblyLocation = AppDomain.CurrentDomain.BaseDirectory;
+            var yavscOrgPath = Path.GetFullPath(Path.Combine(testAssemblyLocation, "../../src/Yavsc.Org"));
+            builder.Environment.ContentRootPath = yavscOrgPath;
+            
             ConfigureLogger();
             builder.Configuration
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
@@ -260,8 +267,10 @@ namespace isnd.tests
 
         private void AddAuthorizedClient(IServiceScope scope, string testClientId, string testClientSecret)
         {
+            var configDb = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+            if (configDb == null)
+                throw new InvalidOperationException("ConfigurationDbContext is not available for IdentityServer client seeding.");
 
-            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             Client testingClient = new Client
             {
                 ClientId = testClientId,
@@ -269,57 +278,58 @@ namespace isnd.tests
                 AccessTokenType = 1,
                 BackChannelLogoutUri = SiteSettings!.Audience,
                 ClientName = "Testing client",
-                Enabled = true
+                Enabled = true,
+                RequireClientSecret = true
             };
-            db.Clients.Add(testingClient);
-            db.SaveChanges();
+            configDb.Clients.Add(testingClient);
+            configDb.SaveChanges();
+
             ClientSecret secret = new ClientSecret
             {
                 Value = testClientSecret.Sha256(),
+                Type = IdentityServer8.IdentityServerConstants.SecretTypes.SharedSecret,
                 ClientId = testingClient.Id
             };
-            db.ClientSecrets.Add(secret);
+            configDb.Set<ClientSecret>().Add(secret);
 
-            var testOrigin = new ClientCorsOrigin
+            configDb.Set<ClientCorsOrigin>().Add(new ClientCorsOrigin
             {
                 ClientId = testingClient.Id,
                 Origin = SiteSettings!.Audience
+            });
 
-            };
-            db.ClientCorsOrigins.Add(testOrigin);
-            db.ClientGrantTypes.Add(new ClientGrantType
+            configDb.Set<ClientGrantType>().Add(new ClientGrantType
             {
                 ClientId = testingClient.Id,
                 GrantType = "client_credentials"
             });
-            db.ClientGrantTypes.Add(new ClientGrantType
+            configDb.Set<ClientGrantType>().Add(new ClientGrantType
             {
                 ClientId = testingClient.Id,
                 GrantType = "password"
             });
-            db.ClientGrantTypes.Add(new ClientGrantType
+            configDb.Set<ClientGrantType>().Add(new ClientGrantType
             {
                 ClientId = testingClient.Id,
                 GrantType = "code"
             });
-            db.ClientScopes.Add(new ClientScope
+            configDb.Set<ClientScope>().Add(new ClientScope
             {
                 ClientId = testingClient.Id,
                 Scope = "test"
             });
-            db.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope
+            configDb.Set<IdentityServer8.EntityFramework.Entities.ApiScope>().Add(new IdentityServer8.EntityFramework.Entities.ApiScope
             {
                 Name = "test",
                 Enabled = true
             });
-            db.ClientRedirectUris.Add(new ClientRedirectUri
+            configDb.Set<ClientRedirectUri>().Add(new ClientRedirectUri
             {
                 ClientId = testingClient.Id,
                 RedirectUri = SiteSettings!.Audience
-
             });
 
-            db.SaveChanges();
+            configDb.SaveChanges();
         }
 
         public void EnsureUser(string testingUserName, string password, string email, IServiceScope scope)

@@ -42,18 +42,30 @@ namespace Yavsc.Models
         }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
+            if (Database.IsRelational())
+            {
+                Database.SetCommandTimeout(180);
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            if (Database.IsNpgsql())
+            {
+                NOW_SQL="LOCALTIMESTAMP";
+            }
+            else
+            {
+                NOW_SQL="CURRENT_TIMESTAMP";
+            }
             builder.UseIdentityByDefaultColumns();
 
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
             builder.Entity<Contact>().HasKey(x => new { x.OwnerId, x.UserId });
-            builder.Entity<DeviceDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql("LOCALTIMESTAMP");
+            builder.Entity<DeviceDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql(NOW_SQL);
             builder.Entity<BlogTag>().HasKey(x => new { x.PostId, x.TagId });
 
             builder.Entity<ApplicationUser>().Property(u => u.FullName).IsRequired(false);
@@ -337,6 +349,6 @@ namespace Yavsc.Models
         public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
 
          public DbSet<YavscApiScope> YavscApiScopes { get; set; }
-
+        public string NOW_SQL { get; private set; }
     }
 }

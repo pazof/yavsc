@@ -152,7 +152,7 @@ public static class HostingExtensions
         if (useInMemory)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseInMemoryDatabase("YavscInMemory"));
+                options.UseSqlite("Data Source=file::memory:?cache=shared"));
         }
         else
         {
@@ -281,7 +281,7 @@ public static class HostingExtensions
         var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
         var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
         bool useInMemory = builder.Configuration.GetValue<bool>("UseInMemoryDatabase", false);
-        string inMemoryDatabaseName = "YavscInMemory";
+        string sqliteInMemoryConnectionString = "Data Source=file::memory:?cache=shared";
 
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
          {
@@ -303,7 +303,7 @@ public static class HostingExtensions
             {
                 if (useInMemory)
                 {
-                    options.ConfigureDbContext = b => b.UseInMemoryDatabase(inMemoryDatabaseName);
+                    options.ConfigureDbContext = b => b.UseSqlite(sqliteInMemoryConnectionString);
                 }
                 else
                 {
@@ -328,7 +328,7 @@ public static class HostingExtensions
             {
                 if (useInMemory)
                 {
-                    options.ConfigureDbContext = b => b.UseInMemoryDatabase(inMemoryDatabaseName);
+                    options.ConfigureDbContext = b => b.UseSqlite(sqliteInMemoryConnectionString);
                 }
                 else
                 {
