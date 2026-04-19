@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>53bd70e8-ff81-497a-847f-a15fd8ea7a09</UserSecretsId>
     <RootNamespace>Yavsc.Server</RootNamespace>

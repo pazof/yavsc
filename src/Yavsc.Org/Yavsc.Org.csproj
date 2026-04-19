@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageLicenseExpression>WTFPL</PackageLicenseExpression>
     <UserSecretsId>76e56fc2-1619-40d8-8393-365258b7a21d</UserSecretsId>
