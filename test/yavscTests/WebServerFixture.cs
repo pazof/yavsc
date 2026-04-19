@@ -28,7 +28,7 @@ namespace isnd.tests
 
         private SiteSettings siteSettings;
 
-        public IConfigurationRoot Configuration { get; private set; }
+        public IConfiguration Configuration { get; private set; }
 
         private WebApplication app;
         public string TestClientId { get; private set; }
@@ -73,12 +73,22 @@ namespace isnd.tests
         {
 
             var builder = WebApplication.CreateBuilder();
+            builder.Environment.EnvironmentName = "Development";
             ConfigureLogger();
-            Configuration = builder.Configuration
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+            builder.Configuration
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
                 .AddEnvironmentVariables()
-                .Build();
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["UseInMemoryDatabase"] = "true",
+                    ["UseTestEmailSender"] = "true",
+                    ["Smtp:Host"] = "localhost",
+                    ["Smtp:Port"] = "25",
+                    ["Smtp:SenderName"] = "Yavsc Test",
+                    ["Smtp:SenderEmail"] = "test@example.com"
+                });
+            Configuration = builder.Configuration;
 
             this.app = builder.ConfigureWebAppServices();
             Services = app.Services;

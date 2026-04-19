@@ -25,6 +25,11 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Yavsc.Org\Yavsc.Org.csproj" />
     <ProjectReference Include="..\..\src\Yavsc.Abstract\Yavsc.Abstract.csproj" />
     <ProjectReference Include="..\..\src\Yavsc.Server\Yavsc.Server.csproj" />

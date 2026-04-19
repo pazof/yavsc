@@ -1,5 +1,4 @@
 
-
 namespace Yavsc.Helpers
 {
     using System.Collections.Generic;
@@ -16,6 +15,9 @@ namespace Yavsc.Helpers
 
     public static class WorkflowHelpers
     {
+        // Synchronization lock for billing service configuration
+        private static readonly object _billingLock = new object();
+
         public static async Task<List<PerformerProfileViewModel>>
         ListPerformersAsync(this ApplicationDbContext context,
         IBillingService billing,
@@ -41,54 +43,79 @@ namespace Yavsc.Helpers
         public static void RegisterBilling<T>(string code, Func<ApplicationDbContext, long,
         IDecidableQuery> getter) where T : IBillable
         {
-            if (BillingService.Billing.ContainsKey(code)
-                || BillingService.GlobalBillingMap.ContainsKey(code))
+            lock (_billingLock)
             {
-                throw new InvalidOperationException("Billing setup");
+                string typeName = typeof(T).Name;
+                
+                // Only add if not already present (idempotent operation)
+                if (!BillingService.Billing.ContainsKey(code))
+                {
+                    BillingService.Billing.Add(code, getter);
+                }
+                else if (!BillingService.GlobalBillingMap.ContainsKey(typeName) || 
+                         BillingService.GlobalBillingMap[typeName] != code)
+                {
+                    throw new InvalidOperationException($"Billing setup: code '{code}' already registered");
+                }
+                
+                if (!BillingService.GlobalBillingMap.ContainsKey(typeName))
+                {
+                    BillingService.GlobalBillingMap.Add(typeName, code);
+                }
+                else if (BillingService.GlobalBillingMap[typeName] != code)
+                {
+                    throw new InvalidOperationException($"Billing setup: type '{typeName}' already registered with different code");
+                }
             }
-            BillingService.Billing.Add(code, getter);
-            BillingService.GlobalBillingMap.Add(typeof(T).Name, code);
         }
 
         public static void ConfigureBillingService()
         {
-            foreach (var a in System.AppDomain.CurrentDomain.GetAssemblies())
+            lock (_billingLock)
             {
-                foreach (var c in a.GetTypes())
+                BillingService.Billing.Clear();
+                BillingService.GlobalBillingMap.Clear();
+                BillingService.UserSettings.Clear();
+                Config.ProfileTypes.Clear();
+
+                foreach (var a in System.AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    if (c.IsClass && !c.IsAbstract &&
-                        c.GetInterface("ISpecializationSettings") != null)
+                    foreach (var c in a.GetTypes())
                     {
-                        Config.ProfileTypes.Add(c);
+                        if (c.IsClass && !c.IsAbstract &&
+                            c.GetInterface("ISpecializationSettings") != null)
+                        {
+                            Config.ProfileTypes.Add(c);
+                        }
                     }
                 }
-            }
 
-            foreach (var propertyInfo in typeof(ApplicationDbContext).GetProperties())
-            {
-                foreach (var attr in propertyInfo.CustomAttributes)
+                foreach (var propertyInfo in typeof(ApplicationDbContext).GetProperties())
                 {
-                    // something like a DbSet?
-                    if (typeof(Yavsc.Attributes.ActivitySettingsAttribute).IsAssignableFrom(attr.AttributeType))
+                    foreach (var attr in propertyInfo.CustomAttributes)
                     {
-                        BillingService.UserSettings.Add(propertyInfo);
+                        // something like a DbSet?
+                        if (typeof(Yavsc.Attributes.ActivitySettingsAttribute).IsAssignableFrom(attr.AttributeType))
+                        {
+                            BillingService.UserSettings.Add(propertyInfo);
+                        }
                     }
                 }
+
+                RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext, long, IDecidableQuery>
+                ((db, id) =>
+                {
+                    var query = db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularisation).Single(q => q.Id == id);
+                    query.SelectedProfile = db.BrusherProfile.Single(b => b.UserId == query.PerformerId);
+                    return query;
+                }));
+
+                RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush, new Func<ApplicationDbContext, long, IDecidableQuery>
+                ((db, id) => db.HairMultiCutQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
+
+                RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext, long, IDecidableQuery>
+                ((db, id) => db.RdvQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
             }
-
-            RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext, long, IDecidableQuery>
-            ((db, id) =>
-            {
-                var query = db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularisation).Single(q => q.Id == id);
-                query.SelectedProfile = db.BrusherProfile.Single(b => b.UserId == query.PerformerId);
-                return query;
-            }));
-
-            RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush, new Func<ApplicationDbContext, long, IDecidableQuery>
-            ((db, id) => db.HairMultiCutQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
-
-            RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext, long, IDecidableQuery>
-            ((db, id) => db.RdvQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
         }
 
     }
