@@ -1,20 +1,24 @@
+using IdentityServer8.EntityFramework.Entities;
+using IdentityServer8.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Yavsc;
-using Yavsc.Models;
-using Yavsc.Extensions;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
-using IdentityServer8.EntityFramework.Entities;
-using IdentityServer8.Models;
+using System.Net;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using Yavsc;
+using Yavsc.Extensions;
+using Yavsc.Models;
 using Client = IdentityServer8.EntityFramework.Entities.Client;
 
 namespace isnd.tests
@@ -88,6 +92,7 @@ namespace isnd.tests
                     ["Smtp:SenderName"] = "Yavsc Test",
                     ["Smtp:SenderEmail"] = "test@example.com"
                 });
+
             Configuration = builder.Configuration;
 
             this.app = builder.ConfigureWebAppServices();

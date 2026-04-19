@@ -1,16 +1,18 @@
-using System.Diagnostics;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using Google.Apis.Util.Store;
+using IdentityModel;
 using IdentityServer8;
-using Microsoft.Extensions.DependencyInjection;
+using IdentityServer8.EntityFramework.Entities;
+using IdentityServer8.EntityFramework.Services;
+using IdentityServer8.EntityFramework.Stores;
 using IdentityServer8.Stores;
-using IdentityServer8.EntityFramework;
-using IdentityServer8.Extensions;
-
-using Microsoft.AspNetCore.Authentication;
+using IdentityServer8.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -22,28 +24,12 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Yavsc.Helpers;
 using Yavsc.Interface;
+using Yavsc.Interfaces;
 using Yavsc.Models;
+using Yavsc.Server.Helpers;
 using Yavsc.Services;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
-using Yavsc.Server.Helpers;
-using System.Security.Cryptography;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Protocols.Configuration;
-using IdentityModel;
-using Yavsc.Interfaces;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Npgsql;
-using System.Reflection;
-using IdentityServer8.EntityFramework.DbContexts;
-using IdentityServer8.EntityFramework.Mappers;
-using System.IdentityModel.Tokens.Jwt;
-using IdentityServer8.EntityFramework.Stores;
-using IdentityServer8.EntityFramework.Services;
-using IdentityServer8.EntityFramework.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using IdentityServer8.Validation;
-using IdentityServer8.EntityFramework.Entities;
 
 namespace Yavsc.Extensions;
 
@@ -177,7 +163,7 @@ public static class HostingExtensions
             });
         }
 
-        return services.AddIdentity<ApplicationUser, IdentityRole>(
+        var identityBuilder = services.AddIdentity<ApplicationUser, IdentityRole>(
             options =>
             {
                 options.SignIn.RequireConfirmedAccount = builder.Environment.IsEnvironment(
@@ -187,6 +173,10 @@ public static class HostingExtensions
             }
         )
         .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
+
+        return identityBuilder;
     }
 
     private static void AddYavscPolicies(IServiceCollection services)
@@ -280,7 +270,7 @@ public static class HostingExtensions
 
             });
     }
-    private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
+    public static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
         builder.Services.Configure<IdentityOptions>(options =>
         {
