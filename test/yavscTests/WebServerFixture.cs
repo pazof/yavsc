@@ -155,7 +155,9 @@ namespace isnd.tests
                     ["Smtp:Host"] = "localhost",
                     ["Smtp:Port"] = "25",
                     ["Smtp:SenderName"] = "Yavsc Test",
-                    ["Smtp:SenderEmail"] = "test@example.com"
+                    ["Smtp:SenderEmail"] = "test@example.com",
+                    ["Site:Audience"] = "https://localhost",
+                    ["Site:Authority"] = "https://localhost"
                 });
 
             // Configure Kestrel for HTTPS with self-signed certificate on a dynamic port
@@ -207,7 +209,13 @@ namespace isnd.tests
                             { 
                                 Name = "test",
                                 Enabled = true,
-                                DisplayName = "Test API Scope"
+                                DisplayName = "Test API Scope",
+                                Description = "Scope for testing purposes",
+                                UserClaims = new List<IdentityServer8.EntityFramework.Entities.ApiScopeClaim>
+                                {
+                                    new IdentityServer8.EntityFramework.Entities.ApiScopeClaim { Type = "role" },
+                                    new IdentityServer8.EntityFramework.Entities.ApiScopeClaim { Type = "email" }
+                                }
                             });
                             
                             // Add a basic API resource for the test scope
@@ -267,7 +275,7 @@ namespace isnd.tests
 
         private void AddAuthorizedClient(IServiceScope scope, string testClientId, string testClientSecret)
         {
-            var configDb = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+            var configDb = scope.ServiceProvider.GetRequiredService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
             if (configDb == null)
                 throw new InvalidOperationException("ConfigurationDbContext is not available for IdentityServer client seeding.");
 
@@ -276,13 +284,24 @@ namespace isnd.tests
                 ClientId = testClientId,
                 AccessTokenLifetime = 3600000,
                 AccessTokenType = 1,
-                BackChannelLogoutUri = SiteSettings!.Audience,
                 ClientName = "Testing client",
                 Enabled = true,
                 RequireClientSecret = true
             };
-            configDb.Clients.Add(testingClient);
+            configDb.Set<Client>().Add(testingClient);
             configDb.SaveChanges();
+
+            var apiScope = new IdentityServer8.EntityFramework.Entities.ApiScope
+            {
+                Name = "test",
+                DisplayName = "Test Scope",
+                Description = "Scope for testing",
+                Enabled = true,
+                Required = false,
+                ShowInDiscoveryDocument = true,
+                Emphasize = false
+            };
+            configDb.Set<IdentityServer8.EntityFramework.Entities.ApiScope>().Add(apiScope);
 
             ClientSecret secret = new ClientSecret
             {
@@ -291,12 +310,6 @@ namespace isnd.tests
                 ClientId = testingClient.Id
             };
             configDb.Set<ClientSecret>().Add(secret);
-
-            configDb.Set<ClientCorsOrigin>().Add(new ClientCorsOrigin
-            {
-                ClientId = testingClient.Id,
-                Origin = SiteSettings!.Audience
-            });
 
             configDb.Set<ClientGrantType>().Add(new ClientGrantType
             {
@@ -308,25 +321,10 @@ namespace isnd.tests
                 ClientId = testingClient.Id,
                 GrantType = "password"
             });
-            configDb.Set<ClientGrantType>().Add(new ClientGrantType
-            {
-                ClientId = testingClient.Id,
-                GrantType = "code"
-            });
             configDb.Set<ClientScope>().Add(new ClientScope
             {
                 ClientId = testingClient.Id,
                 Scope = "test"
-            });
-            configDb.Set<IdentityServer8.EntityFramework.Entities.ApiScope>().Add(new IdentityServer8.EntityFramework.Entities.ApiScope
-            {
-                Name = "test",
-                Enabled = true
-            });
-            configDb.Set<ClientRedirectUri>().Add(new ClientRedirectUri
-            {
-                ClientId = testingClient.Id,
-                RedirectUri = SiteSettings!.Audience
             });
 
             configDb.SaveChanges();

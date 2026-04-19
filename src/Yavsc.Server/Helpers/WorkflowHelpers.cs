@@ -46,26 +46,15 @@ namespace Yavsc.Helpers
             lock (_billingLock)
             {
                 string typeName = typeof(T).Name;
-                
-                // Only add if not already present (idempotent operation)
-                if (!BillingService.Billing.ContainsKey(code))
-                {
-                    BillingService.Billing.Add(code, getter);
-                }
-                else if (!BillingService.GlobalBillingMap.ContainsKey(typeName) || 
-                         BillingService.GlobalBillingMap[typeName] != code)
-                {
-                    throw new InvalidOperationException($"Billing setup: code '{code}' already registered");
-                }
-                
-                if (!BillingService.GlobalBillingMap.ContainsKey(typeName))
-                {
-                    BillingService.GlobalBillingMap.Add(typeName, code);
-                }
-                else if (BillingService.GlobalBillingMap[typeName] != code)
+                if (BillingService.GlobalBillingMap.ContainsKey(typeName))
                 {
                     throw new InvalidOperationException($"Billing setup: type '{typeName}' already registered with different code");
                 }
+                if (BillingService.Billing.ContainsKey(code))
+                {
+                    throw new InvalidOperationException($"Billing setup: code '{code}' already registered with different type");
+                }
+                BillingService.Billing.Add(code, getter);
             }
         }
 

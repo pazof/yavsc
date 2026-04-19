@@ -348,7 +348,6 @@ namespace Yavsc.Models
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
         public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
 
-         public DbSet<YavscApiScope> YavscApiScopes { get; set; }
         public string NOW_SQL { get; private set; }
     }
 }
