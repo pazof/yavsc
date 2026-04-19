@@ -13,5 +13,8 @@
         "fr"
     ],
     "cSpell.reportUnknownWords": true,
-    "cSpell.language": "fr,fr-FR,en,en-GB"
+    "cSpell.language": "fr,fr-FR,en,en-GB",
+    "chat.tools.terminal.autoApprove": {
+        "dotnet test": true
+    }
 }

@@ -44,3 +44,4 @@ yavsc-pre
 
 *.env
 generated/
+*.lscache

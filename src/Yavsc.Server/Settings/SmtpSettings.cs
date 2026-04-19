@@ -3,6 +3,12 @@ namespace Yavsc.Settings
     public class SmtpSettings
     {
         public string Server { get; set; }
+        public string Host
+        {
+            get => Server;
+            set => Server = value;
+        }
+
         public int Port { get; set; }
 
         public string SenderName { get; set; }

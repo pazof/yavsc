@@ -9,7 +9,23 @@ namespace Yavsc;
 
 public static class Config
 {
+    /// <summary>
+    /// Authority URL for IdentityServer, used for authentication and authorization.
+    /// </summary>
         public static string Authority { get;  set; }
+
+        public static string AuthorityDomain
+    {
+        get
+            {
+                if (Uri.TryCreate(Authority, UriKind.Absolute, out var uri))
+                {
+                    return uri.GetLeftPart(UriPartial.Authority);
+                }
+                throw new InvalidOperationException("Invalid Authority URL");
+            }
+    }
+             
 
         public static IConfigurationRoot? GoogleWebClientConfiguration { get;  set; }
         public static GoogleServiceAccount? GServiceAccount { get;  set; }

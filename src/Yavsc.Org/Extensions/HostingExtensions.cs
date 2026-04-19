@@ -1,16 +1,18 @@
-using System.Diagnostics;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using Google.Apis.Util.Store;
+using IdentityModel;
 using IdentityServer8;
-using Microsoft.Extensions.DependencyInjection;
+using IdentityServer8.EntityFramework.Entities;
+using IdentityServer8.EntityFramework.Services;
+using IdentityServer8.EntityFramework.Stores;
 using IdentityServer8.Stores;
-using IdentityServer8.EntityFramework;
-using IdentityServer8.Extensions;
-
-using Microsoft.AspNetCore.Authentication;
+using IdentityServer8.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -22,28 +24,12 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Yavsc.Helpers;
 using Yavsc.Interface;
+using Yavsc.Interfaces;
 using Yavsc.Models;
+using Yavsc.Server.Helpers;
 using Yavsc.Services;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
-using Yavsc.Server.Helpers;
-using System.Security.Cryptography;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Protocols.Configuration;
-using IdentityModel;
-using Yavsc.Interfaces;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Npgsql;
-using System.Reflection;
-using IdentityServer8.EntityFramework.DbContexts;
-using IdentityServer8.EntityFramework.Mappers;
-using System.IdentityModel.Tokens.Jwt;
-using IdentityServer8.EntityFramework.Stores;
-using IdentityServer8.EntityFramework.Services;
-using IdentityServer8.EntityFramework.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using IdentityServer8.Validation;
-using IdentityServer8.EntityFramework.Entities;
 
 namespace Yavsc.Extensions;
 
@@ -99,9 +85,20 @@ public static class HostingExtensions
             options.ResourcesPath = "Resources";
         }).AddDataAnnotationsLocalization();
 
-        services.AddTransient<ITrueEmailSender, MailSender>()
-        .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>()
-        .AddTransient<IYavscMessageSender, YavscMessageSender>()
+        bool useTestEmailSender = builder.Configuration.GetValue<bool>("UseTestEmailSender", false);
+
+        if (useTestEmailSender)
+        {
+            services.AddTransient<ITrueEmailSender, TestMailSender>()
+                .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, TestMailSender>();
+        }
+        else
+        {
+            services.AddTransient<ITrueEmailSender, MailSender>()
+                .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>();
+        }
+
+        services.AddTransient<IYavscMessageSender, YavscMessageSender>()
         .AddTransient<IBillingService, BillingService>()
         .AddTransient<IDataStore, FileDataStore>((sp) => new FileDataStore("googledatastore", false))
         .AddTransient<ICalendarManager, CalendarManager>()
@@ -150,13 +147,23 @@ public static class HostingExtensions
     public static IdentityBuilder AddIdentityDBAndStores(this WebApplicationBuilder builder)
     {
         IServiceCollection services = builder.Services;
-        services.AddDbContext<ApplicationDbContext>(options =>
-        {
-            options.UseNpgsql(builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName),
-                options => options.MigrationsAssembly(typeof(Program).Assembly));
-        });
+        bool useInMemory = builder.Configuration.GetValue<bool>("UseInMemoryDatabase", false);
 
-        return services.AddIdentity<ApplicationUser, IdentityRole>(
+        if (useInMemory)
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseInMemoryDatabase("YavscInMemory"));
+        }
+        else
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseNpgsql(builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName),
+                    options => options.MigrationsAssembly(typeof(Program).Assembly));
+            });
+        }
+
+        var identityBuilder = services.AddIdentity<ApplicationUser, IdentityRole>(
             options =>
             {
                 options.SignIn.RequireConfirmedAccount = builder.Environment.IsEnvironment(
@@ -166,6 +173,10 @@ public static class HostingExtensions
             }
         )
         .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
+
+        return identityBuilder;
     }
 
     private static void AddYavscPolicies(IServiceCollection services)
@@ -259,7 +270,7 @@ public static class HostingExtensions
 
             });
     }
-    private static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
+    public static IIdentityServerBuilder AddIdentityServer(WebApplicationBuilder builder)
     {
         builder.Services.Configure<IdentityOptions>(options =>
         {
@@ -269,6 +280,8 @@ public static class HostingExtensions
         });
         var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
         var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
+        bool useInMemory = builder.Configuration.GetValue<bool>("UseInMemoryDatabase", false);
+        string inMemoryDatabaseName = "YavscInMemory";
 
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
          {
@@ -288,26 +301,40 @@ public static class HostingExtensions
             .AddResourceStore<ResourceStore>()
             .AddConfigurationStore(options =>
             {
-                options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
-                    sql => sql.MigrationsAssembly(migrationsAssembly))
-                    .UseSeeding((context, _) =>
-        {
-            foreach (String scope in new string[] { "blog", "admin", "contract", "com"})
-            {
-                var testBlog = context.Set<ApiScope>().FirstOrDefault(b => b.Name == scope);
-                if (testBlog == null)
+                if (useInMemory)
                 {
-                    context.Set<ApiScope>().Add(new ApiScope { Name = scope });
-                    context.SaveChanges();
+                    options.ConfigureDbContext = b => b.UseInMemoryDatabase(inMemoryDatabaseName);
                 }
-            }
+                else
+                {
+                    options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
+                        sql => sql.MigrationsAssembly(migrationsAssembly))
+                        .UseSeeding((context, _) =>
+                    {
+                        foreach (String scope in new string[] { "blog", "admin", "contract", "com"})
+                        {
+                            var testBlog = context.Set<ApiScope>().FirstOrDefault(b => b.Name == scope);
+                            if (testBlog == null)
+                            {
+                                context.Set<ApiScope>().Add(new ApiScope { Name = scope });
+                                context.SaveChanges();
+                            }
+                        }
 
-        });
+                    });
+                }
             })
             .AddOperationalStore(options =>
             {
-                options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
-                    sql => sql.MigrationsAssembly(migrationsAssembly));
+                if (useInMemory)
+                {
+                    options.ConfigureDbContext = b => b.UseInMemoryDatabase(inMemoryDatabaseName);
+                }
+                else
+                {
+                    options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
+                        sql => sql.MigrationsAssembly(migrationsAssembly));
+                }
             });
 
         if (builder.Environment.IsDevelopment())
