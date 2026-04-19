@@ -1,6 +1,7 @@
 using IdentityServer8.EntityFramework.Entities;
 using IdentityServer8.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,11 @@ namespace isnd.tests
     [CollectionDefinition("Web server collection")]
     public class WebServerFixture : IDisposable
     {
+        private static readonly Lazy<X509Certificate2> _selfSignedCertificate = new Lazy<X509Certificate2>(CreateSelfSignedCertificate);
+        private static WebApplication? _app;
+        private static bool _isInitialized = false;
+        private static int _instanceCount = 0;
+
         public List<string> Addresses { get; private set; } = new List<string>();
         public Microsoft.Extensions.Logging.ILogger? Logger { get; internal set; }
 
@@ -49,13 +55,42 @@ namespace isnd.tests
 
         public WebServerFixture()
         {
-            SetupHost().Wait();
+            lock (this)
+            {
+                _instanceCount++;
+                if (!_isInitialized)
+                {
+                    SetupHost().Wait();
+                    _isInitialized = true;
+                }
+                else
+                {
+                    // Get addresses from existing app
+                    var server = _app!.Services.GetRequiredService<IServer>();
+                    var addressFeatures = server.Features.Get<IServerAddressesFeature>();
+                    if (addressFeatures?.Addresses != null)
+                    {
+                        foreach (var address in addressFeatures.Addresses)
+                        {
+                            Addresses.Add(address);
+                        }
+                    }
+                }
+            }
         }
 
         public void Dispose()
         {
-            if (app != null)
-                app.StopAsync().Wait();
+            lock (this)
+            {
+                _instanceCount--;
+                if (_instanceCount == 0 && _app != null)
+                {
+                    _app.StopAsync().Wait();
+                    _app = null;
+                    _isInitialized = false;
+                }
+            }
         }
         void ConfigureLogger() => Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
@@ -93,13 +128,22 @@ namespace isnd.tests
                     ["Smtp:SenderEmail"] = "test@example.com"
                 });
 
+            // Configure Kestrel for HTTPS with self-signed certificate
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.Listen(IPAddress.Loopback, 5001, listenOptions =>
+                {
+                    listenOptions.UseHttps(_selfSignedCertificate.Value);
+                });
+            });
+
             Configuration = builder.Configuration;
 
-            this.app = builder.ConfigureWebAppServices();
-            Services = app.Services;
-            SiteSettings = app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
+            _app = builder.ConfigureWebAppServices();
+            Services = _app.Services;
+            SiteSettings = _app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
             
-            using (var migrationScope = app.Services.CreateScope())
+            using (var migrationScope = _app.Services.CreateScope())
             {
                 var db = migrationScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 db.Database.EnsureDeleted();
@@ -112,9 +156,9 @@ namespace isnd.tests
                 AddAuthorizedClient(TestClientId, TestClientSecret);
                 TestingUser = await db.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
             }
-            await app!.ConfigurePipeline();
-            app.UseSession();
-            await app.StartAsync();
+            await _app!.ConfigurePipeline();
+            _app.UseSession();
+            await _app.StartAsync();
 
 
 
@@ -224,6 +268,22 @@ namespace isnd.tests
                 scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 TestingUser = dbContext.Users.FirstOrDefault(u => u.UserName == testingUserName);
             }
+        }
+
+        private static X509Certificate2 CreateSelfSignedCertificate()
+        {
+            var rsa = RSA.Create(2048);
+            var certRequest = new CertificateRequest("CN=localhost", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+
+            certRequest.CertificateExtensions.Add(
+                new X509KeyUsageExtension(X509KeyUsageFlags.DataEncipherment | X509KeyUsageFlags.KeyEncipherment | X509KeyUsageFlags.DigitalSignature, false));
+
+            certRequest.CertificateExtensions.Add(
+                new X509EnhancedKeyUsageExtension(
+                    new OidCollection { new Oid("1.3.6.1.5.5.7.3.1") }, false));
+
+            var certificate = certRequest.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)), new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
+            return certificate;
         }
     }
 }
