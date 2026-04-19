@@ -23,7 +23,7 @@ namespace yavscTests
             var serverUrl = _serverFixture.Addresses.FirstOrDefault(u => u.StartsWith("https:"));
             if (string.IsNullOrEmpty(serverUrl))
                 throw new InvalidOperationException("No HTTPS server address found");
-            
+
             HttpClient client = NewHttpClient();
             var disco = await client.GetDiscoveryDocumentAsync(serverUrl);
             if (disco.IsError) throw new Exception(disco.Error);
@@ -39,10 +39,10 @@ namespace yavscTests
             if (response.IsError) throw new Exception(response.Error);
         }
 
-    private static HttpClient NewHttpClient()
-    {
-      return new HttpClient(new BypassSslValidationHandler());
-    }
+        private static HttpClient NewHttpClient()
+        {
+            return new HttpClient(new BypassSslValidationHandler());
+        }
 
         [Fact]
         public async Task ObtainResourceOwnerPasswordToken()
@@ -50,7 +50,7 @@ namespace yavscTests
             var serverUrl = _serverFixture.Addresses.FirstOrDefault(u => u.StartsWith("https:"));
             if (string.IsNullOrEmpty(serverUrl))
                 throw new InvalidOperationException("No HTTPS server address found");
-            
+
             var client = NewHttpClient();
             var disco = await client.GetDiscoveryDocumentAsync(serverUrl);
             if (disco.IsError) throw new Exception(disco.Error);
@@ -80,22 +80,22 @@ namespace yavscTests
 
     }
 
-  internal class   BypassSslValidationHandler : HttpClientHandler
-{
-    public BypassSslValidationHandler()
+    internal class BypassSslValidationHandler : HttpClientHandler
     {
-        // Override validation for this handler only
-        ServerCertificateCustomValidationCallback = ValidateCertificate;
+        public BypassSslValidationHandler()
+        {
+            // Override validation for this handler only
+            ServerCertificateCustomValidationCallback = ValidateCertificate;
+        }
+
+        private bool ValidateCertificate(
+            HttpRequestMessage request,
+            X509Certificate2? certificate,
+            X509Chain? chain,
+            SslPolicyErrors errors)
+        {
+            // Accept all certificates (bypass validation)
+            return true;
+        }
     }
- 
-    private bool ValidateCertificate(
-        HttpRequestMessage request, 
-        X509Certificate2? certificate, 
-        X509Chain? chain, 
-        SslPolicyErrors errors)
-    {
-        // Accept all certificates (bypass validation)
-        return true; 
-    }
-}
 }

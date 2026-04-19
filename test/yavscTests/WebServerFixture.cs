@@ -29,9 +29,20 @@ namespace isnd.tests
     public class WebServerFixture : IDisposable
     {
         private static readonly Lazy<X509Certificate2> _selfSignedCertificate = new Lazy<X509Certificate2>(CreateSelfSignedCertificate);
+        private static readonly object _sync = new object();
         private static WebApplication? _app;
         private static bool _isInitialized = false;
         private static int _instanceCount = 0;
+        private static readonly List<string> _sharedAddresses = new List<string>();
+        private static string? _sharedTestClientId;
+        private static string? _sharedTestClientSecret;
+        private static string? _sharedTestingUserName;
+        private static string? _sharedTestingUserPassword;
+        private static string? _sharedTestingUserEmail;
+        private static IServiceProvider? _sharedServices;
+        private static IConfiguration? _sharedConfiguration;
+        private static SiteSettings? _sharedSiteSettings;
+        private static Microsoft.Extensions.Logging.ILogger? _sharedLogger;
 
         public List<string> Addresses { get; private set; } = new List<string>();
         public Microsoft.Extensions.Logging.ILogger? Logger { get; internal set; }
@@ -40,7 +51,6 @@ namespace isnd.tests
 
         public IConfiguration? Configuration { get; private set; }
 
-        private WebApplication? app;
         public string? TestClientId { get; private set; }
 
         public IServiceProvider? Services { get; private set; }
@@ -52,10 +62,10 @@ namespace isnd.tests
         public bool DbCreated { get; internal set; }
         public SiteSettings? SiteSettings { get => siteSettings; set => siteSettings = value; }
         public string? TestClientSecret { get; set; }
-
+        public string? TestingUserEmail { get; set; }
         public WebServerFixture()
         {
-            lock (this)
+            lock (_sync)
             {
                 _instanceCount++;
                 if (!_isInitialized)
@@ -63,25 +73,14 @@ namespace isnd.tests
                     SetupHost().Wait();
                     _isInitialized = true;
                 }
-                else
-                {
-                    // Get addresses from existing app
-                    var server = _app!.Services.GetRequiredService<IServer>();
-                    var addressFeatures = server.Features.Get<IServerAddressesFeature>();
-                    if (addressFeatures?.Addresses != null)
-                    {
-                        foreach (var address in addressFeatures.Addresses)
-                        {
-                            Addresses.Add(address);
-                        }
-                    }
-                }
+
+                CopySharedState();
             }
         }
 
         public void Dispose()
         {
-            lock (this)
+            lock (_sync)
             {
                 _instanceCount--;
                 if (_instanceCount == 0 && _app != null)
@@ -89,8 +88,32 @@ namespace isnd.tests
                     _app.StopAsync().Wait();
                     _app = null;
                     _isInitialized = false;
+                    _sharedAddresses.Clear();
+                    _sharedServices = null;
+                    _sharedConfiguration = null;
+                    _sharedSiteSettings = null;
+                    _sharedLogger = null;
+                    _sharedTestClientId = null;
+                    _sharedTestClientSecret = null;
+                    _sharedTestingUserName = null;
+                    _sharedTestingUserPassword = null;
+                    _sharedTestingUserEmail = null;
                 }
             }
+        }
+
+        private void CopySharedState()
+        {
+            Addresses = new List<string>(_sharedAddresses);
+            Logger = _sharedLogger;
+            Configuration = _sharedConfiguration;
+            Services = _sharedServices;
+            SiteSettings = _sharedSiteSettings;
+            TestClientId = _sharedTestClientId;
+            TestClientSecret = _sharedTestClientSecret;
+            TestingUserName = _sharedTestingUserName;
+            TestingUserPassword = _sharedTestingUserPassword;
+            TestingUserEmail = _sharedTestingUserEmail;
         }
         void ConfigureLogger() => Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
@@ -128,10 +151,10 @@ namespace isnd.tests
                     ["Smtp:SenderEmail"] = "test@example.com"
                 });
 
-            // Configure Kestrel for HTTPS with self-signed certificate
+            // Configure Kestrel for HTTPS with self-signed certificate on a dynamic port
             builder.WebHost.ConfigureKestrel(options =>
             {
-                options.Listen(IPAddress.Loopback, 5001, listenOptions =>
+                options.Listen(IPAddress.Loopback, 0, listenOptions =>
                 {
                     listenOptions.UseHttps(_selfSignedCertificate.Value);
                 });
@@ -142,7 +165,7 @@ namespace isnd.tests
             _app = builder.ConfigureWebAppServices();
             Services = _app.Services;
             SiteSettings = _app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
-            
+
             using (var migrationScope = _app.Services.CreateScope())
             {
                 var db = migrationScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -151,104 +174,110 @@ namespace isnd.tests
                 TestingUserName = "Tester";
                 TestingUserPassword = "tesT456+*";
                 TestClientId = "testClientId";
+                TestingUserEmail = "test@no-reply.com";
+                TestingUser = null;
                 TestClientSecret = Guid.CreateVersion7().ToString();
-                EnsureUser(TestingUserName, TestingUserPassword);
-                AddAuthorizedClient(TestClientId, TestClientSecret);
+                EnsureUser(TestingUserName, TestingUserPassword, TestingUserEmail, migrationScope);
+                AddAuthorizedClient(migrationScope, TestClientId, TestClientSecret);
                 TestingUser = await db.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
             }
             await _app!.ConfigurePipeline();
             _app.UseSession();
             await _app.StartAsync();
 
+            _sharedServices = _app.Services;
+            _sharedConfiguration = Configuration;
+            _sharedSiteSettings = SiteSettings;
+            _sharedTestClientId = TestClientId;
+            _sharedTestClientSecret = TestClientSecret;
+            _sharedTestingUserName = TestingUserName;
+            _sharedTestingUserPassword = TestingUserPassword;
+            _sharedTestingUserEmail = TestingUserEmail;
+            _sharedLogger = _app.Services.GetRequiredService<ILoggerFactory>().CreateLogger<WebServerFixture>();
+            Logger = _sharedLogger;
 
-
-            var logFactory = app.Services.GetRequiredService<ILoggerFactory>();
-            Logger = logFactory.CreateLogger<WebServerFixture>();
-
-            var server = app.Services.GetRequiredService<IServer>();
-
+            var server = _app.Services.GetRequiredService<IServer>();
             var addressFeatures = server.Features.Get<IServerAddressesFeature>();
 
             if (addressFeatures?.Addresses != null)
             {
+                _sharedAddresses.Clear();
                 foreach (var address in addressFeatures.Addresses)
                 {
+                    _sharedAddresses.Add(address);
                     Addresses.Add(address);
                 }
             }
         }
 
-        private void AddAuthorizedClient(string testClientId, string testClientSecret)
+        private void AddAuthorizedClient(IServiceScope scope, string testClientId, string testClientSecret)
         {
-            using (IServiceScope scope = app!.Services.CreateScope())
+
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            Client testingClient = new Client
             {
-                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                Client testingClient = new Client
-                {
-                    ClientId = testClientId,
-                    AccessTokenLifetime = 3600000,
-                    AccessTokenType = 1,
-                    BackChannelLogoutUri = SiteSettings!.Audience,
-                    ClientName = "Testing client",
-                    Enabled = true
-                };
-                db.Clients.Add(testingClient);
-                db.SaveChanges();
-                ClientSecret secret = new ClientSecret
-                {
-                    Value = testClientSecret.Sha256(),
-                    ClientId = testingClient.Id
-                };
-                db.ClientSecrets.Add(secret);
+                ClientId = testClientId,
+                AccessTokenLifetime = 3600000,
+                AccessTokenType = 1,
+                BackChannelLogoutUri = SiteSettings!.Audience,
+                ClientName = "Testing client",
+                Enabled = true
+            };
+            db.Clients.Add(testingClient);
+            db.SaveChanges();
+            ClientSecret secret = new ClientSecret
+            {
+                Value = testClientSecret.Sha256(),
+                ClientId = testingClient.Id
+            };
+            db.ClientSecrets.Add(secret);
 
-                var testOrigin = new ClientCorsOrigin
-                {
-                    ClientId = testingClient.Id,
-                    Origin = SiteSettings!.Audience
+            var testOrigin = new ClientCorsOrigin
+            {
+                ClientId = testingClient.Id,
+                Origin = SiteSettings!.Audience
 
-                };
-                db.ClientCorsOrigins.Add(testOrigin);
-                db.ClientGrantTypes.Add(new ClientGrantType
-                {
-                    ClientId = testingClient.Id,
-                    GrantType = "client_credentials"
-                });
-                db.ClientGrantTypes.Add(new ClientGrantType
-                {
-                    ClientId = testingClient.Id,
-                    GrantType = "password"
-                });
-                db.ClientGrantTypes.Add(new ClientGrantType
-                {
-                    ClientId = testingClient.Id,
-                    GrantType = "code"
-                });
-                db.ClientScopes.Add(new ClientScope
-                {
-                    ClientId = testingClient.Id,
-                    Scope = "test"
-                });
-                db.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope
-                {
-                    Name = "test",
-                    Enabled = true
-                });
-                db.ClientRedirectUris.Add(new ClientRedirectUri
-                {
-                    ClientId = testingClient.Id,
-                    RedirectUri = SiteSettings!.Audience
+            };
+            db.ClientCorsOrigins.Add(testOrigin);
+            db.ClientGrantTypes.Add(new ClientGrantType
+            {
+                ClientId = testingClient.Id,
+                GrantType = "client_credentials"
+            });
+            db.ClientGrantTypes.Add(new ClientGrantType
+            {
+                ClientId = testingClient.Id,
+                GrantType = "password"
+            });
+            db.ClientGrantTypes.Add(new ClientGrantType
+            {
+                ClientId = testingClient.Id,
+                GrantType = "code"
+            });
+            db.ClientScopes.Add(new ClientScope
+            {
+                ClientId = testingClient.Id,
+                Scope = "test"
+            });
+            db.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope
+            {
+                Name = "test",
+                Enabled = true
+            });
+            db.ClientRedirectUris.Add(new ClientRedirectUri
+            {
+                ClientId = testingClient.Id,
+                RedirectUri = SiteSettings!.Audience
 
-                });
+            });
 
-                db.SaveChanges();
-            }
+            db.SaveChanges();
         }
 
-        public void EnsureUser(string testingUserName, string password)
+        public void EnsureUser(string testingUserName, string password, string email, IServiceScope scope)
         {
             if (TestingUser == null)
             {
-                using IServiceScope scope = app!.Services.CreateScope();
 
                 var userManager =
                 scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
