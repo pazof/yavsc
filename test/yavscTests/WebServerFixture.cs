@@ -24,24 +24,24 @@ namespace isnd.tests
     public class WebServerFixture : IDisposable
     {
         public List<string> Addresses { get; private set; } = new List<string>();
-        public Microsoft.Extensions.Logging.ILogger Logger { get; internal set; }
+        public Microsoft.Extensions.Logging.ILogger? Logger { get; internal set; }
 
-        private SiteSettings siteSettings;
+        private SiteSettings? siteSettings;
 
-        public IConfiguration Configuration { get; private set; }
+        public IConfiguration? Configuration { get; private set; }
 
-        private WebApplication app;
-        public string TestClientId { get; private set; }
+        private WebApplication? app;
+        public string? TestClientId { get; private set; }
 
-        public IServiceProvider Services { get; private set; }
-        public string TestingUserName { get; private set; }
-        public string TestingUserPassword { get; private set; }
+        public IServiceProvider? Services { get; private set; }
+        public string? TestingUserName { get; private set; }
+        public string? TestingUserPassword { get; private set; }
 
-        public string ProtectedTestingApiKey { get; internal set; }
-        public ApplicationUser TestingUser { get; private set; }
+        public string? ProtectedTestingApiKey { get; internal set; }
+        public ApplicationUser? TestingUser { get; private set; }
         public bool DbCreated { get; internal set; }
-        public SiteSettings SiteSettings { get => siteSettings; set => siteSettings = value; }
-        public string TestClientSecret { get; set; }
+        public SiteSettings? SiteSettings { get => siteSettings; set => siteSettings = value; }
+        public string? TestClientSecret { get; set; }
 
         public WebServerFixture()
         {
@@ -107,7 +107,7 @@ namespace isnd.tests
                 AddAuthorizedClient(TestClientId, TestClientSecret);
                 TestingUser = await db.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
             }
-            await app.ConfigurePipeline();
+            await app!.ConfigurePipeline();
             app.UseSession();
             await app.StartAsync();
 
@@ -120,16 +120,18 @@ namespace isnd.tests
 
             var addressFeatures = server.Features.Get<IServerAddressesFeature>();
 
-            foreach (var address in addressFeatures.Addresses)
+            if (addressFeatures?.Addresses != null)
             {
-                Addresses.Add(address);
+                foreach (var address in addressFeatures.Addresses)
+                {
+                    Addresses.Add(address);
+                }
             }
-
         }
 
         private void AddAuthorizedClient(string testClientId, string testClientSecret)
         {
-            using (IServiceScope scope = app.Services.CreateScope())
+            using (IServiceScope scope = app!.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 Client testingClient = new Client
@@ -137,7 +139,7 @@ namespace isnd.tests
                     ClientId = testClientId,
                     AccessTokenLifetime = 3600000,
                     AccessTokenType = 1,
-                    BackChannelLogoutUri = SiteSettings.Audience,
+                    BackChannelLogoutUri = SiteSettings!.Audience,
                     ClientName = "Testing client",
                     Enabled = true
                 };
@@ -153,7 +155,7 @@ namespace isnd.tests
                 var testOrigin = new ClientCorsOrigin
                 {
                     ClientId = testingClient.Id,
-                    Origin = SiteSettings.Audience
+                    Origin = SiteSettings!.Audience
 
                 };
                 db.ClientCorsOrigins.Add(testOrigin);
@@ -185,7 +187,7 @@ namespace isnd.tests
                 db.ClientRedirectUris.Add(new ClientRedirectUri
                 {
                     ClientId = testingClient.Id,
-                    RedirectUri = SiteSettings.Audience
+                    RedirectUri = SiteSettings!.Audience
 
                 });
 
@@ -197,7 +199,7 @@ namespace isnd.tests
         {
             if (TestingUser == null)
             {
-                using IServiceScope scope = app.Services.CreateScope();
+                using IServiceScope scope = app!.Services.CreateScope();
 
                 var userManager =
                 scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();

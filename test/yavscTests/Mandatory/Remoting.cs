@@ -100,8 +100,8 @@ namespace yavscTests
  
     private bool ValidateCertificate(
         HttpRequestMessage request, 
-        X509Certificate2 certificate, 
-        X509Chain chain, 
+        X509Certificate2? certificate, 
+        X509Chain? chain, 
         SslPolicyErrors errors)
     {
         // Accept all certificates (bypass validation)
