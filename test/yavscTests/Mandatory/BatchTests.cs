@@ -53,8 +53,6 @@ namespace yavscTests
         public void HaveConfigurationRoot()
         {
             var builder = new ConfigurationBuilder();
-            builder.AddJsonFile( "appsettings.json", false);
-            builder.AddJsonFile( "appsettings.Development.json", true);
             configurationRoot = builder.Build();
         }
 

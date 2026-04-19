@@ -47,9 +47,9 @@ namespace Yavsc.Services
         /// <returns>a MessageWithPayloadResponse,
         /// <c>bool somethingsent = (response.failure == 0 &amp;&amp; response.success > 0)</c>
         /// </returns>
-        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            await SendEmailAsync("", email, subject, htmlMessage);
+            return SendEmailAsync("", email, subject, htmlMessage);
         }
 
         public async Task<string> SendEmailAsync(string name, string email, string subject, string htmlMessage)
@@ -71,8 +71,9 @@ namespace Yavsc.Services
             );
             using (SmtpClient sc = new())
             {
+                sc.Timeout = 30000;
                 sc.Connect(
-                    smtpSettings.Server,
+                    smtpSettings.Host,
                     smtpSettings.Port,
                     SecureSocketOptions.Auto
                     );

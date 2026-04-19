@@ -1,3 +1,4 @@
+
 using IdentityServer8.EntityFramework.Entities;
 using IdentityServer8.Models;
 using Microsoft.AspNetCore.Builder;
@@ -5,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -136,20 +137,16 @@ namespace isnd.tests
 
             var builder = WebApplication.CreateBuilder();
             builder.Environment.EnvironmentName = "Development";
+            // Set ContentRoot to the Yavsc.Org project directory so WebRootPath resolves correctly
+            var testAssemblyLocation = AppDomain.CurrentDomain.BaseDirectory;
+            var yavscOrgPath = Path.GetFullPath(Path.Combine(testAssemblyLocation, "../../src/Yavsc.Org"));
+            builder.Environment.ContentRootPath = yavscOrgPath;
+            
             ConfigureLogger();
-            builder.Configuration
+            var config = builder.Configuration
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
-                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
-                .AddEnvironmentVariables()
-                .AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["UseInMemoryDatabase"] = "true",
-                    ["UseTestEmailSender"] = "true",
-                    ["Smtp:Host"] = "localhost",
-                    ["Smtp:Port"] = "25",
-                    ["Smtp:SenderName"] = "Yavsc Test",
-                    ["Smtp:SenderEmail"] = "test@example.com"
-                });
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
+                .AddEnvironmentVariables().Build();
 
             // Configure Kestrel for HTTPS with self-signed certificate on a dynamic port
             builder.WebHost.ConfigureKestrel(options =>
@@ -165,6 +162,7 @@ namespace isnd.tests
             _app = builder.ConfigureWebAppServices();
             Services = _app.Services;
             SiteSettings = _app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
+            String cxStr = config.GetConnectionString(Constants.YavscConnectionStringName) ?? throw new InvalidOperationException("DefaultConnection string is not configured.");
 
             using (var migrationScope = _app.Services.CreateScope())
             {
@@ -172,7 +170,7 @@ namespace isnd.tests
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
                 TestingUserName = "Tester";
-                TestingUserPassword = "tesT456+*";
+                TestingUserPassword = "Test123!";
                 TestClientId = "testClientId";
                 TestingUserEmail = "test@no-reply.com";
                 TestingUser = null;
@@ -181,6 +179,60 @@ namespace isnd.tests
                 AddAuthorizedClient(migrationScope, TestClientId, TestClientSecret);
                 TestingUser = await db.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
             }
+
+            // Seed IdentityServer ConfigurationDbContext with API resources and scopes
+            using (var configScope = _app.Services.CreateScope())
+            {
+                try
+                {
+                    var configDbContext = configScope.ServiceProvider.GetService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
+                    if (configDbContext != null)
+                    {
+                        configDbContext.Database.EnsureCreated();
+                        
+                        // Add test API scope if it doesn't exist
+                        var testScope = configDbContext.ApiScopes.FirstOrDefault(s => s.Name == "test");
+                        if (testScope == null)
+                        {
+                            configDbContext.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope 
+                            { 
+                                Name = "test",
+                                Enabled = true,
+                                DisplayName = "Test API Scope",
+                                Description = "Scope for testing purposes",
+                                UserClaims = new List<IdentityServer8.EntityFramework.Entities.ApiScopeClaim>
+                                {
+                                    new IdentityServer8.EntityFramework.Entities.ApiScopeClaim { Type = "role" },
+                                    new IdentityServer8.EntityFramework.Entities.ApiScopeClaim { Type = "email" }
+                                }
+                            });
+                            
+                            // Add a basic API resource for the test scope
+                            var apiResource = new IdentityServer8.EntityFramework.Entities.ApiResource
+                            {
+                                Name = "testapi",
+                                DisplayName = "Test API",
+                                Enabled = true,
+                                Scopes = new List<IdentityServer8.EntityFramework.Entities.ApiResourceScope>
+                                {
+                                    new IdentityServer8.EntityFramework.Entities.ApiResourceScope
+                                    {
+                                        Scope = "test"
+                                    }
+                                }
+                            };
+                            configDbContext.ApiResources.Add(apiResource);
+                            configDbContext.SaveChanges();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _sharedLogger?.LogWarning($"Failed to seed ConfigurationDbContext: {ex.Message}");
+                    // Don't fail the fixture if seeding fails
+                }
+            }
+
             await _app!.ConfigurePipeline();
             _app.UseSession();
             await _app.StartAsync();
@@ -212,66 +264,59 @@ namespace isnd.tests
 
         private void AddAuthorizedClient(IServiceScope scope, string testClientId, string testClientSecret)
         {
+            var configDb = scope.ServiceProvider.GetRequiredService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
+            if (configDb == null)
+                throw new InvalidOperationException("ConfigurationDbContext is not available for IdentityServer client seeding.");
 
-            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             Client testingClient = new Client
             {
                 ClientId = testClientId,
                 AccessTokenLifetime = 3600000,
                 AccessTokenType = 1,
-                BackChannelLogoutUri = SiteSettings!.Audience,
                 ClientName = "Testing client",
-                Enabled = true
+                Enabled = true,
+                RequireClientSecret = true
             };
-            db.Clients.Add(testingClient);
-            db.SaveChanges();
+            configDb.Set<Client>().Add(testingClient);
+            configDb.SaveChanges();
+
+            var apiScope = new IdentityServer8.EntityFramework.Entities.ApiScope
+            {
+                Name = "test",
+                DisplayName = "Test Scope",
+                Description = "Scope for testing",
+                Enabled = true,
+                Required = false,
+                ShowInDiscoveryDocument = true,
+                Emphasize = false
+            };
+            configDb.Set<IdentityServer8.EntityFramework.Entities.ApiScope>().Add(apiScope);
+
             ClientSecret secret = new ClientSecret
             {
                 Value = testClientSecret.Sha256(),
+                Type = IdentityServer8.IdentityServerConstants.SecretTypes.SharedSecret,
                 ClientId = testingClient.Id
             };
-            db.ClientSecrets.Add(secret);
+            configDb.Set<ClientSecret>().Add(secret);
 
-            var testOrigin = new ClientCorsOrigin
-            {
-                ClientId = testingClient.Id,
-                Origin = SiteSettings!.Audience
-
-            };
-            db.ClientCorsOrigins.Add(testOrigin);
-            db.ClientGrantTypes.Add(new ClientGrantType
+            configDb.Set<ClientGrantType>().Add(new ClientGrantType
             {
                 ClientId = testingClient.Id,
                 GrantType = "client_credentials"
             });
-            db.ClientGrantTypes.Add(new ClientGrantType
+            configDb.Set<ClientGrantType>().Add(new ClientGrantType
             {
                 ClientId = testingClient.Id,
                 GrantType = "password"
             });
-            db.ClientGrantTypes.Add(new ClientGrantType
-            {
-                ClientId = testingClient.Id,
-                GrantType = "code"
-            });
-            db.ClientScopes.Add(new ClientScope
+            configDb.Set<ClientScope>().Add(new ClientScope
             {
                 ClientId = testingClient.Id,
                 Scope = "test"
             });
-            db.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope
-            {
-                Name = "test",
-                Enabled = true
-            });
-            db.ClientRedirectUris.Add(new ClientRedirectUri
-            {
-                ClientId = testingClient.Id,
-                RedirectUri = SiteSettings!.Audience
 
-            });
-
-            db.SaveChanges();
+            configDb.SaveChanges();
         }
 
         public void EnsureUser(string testingUserName, string password, string email, IServiceScope scope)

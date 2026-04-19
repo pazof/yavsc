@@ -65,8 +65,9 @@ internal class Program
                          new() { ValidateAudience = false, RoleClaimType = Constants.RoleClaimType };
                      options.MapInboundClaims = true;
                  });
-
+        
         services.AddDbContext<ApplicationDbContext>(options =>
+           
            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         services.AddTransient<ITrueEmailSender, MailSender>()

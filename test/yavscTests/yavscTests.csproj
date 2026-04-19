@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <RootNamespace>Yavsc.Tests</RootNamespace>
+    <UserSecretsId>78a4efec-68dc-4745-ba06-d8545ef9ee91</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
@@ -30,6 +31,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="appsettings.*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Yavsc.Org\Yavsc.Org.csproj" />
     <ProjectReference Include="..\..\src\Yavsc.Abstract\Yavsc.Abstract.csproj" />
     <ProjectReference Include="..\..\src\Yavsc.Server\Yavsc.Server.csproj" />
@@ -37,4 +43,5 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+
 </Project>

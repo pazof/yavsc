@@ -85,18 +85,9 @@ public static class HostingExtensions
             options.ResourcesPath = "Resources";
         }).AddDataAnnotationsLocalization();
 
-        bool useTestEmailSender = builder.Configuration.GetValue<bool>("UseTestEmailSender", false);
-
-        if (useTestEmailSender)
-        {
-            services.AddTransient<ITrueEmailSender, TestMailSender>()
-                .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, TestMailSender>();
-        }
-        else
-        {
             services.AddTransient<ITrueEmailSender, MailSender>()
                 .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>();
-        }
+        
 
         services.AddTransient<IYavscMessageSender, YavscMessageSender>()
         .AddTransient<IBillingService, BillingService>()
@@ -147,21 +138,12 @@ public static class HostingExtensions
     public static IdentityBuilder AddIdentityDBAndStores(this WebApplicationBuilder builder)
     {
         IServiceCollection services = builder.Services;
-        bool useInMemory = builder.Configuration.GetValue<bool>("UseInMemoryDatabase", false);
-
-        if (useInMemory)
+       
+        services.AddDbContext<ApplicationDbContext>(options =>
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseInMemoryDatabase("YavscInMemory"));
-        }
-        else
-        {
-            services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseNpgsql(builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName),
-                    options => options.MigrationsAssembly(typeof(Program).Assembly));
-            });
-        }
+            options.UseNpgsql(builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName),
+                options => options.MigrationsAssembly(typeof(Program).Assembly));
+        });
 
         var identityBuilder = services.AddIdentity<ApplicationUser, IdentityRole>(
             options =>
@@ -280,8 +262,8 @@ public static class HostingExtensions
         });
         var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
         var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
-        bool useInMemory = builder.Configuration.GetValue<bool>("UseInMemoryDatabase", false);
-        string inMemoryDatabaseName = "YavscInMemory";
+        
+        string sqliteConnectionString = $"Data Source={Path.Combine(Path.GetTempPath(), "yavsc_test.db")}";
 
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
          {
@@ -301,40 +283,15 @@ public static class HostingExtensions
             .AddResourceStore<ResourceStore>()
             .AddConfigurationStore(options =>
             {
-                if (useInMemory)
-                {
-                    options.ConfigureDbContext = b => b.UseInMemoryDatabase(inMemoryDatabaseName);
-                }
-                else
-                {
-                    options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
-                        sql => sql.MigrationsAssembly(migrationsAssembly))
-                        .UseSeeding((context, _) =>
-                    {
-                        foreach (String scope in new string[] { "blog", "admin", "contract", "com"})
-                        {
-                            var testBlog = context.Set<ApiScope>().FirstOrDefault(b => b.Name == scope);
-                            if (testBlog == null)
-                            {
-                                context.Set<ApiScope>().Add(new ApiScope { Name = scope });
-                                context.SaveChanges();
-                            }
-                        }
-
-                    });
-                }
+                options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
+                    sql => sql.MigrationsAssembly(migrationsAssembly))
+                    .UseSeeding(EnsureDefaultApplicationScopes());
             })
             .AddOperationalStore(options =>
             {
-                if (useInMemory)
-                {
-                    options.ConfigureDbContext = b => b.UseInMemoryDatabase(inMemoryDatabaseName);
-                }
-                else
-                {
-                    options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
-                        sql => sql.MigrationsAssembly(migrationsAssembly));
-                }
+                options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
+                    sql => sql.MigrationsAssembly(migrationsAssembly));
+                
             });
 
         if (builder.Environment.IsDevelopment())
@@ -342,6 +299,23 @@ public static class HostingExtensions
             identityServerBuilder.AddDeveloperSigningCredential();
         }
         return identityServerBuilder;
+    }
+
+    private static Action<DbContext, bool> EnsureDefaultApplicationScopes()
+    {
+        return (context, _) =>
+        {
+            foreach (String scope in new string[] { "blog", "admin", "contract", "com" })
+            {
+                var existentScope = context.Set<ApiScope>().FirstOrDefault(b => b.Name == scope);
+                if (existentScope == null)
+                {
+                    context.Set<ApiScope>().Add(new ApiScope { Name = scope });
+                    context.SaveChanges();
+                }
+            }
+
+        };
     }
 
     private static void ConfigureRequestLocalization(IServiceCollection services)
