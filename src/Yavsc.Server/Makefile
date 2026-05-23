@@ -1,2 +1,3 @@
-listConnections:
-	dotnet ef migrations list --connection "$(YAVSC_CONNECTION_STRING)"
+listMigrations:
+	dotnet ef migrations list 
+

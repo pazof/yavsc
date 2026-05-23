@@ -12,7 +12,7 @@ clean:
 	dotnet clean
 
 src/Yavsc/bin/output/wwwroot:
-	dotnet --project src/Yavsc/Yavsc.csproj publish
+	dotnet --project src/Yavsc.Org/Yavsc.Org.csproj publish
 
 test:
 	dotnet test
@@ -27,15 +27,14 @@ src/Yavsc.Server/bin/$(CONFIG)/$(FRAMEWORK)/Yavsc.Server.dll:
 	dotnet build -p:Configuration=$(CONFIG) --project src/Yavsc.Server/Yavsc.Server.csproj
 
 src/Yavsc/bin/$(CONFIG)/$(FRAMEWORK)/Yavsc.dll:
-	dotnet build -p:Configuration=$(CONFIG) --project src/Yavsc/Yavsc.csproj
+	dotnet build -p:Configuration=$(CONFIG) --project src/Yavsc.Org/Yavsc.Org.csproj
 
 $(DESTDIR): 
 	mkdir $(DESTDIR)
 
 install: $(DESTDIR)
-	dotnet publish src/Org/Org.csproj -c Release -o $(APP_FULL_PATH)
+	dotnet publish src/Yavsc.Org/Yavsc.Org.csproj -c Release -o $(APP_FULL_PATH)
 	dotnet publish src/Api/Api.csproj -c Release -o $(APP_FULL_PATH)
-	dotnet publish src/Web/Web.csproj -c Release -o $(APP_FULL_PATH)
 	sudo chown -R www-data:www-data $(APP_FULL_PATH)
 
 docker-image:

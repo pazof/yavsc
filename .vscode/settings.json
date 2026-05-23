@@ -16,5 +16,6 @@
     "cSpell.language": "fr,fr-FR,en,en-GB",
     "chat.tools.terminal.autoApprove": {
         "dotnet test": true
-    }
+    },
+    "makefile.configureOnOpen": false
 }
