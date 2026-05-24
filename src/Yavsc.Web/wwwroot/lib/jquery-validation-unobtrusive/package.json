@@ -35,7 +35,7 @@
     "gulp-replace": "~1.1.3",
     "gulp-uglify": "~3.0.2",
     "lodash": "^4.17.21",
-    "minimatch": ">=5.1.0"
+    "minimatch": ">=10.2.5"
   },
   "overrides": {
     "glob-parent": "~6.0.1"
