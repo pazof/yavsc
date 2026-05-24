@@ -5,6 +5,8 @@
     <PackageLicenseExpression>WTFPL</PackageLicenseExpression>
     <UserSecretsId>76e56fc2-1619-40d8-8393-365258b7a21d</UserSecretsId>
     <RootNamespace>Yavsc</RootNamespace>
+
+    <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="popper.js">

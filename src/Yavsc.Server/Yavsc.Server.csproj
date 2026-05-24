@@ -4,6 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>53bd70e8-ff81-497a-847f-a15fd8ea7a09</UserSecretsId>
     <RootNamespace>Yavsc.Server</RootNamespace>
+    <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="HigginsSoft.IdentityServer8.EntityFramework" />
