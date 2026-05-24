@@ -39,7 +39,6 @@ appsettings.Development.json
 builds/
 /test/yavscTests/test-results.xml
 /test/yavscTests/test-results.html
-/binaries/Debug/yavscd
 yavsc-pre
 
 *.env
@@ -47,3 +46,11 @@ generated/
 *.lscache
 *.Development.json
 *.log
+
+
+**/AppDataDevelopment/
+binaries/
+build/
+src/*/Blog-Dev/
+*.mp4
+
