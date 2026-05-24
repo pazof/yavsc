@@ -24,6 +24,7 @@ on:
     branches: [ "main" ]
 
 jobs:
+
   log-the-inputs:
     runs-on: ubuntu-latest
     steps:
@@ -45,6 +46,8 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
+    - name: Add custom NuGet source
+      run: dotnet nuget add source https://isn.pschneider.fr/v3/index.json --name isn-pschneider
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
