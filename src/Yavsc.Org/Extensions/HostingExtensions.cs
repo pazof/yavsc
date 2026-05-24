@@ -28,6 +28,7 @@ using Yavsc.Interfaces;
 using Yavsc.Models;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
+using Yavsc.Services.Kyc;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
 
@@ -131,7 +132,8 @@ public static class HostingExtensions
 
         services.AddTransient<RoleManager<IdentityRole>>();
         services.AddTransient<IRoleStore<IdentityRole>, RoleStore<IdentityRole, ApplicationDbContext>>();
-
+        services.Configure<KycOptions>(builder.Configuration.GetSection("Kyc"));
+        services.AddScoped<ITrustTokenService, TrustTokenService>();
         return builder.Build();
     }
 

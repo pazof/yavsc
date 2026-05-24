@@ -34,6 +34,7 @@ namespace Yavsc.Models
     using Streaming;
     using Workflow;
     using Workflow.Profiles;
+    using Yavsc.Models.Kyc;
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -53,11 +54,11 @@ namespace Yavsc.Models
             base.OnModelCreating(builder);
             if (Database.IsNpgsql())
             {
-                NOW_SQL="LOCALTIMESTAMP";
+                NOW_SQL = "LOCALTIMESTAMP";
             }
             else
             {
-                NOW_SQL="CURRENT_TIMESTAMP";
+                NOW_SQL = "CURRENT_TIMESTAMP";
             }
             builder.UseIdentityByDefaultColumns();
 
@@ -129,6 +130,70 @@ namespace Yavsc.Models
                 if (et.ClrType.GetInterface("IBaseTrackedEntity") != null)
                     et.FindProperty("DateCreated").SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
             }
+
+            // ── TrustToken ───────────────────────────────────────────────────────
+            builder.Entity<TrustToken>(e =>
+            {
+                e.HasIndex(t => t.TokenHash).IsUnique(); // idempotence garantie en DB
+                e.Property(t => t.TokenHash).HasMaxLength(128).IsRequired();
+                e.Property(t => t.TokenSource).HasMaxLength(32).IsRequired();
+            });
+
+            // ── TrustDeclaration ─────────────────────────────────────────────────
+            builder.Entity<TrustDeclaration>(e =>
+            {
+                e.HasOne(d => d.Subject)
+                 .WithMany(t => t.Declarations)
+                 .HasForeignKey(d => d.TrustTokenId)
+                 .OnDelete(DeleteBehavior.Restrict); // on ne supprime pas un token qui a des déclarations
+
+                // DeclarantTokenId est une FK vers TrustToken mais sans navigation
+                // pour éviter les cycles EF
+                e.HasIndex(d => d.TrustTokenId);
+                e.HasIndex(d => d.Status);
+                e.HasIndex(d => d.SubmittedAt);
+                e.Property(d => d.Content).HasMaxLength(2000);
+            });
+
+            // ── DeclarationFlag ──────────────────────────────────────────────────
+            builder.Entity<DeclarationFlag>(e =>
+            {
+                e.HasOne(f => f.Declaration)
+                 .WithMany(d => d.Flags)
+                 .HasForeignKey(f => f.DeclarationId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(f => f.Pattern)
+                 .WithMany()
+                 .HasForeignKey(f => f.PatternId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                e.Property(f => f.MatchExcerpt).HasMaxLength(100);
+            });
+
+            // ── RegexAlertPattern ────────────────────────────────────────────────
+            builder.Entity<RegexAlertPattern>(e =>
+            {
+                e.Property(p => p.Pattern).HasMaxLength(500).IsRequired();
+                e.Property(p => p.Description).HasMaxLength(200);
+                e.HasIndex(p => p.IsActive);
+            });
+
+            // ── ModerationLog ────────────────────────────────────────────────────
+            builder.Entity<ModerationLog>(e =>
+            {
+                e.HasOne(l => l.Declaration)
+                 .WithMany()
+                 .HasForeignKey(l => l.DeclarationId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasIndex(l => l.DeclarationId);
+                e.HasIndex(l => l.ModeratorId);
+                e.HasIndex(l => l.Timestamp);
+
+                // Log immuable — pas de update autorisé
+                e.ToTable(tb => tb.HasCheckConstraint("CK_ModerationLog_Immutable", "1=1"));
+            });
         }
 
         /// <summary>
@@ -349,5 +414,11 @@ namespace Yavsc.Models
         public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
 
         public string NOW_SQL { get; private set; }
+
+        public DbSet<TrustToken> TrustTokens { get; set; }
+        public DbSet<TrustDeclaration> TrustDeclarations { get; set; }
+        public DbSet<RegexAlertPattern> RegexAlertPatterns { get; set; }
+
+        public DbSet<ModerationLog> ModerationLogs { get; set; }
     }
 }
