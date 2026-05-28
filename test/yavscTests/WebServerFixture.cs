@@ -12,9 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.SystemConsole.Themes;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -116,22 +113,7 @@ namespace isnd.tests
             TestingUserPassword = _sharedTestingUserPassword;
             TestingUserEmail = _sharedTestingUserEmail;
         }
-        void ConfigureLogger() => Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-            .MinimumLevel.Override("System", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-            .Enrich.FromLogContext()
-    // uncomment to write to Azure diagnostics stream
-    //.WriteTo.File(
-    //    @"D:\home\LogFiles\Application\identityserver.txt",
-    //    fileSizeLimitBytes: 1_000_000,
-    //    rollOnFileSizeLimit: true,
-    //    shared: true,
-    //    flushToDiskInterval: TimeSpan.FromSeconds(1))
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
-    .CreateLogger();
+       
         public async Task SetupHost()
         {
 
@@ -142,11 +124,14 @@ namespace isnd.tests
             var yavscOrgPath = Path.GetFullPath(Path.Combine(testAssemblyLocation, "../../src/Yavsc.Org"));
             builder.Environment.ContentRootPath = yavscOrgPath;
             
-            ConfigureLogger();
-            var config = builder.Configuration
+            builder.Configuration
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
-                .AddEnvironmentVariables().Build();
+                .AddEnvironmentVariables()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    [$"ConnectionStrings:{Constants.YavscConnectionStringName}"] = "InMemory"
+                });
 
             // Configure Kestrel for HTTPS with self-signed certificate on a dynamic port
             builder.WebHost.ConfigureKestrel(options =>
@@ -162,7 +147,6 @@ namespace isnd.tests
             _app = builder.ConfigureWebAppServices();
             Services = _app.Services;
             SiteSettings = _app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
-            String cxStr = config.GetConnectionString(Constants.YavscConnectionStringName) ?? throw new InvalidOperationException("DefaultConnection string is not configured.");
 
             using (var migrationScope = _app.Services.CreateScope())
             {

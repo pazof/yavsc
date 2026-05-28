@@ -37,6 +37,7 @@ namespace Yavsc.Extensions;
 
 public static class HostingExtensions
 {
+    private const string InMemoryProviderName = "InMemory";
 
     public static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
@@ -140,11 +141,19 @@ public static class HostingExtensions
     public static IdentityBuilder AddIdentityDBAndStores(this WebApplicationBuilder builder)
     {
         IServiceCollection services = builder.Services;
+        var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
        
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseNpgsql(builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName),
-                options => options.MigrationsAssembly(typeof(Program).Assembly));
+            if (UsesInMemoryProvider(connectionString))
+            {
+                options.UseInMemoryDatabase(connectionString);
+            }
+            else
+            {
+                options.UseNpgsql(connectionString,
+                    options => options.MigrationsAssembly(typeof(Program).Assembly));
+            }
         });
 
         var identityBuilder = services.AddIdentity<ApplicationUser, IdentityRole>(
@@ -285,14 +294,35 @@ public static class HostingExtensions
             .AddResourceStore<ResourceStore>()
             .AddConfigurationStore(options =>
             {
-                options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
-                    sql => sql.MigrationsAssembly(migrationsAssembly))
-                    .UseSeeding(EnsureDefaultApplicationScopes());
+                options.ConfigureDbContext = b =>
+                {
+                    if (UsesInMemoryProvider(connectionString))
+                    {
+                        b.UseInMemoryDatabase(connectionString);
+                    }
+                    else
+                    {
+                        b.UseNpgsql(connectionString,
+                            sql => sql.MigrationsAssembly(migrationsAssembly));
+                    }
+
+                    b.UseSeeding(EnsureDefaultApplicationScopes());
+                };
             })
             .AddOperationalStore(options =>
             {
-                options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
-                    sql => sql.MigrationsAssembly(migrationsAssembly));
+                options.ConfigureDbContext = b =>
+                {
+                    if (UsesInMemoryProvider(connectionString))
+                    {
+                        b.UseInMemoryDatabase(connectionString);
+                    }
+                    else
+                    {
+                        b.UseNpgsql(connectionString,
+                            sql => sql.MigrationsAssembly(migrationsAssembly));
+                    }
+                };
                 
             });
 
@@ -301,6 +331,11 @@ public static class HostingExtensions
             identityServerBuilder.AddDeveloperSigningCredential();
         }
         return identityServerBuilder;
+    }
+
+    private static bool UsesInMemoryProvider(string connectionString)
+    {
+        return string.Equals(connectionString, InMemoryProviderName, StringComparison.OrdinalIgnoreCase);
     }
 
     private static Action<DbContext, bool> EnsureDefaultApplicationScopes()

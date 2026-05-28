@@ -5,7 +5,7 @@
     <PackageLicenseExpression>WTFPL</PackageLicenseExpression>
     <UserSecretsId>76e56fc2-1619-40d8-8393-365258b7a21d</UserSecretsId>
     <RootNamespace>Yavsc</RootNamespace>
-
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
@@ -21,7 +21,6 @@
     <PackageReference Include="HigginsSoft.IdentityServer8.EntityFramework.Storage" />
     <PackageReference Include="HigginsSoft.IdentityServer8.Security" />
     <PackageReference Include="HigginsSoft.IdentityServer8.Storage" />
-    <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
@@ -33,6 +32,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Google.Apis.Compute.v1" />
@@ -44,7 +44,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="AsciiDocSharp" />
     <PackageReference Include="AsciiDocSharp.Converters.Html" />
-    <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>

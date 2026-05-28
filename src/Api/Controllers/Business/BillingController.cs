@@ -115,7 +115,7 @@ namespace Yavsc.ApiControllers
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            User.ReceiveProSignature(billingCode,id,Request.Form.Files[0],"pro");
+            await User.ReceiveProSignatureAsync(billingCode,id,Request.Form.Files[0],"pro");
             estimate.ProviderValidationDate = DateTime.Now;
             dbContext.SaveChanges(User.GetUserId());
             // Notify the client
@@ -160,7 +160,7 @@ namespace Yavsc.ApiControllers
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            User.ReceiveProSignature(billingCode,id,Request.Form.Files[0],"cli");
+            await User.ReceiveProSignatureAsync(billingCode,id,Request.Form.Files[0],"cli");
             estimate.ClientValidationDate = DateTime.Now;
             dbContext.SaveChanges(User.GetUserId());
             return Ok (new { ClientValidationDate = estimate.ClientValidationDate });

@@ -66,12 +66,15 @@ namespace Yavsc.WebApi.Controllers
         /// Updates the avatar
         /// </summary>
         /// <returns></returns>
-        [HttpPost("~/api/setavatar")]
+        [HttpPost("~/api/set-avatar")]
         public async Task<IActionResult> SetAvatar()
         {
             var user =  await GetUserData(User.GetUserId());
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
+            if (!Request.Form.Files[0].ContentType.StartsWith("image/png"))
+                return new BadRequestResult();
+
             var info = user.ReceiveAvatar(Request.Form.Files[0]);
             await _dbContext.SaveChangesAsync();
             return Ok(info);

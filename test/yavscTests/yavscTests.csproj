@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -6,6 +6,7 @@
     <IsPackable>false</IsPackable>
     <RootNamespace>Yavsc.Tests</RootNamespace>
     <UserSecretsId>78a4efec-68dc-4745-ba06-d8545ef9ee91</UserSecretsId>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
@@ -43,5 +44,7 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+  </ItemGroup>
 </Project>
