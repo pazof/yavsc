@@ -63,6 +63,13 @@
                 "order": 1
             }
 
+        },
+        {
+            "name": "PostIt",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/PostIt/PostIt.Desktop/PostIt.Desktop.csproj",
+
         }
     ]
 }

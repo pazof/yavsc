@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 
-namespace PostIt;
+namespace PostIt.Views;
 
 public partial class MainWindow : Window
 {
     public MainWindow()
     {
         InitializeComponent();
-        this.Greeting.Content="Hello Joe!";
     }
 }

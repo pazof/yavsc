@@ -1,0 +1,11 @@
+﻿<Solution>
+  <Project Path="PostIt.Android/PostIt.Android.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="PostIt.Browser/PostIt.Browser.csproj" />
+  <Project Path="PostIt.Desktop/PostIt.Desktop.csproj" />
+  <Project Path="PostIt.iOS/PostIt.iOS.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="PostIt/PostIt.csproj" />
+</Solution>
