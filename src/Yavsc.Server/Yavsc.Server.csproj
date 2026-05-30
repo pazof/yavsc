@@ -8,6 +8,7 @@
     <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Anthropic.SDK" />
     <PackageReference Include="HigginsSoft.IdentityServer8.EntityFramework" />
     <PackageReference Include="Magick.NET-Q8-AnyCPU" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
