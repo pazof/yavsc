@@ -67,12 +67,12 @@ internal class Program
                options.IncludeErrorDetails = true;
                options.Authority = authority;
                options.TokenValidationParameters =
-                       new() { ValidateAudience = false, RoleClaimType = Constants.RoleClaimType };
+                       new() { ValidateAudience = false, RoleClaimType = YavscConstants.RoleClaimType };
                options.MapInboundClaims = true;
              });
              
     services.AddDbContext<ApplicationDbContext>(options =>
-       options.UseNpgsql(builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName)));
+       options.UseNpgsql(builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName)));
 
     services.AddTransient<ITrueEmailSender, MailSender>()
        .AddTransient<IBillingService, BillingService>()

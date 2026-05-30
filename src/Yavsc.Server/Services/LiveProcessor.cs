@@ -61,7 +61,7 @@ namespace Yavsc.Services
                     // TODO: Handle the socket here.
                     // Find receivers: others in the chat room
                     // send them the flow
-                    var buffer = new byte[Constants.WebSocketsMaxBufLen];
+                    var buffer = new byte[YavscConstants.WebSocketsMaxBufLen];
                     var sBuffer = new ArraySegment<byte>(buffer);
                     _logger.LogInformation("Receiving bytes...");
 
@@ -109,7 +109,7 @@ namespace Yavsc.Services
                             {
                              _logger.LogInformation("try and receive new bytes");
 
-                            buffer = new byte[Constants.WebSocketsMaxBufLen];
+                            buffer = new byte[YavscConstants.WebSocketsMaxBufLen];
                             received = await liveHandler.Socket.ReceiveAsync(sBuffer, liveHandler.TokenSource.Token);
                             
                             _logger.LogInformation($"Received bytes : {received.Count}");

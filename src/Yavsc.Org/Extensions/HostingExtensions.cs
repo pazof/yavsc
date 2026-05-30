@@ -126,7 +126,7 @@ public static class HostingExtensions
                          new()
                          {
                              ValidateAudience = false,
-                             RoleClaimType = Constants.RoleClaimType
+                             RoleClaimType = YavscConstants.RoleClaimType
                          };
                      options.MapInboundClaims = true;
                  });
@@ -141,7 +141,7 @@ public static class HostingExtensions
     public static IdentityBuilder AddIdentityDBAndStores(this WebApplicationBuilder builder)
     {
         IServiceCollection services = builder.Services;
-        var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
+        var connectionString = builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName);
        
         services.AddDbContext<ApplicationDbContext>(options =>
         {
@@ -162,7 +162,7 @@ public static class HostingExtensions
                 options.SignIn.RequireConfirmedAccount = builder.Environment.IsEnvironment(
                     builder.Environment.EnvironmentName);
                 options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.PreferredUserName;
-                options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
+                options.ClaimsIdentity.RoleClaimType = YavscConstants.RoleClaimType;
             }
         )
         .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -186,18 +186,18 @@ public static class HostingExtensions
             {
                 policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(Constants.RoleClaimType,
-                    new string[] { Constants.PerformerGroupName, Constants.AdminGroupName })
+                    .RequireClaim(YavscConstants.RoleClaimType,
+                    new string[] { YavscConstants.PerformerGroupName, YavscConstants.AdminGroupName })
                     ;
             });
             options.AddPolicy("AdministratorOnly", policy =>
             {
                 _ = policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(Constants.RoleClaimType, Constants.AdminGroupName);
+                    .RequireClaim(YavscConstants.RoleClaimType, YavscConstants.AdminGroupName);
             });
 
-            options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
+            options.AddPolicy("FrontOffice", policy => policy.RequireRole(YavscConstants.FrontOfficeGroupName));
 
             // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
             // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
@@ -269,10 +269,10 @@ public static class HostingExtensions
         {
             options.ClaimsIdentity.UserIdClaimType = JwtClaimTypes.Subject;
             options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.Name;
-            options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
+            options.ClaimsIdentity.RoleClaimType = YavscConstants.RoleClaimType;
         });
         var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
-        var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
+        var connectionString = builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName);
         
         string sqliteConnectionString = $"Data Source={Path.Combine(Path.GetTempPath(), "yavsc_test.db")}";
 
@@ -503,7 +503,7 @@ public static class HostingExtensions
         Config.UserFilesOptions = new FileServerOptions()
         {
             FileProvider = new PhysicalFileProvider(AbstractFileSystemHelpers.UserFilesDirName),
-            RequestPath = PathString.FromUriComponent(Constants.UserFilesPath),
+            RequestPath = PathString.FromUriComponent(YavscConstants.UserFilesPath),
             EnableDirectoryBrowsing = enableDirectoryBrowsing,
         };
         Config.UserFilesOptions.EnableDefaultFiles = true;
@@ -516,7 +516,7 @@ public static class HostingExtensions
         Config.AvatarsOptions = new FileServerOptions()
         {
             FileProvider = new PhysicalFileProvider(Config.AvatarsDirName),
-            RequestPath = PathString.FromUriComponent(Constants.AvatarsPath),
+            RequestPath = PathString.FromUriComponent(YavscConstants.AvatarsPath),
             EnableDirectoryBrowsing = enableDirectoryBrowsing
         };
 
@@ -527,7 +527,7 @@ public static class HostingExtensions
         Config.GitOptions = new FileServerOptions()
         {
             FileProvider = new PhysicalFileProvider(Config.GitDirName),
-            RequestPath = PathString.FromUriComponent(Constants.GitPath),
+            RequestPath = PathString.FromUriComponent(YavscConstants.GitPath),
             EnableDirectoryBrowsing = enableDirectoryBrowsing,
         };
         Config.GitOptions.DefaultFilesOptions.DefaultFileNames.Add("index.md");

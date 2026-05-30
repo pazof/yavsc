@@ -137,7 +137,7 @@ namespace Yavsc.Controllers
 
             if (User.GetUserId() != chatRoom.OwnerId )
             {
-                if (!User.IsInMsRole(Constants.AdminGroupName))
+                if (!User.IsInMsRole(YavscConstants.AdminGroupName))
                     return BadRequest(new {error = "OwnerId"});
             }
 

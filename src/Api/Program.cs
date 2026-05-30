@@ -62,7 +62,7 @@ internal class Program
                      options.IncludeErrorDetails = true;
                      options.Authority = "https://localhost:5001";
                      options.TokenValidationParameters =
-                         new() { ValidateAudience = false, RoleClaimType = Constants.RoleClaimType };
+                         new() { ValidateAudience = false, RoleClaimType = YavscConstants.RoleClaimType };
                      options.MapInboundClaims = true;
                  });
         

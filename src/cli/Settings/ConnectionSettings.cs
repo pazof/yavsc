@@ -40,8 +40,8 @@ namespace cli
         [NotMapped]
         [JsonIgnore]
         public string StreamingUrl { get {
-            return Port==0 ? $"ws://{Authority}"+Constants.StreamingPath:
-            $"ws://{Authority}:{Port}"+Constants.StreamingPath;
+            return Port==0 ? $"ws://{Authority}"+YavscConstants.StreamingPath:
+            $"ws://{Authority}:{Port}"+YavscConstants.StreamingPath;
         } }
 
     }

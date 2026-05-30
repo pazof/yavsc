@@ -72,8 +72,8 @@ namespace Yavsc.Models
             builder.Entity<ApplicationUser>().Property(u => u.FullName).IsRequired(false);
             builder.Entity<ApplicationUser>().Property(u => u.DedicatedGoogleCalendar).IsRequired(false);
             builder.Entity<ApplicationUser>().HasMany<ChatConnection>(c => c.Connections);
-            builder.Entity<ApplicationUser>().Property(u => u.Avatar).HasDefaultValue(Constants.DefaultAvatar);
-            builder.Entity<ApplicationUser>().Property(u => u.DiskQuota).HasDefaultValue(Constants.DefaultFSQ);
+            builder.Entity<ApplicationUser>().Property(u => u.Avatar).HasDefaultValue(YavscConstants.DefaultAvatar);
+            builder.Entity<ApplicationUser>().Property(u => u.DiskQuota).HasDefaultValue(YavscConstants.DefaultFSQ);
             builder.Entity<ApplicationUser>().HasAlternateKey(u => u.Email);
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.User);
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.Owner);

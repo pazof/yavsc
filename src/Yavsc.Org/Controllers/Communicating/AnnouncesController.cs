@@ -59,8 +59,8 @@ namespace Yavsc.Controllers
         }
         private async Task SetupView(Announce announce)
         {
-            ViewBag.IsAdmin = User.IsInMsRole(Constants.AdminGroupName);
-            ViewBag.IsPerformer = User.IsInMsRole(Constants.PerformerGroupName);
+            ViewBag.IsAdmin = User.IsInMsRole(YavscConstants.AdminGroupName);
+            ViewBag.IsPerformer = User.IsInMsRole(YavscConstants.PerformerGroupName);
             ViewBag.AllowEdit = announce==null || announce.Id<=0 || !_authorizationService.AuthorizeAsync(User,announce,new EditPermission()).IsFaulted;
             List<SelectListItem> dl = new List<SelectListItem>();
             var rnames = System.Enum.GetNames(typeof(Reason));
@@ -82,14 +82,14 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 // Only allow admin to create corporate annonces
-                if (announce.For == Reason.Corporate && ! User.IsInMsRole(Constants.AdminGroupName))
+                if (announce.For == Reason.Corporate && ! User.IsInMsRole(YavscConstants.AdminGroupName))
                 {
                     ModelState.AddModelError("For", _localizer["YourNotAdmin"]);
                     return View(announce);
                 }
 
                 // Only allow performers to create ServiceProposal 
-                if (announce.For == Reason.ServiceProposal && ! User.IsInMsRole(Constants.PerformerGroupName))
+                if (announce.For == Reason.ServiceProposal && ! User.IsInMsRole(YavscConstants.PerformerGroupName))
                 {
                     ModelState.AddModelError("For", _localizer["YourNotAPerformer"]);
                     return View(announce);

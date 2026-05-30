@@ -46,7 +46,7 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/ServiceApi/5
-        [HttpPut("{id}"),Authorize(Constants.FrontOfficeGroupName)]
+        [HttpPut("{id}"),Authorize(YavscConstants.FrontOfficeGroupName)]
         public IActionResult PutService(long id, [FromBody] Service service)
         {
             if (!ModelState.IsValid)
@@ -81,7 +81,7 @@ namespace Yavsc.Controllers
         }
 
         // POST: api/ServiceApi
-        [HttpPost,Authorize(Constants.FrontOfficeGroupName)]
+        [HttpPost,Authorize(YavscConstants.FrontOfficeGroupName)]
         public IActionResult PostService([FromBody] Service service)
         {
             if (!ModelState.IsValid)
@@ -110,7 +110,7 @@ namespace Yavsc.Controllers
         }
 
         // DELETE: api/ServiceApi/5
-        [HttpDelete("{id}"),Authorize(Constants.FrontOfficeGroupName)]
+        [HttpDelete("{id}"),Authorize(YavscConstants.FrontOfficeGroupName)]
         public IActionResult DeleteService(long id)
         {
             if (!ModelState.IsValid)

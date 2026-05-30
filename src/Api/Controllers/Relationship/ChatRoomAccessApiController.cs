@@ -46,7 +46,7 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != chatRoomAccess.UserId && uid != chatRoomAccess.Room.OwnerId
-             && ! User.IsInMsRole(Constants.AdminGroupName))
+             && ! User.IsInMsRole(YavscConstants.AdminGroupName))
            
             {
                 ModelState.AddModelError("UserId","get refused");
@@ -72,7 +72,7 @@ namespace Yavsc.Controllers
             }
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
 
-            if (uid != room.OwnerId && ! User.IsInMsRole(Constants.AdminGroupName))
+            if (uid != room.OwnerId && ! User.IsInMsRole(YavscConstants.AdminGroupName))
             {
                 ModelState.AddModelError("ChannelName", "access put refused");
                 return BadRequest(ModelState);
@@ -110,7 +110,7 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
-            if (room == null || (uid != room.OwnerId && ! User.IsInMsRole(Constants.AdminGroupName)))
+            if (room == null || (uid != room.OwnerId && ! User.IsInMsRole(YavscConstants.AdminGroupName)))
             {
                 ModelState.AddModelError("ChannelName", "access post refused");
                 return BadRequest(ModelState);
@@ -154,7 +154,7 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
-            if (room == null || (uid != room.OwnerId  && chatRoomAccess.UserId != uid && ! User.IsInMsRole(Constants.AdminGroupName)))
+            if (room == null || (uid != room.OwnerId  && chatRoomAccess.UserId != uid && ! User.IsInMsRole(YavscConstants.AdminGroupName)))
             {
                 ModelState.AddModelError("UserId", "access drop refused");
                 return BadRequest(ModelState);

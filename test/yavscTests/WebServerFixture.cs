@@ -130,7 +130,7 @@ namespace isnd.tests
                 .AddEnvironmentVariables()
                 .AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    [$"ConnectionStrings:{Constants.YavscConnectionStringName}"] = "InMemory"
+                    [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory"
                 });
 
             // Configure Kestrel for HTTPS with self-signed certificate on a dynamic port

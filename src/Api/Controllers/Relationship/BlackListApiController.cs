@@ -50,8 +50,8 @@ namespace Yavsc.Controllers
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != blackListed.OwnerId)
-                if (!User.IsInRole(Constants.AdminGroupName))
-                    if (!User.IsInRole(Constants.FrontOfficeGroupName))
+                if (!User.IsInRole(YavscConstants.AdminGroupName))
+                    if (!User.IsInRole(YavscConstants.FrontOfficeGroupName))
                         return false;
             return true;
         }

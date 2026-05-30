@@ -50,12 +50,12 @@ namespace Yavsc.Controllers
         {
             // ensure all roles existence
             foreach (string roleName in new string[] {
-                Constants.AdminGroupName,
-                Constants.StarGroupName,
-                Constants.PerformerGroupName,
-                Constants.FrontOfficeGroupName,
-                Constants.StarHunterGroupName,
-                Constants.BlogModeratorGroupName
+                YavscConstants.AdminGroupName,
+                YavscConstants.StarGroupName,
+                YavscConstants.PerformerGroupName,
+                YavscConstants.FrontOfficeGroupName,
+                YavscConstants.StarHunterGroupName,
+                YavscConstants.BlogModeratorGroupName
                 })
                 if (!await _roleManager.RoleExistsAsync(roleName))
                 {
@@ -80,11 +80,11 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Take()
         {
             // If some amdin already exists, make this method disapear
-            var admins = await _userManager.GetUsersInRoleAsync(Constants.AdminGroupName);
+            var admins = await _userManager.GetUsersInRoleAsync(YavscConstants.AdminGroupName);
             if (admins != null && admins.Count > 0)
             {
                 // All is ok, nothing to do here.
-                if (User.IsInMsRole(Constants.AdminGroupName))
+                if (User.IsInMsRole(YavscConstants.AdminGroupName))
                 {
 
                     return Ok(new { message = "you already got it." });
@@ -100,7 +100,7 @@ namespace Yavsc.Controllers
                 return new BadRequestObjectResult(ModelState);
             }
 
-            var addToRoleResult = await _userManager.AddToRoleAsync(user, Constants.AdminGroupName);
+            var addToRoleResult = await _userManager.AddToRoleAsync(user, YavscConstants.AdminGroupName);
             if (!addToRoleResult.Succeeded)
             {
                 AddErrors(addToRoleResult);
@@ -114,11 +114,11 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Index()
         {
             var adminCount = await _userManager.GetUsersInRoleAsync(
-                Constants.AdminGroupName);
+                YavscConstants.AdminGroupName);
             var userCount = await _dbContext.Users.CountAsync();
             var youAreAdmin = await _userManager.IsInRoleAsync(
                 await _userManager.FindByIdAsync(User.GetUserId()),
-                Constants.AdminGroupName);
+                YavscConstants.AdminGroupName);
 
             var roles = await _roleManager.Roles.Select(x => new RoleInfo
             {

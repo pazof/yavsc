@@ -14,7 +14,7 @@ namespace Yavsc.Helpers
         public static string ToAbsolute(this HttpRequest request, string url)
         {
             var host = request.Host;
-            var isSecure = request.Headers[Constants.SshHeaderKey] == "on";
+            var isSecure = request.Headers[YavscConstants.SshHeaderKey] == "on";
             return (isSecure ? "https" : "http") + $"://{host}/{url}";
         }
     }

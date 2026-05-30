@@ -27,12 +27,12 @@ namespace Yavsc.Controllers
         }
         bool UserIsAdminOrThis(string uid)
         {
-            if (User.IsInRole(Constants.AdminGroupName)) return true;
+            if (User.IsInRole(YavscConstants.AdminGroupName)) return true;
             return uid == User.GetUserId();
         }
         bool UserIsAdminOrInThese(string oid, string uid)
         {
-            if (User.IsInRole(Constants.AdminGroupName)) return true;
+            if (User.IsInRole(YavscConstants.AdminGroupName)) return true;
             var cuid = User.GetUserId();
             return cuid == uid || cuid == oid;
         }
@@ -82,7 +82,7 @@ namespace Yavsc.Controllers
                 return BadRequest();
             }
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!User.IsInRole(Constants.AdminGroupName))
+            if (!User.IsInRole(YavscConstants.AdminGroupName))
             {
                 if (uid != estimate.OwnerId)
                 {
@@ -118,7 +118,7 @@ namespace Yavsc.Controllers
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (estimate.OwnerId == null) estimate.OwnerId = uid;
 
-            if (!User.IsInRole(Constants.AdminGroupName))
+            if (!User.IsInRole(YavscConstants.AdminGroupName))
             {
                 if (uid != estimate.OwnerId)
                 {
@@ -187,7 +187,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!User.IsInRole(Constants.AdminGroupName))
+            if (!User.IsInRole(YavscConstants.AdminGroupName))
             {
                 if (uid != estimate.OwnerId)
                 {

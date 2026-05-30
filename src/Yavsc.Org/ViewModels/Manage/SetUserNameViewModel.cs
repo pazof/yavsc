@@ -7,7 +7,7 @@ namespace Yavsc.ViewModels.Manage
     public class SetUserNameViewModel
     {
         [Required]
-        [Display(Name = "User name"),RegularExpression(Constants.UserNameRegExp)]
+        [Display(Name = "User name"),RegularExpression(YavscConstants.UserNameRegExp)]
         public string UserName { get; set; }
 
     }

@@ -14,7 +14,7 @@
                 <li><a class="dropdown-item" asp-controller="Feature" asp-action="Index">Features</a></li>
             </ul>
         </li>
-        @if (User.IsInMsRole(Constants.AdminGroupName)) {
+        @if (User.IsInMsRole(YavscConstants.AdminGroupName)) {
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown05" data-bs-toggle="dropdown" aria-expanded="false">
                 Administration

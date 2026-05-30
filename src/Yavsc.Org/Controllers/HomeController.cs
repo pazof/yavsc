@@ -31,9 +31,9 @@ namespace Yavsc.Controllers
 
         public async Task<IActionResult> Index(string id)
         {
-            ViewBag.IsFromSecureProx = Request.Headers.ContainsKey(Constants.SshHeaderKey) && Request.Headers[Constants.SshHeaderKey] == "on";
+            ViewBag.IsFromSecureProx = Request.Headers.ContainsKey(YavscConstants.SshHeaderKey) && Request.Headers[YavscConstants.SshHeaderKey] == "on";
             ViewBag.SecureHomeUrl = "https://" + Request.Headers["X-Forwarded-Host"];
-            ViewBag.SshHeaderKey = Request.Headers[Constants.SshHeaderKey];
+            ViewBag.SshHeaderKey = Request.Headers[YavscConstants.SshHeaderKey];
             var uid = User.GetUserId();
             long[] clicked = null;
             if (uid == null)

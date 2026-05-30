@@ -198,7 +198,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         /// <summary>
         /// Entry point into the login workflow
         /// </summary>
-        [HttpGet(Constants.SigninPath)]
+        [HttpGet(YavscConstants.SigninPath)]
         public async Task<IActionResult> Signin(SignInModel model)
         {
             // build a model so we know what to show on the login page
@@ -217,7 +217,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         /// Handle postback from username/password login
         /// </summary>
         /// 
-        [HttpPost(Constants.SigninPath)]
+        [HttpPost(YavscConstants.SigninPath)]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
   
@@ -659,7 +659,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         }
         //
         // POST: /Account/LogOff
-        [HttpPost(Constants.LogoutPath)]
+        [HttpPost(YavscConstants.LogoutPath)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff(string returnUrl = null)
         {
@@ -829,7 +829,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             bool result = false;
             try
             {
-                result = await _userManager.VerifyTwoFactorTokenAsync(user, Constants.DefaultFactor, code);
+                result = await _userManager.VerifyTwoFactorTokenAsync(user, YavscConstants.DefaultFactor, code);
                 _dbContext.SaveChanges(userId);
             }
             catch (Exception ex)
@@ -1024,12 +1024,12 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             }
 
             // Generate the token and send it
-            if (model.SelectedProvider == Constants.MobileAppFactor)
+            if (model.SelectedProvider == YavscConstants.MobileAppFactor)
             {
                 return View("Error", new Exception("No mobile app service was activated"));
             }
             else
-                if (model.SelectedProvider == Constants.SMSFactor)
+                if (model.SelectedProvider == YavscConstants.SMSFactor)
                 {
                     return View("Error", new Exception("No SMS service was activated"));
                     // await _smsSender.SendSmsAsync(_twilioSettings, await _userManager.GetPhoneNumberAsync(user), message);

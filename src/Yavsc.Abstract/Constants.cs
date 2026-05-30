@@ -3,7 +3,7 @@ using Yavsc.Models.Auth;
 namespace Yavsc
 {
 
-    public static class Constants
+    public static class YavscConstants
     {
         public static readonly Scope[] SiteScopes = {
             new Scope { Id = "profile", Description = "Your profile informations" },

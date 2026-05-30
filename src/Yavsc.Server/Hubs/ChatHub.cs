@@ -86,7 +86,7 @@ namespace Yavsc
                 var userId = _dbContext.Users.First(u => u.UserName == Context.User.Identity.Name).Id;
 
                 await Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).SendAsync("notifyUser",  NotificationTypes.Connected, userName, null);
-                isCop = Context.User.IsInMsRole(Constants.AdminGroupName) ;
+                isCop = Context.User.IsInMsRole(YavscConstants.AdminGroupName) ;
                 if (isCop)
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, ChatHubConstants.HubGroupCops);
@@ -353,7 +353,7 @@ namespace Yavsc
                     var identityUserName = Context.User.GetUserName();
 
             if (userName[0] != '?' && Context.User!=null)
-                if (!Context.User.IsInMsRole(Constants.AdminGroupName))
+                if (!Context.User.IsInMsRole(YavscConstants.AdminGroupName))
                 {
 
                     var bl = _dbContext.BlackListed

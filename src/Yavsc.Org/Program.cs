@@ -28,11 +28,13 @@ namespace Yavsc
             else
                 builder.Services.AddScoped<IModerationService, ClaudeModerationService>();
 
-            builder.Configuration
+            var rootConfig = builder.Configuration
                           .AddJsonFile("appsettings.json")
                           .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
                           .AddEnvironmentVariables()
                           .Build();
+
+            rootConfig.GetConnectionString(YavscConstants.YavscConnectionStringName);   
 
             var app = await builder.ConfigureWebAppServices().ConfigurePipeline();
             app.Run();

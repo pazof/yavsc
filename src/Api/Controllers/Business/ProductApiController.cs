@@ -46,7 +46,7 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/ProductApi/5
-        [HttpPut("{id}"),Authorize(Constants.FrontOfficeGroupName)]
+        [HttpPut("{id}"),Authorize(YavscConstants.FrontOfficeGroupName)]
         public IActionResult PutProduct(long id, [FromBody] Product product)
         {
             if (!ModelState.IsValid)
@@ -81,7 +81,7 @@ namespace Yavsc.Controllers
         }
 
         // POST: api/ProductApi
-        [HttpPost,Authorize(Constants.FrontOfficeGroupName)]
+        [HttpPost,Authorize(YavscConstants.FrontOfficeGroupName)]
         public IActionResult PostProduct([FromBody] Product product)
         {
             if (!ModelState.IsValid)
@@ -110,7 +110,7 @@ namespace Yavsc.Controllers
         }
 
         // DELETE: api/ProductApi/5
-        [HttpDelete("{id}"),Authorize(Constants.FrontOfficeGroupName)]
+        [HttpDelete("{id}"),Authorize(YavscConstants.FrontOfficeGroupName)]
         public IActionResult DeleteProduct(long id)
         {
             if (!ModelState.IsValid)
