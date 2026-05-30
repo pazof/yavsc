@@ -40,4 +40,11 @@ install: $(DESTDIR)
 docker-image:
 	docker build .
 
+docker-build:
+	docker compose up --build
+
+docker-run:
+	docker run -d -p 5000:5000 --name yavsc yavsc
+
+
 .PHONY: 

@@ -5,6 +5,7 @@
         "appsettings",
         "asciidoctor",
         "Cratie",
+        "DESTDIR",
         "Newtonsoft",
         "Npgsql",
         "Yavsc"

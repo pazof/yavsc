@@ -53,4 +53,5 @@ binaries/
 build/
 src/*/Blog-Dev/
 *.mp4
+src/Yavsc.Org/data/
 
