@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet publish src/Yavsc/Yavsc.csproj -c Release -o /app/publish
+RUN dotnet publish src/Yavsc.Org/Yavsc.Org.csproj -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
@@ -27,4 +27,4 @@ ENV ConnectionStrings__DefaultConnection=\
 
 COPY --from=build /app/publish .
 EXPOSE 5000
-ENTRYPOINT ["dotnet", "Yavsc.dll"]
+ENTRYPOINT ["dotnet", "Yavsc.Org.dll"]
