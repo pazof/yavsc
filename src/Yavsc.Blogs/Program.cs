@@ -23,89 +23,109 @@ using Yavsc.Server.Helpers;
 internal class Program
 {
     private static async Task Main(string[] args)
-  {
-    Console.Title = "Yavsc.Blogs";
+    {
+        Console.Title = "Yavsc.Blogs";
 
-    var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-    var services = builder.Services;
+        var services = builder.Services;
 
-    var authority = builder.GetAuthority();
-    var audience = builder.GetAudience();
+        var authority = builder.GetAuthority();
+        var audience = builder.GetAudience();
 
-    // builder.Services.AddDistributedMemoryCache();
+        // builder.Services.AddDistributedMemoryCache();
 
-    // accepts any access token issued by identity server
-    // adds an authorization policy for scope 'scope1'
+        // accepts any access token issued by identity server
+        // adds an authorization policy for scope 'scope1'
 
-    services
-        .AddAuthorization(options =>
-        {
-          options.AddPolicy("ApiScope", policy =>
-          {
-            policy
+        services
+            .AddAuthorization(options =>
+            {
+                options.AddPolicy("ApiScope", policy =>
+            {
+                policy
                     .RequireAuthenticatedUser()
                     .RequireClaim(JwtClaimTypes.Scope, new string[] { "blogs" });
-          });
-        })
-        .AddCors(options =>
-        {
-          // this defines a CORS policy called "default"
-          options.AddPolicy("default", policy =>
-          {
-            policy.WithOrigins(audience)
+            });
+            })
+            .AddCors(options =>
+            {
+                // this defines a CORS policy called "default"
+                options.AddPolicy("default", policy =>
+            {
+                policy.WithOrigins(audience)
                     .AllowAnyHeader()
                     .AllowAnyMethod();
-          });
-        })
-        .AddControllers();
+            });
+            })
+            .AddControllers();
 
-    // accepts any access token issued by identity server
-    var authenticationBuilder = services.AddAuthentication("Bearer")
-             .AddJwtBearer("Bearer", options =>
-             {
-               options.IncludeErrorDetails = true;
-               options.Authority = authority;
-               options.TokenValidationParameters =
-                       new() { ValidateAudience = false, RoleClaimType = YavscConstants.RoleClaimType };
-               options.MapInboundClaims = true;
-             });
-             
-    services.AddDbContext<ApplicationDbContext>(options =>
-       options.UseNpgsql(builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName)));
+        // accepts any access token issued by identity server
+        var authenticationBuilder = services.AddAuthentication("Bearer")
+                 .AddJwtBearer("Bearer", options =>
+                 {
+                     options.IncludeErrorDetails = true;
+                     options.Authority = authority;
+                     options.TokenValidationParameters =
+                         new() { ValidateAudience = false, RoleClaimType = YavscConstants.RoleClaimType };
+                     options.MapInboundClaims = true;
+                 });
 
-    services.AddTransient<ITrueEmailSender, MailSender>()
-       .AddTransient<IBillingService, BillingService>()
-       .AddTransient<ICalendarManager, CalendarManager>();
-    services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
+        services.AddDbContext<ApplicationDbContext>(options =>
+           options.UseNpgsql(builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName)));
 
-    WorkflowHelpers.ConfigureBillingService();
-    using (var app = builder.Build())
-    {
-      if (app.Environment.IsDevelopment())
-        app.UseDeveloperExceptionPage();
+        services.AddTransient<ITrueEmailSender, MailSender>()
+           .AddTransient<IBillingService, BillingService>()
+           .AddTransient<ICalendarManager, CalendarManager>();
+        services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
+        
+        services.AddLocalization(options =>
+        {
+            options.ResourcesPath = "Resources";
+        });
+        services.AddDistributedMemoryCache();
 
-      app
-          .UseRouting()
-          .UseAuthentication()
-          .UseAuthorization()
-          .UseCors("default")
-          /*         .UseEndpoints(endpoints =>
-                   {
-                       endpoints.MapDefaultControllerRoute()
-                           .RequireAuthorization();
-                   })*/
+        services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = false;
+        });
 
-          ;
-      //   app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
-      app.MapDefaultControllerRoute();
-      app.MapGet("/identity", (HttpContext context) =>
-          new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
-      );
+        services.Configure<RequestLocalizationOptions>(options =>
+        {
+            var supportedCultures = new[] { "fr", "en", "pt" };
+            options.SetDefaultCulture(supportedCultures[0])
+            .AddSupportedCultures(supportedCultures)
+            .AddSupportedUICultures(supportedCultures);
+        });
 
-      //     app.UseSession(); 
-      await app.RunAsync();
+        using (var app = builder.Build())
+        {
+            if (app.Environment.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+
+            app
+                .UseRouting()
+                .UseAuthentication()
+                .UseAuthorization()
+                .UseCors("default")
+                /*         .UseEndpoints(endpoints =>
+                         {
+                             endpoints.MapDefaultControllerRoute()
+                                 .RequireAuthorization();
+                         })*/
+
+                ;
+            //   app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
+            app.MapDefaultControllerRoute();
+            app.MapGet("/identity", (HttpContext context) =>
+                new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
+            );
+
+            //     app.UseSession(); 
+            await app.RunAsync();
+        }
     }
-  }
 
 }

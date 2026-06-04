@@ -18,5 +18,6 @@
     "chat.tools.terminal.autoApprove": {
         "dotnet test": true
     },
-    "makefile.configureOnOpen": false
+    "makefile.configureOnOpen": false,
+    "chat.disableAIFeatures": false
 }

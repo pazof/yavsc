@@ -12,7 +12,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
-    public class BlogspotController : Controller
+    public class BlogSpotController : Controller
     {
         readonly ILogger _logger;
         private readonly ApplicationDbContext _context;
@@ -20,7 +20,7 @@ namespace Yavsc.Controllers
         readonly RequestLocalizationOptions _localisationOptions;
 
         readonly BlogSpotService blogSpotService;
-        public BlogspotController(
+        public BlogSpotController(
             ApplicationDbContext context,
             ILoggerFactory loggerFactory,
             IAuthorizationService authorizationService,

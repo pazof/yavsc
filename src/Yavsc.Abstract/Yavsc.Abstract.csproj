@@ -7,6 +7,7 @@
     <RootNamespace>Yavsc.Abstract</RootNamespace>
     <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <Library>true</Library>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />

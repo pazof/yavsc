@@ -65,16 +65,39 @@ internal class Program
                          new() { ValidateAudience = false, RoleClaimType = YavscConstants.RoleClaimType };
                      options.MapInboundClaims = true;
                  });
-        
+
         services.AddDbContext<ApplicationDbContext>(options =>
-           
+
            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddLocalization(options =>
+        {
+            options.ResourcesPath = "Resources";
+        });
+        // 
+        services.AddTransient<Microsoft.AspNetCore.Identity.IEmailSender<ApplicationUser>, MailSender>();
         services.AddTransient<ITrueEmailSender, MailSender>()
+        .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender,
+         MailSender>()
            .AddTransient<IBillingService, BillingService>()
            .AddTransient<ICalendarManager, CalendarManager>();
         services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
-        
+        builder.Services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = false;
+        });
+
+        builder.Services.AddDistributedMemoryCache();
+
+        builder.Services.Configure<RequestLocalizationOptions>(options =>
+        {
+            var supportedCultures = new[] { "fr", "en", "pt" };
+            options.SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+        });
         WorkflowHelpers.ConfigureBillingService();
         using (var app = builder.Build())
         {
@@ -86,20 +109,14 @@ internal class Program
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseCors("default")
-                /*         .UseEndpoints(endpoints =>
-                         {
-                             endpoints.MapDefaultControllerRoute()
-                                 .RequireAuthorization();
-                         })*/
-
                 ;
-            //   app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
+            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope");
             app.MapDefaultControllerRoute();
             app.MapGet("/identity", (HttpContext context) =>
                 new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
             );
 
-            //     app.UseSession(); 
+            app.UseSession();
             await app.RunAsync();
         }
     }

@@ -6,6 +6,7 @@
     <RootNamespace>Yavsc.Server</RootNamespace>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
+    <Library>true</Library>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Anthropic.SDK" />

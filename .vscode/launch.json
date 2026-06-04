@@ -5,6 +5,44 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": ".NET API",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/Api/bin/Debug/net10.0/Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Api",
+            "serverReadyAction": {
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "envFile": "${workspaceFolder}/src/Api/.env"
+        },
+        {
+            "name": "C#: API Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/Api/Api.csproj"
+        },
+        {
+            "name": "Blogs",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Yavsc.Blogs/bin/Debug/net10.0/Yavsc.Blogs.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Yavsc.Blogs/",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
             "name": "C#: Yavsc.Org Debug",
             "type": "dotnet",
             "request": "launch",
@@ -26,8 +64,9 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
+            "envFile": "${workspaceFolder}/src/Yavsc.Org/.env",
             "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
+                "/Views": "${workspaceFolder}/src/Yavsc.Org/Views"
             }
         },
         {
@@ -58,20 +97,8 @@
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceFolder}/src/Web/Views"
+                "/Views": "${workspaceFolder}/src/Yavsc.Web/Views"
             }
-        },
-        
-         {
-            "name": "Api",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build-webapi",
-            "program": "${workspaceFolder}/src/Api/bin/Debug/net10.0/Api.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Api",
-            "stopAtEntry": false,
-            "console": "internalConsole"
         },
         {
             "name": "PostIt",
