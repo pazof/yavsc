@@ -1,8 +1,8 @@
 @{
-    ViewData["Title"] = "Le paiment "+ViewData["id"]+" a échoué";
+    ViewBag.Title = "Le paiment "+ViewBag.id+" a échoué";
 }
 
-<h2>@ViewData["Title"].</h2>
+<h2>@ViewBag.Title.</h2>
 <p>
-@ViewData["error"]
+@ViewBag.error
 </p>

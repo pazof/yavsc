@@ -1,9 +1,9 @@
 @model Yavsc.ViewModels.PayPal.PaymentInfo
 @{
-    ViewData["Title"] = "Informations sur le paiment "+ViewData["id"];
+    ViewBag.Title = "Informations sur le paiment "+ViewBag.id;
 }
 
-<h2>@ViewData["Title"].</h2>
+<h2>@ViewBag.Title.</h2>
 <p>
  @if (Model.DbContent.Executor.Id == User.GetUserId()) {
         <text>

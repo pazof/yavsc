@@ -1,12 +1,12 @@
 @model HairCutQuery
 @{
-    ViewData["Title"] = "Command confirmation"+" "+ViewBag.Activity.Name;
+    ViewBag.Title = "Command confirmation"+" "+ViewBag.Activity.Name;
 }
 @section header {
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2>@ViewBag.Title</h2>
     <div class="form-horizontal">
         <h4>Your book query</h4>
         <hr />

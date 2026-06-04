@@ -1,11 +1,11 @@
 @model IndexViewModel
 @using System.Security.Claims
 @{
-    ViewData["Title"] = "Manage your account";
+    ViewBag.Title = "Manage your account";
 }
 
-<h2>@ViewData["Title"]</h2>
-<p class="text-success">@ViewData["StatusMessage"]</p>
+<h2>@ViewBag.Title</h2>
+<p class="text-success">@ViewBag.StatusMessage</p>
 <div>
     <h4>Your account settings</h4>
     <hr />

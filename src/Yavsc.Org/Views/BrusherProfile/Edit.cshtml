@@ -1,7 +1,7 @@
 @model Yavsc.Models.Haircut.BrusherProfile
 
 @{
-    ViewData["Title"] = "Edition du profile coiffeu(se|r)";
+    ViewBag.Title = "Edition du profile coiffeu(se|r)";
 }
 
 @section header {
@@ -19,7 +19,7 @@
     </script>
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>@ViewBag.Title</h1>
 
 <form asp-action="Edit">
     <div class="form-horizontal">

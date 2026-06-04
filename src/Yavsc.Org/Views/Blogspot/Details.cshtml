@@ -1,6 +1,6 @@
 @model BlogPost
 @{
-    ViewData["Title"]=Model.Title;
+    ViewBag.Title=Model.Title;
 }
 @section scripts {
    
@@ -42,7 +42,7 @@ $('#commentValidation').html(
                         var comment = $('#Comment').val();
                         $('#Comment').val('');
                         $('#commentValidation').empty();
-                        var nnode = '<div data-type="blogcomment" data-id="'+data.id+'" data-allow-edit="True" data-allow-moderate="@ViewData["moderatoFlag"]" data-date="'+data.dateCreated+'" data-username="@User.GetUserName()">'+comment+'</div>';
+                        var nnode = '<div data-type="blogcomment" data-id="'+data.id+'" data-allow-edit="True" data-allow-moderate="@ViewBag.moderatoFlag" data-date="'+data.dateCreated+'" data-username="@User.GetUserName()">'+comment+'</div>';
                         $('#comments').append($(nnode).blogcomment())
                     },
                     url:'/api/blogcomments'

@@ -1,6 +1,6 @@
 @model RdvQuery
 
-@{ ViewData["Title"] = "Proposition de rendez-vous ["+ViewBag.Activity.Code+"]"; } 
+@{ ViewBag.Title = "Proposition de rendez-vous ["+ViewBag.Activity.Code+"]"; } 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleSettings.BrowserApiKey"></script>
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
@@ -112,7 +112,7 @@
     });
 </script>
 }
-<h2>@ViewData["Title"]</h2>
+<h2>@ViewBag.Title</h2>
 <form asp-action="Create" id="FrmComCre" role="form">
     <div class="form-horizontal">
         <h4>Fill in your book query</h4>

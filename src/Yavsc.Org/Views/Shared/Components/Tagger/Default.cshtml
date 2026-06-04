@@ -7,7 +7,7 @@
 <div class="row">
 <div class="col-xs-12">
     <ul>
-    @foreach (string tag in (string[]) ViewData["Tags"]) {
+    @foreach (string tag in (string[]) ViewBag.Tags) {
         <li>@tag</li>
     }
     </ul>

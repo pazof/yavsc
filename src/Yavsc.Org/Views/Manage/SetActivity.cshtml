@@ -1,5 +1,5 @@
 @model PerformerProfile 
-@{ ViewData["Title"] = "Your performer profile"; } 
+@{ ViewBag.Title = "Your performer profile"; } 
 @section header {
 <style>
     #map {
@@ -9,7 +9,7 @@
 </style>
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2>@ViewBag.Title</h2>
 
 @Html.DisplayFor(model => model)
 

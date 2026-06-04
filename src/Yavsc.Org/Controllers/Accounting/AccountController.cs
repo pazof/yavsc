@@ -709,10 +709,10 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             }
             else
             {
-                ViewData["jsonres"] = JsonConvert.SerializeObject(result);
+                ViewBag.jsonres = JsonConvert.SerializeObject(result);
                 // If the user does not have an account, then ask the user to create an account.
-                ViewData["ReturnUrl"] = returnUrl;
-                ViewData["LoginProvider"] = info.LoginProvider;
+                ViewBag.ReturnUrl = returnUrl;
+                ViewBag.LoginProvider = info.LoginProvider;
                 var email = info.AuthenticationProperties.GetParameter<string>(ClaimTypes.Email);
                 var name = info.AuthenticationProperties.GetParameter<string>(ClaimTypes.Name);
                 var avatar = info.AuthenticationProperties.GetParameter<string>("urn:google:profile");
@@ -780,7 +780,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                 AddErrors(result);
             }
 
-            ViewData["ReturnUrl"] = returnUrl;
+            ViewBag.ReturnUrl = returnUrl;
             return View(model);
         }
 
@@ -1077,7 +1077,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             var result = await _signInManager.TwoFactorSignInAsync(model.Provider, model.Code, model.RememberMe, model.RememberMe);
             if (result.Succeeded)
             {
-                ViewData["StatusMessage"] = "Your code was verified";
+                ViewBag.StatusMessage = "Your code was verified";
                 _logger.LogInformation($"Signed in. returning to {model.ReturnUrl}");
                 if (model.ReturnUrl != null)
                     return Redirect(model.ReturnUrl);

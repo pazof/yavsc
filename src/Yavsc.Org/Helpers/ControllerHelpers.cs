@@ -24,10 +24,10 @@ namespace Yavsc.Helpers
         }
         private static List<Notification> SetupNotificationList(this Controller controller)
         {
-            List<Notification> notifs = (List<Notification>)controller.ViewData["Notify"];
+            List<Notification> notifs = (List<Notification>)controller.ViewBag.Notify;
             if (notifs == null)
             {
-                controller.ViewData["Notify"] = notifs = new List<Notification>();
+                controller.ViewBag.Notify = notifs = new List<Notification>();
             }
             return notifs;
         }

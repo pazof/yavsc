@@ -81,7 +81,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
             var paymentInfo = await _context.ConfirmPayment(User.GetUserId(), PayerID, token);
-            ViewData["paymentinfo"] = paymentInfo;
+            ViewBag.paymentinfo = paymentInfo;
             command.Regularisation = paymentInfo.DbContent;
             command.PaymentId = token;
             bool paymentOk = false;
@@ -123,7 +123,7 @@ namespace Yavsc.Controllers
                 );
             }
 
-            ViewData["Notify"] = new List<Notification> {
+            ViewBag.Notify = new List<Notification> {
                 new Notification {
                     title= "Paiment PayPal",
                     body = "Votre paiment a été accépté."
@@ -377,7 +377,7 @@ namespace Yavsc.Controllers
             ViewBag.ColorsClass = (pPrestation.Tech == HairTechnos.Color
             || pPrestation.Tech == HairTechnos.Mech) ? "" : "hidden";
             ViewBag.TechClass = (pPrestation.Gender == HairCutGenders.Women) ? "" : "hidden";
-            ViewData["PerfPrefs"] = _context.BrusherProfile.Single(p => p.UserId == performerId);
+            ViewBag.PerfPrefs = _context.BrusherProfile.Single(p => p.UserId == performerId);
         }
 
         [HttpPost, Authorize]

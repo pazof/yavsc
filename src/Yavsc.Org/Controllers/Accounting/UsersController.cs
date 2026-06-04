@@ -44,7 +44,7 @@ namespace Yavsc.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
-            ViewData["PostalAddressId"] = new SelectList(_context.Locations, "Id", "PostalAddress");
+            ViewBag.PostalAddressId = new SelectList(_context.Locations, "Id", "PostalAddress");
             return View();
         }
 
@@ -59,7 +59,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["PostalAddressId"] = new SelectList(_context.Locations, "Id", "PostalAddress", applicationUser.PostalAddressId);
+            ViewBag.PostalAddressId = new SelectList(_context.Locations, "Id", "PostalAddress", applicationUser.PostalAddressId);
             return View(applicationUser);
         }
 
@@ -76,7 +76,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            ViewData["PostalAddressId"] = new SelectList(_context.Locations, "Id", "PostalAddress", applicationUser.PostalAddressId);
+            ViewBag.PostalAddressId = new SelectList(_context.Locations, "Id", "PostalAddress", applicationUser.PostalAddressId);
             return View(applicationUser);
         }
 
@@ -91,7 +91,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["PostalAddressId"] = new SelectList(_context.Locations, "Id", "PostalAddress", applicationUser.PostalAddressId);
+            ViewBag.PostalAddressId = new SelectList(_context.Locations, "Id", "PostalAddress", applicationUser.PostalAddressId);
             return View(applicationUser);
         }
 

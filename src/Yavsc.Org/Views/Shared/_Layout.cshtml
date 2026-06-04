@@ -22,9 +22,9 @@ background-attachment: fixed;
 ">
         <partial name="_Nav" />
         @RenderSection("ctxmenu", required: false)
-          @if (ViewData["Notify"] != null)
+          @if (ViewBag.Notify != null)
     {
-        foreach (Notification n in ViewData["Notify"] as IEnumerable<Notification>)
+        foreach (Notification n in ViewBag.Notify as IEnumerable<Notification>)
         {
             <div class="alert alert-info alert-dismissable" data-nid="@n.Id">
                 <img src="~/images/Notifications/@(n.icon).png" style="max-height:3em; float: left; margin:1em;" />

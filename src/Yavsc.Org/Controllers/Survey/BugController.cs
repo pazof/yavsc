@@ -30,8 +30,8 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Index(int skip = 0, int take = 25)
         {
             if (take > 50) return BadRequest();
-            ViewData["skip"]=skip;
-            ViewData["take"]=take;
+            ViewBag.skip=skip;
+            ViewBag.take=take;
             return View(await _context.Bug.Skip(skip).Take(take).ToListAsync());
         }
 

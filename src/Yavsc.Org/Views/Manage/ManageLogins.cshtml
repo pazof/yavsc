@@ -1,11 +1,11 @@
 @model ManageLoginsViewModel
 @{
-    ViewData["Title"] = "Manage your external logins";
+    ViewBag.Title = "Manage your external logins";
 }
 
-<h2>@ViewData["Title"].</h2>
+<h2>@ViewBag.Title.</h2>
 
-<p class="text-success">@ViewData["StatusMessage"]</p>
+<p class="text-success">@ViewBag.StatusMessage</p>
 @if (Model.CurrentLogins.Count > 0)
 {
     <h4>Registered Logins</h4>
@@ -17,7 +17,7 @@
                     <td>@account.LoginProvider</td>
                     <td>
                         @account.ProviderDisplayName
-                        @if ((bool)ViewData["ShowRemoveButton"])
+                        @if ((bool)ViewBag.ShowRemoveButton)
                         {
                             <form asp-controller="Manage" asp-action="RemoveLogin" method="post" class="form-horizontal" role="form">
                                 <div>

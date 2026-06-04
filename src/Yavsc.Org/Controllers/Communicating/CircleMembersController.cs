@@ -69,8 +69,8 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
-            ViewData["CircleId"] = new SelectList(_context.Circle, "Id", "Name", circleMember.CircleId);
-            ViewData["MemberId"] = new SelectList(_context.Users, "Id", "UserName", circleMember.MemberId);
+            ViewBag.CircleId = new SelectList(_context.Circle, "Id", "Name", circleMember.CircleId);
+            ViewBag.MemberId = new SelectList(_context.Users, "Id", "UserName", circleMember.MemberId);
             return View(circleMember);
         }
 
@@ -99,8 +99,8 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
-            ViewData["CircleId"] = new SelectList(_context.Circle, "Id", "Circle", circleMember.CircleId);
-            ViewData["MemberId"] = new SelectList(_context.Users, "Id", "Member", circleMember.MemberId);
+            ViewBag.CircleId = new SelectList(_context.Circle, "Id", "Circle", circleMember.CircleId);
+            ViewBag.MemberId = new SelectList(_context.Users, "Id", "Member", circleMember.MemberId);
             return View(circleMember);
         }
 

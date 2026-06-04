@@ -1,10 +1,10 @@
 @model IEnumerable<PerformerProfile>
   
 @{
-    ViewData["Title"] = "Les profiles - " + (ViewBag.Activity?.Name ?? "Any");
+    ViewBag.Title = "Les profiles - " + (ViewBag.Activity?.Name ?? "Any");
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>@ViewBag.Title</h1>
 <em>@ViewBag.Activity.Description</em>
 
 @foreach (var profile in Model) {

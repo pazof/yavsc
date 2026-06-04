@@ -1,6 +1,4 @@
-
 using Anthropic.SDK;
-using Microsoft.AspNetCore;
 using Yavsc.Abstract.Interfaces;
 using Yavsc.Extensions;
 
@@ -17,7 +15,7 @@ namespace Yavsc
                 new AnthropicClient(
                     new APIAuthentication(
                         builder.Configuration["ANTHROPIC_API_KEY"]
-                            ?? throw new InvalidOperationException("ANTHROPIC_API_KEY manquante")
+                        ?? throw new InvalidOperationException("ANTHROPIC_API_KEY manquante")
                     )
                 )
             );
@@ -28,15 +26,10 @@ namespace Yavsc
             else
                 builder.Services.AddScoped<IModerationService, ClaudeModerationService>();
 
-            var rootConfig = builder.Configuration
-                          .AddJsonFile("appsettings.json")
-                          .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-                          .AddEnvironmentVariables()
-                          .Build();
+            var app = await builder
+                .ConfigureWebAppServices()
+                .ConfigurePipeline();
 
-            rootConfig.GetConnectionString(YavscConstants.YavscConnectionStringName);   
-
-            var app = await builder.ConfigureWebAppServices().ConfigurePipeline();
             app.Run();
         }
     }

@@ -1,9 +1,9 @@
 @model SetUserNameViewModel
 @{
-    ViewData["Title"] = "Changer de nom d'utilisateur";
+    ViewBag.Title = "Changer de nom d'utilisateur";
 }
 
-<h2>@ViewData["Title"].</h2>
+<h2>@ViewBag.Title.</h2>
 
 <form asp-controller="Manage" asp-action="SetUserName" method="post" class="form-horizontal" role="form">
     <h4>Change user name form</h4>

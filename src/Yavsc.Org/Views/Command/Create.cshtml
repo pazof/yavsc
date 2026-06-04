@@ -12,8 +12,8 @@
 <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
 
 }
-@{ ViewData["Title"] = $"Proposition de rendez-vous à {Model.PerformerProfile.Performer.UserName} [{ViewBag.Activity.Name}]"; } 
-<h2>@ViewData["Title"]</h2>
+@{ ViewBag.Title = $"Proposition de rendez-vous à {Model.PerformerProfile.Performer.UserName} [{ViewBag.Activity.Name}]"; } 
+<h2>@ViewBag.Title</h2>
 <form asp-action="Create" method="post">
     <div class="form-horizontal">
         <h4>Saisissez votre demande de rendez-vous</h4>

@@ -79,7 +79,7 @@ namespace Yavsc.Controllers
                 userId = User.GetUserId();
             var model = new UserActivity { UserId = userId };
             ViewBag.DoesCode = new SelectList(dbContext.Activities, "Code", "Name");
-            //ViewData["UserId"] = userId;
+            //ViewBag.UserId = userId;
             ViewBag.UserId = new SelectList(dbContext.Performers.Include(p=>p.Performer), "PerformerId", "Performer", userId);
             return View(model);
         }
@@ -123,8 +123,8 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            ViewData["DoesCode"] = new SelectList(dbContext.Activities, "Code", "Does", userActivity.DoesCode);
-            ViewData["UserId"] = new SelectList(dbContext.Performers, "PerformerId", "User", userActivity.UserId);
+            ViewBag.DoesCode = new SelectList(dbContext.Activities, "Code", "Does", userActivity.DoesCode);
+            ViewBag.UserId = new SelectList(dbContext.Performers, "PerformerId", "User", userActivity.UserId);
             return View(userActivity);
         }
 
@@ -142,8 +142,8 @@ namespace Yavsc.Controllers
                 dbContext.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
-            ViewData["DoesCode"] = new SelectList(dbContext.Activities, "Code", "Does", userActivity.DoesCode);
-            ViewData["UserId"] = new SelectList(dbContext.Performers, "PerformerId", "User", userActivity.UserId);
+            ViewBag.DoesCode = new SelectList(dbContext.Activities, "Code", "Does", userActivity.DoesCode);
+            ViewBag.UserId = new SelectList(dbContext.Performers, "PerformerId", "User", userActivity.UserId);
             return View(userActivity);
         }
 

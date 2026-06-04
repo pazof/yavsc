@@ -3,10 +3,10 @@
 
 @{
     ViewBag.SettingLabel = "Yavsc.Models.Musical.Profiles.Instrumentation";
-    ViewData["Title"] = ViewBag.SettingLabel + "[" +"Set" + "]" ;
+    ViewBag.Title = ViewBag.SettingLabel + "[" +"Set" + "]" ;
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2>@ViewBag.Title</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">

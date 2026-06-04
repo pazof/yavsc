@@ -1,9 +1,9 @@
 @model Yavsc.Models.Bank.BankIdentity
 @{
-    ViewData["Title"] = "Fill in your Bank Info";
+    ViewBag.Title = "Fill in your Bank Info";
 }
 
-<h2>@ViewData["Title"].</h2>
+<h2>@ViewBag.Title.</h2>
 <form asp-controller="Manage" asp-action="AddBankInfo" method="post" class="form-horizontal" role="form">
     <h4>Vous pouvez valider vos coordonnée bancaire ci après.</h4>
     

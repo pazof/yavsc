@@ -75,7 +75,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(ManageMessageId? message = null)
         {
-            ViewData["StatusMessage"] =
+            ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? _SR["Your password has been changed."]
                 : message == ManageMessageId.SetPasswordSuccess ? _SR["Your password has been set."]
                 : message == ManageMessageId.SetTwoFactorSuccess ? _SR["Your two-factor authentication provider has been set."]
@@ -484,7 +484,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public async Task<IActionResult> ManageLogins(ManageMessageId? message = null)
         {
-            ViewData["StatusMessage"] =
+            ViewBag.StatusMessage =
                 message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
                 : message == ManageMessageId.AddLoginSuccess ? "The external login was added."
                 : message == ManageMessageId.Error ? "An error has occurred."
@@ -496,7 +496,7 @@ namespace Yavsc.Controllers
             }
             var userLogins = await _userManager.GetLoginsAsync(user);
           
-            ViewData["ShowRemoveButton"] = user.PasswordHash != null || userLogins.Count > 1;
+            ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
 
             return View(new ManageLoginsViewModel
             {
@@ -748,15 +748,15 @@ namespace Yavsc.Controllers
         }
         public async Task<IActionResult> PaymentInfo (string id)
         {
-           ViewData["id"] = id;
+           ViewBag.id = id;
            var info = await PayPalHelpers.GetCheckoutInfo(_dbContext,id);
            return View(info);
         }
 
         public IActionResult PaymentError (string id, string error)
         {
-            ViewData["error"] = error;
-            ViewData["id"] = id;
+            ViewBag.error = error;
+            ViewBag.id = id;
             return View();
         }
     }

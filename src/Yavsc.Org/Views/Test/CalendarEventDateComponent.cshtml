@@ -1,13 +1,13 @@
 @model Yavsc.ViewModels.Test.CalendarViewModel
 @{
-    ViewData["Title"] = "Page d'accueil";
+    ViewBag.Title = "Page d'accueil";
 }
 @section header {
     <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
     <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
 }
-<h2>@ViewData["Title"]</h2>
+<h2>@ViewBag.Title</h2>
 <form asp-action="Create" id="FrmComCre" role="form">
     <div class="form-horizontal">
         <h4>Saisissez votre demande de rendez-vous</h4>

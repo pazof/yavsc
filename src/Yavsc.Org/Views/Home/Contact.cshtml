@@ -1,9 +1,13 @@
+@using Microsoft.IdentityModel.Protocols.Configuration
 @model SiteSettings
 @{
-    ViewData["Title"] = "Contact";
+    ViewBag.Title = "Contact";
+    if (Model.Owner==null)
+        throw new InvalidConfigurationException("no owner");
 }
-<h2>@ViewData["Title"].</h2>
-<h3>@ViewData["Message"]</h3>
+
+<h2>@ViewBag.Title</h2>
+<h3>@ViewBag.Message</h3>
 
 <p>
 @Model.Owner.Name <br>

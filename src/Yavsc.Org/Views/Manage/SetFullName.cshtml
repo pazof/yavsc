@@ -1,8 +1,8 @@
 @model SetFullNameViewModel
 
-@{ ViewData["Title"] = "Your full name"; } 
+@{ ViewBag.Title = "Your full name"; } 
 
-<h2>@ViewData["Title"]</h2>
+<h2>@ViewBag.Title</h2>
 
 <form  asp-controller="Manage" asp-action="SetFullName" method="post" class="form-horizontal" role="form">
     <h4>Indicate below your full name:</h4>

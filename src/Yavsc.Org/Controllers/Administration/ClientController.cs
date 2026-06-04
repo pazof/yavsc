@@ -132,7 +132,7 @@ namespace Yavsc.Controllers
                      Value = ((int) ApplicationTypes.NativeConfidential).ToString()
                      }
              };
-            ViewData["AccessTokenType"] = types;
+            ViewBag.AccessTokenType = types;
         }
         // GET: Client/Edit/5
         public async Task<IActionResult> Edit(int id)

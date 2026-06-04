@@ -1,6 +1,6 @@
 @model IEnumerable<IBlogPost>
 @{
-    ViewData["Title"] = "Blogs, l'index";
+    ViewBag.Title = "Blogs, l'index";
 }
 @section header {
     <style>
@@ -36,8 +36,8 @@
         )
    </script>
 }
-<h2>@ViewData["Title"]</h2>
-<p class="text-success">@ViewData["StatusMessage"]</p>
+<h2>@ViewBag.Title</h2>
+<p class="text-success">@ViewBag.StatusMessage</p>
 @if (User.IsSignedIn()) {
 <p>
     <a asp-action="Create">Create a new article</a>

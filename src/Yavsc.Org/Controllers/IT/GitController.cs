@@ -96,7 +96,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["OwnerId"] = new SelectList(_context.ApplicationUser, "Id", "Owner", gitRepositoryReference.OwnerId);
+            ViewBag.OwnerId = new SelectList(_context.ApplicationUser, "Id", "Owner", gitRepositoryReference.OwnerId);
             return View(gitRepositoryReference);
         }
 
@@ -124,7 +124,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["OwnerId"] = new SelectList(_context.ApplicationUser, "Id", "Owner", gitRepositoryReference.OwnerId);
+            ViewBag.OwnerId = new SelectList(_context.ApplicationUser, "Id", "Owner", gitRepositoryReference.OwnerId);
             return View(gitRepositoryReference);
         }
 

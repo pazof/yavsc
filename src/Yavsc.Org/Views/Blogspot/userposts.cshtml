@@ -1,10 +1,10 @@
 @model IEnumerable<BlogPost>
 @{
-    ViewData["Title"] = "User posts";
+    ViewBag.Title = "User posts";
 }
 
 <h2>Index</h2>
-<p class="text-success">@ViewData["StatusMessage"]</p>
+<p class="text-success">@ViewBag.StatusMessage</p>
 <p>
     <a asp-action="Create">Create New</a>
 </p>

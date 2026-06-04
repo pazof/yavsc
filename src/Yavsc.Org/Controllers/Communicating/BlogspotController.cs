@@ -53,7 +53,7 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IActionResult Title(string id)
         {
-            ViewData["Title"] = id;
+            ViewBag.Title = id;
             return View("Title", blogSpotService.GetTitle(id));
         }
 
@@ -70,8 +70,8 @@ namespace Yavsc.Controllers
             try
             {
                 var blog = await blogSpotService.Details(User, id.Value);
-                ViewData["apicmtctlr"] = "/api/blogcomments";
-                ViewData["moderatoFlag"] = User.IsInMsRole(YavscConstants.BlogModeratorGroupName);
+                ViewBag.apicmtctlr = "/api/blogcomments";
+                ViewBag.moderatoFlag = User.IsInMsRole(YavscConstants.BlogModeratorGroupName);
 
                 return View(blog);
 
@@ -150,7 +150,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 await blogSpotService.Modify(User, blogEdit);
-                ViewData["StatusMessage"] = "Post modified";
+                ViewBag.StatusMessage = "Post modified";
                 return RedirectToAction("Index");
             }
             return View(blogEdit);

@@ -17,7 +17,7 @@ namespace Yavsc.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -2170,6 +2170,171 @@ namespace Yavsc.Migrations
                     b.ToTable("DeviceDeclaration");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Kyc.DeclarationFlag", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("DeclarationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("MatchExcerpt")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("PatternId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeclarationId");
+
+                    b.HasIndex("PatternId");
+
+                    b.ToTable("DeclarationFlag");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Kyc.ModerationLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("DeclarationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ModeratorId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ScoreDelta")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeclarationId");
+
+                    b.HasIndex("ModeratorId");
+
+                    b.HasIndex("Timestamp");
+
+                    b.ToTable("ModerationLogs", t =>
+                        {
+                            t.HasCheckConstraint("CK_ModerationLog_Immutable", "1=1");
+                        });
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Kyc.RegexAlertPattern", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Pattern")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive");
+
+                    b.ToTable("RegexAlertPatterns");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Kyc.TrustDeclaration", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Content")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<Guid>("DeclarantTokenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("ScoreDelta")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Sentiment")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TrustTokenId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("SubmittedAt");
+
+                    b.HasIndex("TrustTokenId");
+
+                    b.ToTable("TrustDeclarations");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Kyc.TrustToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("TokenSource")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<int?>("TrustScore")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.ToTable("TrustTokens");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Market.Product", b =>
                 {
                     b.Property<long>("Id")
@@ -3838,6 +4003,47 @@ namespace Yavsc.Migrations
                     b.Navigation("DeviceOwner");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Kyc.DeclarationFlag", b =>
+                {
+                    b.HasOne("Yavsc.Models.Kyc.TrustDeclaration", "Declaration")
+                        .WithMany("Flags")
+                        .HasForeignKey("DeclarationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yavsc.Models.Kyc.RegexAlertPattern", "Pattern")
+                        .WithMany()
+                        .HasForeignKey("PatternId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Declaration");
+
+                    b.Navigation("Pattern");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Kyc.ModerationLog", b =>
+                {
+                    b.HasOne("Yavsc.Models.Kyc.TrustDeclaration", "Declaration")
+                        .WithMany()
+                        .HasForeignKey("DeclarationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Declaration");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Kyc.TrustDeclaration", b =>
+                {
+                    b.HasOne("Yavsc.Models.Kyc.TrustToken", "Subject")
+                        .WithMany("Declarations")
+                        .HasForeignKey("TrustTokenId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Market.Service", b =>
                 {
                     b.HasOne("Yavsc.Models.Workflow.Activity", "Context")
@@ -4301,6 +4507,16 @@ namespace Yavsc.Migrations
             modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestation", b =>
                 {
                     b.Navigation("Taints");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Kyc.TrustDeclaration", b =>
+                {
+                    b.Navigation("Flags");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Kyc.TrustToken", b =>
+                {
+                    b.Navigation("Declarations");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Musical.Profiles.DjSettings", b =>

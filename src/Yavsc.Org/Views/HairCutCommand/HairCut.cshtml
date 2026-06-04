@@ -1,6 +1,10 @@
 @model Yavsc.Models.Haircut.HairCutQuery 
-@{ ViewData["Title"] = $"{ViewBag.Activity.Name}: Votre commande"; } 
-@await Html.PartialAsync("BrusherProfileScript",ViewData["PerfPrefs"])
+@{ ViewBag.Title = $"{ViewBag.Activity.Name}: Votre commande"; 
+}
+
+
+ @await Html.PartialAsync("BrusherProfileScript", Model, ViewBag.PerfPrefs)
+
 @section header {
 <script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
@@ -145,7 +149,7 @@
 }
 <em>@ViewBag.Activity.Description</em> 
 
-<h2>@ViewData["Title"]</h2>
+<h2>@ViewBag.Title</h2>
 
 @Html.DisplayFor(m=>m.PerformerProfile)
 

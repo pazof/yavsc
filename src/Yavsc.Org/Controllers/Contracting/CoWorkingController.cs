@@ -60,8 +60,8 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
-            ViewData["PerformerId"] = new SelectList(_context.Performers, "PerformerId", "Performer", coWorking.PerformerId);
-            ViewData["WorkingForId"] = new SelectList(_context.Users, "Id", "WorkingFor", coWorking.WorkingForId);
+            ViewBag.PerformerId = new SelectList(_context.Performers, "PerformerId", "Performer", coWorking.PerformerId);
+            ViewBag.WorkingForId = new SelectList(_context.Users, "Id", "WorkingFor", coWorking.WorkingForId);
             return View(coWorking);
         }
 
@@ -78,8 +78,8 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            ViewData["PerformerId"] = new SelectList(_context.Performers, "PerformerId", "Performer", coWorking.PerformerId);
-            ViewData["WorkingForId"] = new SelectList(_context.Users, "Id", "WorkingFor", coWorking.WorkingForId);
+            ViewBag.PerformerId = new SelectList(_context.Performers, "PerformerId", "Performer", coWorking.PerformerId);
+            ViewBag.WorkingForId = new SelectList(_context.Users, "Id", "WorkingFor", coWorking.WorkingForId);
             return View(coWorking);
         }
 
@@ -94,8 +94,8 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync(User.GetUserId());
                 return RedirectToAction("Index");
             }
-            ViewData["PerformerId"] = new SelectList(_context.Performers, "PerformerId", "Performer", coWorking.PerformerId);
-            ViewData["WorkingForId"] = new SelectList(_context.Users, "Id", "WorkingFor", coWorking.WorkingForId);
+            ViewBag.PerformerId = new SelectList(_context.Performers, "PerformerId", "Performer", coWorking.PerformerId);
+            ViewBag.WorkingForId = new SelectList(_context.Users, "Id", "WorkingFor", coWorking.WorkingForId);
             return View(coWorking);
         }
 

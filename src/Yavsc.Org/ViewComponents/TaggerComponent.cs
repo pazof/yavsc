@@ -16,9 +16,9 @@ namespace Yavsc.ViewComponents
         }
         public IViewComponentResult Invoke(ITaggable<long> longTaggable)
         {
-            ViewData["Tags"] = longTaggable.GetTags();
-            ViewData["at"] = localizer["at"];
-            ViewData["apictlr"] = "~/api/"+localizer["apiRouteTag"+longTaggable.GetType().Name];
+            ViewBag.Tags = longTaggable.GetTags();
+            ViewBag.at = localizer["at"];
+            ViewBag.apictlr = "~/api/"+localizer["apiRouteTag"+longTaggable.GetType().Name];
             return View(longTaggable);
         }
     }

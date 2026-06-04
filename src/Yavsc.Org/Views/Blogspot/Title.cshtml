@@ -1,10 +1,10 @@
 @model IEnumerable<BlogPost>
 
-<h2 markdown="@ViewData["Title"]"></h2>
-<p class="text-success">@ViewData["StatusMessage"]</p>
+<h2 markdown="@ViewBag.Title"></h2>
+<p class="text-success">@ViewBag.StatusMessage</p>
 
 <p>
-    <a asp-action="Create" asp-route-title="@ViewData["Title"]">Poster au même titre</a>
+    <a asp-action="Create" asp-route-title="@ViewBag.Title">Poster au même titre</a>
 </p>
 
 <table class="table">

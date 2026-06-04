@@ -23,7 +23,7 @@ namespace Yavsc.ViewComponents
             var comment = await context.Comment.Include(c=>c.Children).FirstOrDefaultAsync(c => c.Id==id);
             if (comment == null) 
                 throw new InvalidOperationException();
-            ViewData["apictlr"] = "/api/blogcomments";
+            ViewBag.apictlr = "/api/blogcomments";
             return View("Default", comment);
         }
 

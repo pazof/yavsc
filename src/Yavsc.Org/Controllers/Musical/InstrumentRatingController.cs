@@ -77,7 +77,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["OwnerId"] = new SelectList(_context.Performers, "PerformerId", "Profile", instrumentRating.OwnerId);
+            ViewBag.OwnerId = new SelectList(_context.Performers, "PerformerId", "Profile", instrumentRating.OwnerId);
             return View(instrumentRating);
         }
 
@@ -94,7 +94,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            ViewData["OwnerId"] = new SelectList(_context.Performers, "PerformerId", "Profile", instrumentRating.OwnerId);
+            ViewBag.OwnerId = new SelectList(_context.Performers, "PerformerId", "Profile", instrumentRating.OwnerId);
             return View(instrumentRating);
         }
 
@@ -109,7 +109,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewData["OwnerId"] = new SelectList(_context.Performers, "PerformerId", "Profile", instrumentRating.OwnerId);
+            ViewBag.OwnerId = new SelectList(_context.Performers, "PerformerId", "Profile", instrumentRating.OwnerId);
             return View(instrumentRating);
         }
 
