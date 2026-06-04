@@ -5,10 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "C#: Yavsc.Org Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj"
+        },
+        {
             "name": "Yavsc.Org",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "build-web",
             "program": "${workspaceFolder}/src/Yavsc.Org/bin/Debug/net10.0/Yavsc.Org.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Yavsc.Org",

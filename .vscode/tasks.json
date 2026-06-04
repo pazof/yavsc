@@ -19,12 +19,11 @@
       "command": "dotnet",
       "args": ["build"],
       "options": {
-        "cwd": "src/Yavsc"
+        "cwd": "src/Yavsc.Org"
       },
       "group": {
         "kind": "build"
-      },
-      "isBackground": true
+      }
     },
     {
       "label": "build-webapi",

@@ -1,8 +1,14 @@
 @model PostalAddress
-
+@if (Model==null)
+{
+    <i>⚠ Pas d'adresse postale renseignée ⚠</i>
+}
+else {
 <address>
 @Model.Street1<br />
 @Model.Street2<br />
 @Model.PostalCode, @Model.City<br />
 @Model.Province @Model.State @Model.Country
 </address>
+}
+

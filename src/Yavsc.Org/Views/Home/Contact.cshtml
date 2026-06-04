@@ -1,17 +1,10 @@
 @using Microsoft.IdentityModel.Protocols.Configuration
 @model SiteSettings
-@{
-    ViewBag.Title = "Contact";
-    if (Model.Owner==null)
-        throw new InvalidConfigurationException("no owner");
-}
+<h2>Contact</h2>
 
-<h2>@ViewBag.Title</h2>
-<h3>@ViewBag.Message</h3>
+<p>@Model.Owner.Name </p>
 
-<p>
-@Model.Owner.Name <br>
-@Html.DisplayFor(m=>m.Owner.PostalAddress)</p>
+@Html.DisplayFor(m=>m.Owner.PostalAddress)
 
 <address>
     <strong>Support:</strong> <a href="mailto:@Model.Admin.EMail">@(Model.Admin.Name)&lt;@(Model.Admin.EMail)&gt;</a><br />
