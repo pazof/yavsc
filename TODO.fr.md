@@ -6,8 +6,8 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 
 ## Jalon 1
 
-	☐ Des spécifications détaillées du coeur de l'application
-	✔ Acces (publique) aux Blogs. @done (August 13th 2016, 0:51)
+	☐ Des spécifications détaillées du Coeur de l'application
+	✔ Accès (publique) aux Blogs. @done (August 13th 2016, 0:51)
 	✔ Accès aux profiles des intervenants. @done (August 13th 2016, 0:57)
 	✔ Demande de devis, spécifiant une date et un lieu, envers un pro (ou "BookQuery", ou "demande de rendez-vous"). @done (August 13th 2016, 0:57)
 	✔ Notifications commande. @done (September 15th 2016, 15:00)
@@ -17,18 +17,18 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	✔ Saisie et soumission basique du devis. @done (October 30th 2016, 21:50)
 	✔ Devis au formats TeX et Pdf en ligne à accès restreint. @done (November 6th 2016, 2:10)
 	✔ Idem depuis l'API web. @done (November 10th 2016, 10:00)
-	✔ Signature du devis par le fournisseur (l'arstiste), depuis le mobile. @done (December 7th 2016, 10:45)
+	✔ Signature du devis par le fournisseur (l'artiste), depuis le mobile. @done (December 7th 2016, 10:45)
 	☐ Au devis validé par le fournisseur pour le client : Envoi d'une notification au client et mise à disposition du devis signé
 	* à l'accord du client sur le devis :
 		☐ Envoi d'une notification au fournisseur et mise à disposition de la signature client et d'un commentaire.
-		☐ Edition de la facture non aquittée depuis le mobile.
+		☐ Edition de la facture non acquittée depuis le mobile.
 		☐ Edition de contrat depuis le mobile.
 		☐ Notification et mise à disposition du contrat pour le client.
 		☐ Signature de contrat par le client.
-		☐ Notification au client de la facture non aquittée.
+		☐ Notification au client de la facture non acquittée.
 		(+ ☐ Paiement du client?)
-		☐ Edition de la facture marquée aquitée et signée par le fournisseur.
-		☐ Notification au client de la facture aquittée signée.
+		☐ Edition de la facture marquée acquittée et signée par le fournisseur.
+		☐ Notification au client de la facture acquittée signée.
     ✔ Chat privé (coté serveur). @done (October 13th 2016, 16:27)
 	✔ Accès mobile au salon public. @done (October 13th 2016, 16:27)
 	✔ Accès Web au chat privé. @done (November 3rd 2016, 14:57)
@@ -74,14 +74,14 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 		☐ Mobile
 	☐ Evaluation des trajets
 	✔ Réactivation des cercles privés (cassé avec vNext) @done (May 31st 2017, 3:22)
-	✔ Support multi-lanque de l'app mobile @done (December 7th 2016, 10:58)
-	✔ Support multi-lanque du web @done (December 7th 2016, 10:58)
+	✔ Support multi-langue de l'app mobile @done (December 7th 2016, 10:58)
+	✔ Support multi-langue du web @done (December 7th 2016, 10:58)
 
 ## Jalon 2
 
 
 	☐ Interface de gestion des collaborateurs
-	☐ Migration de l'identifiant utilisateur, de la chaine de caractère ala GUID vers l'entier long auto incrémenté par Npgsql 
+	☐ Migration de l'identifiant utilisateur, de la chaîne de caractère ala GUID vers l'entier long auto incrémenté par Npgsql 
 
 	☐ Login with Twitter
 	☐ Login with PayPal
@@ -89,7 +89,7 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	☐ Contrôle Web du rating
 
 	☐ Paiement client d'un approvisionnement pour une demande de prestation définie.
-	☐ La saisie et l'usage des disonibilités, les ponctuelles, les réccurentes, et les périodes de congé.
+	☐ La saisie et l'usage des disponibilités, les ponctuelles, les récurrentes, et les périodes de congé.
 	☐ Notifications structurelles (liste de notifications impératives, relatives au site, 
 	spécifiées par groupe d'utilisateurs).
 	☐ Notifications aux posts, à l'entée d'un artiste, à la conclusion d'une success story.
@@ -110,18 +110,18 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	
 	### Réécritures prévues : 
 
-	☐ Eviter la création de fichier TeX inutile à la génération du Pdf
+	☐ Éviter la création de fichier TeX inutile à la génération du Pdf
 	
 	### Accessibilité :
-	☐ Correction des libéllés manquant et/ou en anglais relevés avant le jalon 2 
+	☐ Correction des libellés manquant et/ou en anglais relevés avant le jalon 2 
 	
 	### Sécurité
 	☐ Quota fs utilisateur
 	☐ Usage de clés anti-forge coté interfaces Web 
-	☐ Fixer "là où ça manque" les limitations en taille des chaines de caratères du modèle 
+	☐ Fixer "là où ça manque" les limitations en taille des chaines de caractères du modèle 
 	
 	### Configurabilité
-	☐ Gestion de contenu des pages du site, au format interne (NRLD: i.e. non exposé,
+	☐ Gestion de contenu des pages du site, au format interne (NDLR: i.e. non exposé,
 	absent du code livré aux clients Web) Markdown-av (`@Html.SiteContent<AccessRules>(id).Responsible`)
 	
 ## Jalon 3
@@ -132,11 +132,11 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	☐ Chaque champ possède:
 		☐ Un label
 		☐ Un type pour la valeur
-		☐ Un type de controle
+		☐ Un type de contrôle
 		☐ Une liste de validateurs
 		☐ Une invitation à la saisie
 		 
-	☐ Chaque champ apparait dans un groupe de champ possèdant un titre
+	☐ Chaque champ apparaît dans un groupe de champ possédant un titre
 	☐ Saisie d'un devis à destination d'un invité (envoi par email, contact local)
 	☐ Paiement d'Arrhes
 
@@ -156,6 +156,6 @@ Ceci est une grosse liste de fonctionnalités, existantes, ou à implémenter, o
 	☐ Conciliation: Une aide à la décision en cas de conflit entre fournisseur et client: 
 	à partir du dossier de la commande, on peut aider, en tant que personne du milieu, qui a accès aux deux vues du dossier, 
 	celle du client et celle du fournisseur, des indicateurs peuvent aider un membre de l'équipe commerciale (du groupe "FrontOffice")
-	à choisir où se place la part de chacun dans l'échec du projet, et à en faire part au bélligérants dans l'espoir d'un accord.
+	à choisir où se place la part de chacun dans l'échec du projet, et à en faire part au belligérants dans l'espoir d'un accord.
 	☐ Le réseau pro : on a des sous-traitants, on leur transmet des demandes de devis en tant que sous-traitance
-	d'une demande en cours, cette dernière n'est validable qu'une fois seulement que tous les devis dont elle dépend sont validés.
+	d'une demande en cours, cette dernière n'est validable une fois seulement que tous les devis dont elle dépend sont validés.

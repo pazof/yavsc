@@ -5,6 +5,7 @@
         "appsettings",
         "asciidoctor",
         "ASPNETCORE",
+        "Configurabilité",
         "Cratie",
         "DESTDIR",
         "dotnet",
@@ -13,6 +14,7 @@
         "Newtonsoft",
         "Npgsql",
         "SLNDIR",
+        "validable",
         "www-data",
         "yavsc",
         "Yavsc"
