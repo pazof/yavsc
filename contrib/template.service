@@ -12,16 +12,18 @@ Type=simple
 User=www-data
 Group=www-data
 WorkingDirectory=$DESTDIR
-ExecStart=$DESTDIR/$APP_NAME
+ExecStart=$DESTDIR/Yavsc.$APP_NAME
 Restart=always
 Environment="HOME=$DESTDIR"
 Environment="ASPNETCORE_ENVIRONMENT=Production"
-Environment="ASPNETCORE_ConnectionStrings__YavscConnection=Server=$YAVSC_CONNECTION_HOST;Port=$YAVSC_CONNECTION_PORT;Database=$YAVSC_CONNECTION_DATABASE;Username=$YAVSC_CONNECTION_USERNAME;Password=$YAVSC_CONNECTION_PASSWORD;"
+Environment="ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
+Environment="ANTHROPIC_MAX_TOKENS=$ANTHROPIC_MAX_TOKENS"
+Environment="ASPNETCORE_ConnectionStrings__YavscConnection=Server=$POSTGRES_HOST;Port=$POSTGRES_PORT;Database=$POSTGRES_DB;Username=$POSTGRES_USER;Password=$POSTGRES_PASSWORD;"
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=$APP_NAME
+SyslogIdentifier=$APP_SYSLOG_ID
 
 [Install]
 WantedBy=multi-user.target

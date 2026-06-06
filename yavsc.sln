@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc.Org", "src\Yavsc.Org\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc.Web", "src\Yavsc.Web\Yavsc.Web.csproj", "{1F594222-C5CB-4D4A-94A1-C5AEB4990B59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "src\Api\Api.csproj", "{95DAD2B5-4324-4E89-A337-5703E45CFBE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc.Api", "src\Yavsc.Api\Yavsc.Api.csproj", "{95DAD2B5-4324-4E89-A337-5703E45CFBE8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cli", "src\cli\cli.csproj", "{27DA6CEC-4266-4F78-BB32-8388F9A401D0}"
 EndProject

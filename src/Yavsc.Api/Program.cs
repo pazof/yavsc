@@ -10,10 +10,12 @@
  copies or substantial portions of the Software.
 */
 
+using Anthropic.SDK;
 using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc;
+using Yavsc.Abstract.Interfaces;
 using Yavsc.Helpers;
 using Yavsc.Interface;
 using Yavsc.Models;
@@ -28,7 +30,23 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var services = builder.Services;
-        // builder.Services.AddDistributedMemoryCache();
+
+        // Anthropic client
+        builder.Services.AddSingleton<AnthropicClient>(_ =>
+            new AnthropicClient(
+                new APIAuthentication(
+                    builder.Configuration["ANTHROPIC_API_KEY"]
+                    ?? throw new InvalidOperationException("ANTHROPIC_API_KEY manquante")
+                )
+            )
+        );
+
+        // Service de modération
+        if (builder.Environment.IsDevelopment())
+            builder.Services.AddScoped<IModerationService, MockModerationService>();
+        else
+            builder.Services.AddScoped<IModerationService, ClaudeModerationService>();
+
 
         // accepts any access token issued by identity server
         // adds an authorization policy for scope 'scope1'

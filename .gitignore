@@ -47,11 +47,9 @@ generated/
 *.Development.json
 *.log
 
-
 **/AppDataDevelopment/
 binaries/
 build/
 src/*/Blog-Dev/
 *.mp4
 src/Yavsc.Org/data/
-
