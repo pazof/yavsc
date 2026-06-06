@@ -2,9 +2,19 @@
 
 ## Resources
 
-### A Name
+System resources needed to install.
 
-In this doc, let's say, `FreeField`
+### Some TCP/IP ports to listen
+
+The following provided services need all a port to listen :
+
+* Org
+* Blogs
+* Api (to become obsolete, in favor of Performer + Client + Com + Moderation )
+
+### A Software bloc name
+
+In this doc, let's say, `Yavsc`
 
 ### A domain name
 
@@ -13,11 +23,11 @@ You'll have to see with your provider, in order to power it, and make it point t
 
 ### A Postgresql db
 
-The database must be created, and we need its connection string, allowed to modify the data dictionary
+The database must be created, and we need its connection string, allowed to modify the data dictionary, see the `.env` file
 
-### A mailling service
+### An Smtp mail service
 
-You'll need to send e-mail ... using smtp and the provider of your choice.
+You'll need to send e-mail ... using smtp and the provider of your choice, see the `.env` file.
 
 ### Google
 
