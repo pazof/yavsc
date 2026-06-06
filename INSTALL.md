@@ -1,4 +1,14 @@
-# configuring a new application
+# Install
+
+With internet access, Git, dotnet, and GNU/Makefile, simply follow these instructions:
+
+```bash
+git clone https://github.com/pschneider/yavsc.git
+cd yavsc
+dotnet restore
+cd contrib
+make install
+```
 
 ## Resources
 
