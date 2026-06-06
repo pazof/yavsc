@@ -342,7 +342,7 @@ public static class HostingExtensions
     {
         return (context, _) =>
         {
-            foreach (String scope in new string[] { "blog", "admin", "contract", "com" })
+            foreach (String scope in Constants.BuildInApiScopes)
             {
                 var existentScope = context.Set<ApiScope>().FirstOrDefault(b => b.Name == scope);
                 if (existentScope == null)

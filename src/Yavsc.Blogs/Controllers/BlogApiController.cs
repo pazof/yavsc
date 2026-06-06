@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
@@ -6,6 +7,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
+    [Authorize("BlogScope")]
     [Produces("application/json")]
     [Route("api/blog")]
 

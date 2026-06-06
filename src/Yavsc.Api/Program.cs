@@ -58,7 +58,7 @@ internal class Program
                 {
                     policy
                         .RequireAuthenticatedUser()
-                        .RequireClaim(JwtClaimTypes.Scope, new string[] { "scope2" });
+                        .RequireClaim(JwtClaimTypes.Scope, new string[] { "com" });
                 });
             })
             .AddCors(options =>

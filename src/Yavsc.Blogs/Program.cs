@@ -41,11 +41,11 @@ internal class Program
         services
             .AddAuthorization(options =>
             {
-                options.AddPolicy("ApiScope", policy =>
+                options.AddPolicy("BlogScope", policy =>
             {
                 policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(JwtClaimTypes.Scope, new string[] { "blogs" });
+                    .RequireClaim(JwtClaimTypes.Scope, new string[] { "blog" });
             });
             })
             .AddCors(options =>
