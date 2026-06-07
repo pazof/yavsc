@@ -36,10 +36,7 @@ RUN dotnet restore
 COPY . .
 
 # 6. Compilation du serveur Web principal
-RUN dotnet build src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-restore -clp:ErrorsOnly
-
-# 7. Génération de l'APK Android (Forçage de l'identifiant de runtime mobile -r)
-RUN dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj -c Release -f net10.0-android -r android-arm64 --no-restore -clp:ErrorsOnly
+RUN dotnet build . -c Release --no-restore -clp:ErrorsOnly
 
 # Définition du répertoire d'exécution par défaut
 CMD ["bash"]
