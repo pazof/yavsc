@@ -1,55 +1,21 @@
-*.pfx
-*.userprefs
-*.Private.cs
-*-secret.json
+# Exclure uniquement les dossiers de sortie de compilation
+bin/
+obj/
+src/*/bin/
+src/*/obj/
+test/*/bin/
+test/*/obj/
 
-.gitignore
-.paket/
+# Exclure les caches lourds
+**/.playwright/
+.git/
 .vs/
-.sass-cache/
-.private/
 
-/out
-bin
-obj
-bower_components
-node_modules/
-private/
-
-DataProtection-Keys/
-RSA-Params.json
-appsettings.*.json
-omnisharp.json
-
-DataProtection/
-
-/packages/
-/src/Yavsc/Avatars-*/
-/src/Yavsc/Blog-*/
-/src/Yavsc/Bills-*/
-/src/Yavsc/AppData*/
-/src/Yavsc/Temp-*/
-/src/Yavsc/bower_components/
-/src/Yavsc/Data-Dev/
-/src/test/testingrepo/
-connectionsettings.Development.json
+.env
+*.csproj.lscache
+data/
 appsettings.Development.json
-/src/Yavsc/web.log
-/yavscd
-builds/
-/test/yavscTests/test-results.xml
-/test/yavscTests/test-results.html
-yavsc-pre
 
-*.env
-generated/
-*.lscache
-*.Development.json
-*.log
+contrib/generated/
+*.tmp
 
-**/AppDataDevelopment/
-binaries/
-build/
-src/*/Blog-Dev/
-*.mp4
-src/Yavsc.Org/data/

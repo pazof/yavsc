@@ -4,3 +4,15 @@
 .git/
 .vs/
 .github/
+# Exclure uniquement les dossiers de sortie de compilation
+bin/
+obj/
+src/*/bin/
+src/*/obj/
+test/*/bin/
+test/*/obj/
+
+# Exclure les caches lourds
+**/.playwright/
+.git/
+.vs/
