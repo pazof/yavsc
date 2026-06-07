@@ -1,6 +1,6 @@
 # Install
 
-With internet access, Git, dotnet, and GNU/Makefile, simply follow these instructions:
+With internet access, Git, dotnet, and GNU/Makefile, simply follow these instructions, in order to have the server part installed:
 
 ```bash
 git clone https://github.com/pschneider/yavsc.git
@@ -9,6 +9,16 @@ dotnet restore
 cd contrib
 make install
 ```
+
+About the mobile app,
+
+```bash
+cd src/PostIt/PostIt.Android
+dotnet publish -c Release
+```
+
+and then, install the app, from the `src/PostIt/PostIt.Android/bin/Release/net10.0/PostIt.apk`
+
 
 ## Resources
 
