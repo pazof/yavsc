@@ -1,3 +1,14 @@
+name: Build and Push Yavsc Apk
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  apk-deploy:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
