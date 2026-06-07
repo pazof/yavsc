@@ -33,7 +33,7 @@ RUN dotnet nuget add source https://isn.pschneider.fr/v3/index.json --allow-inse
 RUN dotnet restore
 
 # 5. Compilation globale de la solution
-RUN dotnet build -c Release --no-restore
+RUN dotnet build -c Release --no-restore -clp:ErrorsOnly
 
 # L'image finale reste sur votre environnement complet
 EXPOSE 8080
