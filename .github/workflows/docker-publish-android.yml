@@ -20,15 +20,13 @@ jobs:
       - name: Extraire l'APK du conteneur Docker
         run: |
           docker create --name extractor postit-android
-          docker cp extractor:/app/bin/Release/net10.0-android/android-arm64/PostIt.Android.apk ./PostIt.Android.apk
+          docker cp extractor:/src/src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/com.CompanyName.PostIt-Signed.apk ./PostIt.Android.apk
           docker rm extractor
-        # 😉 Note du dev : Ajustez le chemin "/app/bin/Release/..." 
-        # selon l'endroit exact où votre Dockerfile dépose l'APK final.
 
-      # 3. ARCHIVAGE : L'action officielle pour rendre le fichier téléchargeable
       - name: Téléverser l'APK en tant qu'Artéfact GitHub
         uses: actions/upload-artifact@v4
         with:
           name: application-apk-release
           path: ./PostIt.Android.apk
           retention-days: 7
+
