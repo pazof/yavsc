@@ -32,9 +32,14 @@ RUN dotnet nuget add source https://isn.pschneider.fr/v3/index.json --allow-inse
 # 4. Restauration des dépendances pour tous les projets
 RUN dotnet restore
 
-# 5. Compilation globale de la solution
-RUN dotnet build -c Release --no-restore -clp:ErrorsOnly
+# 5. Copie de la totalité du code source (filtrée par votre .dockerignore)
+COPY . .
 
-# L'image finale reste sur votre environnement complet
-EXPOSE 8080
+# 6. Compilation du serveur Web principal
+RUN dotnet build src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-restore -clp:ErrorsOnly
+
+# 7. Génération de l'APK Android (Forçage de l'identifiant de runtime mobile -r)
+RUN dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj -c Release -f net10.0-android -r android-arm64 --no-restore -clp:ErrorsOnly
+
+# Définition du répertoire d'exécution par défaut
 CMD ["bash"]
