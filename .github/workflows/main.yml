@@ -15,8 +15,7 @@ jobs:
 
       # 1. Votre étape de build actuelle (on nomme l'image "postit-android")
       - name: Build de l'image Docker
-        run: docker build -t postit-android .
-
+        run: docker build --build-arg TARGET_RID=android-arm64 -t postit-android .
       # 2. EXTRACTION : Créer un conteneur éphémère pour copier l'APK vers l'hôte GitHub
       - name: Extraire l'APK du conteneur Docker
         run: |

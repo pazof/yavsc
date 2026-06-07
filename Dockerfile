@@ -34,9 +34,11 @@ RUN dotnet restore
 
 # 5. Copie de la totalité du code source (filtrée par votre .dockerignore)
 COPY . .
+# Définir une variable d'architecture par défaut (ex: android-arm64)
+ARG TARGET_RID=android-arm64
 
-# 6. Compilation du serveur Web principal
-RUN dotnet build . -c Release --no-restore -clp:ErrorsOnly
+#  6. Compilation du serveur Web principal, Injecter l'option -r avec la variable
+RUN dotnet build . -c Release --no-restore -clp:ErrorsOnly -r ${TARGET_RID}
 
 # Définition du répertoire d'exécution par défaut
 CMD ["bash"]
