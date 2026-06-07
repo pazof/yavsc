@@ -1,33 +1,38 @@
-# Build stage
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+# Utilisation de votre image globale pour le build et l'exécution
+FROM pazof/yavsc-build-env:latest AS build-env
 WORKDIR /src
-COPY . .
-RUN dotnet workload install android --skip-manifest-update
-RUN dotnet workload restore
+
+
+# 1. Copie de la solution
+COPY *.sln ./
+COPY Directory.*.props ./
+
+# 2. Copie de l'intégralité des fichiers de projets (.csproj) pour la restauration
+COPY src/Yavsc.Org/*.csproj ./src/Yavsc.Org/
+COPY src/Yavsc.Abstract/*.csproj ./src/Yavsc.Abstract/
+COPY src/Yavsc.Server/*.csproj ./src/Yavsc.Server/
+COPY src/Yavsc.Web/*.csproj ./src/Yavsc.Web/
+COPY src/Yavsc.Api/*.csproj ./src/Yavsc.Api/
+COPY src/Yavsc.Blogs/*.csproj ./src/Yavsc.Blogs/
+COPY src/cli/*.csproj ./src/cli/
+COPY test/yavscTests/*.csproj ./test/yavscTests/
+
+# Projets associés à PostIt
+COPY src/PostIt/PostIt/*.csproj ./src/PostIt/PostIt/
+COPY src/PostIt/PostIt.Android/*.csproj ./src/PostIt/PostIt.Android/
+COPY src/PostIt/PostIt.Browser/*.csproj ./src/PostIt/PostIt.Browser/
+COPY src/PostIt/PostIt.Desktop/*.csproj ./src/PostIt/PostIt.Desktop/
+
+# 3. Restauration des dépendances avec vos workloads actifs
 RUN dotnet nuget add source https://isn.pschneider.fr/v3/index.json --allow-insecure-connections
-RUN dotnet publish src/Yavsc.Org/Yavsc.Org.csproj -c Release -o /app/publish
+RUN dotnet restore
 
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
-WORKDIR /app
+# 4. Copie du reste du code source (filtré par votre .dockerignore)
+COPY . .
 
-# Variables d'environnement avec valeurs par défaut
-ARG POSTGRES_HOST=localhost
-ARG POSTGRES_PORT=5432
-ARG POSTGRES_DB=yavsc
-ARG POSTGRES_USER=yavsc
-ARG POSTGRES_PASSWORD
+# 5. Compilation globale de la solution
+RUN dotnet build -c Release
 
-ENV POSTGRES_HOST=${POSTGRES_HOST}
-ENV POSTGRES_PORT=${POSTGRES_PORT}
-ENV POSTGRES_DB=${POSTGRES_DB}
-ENV POSTGRES_USER=${POSTGRES_USER}
-ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-
-# Chaîne de connexion construite depuis les variables
-ENV ConnectionStrings__DefaultConnection=\
-"Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
-
-COPY --from=build /app/publish .
-EXPOSE 5000
-ENTRYPOINT ["dotnet", "Yavsc.Org.dll"]
+# L'image finale reste sur votre environnement complet
+EXPOSE 8080
+CMD ["bash"]

@@ -1,0 +1,41 @@
+name: Build and Push Yavsc Production Image
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  production-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupération du code
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      # 2. Configuration du moteur de Buildx
+      - name: Set up Docker Buildx
+        uses: actions/setup-buildx-action@v3
+
+      # 3. Connexion sécurisée à Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 4. Build et Push de l'image de production finale
+      - name: Build and push production image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile.prod
+          push: true
+          tags: |
+            pazof/yavsc:latest
+            pazof/yavsc:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
