@@ -35,10 +35,15 @@ RUN dotnet restore
 # 5. Copie de la totalité du code source (filtrée par votre .dockerignore)
 COPY . .
 # Définir une variable d'architecture par défaut (ex: android-arm64)
-ARG TARGET_RID=android-arm64
+ARG ANDROID_TARGET_RID=android-arm64
 
 #  6. Compilation du serveur Web principal, Injecter l'option -r avec la variable
-RUN dotnet build . -c Release --no-restore -clp:ErrorsOnly -r ${TARGET_RID}
+RUN dotnet build src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-restore -clp:ErrorsOnly -r ${TARGET_RID}
+RUN dotnet build src/Yavsc.Api/Yavsc.Api.csproj -c Release --no-restore -clp:ErrorsOnly -r ${TARGET_RID}
+RUN dotnet build src/Yavsc.Blogs/Yavsc.Blogs.csproj -c Release --no-restore -clp:ErrorsOnly -r ${ANDROID_TARGET_RID}
+
+# 6. Compilation du serveur Web principal Injecter l'option -r avec la variable
+RUN dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj -c Release --no-restore -clp:ErrorsOnly -r ${TARGET_RID}
 
 # Définition du répertoire d'exécution par défaut
 CMD ["bash"]
