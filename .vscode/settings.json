@@ -13,6 +13,7 @@
         "envsubst",
         "Newtonsoft",
         "Npgsql",
+        "pschneider",
         "SLNDIR",
         "validable",
         "www-data",
