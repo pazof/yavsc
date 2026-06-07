@@ -1,5 +1,5 @@
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet workload install android --skip-manifest-update
@@ -8,7 +8,7 @@ RUN dotnet nuget add source https://isn.pschneider.fr/v3/index.json --allow-inse
 RUN dotnet publish src/Yavsc.Org/Yavsc.Org.csproj -c Release -o /app/publish
 
 # Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
 # Variables d'environnement avec valeurs par défaut
