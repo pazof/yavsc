@@ -31,7 +31,7 @@ RUN dotnet restore
 COPY . .
 
 # 5. Compilation globale de la solution
-RUN dotnet build -c Release
+RUN dotnet build -c Release --no-restore
 
 # L'image finale reste sur votre environnement complet
 EXPOSE 8080
