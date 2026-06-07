@@ -26,7 +26,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
       # 4. Build et Push de l'image de production finale
       - name: Build and push production image
         uses: docker/build-push-action@v6
