@@ -23,6 +23,9 @@ COPY src/PostIt/PostIt.Android/*.csproj ./src/PostIt/PostIt.Android/
 COPY src/PostIt/PostIt.Browser/*.csproj ./src/PostIt/PostIt.Browser/
 COPY src/PostIt/PostIt.Desktop/*.csproj ./src/PostIt/PostIt.Desktop/
 
+# 4. Copie de l'intégralité du code source
+COPY . .
+
 # 3. Restauration des dépendances avec vos workloads actifs
 RUN dotnet nuget add source https://isn.pschneider.fr/v3/index.json --allow-insecure-connections
 
