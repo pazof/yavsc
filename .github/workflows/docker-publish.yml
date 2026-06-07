@@ -16,9 +16,9 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      # 2. Configuration du moteur de Buildx
+      # 2. Configuration du moteur de Buildx pour les builds multi-plateformes
       - name: Set up Docker Buildx
-        uses: actions/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       # 3. Connexion sécurisée à Docker Hub
       - name: Log in to Docker Hub
