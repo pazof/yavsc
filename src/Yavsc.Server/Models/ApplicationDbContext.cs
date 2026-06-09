@@ -385,6 +385,10 @@ namespace Yavsc.Models
 
         public DbSet<BlogSpotPublication> blogSpotPublications { get; set; }
 
+        public DbSet<UploadedFile> UploadedFiles { get; set; }
+
+        public DbSet<BlogAttachedFile> BlogAttachedFiles { get; set; }
+
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientIdPRestriction> ClientIdPRestrictions { get; set; }
         public DbSet<ClientProperty> ClientProperties { get; set; }

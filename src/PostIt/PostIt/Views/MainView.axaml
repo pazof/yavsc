@@ -3,26 +3,68 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:PostIt.ViewModels"
+             xmlns:models="using:PostIt.Models"
              xmlns:views="using:PostIt.Views"
              xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
              x:Class="PostIt.Views.MainView"
              x:DataType="vm:MainViewModel">
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-        to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainViewModel />
     </Design.DataContext>
-    <StackPanel>
 
-        <Label>Hello</Label>
-        <AvaloniaEdit:TextEditor
-        ShowLineNumbers="True"
-        FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
-        Background="AliceBlue"
-        Foreground="Black"
-        Watermark="Hit me strong!"
-        />
+    <StackPanel Margin="12" Spacing="12">
+        <TextBlock Text="PostIt Blog API Interface" FontSize="20" FontWeight="Bold" />
+
+        <Grid ColumnDefinitions="Auto,1*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+            <TextBlock Text="API URL" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" Text="{Binding ApiUrl, Mode=TwoWay}" />
+
+            <TextBlock Grid.Row="1" Text="Bearer token" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding BearerToken, Mode=TwoWay}" PlaceholderText="Optional token for blog scope" />
+
+            <TextBlock Grid.Row="2" Text="Search" VerticalAlignment="Center" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SearchText, Mode=TwoWay}" PlaceholderText="Search title, article, author" />
+
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8">
+                <Button Command="{Binding LoadPostsCommand}" Content="Load posts" />
+                <Button Command="{Binding SearchCommand}" Content="Filter" />
+                <Button Command="{Binding NewCommand}" Content="New post" />
+                <Button Command="{Binding SaveCommand}" Content="Save" />
+                <Button Command="{Binding DeleteCommand}" Content="Delete" />
+            </StackPanel>
+        </Grid>
+
+        <Grid ColumnDefinitions="2*,3*" RowDefinitions="*" ColumnSpacing="12">
+            <Border BorderBrush="Gray" BorderThickness="1" Padding="8">
+                <ListBox ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:BlogPost">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" FontSize="10" Foreground="Gray" />
+                                <TextBlock Text="{Binding AuthorId}" FontSize="10" Foreground="DarkSlateGray" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <Border BorderBrush="Gray" BorderThickness="1" Padding="8">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Post detail" FontWeight="SemiBold" />
+                    <TextBox Text="{Binding SelectedPost.Title, Mode=TwoWay}" PlaceholderText="Title" />
+                    <TextBox Text="{Binding SelectedPost.AuthorId, Mode=TwoWay}" PlaceholderText="Author id" />
+                    <AvaloniaEdit:TextEditor
+                        views:TextEditorBinding.Text="{Binding SelectedPost.Article, Mode=TwoWay}"
+                        ShowLineNumbers="True"
+                        FontFamily="Cascadia Code, Consolas, Menlo, Monospace"
+                        Height="320"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Auto" />
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="Gray" />
+                </StackPanel>
+            </Border>
+        </Grid>
     </StackPanel>
-
 </UserControl>

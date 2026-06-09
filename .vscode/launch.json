@@ -64,7 +64,7 @@
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
-            "envFile": "${workspaceFolder}/src/Yavsc.Org/.env",
+            "envFile": "${workspaceFolder}/.env",
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/src/Yavsc.Org/Views"
             }

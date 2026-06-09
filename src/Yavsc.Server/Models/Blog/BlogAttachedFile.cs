@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Org.BouncyCastle.Crypto.Modes;
+using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.Models.Blog
 {
@@ -34,11 +35,12 @@ namespace Yavsc.Models.Blog
     /// <value></value>
     public string ContentType { get; set; }
   }
+
+  [PrimaryKey(nameof(FileId), nameof(PostId))]
   public class BlogAttachedFile
   {
-
     /// <summary>
-    /// Post Id
+    /// File Id (part of composite key)
     /// </summary>
     /// <value></value>
     public long FileId { get; set; }
@@ -47,7 +49,7 @@ namespace Yavsc.Models.Blog
     public virtual UploadedFile File { get; set; }
 
     /// <summary>
-    /// Post Id
+    /// Post Id (part of composite key)
     /// </summary>
     /// <value></value>
     public long PostId { get; set; }

@@ -11,6 +11,7 @@
 */
 
 using IdentityModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc;
@@ -19,6 +20,7 @@ using Yavsc.Interface;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
+using Yavsc.Extensions;
 
 internal class Program
 {
@@ -78,6 +80,8 @@ internal class Program
            .AddTransient<IBillingService, BillingService>()
            .AddTransient<ICalendarManager, CalendarManager>();
         services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
+        services.AddTransient<BlogSpotService>();
+        services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         
         services.AddLocalization(options =>
         {

@@ -11,6 +11,8 @@ using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
 using Yavsc.ViewModels.Auth;
+using Yavsc.Abstract.Helpers;
+using Microsoft.AspNetCore.Http;
 
 public class BlogSpotService
 {
@@ -29,11 +31,63 @@ public class BlogSpotService
 
     public BlogPost Create(string userId, BlogPost post, IFormFileCollection files)
     {
-        foreach (var file in files)
-        {
-        }
+        // Sauvegarder le post d'abord pour obtenir son ID
         _context.BlogSpot.Add(post);
         _context.SaveChanges(userId);
+
+        // Traiter les fichiers attachés s'il y en a
+        if (files != null && files.Count > 0)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            if (user != null)
+            {
+                try
+                {
+                    // Créer un répertoire pour les fichiers du blog
+                    string blogFilesSubdir = $"blogs/{post.Id}";
+                    string destDir = Path.Combine(
+                        AbstractFileSystemHelpers.UserFilesDirName,
+                        user.UserName,
+                        blogFilesSubdir
+                    );
+                    var di = new DirectoryInfo(destDir);
+                    if (!di.Exists) di.Create();
+
+                    // Traiter chaque fichier
+                    foreach (var formFile in files)
+                    {
+                        var fileInfo = user.ReceiveUserFile(destDir, formFile);
+                        if (fileInfo != null && !fileInfo.QuotaOffense)
+                        {
+                            // Créer une entrée UploadedFile si nécessaire
+                            var uploadedFile = new UploadedFile
+                            {
+                                Path = fileInfo.FileName,
+                                ContentType = formFile.ContentType,
+                                Length = formFile.Length
+                            };
+                            _context.UploadedFiles.Add(uploadedFile);
+                            _context.SaveChanges(userId);
+
+                            // Lier le fichier au post
+                            var attachment = new BlogAttachedFile
+                            {
+                                PostId = post.Id,
+                                FileId = uploadedFile.Id
+                            };
+                            _context.BlogAttachedFiles.Add(attachment);
+                        }
+                    }
+                    _context.SaveChanges(userId);
+                }
+                catch (Exception ex)
+                {
+                    // Logger l'erreur mais ne pas échouer la création du post
+                    System.Diagnostics.Debug.WriteLine($"Erreur lors du traitement des fichiers : {ex.Message}");
+                }
+            }
+        }
+
         return post;
     }
     public async Task<BlogPostEditViewModel> GetPostForEdition(ClaimsPrincipal user, long blogPostId)
@@ -112,6 +166,29 @@ public class BlogSpotService
         _context.SaveChanges(user.GetUserId());
     }
 
+    public async Task Modify(ClaimsPrincipal user, BlogPost blog)
+    {
+        var existing = await _context.BlogSpot.Include(b => b.ACL).SingleOrDefaultAsync(b => b.Id == blog.Id);
+        if (existing == null)
+        {
+            throw new InvalidOperationException($"Blog post {blog.Id} not found.");
+        }
+
+        var auth = await _authorizationService.AuthorizeAsync(user, existing, new EditPermission());
+        if (!auth.Succeeded)
+        {
+            throw new AuthorizationFailureException(auth);
+        }
+
+        existing.Title = blog.Title;
+        existing.Article = blog.Article;
+        existing.Photo = blog.Photo;
+        existing.ACL = blog.ACL;
+
+        _context.Update(existing);
+        _context.SaveChanges(user.GetUserId());
+    }
+
     public async Task<IEnumerable<IBlogPost>> Index(ClaimsPrincipal user, string id, int skip = 0, int take = 25)
     {
         IEnumerable<IBlogPost> posts;
@@ -148,7 +225,9 @@ public class BlogSpotService
            .Select(p => p.BlogPost).ToArray();
         }
 
-        var data = posts.OrderByDescending(p => p.DateModified);
+        var data = posts.OrderByDescending(p => p.DateModified)
+            .Skip(skip)
+            .Take(take);
         return data;
     }
 

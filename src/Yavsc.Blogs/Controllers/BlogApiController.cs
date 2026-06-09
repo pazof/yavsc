@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
+using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
@@ -13,43 +15,48 @@ namespace Yavsc.Controllers
 
     public class BlogApiController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly BlogSpotService blogSpotService;
 
-        public BlogApiController(ApplicationDbContext context)
+        public BlogApiController(BlogSpotService blogSpotService)
         {
-            _context = context;
+            this.blogSpotService = blogSpotService;
         }
 
         // GET: api/BlogApi
         [HttpGet]
-        public IEnumerable<BlogPost> GetBlogspot(int start=0, int take=25)
+        public async Task<IEnumerable<IBlogPost>> GetBlogspot(int start = 0, int take = 25)
         {
-            return _context.BlogSpot.OrderByDescending(b => b.UserModified)
-            .Skip(start).Take(take);
+            return await blogSpotService.Index(User, null, start, take);
         }
 
         // GET: api/BlogApi/5
         [HttpGet("{id}", Name = "GetBlog")]
-        public IActionResult GetBlog([FromRoute] long id)
+        public async Task<IActionResult> GetBlog([FromRoute] long id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            BlogPost blog = _context.BlogSpot.Single(m => m.Id == id);
-
-            if (blog == null)
+            try
             {
-                return NotFound();
-            }
+                var blog = await blogSpotService.Details(User, id);
+                if (blog == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(blog);
+                return Ok(blog);
+            }
+            catch (AuthorizationFailureException)
+            {
+                return Challenge();
+            }
         }
 
         // PUT: api/BlogApi/5
         [HttpPut("{id}")]
-        public IActionResult PutBlog(long id, [FromBody] BlogPost blog)
+        public async Task<IActionResult> PutBlog(long id, [FromBody] BlogPost blog)
         {
             if (!ModelState.IsValid)
             {
@@ -61,22 +68,19 @@ namespace Yavsc.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(blog).State = EntityState.Modified;
+            var existing = await blogSpotService.GetBlogPostAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
 
             try
             {
-                _context.SaveChanges(User.GetUserId());
+                await blogSpotService.Modify(User, blog);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (AuthorizationFailureException)
             {
-                if (!BlogExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Challenge();
             }
 
             return new StatusCodeResult(StatusCodes.Status204NoContent);
@@ -91,59 +95,32 @@ namespace Yavsc.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.BlogSpot.Add(blog);
-            try
-            {
-                _context.SaveChanges(User.GetUserId());
-            }
-            catch (DbUpdateException)
-            {
-                if (BlogExists(blog.Id))
-                {
-                    return new StatusCodeResult(StatusCodes.Status409Conflict);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtRoute("GetBlog", new { id = blog.Id }, blog);
+            var post = blogSpotService.Create(User.GetUserId(), blog, Request.Form.Files);
+            return CreatedAtRoute("GetBlog", new { id = post.Id }, post);
         }
 
         // DELETE: api/BlogApi/5
         [HttpDelete("{id}")]
-        public IActionResult DeleteBlog(long id)
+        public async Task<IActionResult> DeleteBlog(long id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            BlogPost blog = _context.BlogSpot.Single(m => m.Id == id);
+            var blog = await blogSpotService.GetBlogPostAsync(id);
             if (blog == null)
             {
                 return NotFound();
             }
 
-            _context.BlogSpot.Remove(blog);
-            _context.SaveChanges(User.GetUserId());
-
+            await blogSpotService.Delete(User, id);
             return Ok(blog);
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
             base.Dispose(disposing);
-        }
-
-        private bool BlogExists(long id)
-        {
-            return _context.BlogSpot.Count(e => e.Id == id) > 0;
         }
     }
 }
