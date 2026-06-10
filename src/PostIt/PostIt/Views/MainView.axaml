@@ -16,17 +16,27 @@
     <StackPanel Margin="12" Spacing="12">
         <TextBlock Text="PostIt Blog API Interface" FontSize="20" FontWeight="Bold" />
 
-        <Grid ColumnDefinitions="Auto,1*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
-            <TextBlock Text="API URL" VerticalAlignment="Center" />
-            <TextBox Grid.Column="1" Text="{Binding ApiUrl, Mode=TwoWay}" />
+        <Grid ColumnDefinitions="Auto,1*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+            <TextBlock Text="Authority" VerticalAlignment="Center" />
+            <TextBox Grid.Column="1" Text="{Binding Authority, Mode=TwoWay}" PlaceholderText="https://localhost:5001" />
 
-            <TextBlock Grid.Row="1" Text="Bearer token" VerticalAlignment="Center" />
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding BearerToken, Mode=TwoWay}" PlaceholderText="Optional token for blog scope" />
+            <TextBlock Grid.Row="1" Text="Client ID" VerticalAlignment="Center" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ClientId, Mode=TwoWay}" />
 
-            <TextBlock Grid.Row="2" Text="Search" VerticalAlignment="Center" />
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SearchText, Mode=TwoWay}" PlaceholderText="Search title, article, author" />
+            <TextBlock Grid.Row="2" Text="Client secret" VerticalAlignment="Center" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ClientSecret, Mode=TwoWay}" />
 
-            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8">
+            <TextBlock Grid.Row="3" Text="Scope" VerticalAlignment="Center" />
+            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Scope, Mode=TwoWay}" />
+
+            <TextBlock Grid.Row="4" Text="API URL" VerticalAlignment="Center" />
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ApiUrl, Mode=TwoWay}" />
+
+            <TextBlock Grid.Row="5" Text="Bearer token" VerticalAlignment="Center" />
+            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding BearerToken, Mode=TwoWay}" PlaceholderText="Token for blog scope" />
+
+            <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8">
+                <Button Command="{Binding LoginCommand}" Content="Acquire token" />
                 <Button Command="{Binding LoadPostsCommand}" Content="Load posts" />
                 <Button Command="{Binding SearchCommand}" Content="Filter" />
                 <Button Command="{Binding NewCommand}" Content="New post" />

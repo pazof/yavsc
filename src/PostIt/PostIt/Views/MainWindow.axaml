@@ -6,7 +6,7 @@
         xmlns:views="using:PostIt.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PostIt.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/yavsc-logo.ico"
         Title="PostIt">
         <views:MainView />
 </Window>

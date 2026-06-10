@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -12,6 +18,18 @@ namespace PostIt.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    private string _authority = "https://localhost:5001";
+
+    [ObservableProperty]
+    private string _clientId = "postit";
+
+    [ObservableProperty]
+    private string _clientSecret = "postit-secret";
+
+    [ObservableProperty]
+    private string _scope = "blog";
+
     [ObservableProperty]
     private string _apiUrl = "http://localhost:5000";
 
@@ -77,6 +95,19 @@ public partial class MainViewModel : ViewModelBase
     public void Search()
     {
         ApplyFilter();
+    }
+
+    [RelayCommand]
+    public async Task LoginAsync()
+    {
+        await ExecuteAsync(async () =>
+        {
+            var tokenResponse = await RequestClientCredentialsTokenAsync();
+            BearerToken = tokenResponse.AccessToken;
+            StatusMessage = string.IsNullOrWhiteSpace(tokenResponse.Error)
+                ? "Bearer token acquired."
+                : $"Token acquired with warning: {tokenResponse.ErrorDescription}";
+        });
     }
 
     [RelayCommand]
@@ -200,6 +231,52 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    private async Task<TokenResponse> RequestClientCredentialsTokenAsync()
+    {
+        using var client = new HttpClient();
+        var discoveryUrl = Authority.TrimEnd('/') + "/.well-known/openid-configuration";
+        var discoveryDocument = await client.GetFromJsonAsync<DiscoveryDocument>(discoveryUrl, JsonOptions);
+
+        if (discoveryDocument is null || string.IsNullOrWhiteSpace(discoveryDocument.TokenEndpoint))
+        {
+            throw new InvalidOperationException("Unable to discover the token endpoint from the authority.");
+        }
+
+        var request = new HttpRequestMessage(HttpMethod.Post, discoveryDocument.TokenEndpoint)
+        {
+            Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                ["grant_type"] = "client_credentials",
+                ["client_id"] = ClientId,
+                ["client_secret"] = ClientSecret,
+                ["scope"] = Scope,
+            })
+        };
+
+        var response = await client.SendAsync(request).ConfigureAwait(false);
+
+        var payload = await response.Content.ReadFromJsonAsync<TokenResponse>(JsonOptions);
+        if (payload is null)
+        {
+            throw new InvalidOperationException("Invalid token response from the identity provider.");
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var message = string.IsNullOrWhiteSpace(payload.ErrorDescription)
+                ? payload.Error ?? "Unknown token error"
+                : payload.ErrorDescription;
+            throw new InvalidOperationException(message);
+        }
+
+        return payload;
+    }
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     private BlogApiClient CreateClient()
         => new BlogApiClient(ApiUrl, BearerToken);
 
@@ -213,4 +290,12 @@ public partial class MainViewModel : ViewModelBase
 
     private bool CanSave() => SelectedPost is not null && !IsBusy;
     private bool CanDelete() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
+
+    private sealed record DiscoveryDocument([property: JsonPropertyName("token_endpoint")] string? TokenEndpoint);
+    private sealed record TokenResponse(
+        [property: JsonPropertyName("access_token")] string? AccessToken,
+        [property: JsonPropertyName("token_type")] string? TokenType,
+        [property: JsonPropertyName("expires_in")] int ExpiresIn,
+        [property: JsonPropertyName("error")] string? Error,
+        [property: JsonPropertyName("error_description")] string? ErrorDescription);
 }

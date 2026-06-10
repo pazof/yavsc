@@ -306,7 +306,7 @@ public static class HostingExtensions
                             sql => sql.MigrationsAssembly(migrationsAssembly));
                     }
 
-                    b.UseSeeding(EnsureDefaultApplicationScopes());
+                    b.UseSeeding(EnsureDefaultConfiguration());
                 };
             })
             .AddOperationalStore(options =>
@@ -351,7 +351,47 @@ public static class HostingExtensions
                     context.SaveChanges();
                 }
             }
+        };
+    }
 
+    private static Action<DbContext, bool> EnsureDefaultConfiguration()
+    {
+        return (context, _) =>
+        {
+            EnsureDefaultApplicationScopes()(context, _);
+
+            var existingClient = context.Set<Client>().FirstOrDefault(c => c.ClientId == "postit");
+            if (existingClient == null)
+            {
+                var client = new Client
+                {
+                    ClientId = "postit",
+                    Enabled = true,
+                    RequireClientSecret = true,
+                    ProtocolType = "oidc",
+                    RequireConsent = false,
+                };
+
+                context.Set<Client>().Add(client);
+                context.Set<ClientGrantType>().Add(new ClientGrantType
+                {
+                    Client = client,
+                    GrantType = "client_credentials"
+                });
+                context.Set<ClientScope>().Add(new ClientScope
+                {
+                    Client = client,
+                    Scope = "blog"
+                });
+                context.Set<ClientSecret>().Add(new ClientSecret
+                {
+                    Client = client,
+                    Value = "postit-secret".Sha256(),
+                    Type = IdentityServer8.Models.IdentityServerConstants.SecretTypes.SharedSecret
+                });
+
+                context.SaveChanges();
+            }
         };
     }
 
