@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace PostIt.ViewModels;
 
-public partial class SettingsViewModel : ViewModelBase
+public partial class SettingsPageViewModel : ViewModelBase
 {
     [ObservableProperty]
     public partial bool DarkMode { get; set; }
@@ -15,5 +15,6 @@ public partial class SettingsViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial string ClientSecret { get; set; }
-
+    public override bool CanNavigateNext { get => false; protected set => throw new System.NotImplementedException(); }
+    public override bool CanNavigatePrevious { get => true; protected set => throw new System.NotImplementedException(); }
 }

@@ -1,0 +1,37 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           x:Class="PostIt.Views.LoginPage"
+           Header="Login">
+
+  <StackPanel HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Spacing="20">
+
+      <TextBlock Text="Sign In"
+                 FontSize="24"
+                 HorizontalAlignment="Center"/>
+
+      <StackPanel Spacing="4">
+          <TextBlock Text="Email"/>
+          <TextBox Name="EmailBox"
+                   PlaceholderText="Enter your email"/>
+      </StackPanel>
+
+      <StackPanel Spacing="4">
+          <TextBlock Text="Password"/>
+          <TextBox Name="PasswordBox"
+                   PlaceholderText="Enter your password"
+                   PasswordChar="•"/>
+      </StackPanel>
+
+      <Button Content="Login"
+              Click="OnLoginClick"/>
+
+      <Button Content="Cancel"
+              Click="OnCancelClick"/>
+
+      <TextBlock Name="StatusText" Text="Starting authentication..." />
+      <ProgressBar IsIndeterminate="True" />
+
+  </StackPanel>
+</ContentPage>

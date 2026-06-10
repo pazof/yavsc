@@ -15,9 +15,15 @@ using Avalonia.Styling;
 
 namespace PostIt.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainPageViewModel : ViewModelBase
 {
 
+    [ObservableProperty]
+    public partial string Title { get; set; }
+
+    [ObservableProperty]
+    public partial ViewModelBase? CurrentViewModel { get; set; }
+    public SettingsPageViewModel SettingsModel { get; }
     [ObservableProperty]
     public partial string StatusMessage { get; set; }
 
@@ -34,18 +40,20 @@ public partial class MainViewModel : ViewModelBase
     public partial ObservableCollection<BlogPost> FilteredPosts { get; set; }
 
     [ObservableProperty]
-    public partial BlogPost? SelectedPost{ get; set; }
+    public partial BlogPost? SelectedPost { get; set; }
 
     [ObservableProperty]
-    public partial bool IsBusy{ get; set; }
+    public partial bool IsBusy { get; set; }
 
     [ObservableProperty]
     ThemeVariant themeVariant = ThemeVariant.Default;
-    
+
     [ObservableProperty]
     public partial Settings Settings { get; private set; }
+    public override bool CanNavigateNext { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
+    public override bool CanNavigatePrevious { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
 
-    public MainViewModel()
+    public MainPageViewModel()
     {
         SearchText = string.Empty;
         Posts = new ObservableCollection<BlogPost>();
@@ -55,6 +63,9 @@ public partial class MainViewModel : ViewModelBase
         IsBusy = false;
         StatusMessage = "Ready";
         Settings = new Settings();
+        Title = "PostIt";
+        CurrentViewModel = this;
+        SettingsModel = new SettingsPageViewModel();
     }
 
     partial void OnSearchTextChanged(string value)
@@ -105,7 +116,7 @@ public partial class MainViewModel : ViewModelBase
             try
             {
 
-                var loginWin = new PostIt.Views.LoginWindow();
+                var loginWin = new PostIt.Views.LoginPage();
                 var result = await loginWin.StartLoginAsync(Settings.GetOidcClientOptions());
 
                 if (result is not null && !result.IsError && !string.IsNullOrWhiteSpace(result.AccessToken))
@@ -202,6 +213,12 @@ public partial class MainViewModel : ViewModelBase
         StatusMessage = "New blog post ready.";
     }
 
+    [RelayCommand]
+    internal void OpenSettings()
+    {
+        // Appeler la méthode OpenSettings de la vue MainWindow
+        CurrentViewModel = SettingsModel;
+    }
 
     private async Task RefreshPostsAsync()
     {
@@ -224,7 +241,7 @@ public partial class MainViewModel : ViewModelBase
     private void ApplyFilter()
     {
         if (Posts is null) return;
-        
+
         var query = SearchText?.Trim();
         var filtered = string.IsNullOrWhiteSpace(query)
             ? Posts.OrderByDescending(p => p.DateModified)
@@ -299,6 +316,7 @@ public partial class MainViewModel : ViewModelBase
         return payload;
     }
 
+    
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true

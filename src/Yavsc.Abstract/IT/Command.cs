@@ -1,7 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Yavsc.Abstract.IT
 {
@@ -13,17 +13,17 @@ namespace Yavsc.Abstract.IT
 public class Command
     {
         [Required]
-        [JsonPropertyAttribute("path")]
+        [JsonPropertyName("path")]
         public string Path { get; set; }
 
-        [JsonPropertyAttribute("args")]
+        [JsonPropertyName("args")]
         public string[] Args { get; set; }
 
         /// <summary>
         /// Specific variables for this process
         /// </summary>
         /// <value></value>
-        [JsonPropertyAttribute("env")]
+        [JsonPropertyName("env")]
         public string[] Environment { get; set; }
 
         public virtual Process Start(string workingDir=null, bool redirectInput=false, bool redirectOutput=false)

@@ -1,14 +1,12 @@
 
-using Avalonia;
+
 using Avalonia.Controls;
 
 namespace PostIt.Views;
-
-public partial class MainView : UserControl
+public partial class SettingsPage: ContentPage
 {
-    public MainView()
+    public SettingsPage()
     {
         InitializeComponent();
     }
-
 }

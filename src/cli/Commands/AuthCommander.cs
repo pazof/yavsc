@@ -40,7 +40,7 @@ namespace cli.Commands
                     });
                     loginCommand.OnExecute(async () =>
             {
-                string? authHostName = Program.AppConfiguration.GetRequiredSection("ConnectionSettings:ServerApi")["Authority"];
+                string authHostName = Program.AppConfiguration.GetRequiredSection("ConnectionSettings:ServerApi")["Authority"];
              
                 throw new NotImplementedException();
                 /*

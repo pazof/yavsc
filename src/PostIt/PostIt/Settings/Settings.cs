@@ -26,7 +26,7 @@ public partial class Settings : ObservableObject
 
 
     [ObservableProperty]
-    public partial string[] Scopes { get; set; }
+    public partial string[] Scopes { get; set; }
 
     internal OidcClientOptions GetOidcClientOptions()
     {
@@ -40,41 +40,44 @@ public partial class Settings : ObservableObject
 
     }
 
-    internal async Task Load(IStorageProvider storageProvider)
+    internal async Task Load()
     {
-        var configFile = await storageProvider.TryGetFileFromPathAsync(
-            Path.Combine(AppContext.BaseDirectory, SettingsFileName));
+        String configPath =
+        Path.Combine(AppContext.BaseDirectory, SettingsFileName);
 
-        if (configFile is null)
+        FileInfo configFileInfo = new FileInfo(configPath);
+
+        if (!configFileInfo.Exists)
         {
-            Console.Error.WriteLine("🩎 No settings file found.");
+            Console.Error.WriteLine($"🩎 Settings file not found at {configFileInfo.FullName}");
             return; // no settings file
         }
-        try {
-            using var stream = await configFile.OpenReadAsync();
 
-        
-                    using var reader = new StreamReader( stream);
-                    var json = await reader.ReadToEndAsync();
-                    if (string.IsNullOrWhiteSpace(json))
-                    {
-                        Console.Error.WriteLine("🩎 Settings file is empty.");
-                        return ;
-                    }
+        Console.WriteLine($"🔎 Loading settings from {configFileInfo.FullName}");
 
-                    var settings = JsonSerializer.Deserialize<Settings>(json);
+        try
+        {
+            using var stream = configFileInfo.OpenRead();
+            using var reader = new StreamReader(stream);
+            var json = await reader.ReadToEndAsync();
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                Console.Error.WriteLine("🩎 Settings file is empty.");
+                return;
+            }
 
-                    if (settings is null)
-                    {
-                        Console.Error.WriteLine("🩎 Settings file is invalid.");
-                        return ;
-                    }
-                    this.Authentication = settings.Authentication;
-                    this.DarkMode = settings.DarkMode;
-                    this.ApiUrl = settings.ApiUrl;
-                    this.Scopes = settings.Scopes;
+            var settings = JsonSerializer.Deserialize<Settings>(json);
 
-             
+            if (settings is null)
+            {
+                Console.Error.WriteLine("🩎 Settings file is invalid.");
+                return;
+            }
+            this.Authentication = settings.Authentication;
+            this.DarkMode = settings.DarkMode;
+            this.ApiUrl = settings.ApiUrl;
+            this.Scopes = settings.Scopes;
+
         }
         catch (Exception ex)
         {

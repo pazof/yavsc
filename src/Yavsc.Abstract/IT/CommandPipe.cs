@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+
 using System.Diagnostics;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Yavsc.Abstract.IT
 {
@@ -10,11 +8,11 @@ namespace Yavsc.Abstract.IT
     {
 
 
-        [JsonPropertyAttribute("pipe")]
+        [JsonPropertyName("pipe")]
         public Command[] Pipe { get; set; }
 
 
-        [JsonPropertyAttribute("working_dir")]
+        [JsonPropertyName("working_dir")]
         public string WorkingDir { get; set; }
 
         public virtual int Run()

@@ -18,7 +18,7 @@ public class PostItViewModelTests
     [Fact]
     public void SearchCommand_filters_posts_by_title_article_or_author()
     {
-        var viewModel = new MainViewModel();
+        var viewModel = new MainPageViewModel();
 
         viewModel.Posts.Add(new BlogPost { Id = 1, Title = "First post", Article = "Hello world", AuthorId = "alice" });
         viewModel.Posts.Add(new BlogPost { Id = 2, Title = "Second post", Article = "Nothing here", AuthorId = "bob" });
