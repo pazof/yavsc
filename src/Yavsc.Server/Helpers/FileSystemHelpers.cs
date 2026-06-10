@@ -12,6 +12,7 @@ using Yavsc.Exceptions;
 using Yavsc.Helpers;
 using Yavsc.Abstract.Helpers;
 using ImageMagick;
+using Yavsc.Server.Models.FileSystem;
 namespace Yavsc.Server.Helpers
 {
     public static class FileSystemHelpers

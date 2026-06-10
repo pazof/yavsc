@@ -7,7 +7,7 @@ using Yavsc.Models.Blog;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Blogs.Controllers
 {
     [Authorize("BlogScope")]
     [Produces("application/json")]

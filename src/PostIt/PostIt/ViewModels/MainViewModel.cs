@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -13,49 +11,50 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PostIt.Models;
 using PostIt.Services;
+using Avalonia.Styling;
 
 namespace PostIt.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private string _authority = "https://localhost:5001";
 
     [ObservableProperty]
-    private string _clientId = "postit";
+    public partial string StatusMessage { get; set; }
 
     [ObservableProperty]
-    private string _clientSecret = "postit-secret";
+    public partial string SearchText { get; set; }
 
     [ObservableProperty]
-    private string _scope = "blog";
+    public partial string BearerToken { get; set; }
 
     [ObservableProperty]
-    private string _apiUrl = "http://localhost:5000";
+    public partial ObservableCollection<BlogPost> Posts { get; set; }
 
     [ObservableProperty]
-    private string _searchText = string.Empty;
+    public partial ObservableCollection<BlogPost> FilteredPosts { get; set; }
 
     [ObservableProperty]
-    private string? _bearerToken;
+    public partial BlogPost? SelectedPost{ get; set; }
 
     [ObservableProperty]
-    private ObservableCollection<BlogPost> _posts = new();
+    public partial bool IsBusy{ get; set; }
 
     [ObservableProperty]
-    private ObservableCollection<BlogPost> _filteredPosts = new();
-
+    ThemeVariant themeVariant = ThemeVariant.Default;
+    
     [ObservableProperty]
-    private BlogPost? _selectedPost;
-
-    [ObservableProperty]
-    private string _statusMessage = "Ready";
-
-    [ObservableProperty]
-    private bool _isBusy;
+    public partial Settings Settings { get; private set; }
 
     public MainViewModel()
     {
+        SearchText = string.Empty;
+        Posts = new ObservableCollection<BlogPost>();
+        FilteredPosts = new ObservableCollection<BlogPost>();
+        SelectedPost = null;
+        BearerToken = string.Empty;
+        IsBusy = false;
+        StatusMessage = "Ready";
+        Settings = new Settings();
     }
 
     partial void OnSearchTextChanged(string value)
@@ -74,7 +73,7 @@ public partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async Task LoadPostsAsync()
+    internal async Task LoadPosts()
     {
         await ExecuteAsync(async () =>
         {
@@ -92,26 +91,51 @@ public partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void Search()
+    internal void Search()
     {
         ApplyFilter();
     }
 
     [RelayCommand]
-    public async Task LoginAsync()
+    internal async Task Login()
     {
         await ExecuteAsync(async () =>
         {
+            // Try interactive OIDC login first
+            try
+            {
+
+                var loginWin = new PostIt.Views.LoginWindow();
+                var result = await loginWin.StartLoginAsync(Settings.GetOidcClientOptions());
+
+                if (result is not null && !result.IsError && !string.IsNullOrWhiteSpace(result.AccessToken))
+                {
+                    BearerToken = result.AccessToken;
+                    StatusMessage = "Interactive token acquired.";
+                    return;
+                }
+            }
+            catch
+            {
+                // ignore and fallback to client credentials
+            }
+
+            // Fallback to client credentials if interactive fails
             var tokenResponse = await RequestClientCredentialsTokenAsync();
+            if (string.IsNullOrWhiteSpace(tokenResponse.AccessToken))
+            {
+                throw new InvalidOperationException("Failed to acquire a token using client credentials.");
+            }
+
             BearerToken = tokenResponse.AccessToken;
             StatusMessage = string.IsNullOrWhiteSpace(tokenResponse.Error)
-                ? "Bearer token acquired."
+                ? "Bearer token acquired (client credentials)."
                 : $"Token acquired with warning: {tokenResponse.ErrorDescription}";
         });
     }
 
     [RelayCommand]
-    public async Task SaveAsync()
+    internal async Task Save()
     {
         if (SelectedPost is null)
         {
@@ -146,7 +170,7 @@ public partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async Task DeleteAsync()
+    internal async Task Delete()
     {
         if (SelectedPost is null || SelectedPost.Id == 0)
         {
@@ -165,7 +189,7 @@ public partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public void New()
+    internal void New()
     {
         SelectedPost = new BlogPost
         {
@@ -177,6 +201,7 @@ public partial class MainViewModel : ViewModelBase
 
         StatusMessage = "New blog post ready.";
     }
+
 
     private async Task RefreshPostsAsync()
     {
@@ -198,6 +223,8 @@ public partial class MainViewModel : ViewModelBase
 
     private void ApplyFilter()
     {
+        if (Posts is null) return;
+        
         var query = SearchText?.Trim();
         var filtered = string.IsNullOrWhiteSpace(query)
             ? Posts.OrderByDescending(p => p.DateModified)
@@ -234,7 +261,7 @@ public partial class MainViewModel : ViewModelBase
     private async Task<TokenResponse> RequestClientCredentialsTokenAsync()
     {
         using var client = new HttpClient();
-        var discoveryUrl = Authority.TrimEnd('/') + "/.well-known/openid-configuration";
+        var discoveryUrl = Settings.Authentication.Authority.TrimEnd('/') + "/.well-known/openid-configuration";
         var discoveryDocument = await client.GetFromJsonAsync<DiscoveryDocument>(discoveryUrl, JsonOptions);
 
         if (discoveryDocument is null || string.IsNullOrWhiteSpace(discoveryDocument.TokenEndpoint))
@@ -247,9 +274,9 @@ public partial class MainViewModel : ViewModelBase
             Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 ["grant_type"] = "client_credentials",
-                ["client_id"] = ClientId,
-                ["client_secret"] = ClientSecret,
-                ["scope"] = Scope,
+                ["client_id"] = Settings.Authentication.ClientId,
+                ["client_secret"] = Settings.Authentication.ClientSecret,
+                ["scope"] = string.Join(' ', Settings.Scopes),
             })
         };
 
@@ -278,7 +305,7 @@ public partial class MainViewModel : ViewModelBase
     };
 
     private BlogApiClient CreateClient()
-        => new BlogApiClient(ApiUrl, BearerToken);
+        => new BlogApiClient(Settings.ApiUrl, BearerToken);
 
     private void UpdateCommandStates()
     {

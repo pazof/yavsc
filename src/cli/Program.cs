@@ -6,8 +6,8 @@ using Microsoft.Extensions.Hosting;
 internal class Program
 {
     public static IHost? AppHost { get; private set; }
-    public static IConfigurationRoot? AppConfiguration { get; private set; }
-    public static IHostEnvironment? AppEnvironment { get; private set; }
+    public static IConfigurationRoot AppConfiguration { get; private set; }
+    public static IHostEnvironment AppEnvironment { get; private set; }
 
     private static void Main(string[] args)
     {

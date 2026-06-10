@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
-namespace Yavsc.Controllers
+namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
     [Route("api/blogtags")]

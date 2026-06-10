@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>1c73094f-959f-4211-b1a1-6a69b236c283</UserSecretsId>
-    <RootNamespace>Yavsc.Api</RootNamespace>
+    <RootNamespace>Yavsc.Blogs</RootNamespace>
     <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>

@@ -15,12 +15,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc;
-using Yavsc.Helpers;
 using Yavsc.Interface;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
 using Yavsc.Extensions;
+namespace Yavsc.Blogs;
 
 internal class Program
 {
@@ -114,15 +114,9 @@ internal class Program
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseCors("default")
-                /*         .UseEndpoints(endpoints =>
-                         {
-                             endpoints.MapDefaultControllerRoute()
-                                 .RequireAuthorization();
-                         })*/
-
                 ;
-            //   app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope"); 
-            app.MapDefaultControllerRoute();
+            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("blog"); 
+            
             app.MapGet("/identity", (HttpContext context) =>
                 new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
             );

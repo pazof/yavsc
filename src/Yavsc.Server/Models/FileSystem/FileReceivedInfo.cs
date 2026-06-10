@@ -23,7 +23,7 @@
 
 using Yavsc.Abstract.FileSystem;
 
-namespace Yavsc.Models.FileSystem
+namespace Yavsc.Server.Models.FileSystem
 {
     public class FileReceivedInfo : IFileReceivedInfo
     {

@@ -2,20 +2,15 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Yavsc.Models;
 
-namespace Yavsc.ApiControllers
+namespace Yavsc.Blogs.Controllers
 {
-    using System.Threading.Tasks;
-    using Microsoft.Extensions.Logging;
-    using Yavsc.Helpers;
-    using Yavsc.Models.FileSystem;
-    using System.ComponentModel.DataAnnotations;
     using Yavsc.Attributes.Validation;
-    using System.IO;
+    using Yavsc.Models;
     using Yavsc.Exceptions;
     using Yavsc.Server.Helpers;
     using Yavsc.Abstract.Helpers;
+    using Yavsc.Server.Models.FileSystem;
 
     [Authorize,Route("api/fs")]
     public partial class FileSystemApiController : Controller

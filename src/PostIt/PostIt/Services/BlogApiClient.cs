@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using IdentityModel.OidcClient;
 using PostIt.Models;
 
 namespace PostIt.Services;
@@ -14,8 +16,8 @@ public sealed class BlogApiClient : IDisposable
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _serializerOptions;
 
-    public BlogApiClient(string baseUrl, string? bearerToken = null)
-        : this(CreateHttpClient(baseUrl, bearerToken))
+    public BlogApiClient(string baseUrl, string? accessToken = null)
+        : this(CreateHttpClient(baseUrl, accessToken))
     {
     }
 
@@ -28,18 +30,13 @@ public sealed class BlogApiClient : IDisposable
         };
     }
 
-    private static HttpClient CreateHttpClient(string baseUrl, string? bearerToken)
+    private static HttpClient CreateHttpClient(string baseUrl, string? accessToken)
     {
-        var client = new HttpClient
+        var client = new HttpClient { BaseAddress = new Uri(baseUrl) };
+        if (!string.IsNullOrWhiteSpace(accessToken))
         {
-            BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/")
-        };
-
-        if (!string.IsNullOrWhiteSpace(bearerToken))
-        {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken.Trim());
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
-
         return client;
     }
 

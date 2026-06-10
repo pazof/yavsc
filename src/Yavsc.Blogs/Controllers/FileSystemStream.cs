@@ -10,7 +10,7 @@ using Yavsc.Services;
 using Microsoft.AspNetCore.SignalR;
 using Yavsc.Server.Helpers;
 
-namespace Yavsc.ApiControllers
+namespace Yavsc.Blogs.Controllers
 {
     [Authorize, Route("api/stream")]
     public partial class FileSystemStreamController : Controller

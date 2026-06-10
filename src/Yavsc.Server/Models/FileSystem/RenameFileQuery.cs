@@ -1,5 +1,5 @@
 using Yavsc.Attributes.Validation;
-namespace Yavsc.Models.FileSystem
+namespace Yavsc.Server.Models.FileSystem
 {
     public class RenameFileQuery
     {

@@ -6,11 +6,16 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using PostIt.ViewModels;
 using PostIt.Views;
+using Avalonia.Controls;
 
 namespace PostIt;
 
 public partial class App : Application
 {
+    public App()
+    {
+    }
+    
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);

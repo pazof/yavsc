@@ -31,6 +31,7 @@ using Yavsc.Services;
 using Yavsc.Services.Kyc;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
+using static IdentityServer8.IdentityServerConstants;
 
 namespace Yavsc.Extensions;
 
@@ -360,10 +361,10 @@ public static class HostingExtensions
         {
             EnsureDefaultApplicationScopes()(context, _);
 
-            var existingClient = context.Set<Client>().FirstOrDefault(c => c.ClientId == "postit");
+            var existingClient = context.Set<IdentityServer8.EntityFramework.Entities.Client>().FirstOrDefault(c => c.ClientId == "postit");
             if (existingClient == null)
             {
-                var client = new Client
+                var client = new IdentityServer8.EntityFramework.Entities.Client
                 {
                     ClientId = "postit",
                     Enabled = true,
@@ -373,21 +374,44 @@ public static class HostingExtensions
                 };
 
                 context.Set<Client>().Add(client);
-                context.Set<ClientGrantType>().Add(new ClientGrantType
+                // allow authorization code (interactive) and client credentials (m2m)
+                context.Set<ClientGrantType>().Add(new IdentityServer8.EntityFramework.Entities.ClientGrantType
+                {
+                    Client = client,
+                    GrantType = "authorization_code"
+                });
+                context.Set<ClientGrantType>().Add(new IdentityServer8.EntityFramework.Entities.ClientGrantType
                 {
                     Client = client,
                     GrantType = "client_credentials"
                 });
-                context.Set<ClientScope>().Add(new ClientScope
+
+                context.Set<ClientScope>().Add(new IdentityServer8.EntityFramework.Entities.ClientScope
                 {
                     Client = client,
                     Scope = "blog"
                 });
-                context.Set<ClientSecret>().Add(new ClientSecret
+                context.Set<ClientScope>().Add(new IdentityServer8.EntityFramework.Entities.ClientScope
                 {
                     Client = client,
-                    Value = "postit-secret".Sha256(),
-                    Type = IdentityServer8.Models.IdentityServerConstants.SecretTypes.SharedSecret
+                    Scope = IdentityServer8.IdentityServerConstants.StandardScopes.OpenId
+                });
+                context.Set<ClientScope>().Add(new IdentityServer8.EntityFramework.Entities.ClientScope
+                {
+                    Client = client,
+                    Scope = IdentityServer8.IdentityServerConstants.StandardScopes.Profile
+                });
+
+                context.Set<ClientRedirectUri>().Add(new IdentityServer8.EntityFramework.Entities.ClientRedirectUri
+                {
+                    Client = client,
+                    RedirectUri = "http://127.0.0.1:7890/"
+                });
+
+                context.Set<ClientSecret>().Add(new IdentityServer8.EntityFramework.Entities.ClientSecret
+                {
+                    Client = client,
+                    Value = "postit-secret".ToSha256(),
                 });
 
                 context.SaveChanges();

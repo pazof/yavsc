@@ -11,6 +11,7 @@ using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.FileSystem;
 using Yavsc.Server.Helpers;
+using Yavsc.Server.Models.FileSystem;
 
 namespace Yavsc.ViewModels.Streaming
 {

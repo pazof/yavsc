@@ -666,7 +666,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             await _signInManager.SignOutAsync();
             HttpContext.Session.Clear();
             _logger.LogInformation(4, "User logged out.");
-            if (returnUrl == null) return RedirectToAction(nameof(HomeController.Index), "Home");
+            if (returnUrl == null) return RedirectToAction(nameof(AccountController.Index), "Home");
             return Redirect(returnUrl);
         }
 

@@ -1,7 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Styling;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace PostIt.ViewModels;
 
-public abstract class ViewModelBase : ObservableObject
+public abstract partial class ViewModelBase : ObservableObject
 {
 }

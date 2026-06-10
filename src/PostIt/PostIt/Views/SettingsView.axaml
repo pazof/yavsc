@@ -1,0 +1,29 @@
+<Window 
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="cl:avalonia.Controls"
+        x:Class="PostIt.Views.SettingsView"
+        xmlns:vm="using:PostIt.ViewModels"
+        x:DataType="vm:SettingsViewModel"
+        Title="Settings"
+        Width="400"
+        Height="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Authority"/>
+        <TextBox Grid.Row="1" x:Name="AuthorityTextBox" Text="{Binding Authority, Mode=TwoWay}"/>
+
+        <TextBlock Grid.Row="2" Text="ClientId"/>
+        <TextBox Grid.Row="3" x:Name="ClientIdTextBox" Text="{Binding ClientId, Mode=TwoWay}"/>
+
+        <TextBlock Grid.Row="4" Text="ClientSecret"/>
+        <TextBox Grid.Row="5" x:Name="ClientSecretTextBox" Text="{Binding ClientSecret, Mode=TwoWay}"/>
+    </Grid>
+</Window>

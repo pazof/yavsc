@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Blogs.Controllers
 {
     using System.Security.Claims;
     using Microsoft.EntityFrameworkCore;
