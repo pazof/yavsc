@@ -1,6 +1,15 @@
+
+
 # Yavsc
 
 C'est une application mettant en oeuvre une prise de contact entre un demandeur de services et son éventuel prestataire associé.
+
+# Statut actuel des actions GitHub
+
+* [![Build and Push Yavsc Apk](https://github.com/pazof/yavsc/actions/workflows/docker-publish-android.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/docker-publish-android.yml)
+
+* [![Build and Push Yavsc Production Image](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml)
+
 
 # Construction et déploiement
 
