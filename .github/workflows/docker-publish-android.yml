@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # 1. Votre étape de build actuelle (on nomme l'image "postit-android")
       - name: Build de l'image Docker
@@ -24,7 +24,7 @@ jobs:
           docker rm extractor
 
       - name: Téléverser l'APK en tant qu'Artéfact GitHub
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: application-apk-release
           path: ./PostIt.Android.apk

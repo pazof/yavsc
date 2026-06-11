@@ -13,7 +13,7 @@ jobs:
     steps:
       # 1. Récupération du code
       - name: Check out the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # 2. Configuration du moteur de Buildx pour les builds multi-plateformes
       - name: Set up Docker Buildx
@@ -21,7 +21,7 @@ jobs:
 
       # 3. Connexion sécurisée à Docker Hub
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -29,7 +29,7 @@ jobs:
         run: dotnet test --no-build --verbosity normal
       # 4. Build et Push de l'image de production finale
       - name: Build and push production image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ./Dockerfile.backend
