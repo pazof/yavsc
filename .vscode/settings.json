@@ -20,11 +20,8 @@
         "yavsc",
         "Yavsc"
     ],
-    "cSpell.dictionaries": [
-        "fr"
-    ],
     "cSpell.reportUnknownWords": true,
-    "cSpell.language": "fr,fr-FR,en,en-GB",
+    "cSpell.language": "fr,en",
     "chat.tools.terminal.autoApprove": {
         "dotnet test": true
     },

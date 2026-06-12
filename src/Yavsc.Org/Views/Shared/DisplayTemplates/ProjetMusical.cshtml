@@ -1,0 +1,14 @@
+@model Yavsc.Domains.Musical.ProjetMusical
+
+@if (Model.Licence.EstLibre)
+{
+    <span class="badge badge-libre">
+        🎵 Libre · @Model.Licence.Nom
+    </span>
+}
+else
+{
+    <span class="badge badge-non-libre">
+        🔒 @Model.Licence.Nom
+    </span>
+}

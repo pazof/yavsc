@@ -198,3 +198,20 @@ body {
 {
   padding: .5em;
 }
+
+.badge-libre {
+    background-color: #2ecc71;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+.badge-non-libre {
+    background-color: #e67e22;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+}
+
