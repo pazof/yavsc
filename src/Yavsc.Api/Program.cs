@@ -29,6 +29,10 @@ internal class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Configuration
+            .AddJsonFile("appsettings-api.json", optional: false, reloadOnChange: false)
+            .AddJsonFile($"appsettings-api.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
+            .AddEnvironmentVariables();
         var services = builder.Services;
 
         // Anthropic client

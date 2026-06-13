@@ -2,20 +2,18 @@
 Description=yavsc-$APP_NAME
 After=syslog.target
 After=network.target
-
 Wants=postgresql.service
 After=postgresql.service
 
 [Service]
 RestartSec=5s
 Type=simple
-User=www-data
-Group=www-data
+User=yavsc
+Group=yavsc
 WorkingDirectory=$DESTDIR
 ExecStart=$DESTDIR/Yavsc.$APP_NAME
 Restart=always
 Environment="HOME=$DESTDIR"
-Environment="ASPNETCORE_ENVIRONMENT=Production"
 Environment="ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
 Environment="ANTHROPIC_MAX_TOKENS=$ANTHROPIC_MAX_TOKENS"
 Environment="ASPNETCORE_ConnectionStrings__YavscConnection=Server=$POSTGRES_HOST;Port=$POSTGRES_PORT;Database=$POSTGRES_DB;Username=$POSTGRES_USER;Password=$POSTGRES_PASSWORD;"

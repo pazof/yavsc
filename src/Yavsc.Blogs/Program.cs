@@ -29,7 +29,11 @@ internal class Program
         Console.Title = "Yavsc.Blogs";
 
         var builder = WebApplication.CreateBuilder(args);
-
+        builder.Configuration
+            .AddJsonFile("appsettings-blogs.json", optional: false, reloadOnChange: false)
+            .AddJsonFile($"appsettings-blogs.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
+            .AddEnvironmentVariables();
+            
         var services = builder.Services;
 
         var authority = builder.GetAuthority();
@@ -103,9 +107,10 @@ internal class Program
             .AddSupportedCultures(supportedCultures)
             .AddSupportedUICultures(supportedCultures);
         });
-
+  
         using (var app = builder.Build())
         {
+
             if (app.Environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
