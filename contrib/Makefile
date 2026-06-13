@@ -1,7 +1,7 @@
 APP_PROJECT_NAMES=Api Org Blogs
 APP_PROJECTS=src/Yavsc.Org/Yavsc.Org.csproj src/Yavsc.Api/Yavsc.Api.csproj
 SLNDIR=..
-DESTDIR=/srv/www/yavsc/
+DESTDIR=/srv/www/yavsc
 USER_AND_GROUP=www-data:www-data
 CONFIGURATION=Release
 DOTNET_FRAMEWORK=net10.0
@@ -35,7 +35,7 @@ copy-service-Org: /etc/systemd/system/yavscOrg.service
 copy-service-Api: /etc/systemd/system/yavscApi.service
 copy-service-Blogs: /etc/systemd/system/yavscBlogs.service
 
-copy-binaries:
+copy-binaries: build_publish_Org build_publish_Api build_publish_Blogs
 	for project in $(APP_PROJECT_NAMES); \
 	do \
 		sudo cp -a $(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/* $(DESTDIR) ; \
@@ -45,14 +45,12 @@ copy-binaries:
 /etc/systemd/system/yavsc%.service: generated/yavsc%.service 
 	sudo cp $^ $@
 	sudo chown root:root $@
-	sudo systemctl daemon-reload
-	
-build_publish: 
-	for f in $(APP_PROJECTS); do \
-		ASPNETCORE_ENV=$(CONFIGURATION) dotnet publish $(SLNDIR)/$$f ; \
-	done
 
-install: build_publish copy-services copy-binaries
+
+build_publish_%: 
+	ASPNETCORE_ENV=$(CONFIGURATION) dotnet publish $(SLNDIR)/src/Yavsc.$*/Yavsc.$*.csproj
+
+install: build_publish copy-binaries copy-services 
 	sudo systemctl daemon-reload
 	for project in $(APP_PROJECT_NAMES); \
 	do \
@@ -61,6 +59,7 @@ install: build_publish copy-services copy-binaries
 	done
 	
 reinstall: build_publish copy-services copy-binaries
+	sudo systemctl daemon-reload
 	for project in $(APP_PROJECT_NAMES); \
 	do \
 		sudo systemctl stop yavsc$${project} ; \
@@ -69,7 +68,13 @@ reinstall: build_publish copy-services copy-binaries
 	do \
 		sudo systemctl start yavsc$${project} ; \
 	done
-	
+
+$(SLNDIR)/src/Yavsc.Org/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish: build_publish
+$(SLNDIR)/src/Yavsc.Blogs/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish: build_publish
+$(SLNDIR)/src/Yavsc.Api/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish: build_publish
+
+
+
 showConfig: 
 	@echo CONFIGURATION: $(CONFIGURATION)
 	@echo DESTDIR: $(DESTDIR)

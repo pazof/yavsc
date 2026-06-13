@@ -12,6 +12,11 @@ internal class Program
     private static void Main(string[] args)
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+         builder.Configuration
+                .AddJsonFile("appsettings-cli.json", optional: false, reloadOnChange: false)
+                .AddJsonFile($"appsettings-cli.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
+                .AddEnvironmentVariables();
+            
         AppHost = builder.Build();
         AppConfiguration = builder.Configuration;
         AppHost.Start();
