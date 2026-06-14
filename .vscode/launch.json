@@ -46,7 +46,21 @@
             "name": "C#: Yavsc.Org Debug",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj",
+            "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj"
+        },
+        {
+            "name": "Web",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-web",
+            "program": "${workspaceFolder}/src/Yavsc.Web/bin/Debug/net10.0/Yavsc.Web.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Yavsc.Web",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
