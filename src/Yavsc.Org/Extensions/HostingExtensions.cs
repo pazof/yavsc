@@ -170,6 +170,24 @@ public static class HostingExtensions
 
         services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
 
+        // Dev-only: Chromium rejects SameSite=None without Secure on http://
+        // (e.g. http://localhost:5000). The default Identity cookie policy
+        // sets SameSite=None, which is invalid without Secure. Force Lax in
+        // dev. In production (https://) the default SameSite=None is fine.
+        if (builder.Environment.IsDevelopment())
+        {
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            });
+            services.ConfigureExternalCookie(options =>
+            {
+                options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            });
+        }
+
         return identityBuilder;
     }
 
