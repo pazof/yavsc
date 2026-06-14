@@ -14,7 +14,6 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Yavsc;
 using Yavsc.Interface;
 using Yavsc.Models;
 using Yavsc.Services;
@@ -29,6 +28,7 @@ internal class Program
         Console.Title = "Yavsc.Blogs";
 
         var builder = WebApplication.CreateBuilder(args);
+
         builder.AddConfiguration("blogs");
             
         var services = builder.Services;

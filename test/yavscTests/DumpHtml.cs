@@ -1,4 +1,4 @@
-using System.Net.Http;
+using yavscTests.ServerFixtures;
 
 namespace Yavsc.Tests
 {

@@ -5,6 +5,7 @@ namespace Yavsc.Server.Helpers;
 
 public static class ConfigHelpers
 {
+
     public static IConfigurationBuilder AddConfiguration(this WebApplicationBuilder builder, string appName )
         {
             var rootConfig = builder.Configuration
@@ -13,5 +14,6 @@ public static class ConfigHelpers
             rootConfig.AddJsonFile($"appsettings-{appName}.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false);
             
             return rootConfig.AddEnvironmentVariables();
+
         }
 }

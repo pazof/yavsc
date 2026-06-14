@@ -14,12 +14,15 @@ using Microsoft.Extensions.Options;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using Yavsc;
 using Yavsc.Extensions;
 using Yavsc.Models;
 using Yavsc.Server.Helpers;
 using Client = IdentityServer8.EntityFramework.Entities.Client;
 
-namespace Yavsc.Tests
+
+namespace yavscTests.ServerFixtures
+
 {
 
     [CollectionDefinition("Yavsc Server")]

@@ -4,7 +4,8 @@ using Yavsc.Models;
 using Xunit.Abstractions;
 using Yavsc.Server.Models.IT.SourceCode;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Tests;
+
+using yavscTests.ServerFixtures;
 using Yavsc.Server.Models.IT;
 
 namespace yavscTests

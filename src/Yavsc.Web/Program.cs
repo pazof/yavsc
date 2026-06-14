@@ -18,6 +18,7 @@ JwtSecurityTokenHandler.DefaultMapInboundClaims = true;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddConfiguration("web");
+
 var authSection = builder.Configuration.GetSection("Authentication");
 
 var issuer = authSection.GetValue<String>("Issuer");

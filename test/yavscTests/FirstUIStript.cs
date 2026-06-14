@@ -3,9 +3,9 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using Xunit.Abstractions;
-using Yavsc.Tests;
 
 namespace yavscTests.ServerFixtures;
+
 
 
 [Collection("Yavsc Server")]
@@ -21,6 +21,21 @@ public class FirstScript : BaseTestContext
         _serverFixture = fixture;
         this._output = output;
     }
+
+    [Fact]
+    public  void DoTestSeleniumWebSite()
+    {
+        var firefoxOptions = new FirefoxOptions();
+        firefoxOptions.AcceptInsecureCertificates = true;
+
+        var driver = new FirefoxDriver(firefoxOptions);
+
+        driver.Navigate()
+        .GoToUrl(_serverFixture.Addresses.FirstOrDefault(u => u.StartsWith("http:")));
+
+        driver.Quit();
+    }
+    
 
 
     // FIXME [Fact]
