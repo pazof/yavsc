@@ -119,9 +119,23 @@ namespace isnd.tests
 
             var builder = WebApplication.CreateBuilder();
             builder.Environment.EnvironmentName = "Development";
-            // Set ContentRoot to the Yavsc.Org project directory so WebRootPath resolves correctly
+            // Set ContentRoot to the Yavsc.Org project directory so WebRootPath resolves correctly.
+            // Walk up from BaseDir until we find a directory that contains src/Yavsc.Org. This is
+            // robust against the test runner changing the current working directory.
             var testAssemblyLocation = AppDomain.CurrentDomain.BaseDirectory;
-            var yavscOrgPath = Path.GetFullPath(Path.Combine(testAssemblyLocation, "../../src/Yavsc.Org"));
+            string yavscOrgPath = "";
+            for (var d = new DirectoryInfo(testAssemblyLocation); d != null; d = d.Parent)
+            {
+                var candidate = Path.Combine(d.FullName, "src/Yavsc.Org");
+                if (Directory.Exists(candidate))
+                {
+                    yavscOrgPath = candidate;
+                    break;
+                }
+            }
+            if (string.IsNullOrEmpty(yavscOrgPath))
+                throw new InvalidOperationException(
+                    $"Could not locate src/Yavsc.Org by walking up from {testAssemblyLocation}");
             builder.Environment.ContentRootPath = yavscOrgPath;
             
             builder.Configuration
