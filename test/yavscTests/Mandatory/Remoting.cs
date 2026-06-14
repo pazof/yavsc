@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
-using isnd.tests;
+using Yavsc.Tests;
 using Xunit.Abstractions;
 using IdentityModel.Client;
 

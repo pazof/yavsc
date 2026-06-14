@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,15 +14,15 @@ using Microsoft.Extensions.Options;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Yavsc;
 using Yavsc.Extensions;
 using Yavsc.Models;
+using Yavsc.Server.Helpers;
 using Client = IdentityServer8.EntityFramework.Entities.Client;
 
-namespace isnd.tests
+namespace Yavsc.Tests
 {
 
-    [CollectionDefinition("Web server collection")]
+    [CollectionDefinition("Yavsc Server")]
     public class WebServerFixture : IDisposable
     {
         private static readonly Lazy<X509Certificate2> _selfSignedCertificate = new Lazy<X509Certificate2>(CreateSelfSignedCertificate);
@@ -116,33 +115,19 @@ namespace isnd.tests
        
         public async Task SetupHost()
         {
-
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
+// Set ContentRoot to the Yavsc.Org project directory so WebRootPath resolves correctly
+            var cwd = System.IO.Directory.GetCurrentDirectory();
+            var yavscOrgPath = Path.GetFullPath(
+                Path.Combine(cwd,
+                "../../../../../src/Yavsc.Org"));
+            Environment.CurrentDirectory = yavscOrgPath;
             var builder = WebApplication.CreateBuilder();
             builder.Environment.EnvironmentName = "Development";
-            // Set ContentRoot to the Yavsc.Org project directory so WebRootPath resolves correctly.
-            // Walk up from BaseDir until we find a directory that contains src/Yavsc.Org. This is
-            // robust against the test runner changing the current working directory.
-            var testAssemblyLocation = AppDomain.CurrentDomain.BaseDirectory;
-            string yavscOrgPath = "";
-            for (var d = new DirectoryInfo(testAssemblyLocation); d != null; d = d.Parent)
-            {
-                var candidate = Path.Combine(d.FullName, "src/Yavsc.Org");
-                if (Directory.Exists(candidate))
-                {
-                    yavscOrgPath = candidate;
-                    break;
-                }
-            }
-            if (string.IsNullOrEmpty(yavscOrgPath))
-                throw new InvalidOperationException(
-                    $"Could not locate src/Yavsc.Org by walking up from {testAssemblyLocation}");
-            builder.Environment.ContentRootPath = yavscOrgPath;
             
-            builder.Configuration
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
-                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
-                .AddEnvironmentVariables()
-                .AddInMemoryCollection(new Dictionary<string, string?>
+            builder.Environment.ContentRootPath = yavscOrgPath;
+           
+            builder.AddConfiguration("org").AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory"
                 });
@@ -176,23 +161,12 @@ namespace isnd.tests
                 EnsureUser(TestingUserName, TestingUserPassword, TestingUserEmail, migrationScope);
                 AddAuthorizedClient(migrationScope, TestClientId, TestClientSecret);
                 TestingUser = await db.Users.FirstOrDefaultAsync(u => u.UserName == TestingUserName);
-            }
 
-            // Seed IdentityServer ConfigurationDbContext with API resources and scopes
-            using (var configScope = _app.Services.CreateScope())
-            {
-                try
-                {
-                    var configDbContext = configScope.ServiceProvider.GetService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
-                    if (configDbContext != null)
-                    {
-                        configDbContext.Database.EnsureCreated();
-                        
-                        // Add test API scope if it doesn't exist
-                        var testScope = configDbContext.ApiScopes.FirstOrDefault(s => s.Name == "test");
+                 // Add test API scope if it doesn't exist
+                        var testScope = db.ApiScopes.FirstOrDefault(s => s.Name == "test");
                         if (testScope == null)
                         {
-                            configDbContext.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope 
+                            db.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope 
                             { 
                                 Name = "test",
                                 Enabled = true,
@@ -219,20 +193,15 @@ namespace isnd.tests
                                     }
                                 }
                             };
-                            configDbContext.ApiResources.Add(apiResource);
-                            configDbContext.SaveChanges();
+                            db.ApiResources.Add(apiResource);
+                            db.SaveChanges();
                         }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _sharedLogger?.LogWarning($"Failed to seed ConfigurationDbContext: {ex.Message}");
-                    // Don't fail the fixture if seeding fails
-                }
             }
 
-            await _app!.ConfigurePipeline();
-            _app.UseSession();
+
+       
+            _app = await _app.ConfigurePipeline();
+
             await _app.StartAsync();
 
             _sharedServices = _app.Services;
