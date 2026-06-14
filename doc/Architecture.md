@@ -114,6 +114,26 @@ Rendu CSS/HTML — vert si `EstLibre`, orange sinon.
 - **Base de données** : PostgreSQL (provider Npgsql)
 - **Frontend** : Razor views
 
+## Droits de yavsc
+
+### Administration
+
+Le groupe des administrateurs prend la charge de : 
+
+- la Gestion des licences
+- la Gestion des groupes d'utilisateurs (les modérateurs, en particulier)
+- la Gestion des projets
+- la Gestion des utilisateurs
+
+### Gestion des utilisateurs et des groupes
+
+En supposant que les certificats de letsencrypt sont au groupe `www-data` ,
+on peut créer l'utilisateur `yavsc` avec les droits suivants :
+
+¨¨¨¨bash
+sudo addgroup yavsc --system
+sudo adduser --ingroup yavsc --add-extra-groups www-data \
+ --disabled-password --system yavsc
 ---
 
 ## À documenter ensuite
