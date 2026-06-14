@@ -14,7 +14,7 @@ internal class Program
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
          builder.Configuration
                 .AddJsonFile("appsettings-cli.json", optional: false, reloadOnChange: false)
-                .AddJsonFile($"appsettings-cli.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
+                .AddJsonFile($"appsettings-cli.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
                 .AddEnvironmentVariables();
             
         AppHost = builder.Build();
