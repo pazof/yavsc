@@ -7,9 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <link rel="icon" type="image/svg+xml" href="~/images/yavsc-logo.svg" asp-append-version="true" />
     <link rel="alternate icon" type="image/x-icon" href="@SiteSettings.Value.FavIcon" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css"  asp-append-version="true"/>
-    <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/css/jquery-ui.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/main/site.css"  asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/main/bootstrap.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/main/jquery-ui.min.css" asp-append-version="true"/>
+    <!-- Vendor scripts: jQuery first, everything else depends on it.
+         Loaded as global <script> tags (not bundled) so they are
+         exposed on window as $ / jQuery for the application code. -->
+    <script src="~/js/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-ui.min.js" asp-append-version="true"></script>
+    <script src="~/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.validate.min.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
     <script src="~/js/core.bundle.min.js" asp-append-version="true"></script>
     @await RenderSectionAsync("header", false)
 </head>

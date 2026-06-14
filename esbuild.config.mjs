@@ -43,8 +43,10 @@ const bundleNames = [
 ];
 
 // Static assets that cannot be bundled (dynamic require, legacy
-// server protocol, package not on npm). CSS files are also copied
-// as static assets (bundling CSS is out of scope of this commit).
+// server protocol, package not on npm). CSS files are copied into
+// wwwroot/css/main/ (alongside the existing custom-styled versions
+// of bootstrap, jquery-ui, etc., which are NOT touched by this
+// toolchain).
 const staticAssets = [
   {
     src: 'node_modules/@aspnet/signalr/dist/browser/signalr.min.js',
@@ -54,29 +56,38 @@ const staticAssets = [
     src: 'node_modules/moment/min/moment-with-locales.min.js',
     dst: 'moment-with-locales.min.js',
   },
+  // Global vendor scripts (loaded by _Layout.cshtml before
+  // core.bundle.min.js). Kept as static assets instead of being
+  // bundled so jQuery, jQuery UI, Bootstrap, and the validation
+  // plugins are exposed on window (which esbuild IIFE bundles do
+  // NOT do for UMD-style modules like these).
   {
-    src: 'node_modules/bootstrap/dist/css/bootstrap.min.css',
-    dst: '../css/bootstrap.min.css',
+    src: 'node_modules/jquery/dist/jquery.min.js',
+    dst: 'jquery.min.js',
   },
   {
-    src: 'node_modules/jquery-ui/dist/themes/base/jquery-ui.min.css',
-    dst: '../css/jquery-ui.min.css',
+    src: 'node_modules/jquery-ui/dist/jquery-ui.min.js',
+    dst: 'jquery-ui.min.js',
   },
   {
-    src: 'node_modules/dropzone/dist/min/dropzone.min.css',
-    dst: '../css/dropzone.min.css',
+    src: 'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
+    dst: 'bootstrap.bundle.min.js',
   },
   {
-    src: 'node_modules/dropzone/dist/min/basic.min.css',
-    dst: '../css/dropzone-basic.min.css',
+    src: 'node_modules/jquery-validation/dist/jquery.validate.min.js',
+    dst: 'jquery.validate.min.js',
+  },
+  {
+    src: 'node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js',
+    dst: 'jquery.validate.unobtrusive.min.js',
   },
   {
     src: 'node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
-    dst: '../css/bootstrap-datetimepicker.min.css',
+    dst: '../css/main/bootstrap-datetimepicker.min.css',
   },
   {
     src: 'node_modules/jquery-timepicker/jquery.timepicker.css',
-    dst: '../css/jquery.timepicker.css',
+    dst: '../css/main/jquery.timepicker.css',
   },
 ];
 
