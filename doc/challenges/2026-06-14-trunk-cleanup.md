@@ -198,7 +198,7 @@ Le défi est résolu quand :
 - [ ] **CA2** : la branche `refac/js-bundle` est mergée (ou
   re-intégrée) sur `main`, via un commit explicite (pas un
   merge fast-forward silencieux).
-- [ ] **CA3** : un test d'UI automatisé (Playwright) existe et
+- [ ] **CA3** : un test d'UI automatisé (Selenium Driver) existe et
   passe sur `main` ET sur `themeok`. Le test vérifie au minimum :
   - la page d'accueil répond 200,
   - le HTML contient la navbar Bootstrap,
