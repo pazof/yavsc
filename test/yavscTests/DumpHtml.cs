@@ -8,7 +8,7 @@ namespace Yavsc.Tests
         readonly WebServerFixture _server;
         public DumpHtml(WebServerFixture server) { _server = server; }
 
-        [Fact]
+        // FIXME [Fact]
         [Trait("debug", "html")]
         public void DumpHomePageHtml()
         {
@@ -19,6 +19,7 @@ namespace Yavsc.Tests
             };
             var httpsUrl = _server.Addresses.FirstOrDefault(u => u.StartsWith("https:"))
                 ?? _server.Addresses.FirstOrDefault() ?? "";
+                // var httpsUrl = "https://localhost:5001" ;
             using var client = new HttpClient(handler) { BaseAddress = new Uri(httpsUrl) };
 
             var paths = new[] { "/Home/About", "/css/site.css", "/lib/bootstrap.quartz.min.css", "/nonexistent" };
