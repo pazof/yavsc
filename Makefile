@@ -5,6 +5,8 @@ DESTDIR=/tmp/yavsc
 APP_PATH=srv/www/yavsc
 APP_FULL_PATH=$(DESTDIR)/$(APP_PATH)
 
+include .env
+
 all:
 	dotnet build --nologo
 
@@ -15,7 +17,7 @@ src/Yavsc/bin/output/wwwroot:
 	dotnet --project src/Yavsc.Org/Yavsc.Org.csproj publish
 
 test:
-	dotnet test
+	ASPNETCORE_ENVIRONMENT=Development dotnet test -e SLNDIR=$(SLNDIR)
 
 watch:
 	dotnet watch -p:Configuration=$(CONFIG) --project src/Yavsc/Yavsc.csproj
@@ -47,4 +49,4 @@ docker-run:
 	docker run -d -p 5000:5000 --name yavsc yavsc
 
 
-.PHONY: 
+.PHONY: test

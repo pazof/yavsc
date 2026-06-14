@@ -31,6 +31,7 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.AddConfiguration("api");
+
         var services = builder.Services;
 
         // Anthropic client
