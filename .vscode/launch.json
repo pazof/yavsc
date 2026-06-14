@@ -46,7 +46,10 @@
             "name": "C#: Yavsc.Org Debug",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj"
+            "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
         },
         {
             "name": "Yavsc.Org",
