@@ -4,7 +4,7 @@
 **Participants** : Paul Schneider (expert métier), Lum ✨ (assistant DDD)
 **Cadre** : Event Storming narratif exploratoire sur le domaine Yavsc
 **Statut** : Session 1 (première itération, périmètre complet)
-
+ 
 ---
 
 ## 🎯 Objectif de la session
