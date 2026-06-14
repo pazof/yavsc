@@ -16,7 +16,17 @@ Restart=always
 Environment="HOME=$DESTDIR"
 Environment="ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
 Environment="ANTHROPIC_MAX_TOKENS=$ANTHROPIC_MAX_TOKENS"
+Environment="ASPNETCORE_Environment=$ENV"
+Environment="ASPNETCORE_Kestrel__Endpoints__Http=http://$HTTP_HOST:$HTTP_PORT"
 Environment="ASPNETCORE_ConnectionStrings__YavscConnection=Server=$POSTGRES_HOST;Port=$POSTGRES_PORT;Database=$POSTGRES_DB;Username=$POSTGRES_USER;Password=$POSTGRES_PASSWORD;"
+
+Environment="ASPNETCORE_Smtp__Host=$ASPNETCORE_Smtp__Host",
+Environment="ASPNETCORE_Smtp__Port=$ASPNETCORE_Smtp__Port"
+Environment="ASPNETCORE_Smtp__SenderName=\"$ASPNETCORE_Smtp__SenderName\""
+Environment="ASPNETCORE_Smtp__SenderEmail=\"$ASPNETCORE_Smtp__SenderEmail\""
+Environment="ASPNETCORE_Smtp__UserName=$ASPNETCORE_Smtp__UserName"
+Environment="ASPNETCORE_Smtp__Password=$ASPNETCORE_Smtp__Password"
+
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 StandardOutput=syslog

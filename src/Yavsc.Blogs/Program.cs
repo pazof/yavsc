@@ -29,10 +29,8 @@ internal class Program
         Console.Title = "Yavsc.Blogs";
 
         var builder = WebApplication.CreateBuilder(args);
-        builder.Configuration
-            .AddJsonFile("appsettings-blogs.json", optional: false, reloadOnChange: false)
-            .AddJsonFile($"appsettings-blogs.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
-            .AddEnvironmentVariables();
+        
+        builder.AddConfiguration("blogs");
             
         var services = builder.Services;
 

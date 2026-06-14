@@ -12,6 +12,8 @@ test/*/obj/
 .vs/
 
 .env
+.*.env
+
 *.csproj.lscache
 data/
 appsettings.Development.json

@@ -19,6 +19,7 @@ using Yavsc.Abstract.Interfaces;
 using Yavsc.Helpers;
 using Yavsc.Interface;
 using Yavsc.Models;
+using Yavsc.Server.Helpers;
 using Yavsc.Services;
 
 internal class Program
@@ -29,10 +30,8 @@ internal class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Configuration
-            .AddJsonFile("appsettings-api.json", optional: false, reloadOnChange: false)
-            .AddJsonFile($"appsettings-api.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: false)
-            .AddEnvironmentVariables();
+        builder.AddConfiguration("api");
+
         var services = builder.Services;
 
         // Anthropic client
