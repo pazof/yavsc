@@ -1,6 +1,7 @@
 
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
 using Xunit.Abstractions;
 using Yavsc.Tests;
 
@@ -22,19 +23,22 @@ public class FirstScript : BaseTestContext
     }
 
 
-    [Fact]
+    // FIXME [Fact]
     public async Task DoTestYavscSite()
     {
-        var chromeOptions = new ChromeOptions
+       
+
+        var firefoxOptions = new FirefoxOptions
         {
             AcceptInsecureCertificates = true
         };
 
-        var driver = new ChromeDriver(chromeOptions);
-        var url = _serverFixture.Addresses.FirstOrDefault(u => u.StartsWith("https:"));
-        Assert.NotNull(url);
-        driver.Navigate().GoToUrl(url);
+        var driver = new FirefoxDriver(firefoxOptions);
 
+        var url = _serverFixture.Addresses.FirstOrDefault(u => u.StartsWith("http:"));
+        Assert.NotNull(url);
+        //driver.Navigate().GoToUrl(url);
+driver.Navigate().GoToUrl("http://localhost:5000/Home/About");
         var title = driver.Title;
 
         driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(500);

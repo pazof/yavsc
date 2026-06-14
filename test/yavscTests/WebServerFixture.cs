@@ -115,17 +115,16 @@ namespace Yavsc.Tests
        
         public async Task SetupHost()
         {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
-// Set ContentRoot to the Yavsc.Org project directory so WebRootPath resolves correctly
-            var cwd = System.IO.Directory.GetCurrentDirectory();
-            var yavscOrgPath = Path.GetFullPath(
-                Path.Combine(cwd,
-                "../../../../../src/Yavsc.Org"));
-            Environment.CurrentDirectory = yavscOrgPath;
-            var builder = WebApplication.CreateBuilder();
-            builder.Environment.EnvironmentName = "Development";
             
-            builder.Environment.ContentRootPath = yavscOrgPath;
+            var builder = WebApplication.CreateBuilder();
+           
+            var slnDir =  builder.Configuration.GetValue<string>("SLNDIR");
+            Assert.NotNull(slnDir);
+
+            var yavscOrgPath = Path.GetFullPath(
+                Path.Combine(slnDir,
+                "src/Yavsc.Org"));
+            Environment.CurrentDirectory = yavscOrgPath;
            
             builder.AddConfiguration("org").AddInMemoryCollection(new Dictionary<string, string?>
                 {
