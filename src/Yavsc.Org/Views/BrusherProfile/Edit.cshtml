@@ -5,11 +5,11 @@
 }
 
 @section header {
-     <link rel="stylesheet" href="~/lib/jquery-timepicker/jquery.timepicker.css"></style>
+     <link rel="stylesheet" href="~/css/jquery.timepicker.css" asp-append-version="true"/>
 }
 @section scripts {
-    <script src="~/lib/jquery-timepicker/jquery.timepicker.min.js"></script>
-    <script src="~/lib/jonthornton-Datepair/datepair.min.js"></script>
+    <script src="~/js/timepicker.bundle.min.js" asp-append-version="true"></script>
+    @* datepair is loaded as a static asset (not on npm) *@
     <script src="~/lib/jonthornton-Datepair/jquery.datepair.min.js"></script>
     <script>
         $(document).ready(function(){

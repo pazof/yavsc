@@ -7,9 +7,9 @@
 }
 </style>
 
-<script type="text/javascript" src="~/lib/moment/moment-with-locales.min.js"></script>
-<script type="text/javascript" src="~/lib/eonasdan-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
-<link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" />
+<script type="text/javascript" src="~/js/moment-with-locales.min.js"></script>
+<script src="~/js/datetime.bundle.min.js" asp-append-version="true"></script>
+<link rel="stylesheet" href="~/css/bootstrap-datetimepicker.min.css" asp-append-version="true"/>
 
 }
 @{ ViewBag.Title = $"Proposition de rendez-vous à {Model.PerformerProfile.Performer.UserName} [{ViewBag.Activity.Name}]"; } 

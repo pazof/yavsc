@@ -7,13 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <link rel="icon" type="image/svg+xml" href="~/images/yavsc-logo.svg" asp-append-version="true" />
     <link rel="alternate icon" type="image/x-icon" href="@SiteSettings.Value.FavIcon" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
-    <link rel="stylesheet" href="~/lib/bootstrap.quartz.min.css"  asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/site.css"  asp-append-version="true"/>
-    <script src="~/lib/jquery-ui/external/jquery/jquery.js"></script>
-    <script src="~/lib/jquery-ui/jquery-ui.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/jquery-ui.min.css" asp-append-version="true"/>
+    <script src="~/js/core.bundle.min.js" asp-append-version="true"></script>
     @await RenderSectionAsync("header", false)
 </head>
 <body style="background-image: url('@Config.SiteSetup.Banner'); 
