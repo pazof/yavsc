@@ -20,7 +20,7 @@ using Yavsc.Extensions;
 using Yavsc.Models;
 using Client = IdentityServer8.EntityFramework.Entities.Client;
 
-namespace isnd.tests
+namespace yavscTests.ServerFixtures
 {
 
     [CollectionDefinition("Web server collection")]
@@ -120,8 +120,10 @@ namespace isnd.tests
             var builder = WebApplication.CreateBuilder();
             builder.Environment.EnvironmentName = "Development";
             // Set ContentRoot to the Yavsc.Org project directory so WebRootPath resolves correctly
-            var testAssemblyLocation = AppDomain.CurrentDomain.BaseDirectory;
-            var yavscOrgPath = Path.GetFullPath(Path.Combine(testAssemblyLocation, "../../src/Yavsc.Org"));
+            var cwd = System.IO.Directory.GetCurrentDirectory();
+            var yavscOrgPath = Path.GetFullPath(
+                Path.Combine(cwd,
+                "../../../../../src/Yavsc.Org"));
             builder.Environment.ContentRootPath = yavscOrgPath;
             
             builder.Configuration
