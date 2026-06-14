@@ -4,8 +4,11 @@ using OpenQA.Selenium.Chrome;
 
 namespace SeleniumDocs.GettingStarted;
 
+    [Collection("Yavsc Server")]
+    [Trait("regression", "oui")]
 public static class FirstScript
 {
+    [Fact]
     public static void DoTestSeleniumWebSite()
     {
         IWebDriver driver = new ChromeDriver();
