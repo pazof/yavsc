@@ -36,3 +36,5 @@ appsettings.Development.json
 
 contrib/generated/
 *.tmp
+
+DataDir/

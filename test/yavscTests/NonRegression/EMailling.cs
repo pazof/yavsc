@@ -1,4 +1,4 @@
-using isnd.tests;
+using Yavsc.Tests;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
