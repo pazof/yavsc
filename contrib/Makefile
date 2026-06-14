@@ -2,11 +2,12 @@ APP_PROJECT_NAMES=Api Org Blogs
 APP_PROJECTS=src/Yavsc.Org/Yavsc.Org.csproj src/Yavsc.Api/Yavsc.Api.csproj
 SLNDIR=..
 DESTDIR=/srv/www/yavsc
-USER_AND_GROUP=www-data:www-data
+USER_AND_GROUP=yavsc:yavsc
 CONFIGURATION=Release
 DOTNET_FRAMEWORK=net10.0
 
 include $(SLNDIR)/.env
+include .env
 
 generated/:
 	@mkdir -p $@
@@ -17,6 +18,8 @@ generated/Blogs.service:
 
 generated/yavsc%.service: generated/ template.service $(SLNDIR)/.env
 	@cat template.service | APP_NAME="$*" \
+	HTTP_HOST="$(HTTP_HOST)" \
+	HTTP_PORT="$*_$(HTTP_PORT)" \
 	DESTDIR="$(DESTDIR)" \
 	APP_SYSLOG_ID="yavsc$*" \
 	POSTGRES_HOST="$(POSTGRES_HOST)" \
@@ -38,6 +41,9 @@ copy-service-Blogs: /etc/systemd/system/yavscBlogs.service
 copy-binaries: build_publish_Org build_publish_Api build_publish_Blogs
 	for project in $(APP_PROJECT_NAMES); \
 	do \
+		LCAPI=$$(echo $${project}|tr [:upper:] [:lower:]) ; \
+		mv $(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/appsettings-$$LCAPI.json \
+		   $(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/appsettings-$$LCAPI-dist.json ;\
 		sudo cp -a $(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/* $(DESTDIR) ; \
 	done
 	sudo chown -R $(USER_AND_GROUP) $(DESTDIR)
@@ -45,7 +51,6 @@ copy-binaries: build_publish_Org build_publish_Api build_publish_Blogs
 /etc/systemd/system/yavsc%.service: generated/yavsc%.service 
 	sudo cp $^ $@
 	sudo chown root:root $@
-
 
 build_publish_%: 
 	ASPNETCORE_ENV=$(CONFIGURATION) dotnet publish $(SLNDIR)/src/Yavsc.$*/Yavsc.$*.csproj
@@ -58,15 +63,17 @@ install: build_publish copy-binaries copy-services
 		sudo systemctl start yavsc$${project} ; \
 	done
 	
-reinstall: build_publish copy-services copy-binaries
+reinstall: build_publish stop-services copy-binaries
 	sudo systemctl daemon-reload
 	for project in $(APP_PROJECT_NAMES); \
 	do \
-		sudo systemctl stop yavsc$${project} ; \
+		sudo systemctl start yavsc$${project} ; \
 	done
+
+stop-services:
 	for project in $(APP_PROJECT_NAMES); \
 	do \
-		sudo systemctl start yavsc$${project} ; \
+		sudo systemctl stop yavsc$${project} ; \
 	done
 
 $(SLNDIR)/src/Yavsc.Org/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish: build_publish

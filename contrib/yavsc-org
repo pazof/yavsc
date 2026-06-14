@@ -1,0 +1,54 @@
+
+
+server {
+    if ($host = yavsc.pschneider.fr) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+
+    listen        80;
+    server_name yavsc.pschneider.fr;
+    location / {
+		root /srv/www/yavsc/wwwroot;
+        dav_methods  PUT;
+
+        proxy_pass         http://127.0.0.1:3003;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection keep-alive;
+        proxy_set_header   Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+
+}
+
+server {
+	listen 443 ssl;
+	server_name yavsc.pschneider.fr;
+    ssl_certificate /etc/letsencrypt/live/yavsc.pschneider.fr-0001/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/yavsc.pschneider.fr-0001/privkey.pem; # managed by Certbot
+	# Configure the SignalR Endpoint
+	location / {
+		# App server url
+		proxy_pass http://localhost:3003;
+
+		proxy_cache off;
+		# WebSockets were implemented after http/1.0
+		proxy_http_version 1.1;
+
+		# Configuration for ServerSentEvents
+		proxy_buffering off;
+
+		# Configuration for LongPolling or if your KeepAliveInterval is longer than 60 seconds
+		proxy_read_timeout 100s;
+
+		proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+	}
+}
+
