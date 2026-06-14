@@ -6,12 +6,28 @@ src/*/obj/
 test/*/bin/
 test/*/obj/
 
+# Toolchain front (Node / esbuild)
+node_modules/
+build/
+package-lock.json
+
+# Libs tierces servies par ASP.NET — restaurées via npm + esbuild.
+# Exception : jonthornton-Datepair n'est pas sur npm, on garde le
+# fichier bundlé comme asset statique.
+src/Yavsc.Org/wwwroot/lib/
+!src/Yavsc.Org/wwwroot/lib/jonthornton-Datepair/
+!src/Yavsc.Org/wwwroot/lib/jonthornton-Datepair/jquery.datepair.min.js
+# Versions .min des libs tierces dans wwwroot/js (elles ne sont plus
+# versionnées ; la minification est faite par esbuild au build)
+src/Yavsc.Org/wwwroot/js/*.min.js
+
 # Exclure les caches lourds
 **/.playwright/
 .git/
 .vs/
 
 .env
+.Production.env
 .*.env
 
 *.csproj.lscache
@@ -20,4 +36,3 @@ appsettings.Development.json
 
 contrib/generated/
 *.tmp
-
