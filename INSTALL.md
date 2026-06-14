@@ -1,14 +1,23 @@
 # Install
 
-With internet access, Git, dotnet, and GNU/Makefile, simply follow these instructions, in order to have the server part installed:
+With internet access, Git, dotnet, Node.js, and GNU/Makefile, simply follow these instructions, in order to have the server part installed:
 
 ```bash
 git clone https://github.com/pschneider/yavsc.git
 cd yavsc
 dotnet restore
+npm install          # restore front-end dependencies
+npm run build:js     # build the JS/CSS bundles into wwwroot
 cd contrib
 make install
 ```
+
+The front-end bundles (under `src/Yavsc.Org/wwwroot/js/*.bundle.min.js`
+and `src/Yavsc.Org/wwwroot/css/*.min.css`) are produced by `npm run
+build:js` and committed to the repo, so the runtime .NET stack does
+not need a Node toolchain at publish time. Re-run `npm run build:js`
+after editing any of the entry files under `src/Yavsc.Org/wwwroot/js/`
+or any of the `build/*.entry.js` bundle manifests.
 
 About the mobile app,
 
