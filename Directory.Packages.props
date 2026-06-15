@@ -3,6 +3,34 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Anthropic.SDK" Version="5.10.0" />
+    <PackageVersion Include="AsciiDocSharp" Version="0.2.0" />
+    <PackageVersion Include="AsciiDocSharp.Converters.Html" Version="0.2.0" />
+    <PackageVersion Include="Avalonia" Version="12.0.4" />
+    <PackageVersion Include="Avalonia.Android" Version="12.0.4" />
+    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
+    <PackageVersion Include="Avalonia.Browser" Version="12.0.4" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.0.4" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.0.4" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.4" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.2" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="Google.Apis.Calendar.v3" Version="1.74.0.4154" />
+    <PackageVersion Include="Google.Apis.Compute.v1" Version="1.75.0.4157" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8" Version="8.0.5-preview-net9" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="8.0.5-preview-net9" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="8.0.5-preview-net9" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework.Storage" Version="8.0.5-preview-net9" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.Security" Version="8.0.5-preview-net9" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.Storage" Version="8.0.5-preview-net9" />
+    <PackageVersion Include="IdentityModel.AspNetCore" Version="4.3.0" />
+    <PackageVersion Include="IdentityModel.OidcClient" Version="6.0.0" />
+    <PackageVersion Include="Json.NET" Version="1.0.33" />
+    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.14.0" />
+    <PackageVersion Include="MailKit" Version="4.17.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Antiforgery" Version="2.3.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication" Version="10.0.8" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.9" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
     <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.9" />
@@ -13,55 +41,24 @@
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.3.11" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.9" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Razor" Version="2.3.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Razor.Language" Version="6.0.36" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR" Version="1.2.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.StaticFiles" Version="2.3.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.9" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.9" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.9" />
-    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication" Version="10.0.8" />
-    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.19.1" />
-    <PackageVersion Include="Microsoft.AspNetCore.Antiforgery" Version="2.3.11" />
-    <PackageVersion Include="Microsoft.AspNetCore.Razor" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Razor.Language" Version="6.0.36" />
-    <PackageVersion Include="Microsoft.AspNetCore.SignalR" Version="1.2.11" />
-    <PackageVersion Include="Microsoft.AspNetCore.StaticFiles" Version="2.3.11" />
-    <PackageVersion Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
-    <PackageVersion Include="Google.Apis.Calendar.v3" Version="1.74.0.4154" />
-    <PackageVersion Include="Google.Apis.Compute.v1" Version="1.75.0.4157" />
-    <PackageVersion Include="IdentityModel.AspNetCore" Version="4.3.0" />
-    <PackageVersion Include="IdentityModel.OidcClient" Version="6.0.0" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8" Version="8.0.5-preview-net9" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="8.0.5-preview-net9" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="8.0.5-preview-net9" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework.Storage" Version="8.0.5-preview-net9" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.Security" Version="8.0.5-preview-net9" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.Storage" Version="8.0.5-preview-net9" />
-    <PackageVersion Include="Anthropic.SDK" Version="5.10.0" />
-    <PackageVersion Include="AsciiDocSharp" Version="0.2.0" />
-    <PackageVersion Include="AsciiDocSharp.Converters.Html" Version="0.2.0" />
-    <PackageVersion Include="Avalonia" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Browser" Version="12.0.4" />
-    <PackageVersion Include="Avalonia.Android" Version="12.0.4" />
-    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.2" />
-    <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0" />
-    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
-    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.14.0" />
-    <PackageVersion Include="MailKit" Version="4.17.0" />
     <PackageVersion Include="MimeKit" Version="4.17.0" />
-    <PackageVersion Include="Json.NET" Version="1.0.33" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
     <PackageVersion Include="PayPalMerchantSDK" Version="2.16.250" />
     <PackageVersion Include="pazof.rules" Version="1.1.3" />
@@ -70,6 +67,9 @@
     <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageVersion Include="SixLabors.ImageSharp" Version="4.0.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.19.1" />
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.9" />
+    <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>

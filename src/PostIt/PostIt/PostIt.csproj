@@ -19,11 +19,8 @@
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="IdentityModel.OidcClient" />
-     
     <ProjectReference Include="../../Yavsc.Abstract/Yavsc.Abstract.csproj" />
-
   </ItemGroup>
-  
   <ItemGroup>
     <Content Include="settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

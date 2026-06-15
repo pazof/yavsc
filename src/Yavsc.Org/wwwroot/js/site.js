@@ -10,7 +10,7 @@ var notifClick =
     };
 
 var setUiCult = function(lngspec) {
-    document.cookie = 'ASPNET_CULTURE=c=' + lngspec + '|uic=' + lngspec;
+    document.cookie = 'ASPNETCORE_CULTURE=c=' + lngspec + '|uic=' + lngspec;
     location.reload();
 };
 

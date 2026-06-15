@@ -513,6 +513,7 @@ public static class HostingExtensions
         app.UseIdentityServer();
         app.UseAuthorization();
         app.UseCors("default");
+        app.MapStaticAssets();
         app.MapDefaultControllerRoute();
         //app.MapRazorPages();
         app.MapHub<ChatHub>("/chatHub");
