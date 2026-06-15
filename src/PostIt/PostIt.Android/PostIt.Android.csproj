@@ -5,7 +5,6 @@
     <!-- FORCE LES ARCHITECTURES ANDROID VALIDES -->
     <RuntimeIdentifiers>android-arm64;android-x64</RuntimeIdentifiers>
     <SupportedOSPlatformVersion>23.0.0</SupportedOSPlatformVersion>
-
     <Nullable>enable</Nullable>
     <ApplicationId>com.CompanyName.PostIt</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
@@ -13,7 +12,6 @@
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
-
   </PropertyGroup>
   <ItemGroup>
     <AndroidResource Include="Icon.png">
