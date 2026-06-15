@@ -127,7 +127,7 @@
     "hugo-bin": "^0.119.0",
     "ip": "^2.0.1",
     "jasmine": "^5.1.0",
-    "jquery": "^3.7.1",
+    "jquery": "^4.0.0",
     "karma": "^6.4.2",
     "karma-browserstack-launcher": "1.4.0",
     "karma-chrome-launcher": "^3.2.0",
@@ -151,7 +151,7 @@
     "stylelint": "^16.2.1",
     "stylelint-config-twbs-bootstrap": "^14.0.0",
     "terser": "^5.27.2",
-    "vnu-jar": "23.4.11"
+    "vnu-jar": "26.2.1"
   },
   "files": [
     "dist/{css,js}/*.{css,js,map}",
