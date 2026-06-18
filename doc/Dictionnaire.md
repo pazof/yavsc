@@ -36,4 +36,5 @@ ses ancêtres jusqu à la racine.
 Ainsi, les termes juridiques sont toujours disponibles, quel que
 soit le domaine du projet.
 
-Ce dictionnaire juridique est simplement fondamental, par construction.
+Ce dictionnaire juridique est simplement fondamental, par construction, c'est la base de tous les dictionnaires.
+
