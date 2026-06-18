@@ -70,6 +70,7 @@ namespace yavscTests.ServerFixtures
                 _instanceCount++;
                 if (!_isInitialized)
                 {
+                    
                     SetupHost().Wait();
                     _isInitialized = true;
                 }
@@ -127,8 +128,9 @@ namespace yavscTests.ServerFixtures
             var yavscOrgPath = Path.GetFullPath(
                 Path.Combine(slnDir,
                 "src/Yavsc.Org"));
-            Environment.CurrentDirectory = yavscOrgPath;
+            
            
+            Directory.SetCurrentDirectory(yavscOrgPath);
             builder.AddConfiguration("org").AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory"
