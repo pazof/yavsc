@@ -22,9 +22,5 @@
     ],
     "cSpell.reportUnknownWords": true,
     "cSpell.language": "fr,en",
-    "chat.tools.terminal.autoApprove": {
-        "dotnet test": true
-    },
-    "makefile.configureOnOpen": false,
-    "chat.disableAIFeatures": true
+    "makefile.configureOnOpen": false
 }

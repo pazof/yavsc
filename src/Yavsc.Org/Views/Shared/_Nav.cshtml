@@ -1,4 +1,7 @@
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark" aria-label="Yavsc">
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark" aria-label="Yavsc"
+ style="background-image: url('@Config.SiteSetup.Banner'); 
+background-position: 0%;
+background-attachment: fixed;">
   <a class="navbar-brand" href="/">
     <img src="~/images/yavsc-logo.svg" alt="Yavsc" style="height:32px; margin-right:8px; display:inline-block; vertical-align:middle;" />
     @Config.SiteSetup.Title
@@ -8,7 +11,7 @@
       aria-expanded="true" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbar" style="background-image: @Config.SiteSetup.Banner;">
+      <div class="collapse navbar-collapse" id="navbar" >
         <ul class="navbar-nav me-auto" >
           <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
           <li class="nav-item"><a asp-controller="Blogspot" asp-action="Index" class="nav-link">@Localizer["Blogs"]</a></li>

@@ -66,27 +66,6 @@
             }
         },
         {
-            "name": "Yavsc.Org",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build-web",
-            "program": "${workspaceFolder}/src/Yavsc.Org/bin/Debug/net10.0/Yavsc.Org.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Yavsc.Org",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "envFile": "${workspaceFolder}/.env",
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/src/Yavsc.Org/Views"
-            }
-        },
-        {
             "name": "cli",
             "type": "coreclr",
             "request": "launch",
