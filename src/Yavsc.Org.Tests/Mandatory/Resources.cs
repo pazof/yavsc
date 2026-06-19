@@ -1,5 +1,5 @@
 
-namespace yavscTests {
+namespace Yavsc {
     public class ResxResources {
         const string resPath = "Resources/Test.TestResources.resx";
         public void HaveAResxLoader()

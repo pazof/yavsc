@@ -1,9 +1,8 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
-using yavscTests.ServerFixtures;
 using IdentityModel.Client;
 
-namespace yavscTests
+namespace Yavsc.Org.Tests
 {
     [Collection("Yavsc Server")]
     [Trait("regression", "oui")]

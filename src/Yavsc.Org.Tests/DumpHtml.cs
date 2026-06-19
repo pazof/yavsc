@@ -1,6 +1,6 @@
-using yavscTests.ServerFixtures;
 
-namespace Yavsc.Tests
+
+namespace Yavsc.Org.Tests
 {
     [Collection("Yavsc Server")]
     public class DumpHtml : IClassFixture<WebServerFixture>

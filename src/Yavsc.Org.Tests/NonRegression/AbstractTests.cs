@@ -1,7 +1,7 @@
 
 using Yavsc.Server.Helpers;
 
-namespace yavscTests
+namespace Yavsc
 {
     [Collection("Yavsc Abstract tests")]
     [Trait("regression", "II")]

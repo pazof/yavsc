@@ -4,10 +4,9 @@ using Yavsc.Models;
 using Yavsc.Server.Models.IT.SourceCode;
 using Microsoft.EntityFrameworkCore;
 
-using yavscTests.ServerFixtures;
 using Yavsc.Server.Models.IT;
 
-namespace yavscTests
+namespace Yavsc.Org.Tests
 {
     [Collection("Yavsc Server")]
     [Trait("regression", "oui")]

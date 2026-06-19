@@ -15,7 +15,7 @@ COPY src/Yavsc.Web/*.csproj ./src/Yavsc.Web/
 COPY src/Yavsc.Api/*.csproj ./src/Yavsc.Api/
 COPY src/Yavsc.Blogs/*.csproj ./src/Yavsc.Blogs/
 COPY src/cli/*.csproj ./src/cli/
-COPY test/yavscTests/*.csproj ./test/yavscTests/
+COPY test/Yavsc.Org.Tests/*.csproj ./test/Yavsc.Org.Tests/
 
 # Projets associés à PostIt
 COPY src/PostIt/PostIt/*.csproj ./src/PostIt/PostIt/

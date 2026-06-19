@@ -40,7 +40,7 @@ Trois principes non négociables traversent tous les jalons :
 | Blogs | `Yavsc.Blogs` | actif |
 | Client chat (`PostIt`) | `PostIt` (Avalonia) + `PostIt.Android` / `PostIt.Browser` / `PostIt.Desktop` | actif, OIDC |
 | CLI admin | `src/cli` | actif |
-| Tests | `test/yavscTests` | présents, à densifier |
+| Tests | `test/Yavsc.Org.Tests` | présents, à densifier |
 | Conteneurisation | `Dockerfile`, `Dockerfile.backend`, `docker-compose.yaml` | actif, image `pazof/yavsc-build-env` |
 | CI | `.github/workflows/`, Dependabot (multi-ecosystems) | actif |
 | Docs | `doc/Architecture.md`, `doc/ddd-exploration-2026-06-14.md` | frais (13–14 juin 2026) |

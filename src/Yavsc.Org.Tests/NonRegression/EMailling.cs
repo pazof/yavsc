@@ -1,11 +1,8 @@
-
-using yavscTests.ServerFixtures;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Yavsc.Interface;
 
-namespace yavscTests
+namespace Yavsc.Org.Tests
 {
 
     [Collection("EMaillingTeststCollection")]

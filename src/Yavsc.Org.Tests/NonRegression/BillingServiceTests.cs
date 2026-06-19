@@ -8,7 +8,7 @@ using Yavsc.Models.Billing;
 using Yavsc.Models.Haircut;
 using Yavsc.Services;
 
-namespace yavscTests
+namespace Yavsc
 {
     [Trait("regression", "II")]
     public class BillingServiceTests

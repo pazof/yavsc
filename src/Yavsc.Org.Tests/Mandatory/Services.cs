@@ -1,8 +1,4 @@
-
-using yavscTests.ServerFixtures;
-
-
-namespace yavscTests.Mandatory;
+namespace Yavsc.Org.Tests.Mandatory;
 
 [Collection("Yavsc Server")]
 [Trait("regression", "oui")]

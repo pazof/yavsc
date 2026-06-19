@@ -21,7 +21,7 @@ using Yavsc.Server.Helpers;
 using Client = IdentityServer8.EntityFramework.Entities.Client;
 
 
-namespace yavscTests.ServerFixtures
+namespace Yavsc.Org.Tests
 
 {
 
