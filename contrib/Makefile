@@ -74,6 +74,7 @@ install: build_publish copy-binaries copy-services
 	done
 	
 reinstall: copy-binaries
+	@sync
 	@for project in $(APP_PROJECT_NAMES); do \
 		sudo systemctl start yavsc$${project} ; done
 

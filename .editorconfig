@@ -16,9 +16,14 @@ insert_final_newline = true
 charset = utf-8
 
 # 4 space indentation
-[*.py]
+[*.py,*.xml,*.csproj]
 indent_style = space
 indent_size = 4
+
+# 2 space indentation
+[*.xml,*.csproj,*.axaml]
+indent_style = space
+indent_size = 2
 
 # Tab indentation (no size specified)
 [Makefile]

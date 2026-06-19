@@ -61,7 +61,7 @@ internal class Program
                 {
                     policy
                         .RequireAuthenticatedUser()
-                        .RequireClaim(JwtClaimTypes.Scope, new string[] { "com" });
+                        .RequireClaim(JwtClaimTypes.Scope, new string[] { "api" });
                 });
             })
             .AddYavscCors(builder.Configuration)

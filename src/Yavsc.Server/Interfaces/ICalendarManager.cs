@@ -19,7 +19,6 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using Google.Apis.Calendar.v3.Data;
 
 namespace Yavsc.Services

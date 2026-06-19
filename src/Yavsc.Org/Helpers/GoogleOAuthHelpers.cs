@@ -18,10 +18,7 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 
 using Google.Apis.Auth.OAuth2;
@@ -32,7 +29,6 @@ using Google.Apis.Util.Store;
 using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Util;
 using Yavsc.Models;
-using Yavsc.Models.Calendar;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
 using Microsoft.AspNetCore.Identity;

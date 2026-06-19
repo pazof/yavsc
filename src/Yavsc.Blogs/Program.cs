@@ -18,6 +18,7 @@ using Yavsc.Interface;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
+using Microsoft.AspNetCore.Identity;
 namespace Yavsc.Blogs;
 
 internal class Program
@@ -32,62 +33,58 @@ internal class Program
 
         var services = builder.Services;
 
-        // builder.Services.AddDistributedMemoryCache();
-
-        // accepts any access token issued by identity server
-        // adds an authorization policy for scope 'scope1'
-
-        services
+        // MvcBuilder
+        builder.Services
             .AddAuthorization(options =>
             {
                 options.AddPolicy("BlogScope", policy =>
             {
                 policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(JwtClaimTypes.Scope, new string[] { "blogs" });
+                    .RequireClaim(JwtClaimTypes.Scope, new string[] { "blog" });
             });
             })
             .AddYavscCors(builder.Configuration)
             .AddControllers();
 
-        // accepts any access token issued by identity server
+        // AuthenticationBuilder
         services.AddAuthentication("Bearer")
                  .AddYavscJwtBearer(builder.Configuration);
 
+        // DbContextBuilder
         services.AddDbContext<ApplicationDbContext>(options =>
            options.UseNpgsql(builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName)));
 
-        services.AddTransient<ITrueEmailSender, MailSender>()
-           .AddTransient<IBillingService, BillingService>()
-           .AddTransient<ICalendarManager, CalendarManager>();
-        services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
-        services.AddTransient<BlogSpotService>();
-        services.AddScoped<IAuthorizationHandler, PermissionHandler>();
-        
-        services.AddLocalization(options =>
+        // other services
+        services
+        .AddTransient<ITrueEmailSender, MailSender>()
+        .AddTransient<IEmailSender<ApplicationUser>, MailSender>()
+        .AddTransient<IBillingService, BillingService>()
+        .AddTransient<ICalendarManager, CalendarManager>()
+        .AddTransient<IFileSystemAuthManager, FileSystemAuthManager>()
+        .AddTransient<BlogSpotService>()
+        .AddScoped<IAuthorizationHandler, PermissionHandler>()
+        .AddLocalization(options =>
         {
             options.ResourcesPath = "Resources";
-        });
-        services.AddDistributedMemoryCache();
-
-        services.AddSession(options =>
+        })
+        .AddDistributedMemoryCache()
+        .AddSession(options =>
         {
             options.IdleTimeout = TimeSpan.FromMinutes(30);
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = false;
-        });
-
-        services.Configure<RequestLocalizationOptions>(options =>
+        }).Configure<RequestLocalizationOptions>(options =>
         {
             var supportedCultures = new[] { "fr", "en", "pt" };
             options.SetDefaultCulture(supportedCultures[0])
             .AddSupportedCultures(supportedCultures)
             .AddSupportedUICultures(supportedCultures);
         });
-  
+
+        // App startup
         using (var app = builder.Build())
         {
-
             if (app.Environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
@@ -97,13 +94,13 @@ internal class Program
                 .UseAuthorization()
                 .UseCors("default")
                 ;
-            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("blog"); 
-            
+            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("blog");
+
             app.MapGet("/identity", (HttpContext context) =>
                 new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
             );
 
-            //     app.UseSession(); 
+            app.UseSession(); 
             await app.RunAsync();
         }
     }
