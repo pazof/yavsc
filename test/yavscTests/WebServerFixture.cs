@@ -119,18 +119,8 @@ namespace yavscTests.ServerFixtures
        
         public async Task SetupHost()
         {
-            
             var builder = WebApplication.CreateBuilder();
            
-            var slnDir =  builder.Configuration.GetValue<string>("SLNDIR");
-            Assert.NotNull(slnDir);
-
-            var yavscOrgPath = Path.GetFullPath(
-                Path.Combine(slnDir,
-                "src/Yavsc.Org"));
-            
-           
-            Directory.SetCurrentDirectory(yavscOrgPath);
             builder.AddConfiguration("org").AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory"

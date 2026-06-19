@@ -17,7 +17,7 @@ src/Yavsc/bin/output/wwwroot:
 	dotnet --project src/Yavsc.Org/Yavsc.Org.csproj publish
 
 test:
-	ASPNETCORE_ENVIRONMENT=Development dotnet test -e SLNDIR=$(SLNDIR)
+	ASPNETCORE_ENVIRONMENT=Development dotnet test
 
 watch:
 	dotnet watch -p:Configuration=$(CONFIG) --project src/Yavsc/Yavsc.csproj

@@ -26,5 +26,5 @@
         "dotnet test": true
     },
     "makefile.configureOnOpen": false,
-    "chat.disableAIFeatures": false
+    "chat.disableAIFeatures": true
 }

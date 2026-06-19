@@ -194,5 +194,104 @@ namespace Yavsc.Controllers
             await dbContext.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+        // GET: Client/RegenerateSecret/5
+        [ActionName("RegenerateSecret")]
+        public async Task<IActionResult> RegenerateSecretGet(int id)
+        {
+            Client client = await dbContext.Clients
+                .Include(c => c.ClientSecrets)
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (client == null)
+            {
+                return NotFound();
+            }
+            return View("RegenerateSecret", client);
+        }
+
+        // POST: Client/RegenerateSecret/5
+        [HttpPost, ActionName("RegenerateSecret")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegenerateSecretConfirmed(int id)
+        {
+            Client client = await dbContext.Clients
+                .Include(c => c.ClientSecrets)
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (client == null)
+            {
+                return NotFound();
+            }
+
+            // Generate a fresh secret in clear text. We display it to the admin
+            // once, then IdentityServer will hash it on SaveChanges.
+            var newSecret = GenerateRawClientSecret();
+            var now = DateTime.UtcNow;
+            var expiration = now.AddDays(90);
+
+            // Replace: drop existing secrets and add the freshly generated one.
+            if (client.ClientSecrets != null && client.ClientSecrets.Count > 0)
+            {
+                dbContext.ClientSecrets.RemoveRange(client.ClientSecrets);
+            }
+
+            client.ClientSecrets = new List<ClientSecret>
+            {
+                new ClientSecret
+                {
+                    ClientId = client.Id,
+                    Client = client,
+                    Type = "SharedSecret",
+                    Value = newSecret,
+                    Description = $"Regenerated on {now:yyyy-MM-dd HH:mm:ss} UTC",
+                    Created = now,
+                    Expiration = expiration
+                }
+            };
+
+            dbContext.Update(client);
+            await dbContext.SaveChangesAsync(User.GetUserId());
+
+            // Flash the secret through TempData so the next request can render
+            // it exactly once, then it is gone forever (IdentityServer stores
+            // it hashed).
+            TempData["NewClientSecret"] = newSecret;
+            TempData["NewClientSecretExpiresAt"] = expiration.ToString("u");
+            TempData["NewClientSecretClientName"] = client.ClientName ?? client.ClientId;
+
+            return RedirectToAction("ShowSecret", new { id = client.Id });
+        }
+
+        // GET: Client/ShowSecret/5
+        public IActionResult ShowSecret(int id)
+        {
+            var secret = TempData["NewClientSecret"] as string;
+            if (string.IsNullOrEmpty(secret))
+            {
+                // The one-shot window is closed. Refuse to render anything
+                // sensitive and bounce back to the details page.
+                return RedirectToAction("Details", new { id });
+            }
+
+            // TempData.Keep would persist to the next request; we deliberately
+            // do NOT keep it so the value cannot be replayed.
+
+            ViewBag.NewClientSecret = secret;
+            ViewBag.NewClientSecretExpiresAt = TempData["NewClientSecretExpiresAt"] as string;
+            ViewBag.NewClientSecretClientName = TempData["NewClientSecretClientName"] as string;
+            ViewBag.ClientId = id;
+            return View();
+        }
+
+        private static string GenerateRawClientSecret()
+        {
+            // 32 bytes => 43 url-safe base64 chars without padding. Enough entropy
+            // for a client secret; readable enough to copy/paste once.
+            var bytes = new byte[32];
+            System.Security.Cryptography.RandomNumberGenerator.Fill(bytes);
+            return Convert.ToBase64String(bytes)
+                .TrimEnd('=')
+                .Replace('+', '-')
+                .Replace('/', '_');
+        }
     }
 }
