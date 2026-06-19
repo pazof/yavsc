@@ -38,12 +38,10 @@ copy-service-Org: /etc/systemd/system/yavscOrg.service
 copy-service-Api: /etc/systemd/system/yavscApi.service
 copy-service-Blogs: /etc/systemd/system/yavscBlogs.service
 
-copy-binaries: build_publish_Org build_publish_Api build_publish_Blogs
-	for project in $(APP_PROJECT_NAMES); \
-	do \
-		LCAPI=$$(echo $${project}|tr [:upper:] [:lower:]) ; \
-		mv $(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/appsettings-$$LCAPI.json \
-		   $(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/appsettings-$$LCAPI-dist.json ;\
+copy-binaries: build_publish_Org build_publish_Api build_publish_Blogs stop-services 
+	for project in $(APP_PROJECT_NAMES); do LCAPI=$$(echo $${project}|tr [:upper:] [:lower:]) ; \
+		mv $(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/appsettings-$${LCAPI}.json \
+		   $(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/appsettings-$${LCAPI}-dist.json ;\
 		sudo cp -a $(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish/* $(DESTDIR) ; \
 	done
 	sudo chown -R $(USER_AND_GROUP) $(DESTDIR)
@@ -63,12 +61,9 @@ install: build_publish copy-binaries copy-services
 		sudo systemctl start yavsc$${project} ; \
 	done
 	
-reinstall: build_publish stop-services copy-binaries
-	sudo systemctl daemon-reload
-	for project in $(APP_PROJECT_NAMES); \
-	do \
-		sudo systemctl start yavsc$${project} ; \
-	done
+reinstall: copy-binaries
+	for project in $(APP_PROJECT_NAMES); do \
+		sudo systemctl start yavsc$${project} ; done
 
 stop-services:
 	for project in $(APP_PROJECT_NAMES); \

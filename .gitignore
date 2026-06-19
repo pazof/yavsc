@@ -22,6 +22,7 @@ package-lock.json
 *.csproj.lscache
 data/
 appsettings.*.json
+appsettings-*.json
 
 generated/
 *.tmp
