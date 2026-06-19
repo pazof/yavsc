@@ -30,11 +30,8 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.AddConfiguration("blogs");
-            
-        var services = builder.Services;
 
-        var authority = builder.GetAuthority();
-        var audience = builder.GetAudience();
+        var services = builder.Services;
 
         // builder.Services.AddDistributedMemoryCache();
 
@@ -48,31 +45,15 @@ internal class Program
             {
                 policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(JwtClaimTypes.Scope, new string[] { "blog" });
+                    .RequireClaim(JwtClaimTypes.Scope, new string[] { "blogs" });
             });
             })
-            .AddCors(options =>
-            {
-                // this defines a CORS policy called "default"
-                options.AddPolicy("default", policy =>
-            {
-                policy.WithOrigins(audience)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-            })
+            .AddYavscCors(builder.Configuration)
             .AddControllers();
 
         // accepts any access token issued by identity server
-        var authenticationBuilder = services.AddAuthentication("Bearer")
-                 .AddJwtBearer("Bearer", options =>
-                 {
-                     options.IncludeErrorDetails = true;
-                     options.Authority = authority;
-                     options.TokenValidationParameters =
-                         new() { ValidateAudience = false, RoleClaimType = YavscConstants.RoleClaimType };
-                     options.MapInboundClaims = true;
-                 });
+        services.AddAuthentication("Bearer")
+                 .AddYavscJwtBearer(builder.Configuration);
 
         services.AddDbContext<ApplicationDbContext>(options =>
            options.UseNpgsql(builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName)));

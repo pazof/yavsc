@@ -87,13 +87,13 @@ namespace Yavsc.Controllers
                 dbContext.ClientRedirectUris.Add(new ClientRedirectUri
                 {
                     ClientId = client.Id,
-                    RedirectUri = siteSettings.Audience
+                    RedirectUri = siteSettings.ExternalUrl
 
                 });
                 dbContext.ClientCorsOrigins.Add(new ClientCorsOrigin
                 {
                     ClientId = client.Id,
-                    Origin = siteSettings.Audience
+                    Origin = siteSettings.ExternalUrl
 
                 });
                 foreach (String credType in new String[] { "code", "client_credentials", "password" })

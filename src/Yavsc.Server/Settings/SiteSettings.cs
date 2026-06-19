@@ -14,10 +14,14 @@ namespace Yavsc
         public string FavIcon { get; set; } = "favicon.ico";
         public string Logo { get; set; } = "logo.png";
         /// <summary>
+        /// Origins to allow via the CORS "default" policy.
+        /// Each entry must be a full origin (scheme + host [+ port]), e.g. "https://app.example.com".
         /// </summary>
-        /// <returns></returns>
-        public string Audience { get; set; } = "lua.pschneider.fr";
-       
+        public IList<string> CorsAllowedOrigins { get; set; } = new List<string>
+        {
+            "https://localhost:5001"
+        };
+
         /// <summary>
         /// External Url
         /// </summary>

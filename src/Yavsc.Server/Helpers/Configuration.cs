@@ -12,10 +12,4 @@ public static class ConfigurationHelpers
         return builder.Configuration.GetSection("Site")
                 .GetValue<string>("Authority");
     }
-    public static string GetAudience(this WebApplicationBuilder builder)
-    {
-        return builder.Configuration.GetSection("Site")
-                .GetValue<string>("Audience");
-    }
-
 }

@@ -64,28 +64,12 @@ internal class Program
                         .RequireClaim(JwtClaimTypes.Scope, new string[] { "com" });
                 });
             })
-            .AddCors(options =>
-            {
-                // this defines a CORS policy called "default"
-                options.AddPolicy("default", policy =>
-                {
-                    policy.WithOrigins("https://localhost:5003")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-            })
+            .AddYavscCors(builder.Configuration)
             .AddControllers();
 
         // accepts any access token issued by identity server
-        var authenticationBuilder = services.AddAuthentication("Bearer")
-                 .AddJwtBearer("Bearer", options =>
-                 {
-                     options.IncludeErrorDetails = true;
-                     options.Authority = "https://localhost:5001";
-                     options.TokenValidationParameters =
-                         new() { ValidateAudience = false, RoleClaimType = YavscConstants.RoleClaimType };
-                     options.MapInboundClaims = true;
-                 });
+        services.AddAuthentication("Bearer")
+                 .AddYavscJwtBearer(builder.Configuration);
 
         services.AddDbContext<ApplicationDbContext>(options =>
 

@@ -97,7 +97,7 @@ namespace Yavsc.Services
 
         public async Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode)
         {
-            var callbackUrl = siteSettings.Audience + "/Account/ResetPassword/" +
+            var callbackUrl = siteSettings.ExternalUrl + "/Account/ResetPassword/" +
                     HttpUtility.UrlEncode(user.Id) + "/" + HttpUtility.UrlEncode(resetCode);
 
             await SendEmailAsync(user.UserName, user.Email,

@@ -111,26 +111,15 @@ public static class HostingExtensions
         // Add session related services.
 
         services.AddDataProtection().PersistKeysToFileSystem(dataDir);
-        AddYavscPolicies(services);
+        AddYavscPolicies(services, builder.Configuration);
 
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         services.AddTransient<IExternalIdentityManager, ExternalIdentityManager>();
 
 
         services.AddAuthentication("Bearer")
-                 .AddJwtBearer("Bearer", options =>
-                 {
-                     options.IncludeErrorDetails = true;
-                     options.Authority = builder.Configuration.GetSection("Site")["Authority"];
-                     options.Audience = builder.Configuration.GetSection("Site")["Audience"];
-                     options.TokenValidationParameters =
-                         new()
-                         {
-                             ValidateAudience = false,
-                             RoleClaimType = YavscConstants.RoleClaimType
-                         };
-                     options.MapInboundClaims = true;
-                 });
+                 .AddYavscJwtBearer(builder.Configuration,
+                     configure: o => o.Audience = builder.Configuration.GetSection("Site")["ExternalUrl"]);
 
         services.AddTransient<RoleManager<IdentityRole>>();
         services.AddTransient<IRoleStore<IdentityRole>, RoleStore<IdentityRole, ApplicationDbContext>>();
@@ -191,7 +180,7 @@ public static class HostingExtensions
         return identityBuilder;
     }
 
-    private static void AddYavscPolicies(IServiceCollection services)
+    private static void AddYavscPolicies(IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthorization(options =>
         {
@@ -222,17 +211,9 @@ public static class HostingExtensions
             // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
             options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
             options.AddPolicy("TheAuthor", policy => policy.Requirements.Add(new EditPermission()));
-        })
-        .AddCors(options =>
-        {
-            options.AddPolicy("default", builder =>
-            {
-                _ = builder.WithOrigins("*")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-            });
-
         });
+
+        services.AddYavscCors(configuration);
     }
 
     public static IServiceCollection LoadConfiguration(this WebApplicationBuilder builder)

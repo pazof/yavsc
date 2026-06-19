@@ -590,7 +590,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                        _siteSettings.Title,
                        callbackUrl,
                        _siteSettings.Slogan,
-                       _siteSettings.Audience));
+                       _siteSettings.ExternalUrl));
                     // No, wait for more than a login pass submission:
                     // do not await _signInManager.SignInAsync(user, isPersistent: false);
 
@@ -641,7 +641,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             this._localizer["ConfirmYourAccountTitle"],
             string.Format(this._localizer["ConfirmYourAccountBody"],
                   _siteSettings.Title, callbackUrl, _siteSettings.Slogan,
-                   _siteSettings.Audience));
+                   _siteSettings.ExternalUrl));
             return new EmailSentViewModel { EMail = user.Email, Sent = true, MessageId = res };
         }
 
@@ -654,7 +654,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             this._localizer["AccountEmailFactorTitle"],
             string.Format(this._localizer["AccountEmailFactorBody"],
                   _siteSettings.Title, callbackUrl, _siteSettings.Slogan,
-                   _siteSettings.Audience, code));
+                   _siteSettings.ExternalUrl, code));
             return new EmailSentViewModel { EMail = user.Email, Sent = true, MessageId = res }; ;
         }
         //
