@@ -11,7 +11,7 @@ using PostIt.Services;
 using PostIt.ViewModels;
 using Xunit;
 
-namespace Yavsc.Tests.NonRegression;
+namespace PostIt;
 
 public class PostItViewModelTests
 {

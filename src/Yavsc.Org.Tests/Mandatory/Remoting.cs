@@ -1,9 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
-
 using yavscTests.ServerFixtures;
-
-using Xunit.Abstractions;
 using IdentityModel.Client;
 
 namespace yavscTests

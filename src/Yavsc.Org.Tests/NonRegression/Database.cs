@@ -1,7 +1,6 @@
 
 using yavscTests.ServerFixtures;
 
-using Xunit.Abstractions;
 
 namespace yavscTests.Mandatory
 {

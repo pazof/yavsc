@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cli", "src\cli\cli.csproj",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{76A7FBA6-B7EC-4864-85C0-1F470794BA0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yavscTests", "test\yavscTests\yavscTests.csproj", "{CDCF676A-2037-472E-8C8B-67C5E4FDFEA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc.Org.Tests", "src\Yavsc.Org.Tests\Yavsc.Org.Tests.csproj", "{CDCF676A-2037-472E-8C8B-67C5E4FDFEA1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yavsc.Blogs", "src\Yavsc.Blogs\Yavsc.Blogs.csproj", "{5D9E161F-3CB3-4854-9D07-3DF6882EA66C}"
 EndProject

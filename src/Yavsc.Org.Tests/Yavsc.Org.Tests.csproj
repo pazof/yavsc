@@ -7,6 +7,7 @@
     <RootNamespace>Yavsc.Tests</RootNamespace>
     <UserSecretsId>78a4efec-68dc-4745-ba06-d8545ef9ee91</UserSecretsId>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <OutputType>exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
@@ -22,6 +23,9 @@
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.v3.common" />
+    <PackageReference Include="xunit.v3.extensibility.core" />
+    
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
@@ -35,10 +39,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Yavsc.Org\Yavsc.Org.csproj" />
-    <ProjectReference Include="..\..\src\Yavsc.Abstract\Yavsc.Abstract.csproj" />
-    <ProjectReference Include="..\..\src\Yavsc.Server\Yavsc.Server.csproj" />
-    <ProjectReference Include="..\..\src\PostIt\PostIt\PostIt.csproj" />
+    <ProjectReference Include="..\Yavsc.Org\Yavsc.Org.csproj" />
+    <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
+    <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
@@ -47,6 +50,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
   </ItemGroup>
   <Target Name="CopyStaticWebAssetsManifest" AfterTargets="Build">
-    <Copy SourceFiles="$(OutDir)Yavsc.Org.staticwebassets.endpoints.json" DestinationFiles="$(OutDir)testhost.staticwebassets.endpoints.json" SkipUnchangedFiles="true" Condition="Exists('$(OutDir)Yavsc.Org.staticwebassets.endpoints.json')" />
+    <Copy SourceFiles="$(OutDir)Yavsc.Org.staticwebassets.endpoints.json" DestinationFiles="$(OutDir)$(MSBuildProjectName).staticwebassets.endpoints.json" SkipUnchangedFiles="true" Condition="Exists('$(OutDir)Yavsc.Org.staticwebassets.endpoints.json')" />
   </Target>
 </Project>
