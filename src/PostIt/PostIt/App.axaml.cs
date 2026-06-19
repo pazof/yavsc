@@ -1,12 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
-using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using PostIt.ViewModels;
 using PostIt.Views;
-using Avalonia.Controls;
 
 namespace PostIt;
 

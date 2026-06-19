@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
@@ -47,9 +47,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
   </ItemGroup>
   <Target Name="CopyStaticWebAssetsManifest" AfterTargets="Build">
-    <Copy SourceFiles="$(OutDir)Yavsc.Org.staticwebassets.endpoints.json"
-          DestinationFiles="$(OutDir)testhost.staticwebassets.endpoints.json"
-          SkipUnchangedFiles="true"
-          Condition="Exists('$(OutDir)Yavsc.Org.staticwebassets.endpoints.json')" />
+    <Copy SourceFiles="$(OutDir)Yavsc.Org.staticwebassets.endpoints.json" DestinationFiles="$(OutDir)testhost.staticwebassets.endpoints.json" SkipUnchangedFiles="true" Condition="Exists('$(OutDir)Yavsc.Org.staticwebassets.endpoints.json')" />
   </Target>
 </Project>
