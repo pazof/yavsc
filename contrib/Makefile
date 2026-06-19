@@ -7,9 +7,9 @@ include .env
 generated/:
 	@mkdir -p $@
 
-generated/Api.service:
-generated/Org.service:
-generated/Blogs.service:
+generated/yavscApi.service:
+generated/yavscOrg.service:
+generated/yavscBlogs.service:
 
 generated/yavsc%.service: generated/ template.service $(SLNDIR)/.env
 	@cat template.service | APP_NAME="$*" \
@@ -24,6 +24,12 @@ generated/yavsc%.service: generated/ template.service $(SLNDIR)/.env
 	POSTGRES_PASSWORD="$(POSTGRES_PASSWORD)" \
 	ANTHROPIC_API_KEY="$(ANTHROPIC_API_KEY)" \
 	ANTHROPIC_MAX_TOKENS="$(ANTHROPIC_MAX_TOKENS)" \
+	ASPNETCORE_Smtp__Host="$(ASPNETCORE_Smtp__Host)" \
+	ASPNETCORE_Smtp__Port="$(ASPNETCORE_Smtp__Port)" \
+	ASPNETCORE_Smtp__SenderName=$(ASPNETCORE_Smtp__SenderName) \
+	ASPNETCORE_Smtp__SenderEmail="$(ASPNETCORE_Smtp__SenderEmail)" \
+	ASPNETCORE_Smtp__UserName="$(ASPNETCORE_Smtp__UserName)" \
+	ASPNETCORE_Smtp__Password="$(ASPNETCORE_Smtp__Password)" \
 	envsubst > $@
 	@echo Created service file: $@
 
