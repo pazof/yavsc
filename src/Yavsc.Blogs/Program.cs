@@ -18,7 +18,6 @@ using Yavsc.Interface;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
-using Yavsc.Extensions;
 namespace Yavsc.Blogs;
 
 internal class Program

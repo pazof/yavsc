@@ -121,7 +121,7 @@ namespace Yavsc.Org.Tests
         {
             var builder = WebApplication.CreateBuilder();
            
-            builder.AddConfiguration("org").AddInMemoryCollection(new Dictionary<string, string?>
+            builder.AddConfiguration(null).AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory"
                 });

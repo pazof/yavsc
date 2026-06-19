@@ -6,14 +6,24 @@ namespace Yavsc.Server.Helpers;
 public static class ConfigHelpers
 {
 
-    public static IConfigurationBuilder AddConfiguration(this WebApplicationBuilder builder, string appName )
+    public static IConfigurationBuilder AddConfiguration(this WebApplicationBuilder builder, string appName)
+    {
+        if (string.IsNullOrEmpty(appName))
         {
             var rootConfig = builder.Configuration
-                 .AddJsonFile($"appsettings-{appName}.json", optional: false, reloadOnChange: false);
+                 .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: false);
 
-            rootConfig.AddJsonFile($"appsettings-{appName}.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false);
-            
+            rootConfig.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false);
+
             return rootConfig.AddEnvironmentVariables();
-
         }
+
+        var specRootConfig = builder.Configuration
+             .AddJsonFile($"appsettings-{appName}.json", optional: false, reloadOnChange: false);
+
+        specRootConfig.AddJsonFile($"appsettings-{appName}.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false);
+
+        return specRootConfig.AddEnvironmentVariables();
+
+    }
 }

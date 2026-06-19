@@ -48,7 +48,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
   </ItemGroup>
-  <Target Name="CopyStaticWebAssetsManifest" AfterTargets="Build">
-    <Copy SourceFiles="$(OutDir)Yavsc.Org.staticwebassets.endpoints.json" DestinationFiles="$(OutDir)$(MSBuildProjectName).staticwebassets.endpoints.json" SkipUnchangedFiles="true" Condition="Exists('$(OutDir)Yavsc.Org.staticwebassets.endpoints.json')" />
-  </Target>
 </Project>

@@ -10,6 +10,5 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <ProjectReference Include="../Yavsc.Server/Yavsc.Server.csproj" />
-    <ProjectReference Include="../Yavsc.Org/Yavsc.Org.csproj" />
   </ItemGroup>
 </Project>

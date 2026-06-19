@@ -1,12 +1,14 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;
 using Yavsc.ViewModels.Auth;
 
-namespace Yavsc.Extensions;
+namespace Yavsc.Services;
 
 public class PermissionHandler : IAuthorizationHandler
 {

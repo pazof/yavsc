@@ -45,9 +45,12 @@ copy-binaries: build_publish_Org build_publish_Api build_publish_Blogs stop-serv
 		echo "$${project} -> $${LCAPI}" ; \
 		BINDIR="$(SLNDIR)/src/Yavsc.$${project}/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish" ; \
 		echo BINDIR: $${BINDIR} ; \
-		ls $${BINDIR}/appsettings* 2>&1 ; \
-		mv $${BINDIR}/appsettings-$${LCAPI}.json \
+		rm -f $${BINDIR}/appsettings-$${LCAPI}-dist.json ; \
+		mv -f $${BINDIR}/appsettings-$${LCAPI}.json \
 		   $${BINDIR}/appsettings-$${LCAPI}-dist.json ; \
+		rm -f $${BINDIR}/appsettings-$${LCAPI}.json ; \
+		sync ; \
+		ls $${BINDIR}/appsettings* 2>&1 ; \
 		sudo cp -a $${BINDIR}/* $(BASEAPPDIR) ; \
 	done
 	@sudo chown -R $(USER_AND_GROUP) $(BASEAPPDIR)
@@ -56,8 +59,11 @@ copy-binaries: build_publish_Org build_publish_Api build_publish_Blogs stop-serv
 	sudo cp $^ $@
 	sudo chown root:root $@
 
-build_publish_%: 
+build_publish_%: clean_publish_dir_%
 	@ASPNETCORE_ENV=$(CONFIGURATION) dotnet publish $(SLNDIR)/src/Yavsc.$*/Yavsc.$*.csproj
+
+clean_publish_dir_%:
+	@rm -rf $(SLNDIR)/src/Yavsc.$*/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish
 
 install: build_publish copy-binaries copy-services 
 	@sudo systemctl daemon-reload
