@@ -1,0 +1,9 @@
+<Project>
+  <!-- Pull in shared package versions from the repository root. -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- Yavsc.Web-specific versions -->
+  <ItemGroup>
+    <PackageVersion Include="IdentityModel.AspNetCore" Version="4.3.0" />
+  </ItemGroup>
+</Project>

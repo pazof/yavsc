@@ -1,0 +1,10 @@
+<Project>
+  <!-- Pull in shared package versions from the repository root. -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- PostIt.Tests-specific versions -->
+  <ItemGroup>
+    <PackageVersion Include="Avalonia.Headless" Version="12.0.4" />
+    <PackageVersion Include="Avalonia.Headless.XUnit" Version="12.0.4" />
+  </ItemGroup>
+</Project>
