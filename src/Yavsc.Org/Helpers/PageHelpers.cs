@@ -17,8 +17,30 @@ namespace Yavsc.Server.Helpers
         /// </summary>
         public static IHtmlContent ActivePage(this ViewContext viewContext, string controller, string action = null)
         {
+            return MatchesCurrent(viewContext, controller, action)
+                ? ActiveMarker()
+                : HtmlString.Empty;
+        }
+
+        /// <summary>
+        /// Returns "active" aria-current="page" when the current route targets any of
+        /// the given controllers. Useful for highlighting a dropdown toggle whose
+        /// children span several controllers.
+        /// </summary>
+        public static IHtmlContent ActivePageAny(this ViewContext viewContext, IEnumerable<string> controllers)
+        {
+            if (controllers == null) return HtmlString.Empty;
+            foreach (var c in controllers)
+            {
+                if (MatchesCurrent(viewContext, c, null)) return ActiveMarker();
+            }
+            return HtmlString.Empty;
+        }
+
+        private static bool MatchesCurrent(ViewContext viewContext, string controller, string action)
+        {
             var route = viewContext?.RouteData.Values;
-            if (route == null) return HtmlString.Empty;
+            if (route == null) return false;
 
             var currentController = route["controller"] as string;
             var currentAction = route["action"] as string;
@@ -32,23 +54,17 @@ namespace Yavsc.Server.Helpers
                 || (string.Equals(controller, "Home", cmp)
                     && (action == null || string.Equals(action, "Index", cmp)));
 
-            bool isCurrent;
             if (isHome)
             {
-                isCurrent = string.IsNullOrEmpty(currentController)
+                return string.IsNullOrEmpty(currentController)
                     || string.Equals(currentController, "Home", cmp)
                         && (currentAction == null || string.Equals(currentAction, "Index", cmp));
             }
-            else
-            {
-                isCurrent = string.Equals(currentController, controller, cmp)
-                    && (action == null || string.Equals(currentAction, action, cmp));
-            }
-
-            return isCurrent
-                ? (IHtmlContent)new HtmlString("active\" aria-current=\"page")
-                : HtmlString.Empty;
+            return string.Equals(currentController, controller, cmp)
+                && (action == null || string.Equals(currentAction, action, cmp));
         }
+
+        private static IHtmlContent ActiveMarker() => new HtmlString("active\" aria-current=\"page");
 
         public static List<SelectListItem> CreateSelectListItems<T> (this IStringLocalizer<T>  localisation, Type enumType, object selectedValue =null)
         {

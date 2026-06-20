@@ -5,9 +5,12 @@
 @if (Context.User?.Identity?.IsAuthenticated ?? false)
 {
     string userName = User.GetUserName();
+    var plateformeControllers = new[] { "Bug", "HyperLink", "Feature" };
+    var administrationControllers = new[] { "Administration", "Announces", "Activity", "CommandForms", "Notifications", "SIRENExceptions", "Client", "MailingTemplate" };
+    var accountMenuControllers = new[] { "Manage", "Grants", "Device", "Diagnostics", "Account" };
 
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Plateforme</a>
+            <a class="nav-link dropdown-toggle @PageHelpers.ActivePageAny(ViewContext, plateformeControllers)" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Plateforme</a>
             <ul class="dropdown-menu" aria-labelledby="dropdown04">
                 <li><a class="dropdown-item @PageHelpers.ActivePage(ViewContext, "Bug")" asp-controller="Bug" asp-action="Index">Bugs</a></li>
                 <li><a class="dropdown-item @PageHelpers.ActivePage(ViewContext, "HyperLink")" asp-controller="HyperLink" asp-action="Index">HyperLink</a></li>
@@ -16,7 +19,7 @@
         </li>
         @if (User.IsInMsRole(YavscConstants.AdminGroupName)) {
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown05" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle @PageHelpers.ActivePageAny(ViewContext, administrationControllers)" href="#" id="dropdown05" data-bs-toggle="dropdown" aria-expanded="false">
                 Administration
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdown05">
@@ -31,7 +34,7 @@
             </ul>
         </li>}
     <li class="nav-item dropdown">
-         <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Hello @userName!</a>
+         <a class="nav-link dropdown-toggle @PageHelpers.ActivePageAny(ViewContext, accountMenuControllers)" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Hello @userName!</a>
         <ul class="dropdown-menu">
             <li>
         <a class="dropdown-item @PageHelpers.ActivePage(ViewContext, "Manage")" asp-controller="Manage" asp-action="Index" title="Manage">
