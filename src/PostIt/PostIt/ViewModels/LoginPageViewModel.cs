@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Input;
 using IdentityModel.OidcClient;
+using PostIt.Services;
 using System;
 using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ public partial class LoginPageViewModel : ViewModelBase
 
     private string _StatusMessage;
     public string StatusMessage { get => _StatusMessage; private set => this.SetProperty(ref _StatusMessage, value); }
-    
+
     private bool _IsBusy;
     public bool IsBusy { get=> _IsBusy; private set=> this.SetProperty(ref _IsBusy, value); }
 
@@ -37,10 +38,23 @@ public partial class LoginPageViewModel : ViewModelBase
         try
         {
             Settings.Load().Wait();
-            
-            var client = new OidcClient(Settings.GetOidcClientOptions());
+
+            // The platform project picks the right redirect URI and browser
+            // implementation; we don't reference any UI toolkit from here.
+            Settings.RedirectUri = string.IsNullOrWhiteSpace(Settings.RedirectUri)
+                ? Platform.DefaultRedirectUri
+                : Settings.RedirectUri;
+
+            var browser = Platform.CreateBrowser?.Invoke();
+            if (browser is null)
+            {
+                StatusMessage = "No browser is available on this platform.";
+                return;
+            }
+
+            var client = new OidcClient(Settings.GetOidcClientOptions(browser));
             var loginResult = await client.LoginAsync(new LoginRequest());
-            
+
             if (loginResult.IsError)
             {
                 StatusMessage = loginResult.Error;
@@ -51,12 +65,12 @@ public partial class LoginPageViewModel : ViewModelBase
 
             this.IsBusy = false;
             AccessToken = loginResult.AccessToken;
-            /* TODO save or not user log and password 
+            /* TODO save or not user log and password
             await Task.Run(() =>
             {
                 Settings.Save().Wait();
             });*/
-           
+
         }
         catch (Exception ex)
         {

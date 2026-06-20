@@ -17,6 +17,21 @@ namespace PostIt.Android;
 public class MainActivity : AvaloniaMainActivity
 {
     /// <summary>
+    /// Strongly-typed handle to the current MainActivity instance, set in
+    /// <see cref="OnCreate"/> and consumed by platform services such as
+    /// <see cref="Services.AndroidSystemBrowser"/> which need to launch
+    /// Chrome Custom Tabs.
+    /// </summary>
+    public static MainActivity? Current { get; private set; }
+
+    protected override void OnCreate(global::Android.OS.Bundle? savedInstanceState)
+    {
+        base.OnCreate(savedInstanceState);
+        PlatformBootstrap.EnsureInitialized();
+        Current = this;
+    }
+
+    /// <summary>
     /// Receives the deep-link Intent fired by the system browser after the
     /// user completes the OIDC login on https://yavsc.pschneider.fr. The
     /// Intent URI has the shape <c>android://postit-signin?code=...&amp;state=...</c>.
