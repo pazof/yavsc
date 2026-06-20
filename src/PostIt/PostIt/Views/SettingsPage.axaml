@@ -1,4 +1,4 @@
-<ContentPage 
+<ContentPage
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="cl:avalonia.Controls"
@@ -13,7 +13,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="Authority"/>
@@ -21,8 +20,5 @@
 
         <TextBlock Grid.Row="2" Text="ClientId"/>
         <TextBox Grid.Row="3" x:Name="ClientIdTextBox" Text="{Binding ClientId, Mode=TwoWay}"/>
-
-        <TextBlock Grid.Row="4" Text="ClientSecret"/>
-        <TextBox Grid.Row="5" x:Name="ClientSecretTextBox" Text="{Binding ClientSecret, Mode=TwoWay}"/>
     </Grid>
 </ContentPage>

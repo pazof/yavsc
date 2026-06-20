@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IdentityModel.OidcClient;
+using PostIt.Services;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -15,6 +16,19 @@ public partial class Settings : ObservableObject
     const string SettingsFileName = "postit-settings.json";
     IStorageFolder? folder = null;
 
+    /// <summary>
+    /// Default loopback redirect URI used for interactive PKCE login on desktop
+    /// platforms. The corresponding <c>RedirectUri</c> must be registered for
+    /// the PostIt client in IdentityServer.
+    /// </summary>
+    public const string DefaultLoopbackRedirectUri = "http://127.0.0.1:7890/";
+
+    /// <summary>
+    /// Redirect URI used by the Android app. The corresponding IntentFilter
+    /// in <c>PostIt.Android/Properties/AndroidManifest.xml</c> must match.
+    /// </summary>
+    public const string AndroidRedirectUri = "android://postit-signin";
+
     [ObservableProperty]
     public partial AuthenticationSettings Authentication { get; set; } = new();
 
@@ -24,20 +38,38 @@ public partial class Settings : ObservableObject
     [ObservableProperty]
     public partial string ApiUrl { get; set; } = "https://blogs.pschneider.fr/api/v1/";
 
+    /// <summary>
+    /// OAuth redirect URI. Defaults to a loopback URI suitable for desktop
+    /// apps; mobile platforms must set this to <see cref="AndroidRedirectUri"/>
+    /// before calling <c>LoginAsync</c>.
+    /// </summary>
+    [ObservableProperty]
+    public partial string RedirectUri { get; set; } = DefaultLoopbackRedirectUri;
+
 
     [ObservableProperty]
     public partial string[] Scopes { get; set; }
 
-    internal OidcClientOptions GetOidcClientOptions()
+    /// <summary>
+    /// Build OidcClient options configured for Authorization Code + PKCE
+    /// (no client secret). The browser implementation should be supplied
+    /// per-platform by the caller.
+    /// </summary>
+    internal OidcClientOptions GetOidcClientOptions(IdentityModel.OidcClient.Browser.IBrowser? browser = null)
     {
-        return new OidcClientOptions
+        var options = new OidcClientOptions
         {
             Authority = Authentication.Authority,
             ClientId = Authentication.ClientId,
-            ClientSecret = Authentication.ClientSecret,
-            Scope = string.Join(' ', this.Scopes)
+            RedirectUri = RedirectUri,
+            Scope = string.Join(' ', this.Scopes),
+            // PKCE is enabled by default when no client_secret is provided.
         };
 
+        if (browser is not null)
+            options.Browser = browser;
+
+        return options;
     }
 
     internal async Task Load()
@@ -81,6 +113,7 @@ public partial class Settings : ObservableObject
             this.Authentication = settings.Authentication;
             this.DarkMode = settings.DarkMode;
             this.ApiUrl = settings.ApiUrl;
+            this.RedirectUri = string.IsNullOrWhiteSpace(settings.RedirectUri) ? DefaultLoopbackRedirectUri : settings.RedirectUri;
             this.Scopes = settings.Scopes;
 
         }

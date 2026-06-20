@@ -1,15 +1,14 @@
 {
     "Authentication": {
         "ClientId": "postit",
-        "ClientSecret": "postit-secret",
-        "Authority": "https://blogs.pschneider.fr/auth/realms/master",
+        "Authority": "https://yavsc.pschneider.fr"
     },
+    "RedirectUri": "http://127.0.0.1:7890/",
     "DarkMode": false,
     "ApiUrl": "https://blogs.pschneider.fr/api/v1/",
     "Scopes": [
         "openid",
         "profile",
-        "email",
         "offline_access",
         "blogs"
     ]

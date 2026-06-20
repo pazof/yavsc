@@ -354,68 +354,208 @@ public static class HostingExtensions
         };
     }
 
+    private const string PostItClientId = "postit";
+
+    private static readonly string[] PostItRedirectUris = new[]
+    {
+        // Loopback URI for desktop / browser-based PKCE flows.
+        "http://127.0.0.1:7890/",
+        // Custom-scheme URI for Android. The matching IntentFilter must be
+        // declared in PostIt.Android/Properties/AndroidManifest.xml.
+        "android://postit-signin",
+    };
+
+    private static readonly string[] PostItGrantTypes = new[]
+    {
+        "authorization_code",
+        "client_credentials",
+    };
+
+    private static readonly string[] PostItScopes = new[]
+    {
+        "blog",
+        IdentityServer8.IdentityServerConstants.StandardScopes.OpenId,
+        IdentityServer8.IdentityServerConstants.StandardScopes.Profile,
+    };
+
     private static Action<DbContext, bool> EnsureDefaultConfiguration()
     {
         return (context, _) =>
         {
             EnsureDefaultApplicationScopes()(context, _);
 
-            var existingClient = context.Set<IdentityServer8.EntityFramework.Entities.Client>().FirstOrDefault(c => c.ClientId == "postit");
-            if (existingClient == null)
+            var clients = context.Set<IdentityServer8.EntityFramework.Entities.Client>();
+            var existingClient = clients.FirstOrDefault(c => c.ClientId == PostItClientId);
+
+            if (existingClient is null)
             {
-                var client = new IdentityServer8.EntityFramework.Entities.Client
-                {
-                    ClientId = "postit",
-                    Enabled = true,
-                    RequireClientSecret = true,
-                    ProtocolType = "oidc",
-                    RequireConsent = false,
-                };
+                SeedNewPostItClient(context);
+                return;
+            }
 
-                context.Set<Client>().Add(client);
-                // allow authorization code (interactive) and client credentials (m2m)
+            MigratePostItClientToPublic(context, existingClient);
+        };
+    }
+
+    /// <summary>
+    /// Insert a brand new <c>postit</c> client configured as a public OIDC
+    /// client using Authorization Code + PKCE. Used the first time the
+    /// ConfigurationDb is seeded.
+    /// </summary>
+    private static void SeedNewPostItClient(DbContext context)
+    {
+        // PostIt is a public client (Authorization Code + PKCE).
+        // No client secret is stored or transmitted; PKCE binds the
+        // authorization code to the requesting device.
+        var client = new IdentityServer8.EntityFramework.Entities.Client
+        {
+            ClientId = PostItClientId,
+            Enabled = true,
+            RequireClientSecret = false,
+            RequirePkce = true,
+            ProtocolType = "oidc",
+            RequireConsent = false,
+        };
+
+        context.Set<Client>().Add(client);
+
+        foreach (var grantType in PostItGrantTypes)
+        {
+            context.Set<ClientGrantType>().Add(new IdentityServer8.EntityFramework.Entities.ClientGrantType
+            {
+                Client = client,
+                GrantType = grantType
+            });
+        }
+
+        foreach (var scope in PostItScopes)
+        {
+            context.Set<ClientScope>().Add(new IdentityServer8.EntityFramework.Entities.ClientScope
+            {
+                Client = client,
+                Scope = scope
+            });
+        }
+
+        foreach (var redirectUri in PostItRedirectUris)
+        {
+            context.Set<ClientRedirectUri>().Add(new IdentityServer8.EntityFramework.Entities.ClientRedirectUri
+            {
+                Client = client,
+                RedirectUri = redirectUri
+            });
+        }
+
+        // No ClientSecret row: PKCE-only clients don't need one.
+        context.SaveChanges();
+    }
+
+    /// <summary>
+    /// Bring an existing <c>postit</c> client up to the current public-client
+    /// configuration. Idempotent: each change is applied only when the row is
+    /// currently in the legacy state.
+    /// </summary>
+    private static void MigratePostItClientToPublic(
+        DbContext context,
+        IdentityServer8.EntityFramework.Entities.Client client)
+    {
+        var changed = false;
+
+        // 1. Drop the client secret. PKCE-only clients must not have one.
+        var secrets = context.Set<ClientSecret>().Where(s => s.Client.Id == client.Id);
+        if (secrets.Any())
+        {
+            context.Set<ClientSecret>().RemoveRange(secrets);
+            changed = true;
+        }
+
+        // 2. Flip the security flags.
+        if (client.RequireClientSecret)
+        {
+            client.RequireClientSecret = false;
+            changed = true;
+        }
+        if (!client.RequirePkce)
+        {
+            client.RequirePkce = true;
+            changed = true;
+        }
+
+        // 3. Ensure all expected grant types are present (don't remove extras
+        //    that may have been added by hand).
+        var existingGrantTypes = context.Set<ClientGrantType>()
+            .Where(g => g.Client.Id == client.Id)
+            .Select(g => g.GrantType)
+            .ToHashSet();
+        foreach (var grantType in PostItGrantTypes)
+        {
+            if (!existingGrantTypes.Contains(grantType))
+            {
                 context.Set<ClientGrantType>().Add(new IdentityServer8.EntityFramework.Entities.ClientGrantType
                 {
                     Client = client,
-                    GrantType = "authorization_code"
+                    GrantType = grantType
                 });
-                context.Set<ClientGrantType>().Add(new IdentityServer8.EntityFramework.Entities.ClientGrantType
-                {
-                    Client = client,
-                    GrantType = "client_credentials"
-                });
+                changed = true;
+            }
+        }
 
+        // 4. Ensure all expected scopes are present.
+        var existingScopes = context.Set<ClientScope>()
+            .Where(s => s.Client.Id == client.Id)
+            .Select(s => s.Scope)
+            .ToHashSet();
+        foreach (var scope in PostItScopes)
+        {
+            if (!existingScopes.Contains(scope))
+            {
                 context.Set<ClientScope>().Add(new IdentityServer8.EntityFramework.Entities.ClientScope
                 {
                     Client = client,
-                    Scope = "blog"
+                    Scope = scope
                 });
-                context.Set<ClientScope>().Add(new IdentityServer8.EntityFramework.Entities.ClientScope
-                {
-                    Client = client,
-                    Scope = IdentityServer8.IdentityServerConstants.StandardScopes.OpenId
-                });
-                context.Set<ClientScope>().Add(new IdentityServer8.EntityFramework.Entities.ClientScope
-                {
-                    Client = client,
-                    Scope = IdentityServer8.IdentityServerConstants.StandardScopes.Profile
-                });
+                changed = true;
+            }
+        }
 
+        // 5. Ensure all expected redirect URIs are present. Legacy entries
+        //    pointing at the OP itself (e.g. https://yavsc.pschneider.fr/)
+        //    are removed — they redirect back into IdentityServer's own home
+        //    page and create a login loop.
+        var existingRedirects = context.Set<ClientRedirectUri>()
+            .Where(r => r.Client.Id == client.Id)
+            .ToList();
+        var existingRedirectUris = existingRedirects
+            .Select(r => r.RedirectUri)
+            .ToHashSet(StringComparer.Ordinal);
+
+        foreach (var redirectUri in PostItRedirectUris)
+        {
+            if (!existingRedirectUris.Contains(redirectUri))
+            {
                 context.Set<ClientRedirectUri>().Add(new IdentityServer8.EntityFramework.Entities.ClientRedirectUri
                 {
                     Client = client,
-                    RedirectUri = "http://127.0.0.1:7890/"
+                    RedirectUri = redirectUri
                 });
-
-                context.Set<ClientSecret>().Add(new IdentityServer8.EntityFramework.Entities.ClientSecret
-                {
-                    Client = client,
-                    Value = "postit-secret".ToSha256(),
-                });
-
-                context.SaveChanges();
+                changed = true;
             }
-        };
+        }
+
+        var legacyRedirects = existingRedirects
+            .Where(r => r.RedirectUri == "https://yavsc.pschneider.fr/"
+                     || r.RedirectUri == "yavsc://callback")
+            .ToList();
+        if (legacyRedirects.Count > 0)
+        {
+            context.Set<ClientRedirectUri>().RemoveRange(legacyRedirects);
+            changed = true;
+        }
+
+        if (changed)
+        {
+            context.SaveChanges();
+        }
     }
 
     private static void ConfigureRequestLocalization(IServiceCollection services)

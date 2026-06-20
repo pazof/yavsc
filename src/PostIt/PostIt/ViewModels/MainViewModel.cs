@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using IdentityModel.OidcClient;
+using IdentityModel.OidcClient.Browser;
 using PostIt.Models;
 using PostIt.Services;
 using Avalonia.Styling;
@@ -237,52 +234,47 @@ public partial class MainPageViewModel : ViewModelBase
         }
     }
 
-    private async Task<TokenResponse> RequestClientCredentialsTokenAsync()
+    /// <summary>
+    /// Performs an interactive Authorization Code + PKCE login against the
+    /// configured authority and stores the resulting access token in
+    /// <see cref="BearerToken"/>. No client secret is sent; PKCE prevents
+    /// authorization-code interception by relying on a per-request verifier
+    /// generated locally and never leaving the device.
+    /// </summary>
+    /// <param name="browser">
+    /// Platform-specific <see cref="IBrowser"/> implementation. On desktop
+    /// pass a <c>LoopbackBrowser</c>; on Android a custom-scheme
+    /// deep-link browser is required.
+    /// </param>
+    public async Task LoginAsync(IBrowser browser)
     {
-        using var client = new HttpClient();
-        var discoveryUrl = Settings.Authentication.Authority.TrimEnd('/') + "/.well-known/openid-configuration";
-        var discoveryDocument = await client.GetFromJsonAsync<DiscoveryDocument>(discoveryUrl, JsonOptions);
-
-        if (discoveryDocument is null || string.IsNullOrWhiteSpace(discoveryDocument.TokenEndpoint))
+        IsBusy = true;
+        StatusMessage = "Signing in...";
+        try
         {
-            throw new InvalidOperationException("Unable to discover the token endpoint from the authority.");
-        }
+            var client = new OidcClient(Settings.GetOidcClientOptions(browser));
+            var loginResult = await client.LoginAsync(new LoginRequest()).ConfigureAwait(false);
 
-        var request = new HttpRequestMessage(HttpMethod.Post, discoveryDocument.TokenEndpoint)
-        {
-            Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            if (loginResult.IsError)
             {
-                ["grant_type"] = "client_credentials",
-                ["client_id"] = Settings.Authentication.ClientId,
-                ["client_secret"] = Settings.Authentication.ClientSecret,
-                ["scope"] = string.Join(' ', Settings.Scopes),
-            })
-        };
+                StatusMessage = loginResult.Error ?? "Login failed.";
+                return;
+            }
 
-        var response = await client.SendAsync(request).ConfigureAwait(false);
-
-        var payload = await response.Content.ReadFromJsonAsync<TokenResponse>(JsonOptions);
-        if (payload is null)
-        {
-            throw new InvalidOperationException("Invalid token response from the identity provider.");
+            BearerToken = loginResult.AccessToken ?? string.Empty;
+            StatusMessage = string.IsNullOrEmpty(BearerToken)
+                ? "Login succeeded but no access token was returned."
+                : "Signed in.";
         }
-
-        if (!response.IsSuccessStatusCode)
+        catch (Exception ex)
         {
-            var message = string.IsNullOrWhiteSpace(payload.ErrorDescription)
-                ? payload.Error ?? "Unknown token error"
-                : payload.ErrorDescription;
-            throw new InvalidOperationException(message);
+            StatusMessage = $"Error: {ex.Message}";
         }
-
-        return payload;
+        finally
+        {
+            IsBusy = false;
+        }
     }
-
-    
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
 
     private BlogApiClient CreateClient()
         => new BlogApiClient(Settings.ApiUrl, BearerToken);
@@ -297,12 +289,4 @@ public partial class MainPageViewModel : ViewModelBase
 
     private bool CanSave() => SelectedPost is not null && !IsBusy;
     private bool CanDelete() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
-
-    private sealed record DiscoveryDocument([property: JsonPropertyName("token_endpoint")] string? TokenEndpoint);
-    private sealed record TokenResponse(
-        [property: JsonPropertyName("access_token")] string? AccessToken,
-        [property: JsonPropertyName("token_type")] string? TokenType,
-        [property: JsonPropertyName("expires_in")] int ExpiresIn,
-        [property: JsonPropertyName("error")] string? Error,
-        [property: JsonPropertyName("error_description")] string? ErrorDescription);
 }

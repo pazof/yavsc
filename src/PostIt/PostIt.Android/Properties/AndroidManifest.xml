@@ -1,5 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto">
 	<uses-permission android:name="android.permission.INTERNET" />
-	<application android:label="PostIt" android:icon="@drawable/Icon" />
+	<application android:label="PostIt" android:icon="@drawable/Icon">
+
+		<!--
+			Deep-link receiver for the OIDC Authorization Code + PKCE flow.
+			After the user authenticates in the system browser, the OP
+			redirects to android://postit-signin?... and Android forwards
+			the Intent to the MainActivity (configured SingleTask so the
+			existing instance receives OnNewIntent rather than spawning a
+			new one).
+
+			The host value (postit-signin) MUST match the
+			AndroidRedirectUri constant in PostIt/Settings/Settings.cs and
+			the corresponding RedirectUri registered for the 'postit'
+			client in IdentityServer (Yavsc.Org ConfigurationDb).
+		-->
+		<activity-alias
+			android:name="PostIt.Android.OidcCallbackActivity"
+			android:targetActivity="PostIt.Android.PostItMainActivity"
+			android:exported="true"
+			android:launchMode="singleTask">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="android" android:host="postit-signin" />
+			</intent-filter>
+		</activity-alias>
+	</application>
 </manifest>

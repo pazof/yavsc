@@ -13,8 +13,6 @@ public partial class SettingsPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string ClientId { get; set; }
 
-    [ObservableProperty]
-    public partial string ClientSecret { get; set; }
     public override bool CanNavigateNext { get => false; protected set => throw new System.NotImplementedException(); }
     public override bool CanNavigatePrevious { get => true; protected set => throw new System.NotImplementedException(); }
 }

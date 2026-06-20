@@ -5,13 +5,9 @@ public partial class AuthenticationSettings : ObservableObject
 {
 
     [ObservableProperty]
-    public partial string Authority { get; set; }
+    public partial string Authority { get; set; }
 
     [ObservableProperty]
-    public partial string ClientId { get; set; } 
-
-    [ObservableProperty]
-    public partial string ClientSecret { get; set; } 
-
+    public partial string ClientId { get; set; }
 
 }
