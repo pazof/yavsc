@@ -4,36 +4,58 @@
              x:Class="PostIt.Views.LoginPage"
              x:DataType="vm:LoginPageViewModel"
              Header="Login">
+  <Design.DataContext>
+    <vm:LoginPageViewModel />
+  </Design.DataContext>
 
-        <StackPanel HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Spacing="20">
+  <StackPanel HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Spacing="20">
 
-                <TextBlock Text="Sign In"
-                           FontSize="24"
-                           HorizontalAlignment="Center"/>
+    <Border IsVisible="{Binding ConfigMissing}"
+            Background="#FFF3CD"
+            BorderBrush="#E0A800"
+            BorderThickness="1"
+            CornerRadius="4"
+            Padding="10">
+      <TextBlock Text="{Binding ConfigMissingMessage}"
+                 TextWrapping="Wrap"
+                 Foreground="#7A5800"/>
+    </Border>
 
-                <StackPanel Spacing="4">
-                        <TextBlock Text="Email"/>
-                        <TextBox Name="EmailBox"
-                                 PlaceholderText="Enter your email"/>
-                </StackPanel>
+    <TextBlock Text="Sign In"
+               FontSize="24"
+               HorizontalAlignment="Center"/>
 
-                <StackPanel Spacing="4">
-                        <TextBlock Text="Password"/>
-                        <TextBox Name="PasswordBox"
-                                 PlaceholderText="Enter your password"
-                                 PasswordChar="•"/>
-                </StackPanel>
+    <StackPanel Spacing="4">
+      <TextBlock Text="Email"/>
+      <TextBox Name="EmailBox"
+               PlaceholderText="Enter your email"/>
+    </StackPanel>
 
-                <Button Content="Login"
-                       Click="OnLoginClickAsync"/>
+    <StackPanel Spacing="4">
+      <TextBlock Text="Password"/>
+      <TextBox Name="PasswordBox"
+               PlaceholderText="Enter your password"
+               PasswordChar="•"/>
+    </StackPanel>
 
-                <Button Content="Cancel"
-                        Click="OnCancelClick"/>
+    <Button Content="Login"
+            Command="{Binding LoginAsync}"/>
 
-                <TextBlock Name="StatusText" Text="Starting authentication..." />
-                <ProgressBar IsIndeterminate="{Binding IsBusy}" />
+    <Button Content="Cancel"
+            Click="OnCancelClick"/>
 
-        </StackPanel>
+    <Button Content="Register a new account"
+            IsEnabled="{Binding HasRegisterUrl}"
+            Click="OnRegisterClick"/>
+
+    <Button Content="Forgot password?"
+            IsEnabled="{Binding HasForgotPasswordUrl}"
+            Click="OnForgotPasswordClick"/>
+
+    <TextBlock Name="StatusText" Text="Starting authentication..." />
+    <ProgressBar IsIndeterminate="{Binding IsBusy}" />
+
+  </StackPanel>
 </ContentPage>

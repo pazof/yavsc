@@ -1,44 +1,23 @@
 using System;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using IdentityModel.OidcClient;
-using PostIt.Services;
+using PostIt.ViewModels;
 
 namespace PostIt.Views;
 
 public partial class LoginPage : ContentPage
 {
-    private TaskCompletionSource<LoginResult?> _tcs = new();
-    private LoginResult loginResult;
-
-
-    public Settings Settings { get; }
-
     public LoginPage()
     {
-        this.Settings = new Settings();
         InitializeComponent();
-    }
 
-    private async void OnLoginClickAsync(object? sender, RoutedEventArgs e)
-    {
-        // This is where you specify your actual login auth logic
-        try
-        {
-            Settings.Load().Wait();
-            
-            var client = new OidcClient(Settings.GetOidcClientOptions());
-            var loginResult = await client.LoginAsync(new LoginRequest());
-            this.loginResult = loginResult;
-        }
-        catch (Exception)
-        {
-            this.loginResult = null;
-        }
-
-        if (Navigation is not null)
-            await Navigation.PopModalAsync();
+        // HomePage pushes LoginPage via PushModalAsync(new LoginPage())
+        // without supplying a DataContext. Attach a freshly-built
+        // LoginPageViewModel whenever the caller hasn't wired one up,
+        // so XAML bindings and LoginAsyncCommand resolve.
+        if (DataContext is null)
+            DataContext = new LoginPageViewModel();
     }
 
     private async void OnCancelClick(object? sender, RoutedEventArgs e)
@@ -46,5 +25,31 @@ public partial class LoginPage : ContentPage
         // Cancel button dismisses all open modals
         if (Navigation is not null)
             await Navigation.PopAllModalsAsync();
+    }
+
+    private void OnRegisterClick(object? sender, RoutedEventArgs e)
+    {
+        OpenExternalUrl((DataContext as LoginPageViewModel)?.RegisterUrl);
+    }
+
+    private void OnForgotPasswordClick(object? sender, RoutedEventArgs e)
+    {
+        OpenExternalUrl((DataContext as LoginPageViewModel)?.ForgotPasswordUrl);
+    }
+
+    private static void OpenExternalUrl(string? url)
+    {
+        if (string.IsNullOrEmpty(url)) return;
+        // Desktop launcher: shell-execute the URL so the OS picks the right handler.
+        // Platform projects (PostIt.Android, PostIt.Browser) override this behavior
+        // when they plug into the LoginPage lifecycle.
+        try
+        {
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to open external URL {url}: {ex.Message}");
+        }
     }
 }

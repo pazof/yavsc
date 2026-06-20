@@ -41,4 +41,64 @@ public class LoginPageViewModelTests
             vm.StatusMessage?.StartsWith("Error") == true,
             $"Login reported error: {vm.StatusMessage}");
     }
+
+    [Fact]
+    public void RegisterUrl_and_ForgotPasswordUrl_are_derived_from_authority()
+    {
+        var settings = new PostIt.Settings
+        {
+            Authentication = new AuthenticationSettings
+            {
+                Authority = "https://yavsc.example.com/",
+                ClientId = "postit-tests"
+            },
+            RedirectUri = "http://127.0.0.1:7890/",
+            Scopes = new[] { "openid" }
+        };
+
+        var vm = new LoginPageViewModel(settings);
+
+        // Trailing slash on Authority is normalised away.
+        Assert.Equal(
+            "https://yavsc.example.com/signin?ReturnUrl=~%2F&AllowRememberLogin=true",
+            vm.RegisterUrl);
+        Assert.Equal(
+            "https://yavsc.example.com/Account/ForgotPassword",
+            vm.ForgotPasswordUrl);
+        Assert.True(vm.HasRegisterUrl);
+        Assert.True(vm.HasForgotPasswordUrl);
+    }
+
+    [Fact]
+    public void RegisterUrl_is_empty_when_authority_is_unset()
+    {
+        var vm = new LoginPageViewModel(new PostIt.Settings());
+        Assert.Equal(string.Empty, vm.RegisterUrl);
+        Assert.Equal(string.Empty, vm.ForgotPasswordUrl);
+        Assert.False(vm.HasRegisterUrl);
+        Assert.False(vm.HasForgotPasswordUrl);
+    }
+
+    [Fact]
+    public void ConfigMissing_is_true_when_authority_is_unset()
+    {
+        var vm = new LoginPageViewModel(new PostIt.Settings());
+        Assert.True(vm.ConfigMissing);
+        Assert.Contains("~/.config/PostIt/postit-settings.json", vm.ConfigMissingMessage);
+    }
+
+    [Fact]
+    public void ConfigMissing_is_false_when_authority_is_set()
+    {
+        var settings = new PostIt.Settings
+        {
+            Authentication = new AuthenticationSettings
+            {
+                Authority = "https://yavsc.example.com/",
+                ClientId = "postit-tests"
+            }
+        };
+        var vm = new LoginPageViewModel(settings);
+        Assert.False(vm.ConfigMissing);
+    }
 }

@@ -12,6 +12,49 @@ public partial class LoginPageViewModel : ViewModelBase
     public string UserEmail { get; set; }
     public string Password { get; set; }
 
+    /// <summary>
+    /// URL of the Yavsc.Org register/sign-in page for new users.
+    /// Derived from <see cref="Settings.Authentication"/>'s Authority.
+    /// Empty when the authority is not configured.
+    /// </summary>
+    public string RegisterUrl =>
+        BuildExternalUrl("/signin?ReturnUrl=~%2F&AllowRememberLogin=true");
+
+    /// <summary>
+    /// URL of the Yavsc.Org password-reset page (open to anonymous users).
+    /// Derived from <see cref="Settings.Authentication"/>'s Authority.
+    /// Empty when the authority is not configured.
+    /// </summary>
+    public string ForgotPasswordUrl =>
+        BuildExternalUrl("/Account/ForgotPassword");
+
+    public bool HasRegisterUrl => !string.IsNullOrEmpty(RegisterUrl);
+    public bool HasForgotPasswordUrl => !string.IsNullOrEmpty(ForgotPasswordUrl);
+
+    /// <summary>
+    /// True when the settings file is missing or <c>Authentication.Authority</c>
+    /// is empty. The LoginPage surfaces a banner in that case and disables
+    /// the Register / Forgot password buttons.
+    /// </summary>
+    public bool ConfigMissing =>
+        string.IsNullOrWhiteSpace(Settings.Authentication?.Authority);
+
+    /// <summary>
+    /// Localised banner shown when <see cref="ConfigMissing"/> is true.
+    /// The path follows the XDG spec on Linux (where PostIt.Desktop runs):
+    /// the file is expected at <c>~/.config/PostIt/postit-settings.json</c>.
+    /// </summary>
+    public string ConfigMissingMessage =>
+        $"Configuration PostIt manquante — voir ~/.config/PostIt/postit-settings.json";
+
+    private string BuildExternalUrl(string path)
+    {
+        var authority = Settings.Authentication?.Authority?.TrimEnd('/');
+        return string.IsNullOrEmpty(authority)
+            ? string.Empty
+            : authority + path;
+    }
+
     private string _AccessToken;
     public string AccessToken { get => _AccessToken; private set => this.SetProperty(ref _AccessToken, value); }
 
@@ -36,6 +79,11 @@ public partial class LoginPageViewModel : ViewModelBase
 
     public LoginPageViewModel() : this(new Settings(), browserFactoryOverride: null)
     {
+        // Load settings eagerly so RegisterUrl / ForgotPasswordUrl are
+        // populated as soon as the page renders (XAML bindings fire
+        // before the user clicks Login).
+        try { Settings.Load().GetAwaiter().GetResult(); }
+        catch { /* settings may be missing in tests/dev; LoginAsync will surface real errors */ }
     }
 
     /// <summary>
