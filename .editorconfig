@@ -5,55 +5,39 @@
 # top-most EditorConfig file
 root = true
 
-# Unix-style newlines with a newline ending every file
+# Defaults for every text file
 [*]
+charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-
-# Matches multiple files with brace expansion notation
-# Set default charset
-[*.{js,py,cs,cshtml,xml,xaml}]
-charset = utf-8
-
-# 4 space indentation
-[*.py,*.xml,*.csproj]
-indent_style = space
-indent_size = 4
-
-# 2 space indentation
-[*.xml,*.csproj,*.axaml]
 indent_style = space
 indent_size = 2
-
-# Tab indentation (no size specified)
-[Makefile]
-indent_style = tab
-
-# Indentation override for all JS under lib directory
-[lib/**.js]
-indent_style = space
-indent_size = 2
-
-# Matches the exact files either package.json or .travis.yml
-[{package.json,.travis.yml}]
-indent_style = space
-indent_size = 2
-# Remove the line below if you want to inherit .editorconfig settings from higher directories
-root = true
+trim_trailing_whitespace = true
 
 # C# files
 [*.cs]
-
-#### Core EditorConfig Options ####
-
-# Indentation and spacing
 indent_size = 4
-indent_style = space
 tab_width = 4
 
-# New line preferences
-end_of_line = crlf
-insert_final_newline = false
+# Razor / ASP.NET views
+[*.cshtml]
+indent_size = 2
+
+# XML and project files
+[*.{xml,csproj,axaml}]
+indent_size = 2
+
+# Python: 4 spaces (PEP 8)
+[*.py]
+indent_size = 4
+
+# Makefile: hard tabs (no width)
+[Makefile]
+indent_style = tab
+
+# JS under lib/
+[lib/**.js]
+indent_size = 2
 
 #### .NET Coding Conventions ####
 
