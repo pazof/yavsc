@@ -49,10 +49,10 @@
 else
 {
     <li class="dropdown-item">
-        <a class="nav-link" asp-controller="Account" asp-action="Register" >Register</a>
+        <a class="nav-link @PageHelpers.ActivePage(ViewContext, "Account", "Register")" asp-controller="Account" asp-action="Register" >Register</a>
     </li>
     <li class="dropdown-item">
-        <a class="nav-link" asp-controller="Account" asp-action="Signin" asp-route-ReturnUrl="~/" asp-route-AllowRememberLogin="true" >Signin</a>
+        <a class="nav-link @PageHelpers.ActivePage(ViewContext, "Account", "Signin")" asp-controller="Account" asp-action="Signin" asp-route-ReturnUrl="~/" asp-route-AllowRememberLogin="true" >Signin</a>
     </li>
 }
 
