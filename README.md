@@ -99,7 +99,7 @@ est fusionné par-dessus). Trois fichiers coexistent dans
 | Fichier                                      | Rôle                                                                                             | Commité ? |
 |----------------------------------------------|--------------------------------------------------------------------------------------------------|-----------|
 | `appsettings-org.json`                       | **Modèle**. Valeurs anonymisées (`[Your domaine name]`, `[YOURSMTPHOST]`, …). Sert de référence.| Oui       |
-| `appsettings-org.Development.json`           | Surcharge pour `ASPNETCORE_ENVIRONMENT=Development`. Concrètement, `Site.Authority` et `Site.ExternalUrl` pointent sur `https://localhoist:5001` (à corriger en `localhost` si besoin), `Site.Title`/`Slogan` sont adaptés, et la `ConnectionStrings.YavscConnection` est fournie. | Oui       |
+| `appsettings-org.Development.json`           | Surcharge locale pour `ASPNETCORE_ENVIRONMENT=Development`. Concrètement, `Site.Authority` et `Site.ExternalUrl` pointent sur `https://localhost:5001`, `Site.Title`/`Slogan` sont adaptés, et la `ConnectionStrings.YavscConnection` est fournie. **Ignoré par `.gitignore`** (`appsettings-*.*.json`) : chaque développeur crée le sien à partir de ce qui est documenté ici et du modèle `appsettings-org.json`. | Non       |
 | `appsettings-org-dist.json`                  | Généré par la cible `copy-binaries` du `contrib/Makefile` (alias `make reinstall`) à partir d'`appsettings-org.json` lors du déploiement, puis copié dans `$(BASEAPPDIR)`. C'est un clone du modèle, juste renommé pour signaler « à éditer ». | Non       |
 
 **Première installation sur un serveur :**
