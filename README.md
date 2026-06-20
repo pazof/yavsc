@@ -89,6 +89,64 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 
 ## Paramétrage
 
+### Fichiers de configuration d'Yavsc.Org
+
+Le paramétrage runtime d'Yavsc.Org se fait via `appsettings-org.json`,
+lu par ASP.NET Core selon la convention standard (`appsettings.<ASPNETCORE_ENVIRONMENT>.json`
+est fusionné par-dessus). Trois fichiers coexistent dans
+`src/Yavsc.Org/`, avec trois rôles distincts :
+
+| Fichier                                      | Rôle                                                                                             | Commité ? |
+|----------------------------------------------|--------------------------------------------------------------------------------------------------|-----------|
+| `appsettings-org.json`                       | **Modèle**. Valeurs anonymisées (`[Your domaine name]`, `[YOURSMTPHOST]`, …). Sert de référence.| Oui       |
+| `appsettings-org.Development.json`           | Surcharge pour `ASPNETCORE_ENVIRONMENT=Development`. Concrètement, `Site.Authority` et `Site.ExternalUrl` pointent sur `https://localhoist:5001` (à corriger en `localhost` si besoin), `Site.Title`/`Slogan` sont adaptés, et la `ConnectionStrings.YavscConnection` est fournie. | Oui       |
+| `appsettings-org-dist.json`                  | Généré par la cible `copy-binaries` du `contrib/Makefile` (alias `make reinstall`) à partir d'`appsettings-org.json` lors du déploiement, puis copié dans `$(BASEAPPDIR)`. C'est un clone du modèle, juste renommé pour signaler « à éditer ». | Non       |
+
+**Première installation sur un serveur :**
+
+```bash
+make install_service        # construit, déploie, active systemd
+cd $BASEAPPDIR              # voir contrib/.env
+ls appsettings-org*.json    # -> appsettings-org-dist.json (le modèle, jamais éditer celui-là)
+cp appsettings-org-dist.json appsettings-org.json
+$EDITOR appsettings-org.json
+```
+
+Le `Makefile` renomme `appsettings-org.json` en `appsettings-org-dist.json`
+juste avant le `cp -a` vers `$(BASEAPPDIR)`, et **supprime** la version
+`appsettings-org.json` du publish dir. Conséquence : un `make reinstall`
+ultérieur n'écrasera jamais ton `appsettings-org.json` édité — il
+recopiera un `appsettings-org-dist.json` neuf par-dessus, sans
+supprimer ton édition. Si tu veux repartir d'un modèle vierge, supprime
+d'abord `appsettings-org.json` du serveur ; sinon, laisse-le en place.
+
+**Valeurs minimales à renseigner pour un serveur de production :**
+
+- `Site.Authority` — issuer OIDC visible de l'extérieur (URL exacte sous
+  laquelle `/.well-known/openid-configuration` est servi, par exemple
+  `https://yavsc.pschneider.fr`). C'est la valeur que PostIt et toutes
+  les autres applications clientes passent dans `Authority`.
+- `Site.ExternalUrl` — URL canonique du serveur, utilisée pour générer
+  les liens absolus dans les e-mails, construire les RedirectUris des
+  clients OIDC tiers, etc. **Depuis la migration PKCE de PostIt, le
+  seed EF Core d'IdentityServer utilise `Site.ExternalUrl` pour
+  autoriser une RedirectUri du client `postit`** : cela permet à PostIt
+  d'être lancé depuis une page web de Yavsc.Org (iframe launcher)
+  sans rejet `redirect_uri mismatch` de l'OP. Les RedirectUris
+  « standalone » du client (`http://127.0.0.1:7890/` et
+  `android://postit-signin`) restent codées en dur dans
+  `EnsureDefaultConfiguration` car elles sont fixées par la plateforme,
+  pas par l'URL de déploiement.
+- `ConnectionStrings.YavscConnection` — chaîne de connexion PostgreSQL
+  (utilisateur, mot de passe, hôte, base). Privilégier
+  `dotnet user-secrets` ou des variables d'environnement `ASPNETCORE_*`
+  plutôt qu'un mot de passe en clair dans le fichier.
+- `Smtp.*` — hôte, port, identifiants SMTP pour l'envoi d'e-mails
+  transactionnels.
+- `Authentication.PayPal.*` et `Authentication.Google.*` — clés d'API
+  pour les fournisseurs d'identité externes utilisés dans les flows
+  OAuth/OIDC.
+
 ### Administration
 
 Une fois le service disponible, s'enregistrer, et
