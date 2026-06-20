@@ -12,7 +12,7 @@ namespace PostIt;
 
 public partial class Settings : ObservableObject
 {
-    const string SettingsFileName = "settings.json";
+    const string SettingsFileName = "postit-settings.json";
     IStorageFolder? folder = null;
 
     [ObservableProperty]
@@ -42,8 +42,13 @@ public partial class Settings : ObservableObject
 
     internal async Task Load()
     {
-        String configPath =
-        Path.Combine(AppContext.BaseDirectory, SettingsFileName);
+        string configDir = Path.Combine(
+    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+    "PostIt"
+);
+        Directory.CreateDirectory(configDir);
+
+        string configPath = Path.Combine(configDir, SettingsFileName);
 
         FileInfo configFileInfo = new FileInfo(configPath);
 

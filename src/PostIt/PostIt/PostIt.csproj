@@ -22,7 +22,7 @@
     <ProjectReference Include="../../Yavsc.Abstract/Yavsc.Abstract.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="settings.json">
+    <Content Include="postit-settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

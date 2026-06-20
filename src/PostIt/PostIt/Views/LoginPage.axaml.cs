@@ -10,6 +10,8 @@ namespace PostIt.Views;
 public partial class LoginPage : ContentPage
 {
     private TaskCompletionSource<LoginResult?> _tcs = new();
+    private LoginResult loginResult;
+
 
     public Settings Settings { get; }
 
@@ -19,25 +21,22 @@ public partial class LoginPage : ContentPage
         InitializeComponent();
     }
 
-    public async Task<LoginResult?> StartLoginAsync(OidcClientOptions options)
+    private async void OnLoginClickAsync(object? sender, RoutedEventArgs e)
     {
+        // This is where you specify your actual login auth logic
         try
         {
             Settings.Load().Wait();
             
-            var client = new OidcClient(options);
+            var client = new OidcClient(Settings.GetOidcClientOptions());
             var loginResult = await client.LoginAsync(new LoginRequest());
-            return loginResult;
+            this.loginResult = loginResult;
         }
         catch (Exception)
         {
-            return null;
+            this.loginResult = null;
         }
-    }
 
-    private async void OnLoginClick(object? sender, RoutedEventArgs e)
-    {
-        // This is where you specify your actual login auth logic
         if (Navigation is not null)
             await Navigation.PopModalAsync();
     }

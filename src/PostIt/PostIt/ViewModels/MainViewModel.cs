@@ -108,44 +108,6 @@ public partial class MainPageViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    internal async Task Login()
-    {
-        await ExecuteAsync(async () =>
-        {
-            // Try interactive OIDC login first
-            try
-            {
-
-                var loginWin = new PostIt.Views.LoginPage();
-                var result = await loginWin.StartLoginAsync(Settings.GetOidcClientOptions());
-
-                if (result is not null && !result.IsError && !string.IsNullOrWhiteSpace(result.AccessToken))
-                {
-                    BearerToken = result.AccessToken;
-                    StatusMessage = "Interactive token acquired.";
-                    return;
-                }
-            }
-            catch
-            {
-                // ignore and fallback to client credentials
-            }
-
-            // Fallback to client credentials if interactive fails
-            var tokenResponse = await RequestClientCredentialsTokenAsync();
-            if (string.IsNullOrWhiteSpace(tokenResponse.AccessToken))
-            {
-                throw new InvalidOperationException("Failed to acquire a token using client credentials.");
-            }
-
-            BearerToken = tokenResponse.AccessToken;
-            StatusMessage = string.IsNullOrWhiteSpace(tokenResponse.Error)
-                ? "Bearer token acquired (client credentials)."
-                : $"Token acquired with warning: {tokenResponse.ErrorDescription}";
-        });
-    }
-
-    [RelayCommand]
     internal async Task Save()
     {
         if (SelectedPost is null)

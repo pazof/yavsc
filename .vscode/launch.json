@@ -5,96 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET API",
-            "type": "coreclr",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/Api/bin/Debug/net10.0/Api.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Api",
-            "serverReadyAction": {
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "envFile": "${workspaceFolder}/src/Api/.env"
-        },
-        {
-            "name": "C#: API Debug",
+            "name": "API",
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/src/Api/Api.csproj"
         },
         {
-            "name": "Blogs",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Yavsc.Blogs/bin/Debug/net10.0/Yavsc.Blogs.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Yavsc.Blogs/",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            }
-        },
-        {
-            "name": "C#: Yavsc.Org Debug",
+            "name": "Yavsc.Org",
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj"
-        },
-        {
-            "name": "Web",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build-web",
-            "program": "${workspaceFolder}/src/Yavsc.Web/bin/Debug/net10.0/Yavsc.Web.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Yavsc.Web",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            }
-        },
-        {
-            "name": "cli",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/cli/bin/Debug/net10.0/cli.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}",
-            "stopAtEntry": false,
-            "console": "internalConsole"
-        },
-        {
-            "name": "Web",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Yavsc.Web/bin/Debug/net10.0/Yavsc.Web.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Yavsc.Web",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/src/Yavsc.Web/Views"
-            }
         },
         {
             "name": "PostIt",

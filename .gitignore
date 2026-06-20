@@ -23,6 +23,7 @@ package-lock.json
 data/
 appsettings.*.json
 appsettings-*.*.json
+*-settings.json
 
 generated/
 *.tmp
