@@ -24,21 +24,25 @@ namespace Yavsc.Server.Helpers
             var currentAction = route["action"] as string;
 
             // Normalize: empty or "Home" + ("Index" or null) both target the site root.
+            // Compare case-insensitively because asp-controller tag helpers resolve
+            // controller names case-insensitively, while RouteData["controller"] holds
+            // the actual class name (e.g. "BlogSpot" vs an URL segment "Blogspot").
+            var cmp = StringComparison.OrdinalIgnoreCase;
             bool isHome = string.IsNullOrEmpty(controller)
-                || (string.Equals(controller, "Home", StringComparison.Ordinal)
-                    && (action == null || string.Equals(action, "Index", StringComparison.Ordinal)));
+                || (string.Equals(controller, "Home", cmp)
+                    && (action == null || string.Equals(action, "Index", cmp)));
 
             bool isCurrent;
             if (isHome)
             {
                 isCurrent = string.IsNullOrEmpty(currentController)
-                    || string.Equals(currentController, "Home", StringComparison.Ordinal)
-                        && (currentAction == null || string.Equals(currentAction, "Index", StringComparison.Ordinal));
+                    || string.Equals(currentController, "Home", cmp)
+                        && (currentAction == null || string.Equals(currentAction, "Index", cmp));
             }
             else
             {
-                isCurrent = string.Equals(currentController, controller, StringComparison.Ordinal)
-                    && (action == null || string.Equals(currentAction, action, StringComparison.Ordinal));
+                isCurrent = string.Equals(currentController, controller, cmp)
+                    && (action == null || string.Equals(currentAction, action, cmp));
             }
 
             return isCurrent
