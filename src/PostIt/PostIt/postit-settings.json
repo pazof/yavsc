@@ -1,0 +1,15 @@
+{
+    "Authentication": {
+        "ClientId": "postit",
+        "Authority": "https://yavsc.pschneider.fr/"
+    },
+    "DarkMode": true,
+    "ApiUrl": "https://blogs.pschneider.fr/api/v1/",
+    "Scopes": [
+        "openid",
+        "profile",
+        "email",
+        "offline_access",
+        "blogs"
+    ]
+}
