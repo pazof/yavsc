@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
+using static Yavsc.Blogs.Constants;
 namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
-    [Route("api/blogtags")]
+    [Route(APIPrefix + "/blogtags")]
     public class BlogTagsApiController : Controller
     {
         private readonly ApplicationDbContext _context;

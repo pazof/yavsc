@@ -1,19 +1,15 @@
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Yavsc.Blogs.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
-    using System.Security.Claims;
     using Microsoft.EntityFrameworkCore;
     using Models;
-    using Yavsc.Helpers;
     using Yavsc.Models.Blog;
     using Yavsc.Server.Helpers;
 
     [Produces("application/json")]
-    [Route("~/api/PostTagsApi")]
+    [Route(APIPrefix + "/PostTagsApi")]
     public class PostTagsApiController : Controller
     {
         private ApplicationDbContext _context;

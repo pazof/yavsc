@@ -1,17 +1,16 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Yavsc.Models;
+using static Yavsc.Blogs.Constants;
 
 namespace Yavsc.Controllers
 {
-    using System.Security.Claims;
     using Microsoft.EntityFrameworkCore;
     using Models.Relationship;
-    using Yavsc.Helpers;
     using Yavsc.Server.Helpers;
 
     [Produces("application/json")]
-    [Route("api/TagsApi")]
+    [Route(APIPrefix + "/TagsApi")]
     public class TagsApiController : Controller
     {
         private ApplicationDbContext _context;

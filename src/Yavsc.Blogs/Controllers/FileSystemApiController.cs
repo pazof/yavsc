@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Yavsc.Blogs.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
@@ -12,7 +13,7 @@ namespace Yavsc.Blogs.Controllers
     using Yavsc.Abstract.Helpers;
     using Yavsc.Server.Models.FileSystem;
 
-    [Authorize,Route("api/fs")]
+    [Authorize,Route(APIPrefix + "/fs")]
     public partial class FileSystemApiController : Controller
     {
         readonly ApplicationDbContext dbContext;

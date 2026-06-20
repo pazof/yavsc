@@ -2,17 +2,16 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;
+using static Yavsc.Blogs.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
     [Authorize]
     [Produces("application/json")]
-    [Route("api/blogcomments")]
+    [Route(APIPrefix + "/blogcomments")]
     public class CommentsApiController : Controller
     {
         private readonly ApplicationDbContext _context;

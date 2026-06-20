@@ -9,10 +9,11 @@ using Yavsc.Models.Messaging;
 using Yavsc.Services;
 using Microsoft.AspNetCore.SignalR;
 using Yavsc.Server.Helpers;
+using static Yavsc.Blogs.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
-    [Authorize, Route("api/stream")]
+    [Authorize, Route(APIPrefix + "/stream")]
     public partial class FileSystemStreamController : Controller
     {
         private readonly ILogger logger;
