@@ -306,7 +306,7 @@ public static class HostingExtensions
                             sql => sql.MigrationsAssembly(migrationsAssembly));
                     }
 
-                    b.UseSeeding(EnsureDefaultConfiguration());
+                    b.UseSeeding(EnsureDefaultConfiguration(builder.Configuration));
                 };
             })
             .AddOperationalStore(options =>
@@ -378,7 +378,9 @@ public static class HostingExtensions
         IdentityServer8.IdentityServerConstants.StandardScopes.Profile,
     };
 
-    private static Action<DbContext, bool> EnsureDefaultConfiguration()
+    private static Action<DbContext, bool> EnsureDefaultConfiguration(
+        IConfiguration configuration
+    )
     {
         return (context, _) =>
         {
@@ -389,11 +391,11 @@ public static class HostingExtensions
 
             if (existingClient is null)
             {
-                SeedNewPostItClient(context);
+                SeedNewPostItClient(configuration, context);
                 return;
             }
 
-            MigratePostItClientToPublic(context, existingClient);
+            MigratePostItClientToPublic(configuration, context, existingClient);
         };
     }
 
@@ -402,7 +404,7 @@ public static class HostingExtensions
     /// client using Authorization Code + PKCE. Used the first time the
     /// ConfigurationDb is seeded.
     /// </summary>
-    private static void SeedNewPostItClient(DbContext context)
+    private static void SeedNewPostItClient(IConfiguration configuration, DbContext context)
     {
         // PostIt is a public client (Authorization Code + PKCE).
         // No client secret is stored or transmitted; PKCE binds the
@@ -437,7 +439,7 @@ public static class HostingExtensions
             });
         }
 
-        foreach (var redirectUri in PostItRedirectUris)
+        foreach (var redirectUri in BuildPostItRedirectUris(configuration))
         {
             context.Set<ClientRedirectUri>().Add(new IdentityServer8.EntityFramework.Entities.ClientRedirectUri
             {
@@ -451,11 +453,28 @@ public static class HostingExtensions
     }
 
     /// <summary>
+    /// Compose the full set of redirect URIs for the PostIt client. The base
+    /// URIs cover the standalone desktop/mobile flows; the value of
+    /// <c>Site:ExternalUrl</c> is appended so PostIt can also be embedded in
+    /// a Yavsc.Org web page (e.g. an iframe-launched launcher).
+    /// </summary>
+    private static IEnumerable<string> BuildPostItRedirectUris(IConfiguration configuration)
+    {
+        foreach (var uri in PostItRedirectUris)
+            yield return uri;
+
+        var externalUrl = configuration["Site:ExternalUrl"];
+        if (!string.IsNullOrWhiteSpace(externalUrl))
+            yield return externalUrl;
+    }
+
+    /// <summary>
     /// Bring an existing <c>postit</c> client up to the current public-client
     /// configuration. Idempotent: each change is applied only when the row is
     /// currently in the legacy state.
     /// </summary>
     private static void MigratePostItClientToPublic(
+        IConfiguration configuration,
         DbContext context,
         IdentityServer8.EntityFramework.Entities.Client client)
     {
@@ -518,10 +537,12 @@ public static class HostingExtensions
             }
         }
 
-        // 5. Ensure all expected redirect URIs are present. Legacy entries
-        //    pointing at the OP itself (e.g. https://yavsc.pschneider.fr/)
-        //    are removed — they redirect back into IdentityServer's own home
-        //    page and create a login loop.
+        // 5. Ensure all expected redirect URIs are present. The expected set
+        //    is built by BuildPostItRedirectUris: the standalone URIs from
+        //    PostItRedirectUris (desktop loopback + Android custom scheme)
+        //    plus Site:ExternalUrl so PostIt can be embedded in a Yavsc.Org
+        //    web page. Any pre-existing rows that are no longer in this set
+        //    are removed.
         var existingRedirects = context.Set<ClientRedirectUri>()
             .Where(r => r.Client.Id == client.Id)
             .ToList();
@@ -529,7 +550,7 @@ public static class HostingExtensions
             .Select(r => r.RedirectUri)
             .ToHashSet(StringComparer.Ordinal);
 
-        foreach (var redirectUri in PostItRedirectUris)
+        foreach (var redirectUri in BuildPostItRedirectUris(configuration))
         {
             if (!existingRedirectUris.Contains(redirectUri))
             {
@@ -540,16 +561,6 @@ public static class HostingExtensions
                 });
                 changed = true;
             }
-        }
-
-        var legacyRedirects = existingRedirects
-            .Where(r => r.RedirectUri == "https://yavsc.pschneider.fr/"
-                     || r.RedirectUri == "yavsc://callback")
-            .ToList();
-        if (legacyRedirects.Count > 0)
-        {
-            context.Set<ClientRedirectUri>().RemoveRange(legacyRedirects);
-            changed = true;
         }
 
         if (changed)
