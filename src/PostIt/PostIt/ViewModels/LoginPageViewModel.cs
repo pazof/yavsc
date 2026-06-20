@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Input;
 using IdentityModel.OidcClient;
+using IdentityModel.OidcClient.Browser;
 using PostIt.Services;
 using System;
 using System.Threading.Tasks;
@@ -26,9 +27,26 @@ public partial class LoginPageViewModel : ViewModelBase
     private bool _IsBusy;
     public bool IsBusy { get=> _IsBusy; private set=> this.SetProperty(ref _IsBusy, value); }
 
-    public LoginPageViewModel()
+    /// <summary>
+    /// Optional override used by tests. When set, this factory is called
+    /// instead of <see cref="Platform.CreateBrowser"/> to obtain the
+    /// <see cref="IBrowser"/> instance.
+    /// </summary>
+    public Func<IBrowser?>? BrowserFactoryOverride { get; set; }
+
+    public LoginPageViewModel() : this(new Settings(), browserFactoryOverride: null)
     {
-        Settings = new Settings();
+    }
+
+    /// <summary>
+    /// Test-friendly constructor: caller supplies pre-loaded <paramref name="settings"/>
+    /// and (optionally) a <paramref name="browserFactoryOverride"/> that bypasses
+    /// the static <see cref="Platform"/> indirection.
+    /// </summary>
+    public LoginPageViewModel(Settings settings, Func<IBrowser?>? browserFactoryOverride = null)
+    {
+        Settings = settings;
+        BrowserFactoryOverride = browserFactoryOverride;
         StatusMessage = "Ready";
     }
 
@@ -45,7 +63,9 @@ public partial class LoginPageViewModel : ViewModelBase
                 ? Platform.DefaultRedirectUri
                 : Settings.RedirectUri;
 
-            var browser = Platform.CreateBrowser?.Invoke();
+            var browser = BrowserFactoryOverride is not null
+                ? BrowserFactoryOverride.Invoke()
+                : Platform.CreateBrowser?.Invoke();
             if (browser is null)
             {
                 StatusMessage = "No browser is available on this platform.";
