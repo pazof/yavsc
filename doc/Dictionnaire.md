@@ -9,11 +9,8 @@ c'est un instantané, pas une référence vivante.
 
 ## Règle de résolution
 
-
 Un projet hérite des dictionnaires de son activité et de tous
 ses ancêtres jusqu'à la racine.
-
-
 
 Ainsi, les termes juridiques sont toujours disponibles, quel que
 soit le domaine du projet.
