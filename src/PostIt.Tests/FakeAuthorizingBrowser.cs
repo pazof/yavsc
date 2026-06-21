@@ -15,24 +15,24 @@ namespace PostIt.Tests;
 /// </summary>
 public sealed class FakeAuthorizingBrowser
 {
-    private readonly string _loopbackRedirectUri;
+    private readonly string _redirectUri;
     private readonly HttpClient _http = new();
 
-    public FakeAuthorizingBrowser(string loopbackRedirectUri)
+    public FakeAuthorizingBrowser(string redirectUri)
     {
-        _loopbackRedirectUri = loopbackRedirectUri;
+        _redirectUri = redirectUri;
     }
 
-    public IdentityModel.OidcClient.Browser.IBrowser CreateBrowser() => new Impl(_loopbackRedirectUri, _http);
+    public IdentityModel.OidcClient.Browser.IBrowser CreateBrowser() => new Impl(_redirectUri, _http);
 
     private sealed class Impl : IdentityModel.OidcClient.Browser.IBrowser
     {
-        private readonly string _loopbackRedirectUri;
+        private readonly string _redirectUri;
         private readonly HttpClient _http;
 
-        public Impl(string loopbackRedirectUri, HttpClient http)
+        public Impl(string redirectUri, HttpClient http)
         {
-            _loopbackRedirectUri = loopbackRedirectUri;
+            _redirectUri = redirectUri;
             _http = http;
         }
 
@@ -64,8 +64,14 @@ public sealed class FakeAuthorizingBrowser
                 };
             }
 
+            // Synthesize the redirect that the OIDC server would have
+            // sent back. The scheme and path match whatever the test
+            // configured (loopback for the historical test harness,
+            // postit://callback for the custom-scheme path).
+            var baseUri = _redirectUri;
+            if (!baseUri.EndsWith("/")) baseUri += "/";
             var redirectUri =
-                $"{_loopbackRedirectUri.TrimEnd('/')}/?code=test-auth-code&state={Uri.EscapeDataString(state)}";
+                $"{baseUri}?code=test-auth-code&state={Uri.EscapeDataString(state)}";
 
             return new BrowserResult
             {
