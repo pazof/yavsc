@@ -32,6 +32,23 @@ public partial class LoginPageViewModel : ViewModelBase
     public bool HasForgotPasswordUrl => !string.IsNullOrEmpty(ForgotPasswordUrl);
 
     /// <summary>
+    /// Canonical <see cref="Settings.Authentication"/> authority with any trailing
+    /// slash removed. Used as the base for both the OIDC discovery URL and the
+    /// human-facing Account URLs (Register / Forgot password). Empty when the
+    /// authority is not configured.
+    /// </summary>
+    public string ExternalUrl => BuildExternalUrl(string.Empty);
+
+    /// <summary>
+    /// OIDC discovery URL the client actually calls during login:
+    /// <c>ExternalUrl + "/.well-known/openid-configuration"</c>. Surfaced in
+    /// <see cref="StatusMessage"/> on failure so the operator can copy it
+    /// verbatim and verify reachability from a browser.
+    /// </summary>
+    public string DiscoveryUrl =>
+        string.IsNullOrEmpty(ExternalUrl) ? string.Empty : ExternalUrl + "/.well-known/openid-configuration";
+
+    /// <summary>
     /// True when the settings file is missing or <c>Authentication.Authority</c>
     /// is empty. The LoginPage surfaces a banner in that case and disables
     /// the Register / Forgot password buttons.
@@ -112,12 +129,21 @@ public partial class LoginPageViewModel : ViewModelBase
                 ? Platform.DefaultRedirectUri
                 : Settings.RedirectUri;
 
+            // Surface the discovery URL the client is about to call, so a
+            // failure (DNS, TLS, 404) can be diagnosed by pasting the URL
+            // straight into a browser. OidcClient computes the discovery
+            // URL as `Authority + /.well-known/openid-configuration`; we
+            // normalise the trailing slash here so the printed URL is
+            // exactly what IdentityModel will fetch.
+            if (!string.IsNullOrEmpty(DiscoveryUrl))
+                StatusMessage = $"Discovering {DiscoveryUrl}";
+
             var browser = BrowserFactoryOverride is not null
                 ? BrowserFactoryOverride.Invoke()
                 : Platform.CreateBrowser?.Invoke();
             if (browser is null)
             {
-                StatusMessage = "No browser is available on this platform.";
+                StatusMessage = $"No browser is available on this platform. (discovery: {DiscoveryUrl})";
                 return;
             }
 
@@ -126,7 +152,7 @@ public partial class LoginPageViewModel : ViewModelBase
 
             if (loginResult.IsError)
             {
-                StatusMessage = loginResult.Error;
+                StatusMessage = $"{loginResult.Error} (discovery: {DiscoveryUrl})";
                 return;
             }
 
@@ -144,7 +170,8 @@ public partial class LoginPageViewModel : ViewModelBase
         catch (Exception ex)
         {
             this.IsBusy = false;
-            StatusMessage = "Error: "+ex.Message;
+            var suffix = !string.IsNullOrEmpty(DiscoveryUrl) ? $" (discovery: {DiscoveryUrl})" : string.Empty;
+            StatusMessage = $"Error: {ex.Message}{suffix}";
         }
     }
 }

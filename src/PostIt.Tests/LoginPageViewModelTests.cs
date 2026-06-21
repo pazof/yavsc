@@ -101,4 +101,80 @@ public class LoginPageViewModelTests
         var vm = new LoginPageViewModel(settings);
         Assert.False(vm.ConfigMissing);
     }
+
+    [Theory]
+    [InlineData("https://yavsc.example.com/", "https://yavsc.example.com/.well-known/openid-configuration")]
+    [InlineData("https://yavsc.example.com", "https://yavsc.example.com/.well-known/openid-configuration")]
+    [InlineData("https://yavsc.example.com/sub/", "https://yavsc.example.com/sub/.well-known/openid-configuration")]
+    public void DiscoveryUrl_is_externalurl_plus_well_known(string authority, string expected)
+    {
+        var settings = new PostIt.Settings
+        {
+            Authentication = new AuthenticationSettings { Authority = authority }
+        };
+        var vm = new LoginPageViewModel(settings);
+        Assert.Equal(expected, vm.DiscoveryUrl);
+        // ExternalUrl is the slash-normalised form of Authority.
+        Assert.Equal(expected[..expected.LastIndexOf("/.well-known/openid-configuration")], vm.ExternalUrl);
+    }
+
+    [Fact]
+    public void DiscoveryUrl_is_empty_when_authority_is_unset()
+    {
+        var vm = new LoginPageViewModel(new PostIt.Settings());
+        Assert.Equal(string.Empty, vm.DiscoveryUrl);
+    }
+
+    [Fact]
+    public async Task LoginAsync_failure_message_includes_discovery_url()
+    {
+        // Arrange: settings point at an unreachable authority; the test
+        // browser throws synchronously to guarantee the catch branch runs.
+        var settings = new PostIt.Settings
+        {
+            Authentication = new AuthenticationSettings
+            {
+                Authority = "https://does-not-exist.invalid/",
+                ClientId = "postit-tests"
+            },
+            RedirectUri = "http://127.0.0.1:7890/",
+            Scopes = new[] { "openid" }
+        };
+
+        var vm = new LoginPageViewModel(settings, () => throw new InvalidOperationException("boom"));
+
+        // Act
+        await vm.LoginAsync();
+
+        // Assert: the surfaced error mentions the canonical discovery URL,
+        // so it can be copy-pasted into a browser to diagnose reachability.
+        Assert.NotNull(vm.StatusMessage);
+        Assert.StartsWith("Error:", vm.StatusMessage);
+        Assert.Contains(
+            "https://does-not-exist.invalid/.well-known/openid-configuration",
+            vm.StatusMessage);
+    }
+
+    [Fact]
+    public async Task LoginAsync_reports_discovery_url_when_no_browser_available()
+    {
+        var settings = new PostIt.Settings
+        {
+            Authentication = new AuthenticationSettings
+            {
+                Authority = "https://yavsc.example.com/",
+                ClientId = "postit-tests"
+            },
+            RedirectUri = "http://127.0.0.1:7890/",
+            Scopes = new[] { "openid" }
+        };
+
+        var vm = new LoginPageViewModel(settings, () => null);
+
+        await vm.LoginAsync();
+
+        Assert.Contains(
+            "https://yavsc.example.com/.well-known/openid-configuration",
+            vm.StatusMessage);
+    }
 }

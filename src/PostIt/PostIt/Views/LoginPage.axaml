@@ -54,7 +54,12 @@
             IsEnabled="{Binding HasForgotPasswordUrl}"
             Click="OnForgotPasswordClick"/>
 
-    <TextBlock Name="StatusText" Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+    <TextBox Name="StatusText"
+             Text="{Binding StatusMessage}"
+             TextWrapping="Wrap"
+             IsReadOnly="True"
+             BorderThickness="0"
+             Background="Transparent"/>
     <ProgressBar IsIndeterminate="{Binding IsBusy}" />
 
   </StackPanel>
