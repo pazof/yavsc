@@ -60,7 +60,7 @@ public class LoginPageViewModelTests
 
         // Trailing slash on Authority is normalised away.
         Assert.Equal(
-            "https://yavsc.example.com/signin?ReturnUrl=~%2F&AllowRememberLogin=true",
+            "https://yavsc.example.com/Account/Register",
             vm.RegisterUrl);
         Assert.Equal(
             "https://yavsc.example.com/Account/ForgotPassword",

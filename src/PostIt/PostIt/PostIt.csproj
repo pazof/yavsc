@@ -26,4 +26,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="postit-settings.json">
+      <LogicalName>PostIt.postit-settings.json</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

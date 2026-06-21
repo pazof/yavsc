@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -8,6 +10,8 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+
+[assembly: InternalsVisibleTo("PostIt.Tests")]
 
 namespace PostIt;
 
@@ -87,7 +91,16 @@ public partial class Settings : ObservableObject
         if (!configFileInfo.Exists)
         {
             Console.Error.WriteLine($"🩎 Settings file not found at {configFileInfo.FullName}");
-            return; // no settings file
+            // Only fall back to the embedded default when the in-memory
+            // settings haven't been populated yet. This protects callers
+            // (notably tests) that pre-load Settings with explicit values
+            // from being silently overwritten by the bundled default.
+            if (string.IsNullOrWhiteSpace(this.Authentication?.Authority)
+                && !TryLoadEmbeddedFallback())
+            {
+                Console.Error.WriteLine("🩎 No embedded default settings; running with empty configuration.");
+            }
+            return; // no user settings file
         }
 
         Console.WriteLine($"🔎 Loading settings from {configFileInfo.FullName}");
@@ -97,17 +110,49 @@ public partial class Settings : ObservableObject
             using var stream = configFileInfo.OpenRead();
             using var reader = new StreamReader(stream);
             var json = await reader.ReadToEndAsync();
-            if (string.IsNullOrWhiteSpace(json))
-            {
-                Console.Error.WriteLine("🩎 Settings file is empty.");
-                return;
-            }
+            ApplyJson(json, $"user file {configFileInfo.FullName}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"🩎 Error loading settings: {ex.Message}");
+        }
+    }
 
+    private bool TryLoadEmbeddedFallback()
+    {
+        const string ResourceName = "PostIt.postit-settings.json";
+        var assembly = typeof(Settings).Assembly;
+        using var stream = assembly.GetManifestResourceStream(ResourceName);
+        if (stream is null)
+        {
+            Console.Error.WriteLine($"🩎 Embedded resource {ResourceName} not found.");
+            return false;
+        }
+        using var reader = new StreamReader(stream);
+        var json = reader.ReadToEnd();
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            Console.Error.WriteLine("🩎 Embedded settings resource is empty.");
+            return false;
+        }
+        Console.WriteLine($"🔎 Loading embedded default settings ({ResourceName}).");
+        ApplyJson(json, $"embedded resource {ResourceName}");
+        return true;
+    }
+
+    private void ApplyJson(string json, string source)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            Console.Error.WriteLine($"🩎 Settings payload is empty (source: {source}).");
+            return;
+        }
+        try
+        {
             var settings = JsonSerializer.Deserialize<Settings>(json);
-
             if (settings is null)
             {
-                Console.Error.WriteLine("🩎 Settings file is invalid.");
+                Console.Error.WriteLine($"🩎 Settings payload is invalid (source: {source}).");
                 return;
             }
             this.Authentication = settings.Authentication;
@@ -115,11 +160,10 @@ public partial class Settings : ObservableObject
             this.ApiUrl = settings.ApiUrl;
             this.RedirectUri = string.IsNullOrWhiteSpace(settings.RedirectUri) ? DefaultLoopbackRedirectUri : settings.RedirectUri;
             this.Scopes = settings.Scopes;
-
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"🩎 Error loading settings: {ex.Message}");
+            Console.Error.WriteLine($"🩎 Error applying settings from {source}: {ex.Message}");
         }
     }
 }

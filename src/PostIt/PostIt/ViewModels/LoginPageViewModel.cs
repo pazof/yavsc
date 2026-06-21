@@ -13,12 +13,12 @@ public partial class LoginPageViewModel : ViewModelBase
     public string Password { get; set; }
 
     /// <summary>
-    /// URL of the Yavsc.Org register/sign-in page for new users.
+    /// URL of the Yavsc.Org account-registration page.
     /// Derived from <see cref="Settings.Authentication"/>'s Authority.
     /// Empty when the authority is not configured.
     /// </summary>
     public string RegisterUrl =>
-        BuildExternalUrl("/signin?ReturnUrl=~%2F&AllowRememberLogin=true");
+        BuildExternalUrl("/Account/Register");
 
     /// <summary>
     /// URL of the Yavsc.Org password-reset page (open to anonymous users).
