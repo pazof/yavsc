@@ -64,10 +64,25 @@
       <_YavscOrgStaticAssetsDir>$(MSBuildProjectDirectory)\..\Yavsc.Org\bin\$(Configuration)\$(TargetFramework)</_YavscOrgStaticAssetsDir>
     </PropertyGroup>
     <ItemGroup>
+      <!--
+        Match the SDK-generated manifest files. Each file is then
+        copied into the test bin with the test assembly's name as
+        the prefix so that the default MapStaticAssets() lookup at
+        {AssemblyName}.staticwebassets.endpoints.json finds them.
+
+        Example:
+          src :  Yavsc.Org.staticwebassets.endpoints.json
+          dst :  Yavsc.Org.Tests.staticwebassets.endpoints.json
+
+        The transform is a string replace of the source filename's
+        "Yavsc.Org." prefix with "Yavsc.Org.Tests." — done by the
+        -> '$(OutDir)Yavsc.Org.Tests.%(Filename)' transformation
+        with a RegexReplace on the source path.
+      -->
       <_YavscOrgStaticAssetsFiles Include="$(_YavscOrgStaticAssetsDir)\Yavsc.Org.staticwebassets.*.json" />
     </ItemGroup>
     <Copy SourceFiles="@(_YavscOrgStaticAssetsFiles)"
-          DestinationFolder="$(OutDir)"
+          DestinationFiles="@(_YavscOrgStaticAssetsFiles->'$(OutDir)Yavsc.Org.Tests.' + System.IO.Path.GetFileNameWithoutExtension('%(Filename)').Replace('Yavsc.Org.', '') + System.IO.Path.GetExtension('%(Filename)'))"
           SkipUnchangedFiles="true"
           Condition="'@(_YavscOrgStaticAssetsFiles)' != ''" />
   </Target>

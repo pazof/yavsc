@@ -76,10 +76,12 @@ public class ClientControllerCollectionTests : IClassFixture<TestWebApplicationF
     {
         // WebApplicationFactory.CreateClient() returns an HttpClient wired
         // directly to the in-memory test server — no Kestrel socket, no
-        // self-signed cert, no IServerAddressesFeature lookup.
+        // self-signed cert, no IServerAddressesFeature lookup. Keep
+        // cookies enabled so the antiforgery cookie set on the GET that
+        // fetches the form is replayed on the POST that submits it.
         var http = _factory.CreateClient(new WebApplicationFactoryClientOptions
         {
-            HandleCookies = false,
+            HandleCookies = true,
         });
         http.DefaultRequestHeaders.Add(TestAuthPolicyProvider.HeaderName, TestAuthPolicyProvider.AdminRole);
         return http;
@@ -127,7 +129,10 @@ public class ClientControllerCollectionTests : IClassFixture<TestWebApplicationF
             { new StringContent(newUri), "redirectUri" },
             { new StringContent(token!), "__RequestVerificationToken" },
         };
-        var postResp = await http.PostAsync($"/Client/AddRedirectUri", form, TestContext.Current.CancellationToken);
+        var postResp = await http.PostAsync($"/Client/AddRedirectUri/{id}", form, TestContext.Current.CancellationToken);
+        var postBody = await postResp.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        Assert.True(postResp.StatusCode == HttpStatusCode.Redirect,
+            $"Expected 302 Redirect, got {(int)postResp.StatusCode}. Body[0..500]: {postBody.Substring(0, Math.Min(500, postBody.Length))}");
         Assert.Equal(HttpStatusCode.Redirect, postResp.StatusCode);
 
         // Verify in DB.
