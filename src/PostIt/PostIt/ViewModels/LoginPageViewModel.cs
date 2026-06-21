@@ -103,6 +103,7 @@ public partial class LoginPageViewModel : ViewModelBase
     {
         try
         {
+            this.IsBusy = true;
             Settings.Load().Wait();
 
             // The platform project picks the right redirect URI and browser

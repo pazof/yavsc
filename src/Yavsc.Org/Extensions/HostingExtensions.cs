@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Util.Store;
 using IdentityModel;
 using IdentityServer8;
@@ -330,6 +331,47 @@ public static class HostingExtensions
         {
             identityServerBuilder.AddDeveloperSigningCredential();
         }
+        else
+        {
+            // Production: reuse the Let's Encrypt certificate that Kestrel
+            // already loads for TLS so IdentityServer has a stable signing
+            // key (and a JWKS endpoint). The cert is renewed by the ACME
+            // hook and a service restart picks up the new key automatically.
+            //
+            // The path comes from Kestrel:Endpoints:Https:Certificate to
+            // avoid maintaining a separate setting; fullchain.pem bundles
+            // the leaf + chain, which X509Certificate2 needs for chain
+            // validation by relying parties.
+            var certPath = builder.Configuration["Kestrel:Endpoints:Https:Certificate:Path"];
+            var keyPath = builder.Configuration["Kestrel:Endpoints:Https:Certificate:KeyPath"];
+            if (string.IsNullOrWhiteSpace(certPath) || string.IsNullOrWhiteSpace(keyPath))
+            {
+                throw new InvalidOperationException(
+                    "Production IdentityServer requires a signing certificate. " +
+                    "Configure Kestrel:Endpoints:Https:Certificate:{Path,KeyPath}.");
+            }
+            // CreateFromPemFile loads the leaf cert + its private key from
+            // PEM files without writing to the Windows certificate store
+            // (irrelevant on Linux, but keeps the call cross-platform).
+            var signingCert = X509Certificate2.CreateFromPemFile(certPath, keyPath);
+            // Pick the JWT signing algorithm from the cert's key type. Let's
+            // Encrypt may issue either RSA or ECDSA certificates depending on
+            // the ACME account's preferred chain; IdentityServer would 500 if
+            // we forced RS256 against an ECDSA key.
+            var algorithm = signingCert.GetECDsaPrivateKey() is not null ? "ES256" : "RS256";
+            identityServerBuilder.AddSigningCredential(signingCert, algorithm);
+        }
+
+        // Override the advertised jwks_uri to the canonical
+        // /.well-known/jwks endpoint that UseIdentityServer() actually
+        // mounts. IdentityServer8's default convention here is
+        // /.well-known/openid-configuration/jwks, which is not what most
+        // OIDC clients (including IdentityModel.OidcClient) expect, and
+        // would otherwise need a parallel route to be wired up.
+        identityServerBuilder.Services.Configure<IdentityServer8.Configuration.IdentityServerOptions>(options =>
+        {
+            options.Discovery.CustomEntries["jwks_uri"] = "/.well-known/jwks";
+        });
         return identityServerBuilder;
     }
 
