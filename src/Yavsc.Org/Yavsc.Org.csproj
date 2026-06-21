@@ -38,6 +38,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="AsciiDocSharp" />
     <PackageReference Include="AsciiDocSharp.Converters.Html" />
+    <PackageReference Include="BouncyCastle.Cryptography" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="YamlDotNet" />

@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageVersion Include="AsciiDocSharp" Version="0.2.0" />
     <PackageVersion Include="AsciiDocSharp.Converters.Html" Version="0.2.0" />
+    <PackageVersion Include="BouncyCastle.Cryptography" Version="2.6.2" />
     <PackageVersion Include="Google.Apis.Compute.v1" Version="1.74.0.4138" />
     <PackageVersion Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="8.0.5-preview-net9" />
     <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework.Storage" Version="8.0.5-preview-net9" />

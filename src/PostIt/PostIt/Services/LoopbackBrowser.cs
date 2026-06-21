@@ -29,7 +29,16 @@ namespace PostIt.Services;
             {
                 Process.Start(new ProcessStartInfo(options.StartUrl) { UseShellExecute = true });
 
-                var context = await listener.GetContextAsync().ConfigureAwait(false);
+                // Bound the wait so the port is released even if the user
+                // closes the browser without completing the flow. Without
+                // this, a crashed/abandoned login keeps the HttpListener
+                // bound and the next PostIt launch fails with
+                // "Failed to listen on prefix … because it conflicts with
+                // an existing registration".
+                using var waitCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                waitCts.CancelAfter(TimeSpan.FromMinutes(5));
+
+                var context = await listener.GetContextAsync().WaitAsync(waitCts.Token).ConfigureAwait(false);
                 var response = context.Response;
                 var responseString = "<html><body>Authentication complete. You can close this window.</body></html>";
                 var buffer = Encoding.UTF8.GetBytes(responseString);
@@ -44,13 +53,28 @@ namespace PostIt.Services;
                     Response = raw
                 };
             }
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+            {
+                // Bound hit: user did not complete the flow within 5 minutes.
+                return new BrowserResult
+                {
+                    ResultType = BrowserResultType.Timeout,
+                    Error = "Timed out waiting for the browser to return the authorization code.",
+                };
+            }
             catch (Exception ex)
             {
                 return new BrowserResult { ResultType = BrowserResultType.UnknownError, Error = ex.Message };
             }
             finally
             {
+                // Stop() aborts GetContextAsync (releases the bound port);
+                // Close() disposes the underlying socket. Both are idempotent
+                // and safe to call after Stop() already succeeded, so calling
+                // both covers cases where one path throws before the other
+                // gets a chance (e.g. process-level socket cleanup on Linux).
                 try { listener.Stop(); } catch { }
+                try { listener.Close(); } catch { }
             }
         }
     }

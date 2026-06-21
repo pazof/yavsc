@@ -43,6 +43,83 @@ public class LoginPageViewModelTests
     }
 
     [Fact]
+    public async Task LoginAsync_refuses_to_call_OidcClient_when_Authority_is_empty()
+    {
+        // Regression: when no user settings file exists and the embedded
+        // default somehow fails to load (e.g. resource stripped at publish
+        // time), the ViewModel must NOT hand a blank Authority to
+        // OidcClient — IdentityModel would build a bogus authorize URL
+        // like "http://127.0.0.1:1/" which the browser rejects with a
+        // confusing error. Surface a clear, actionable message instead.
+        //
+        // SettingsLoadOverride is set to a no-op so the test fixture's
+        // pre-loaded Settings object survives the call to LoginAsync.
+        var settings = new PostIt.Settings
+        {
+            Authentication = new AuthenticationSettings
+            {
+                Authority = "",
+                ClientId = "postit-tests",
+            },
+            RedirectUri = "http://127.0.0.1:7890/",
+            Scopes = new[] { "openid" },
+        };
+
+        var browserInvoked = false;
+        var vm = new LoginPageViewModel(settings, () =>
+        {
+            browserInvoked = true;
+            return null;
+        })
+        {
+            // Skip the disk / embedded read so the Authority stays empty.
+            SettingsLoadOverride = () => System.Threading.Tasks.Task.CompletedTask,
+        };
+
+        await vm.LoginAsync();
+
+        Assert.False(
+            browserInvoked,
+            "Browser factory was invoked even though Authority was empty.");
+        Assert.NotNull(vm.StatusMessage);
+        Assert.Contains("Configuration manquante", vm.StatusMessage);
+        Assert.Contains("postit-settings.json", vm.StatusMessage);
+        Assert.True(string.IsNullOrEmpty(vm.AccessToken));
+    }
+
+    [Fact]
+    public async Task LoginAsync_works_when_authority_has_trailing_slash()
+    {
+        // Regression: with Authority ending in "/" (the production
+        // postit-settings.json shape for https://yavsc.pschneider.fr/),
+        // the discovery URL OidcClient computes must NOT contain a
+        // double slash before /.well-known/openid-configuration. The
+        // stub advertises itself without the trailing slash; OidcClient
+        // must bridge.
+        using var authority = await OidcStubAuthority.StartAsync();
+        var browser = new FakeAuthorizingBrowser(authority.LoopbackRedirectUri);
+
+        var settings = new PostIt.Settings
+        {
+            Authentication = new AuthenticationSettings
+            {
+                Authority = authority.Issuer + "/",
+                ClientId = "postit-tests"
+            },
+            RedirectUri = authority.LoopbackRedirectUri,
+            Scopes = new[] { "openid" }
+        };
+
+        var vm = new LoginPageViewModel(settings, browser.CreateBrowser);
+
+        await vm.LoginAsync();
+
+        Assert.True(
+            !string.IsNullOrEmpty(vm.AccessToken),
+            $"Login with trailing slash failed. StatusMessage={vm.StatusMessage ?? "<null>"}");
+    }
+
+    [Fact]
     public void RegisterUrl_and_ForgotPasswordUrl_are_derived_from_authority()
     {
         var settings = new PostIt.Settings

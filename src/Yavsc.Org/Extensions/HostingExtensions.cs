@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Util.Store;
 using IdentityModel;
@@ -18,6 +19,15 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
+using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Security;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
@@ -350,29 +360,147 @@ public static class HostingExtensions
                     "Production IdentityServer requires a signing certificate. " +
                     "Configure Kestrel:Endpoints:Https:Certificate:{Path,KeyPath}.");
             }
-            // CreateFromPemFile loads the leaf cert + its private key from
-            // PEM files without writing to the Windows certificate store
-            // (irrelevant on Linux, but keeps the call cross-platform).
-            var signingCert = X509Certificate2.CreateFromPemFile(certPath, keyPath);
-            // Pick the JWT signing algorithm from the cert's key type. Let's
-            // Encrypt may issue either RSA or ECDSA certificates depending on
-            // the ACME account's preferred chain; IdentityServer would 500 if
-            // we forced RS256 against an ECDSA key.
-            var algorithm = signingCert.GetECDsaPrivateKey() is not null ? "ES256" : "RS256";
-            identityServerBuilder.AddSigningCredential(signingCert, algorithm);
+            // Load the leaf cert and extract its private key for signing.
+            // The previous attempts (X509Certificate2.CreateFromPemFile,
+            // the 3-arg ctor with X509KeyStorageFlags, and BC + CopyWithPrivateKey)
+            // all loaded the cert successfully, but CreateJwkDocumentAsync
+            // still raised NullReferenceException on the first GET /jwks
+            // request: IdentityServer8's key material service reads the
+            // private key off the X509Certificate2 at runtime, and on Linux
+            // the key handle is not retained across that boundary.
+            //
+            // The reliable pattern is to pass a SigningCredentials that
+            // wraps a SecurityKey built directly from the BC-parsed key
+            // parameters. The SecurityKey is a managed object whose Key
+            // property is a live AsymmetricAlgorithm, which survives every
+            // read IdentityServer does (token signing, JWKS publish).
+            var signingCredentials = LoadSigningCredentials(certPath, keyPath);
+            identityServerBuilder.AddSigningCredential(signingCredentials);
         }
 
-        // Override the advertised jwks_uri to the canonical
-        // /.well-known/jwks endpoint that UseIdentityServer() actually
-        // mounts. IdentityServer8's default convention here is
-        // /.well-known/openid-configuration/jwks, which is not what most
-        // OIDC clients (including IdentityModel.OidcClient) expect, and
-        // would otherwise need a parallel route to be wired up.
-        identityServerBuilder.Services.Configure<IdentityServer8.Configuration.IdentityServerOptions>(options =>
-        {
-            options.Discovery.CustomEntries["jwks_uri"] = "/.well-known/jwks";
-        });
+        // Note: IdentityServer8 does NOT expose the JWKS at /.well-known/jwks.
+        // The default jwks_uri is /.well-known/openid-configuration/jwks,
+        // which is what DiscoveryKeyEndpoint serves. Earlier revisions of
+        // this file tried to override CustomEntries["jwks_uri"], but
+        // IdentityServer8 reserves that key and rejects the override with
+        // "Discovery custom entry jwks_uri cannot be added, because it
+        // already exists." The default endpoint works once the signing
+        // credential's private key is attached (see above).
         return identityServerBuilder;
+    }
+
+    /// <summary>
+    /// Load the signing credentials (algorithm + private key) from the
+    /// configured PEM files. Returns a <see cref="SigningCredentials"/>
+    /// whose <c>Key</c> is a managed <see cref="SecurityKey"/> built
+    /// directly from the BouncyCastle-parsed key parameters — which keeps
+    /// the private key alive for every read IdentityServer8 does (token
+    /// signing, JWKS publish), unlike <c>X509Certificate2.CopyWithPrivateKey</c>
+    /// which loses the handle on Linux when IdentityServer8's key material
+    /// service reads it back at runtime.
+    /// </summary>
+    private static SigningCredentials LoadSigningCredentials(string certPath, string keyPath)
+    {
+        // Pre-flight read so permission / missing-file errors surface with
+        // the actual path instead of being wrapped as an opaque
+        // InvalidOperationException by the cert / key parsers.
+        try
+        {
+            return LoadSigningCredentialsInner(certPath, keyPath);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(
+                $"[yavsc] Failed to load signing credentials from {certPath} / {keyPath}:");
+            Console.Error.WriteLine(ex.ToString());
+            throw new InvalidOperationException(
+                $"Failed to load signing credentials from {certPath} / {keyPath}. " +
+                "See stderr for the underlying managed exception (likely a " +
+                "PEM format mismatch between the cert and private key).",
+                ex);
+        }
+    }
+
+    private static SigningCredentials LoadSigningCredentialsInner(string certPath, string keyPath)
+    {
+        // Validate the cert is readable (used downstream for token
+        // audience/subject validation; signing itself uses the key).
+        _ = new X509Certificate2(certPath);
+        string keyPem = File.ReadAllText(keyPath);
+
+        // BouncyCastle's PemReader accepts every flavour of unencrypted
+        // private key PEM that ACME clients produce (PKCS#1 with
+        // BEGIN EC/RSA PRIVATE KEY, PKCS#8 with BEGIN PRIVATE KEY, both
+        // EC and RSA), and returns the right AsymmetricKeyParameter
+        // subtype without the SIGABRTs we saw when forcing the
+        // System.Security.Cryptography path on the production EC Let's
+        // Encrypt cert.
+        using var sr = new StringReader(keyPem);
+        var pemReader = new PemReader(sr);
+        var keyObj = pemReader.ReadObject()
+            ?? throw new InvalidOperationException(
+                $"PEM reader returned null for {keyPath}");
+
+        AsymmetricKeyParameter bcKey = keyObj switch
+        {
+            AsymmetricCipherKeyPair pair => pair.Private,
+            AsymmetricKeyParameter param => param,
+            _ => throw new InvalidOperationException(
+                $"Unexpected PEM object type '{keyObj.GetType().FullName}' " +
+                $"in {keyPath}; expected a private key."),
+        };
+
+        // Build the SecurityKey + SigningCredentials. RsaSecurityKey /
+        // ECDsaSecurityKey wrap managed AsymmetricAlgorithm objects whose
+        // Key is the live private key — IdentityServer8 can call Sign on
+        // these repeatedly without losing the key handle.
+        switch (bcKey)
+        {
+            case RsaPrivateCrtKeyParameters rsa:
+                {
+                    var rsaDotNet = DotNetUtilities.ToRSA(rsa);
+                    var key = new RsaSecurityKey(rsaDotNet);
+                    return new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
+                }
+            case ECPrivateKeyParameters ec:
+                {
+                    var ecParams = new ECParameters
+                    {
+                        Curve = LoadEcCurve(ec.Parameters),
+                        D = ec.D.ToByteArrayUnsigned(),
+                    };
+                    var ecdsa = ECDsa.Create();
+                    ecdsa.ImportParameters(ecParams);
+                    var key = new ECDsaSecurityKey(ecdsa);
+                    return new SigningCredentials(key, SecurityAlgorithms.EcdsaSha256);
+                }
+            default:
+                throw new InvalidOperationException(
+                    $"Unsupported private key algorithm '{bcKey.GetType().Name}' " +
+                    $"in {keyPath}; expected RSA or EC.");
+        }
+    }
+
+    /// <summary>
+    /// Map a BouncyCastle <see cref="ECDomainParameters"/> to a
+    /// <see cref="ECCurve"/> that <see cref="ECDsa.ImportParameters"/>
+    /// understands. Handles the curves Let's Encrypt issues (P-256,
+    /// P-384, P-521); other curves throw.
+    /// </summary>
+    private static ECCurve LoadEcCurve(ECDomainParameters bcCurve)
+    {
+        // bcCurve.N is the order of the generator; its bit length is the
+        // canonical fingerprint for NIST curves (256, 384, 521 bits).
+        var orderBits = bcCurve.N.BitLength;
+        return orderBits switch
+        {
+            256 => ECCurve.NamedCurves.nistP256,
+            384 => ECCurve.NamedCurves.nistP384,
+            521 => ECCurve.NamedCurves.nistP521,
+            _ => throw new InvalidOperationException(
+                $"Unsupported EC curve with order bit length {orderBits}; " +
+                "expected P-256, P-384 or P-521."),
+        };
     }
 
     private static bool UsesInMemoryProvider(string connectionString)

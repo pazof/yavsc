@@ -59,20 +59,11 @@ public partial class Settings : ObservableObject
     /// (no client secret). The browser implementation should be supplied
     /// per-platform by the caller.
     /// </summary>
-    /// <remarks>
-    /// <see cref="AuthenticationSettings.Authority"/> is normalised by
-    /// trimming any trailing slash before being handed to <c>OidcClient</c>.
-    /// <c>OidcClient</c> derives the discovery URL from
-    /// <c>Authority + "/.well-known/openid-configuration"</c>; leaving a
-    /// trailing slash in place would produce a double-slash URL that some
-    /// servers reject with 404.
-    /// </remarks>
     internal OidcClientOptions GetOidcClientOptions(IdentityModel.OidcClient.Browser.IBrowser? browser = null)
     {
-        var authority = Authentication.Authority?.TrimEnd('/') ?? string.Empty;
         var options = new OidcClientOptions
         {
-            Authority = authority,
+            Authority = Authentication.Authority,
             ClientId = Authentication.ClientId,
             RedirectUri = RedirectUri,
             Scope = string.Join(' ', this.Scopes),

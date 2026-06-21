@@ -94,6 +94,14 @@ public partial class LoginPageViewModel : ViewModelBase
     /// </summary>
     public Func<IBrowser?>? BrowserFactoryOverride { get; set; }
 
+    /// <summary>
+    /// Optional override used by tests. When set, this delegate replaces
+    /// the call to <see cref="Settings.Load"/> at the start of
+    /// <see cref="LoginAsync"/>, so tests can inject a Settings object
+    /// without it being overwritten by the user/embedded default.
+    /// </summary>
+    public Func<Task>? SettingsLoadOverride { get; set; }
+
     public LoginPageViewModel() : this(new Settings(), browserFactoryOverride: null)
     {
         // Load settings eagerly so RegisterUrl / ForgotPasswordUrl are
@@ -121,7 +129,22 @@ public partial class LoginPageViewModel : ViewModelBase
         try
         {
             this.IsBusy = true;
-            Settings.Load().Wait();
+            (SettingsLoadOverride ?? Settings.Load)().Wait();
+
+            // Guard: if the authority is empty (no user settings file and
+            // the embedded default couldn't be loaded for any reason),
+            // refuse to call OidcClient. IdentityModel would otherwise
+            // build a bogus authorize URL like "http://127.0.0.1:1/"
+            // from an empty Authority, which the browser then refuses to
+            // open with a confusing "Cette adresse est interdite"
+            // (or equivalent) message. Tell the operator exactly what
+            // to fix instead.
+            if (string.IsNullOrWhiteSpace(Settings.Authentication?.Authority))
+            {
+                this.IsBusy = false;
+                StatusMessage = $"Configuration manquante — édite {SettingsFileHint()} et renseigne Authentication.Authority";
+                return;
+            }
 
             // The platform project picks the right redirect URI and browser
             // implementation; we don't reference any UI toolkit from here.
@@ -173,5 +196,16 @@ public partial class LoginPageViewModel : ViewModelBase
             var suffix = !string.IsNullOrEmpty(DiscoveryUrl) ? $" (discovery: {DiscoveryUrl})" : string.Empty;
             StatusMessage = $"Error: {ex.Message}{suffix}";
         }
+    }
+
+    /// <summary>
+    /// XDG-compliant path to the user settings file. Surfaced in the
+    /// "Configuration manquante" message so the operator knows exactly
+    /// which file to edit without having to dig through docs.
+    /// </summary>
+    private static string SettingsFileHint()
+    {
+        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        return System.IO.Path.Combine(appData, "PostIt", "postit-settings.json");
     }
 }
