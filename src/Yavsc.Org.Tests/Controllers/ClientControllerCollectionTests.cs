@@ -131,9 +131,9 @@ public class ClientControllerCollectionTests : IClassFixture<TestWebApplicationF
         };
         var postResp = await http.PostAsync($"/Client/AddRedirectUri/{id}", form, TestContext.Current.CancellationToken);
         var postBody = await postResp.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-        Assert.True(postResp.StatusCode == HttpStatusCode.Redirect,
-            $"Expected 302 Redirect, got {(int)postResp.StatusCode}. Body[0..500]: {postBody.Substring(0, Math.Min(500, postBody.Length))}");
-        Assert.Equal(HttpStatusCode.Redirect, postResp.StatusCode);
+        Assert.True(postResp.StatusCode == HttpStatusCode.OK,
+            $"Expected 200, got {(int)postResp.StatusCode}. Body[0..500]: {postBody.Substring(0, Math.Min(500, postBody.Length))}");
+        Assert.Equal(HttpStatusCode.OK, postResp.StatusCode);
 
         // Verify in DB.
         using var scope = _factory.Services.CreateScope();

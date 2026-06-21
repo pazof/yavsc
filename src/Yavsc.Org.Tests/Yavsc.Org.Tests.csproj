@@ -82,8 +82,6 @@
       <_YavscOrgStaticAssetsFiles Include="$(_YavscOrgStaticAssetsDir)\Yavsc.Org.staticwebassets.*.json" />
     </ItemGroup>
     <Copy SourceFiles="@(_YavscOrgStaticAssetsFiles)"
-          DestinationFiles="@(_YavscOrgStaticAssetsFiles->'$(OutDir)Yavsc.Org.Tests.' + System.IO.Path.GetFileNameWithoutExtension('%(Filename)').Replace('Yavsc.Org.', '') + System.IO.Path.GetExtension('%(Filename)'))"
-          SkipUnchangedFiles="true"
-          Condition="'@(_YavscOrgStaticAssetsFiles)' != ''" />
+        DestinationFolder="$(OutDir)" />
   </Target>
 </Project>
