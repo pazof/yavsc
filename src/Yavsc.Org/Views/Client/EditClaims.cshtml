@@ -1,0 +1,64 @@
+@model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientClaim>
+@{
+    ViewData["Title"] = "Edit Client Claims";
+    var clientId = Model.FirstOrDefault()?.ClientId ?? 0;
+}
+
+<h2>Client Claims</h2>
+
+<p class="text-muted">
+    Claims issued by IdentityServer on this client's behalf. Use sparingly:
+    these claims are emitted on every token, regardless of the user's
+    identity. For user-derived claims, prefer the API resource scope.
+</p>
+
+@if (TempData["Error"] is string err)
+{
+    <div class="alert alert-danger">@err</div>
+}
+
+<table class="table">
+    <thead>
+        <tr><th>Type</th><th>Value</th><th></th></tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="3" class="text-muted">—</td></tr>
+        }
+        else
+        {
+            foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.Type</td>
+                    <td>@c.Value</td>
+                    <td>
+                        <form asp-action="RemoveClaim" method="post" class="form-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@clientId" />
+                            <input type="hidden" name="rowId" value="@c.Id" />
+                            <button type="submit" class="btn btn-link btn-sm text-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<form asp-action="AddClaim" method="post" class="form-inline">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@clientId" />
+    <div class="form-group mr-2">
+        <input type="text" name="type" class="form-control" placeholder="role" />
+    </div>
+    <div class="form-group mr-2">
+        <input type="text" name="value" class="form-control" placeholder="admin" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@clientId">Back to client</a>
+</p>

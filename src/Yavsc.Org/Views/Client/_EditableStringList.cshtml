@@ -1,0 +1,77 @@
+@model IEnumerable<object>
+@using System.Reflection
+@*
+  Shared partial for client collection pages whose row type carries a
+  single string field plus an `Id` (used for Remove).
+
+  Inputs (via ViewData):
+  - addAction: name of the Add action (e.g. "AddRedirectUri")
+  - removeAction: name of the Remove action
+  - rowKey: display label for the column header
+  - valueField: name of the string property to display (e.g. "RedirectUri")
+  - inputName: name attribute on the Add form's text input
+  - clientId: passed through as a hidden field on both forms
+  - placeholder: optional placeholder text
+
+  Each row is rendered with an "X" button that POSTs to removeAction with
+  the row's `Id`. Add is a separate form with a single text input.
+*@
+
+@{
+    var addAction = ViewData["addAction"] as string ?? "Add";
+    var removeAction = ViewData["removeAction"] as string ?? "Remove";
+    var rowKey = ViewData["rowKey"] as string ?? "Value";
+    var valueField = ViewData["valueField"] as string ?? "Value";
+    var inputName = ViewData["inputName"] as string ?? "value";
+    var clientId = ViewData["clientId"];
+    var placeholder = ViewData["placeholder"] as string ?? string.Empty;
+    var idProp = typeof(object).GetProperty("Id");
+}
+
+@if (TempData["Error"] is string err)
+{
+    <div class="alert alert-danger">@err</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@rowKey</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="2" class="text-muted">—</td></tr>
+        }
+        else
+        {
+            foreach (var row in Model)
+            {
+                var value = row.GetType().GetProperty(valueField)?.GetValue(row) as string ?? string.Empty;
+                var rowId = row.GetType().GetProperty("Id")?.GetValue(row);
+                <tr>
+                    <td>@value</td>
+                    <td>
+                        <form asp-action="@removeAction" method="post" class="form-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@clientId" />
+                            <input type="hidden" name="rowId" value="@rowId" />
+                            <button type="submit" class="btn btn-link btn-sm text-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<form asp-action="@addAction" method="post" class="form-inline">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@clientId" />
+    <div class="form-group mr-2">
+        <input type="text" name="@inputName" class="form-control" placeholder="@placeholder" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>

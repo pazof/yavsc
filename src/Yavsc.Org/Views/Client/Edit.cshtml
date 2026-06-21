@@ -4,10 +4,12 @@
 
 <form asp-action="Edit">
     <div class="form-horizontal">
-        <h4>Client</h4>
+        <h4>Client <code>@Model.ClientId</code></h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="ClientId" />
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <div class="checkbox">
@@ -20,60 +22,285 @@
             <label asp-for="ClientName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="ClientName" class="form-control" />
-                <span asp-validation-for="ClientName" class="text-danger" ></span>
+                <span asp-validation-for="ClientName" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="FrontChannelLogoutUri" class="col-md-2 control-label"></label>
+            <label asp-for="Description" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="FrontChannelLogoutUri" class="form-control" />
-                <span asp-validation-for="FrontChannelLogoutUri" class="text-danger" ></span>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="RedirectUris" class="col-md-2 control-label"></label>
+            <label asp-for="ClientUri" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="RedirectUris" class="form-control" />
-                <span asp-validation-for="RedirectUris" class="text-danger" ></span>
+                <input asp-for="ClientUri" class="form-control" />
+                <span asp-validation-for="ClientUri" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="IdentityTokenLifetime" class="col-md-2 control-label"></label>
+            <label asp-for="LogoUri" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="IdentityTokenLifetime" class="form-control" />
-                <span asp-validation-for="IdentityTokenLifetime" class="text-danger" ></span>
+                <input asp-for="LogoUri" class="form-control" />
+                <span asp-validation-for="LogoUri" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="AbsoluteRefreshTokenLifetime" class="col-md-2 control-label"></label>
+            <label asp-for="ProtocolType" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="AbsoluteRefreshTokenLifetime" class="form-control" />
-                <span asp-validation-for="AbsoluteRefreshTokenLifetime" class="text-danger" ></span>
+                <input asp-for="ProtocolType" class="form-control" />
+                <span asp-validation-for="ProtocolType" class="text-danger"></span>
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="ClientSecrets" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="ClientSecrets" class="form-control" />
-                <span asp-validation-for="ClientSecrets" class="text-danger" ></span>
+
+        <fieldset>
+            <legend>Security</legend>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="RequireConsent" />
+                    <label asp-for="RequireConsent"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="RequirePkce" />
+                    <label asp-for="RequirePkce"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="RequireRequestObject" />
+                    <label asp-for="RequireRequestObject"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="RequireClientSecret" />
+                    <label asp-for="RequireClientSecret"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="AllowPlainTextPkce" />
+                    <label asp-for="AllowPlainTextPkce"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="AllowOfflineAccess" />
+                    <label asp-for="AllowOfflineAccess"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="AllowRememberConsent" />
+                    <label asp-for="AllowRememberConsent"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="EnableLocalLogin" />
+                    <label asp-for="EnableLocalLogin"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="AlwaysIncludeUserClaimsInIdToken" />
+                    <label asp-for="AlwaysIncludeUserClaimsInIdToken"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="AlwaysSendClientClaims" />
+                    <label asp-for="AlwaysSendClientClaims"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="IncludeJwtId" />
+                    <label asp-for="IncludeJwtId"></label>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="UpdateAccessTokenClaimsOnRefresh" />
+                    <label asp-for="UpdateAccessTokenClaimsOnRefresh"></label>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="AccessTokenType" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                @Html.DropDownList("AccessTokenType")
-                <span asp-validation-for="AccessTokenType" class="text-danger" ></span>
+        </fieldset>
+
+        <fieldset>
+            <legend>Logout</legend>
+            <div class="form-group">
+                <label asp-for="FrontChannelLogoutUri" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="FrontChannelLogoutUri" class="form-control" />
+                    <span asp-validation-for="FrontChannelLogoutUri" class="text-danger"></span>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="FrontChannelLogoutSessionRequired" />
+                    <label asp-for="FrontChannelLogoutSessionRequired"></label>
+                </div>
             </div>
-        </div>
+            <div class="form-group">
+                <label asp-for="BackChannelLogoutUri" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="BackChannelLogoutUri" class="form-control" />
+                    <span asp-validation-for="BackChannelLogoutUri" class="text-danger"></span>
+                </div>
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="BackChannelLogoutSessionRequired" />
+                    <label asp-for="BackChannelLogoutSessionRequired"></label>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Tokens</legend>
+            <div class="form-group">
+                <label asp-for="AccessTokenType" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    @Html.DropDownList("AccessTokenType")
+                    <span asp-validation-for="AccessTokenType" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdentityTokenLifetime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="IdentityTokenLifetime" class="form-control" />
+                    <span asp-validation-for="IdentityTokenLifetime" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="AccessTokenLifetime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="AccessTokenLifetime" class="form-control" />
+                    <span asp-validation-for="AccessTokenLifetime" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="AuthorizationCodeLifetime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="AuthorizationCodeLifetime" class="form-control" />
+                    <span asp-validation-for="AuthorizationCodeLifetime" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="AbsoluteRefreshTokenLifetime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="AbsoluteRefreshTokenLifetime" class="form-control" />
+                    <span asp-validation-for="AbsoluteRefreshTokenLifetime" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="SlidingRefreshTokenLifetime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="SlidingRefreshTokenLifetime" class="form-control" />
+                    <span asp-validation-for="SlidingRefreshTokenLifetime" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="RefreshTokenUsage" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="RefreshTokenUsage" class="form-control" />
+                    <span asp-validation-for="RefreshTokenUsage" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="RefreshTokenExpiration" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="RefreshTokenExpiration" class="form-control" />
+                    <span asp-validation-for="RefreshTokenExpiration" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConsentLifetime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="ConsentLifetime" class="form-control" />
+                    <span asp-validation-for="ConsentLifetime" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserSsoLifetime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="UserSsoLifetime" class="form-control" />
+                    <span asp-validation-for="UserSsoLifetime" class="text-danger"></span>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Device / CIBA</legend>
+            <div class="form-group">
+                <label asp-for="DeviceCodeLifetime" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="DeviceCodeLifetime" class="form-control" />
+                    <span asp-validation-for="DeviceCodeLifetime" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserCodeType" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="UserCodeType" class="form-control" />
+                    <span asp-validation-for="UserCodeType" class="text-danger"></span>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Tokens (extra)</legend>
+            <div class="form-group">
+                <label asp-for="AllowedIdentityTokenSigningAlgorithms" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="AllowedIdentityTokenSigningAlgorithms" class="form-control" />
+                    <span asp-validation-for="AllowedIdentityTokenSigningAlgorithms" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10 checkbox">
+                    <input asp-for="AllowAccessTokensViaBrowser" />
+                    <label asp-for="AllowAccessTokensViaBrowser"></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientClaimsPrefix" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="ClientClaimsPrefix" class="form-control" />
+                    <span asp-validation-for="ClientClaimsPrefix" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="PairWiseSubjectSalt" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="PairWiseSubjectSalt" class="form-control" />
+                    <span asp-validation-for="PairWiseSubjectSalt" class="text-danger"></span>
+                </div>
+            </div>
+        </fieldset>
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </div>
     </div>
 </form>
 
+<hr />
+
+<h3>Collections</h3>
+<p class="text-muted">
+    The following pages edit collections of related rows for this client.
+</p>
+<div class="list-group">
+    <a asp-action="EditRedirectUris" asp-route-id="@Model.Id" class="list-group-item">
+        Redirect URIs <span class="badge">@Model.RedirectUris.Count</span>
+    </a>
+    <a asp-action="EditPostLogoutRedirectUris" asp-route-id="@Model.Id" class="list-group-item">
+        Post-logout Redirect URIs <span class="badge">@Model.PostLogoutRedirectUris.Count</span>
+    </a>
+    <a asp-action="EditScopes" asp-route-id="@Model.Id" class="list-group-item">
+        Allowed Scopes <span class="badge">@Model.AllowedScopes.Count</span>
+    </a>
+    <a asp-action="EditGrantTypes" asp-route-id="@Model.Id" class="list-group-item">
+        Allowed Grant Types <span class="badge">@Model.AllowedGrantTypes.Count</span>
+    </a>
+    <a asp-action="EditCorsOrigins" asp-route-id="@Model.Id" class="list-group-item">
+        Allowed CORS Origins <span class="badge">@Model.AllowedCorsOrigins.Count</span>
+    </a>
+    <a asp-action="EditIdPRestrictions" asp-route-id="@Model.Id" class="list-group-item">
+        Identity Provider Restrictions <span class="badge">@Model.IdentityProviderRestrictions.Count</span>
+    </a>
+    <a asp-action="EditClaims" asp-route-id="@Model.Id" class="list-group-item">
+        Client Claims <span class="badge">@Model.Claims.Count</span>
+    </a>
+    <a asp-action="EditProperties" asp-route-id="@Model.Id" class="list-group-item">
+        Client Properties <span class="badge">@Model.Properties.Count</span>
+    </a>
+    <a asp-action="EditSecrets" asp-route-id="@Model.Id" class="list-group-item">
+        Client Secrets <span class="badge">@(Model.ClientSecrets?.Count ?? 0)</span>
+    </a>
+</div>
+
 <div>
     <a asp-action="Index">@Localizer["Back to List"]</a>
 </div>
-

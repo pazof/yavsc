@@ -1,0 +1,65 @@
+@model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientProperty>
+@{
+    ViewData["Title"] = "Edit Client Properties";
+    var clientId = Model.FirstOrDefault()?.ClientId ?? 0;
+}
+
+<h2>Client Properties</h2>
+
+<p class="text-muted">
+    Free-form key/value bag attached to the client. IdentityServer does
+    not interpret these; they're surfaced via the introspection endpoint
+    and read by your custom code. Useful for tagging, ownership, feature
+    flags, etc.
+</p>
+
+@if (TempData["Error"] is string err)
+{
+    <div class="alert alert-danger">@err</div>
+}
+
+<table class="table">
+    <thead>
+        <tr><th>Key</th><th>Value</th><th></th></tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="3" class="text-muted">—</td></tr>
+        }
+        else
+        {
+            foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Key</td>
+                    <td>@p.Value</td>
+                    <td>
+                        <form asp-action="RemoveProperty" method="post" class="form-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@clientId" />
+                            <input type="hidden" name="rowId" value="@p.Id" />
+                            <button type="submit" class="btn btn-link btn-sm text-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<form asp-action="AddProperty" method="post" class="form-inline">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@clientId" />
+    <div class="form-group mr-2">
+        <input type="text" name="key" class="form-control" placeholder="owner-team" />
+    </div>
+    <div class="form-group mr-2">
+        <input type="text" name="value" class="form-control" placeholder="platform" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@clientId">Back to client</a>
+</p>

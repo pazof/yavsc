@@ -1,0 +1,27 @@
+@model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientGrantType>
+@{
+    ViewData["Title"] = "Edit Allowed Grant Types";
+    ViewData["addAction"] = "AddGrantType";
+    ViewData["removeAction"] = "RemoveGrantType";
+    ViewData["rowKey"] = "Grant Type";
+    ViewData["valueField"] = "GrantType";
+    ViewData["inputName"] = "grantType";
+    ViewData["placeholder"] = "authorization_code";
+    ViewData["clientId"] = Model.FirstOrDefault()?.ClientId ?? 0;
+}
+
+<h2>Allowed Grant Types</h2>
+
+<p class="text-muted">
+    OAuth2 grant types this client is allowed to use. Common values:
+    <code>authorization_code</code> (web/native apps with PKCE),
+    <code>client_credentials</code> (server-to-server),
+    <code>refresh_token</code> (used implicitly alongside the others),
+    <code>password</code> (legacy, avoid).
+</p>
+
+@await Html.PartialAsync("_EditableStringList", Model)
+
+<p>
+    <a asp-action="Edit" asp-route-id="@ViewData["clientId"]">Back to client</a>
+</p>

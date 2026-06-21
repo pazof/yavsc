@@ -1,0 +1,25 @@
+@model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientPostLogoutRedirectUri>
+@{
+    ViewData["Title"] = "Edit Post-logout Redirect URIs";
+    ViewData["addAction"] = "AddPostLogoutRedirectUri";
+    ViewData["removeAction"] = "RemovePostLogoutRedirectUri";
+    ViewData["rowKey"] = "Post-logout URI";
+    ViewData["valueField"] = "PostLogoutRedirectUri";
+    ViewData["inputName"] = "postLogoutRedirectUri";
+    ViewData["placeholder"] = "https://app.example.com/";
+    ViewData["clientId"] = Model.FirstOrDefault()?.ClientId ?? 0;
+}
+
+<h2>Post-logout Redirect URIs</h2>
+
+<p class="text-muted">
+    URIs the authorization server will redirect the browser to after a
+    front-channel logout. Use these when the client participates in the
+    OIDC front-channel logout flow.
+</p>
+
+@await Html.PartialAsync("_EditableStringList", Model)
+
+<p>
+    <a asp-action="Edit" asp-route-id="@ViewData["clientId"]">Back to client</a>
+</p>

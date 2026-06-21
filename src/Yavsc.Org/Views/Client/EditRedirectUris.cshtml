@@ -1,0 +1,25 @@
+@model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientRedirectUri>
+@{
+    ViewData["Title"] = "Edit Redirect URIs";
+    ViewData["addAction"] = "AddRedirectUri";
+    ViewData["removeAction"] = "RemoveRedirectUri";
+    ViewData["rowKey"] = "Redirect URI";
+    ViewData["valueField"] = "RedirectUri";
+    ViewData["inputName"] = "redirectUri";
+    ViewData["placeholder"] = "https://app.example.com/callback";
+    ViewData["clientId"] = Model.FirstOrDefault()?.ClientId ?? 0;
+}
+
+<h2>Redirect URIs</h2>
+
+<p class="text-muted">
+    URIs the authorization server will redirect the browser to after a
+    successful login. Must match exactly the URL your client uses to
+    catch the response.
+</p>
+
+@await Html.PartialAsync("_EditableStringList", Model)
+
+<p>
+    <a asp-action="Edit" asp-route-id="@ViewData["clientId"]">Back to client</a>
+</p>

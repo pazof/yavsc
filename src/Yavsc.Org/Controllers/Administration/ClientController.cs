@@ -13,7 +13,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Authorize("AdministratorOnly")]
-    public class ClientController : Controller
+    public partial class ClientController : Controller
     {
         private readonly ApplicationDbContext dbContext;
         private readonly ClientStore clientStore;
@@ -137,8 +137,8 @@ namespace Yavsc.Controllers
         // GET: Client/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            Client client = await dbContext.Clients.SingleOrDefaultAsync(m => m.Id == id);
-            if (client == null)
+            Client? client = await LoadClientAsync(id);
+            if (client is null)
             {
                 return NotFound();
             }
