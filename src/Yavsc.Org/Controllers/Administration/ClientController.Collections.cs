@@ -27,12 +27,8 @@ public partial class ClientController
 
     readonly IHtmlLocalizer _localizer;
 
-    public ClientController(
-        IHtmlLocalizer<ClientController> localizer
-        )
-         {
-            _localizer = localizer;
-        }
+    // ClientController has a single constructor declared in
+    // ClientController.cs; this partial shares its fields.
 
 
     [HttpGet]

@@ -207,3 +207,72 @@ Once the 4 compile errors are fixed and the pages render:
    today; consider adding a `Yavsc.Org.Tests` project that drives
    the controller via `WebApplicationFactory<Program>`.
 
+
+## Test bootstrap notes (session of 2026-06-21 17:00+)
+
+When adding new integration tests against `WebServerFixture`:
+
+1. **Skip `/Account/Login` roundtrip.** The fixture ships without
+   `MapRazorPages()` (commented out in `HostingExtensions.ConfigurePipeline`),
+   so `/Identity/Account/Login` is 404, and the custom
+   `/Account/Login` route requires a complex antiforgery dance.
+   Instead, build a `ClaimsPrincipal` for the test user via
+   `UserManager` + `IUserClaimsPrincipalFactory<ApplicationUser>`,
+   then call `IAuthenticationService.SignInAsync` on a synthetic
+   `DefaultHttpContext` and replay the resulting `Set-Cookie` header
+   into the test `HttpClient`. See
+   `ClientControllerCollectionTests.IssueIdentityCookie`.
+
+2. **Create the `Administrator` role before assigning it.** ASP.NET
+   Identity stores roles in `AspNetRoles`; there is no automatic seed.
+   The constant name is `YavscConstants.AdminGroupName` = `"Administrator"`.
+   Use `RoleManager<IdentityRole>.CreateAsync(new IdentityRole("Administrator"))`
+   before `AddToRoleAsync`.
+
+3. **Use `InMemory` connection string to bypass the prod signing-cert
+   requirement.** `HostingExtensions.AddIdentityServer` requires a
+   PEM cert unless `builder.Environment.IsDevelopment()` OR
+   `UsesInMemoryProvider(connectionString)`. The fixture already
+   uses `InMemory`, so `AddDeveloperSigningCredential()` is called
+   automatically — but only after we wired this check in (see
+   commit history).
+
+4. **Field-name gotchas** (from disassembling HigginsSoft
+   IdentityServer8.EntityFramework.Entities.Client 8.0.5-preview-net9):
+   - `PairWiseSubjectSalt` (capital W on "Wise"), not `PairwiseSubjectSalt`.
+   - `CibaLifetime` and `PollingInterval` do NOT exist on `Client` in
+     this version.
+   - `ConsentLifetime` and `UserSsoLifetime` are `int?`.
+
+5. **`MapStaticAssets()` fails on test projects.** Calling
+   `MapStaticAssets()` resolves a manifest file
+   (`<project>.staticwebassets.endpoints.json`) that test projects
+   don't produce. Skip when `WebRootPath` points at the test
+   assembly directory.
+
+6. **Routing 404 on /Client/Edit/{id} via WebServerFixture.** As of
+   this session, the GET endpoint returns 404 even with admin
+   header. The route mapping is intact
+   (`MapDefaultControllerRoute()`), so this is likely an MVC
+   convention routing issue with the
+   `Controllers/Administration/` subdirectory. To investigate
+   next session: log middleware pipeline or hit `/Client` index
+   first to see if any Client route resolves.
+
+7. **`MapStaticAssets()` is unconditional in prod, but blocks tests.**
+   `WebApplication.CreateBuilder` defaults `ContentRootPath` to
+   `AppContext.BaseDirectory`. In test runs that resolves to
+   `src/Yavsc.Org.Tests/bin/Debug/net10.0/`, where
+   `Yavsc.Org.Tests.staticwebassets.endpoints.json` doesn't exist
+   (it's generated only by projects with the Web SDK). The
+   `app.MapStaticAssets()` call inside `ConfigurePipeline` then
+   throws and the fixture fails to start — taking every test in
+   the `[Collection("Yavsc Server")]` down with it.
+
+   This is a pre-existing fragility of the WebServerFixture that
+   the new test work surfaced. Fixing it cleanly requires either:
+   (a) moving the test project to the Web SDK so it produces its
+   own manifest, (b) copying the manifest at build time via an
+   MSBuild target, or (c) routing `MapStaticAssets` through an
+   assembly-resolution fallback. None attempted in this session —
+   recorded for next session.

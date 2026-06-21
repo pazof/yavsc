@@ -1,6 +1,7 @@
 
 using IdentityServer8.EntityFramework.Entities;
 using IdentityServer8.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -70,7 +71,7 @@ namespace Yavsc.Org.Tests
                 _instanceCount++;
                 if (!_isInitialized)
                 {
-                    
+
                     SetupHost().Wait();
                     _isInitialized = true;
                 }
@@ -116,11 +117,18 @@ namespace Yavsc.Org.Tests
             TestingUserPassword = _sharedTestingUserPassword;
             TestingUserEmail = _sharedTestingUserEmail;
         }
-       
+
         public async Task SetupHost()
         {
             var builder = WebApplication.CreateBuilder();
-           
+
+            // WebApplication.CreateBuilder defaults WebRootPath to
+            // {ContentRoot}/wwwroot. The test assembly runs from
+            // src/Yavsc.Org.Tests/bin/.../, which has no wwwroot of
+            // its own — so point the host at the Yavsc.Org project's
+            // wwwroot so that ConfigurePipeline's
+
+
             builder.AddConfiguration(null).AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory"
@@ -137,7 +145,30 @@ namespace Yavsc.Org.Tests
 
             Configuration = builder.Configuration;
 
+            // Swap the production authorization policy provider for
+            // TestAuthPolicyProvider BEFORE ConfigureWebAppServices
+            // runs. ConfigureWebAppServices calls builder.Build() at
+            // the end, which freezes the service collection. Tests
+            // can satisfy [Authorize("AdministratorOnly")] (and any
+            // other policy that requires a role) by sending an
+            // X-Test-Role header; the production policy is replaced
+            // by the test one via the last-write-wins semantics of
+            // IServiceCollection.AddSingleton.
+            builder.Services.AddSingleton<IAuthorizationPolicyProvider, TestAuthPolicyProvider>();
+
             _app = builder.ConfigureWebAppServices();
+
+            // The MSBuild target CopyYavscOrgStaticAssets in
+            // Yavsc.Org.Tests.csproj mirrors the Yavsc.Org static
+            // assets manifest into the test bin directory. Call
+            // MapStaticAssets() with the explicit path so the test
+            // host resolves the manifest by file location rather
+            // than by {AssemblyName}.staticwebassets.* convention
+            // (which would look for Yavsc.Org.Tests.staticwebassets.*,
+            // a file we don't produce).
+            var testRuntimeManifest = Path.Combine(AppContext.BaseDirectory,
+                "Yavsc.Org.staticwebassets.runtime.json");
+
             Services = _app.Services;
             SiteSettings = _app.Services.GetRequiredService<IOptions<SiteSettings>>().Value;
 
@@ -160,8 +191,8 @@ namespace Yavsc.Org.Tests
                         var testScope = db.ApiScopes.FirstOrDefault(s => s.Name == "test");
                         if (testScope == null)
                         {
-                            db.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope 
-                            { 
+                            db.ApiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope
+                            {
                                 Name = "test",
                                 Enabled = true,
                                 DisplayName = "Test API Scope",
@@ -172,7 +203,7 @@ namespace Yavsc.Org.Tests
                                     new IdentityServer8.EntityFramework.Entities.ApiScopeClaim { Type = "email" }
                                 }
                             });
-                            
+
                             // Add a basic API resource for the test scope
                             var apiResource = new IdentityServer8.EntityFramework.Entities.ApiResource
                             {
@@ -193,8 +224,8 @@ namespace Yavsc.Org.Tests
             }
 
 
-       
-            _app = await _app.ConfigurePipeline();
+
+            _app = await _app.ConfigurePipeline(testRuntimeManifest);
 
             await _app.StartAsync();
 

@@ -27,3 +27,6 @@ appsettings-*.*.json
 generated/
 *.tmp
 DataDir/
+
+*.tests.trx
+*.tests.html

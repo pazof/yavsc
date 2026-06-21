@@ -3,6 +3,7 @@ using IdentityServer8.EntityFramework.Entities;
 using IdentityServer8.EntityFramework.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,7 +22,8 @@ namespace Yavsc.Controllers
 
     public ClientController(
             ApplicationDbContext dbContext,
-    ClientStore clientStore, IOptions<SiteSettings> siteSettingsOptions
+    ClientStore clientStore, IOptions<SiteSettings> siteSettingsOptions,
+    IHtmlLocalizer<ClientController> localizer
 
 
             )
@@ -29,6 +31,7 @@ namespace Yavsc.Controllers
             this.dbContext = dbContext;
             this.clientStore = clientStore;
             this.siteSettings = siteSettingsOptions.Value;
+            _localizer = localizer;
         }
 
         // GET: Client

@@ -101,7 +101,7 @@ public static class HostingExtensions
 
             services.AddTransient<ITrueEmailSender, MailSender>()
                 .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>();
-        
+
 
         services.AddTransient<IYavscMessageSender, YavscMessageSender>()
         .AddTransient<IBillingService, BillingService>()
@@ -143,7 +143,7 @@ public static class HostingExtensions
     {
         IServiceCollection services = builder.Services;
         var connectionString = builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName);
-       
+
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             if (UsesInMemoryProvider(connectionString))
@@ -284,7 +284,7 @@ public static class HostingExtensions
         });
         var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
         var connectionString = builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName);
-        
+
         string sqliteConnectionString = $"Data Source={Path.Combine(Path.GetTempPath(), "yavsc_test.db")}";
 
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
@@ -334,10 +334,18 @@ public static class HostingExtensions
                             sql => sql.MigrationsAssembly(migrationsAssembly));
                     }
                 };
-                
+
             });
 
-        if (builder.Environment.IsDevelopment())
+       // Skip the production signing-cert requirement when running with
+        // an in-memory database (test fixtures) or in the Development
+        // environment. In those cases IdentityServer8 falls back to
+        // AddDeveloperSigningCredential which mints an ephemeral key
+        // at startup; signing real tokens against it would fail, but
+        // the test fixtures only use the discovery/JWKS endpoints.
+        var useDevSigning = builder.Environment.IsDevelopment()
+            || UsesInMemoryProvider(connectionString);
+        if (useDevSigning)
         {
             identityServerBuilder.AddDeveloperSigningCredential();
         }
@@ -774,7 +782,7 @@ public static class HostingExtensions
     }
 
 
-    public async static Task<WebApplication> ConfigurePipeline(this WebApplication app)
+    public async static Task<WebApplication> ConfigurePipeline(this WebApplication app, string staticAssetsManifestPath=null)
     {
         ILoggerFactory loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory.CreateLogger<Program>();
@@ -815,8 +823,8 @@ public static class HostingExtensions
         app.UseIdentityServer();
         app.UseAuthorization();
         app.UseCors("default");
-        app.MapStaticAssets();
         app.MapDefaultControllerRoute();
+        app.MapStaticAssets(staticAssetsManifestPath);
         //app.MapRazorPages();
         app.MapHub<ChatHub>("/chatHub");
 

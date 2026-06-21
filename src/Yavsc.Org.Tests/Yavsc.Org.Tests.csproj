@@ -8,6 +8,7 @@
     <UserSecretsId>78a4efec-68dc-4745-ba06-d8545ef9ee91</UserSecretsId>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <OutputType>exe</OutputType>
+    <RunSettingsFilePath>$(MSBuildProjectDirectory)\test.runsettings</RunSettingsFilePath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
@@ -18,13 +19,14 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="IdentityModel.OidcClient" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.v3.common" />
     <PackageReference Include="xunit.v3.extensibility.core" />
-    
+
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
@@ -48,4 +50,25 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
   </ItemGroup>
+  <!--
+    MapStaticAssets() in the production pipeline resolves
+    {AssemblyName}.staticwebassets.endpoints.json from ContentRoot.
+    The referenced Yavsc.Org project produces
+    Yavsc.Org.staticwebassets.endpoints.json (and a runtime sibling).
+    Mirror them as Yavsc.Org.Tests.staticwebassets.* in the test bin
+    directory so the test WebApplicationFactory finds them at boot.
+  -->
+  <Target Name="CopyYavscOrgStaticAssets"
+          AfterTargets="Build">
+    <PropertyGroup>
+      <_YavscOrgStaticAssetsDir>$(MSBuildProjectDirectory)\..\Yavsc.Org\bin\$(Configuration)\$(TargetFramework)</_YavscOrgStaticAssetsDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <_YavscOrgStaticAssetsFiles Include="$(_YavscOrgStaticAssetsDir)\Yavsc.Org.staticwebassets.*.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_YavscOrgStaticAssetsFiles)"
+          DestinationFolder="$(OutDir)"
+          SkipUnchangedFiles="true"
+          Condition="'@(_YavscOrgStaticAssetsFiles)' != ''" />
+  </Target>
 </Project>
