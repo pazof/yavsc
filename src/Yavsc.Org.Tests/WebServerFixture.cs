@@ -17,9 +17,11 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Yavsc;
 using Yavsc.Extensions;
+using Yavsc.Interfaces;
 using Yavsc.Models;
 using Yavsc.Server.Helpers;
 using Client = IdentityServer8.EntityFramework.Entities.Client;
+using Yavsc.Org.Tests.Fakes;
 
 
 namespace Yavsc.Org.Tests
@@ -40,6 +42,7 @@ namespace Yavsc.Org.Tests
         private static string? _sharedTestingUserName;
         private static string? _sharedTestingUserPassword;
         private static string? _sharedTestingUserEmail;
+        private static RecordingSmtpClientFactory? _sharedSmtpClientFactory;
         private static IServiceProvider? _sharedServices;
         private static IConfiguration? _sharedConfiguration;
         private static SiteSettings? _sharedSiteSettings;
@@ -64,6 +67,7 @@ namespace Yavsc.Org.Tests
         public SiteSettings? SiteSettings { get => siteSettings; set => siteSettings = value; }
         public string? TestClientSecret { get; set; }
         public string? TestingUserEmail { get; set; }
+        public RecordingSmtpClientFactory? SmtpClientFactory { get; private set; }
         public WebServerFixture()
         {
             lock (_sync)
@@ -100,6 +104,7 @@ namespace Yavsc.Org.Tests
                     _sharedTestingUserName = null;
                     _sharedTestingUserPassword = null;
                     _sharedTestingUserEmail = null;
+                    _sharedSmtpClientFactory = null;
                 }
             }
         }
@@ -116,6 +121,7 @@ namespace Yavsc.Org.Tests
             TestingUserName = _sharedTestingUserName;
             TestingUserPassword = _sharedTestingUserPassword;
             TestingUserEmail = _sharedTestingUserEmail;
+            SmtpClientFactory = _sharedSmtpClientFactory;
         }
 
         public async Task SetupHost()
@@ -156,7 +162,22 @@ namespace Yavsc.Org.Tests
             // IServiceCollection.AddSingleton.
             builder.Services.AddSingleton<IAuthorizationPolicyProvider, TestAuthPolicyProvider>();
 
+            // Replace the production ISmtpClientFactory (added later
+            // by ConfigureWebAppServices via TryAddSingleton) with a
+            // recording fake. By pre-registering here, the prod
+            // TryAdd becomes a no-op and tests get a single shared
+            // fake they can assert against.
+            var smtpFactory = new RecordingSmtpClientFactory();
+            builder.Services.AddSingleton<ISmtpClientFactory>(smtpFactory);
+            _sharedSmtpClientFactory = smtpFactory;
+
             _app = builder.ConfigureWebAppServices();
+
+            // Note: a recording ISmtpClientFactory is registered
+            // BEFORE ConfigureWebAppServices() above (further up in
+            // this method) so the production TryAddSingleton inside
+            // ConfigureWebAppServices becomes a no-op.
+            // _sharedSmtpClientFactory is captured there.
 
             // The MSBuild target CopyYavscOrgStaticAssets in
             // Yavsc.Org.Tests.csproj mirrors the Yavsc.Org static

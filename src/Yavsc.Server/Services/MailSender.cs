@@ -1,11 +1,11 @@
 using System.Net;
-using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using Microsoft.AspNetCore.Identity;
 using Yavsc.Interface;
+using Yavsc.Interfaces;
 using Yavsc.Settings;
 using Yavsc.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -16,21 +16,26 @@ namespace Yavsc.Services
 {
     public class MailSender : IEmailSender<ApplicationUser>, IEmailSender, ITrueEmailSender
     {
+
         private readonly IStringLocalizer<MailSender> localizer;
         readonly SiteSettings siteSettings;
         readonly SmtpSettings smtpSettings;
         private readonly ILogger logger;
+        private readonly ISmtpClientFactory _smtpClientFactory;
+
         public MailSender(
             IOptions<SiteSettings> sitesOptions,
             IOptions<SmtpSettings> smtpOptions,
             ILoggerFactory loggerFactory,
-            IStringLocalizer<MailSender> localizer
+            IStringLocalizer<MailSender> localizer,
+            ISmtpClientFactory smtpClientFactory
             )
         {
             this.localizer = localizer;
             siteSettings = sitesOptions.Value;
             smtpSettings = smtpOptions.Value;
             logger = loggerFactory.CreateLogger<MailSender>();
+            _smtpClientFactory = smtpClientFactory;
         }
 
         public Task SendConfirmationLinkAsync(ApplicationUser user, string email, string confirmationLink)
@@ -69,7 +74,7 @@ namespace Yavsc.Services
             msg.MessageId = MimeKit.Utils.MimeUtils.GenerateMessageId(
                 siteSettings.Authority
             );
-            using (SmtpClient sc = new())
+            using ISmtpClient sc = _smtpClientFactory.CreateClient();
             {
                 sc.Timeout = 30000;
                 sc.Connect(

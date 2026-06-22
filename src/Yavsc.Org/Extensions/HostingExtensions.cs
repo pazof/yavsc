@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -101,6 +102,8 @@ public static class HostingExtensions
 
             services.AddTransient<ITrueEmailSender, MailSender>()
                 .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>();
+
+            services.TryAddSingleton<ISmtpClientFactory, SmtpClientFactory>();
 
 
         services.AddTransient<IYavscMessageSender, YavscMessageSender>()

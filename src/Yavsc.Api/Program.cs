@@ -1,10 +1,10 @@
 /*
- Copyright (c) 2024 HigginsSoft, Alexander Higgins - https://github.com/alexhiggins732/ 
+ Copyright (c) 2024 HigginsSoft, Alexander Higgins - https://github.com/alexhiggins732/
 
  Copyright (c) 2018, Brock Allen & Dominick Baier. All rights reserved.
 
- Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information. 
- Source code and license this software can be found 
+ Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+ Source code and license this software can be found
 
  The above copyright notice and this permission notice shall be included in all
  copies or substantial portions of the Software.
@@ -14,10 +14,12 @@ using Anthropic.SDK;
 using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Yavsc;
 using Yavsc.Abstract.Interfaces;
 using Yavsc.Helpers;
 using Yavsc.Interface;
+using Yavsc.Interfaces;
 using Yavsc.Models;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
@@ -79,11 +81,13 @@ internal class Program
         {
             options.ResourcesPath = "Resources";
         });
-        // 
+        //
         services.AddTransient<Microsoft.AspNetCore.Identity.IEmailSender<ApplicationUser>, MailSender>();
         services.AddTransient<ITrueEmailSender, MailSender>()
         .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender,
          MailSender>()
+        .TryAddSingleton<ISmtpClientFactory, SmtpClientFactory>();
+        services
            .AddTransient<IBillingService, BillingService>()
            .AddTransient<ICalendarManager, CalendarManager>();
         services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();

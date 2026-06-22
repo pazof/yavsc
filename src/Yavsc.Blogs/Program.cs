@@ -2,7 +2,10 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Yavsc;
 using Yavsc.Interface;
+using Yavsc.Interfaces;
 using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
@@ -48,6 +51,8 @@ internal class Program
         services
         .AddTransient<ITrueEmailSender, MailSender>()
         .AddTransient<IEmailSender<ApplicationUser>, MailSender>()
+        .TryAddSingleton<ISmtpClientFactory, SmtpClientFactory>();
+        services
         .AddTransient<IBillingService, BillingService>()
         .AddTransient<ICalendarManager, CalendarManager>()
         .AddTransient<IFileSystemAuthManager, FileSystemAuthManager>()
@@ -89,7 +94,7 @@ internal class Program
                 new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))
             );
 
-            app.UseSession(); 
+            app.UseSession();
             await app.RunAsync();
         }
     }

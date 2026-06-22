@@ -19,6 +19,6 @@ internal static class PlatformBootstrap
             return;
 
         Platform.DefaultRedirectUri = Settings.DefaultLoopbackRedirectUri;
-        Platform.CreateBrowser = () => new LoopbackBrowser();
+
     }
 }
