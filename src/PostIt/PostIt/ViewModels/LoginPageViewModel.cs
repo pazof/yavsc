@@ -146,19 +146,20 @@ public partial class LoginPageViewModel : ViewModelBase
 
     /// <summary>
     /// Test-friendly constructor: caller supplies pre-loaded
-    /// <paramref name="settings"/>, an optional pre-built
-    /// <paramref name="apiClient"/>, and an optional
+    /// <paramref name="settings"/>, an optional
     /// <paramref name="browserFactoryOverride"/> that bypasses the
-    /// static <see cref="Platform"/> indirection.
+    /// static <see cref="Platform"/> indirection, and an optional
+    /// pre-built <paramref name="apiClient"/> for end-to-end
+    /// scenarios where the test owns the wiring.
     /// </summary>
     public LoginPageViewModel(
         Settings settings,
-        YavscApiClient? apiClient = null,
-        Func<IBrowser?>? browserFactoryOverride = null)
+        Func<IBrowser?>? browserFactoryOverride = null,
+        YavscApiClient? apiClient = null)
     {
         Settings = settings;
-        ApiClientOverride = apiClient;
         BrowserFactoryOverride = browserFactoryOverride;
+        ApiClientOverride = apiClient;
         StatusMessage = "Ready";
     }
 
@@ -217,6 +218,7 @@ public partial class LoginPageViewModel : ViewModelBase
             await LoginInteractiveCoreAsync(_api).ConfigureAwait(false);
 
             IsBusy = false;
+            AccessToken = _api.CurrentAccessToken;
             StatusMessage = "Interactive token acquired.";
         }
         catch (Exception ex)

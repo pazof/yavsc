@@ -21,9 +21,11 @@ public partial class Settings : ObservableObject
     IStorageFolder? folder = null;
 
     /// <summary>
-    /// Default loopback redirect URI used for interactive PKCE login on desktop
-    /// platforms. The corresponding <c>RedirectUri</c> must be registered for
-    /// the PostIt client in IdentityServer.
+    /// Loopback redirect URI alternative. Used by the test harness and
+    /// available as a fallback if the running platform cannot register
+    /// the default custom-scheme handler (<c>postit://callback</c>).
+    /// Production builds prefer <see cref="Platform.DefaultRedirectUri"/>
+    /// which routes through the OS-registered URI scheme (RFC 8252).
     /// </summary>
     public const string DefaultLoopbackRedirectUri = "http://127.0.0.1:7890/";
 
@@ -32,6 +34,14 @@ public partial class Settings : ObservableObject
     /// in <c>PostIt.Android/Properties/AndroidManifest.xml</c> must match.
     /// </summary>
     public const string AndroidRedirectUri = "android://postit-signin";
+
+    /// <summary>
+    /// Default custom-scheme redirect URI on Desktop. The OS routes the
+    /// callback to the running PostIt instance via the named-pipe hand-off
+    /// in <see cref="PostIt.Services.SingleInstance"/>. Production
+    /// Desktop builds use this; loopback HTTP is only a fallback.
+    /// </summary>
+    public const string DefaultDesktopRedirectUri = "postit://callback";
 
     [ObservableProperty]
     public partial AuthenticationSettings Authentication { get; set; } = new();

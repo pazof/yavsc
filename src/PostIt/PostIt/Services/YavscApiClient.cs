@@ -23,7 +23,7 @@ namespace PostIt.Services;
 /// <see cref="BearerTokenHandler"/> only refreshes once even if many
 /// concurrent requests are in flight.
 /// </summary>
-public sealed class YavscApiClient : IAsyncDisposable
+public class YavscApiClient : IAsyncDisposable
 {
     // 60s of slack before the access_token's nominal expiry. Covers
     // network latency + JWT validation on the server side.
@@ -72,6 +72,17 @@ public sealed class YavscApiClient : IAsyncDisposable
         }
     }
 
+    /// <summary>
+    /// The current access token, or null if no session is active.
+    /// Surfaced so the LoginPageViewModel can mirror it onto its own
+    /// observable property (and so the OIDC id_token / claims can be
+    /// shown in the UI).
+    /// </summary>
+    public string? CurrentAccessToken => _tokens?.AccessToken;
+
+    /// <summary>The current OIDC id_token, or null.</summary>
+    public string? CurrentIdToken => _tokens?.IdToken;
+
     /// <summary>Force a new interactive login (PKCE). Throws on failure.</summary>
     public async Task LoginInteractiveAsync(CancellationToken ct = default)
     {
@@ -98,7 +109,7 @@ public sealed class YavscApiClient : IAsyncDisposable
     }
 
     /// <summary>Call a JSON endpoint, transparently refreshing the token if needed.</summary>
-    public async Task<T> CallAsync<T>(
+    public virtual async Task<T> CallAsync<T>(
         HttpMethod method,
         string path,
         object? body = null,

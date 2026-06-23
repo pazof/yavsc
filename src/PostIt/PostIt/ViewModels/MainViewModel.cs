@@ -1,34 +1,30 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using IdentityModel.OidcClient;
-using IdentityModel.OidcClient.Browser;
 using PostIt.Models;
 using PostIt.Services;
-using Avalonia.Styling;
 
 namespace PostIt.ViewModels;
 
 public partial class MainPageViewModel : ViewModelBase
 {
-
     [ObservableProperty]
     public partial string Title { get; set; }
 
     [ObservableProperty]
     public partial ViewModelBase? CurrentViewModel { get; set; }
+
     public SettingsPageViewModel SettingsModel { get; }
+
     [ObservableProperty]
     public partial string StatusMessage { get; set; }
 
     [ObservableProperty]
     public partial string SearchText { get; set; }
-
-    [ObservableProperty]
-    public partial string BearerToken { get; set; }
 
     [ObservableProperty]
     public partial ObservableCollection<BlogPost> Posts { get; set; }
@@ -47,62 +43,62 @@ public partial class MainPageViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial Settings Settings { get; private set; }
+
+    /// <summary>
+    /// API surface that hits the Yavsc.Blogs deployment at
+    /// <see cref="Settings.ApiUrl"/>. Owned and constructed by
+    /// <c>App.axaml.cs</c> so the same client (and its token store)
+    /// is shared with the login flow.
+    /// </summary>
+    public BlogApiClient BlogClient { get; }
+
     public override bool CanNavigateNext { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
     public override bool CanNavigatePrevious { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
 
-    public MainPageViewModel()
+    /// <summary>
+    /// Test-friendly constructor: caller supplies a pre-built
+    /// <see cref="BlogApiClient"/>. Production code uses the
+    /// (Settings, BlogApiClient) overload below.
+    /// </summary>
+    public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null)
     {
         SearchText = string.Empty;
         Posts = new ObservableCollection<BlogPost>();
         FilteredPosts = new ObservableCollection<BlogPost>();
         SelectedPost = null;
-        BearerToken = string.Empty;
         IsBusy = false;
         StatusMessage = "Ready";
-        Settings = new Settings();
+        Settings = settings ?? new Settings();
         Title = "PostIt";
         CurrentViewModel = this;
         SettingsModel = new SettingsPageViewModel();
+        BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient));
     }
 
-    partial void OnSearchTextChanged(string value)
-    {
-        ApplyFilter();
-    }
+    partial void OnSearchTextChanged(string value) => ApplyFilter();
 
-    partial void OnSelectedPostChanged(BlogPost? value)
-    {
-        UpdateCommandStates();
-    }
+    partial void OnSelectedPostChanged(BlogPost? value) => UpdateCommandStates();
 
-    partial void OnIsBusyChanged(bool value)
-    {
-        UpdateCommandStates();
-    }
+    partial void OnIsBusyChanged(bool value) => UpdateCommandStates();
 
     [RelayCommand]
     internal async Task LoadPosts()
     {
         await ExecuteAsync(async () =>
         {
-            using var client = CreateClient();
-            var posts = await client.GetPostsAsync();
+            var posts = await BlogClient.GetPostsAsync();
             Posts.Clear();
             foreach (var post in posts.OrderByDescending(p => p.DateModified))
             {
                 Posts.Add(post);
             }
-
             ApplyFilter();
             StatusMessage = $"Loaded {Posts.Count} posts.";
         });
     }
 
     [RelayCommand]
-    internal void Search()
-    {
-        ApplyFilter();
-    }
+    internal void Search() => ApplyFilter();
 
     [RelayCommand]
     internal async Task Save()
@@ -115,13 +111,11 @@ public partial class MainPageViewModel : ViewModelBase
 
         await ExecuteAsync(async () =>
         {
-            using var client = CreateClient();
-
             if (SelectedPost.Id == 0)
             {
                 SelectedPost.DateCreated = DateTime.UtcNow;
                 SelectedPost.DateModified = DateTime.UtcNow;
-                var created = await client.CreatePostAsync(SelectedPost);
+                var created = await BlogClient.CreatePostAsync(SelectedPost);
                 if (created is not null)
                 {
                     SelectedPost = created;
@@ -131,7 +125,7 @@ public partial class MainPageViewModel : ViewModelBase
             else
             {
                 SelectedPost.DateModified = DateTime.UtcNow;
-                await client.UpdatePostAsync(SelectedPost.Id, SelectedPost);
+                await BlogClient.UpdatePostAsync(SelectedPost.Id, SelectedPost);
                 StatusMessage = $"Saved post {SelectedPost.Id}.";
             }
 
@@ -150,8 +144,7 @@ public partial class MainPageViewModel : ViewModelBase
 
         await ExecuteAsync(async () =>
         {
-            using var client = CreateClient();
-            await client.DeletePostAsync(SelectedPost.Id);
+            await BlogClient.DeletePostAsync(SelectedPost.Id);
             StatusMessage = $"Deleted post {SelectedPost.Id}.";
             SelectedPost = null;
             await RefreshPostsAsync();
@@ -168,27 +161,23 @@ public partial class MainPageViewModel : ViewModelBase
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
         };
-
         StatusMessage = "New blog post ready.";
     }
 
     [RelayCommand]
     internal void OpenSettings()
     {
-        // Appeler la méthode OpenSettings de la vue MainWindow
         CurrentViewModel = SettingsModel;
     }
 
     private async Task RefreshPostsAsync()
     {
-        using var client = CreateClient();
-        var posts = await client.GetPostsAsync();
+        var posts = await BlogClient.GetPostsAsync();
         Posts.Clear();
         foreach (var post in posts.OrderByDescending(p => p.DateModified))
         {
             Posts.Add(post);
         }
-
         ApplyFilter();
 
         if (SelectedPost is not null)
@@ -233,51 +222,6 @@ public partial class MainPageViewModel : ViewModelBase
             IsBusy = false;
         }
     }
-
-    /// <summary>
-    /// Performs an interactive Authorization Code + PKCE login against the
-    /// configured authority and stores the resulting access token in
-    /// <see cref="BearerToken"/>. No client secret is sent; PKCE prevents
-    /// authorization-code interception by relying on a per-request verifier
-    /// generated locally and never leaving the device.
-    /// </summary>
-    /// <param name="browser">
-    /// Platform-specific <see cref="IBrowser"/> implementation. On desktop
-    /// pass a <c>LoopbackBrowser</c>; on Android a custom-scheme
-    /// deep-link browser is required.
-    /// </param>
-    public async Task LoginAsync(IBrowser browser)
-    {
-        IsBusy = true;
-        StatusMessage = "Signing in...";
-        try
-        {
-            var client = new OidcClient(Settings.GetOidcClientOptions(browser));
-            var loginResult = await client.LoginAsync(new LoginRequest()).ConfigureAwait(false);
-
-            if (loginResult.IsError)
-            {
-                StatusMessage = loginResult.Error ?? "Login failed.";
-                return;
-            }
-
-            BearerToken = loginResult.AccessToken ?? string.Empty;
-            StatusMessage = string.IsNullOrEmpty(BearerToken)
-                ? "Login succeeded but no access token was returned."
-                : "Signed in.";
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = $"Error: {ex.Message}";
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-
-    private BlogApiClient CreateClient()
-        => new BlogApiClient(Settings.ApiUrl, BearerToken);
 
     private void UpdateCommandStates()
     {

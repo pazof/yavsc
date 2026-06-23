@@ -1,75 +1,53 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
-using IdentityModel.OidcClient;
 using PostIt.Models;
 
 namespace PostIt.Services;
 
-public sealed class BlogApiClient : IDisposable
+/// <summary>
+/// High-level client for the Blog subsystem of the Yavsc API
+/// (deployed at <c>https://blogs.pschneider.fr</c>). All transport
+/// concerns — base URL, JSON serialisation, Bearer auth, silent
+/// refresh on 401, request body shaping — are delegated to
+/// <see cref="YavscApiClient"/>. This class is a thin DTO↔path
+/// mapper, nothing more.
+///
+/// The class is intentionally non-IDisposable: it does not own the
+/// <see cref="YavscApiClient"/> it depends on. Lifetimes are managed
+/// by the consumer (typically a singleton service registered with
+/// the application).
+/// </summary>
+public sealed class BlogApiClient
 {
-    private readonly HttpClient _httpClient;
-    private readonly JsonSerializerOptions _serializerOptions;
+    private const string DefaultPathPrefix = "api/blog";
 
-    public BlogApiClient(string baseUrl, string? accessToken = null)
-        : this(CreateHttpClient(baseUrl, accessToken))
+    private readonly YavscApiClient _api;
+    private readonly string _pathPrefix;
+
+    public BlogApiClient(YavscApiClient api, string pathPrefix = DefaultPathPrefix)
     {
+        _api = api ?? throw new ArgumentNullException(nameof(api));
+        _pathPrefix = pathPrefix?.TrimStart('/') ?? DefaultPathPrefix;
     }
 
-    public BlogApiClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _serializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web)
-        {
-            PropertyNameCaseInsensitive = true
-        };
-    }
+    public Task<List<BlogPost>> GetPostsAsync(int start = 0, int take = 25, CancellationToken ct = default)
+        => _api.CallAsync<List<BlogPost>>(
+            HttpMethod.Get,
+            $"{_pathPrefix}?start={start}&take={take}",
+            ct: ct);
 
-    private static HttpClient CreateHttpClient(string baseUrl, string? accessToken)
-    {
-        var client = new HttpClient { BaseAddress = new Uri(baseUrl) };
-        if (!string.IsNullOrWhiteSpace(accessToken))
-        {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-        }
-        return client;
-    }
+    public Task<BlogPost?> GetPostAsync(long id, CancellationToken ct = default)
+        => _api.CallAsync<BlogPost?>(HttpMethod.Get, $"{_pathPrefix}/{id}", ct: ct);
 
-    public async Task<List<BlogPost>> GetPostsAsync(int start = 0, int take = 25)
-    {
-        var result = await _httpClient.GetFromJsonAsync<List<BlogPost>>($"api/blog?start={start}&take={take}", _serializerOptions).ConfigureAwait(false);
-        return result ?? new List<BlogPost>();
-    }
+    public Task<BlogPost?> CreatePostAsync(BlogPost post, CancellationToken ct = default)
+        => _api.CallAsync<BlogPost?>(HttpMethod.Post, _pathPrefix, body: post, ct: ct);
 
-    public Task<BlogPost?> GetPostAsync(long id)
-        => _httpClient.GetFromJsonAsync<BlogPost>($"api/blog/{id}", _serializerOptions);
+    public Task UpdatePostAsync(long id, BlogPost post, CancellationToken ct = default)
+        => _api.CallAsync(HttpMethod.Put, $"{_pathPrefix}/{id}", body: post, ct: ct);
 
-    public async Task<BlogPost?> CreatePostAsync(BlogPost post)
-    {
-        var response = await _httpClient.PostAsJsonAsync("api/blog", post, _serializerOptions).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<BlogPost>(_serializerOptions).ConfigureAwait(false);
-    }
-
-    public async Task UpdatePostAsync(long id, BlogPost post)
-    {
-        var response = await _httpClient.PutAsJsonAsync($"api/blog/{id}", post, _serializerOptions).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-    }
-
-    public async Task DeletePostAsync(long id)
-    {
-        var response = await _httpClient.DeleteAsync($"api/blog/{id}").ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-    }
-
-    public void Dispose()
-    {
-        _httpClient.Dispose();
-    }
+    public Task DeletePostAsync(long id, CancellationToken ct = default)
+        => _api.CallAsync(HttpMethod.Delete, $"{_pathPrefix}/{id}", ct: ct);
 }

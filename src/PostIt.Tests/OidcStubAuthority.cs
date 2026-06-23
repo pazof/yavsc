@@ -95,7 +95,6 @@ public sealed class OidcStubAuthority : IAsyncDisposable, IDisposable
                 break;
         }
     }
-
     private Dictionary<string, object> BuildDiscovery() => new()
     {
         ["issuer"] = Issuer,
@@ -151,10 +150,13 @@ public sealed class OidcStubAuthority : IAsyncDisposable, IDisposable
         };
 
         var accessToken = SignJwt(claims);
+        var refreshToken = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32))
+            .TrimEnd('=').Replace('+', '-').Replace('/', '_');
         var response = new
         {
             access_token = accessToken,
             id_token = accessToken,
+            refresh_token = refreshToken,
             token_type = "Bearer",
             expires_in = 600,
             scope = form.TryGetValue("scope", out var s) ? s : "openid",

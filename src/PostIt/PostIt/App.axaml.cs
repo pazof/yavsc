@@ -34,20 +34,26 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var blog = BuildBlogClient(out var settings);
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainPageViewModel()
+                DataContext = new MainPageViewModel(blog, settings)
             };
         }
         else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
         {
-            singleViewFactoryApplicationLifetime.MainViewFactory = () => new MainPage { DataContext = new MainPageViewModel() };
+            singleViewFactoryApplicationLifetime.MainViewFactory = () =>
+            {
+                var blog = BuildBlogClient(out var settings);
+                return new MainPage { DataContext = new MainPageViewModel(blog, settings) };
+            };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
+            var blog = BuildBlogClient(out var settings);
             singleViewPlatform.MainView = new MainPage
             {
-                DataContext = new MainPageViewModel()
+                DataContext = new MainPageViewModel(blog, settings)
             };
         }
 
@@ -82,5 +88,21 @@ public partial class App : Application
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// Build the (Settings, BlogApiClient) pair used by all UI
+    /// lifetimes. A single TokenStore is shared so a login performed
+    /// by the LoginPage is observable to the MainPage (and vice-versa)
+    /// without going through disk on every API call.
+    /// </summary>
+    private static BlogApiClient BuildBlogClient(out Settings settings)
+    {
+        settings = new Settings();
+        try { settings.Load().GetAwaiter().GetResult(); } catch { /* fall back to embedded defaults */ }
+        var tokenStore = new TokenStore(System.IO.Path.Combine(
+            System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
+            "PostIt", "tokens.json"));
+        return new BlogApiClient(new YavscApiClient(settings, tokenStore));
     }
 }

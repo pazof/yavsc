@@ -26,6 +26,7 @@ public sealed class TokenStore
         {
             if (!File.Exists(_path)) return null;
             var json = File.ReadAllText(_path);
+            if (string.IsNullOrWhiteSpace(json)) return null;
             return JsonSerializer.Deserialize<RefreshTokenRecord>(json);
         }
     }
