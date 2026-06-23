@@ -21,11 +21,16 @@ public partial class Settings : ObservableObject
     IStorageFolder? folder = null;
 
     /// <summary>
-    /// Loopback redirect URI alternative. Used by the test harness and
-    /// available as a fallback if the running platform cannot register
-    /// the default custom-scheme handler (<c>postit://callback</c>).
-    /// Production builds prefer <see cref="Platform.DefaultRedirectUri"/>
-    /// which routes through the OS-registered URI scheme (RFC 8252).
+    /// Legacy loopback redirect URI. The post-2026.6 production flow
+    /// uses the custom URI scheme (<see cref="DefaultDesktopRedirectUri"/>
+    /// on desktop, <see cref="AndroidRedirectUri"/> on Android) so the
+    /// OS hands the callback to the running instance without a TCP
+    /// listener. The loopback constant stays here so test fixtures
+    /// (which spin up an in-process OidcStubAuthority) keep working,
+    /// but it is no longer used as a default anywhere in production.
+    /// If you are still pointing your production <c>postit-settings.json</c>
+    /// at this URI, switch to <c>postit://callback</c> and remove the
+    /// matching entry from the Yavsc.Org server's allowed redirect URIs.
     /// </summary>
     public const string DefaultLoopbackRedirectUri = "http://127.0.0.1:7890/";
 
@@ -37,9 +42,9 @@ public partial class Settings : ObservableObject
 
     /// <summary>
     /// Default custom-scheme redirect URI on Desktop. The OS routes the
-    /// callback to the running PostIt instance via the named-pipe hand-off
-    /// in <see cref="PostIt.Services.SingleInstance"/>. Production
-    /// Desktop builds use this; loopback HTTP is only a fallback.
+    /// callback to the running PostIt instance via the named-pipe
+    /// hand-off in <see cref="PostIt.Services.SingleInstance"/>
+    /// (RFC 8252 §7.1). Production Desktop builds use this.
     /// </summary>
     public const string DefaultDesktopRedirectUri = "postit://callback";
 
@@ -53,12 +58,13 @@ public partial class Settings : ObservableObject
     public partial string ApiUrl { get; set; } = "https://blogs.pschneider.fr/api/v1/";
 
     /// <summary>
-    /// OAuth redirect URI. Defaults to a loopback URI suitable for desktop
-    /// apps; mobile platforms must set this to <see cref="AndroidRedirectUri"/>
-    /// before calling <c>LoginAsync</c>.
+    /// OAuth redirect URI. Defaults to <see cref="DefaultDesktopRedirectUri"/>
+    /// (custom URI scheme) which is the right answer for desktop
+    /// production builds. Mobile platforms must set this to
+    /// <see cref="AndroidRedirectUri"/> before calling <c>LoginAsync</c>.
     /// </summary>
     [ObservableProperty]
-    public partial string RedirectUri { get; set; } = DefaultLoopbackRedirectUri;
+    public partial string RedirectUri { get; set; } = DefaultDesktopRedirectUri;
 
 
     [ObservableProperty]
@@ -168,7 +174,7 @@ public partial class Settings : ObservableObject
             this.Authentication = settings.Authentication;
             this.DarkMode = settings.DarkMode;
             this.ApiUrl = settings.ApiUrl;
-            this.RedirectUri = string.IsNullOrWhiteSpace(settings.RedirectUri) ? DefaultLoopbackRedirectUri : settings.RedirectUri;
+            this.RedirectUri = string.IsNullOrWhiteSpace(settings.RedirectUri) ? DefaultDesktopRedirectUri : settings.RedirectUri;
             this.Scopes = settings.Scopes;
         }
         catch (Exception ex)

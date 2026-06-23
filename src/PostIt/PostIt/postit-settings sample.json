@@ -3,7 +3,7 @@
         "ClientId": "postit",
         "Authority": "https://yavsc.pschneider.fr"
     },
-    "RedirectUri": "http://127.0.0.1:7890/",
+    "RedirectUri": "postit://callback",
     "DarkMode": false,
     "ApiUrl": "https://blogs.pschneider.fr/api/v1/",
     "Scopes": [
