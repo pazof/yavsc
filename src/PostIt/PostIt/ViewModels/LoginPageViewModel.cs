@@ -1,16 +1,24 @@
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
-using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Browser;
 using PostIt.Services;
-using System;
-using System.Threading.Tasks;
 
 namespace PostIt.ViewModels;
 
 public partial class LoginPageViewModel : ViewModelBase
 {
-    public string UserEmail { get; set; }
-    public string Password { get; set; }
+    private const string SettingsFileName = "postit-settings.json";
+
+    [Obsolete("Password grant is not used; IdentityModel.OidcClient performs PKCE.")]
+    public string Password { get; set; } = string.Empty;
+
+    [Obsolete("User-entered email is not used; the IdP login UI collects it.")]
+    public string UserEmail { get; set; } = string.Empty;
+
+    [Obsolete("No local credential persistence in the current build.")]
+    public bool RememberMe { get; set; }
 
     /// <summary>
     /// URL of the Yavsc.Org account-registration page.
@@ -72,20 +80,36 @@ public partial class LoginPageViewModel : ViewModelBase
             : authority + path;
     }
 
-    private string _AccessToken;
-    public string AccessToken { get => _AccessToken; private set => this.SetProperty(ref _AccessToken, value); }
+    /// <summary>
+    /// The access token of the most recent successful login, or null.
+    /// Kept on the VM so views can show "logged in as …" feedback; the
+    /// authoritative copy lives in the <see cref="TokenStore"/>.
+    /// </summary>
+    private string? _accessToken;
+    public string? AccessToken
+    {
+        get => _accessToken;
+        private set => this.SetProperty(ref _accessToken, value);
+    }
 
-    public bool RememberMe { get; set; }
-    public override bool CanNavigateNext { get => false; protected set => throw new System.NotImplementedException(); }
-    public override bool CanNavigatePrevious { get => true; protected set => throw new System.NotImplementedException(); }
+    public override bool CanNavigateNext { get => false; protected set => throw new NotImplementedException(); }
+    public override bool CanNavigatePrevious { get => true; protected set => throw new NotImplementedException(); }
 
     public Settings Settings { get; }
 
-    private string _StatusMessage;
-    public string StatusMessage { get => _StatusMessage; private set => this.SetProperty(ref _StatusMessage, value); }
+    private string _statusMessage = "Ready";
+    public string StatusMessage
+    {
+        get => _statusMessage;
+        private set => this.SetProperty(ref _statusMessage, value);
+    }
 
-    private bool _IsBusy;
-    public bool IsBusy { get=> _IsBusy; private set=> this.SetProperty(ref _IsBusy, value); }
+    private bool _isBusy;
+    public bool IsBusy
+    {
+        get => _isBusy;
+        private set => this.SetProperty(ref _isBusy, value);
+    }
 
     /// <summary>
     /// Optional override used by tests. When set, this factory is called
@@ -102,7 +126,16 @@ public partial class LoginPageViewModel : ViewModelBase
     /// </summary>
     public Func<Task>? SettingsLoadOverride { get; set; }
 
-    public LoginPageViewModel() : this(new Settings(), browserFactoryOverride: null)
+    /// <summary>
+    /// Optional override used by tests. When set, the VM hands this
+    /// pre-built <see cref="YavscApiClient"/> to itself instead of
+    /// constructing a fresh one.
+    /// </summary>
+    public YavscApiClient? ApiClientOverride { get; set; }
+
+    private YavscApiClient? _api;
+
+    public LoginPageViewModel() : this(new Settings(), apiClient: null, browserFactoryOverride: null)
     {
         // Load settings eagerly so RegisterUrl / ForgotPasswordUrl are
         // populated as soon as the page renders (XAML bindings fire
@@ -112,13 +145,19 @@ public partial class LoginPageViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Test-friendly constructor: caller supplies pre-loaded <paramref name="settings"/>
-    /// and (optionally) a <paramref name="browserFactoryOverride"/> that bypasses
-    /// the static <see cref="Platform"/> indirection.
+    /// Test-friendly constructor: caller supplies pre-loaded
+    /// <paramref name="settings"/>, an optional pre-built
+    /// <paramref name="apiClient"/>, and an optional
+    /// <paramref name="browserFactoryOverride"/> that bypasses the
+    /// static <see cref="Platform"/> indirection.
     /// </summary>
-    public LoginPageViewModel(Settings settings, Func<IBrowser?>? browserFactoryOverride = null)
+    public LoginPageViewModel(
+        Settings settings,
+        YavscApiClient? apiClient = null,
+        Func<IBrowser?>? browserFactoryOverride = null)
     {
         Settings = settings;
+        ApiClientOverride = apiClient;
         BrowserFactoryOverride = browserFactoryOverride;
         StatusMessage = "Ready";
     }
@@ -128,73 +167,84 @@ public partial class LoginPageViewModel : ViewModelBase
     {
         try
         {
-            this.IsBusy = true;
-            (SettingsLoadOverride ?? Settings.Load)().Wait();
+            IsBusy = true;
 
-            // Guard: if the authority is empty (no user settings file and
-            // the embedded default couldn't be loaded for any reason),
-            // refuse to call OidcClient. IdentityModel would otherwise
-            // build a bogus authorize URL like "http://127.0.0.1:1/"
-            // from an empty Authority, which the browser then refuses to
-            // open with a confusing "Cette adresse est interdite"
-            // (or equivalent) message. Tell the operator exactly what
-            // to fix instead.
+            if (SettingsLoadOverride is not null)
+                await SettingsLoadOverride().ConfigureAwait(false);
+            else
+                await Settings.Load().ConfigureAwait(false);
+
+            // Guard: refuse to call OidcClient when the authority is
+            // empty. IdentityModel would otherwise build a bogus
+            // authorize URL like "http://127.0.0.1:1/" from an empty
+            // Authority, which the browser refuses with a confusing
+            // "Cette adresse est interdite"-style message. Tell the
+            // operator exactly what to fix instead.
             if (string.IsNullOrWhiteSpace(Settings.Authentication?.Authority))
             {
-                this.IsBusy = false;
-                StatusMessage = $"Configuration manquante — édite {SettingsFileHint()} et renseigne Authentication.Authority";
+                IsBusy = false;
+                StatusMessage =
+                    $"Configuration manquante — édite {SettingsFileHint()} et renseigne Authentication.Authority";
                 return;
             }
 
-            // The platform project picks the right redirect URI and browser
-            // implementation; we don't reference any UI toolkit from here.
+            // The platform project picks the right redirect URI and
+            // browser implementation; we don't reference any UI
+            // toolkit from here.
             Settings.RedirectUri = string.IsNullOrWhiteSpace(Settings.RedirectUri)
                 ? Platform.DefaultRedirectUri
                 : Settings.RedirectUri;
 
-            // Surface the discovery URL the client is about to call, so a
-            // failure (DNS, TLS, 404) can be diagnosed by pasting the URL
-            // straight into a browser. OidcClient computes the discovery
-            // URL as `Authority + /.well-known/openid-configuration`; we
+            // Surface the discovery URL the client is about to call,
+            // so a failure (DNS, TLS, 404) can be diagnosed by
+            // pasting the URL straight into a browser. OidcClient
+            // computes the discovery URL as
+            // `Authority + /.well-known/openid-configuration`; we
             // normalise the trailing slash here so the printed URL is
             // exactly what IdentityModel will fetch.
             if (!string.IsNullOrEmpty(DiscoveryUrl))
                 StatusMessage = $"Discovering {DiscoveryUrl}";
 
-            var browser = BrowserFactoryOverride is not null
-                ? BrowserFactoryOverride.Invoke()
-                : Platform.CreateBrowser?.Invoke();
-            if (browser is null)
-            {
-                StatusMessage = $"No browser is available on this platform. (discovery: {DiscoveryUrl})";
-                return;
-            }
+            // Build (or reuse) the API client. The browser override
+            // takes precedence: tests want to inject a fake browser
+            // and the production path uses Platform.CreateBrowser.
+            _api ??= ApiClientOverride ?? new YavscApiClient(Settings, BuildTokenStore());
 
-            var client = new OidcClient(Settings.GetOidcClientOptions(browser));
-            var loginResult = await client.LoginAsync(new LoginRequest());
+            // Platform.CreateBrowser may still want to be customised
+            // per-call (e.g. between desktop and android), so route
+            // the interactive login through a callback that reuses
+            // BrowserFactoryOverride when present.
+            await LoginInteractiveCoreAsync(_api).ConfigureAwait(false);
 
-            if (loginResult.IsError)
-            {
-                StatusMessage = $"{loginResult.Error} (discovery: {DiscoveryUrl})";
-                return;
-            }
-
+            IsBusy = false;
             StatusMessage = "Interactive token acquired.";
-
-            this.IsBusy = false;
-            AccessToken = loginResult.AccessToken;
-            /* TODO save or not user log and password
-            await Task.Run(() =>
-            {
-                Settings.Save().Wait();
-            });*/
-
         }
         catch (Exception ex)
         {
-            this.IsBusy = false;
+            IsBusy = false;
             var suffix = !string.IsNullOrEmpty(DiscoveryUrl) ? $" (discovery: {DiscoveryUrl})" : string.Empty;
             StatusMessage = $"Error: {ex.Message}{suffix}";
+        }
+    }
+
+    /// <summary>
+    /// Single entry point for the OIDC login: YavscApiClient owns the
+    /// browser choice, the OidcClient instance, the token persistence
+    /// and the refresh path. The VM is just a thin coordinator.
+    /// </summary>
+    private async Task LoginInteractiveCoreAsync(YavscApiClient api)
+    {
+        var original = Platform.CreateBrowser;
+        try
+        {
+            if (BrowserFactoryOverride is not null)
+                Platform.CreateBrowser = BrowserFactoryOverride;
+
+            await api.LoginInteractiveAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            Platform.CreateBrowser = original;
         }
     }
 
@@ -206,6 +256,19 @@ public partial class LoginPageViewModel : ViewModelBase
     private static string SettingsFileHint()
     {
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        return System.IO.Path.Combine(appData, "PostIt", "postit-settings.json");
+        return Path.Combine(appData, "PostIt", "postit-settings.json");
+    }
+
+    /// <summary>
+    /// Build the on-disk <see cref="TokenStore"/> used by
+    /// <see cref="YavscApiClient"/>. The token bundle lives in
+    /// <c>~/.config/PostIt/tokens.json</c> on Linux; the same path
+    /// layout is used on every platform for predictability.
+    /// </summary>
+    private static TokenStore BuildTokenStore()
+    {
+        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var path = Path.Combine(appData, "PostIt", "tokens.json");
+        return new TokenStore(path);
     }
 }
