@@ -32,7 +32,7 @@ internal class Program
             {
                 policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(JwtClaimTypes.Scope, new string[] { "blog" });
+                    .RequireClaim(JwtClaimTypes.Scope, new string[] { "blogs" });
             });
             })
             .AddYavscCors(builder.Configuration)
@@ -88,7 +88,7 @@ internal class Program
                 .UseAuthorization()
                 .UseCors("default")
                 ;
-            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("blog");
+            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("BlogScope");
 
             app.MapGet("/identity", (HttpContext context) =>
                 new JsonResult(context?.User?.Claims.Select(c => new { c.Type, c.Value }))

@@ -1,5 +1,7 @@
 
 public static class Constants
 {
-     public static readonly string[] BuildInApiScopes = {  "blog", "admin", "moderation", "performer", "client" };
+     public static readonly string[] BuildInApiScopes = {
+        "profile", "openid", "offline_access",
+        "blogs", "admin", "moderation", "performer", "client" };
 }

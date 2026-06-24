@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -31,33 +32,41 @@ public partial class App : Application
         {
             return;
         }
+        var settings = new Settings();
+        // Synchronous: Settings.Load is intentionally non-async so we
+        // don't deadlock the Avalonia UI thread. .Wait() on an async
+        // method would block here forever on the await inside the
+        // file read.
+        settings.Load();
 
+        var tokenStore = new TokenStore(System.IO.Path.Combine(
+            System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
+            "PostIt", "tokens.json"));
+        var client = new BlogApiClient(new YavscApiClient(settings, tokenStore));
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var blog = BuildBlogClient(out var settings);
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainPageViewModel(blog, settings)
+                DataContext = new MainPageViewModel(client, settings)
             };
         }
         else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
         {
             singleViewFactoryApplicationLifetime.MainViewFactory = () =>
             {
-                var blog = BuildBlogClient(out var settings);
-                return new MainPage { DataContext = new MainPageViewModel(blog, settings) };
+                return new MainPage { DataContext = new MainPageViewModel(client, settings) };
             };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            var blog = BuildBlogClient(out var settings);
             singleViewPlatform.MainView = new MainPage
             {
-                DataContext = new MainPageViewModel(blog, settings)
+                DataContext = new MainPageViewModel(client, settings)
             };
         }
+        else
+            throw new NotSupportedException("ApplicationLifetime not supported.");
 
-        base.OnFrameworkInitializationCompleted();
     }
 
     private bool TryHandOffCustomSchemeUrl()
@@ -90,19 +99,4 @@ public partial class App : Application
         return false;
     }
 
-    /// <summary>
-    /// Build the (Settings, BlogApiClient) pair used by all UI
-    /// lifetimes. A single TokenStore is shared so a login performed
-    /// by the LoginPage is observable to the MainPage (and vice-versa)
-    /// without going through disk on every API call.
-    /// </summary>
-    private static BlogApiClient BuildBlogClient(out Settings settings)
-    {
-        settings = new Settings();
-        try { settings.Load().GetAwaiter().GetResult(); } catch { /* fall back to embedded defaults */ }
-        var tokenStore = new TokenStore(System.IO.Path.Combine(
-            System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
-            "PostIt", "tokens.json"));
-        return new BlogApiClient(new YavscApiClient(settings, tokenStore));
-    }
 }

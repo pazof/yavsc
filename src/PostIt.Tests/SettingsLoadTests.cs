@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace PostIt.Tests;
@@ -14,7 +13,7 @@ public class SettingsLoadTests
     /// PostIt.dll.
     /// </summary>
     [Fact]
-    public async Task Load_falls_back_to_embedded_resource_when_user_file_missing()
+    public void Load_falls_back_to_embedded_resource_when_user_file_missing()
     {
         // Skip if a user-level file exists (CI / different dev machines).
         var userConfigPath = Path.Combine(
@@ -27,7 +26,7 @@ public class SettingsLoadTests
         }
 
         var settings = new PostIt.Settings();
-        await settings.Load();
+        settings.Load();
 
         // The bundled postit-settings.json points at yavsc.pschneider.fr.
         Assert.False(string.IsNullOrWhiteSpace(settings.Authentication?.Authority));

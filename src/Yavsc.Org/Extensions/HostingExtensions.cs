@@ -44,6 +44,8 @@ using Yavsc.Services.Kyc;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
 using static IdentityServer8.IdentityServerConstants;
+using IdentityServer8.Models;
+using IdentityServer8.EntityFramework.Mappers;
 
 namespace Yavsc.Extensions;
 
@@ -525,13 +527,39 @@ public static class HostingExtensions
         {
             foreach (String scope in Constants.BuildInApiScopes)
             {
-                var existentScope = context.Set<ApiScope>().FirstOrDefault(b => b.Name == scope);
+                var existentScope = context.Set<IdentityServer8.EntityFramework.Entities.ApiScope>().FirstOrDefault(b => b.Name == scope);
                 if (existentScope == null)
                 {
-                    context.Set<ApiScope>().Add(new ApiScope { Name = scope });
+                    context.Set<IdentityServer8.EntityFramework.Entities.ApiScope>().Add(new IdentityServer8.EntityFramework.Entities.ApiScope { Name = scope });
                     context.SaveChanges();
                 }
             }
+             var identityResources = context.Set<IdentityServer8.EntityFramework.Entities.IdentityResource>();
+        var apiScopes = context.Set<IdentityServer8.EntityFramework.Entities.ApiScope>();
+
+        // IdentityResources standards
+        if (!identityResources.Any(r => r.Name == "openid"))
+        {
+            var openid = new IdentityResources.OpenId().ToEntity();
+            identityResources.Add(openid);
+        }
+
+        if (!identityResources.Any(r => r.Name == "profile"))
+        {
+            var profile = new IdentityResources.Profile().ToEntity();
+            identityResources.Add(profile);
+        }
+
+        // ApiScope custom
+        if (!apiScopes.Any(s => s.Name == "blogs"))
+        {
+            apiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope
+            {
+                Name = "blogs",
+                DisplayName = "Yavsc Blogs API",
+                Enabled = true
+            });
+        }
         };
     }
 
@@ -540,10 +568,9 @@ public static class HostingExtensions
     private static readonly string[] PostItRedirectUris = new[]
     {
         // Loopback URI for desktop / browser-based PKCE flows.
-        "http://127.0.0.1:7890/",
-        // Custom-scheme URI for Android. The matching IntentFilter must be
-        // declared in PostIt.Android/Properties/AndroidManifest.xml.
+        "postit://callback",
         "android://postit-signin",
+        "https://blogs.pschneider.fr"
     };
 
     private static readonly string[] PostItGrantTypes = new[]
@@ -554,9 +581,18 @@ public static class HostingExtensions
 
     private static readonly string[] PostItScopes = new[]
     {
-        "blog",
+        // Scopes the PostIt client is allowed to ask for. Must match
+        // what postit-settings.json (and Constants.BuildInApiScopes on
+        // the server) actually defines. Notably:
+        // - "blogs" (plural) is the API scope that gates access to the
+        //   Yavsc.Blogs deployment at https://blogs.pschneider.fr.
+        // - "offline_access" is required for the YavscApiClient's
+        //   silent refresh path to work; without it IdentityServer
+        //   refuses to issue a refresh_token.
+        "blogs",
         IdentityServer8.IdentityServerConstants.StandardScopes.OpenId,
         IdentityServer8.IdentityServerConstants.StandardScopes.Profile,
+        IdentityServer8.IdentityServerConstants.StandardScopes.OfflineAccess,
     };
 
     private static Action<DbContext, bool> EnsureDefaultConfiguration(
@@ -576,7 +612,6 @@ public static class HostingExtensions
                 return;
             }
 
-            MigratePostItClientToPublic(configuration, context, existingClient);
         };
     }
 
@@ -600,7 +635,7 @@ public static class HostingExtensions
             RequireConsent = false,
         };
 
-        context.Set<Client>().Add(client);
+        context.Set<IdentityServer8.EntityFramework.Entities.Client>().Add(client);
 
         foreach (var grantType in PostItGrantTypes)
         {
@@ -649,106 +684,6 @@ public static class HostingExtensions
             yield return externalUrl;
     }
 
-    /// <summary>
-    /// Bring an existing <c>postit</c> client up to the current public-client
-    /// configuration. Idempotent: each change is applied only when the row is
-    /// currently in the legacy state.
-    /// </summary>
-    private static void MigratePostItClientToPublic(
-        IConfiguration configuration,
-        DbContext context,
-        IdentityServer8.EntityFramework.Entities.Client client)
-    {
-        var changed = false;
-
-        // 1. Drop the client secret. PKCE-only clients must not have one.
-        var secrets = context.Set<ClientSecret>().Where(s => s.Client.Id == client.Id);
-        if (secrets.Any())
-        {
-            context.Set<ClientSecret>().RemoveRange(secrets);
-            changed = true;
-        }
-
-        // 2. Flip the security flags.
-        if (client.RequireClientSecret)
-        {
-            client.RequireClientSecret = false;
-            changed = true;
-        }
-        if (!client.RequirePkce)
-        {
-            client.RequirePkce = true;
-            changed = true;
-        }
-
-        // 3. Ensure all expected grant types are present (don't remove extras
-        //    that may have been added by hand).
-        var existingGrantTypes = context.Set<ClientGrantType>()
-            .Where(g => g.Client.Id == client.Id)
-            .Select(g => g.GrantType)
-            .ToHashSet();
-        foreach (var grantType in PostItGrantTypes)
-        {
-            if (!existingGrantTypes.Contains(grantType))
-            {
-                context.Set<ClientGrantType>().Add(new IdentityServer8.EntityFramework.Entities.ClientGrantType
-                {
-                    Client = client,
-                    GrantType = grantType
-                });
-                changed = true;
-            }
-        }
-
-        // 4. Ensure all expected scopes are present.
-        var existingScopes = context.Set<ClientScope>()
-            .Where(s => s.Client.Id == client.Id)
-            .Select(s => s.Scope)
-            .ToHashSet();
-        foreach (var scope in PostItScopes)
-        {
-            if (!existingScopes.Contains(scope))
-            {
-                context.Set<ClientScope>().Add(new IdentityServer8.EntityFramework.Entities.ClientScope
-                {
-                    Client = client,
-                    Scope = scope
-                });
-                changed = true;
-            }
-        }
-
-        // 5. Ensure all expected redirect URIs are present. The expected set
-        //    is built by BuildPostItRedirectUris: the standalone URIs from
-        //    PostItRedirectUris (desktop loopback + Android custom scheme)
-        //    plus Site:ExternalUrl so PostIt can be embedded in a Yavsc.Org
-        //    web page. Any pre-existing rows that are no longer in this set
-        //    are removed.
-        var existingRedirects = context.Set<ClientRedirectUri>()
-            .Where(r => r.Client.Id == client.Id)
-            .ToList();
-        var existingRedirectUris = existingRedirects
-            .Select(r => r.RedirectUri)
-            .ToHashSet(StringComparer.Ordinal);
-
-        foreach (var redirectUri in BuildPostItRedirectUris(configuration))
-        {
-            if (!existingRedirectUris.Contains(redirectUri))
-            {
-                context.Set<ClientRedirectUri>().Add(new IdentityServer8.EntityFramework.Entities.ClientRedirectUri
-                {
-                    Client = client,
-                    RedirectUri = redirectUri
-                });
-                changed = true;
-            }
-        }
-
-        if (changed)
-        {
-            context.SaveChanges();
-        }
-    }
 
     private static void ConfigureRequestLocalization(IServiceCollection services)
     {

@@ -44,7 +44,7 @@ public sealed class OidcStubAuthority : IAsyncDisposable, IDisposable
         // Pick a free loopback port.
         var port = GetFreePort();
         var prefix = $"http://127.0.0.1:{port}/";
-        var loopback = "http://127.0.0.1:7890/"; // matches PostIt.Settings.DefaultLoopbackRedirectUri
+        var loopback = "postit://callback"; // matches PostIt.Settings.DefaultLoopbackRedirectUri
 
         var listener = new HttpListener();
         listener.Prefixes.Add(prefix);

@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -9,7 +8,6 @@ using PostIt.Services;
 using System;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("PostIt.Tests")]
 
@@ -69,6 +67,7 @@ public partial class Settings : ObservableObject
 
     [ObservableProperty]
     public partial string[] Scopes { get; set; }
+    public bool Loaded { get; private set; } = false;
 
     /// <summary>
     /// Build OidcClient options configured for Authorization Code + PKCE
@@ -77,12 +76,14 @@ public partial class Settings : ObservableObject
     /// </summary>
     internal OidcClientOptions GetOidcClientOptions(IdentityModel.OidcClient.Browser.IBrowser? browser = null)
     {
+        if (!Loaded) Load();
         var options = new OidcClientOptions
         {
             Authority = Authentication.Authority,
             ClientId = Authentication.ClientId,
             RedirectUri = RedirectUri,
             Scope = string.Join(' ', this.Scopes),
+            TokenClientCredentialStyle = IdentityModel.Client.ClientCredentialStyle.PostBody
             // PKCE is enabled by default when no client_secret is provided.
         };
 
@@ -92,8 +93,9 @@ public partial class Settings : ObservableObject
         return options;
     }
 
-    internal async Task Load()
+    internal void Load()
     {
+        if (Loaded) return;
         string configDir = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
     "PostIt"
@@ -123,10 +125,17 @@ public partial class Settings : ObservableObject
 
         try
         {
+            // Synchronous read on purpose: Settings.Load() is called from
+            // synchronous startup paths (App.axaml.cs, ViewModel ctors,
+            // tests) and bridging to async here with .Wait() / .GetAwaiter()
+            // .GetResult() deadlocks the Avalonia UI thread because the
+            // continuation can't resume on the same thread. The settings
+            // file is a few KiB at most; async I/O gains nothing here.
             using var stream = configFileInfo.OpenRead();
             using var reader = new StreamReader(stream);
-            var json = await reader.ReadToEndAsync();
+            var json = reader.ReadToEnd();
             ApplyJson(json, $"user file {configFileInfo.FullName}");
+            Loaded = true;
         }
         catch (Exception ex)
         {

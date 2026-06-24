@@ -139,8 +139,10 @@ public partial class LoginPageViewModel : ViewModelBase
     {
         // Load settings eagerly so RegisterUrl / ForgotPasswordUrl are
         // populated as soon as the page renders (XAML bindings fire
-        // before the user clicks Login).
-        try { Settings.Load().GetAwaiter().GetResult(); }
+        // before the user clicks Login). Settings.Load is synchronous
+        // on purpose; calling .GetAwaiter().GetResult() on it would
+        // deadlock the UI thread on the await inside the file read.
+        try { Settings.Load(); }
         catch { /* settings may be missing in tests/dev; LoginAsync will surface real errors */ }
     }
 
@@ -173,7 +175,7 @@ public partial class LoginPageViewModel : ViewModelBase
             if (SettingsLoadOverride is not null)
                 await SettingsLoadOverride().ConfigureAwait(false);
             else
-                await Settings.Load().ConfigureAwait(false);
+                Settings.Load();
 
             // Guard: refuse to call OidcClient when the authority is
             // empty. IdentityModel would otherwise build a bogus

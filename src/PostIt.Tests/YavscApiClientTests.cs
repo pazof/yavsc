@@ -115,12 +115,12 @@ public class YavscApiClientTests
         {
             Authentication = new AuthenticationSettings
             {
-                Authority = "http://127.0.0.1:1",
+                Authority = "https://127.0.0.1:5001",
                 ClientId = "postit-tests",
             },
-            RedirectUri = "http://127.0.0.1:7890/",
+            RedirectUri = "postit://callback",
             Scopes = new[] { "openid" },
-            ApiUrl = "http://127.0.0.1:1/",
+            ApiUrl = "https://127.0.0.1:5003/api/v1",
         };
         var client = new YavscApiClient(settings, new TokenStore(Path.Combine(
             Path.GetTempPath(), $"postit-tests-noop-{Guid.NewGuid():N}.json")));

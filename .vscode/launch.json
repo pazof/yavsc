@@ -17,6 +17,12 @@
             "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj"
         },
         {
+            "name": "Yavsc.Blogs",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/Yavsc.Blogs/Yavsc.Blogs.csproj"
+        },
+        {
             "name": "PostIt",
             "type": "dotnet",
             "request": "launch",

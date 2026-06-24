@@ -35,7 +35,7 @@ Utilisez GNU/Makefile (et visitez le code, dans le dossier `test` ):
 make test
 ```
 
-## Installation / Déploient / Développement  
+## Installation / Déploient / Développement
 
 ### les services et l'API
 
@@ -78,7 +78,7 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 * Le client peut le faire, en perdant les arrhes.
 * Le prestataire peut déléguer à une équipe de son choix un filtrage des demandes des clients.
 
-## Limitations 
+## Limitations
 
 * à une commande, une prestation
 * Dans le cas de l'avance, une fois le paiement client autorisé, pour le moment, aucune annulation de la prestation n'est supportée.
@@ -132,11 +132,7 @@ d'abord `appsettings-org.json` du serveur ; sinon, laisse-le en place.
   seed EF Core d'IdentityServer utilise `Site.ExternalUrl` pour
   autoriser une RedirectUri du client `postit`** : cela permet à PostIt
   d'être lancé depuis une page web de Yavsc.Org (iframe launcher)
-  sans rejet `redirect_uri mismatch` de l'OP. Les RedirectUris
-  « standalone » du client (`http://127.0.0.1:7890/` et
-  `android://postit-signin`) restent codées en dur dans
-  `EnsureDefaultConfiguration` car elles sont fixées par la plateforme,
-  pas par l'URL de déploiement.
+  sans rejet `redirect_uri mismatch` de l'OP.
 - `ConnectionStrings.YavscConnection` — chaîne de connexion PostgreSQL
   (utilisateur, mot de passe, hôte, base). Privilégier
   `dotnet user-secrets` ou des variables d'environnement `ASPNETCORE_*`
@@ -150,11 +146,11 @@ d'abord `appsettings-org.json` du serveur ; sinon, laisse-le en place.
 ### Administration
 
 Une fois le service disponible, s'enregistrer, et
-Visiter l'url `/Administration/Take` 
+Visiter l'url `/Administration/Take`
 
 ## Une nouvelle activité
 
-On gère les activité en faisant partie du groupe des commerciaux (`FrontOffice`), 
+On gère les activité en faisant partie du groupe des commerciaux (`FrontOffice`),
 on crée des activités en y associant des formulaires de commande et une
 classe de paramétrage de profiles professionnels.
 
