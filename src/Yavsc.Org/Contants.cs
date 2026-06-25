@@ -4,8 +4,17 @@ using IdentityServer8.EntityFramework.Entities;
 
 public static class Constants
 {
-     public static readonly string[] BuildInApiScopes = {
-        "profile", "openid", "offline_access",
+     // ApiScopes seeded explicitly by EnsureDefaultApplicationScopes.
+    // IMPORTANT: only application-defined API scopes go here. Do NOT add
+    // "openid", "profile", or "offline_access" — those are identity scopes
+    // and IdentityServer8 refuses to start when an IdentityResource and an
+    // ApiScope share the same Name ("Found identity scopes and API scopes
+    // that use the same names"). 'openid' and 'profile' are seeded as
+    // IdentityResources via IdentityResources.OpenId().ToEntity() /
+    // IdentityResources.Profile().ToEntity() further down;
+    // 'offline_access' is handled by IdentityServer8 itself and never
+    // needs an explicit ApiScope row.
+    public static readonly string[] BuildInApiScopes = {
         "admin", "moderation", "performer", "client" };
 
     // One ApiResource per application scope. Each scope is exposed by
