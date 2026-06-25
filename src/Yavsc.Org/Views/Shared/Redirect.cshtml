@@ -1,0 +1,11 @@
+@model Yavsc.Models.Access.RedirectViewModel
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="refresh" content="0;url=@Model.RedirectUrl" />
+    <title>@Localizer["Redirecting"]</title>
+</head>
+<body>
+    <p>@Localizer["Redirecting to"] <a href="@Model.RedirectUrl">@Model.RedirectUrl</a>…</p>
+</body>
+</html>
