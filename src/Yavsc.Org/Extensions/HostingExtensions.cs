@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
@@ -322,7 +323,13 @@ public static class HostingExtensions
                             sql => sql.MigrationsAssembly(migrationsAssembly));
                     }
 
-                    b.UseSeeding(EnsureDefaultConfiguration(builder.Configuration));
+                    // NOTE: don't b.UseSeeding(...) here — EF Core's UseSeeding
+                    // only runs when the database is empty, so on a live
+                    // configuration store (clients/scopes already present)
+                    // it never fires and missing scopes are never inserted.
+                    // We call the seeder explicitly from MigrateDatabase after
+                    // migrations, so it runs on every startup regardless of
+                    // whether the database is fresh.
                 };
             })
             .AddOperationalStore(options =>
@@ -578,6 +585,64 @@ public static class HostingExtensions
                         DisplayName = scopeSpec.Description,
                     });
                 }
+            }
+
+            // ApiResources — one per application scope, linked to its scope
+            // via ApiResourceScopes. IdentityServer8's DefaultResourceValidator
+            // rejects any scope that isn't backed by an ApiResource at
+            // /connect/authorize time ("Scope X not found in store"), even
+            // when the ApiScope row itself exists. Seeding the scope without
+            // the resource is what caused the PostIt login to die in the
+            // first place.
+            //
+            // The mapping is taken from Constants.ApiResourcesScopes
+            // (ScopeName ↔ ResourceName). We dedupe on resource name so a
+            // future spec that re-uses an existing resource doesn't insert
+            // duplicates.
+            var apiResources = context.Set<IdentityServer8.EntityFramework.Entities.ApiResource>();
+            var apiResourceScopes = context.Set<IdentityServer8.EntityFramework.Entities.ApiResourceScope>();
+
+            // Make sure every resource row referenced by the spec exists.
+            foreach (var resourceGroup in Constants.ApiResourcesScopes
+                         .GroupBy(s => s.ResourceName))
+            {
+                var spec = resourceGroup.First();
+                if (!apiResources.Any(r => r.Name == spec.ResourceName))
+                {
+                    apiResources.Add(new IdentityServer8.EntityFramework.Entities.ApiResource
+                    {
+                        Name = spec.ResourceName,
+                        DisplayName = spec.ResourceDisplayName,
+                        Enabled = true,
+                    });
+                }
+            }
+            context.SaveChanges();
+
+            // Link each scope to its resource. We re-query both sets after
+            // the SaveChanges above so the newly inserted resources have
+            // their generated Ids.
+            var resourceByName = apiResources
+                .Where(r => Constants.ApiResourcesScopes.Any(s => s.ResourceName == r.Name))
+                .ToDictionary(r => r.Name);
+
+            foreach (var scopeSpec in Constants.ApiResourcesScopes)
+            {
+                if (!resourceByName.TryGetValue(scopeSpec.ResourceName, out var resource))
+                    continue;
+
+                bool alreadyLinked = apiResourceScopes.Any(link =>
+                    link.ApiResourceId == resource.Id && link.Scope == scopeSpec.ScopeName);
+
+                if (alreadyLinked)
+                    continue;
+
+                apiResourceScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiResourceScope
+                {
+                    ApiResource = resource,
+                    ApiResourceId = resource.Id,
+                    Scope = scopeSpec.ScopeName,
+                });
             }
             context.SaveChanges();
         };
@@ -873,6 +938,42 @@ public static class HostingExtensions
             {
                 app.Properties["DegradedDBContext"] = ex.Message;
             }
+        }
+
+        // Run the IdentityServer configuration seeder explicitly, after
+        // migrations. EF Core's UseSeeding callback only fires when the
+        // database is empty — on a live ConfigurationDb that's been used
+        // for months, the seeder never runs and missing scopes/resources
+        // are never inserted. Calling EnsureDefaultConfiguration here makes
+        // the seed idempotent across restarts.
+        SeedConfigurationDatabase(app);
+    }
+
+    private static void SeedConfigurationDatabase(IApplicationBuilder app)
+    {
+        try
+        {
+            using var scope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                .CreateScope();
+
+            var configurationDb = scope.ServiceProvider
+                .GetRequiredService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
+
+            var configuration = scope.ServiceProvider
+                .GetRequiredService<IConfiguration>();
+
+            EnsureDefaultConfiguration(configuration)(configurationDb, true);
+        }
+        catch (Exception ex)
+        {
+            // Seeding is best-effort: a missing scope row will just leave
+            // the same login failure as before, no worse than today. Don't
+            // crash the host over it. Log so the operator sees something.
+            var logger = app.ApplicationServices
+                .GetRequiredService<ILoggerFactory>()
+                .CreateLogger("Yavsc.Org.Seeding");
+            logger.LogError(ex, "ConfigurationDb seeding failed.");
         }
     }
 
