@@ -583,6 +583,16 @@ public static class HostingExtensions
                     {
                         Name = scopeSpec.ScopeName,
                         DisplayName = scopeSpec.Description,
+                        // The corresponding Postgres columns are NOT NULL
+                        // with no DB default — EF Core ships the C# default
+                        // (false) unless we set them explicitly. A scope
+                        // inserted with Enabled=false is invisible to
+                        // DefaultResourceValidator, which would silently
+                        // reproduce the bug we're fixing here.
+                        Enabled = true,
+                        Required = false,
+                        Emphasize = false,
+                        ShowInDiscoveryDocument = true,
                     });
                 }
             }
@@ -614,6 +624,14 @@ public static class HostingExtensions
                         Name = spec.ResourceName,
                         DisplayName = spec.ResourceDisplayName,
                         Enabled = true,
+                        // Created is NOT NULL with no DB default. Without
+                        // this EF will send DateTime.MinValue (0001-01-01)
+                        // which Postgres rejects with
+                        // "null value in column 'Created' violates
+                        // not-null constraint" once the seeder runs.
+                        Created = DateTime.UtcNow,
+                        ShowInDiscoveryDocument = true,
+                        NonEditable = false,
                     });
                 }
             }
