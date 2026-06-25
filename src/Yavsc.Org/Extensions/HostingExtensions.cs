@@ -539,7 +539,10 @@ public static class HostingExtensions
             var identityResources = context.Set<IdentityServer8.EntityFramework.Entities.IdentityResource>();
             var apiScopes = context.Set<IdentityServer8.EntityFramework.Entities.ApiScope>();
 
-            // IdentityResources standards
+            // IdentityResources standards (OpenId + Profile only).
+            // Application-defined API scopes from Constants.ApiResourcesScopes
+            // are NOT identity resources — they belong to the ApiScopes table
+            // and are seeded as such further down.
             if (!identityResources.Any(r => r.Name == "openid"))
             {
                 var openid = new IdentityResources.OpenId().ToEntity();
@@ -551,18 +554,29 @@ public static class HostingExtensions
                 var profile = new IdentityResources.Profile().ToEntity();
                 identityResources.Add(profile);
             }
-            foreach (var scope in Constants.ApiResourcesScopes)
-            {
 
-                if (!identityResources.Any(s => s.Name == scope.ScopeName))
+            // Application-defined API scopes (admin, moderation, performer,
+            // client, blogs, …). Seeded into ApiScopes, not IdentityResources:
+            // these gate access to API resources (e.g. the Yavsc.Blogs
+            // deployment requires the "blogs" scope) and must therefore be
+            // discoverable through /connect/discovery's
+            // scopes_supported of type resource, not identity.
+            //
+            // NOTE: prior versions inserted these into IdentityResources,
+            // which made them visible to /connect/authorize but unfulfillable
+            // (no API resource recognises an identity-scoped consent as
+            // access to a downstream resource). Clients like PostIt that
+            // request one of these scopes were rejected with "invalid_scope"
+            // at the token endpoint. Keep this in ApiScopes.
+            foreach (var scopeSpec in Constants.ApiResourcesScopes)
+            {
+                if (!apiScopes.Any(s => s.Name == scopeSpec.ScopeName))
                 {
-                    identityResources.Add(
-                        new IdentityResources.Profile()
-                        {
-                            Name = scope.ScopeName,
-                            DisplayName = scope.Description,
-                            Enabled = true
-                        }.ToEntity());
+                    apiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope
+                    {
+                        Name = scopeSpec.ScopeName,
+                        DisplayName = scopeSpec.Description,
+                    });
                 }
             }
             context.SaveChanges();
@@ -618,6 +632,16 @@ public static class HostingExtensions
                 return;
             }
 
+            // The PostIt client was already seeded in a previous run.
+            // Make sure its AllowedScopes still match what the server
+            // actually exposes — for instance, "blogs" only exists as an
+            // ApiScope since we fixed the seed (see EnsureDefaultApplicationScopes
+            // above). Without this pass, a client created before the fix
+            // would still ask for a scope the server no longer recognises
+            // and IdentityServer would answer "invalid_scope" at the token
+            // endpoint. Idempotent: missing scopes are added, nothing is
+            // removed (manual revocation stays manual).
+            AlignPostItClientScopes(context, existingClient);
         };
     }
 
@@ -672,6 +696,46 @@ public static class HostingExtensions
 
         // No ClientSecret row: PKCE-only clients don't need one.
         context.SaveChanges();
+    }
+
+    /// <summary>
+    /// Idempotent reconciliation of the PostIt client's AllowedScopes
+    /// against the scopes the server actually publishes. Adds any missing
+    /// scope as a ClientScope row; never removes anything (revocation is a
+    /// manual operation, not a seed concern). Called on every startup from
+    /// <see cref="EnsureDefaultConfiguration"/> so a client created before
+    /// a scope was introduced (or before the seed was corrected) catches up
+    /// automatically.
+    /// </summary>
+    private static void AlignPostItClientScopes(
+        DbContext context,
+        IdentityServer8.EntityFramework.Entities.Client postitClient
+    )
+    {
+        var clientScopes = context.Set<ClientScope>();
+        var existingScopeNames = clientScopes
+            .Where(s => s.Client == postitClient || s.ClientId == postitClient.Id)
+            .Select(s => s.Scope)
+            .ToHashSet();
+
+        bool changed = false;
+        foreach (var scope in PostItScopes)
+        {
+            if (existingScopeNames.Contains(scope))
+                continue;
+
+            clientScopes.Add(new IdentityServer8.EntityFramework.Entities.ClientScope
+            {
+                Client = postitClient,
+                Scope = scope
+            });
+            changed = true;
+        }
+
+        if (changed)
+        {
+            context.SaveChanges();
+        }
     }
 
     /// <summary>
