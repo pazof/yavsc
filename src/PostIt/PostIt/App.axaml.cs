@@ -64,8 +64,6 @@ public partial class App : Application
                 DataContext = new MainPageViewModel(client, settings)
             };
         }
-        else
-            throw new NotSupportedException("ApplicationLifetime not supported.");
 
     }
 

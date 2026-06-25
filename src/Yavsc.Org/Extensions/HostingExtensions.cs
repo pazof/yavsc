@@ -102,10 +102,10 @@ public static class HostingExtensions
             options.ResourcesPath = "Resources";
         }).AddDataAnnotationsLocalization();
 
-            services.AddTransient<ITrueEmailSender, MailSender>()
-                .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>();
+        services.AddTransient<ITrueEmailSender, MailSender>()
+            .AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, MailSender>();
 
-            services.TryAddSingleton<ISmtpClientFactory, SmtpClientFactory>();
+        services.TryAddSingleton<ISmtpClientFactory, SmtpClientFactory>();
 
 
         services.AddTransient<IYavscMessageSender, YavscMessageSender>()
@@ -342,7 +342,7 @@ public static class HostingExtensions
 
             });
 
-       // Skip the production signing-cert requirement when running with
+        // Skip the production signing-cert requirement when running with
         // an in-memory database (test fixtures) or in the Development
         // environment. In those cases IdentityServer8 falls back to
         // AddDeveloperSigningCredential which mints an ephemeral key
@@ -438,7 +438,7 @@ public static class HostingExtensions
     {
         // Validate the cert is readable (used downstream for token
         // audience/subject validation; signing itself uses the key).
-        _ = new X509Certificate2(certPath);
+
         string keyPem = File.ReadAllText(keyPath);
 
         // BouncyCastle's PemReader accepts every flavour of unencrypted
@@ -471,7 +471,9 @@ public static class HostingExtensions
         {
             case RsaPrivateCrtKeyParameters rsa:
                 {
+#pragma warning disable CA1416 // Valider la compatibilité de la plateforme
                     var rsaDotNet = DotNetUtilities.ToRSA(rsa);
+#pragma warning restore CA1416 // Valider la compatibilité de la plateforme
                     var key = new RsaSecurityKey(rsaDotNet);
                     return new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
                 }
@@ -534,32 +536,36 @@ public static class HostingExtensions
                     context.SaveChanges();
                 }
             }
-             var identityResources = context.Set<IdentityServer8.EntityFramework.Entities.IdentityResource>();
-        var apiScopes = context.Set<IdentityServer8.EntityFramework.Entities.ApiScope>();
+            var identityResources = context.Set<IdentityServer8.EntityFramework.Entities.IdentityResource>();
+            var apiScopes = context.Set<IdentityServer8.EntityFramework.Entities.ApiScope>();
 
-        // IdentityResources standards
-        if (!identityResources.Any(r => r.Name == "openid"))
-        {
-            var openid = new IdentityResources.OpenId().ToEntity();
-            identityResources.Add(openid);
-        }
-
-        if (!identityResources.Any(r => r.Name == "profile"))
-        {
-            var profile = new IdentityResources.Profile().ToEntity();
-            identityResources.Add(profile);
-        }
-
-        // ApiScope custom
-        if (!apiScopes.Any(s => s.Name == "blogs"))
-        {
-            apiScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiScope
+            // IdentityResources standards
+            if (!identityResources.Any(r => r.Name == "openid"))
             {
-                Name = "blogs",
-                DisplayName = "Yavsc Blogs API",
-                Enabled = true
-            });
-        }
+                var openid = new IdentityResources.OpenId().ToEntity();
+                identityResources.Add(openid);
+            }
+
+            if (!identityResources.Any(r => r.Name == "profile"))
+            {
+                var profile = new IdentityResources.Profile().ToEntity();
+                identityResources.Add(profile);
+            }
+            foreach (var scope in Constants.ApiResourcesScopes)
+            {
+
+                if (!identityResources.Any(s => s.Name == scope.ScopeName))
+                {
+                    identityResources.Add(
+                        new IdentityResources.Profile()
+                        {
+                            Name = scope.ScopeName,
+                            DisplayName = scope.Description,
+                            Enabled = true
+                        }.ToEntity());
+                }
+            }
+            context.SaveChanges();
         };
     }
 
@@ -720,7 +726,7 @@ public static class HostingExtensions
     }
 
 
-    public async static Task<WebApplication> ConfigurePipeline(this WebApplication app, string staticAssetsManifestPath=null)
+    public async static Task<WebApplication> ConfigurePipeline(this WebApplication app, string staticAssetsManifestPath = null)
     {
         ILoggerFactory loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory.CreateLogger<Program>();

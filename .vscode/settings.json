@@ -1,6 +1,6 @@
 {
     "dotnet-test-explorer.testProjectPath": "test/**/*Tests.csproj",
-   
+
     "cSpell.words": [
         "appsettings",
         "asciidoctor",
@@ -10,6 +10,7 @@
         "DESTDIR",
         "dotnet",
         "DOTNET",
+        "ecdsa",
         "envsubst",
         "Newtonsoft",
         "Npgsql",

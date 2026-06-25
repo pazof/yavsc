@@ -96,6 +96,20 @@ public partial class Settings : ObservableObject
     internal void Load()
     {
         if (Loaded) return;
+
+        // Trust an already-populated Authority: tests pre-fill Settings
+        // with the OIDC stub's random loopback port, and programmatic
+        // callers (CLI flags, integration tests) wire their own. If we
+        // fall through to the disk / embedded read here we'd silently
+        // overwrite their value with the bundled default
+        // (yavsc.pschneider.fr), break the stubbed discovery URL, and
+        // turn a passing login into an invalid_grant.
+        if (!string.IsNullOrWhiteSpace(Authentication?.Authority))
+        {
+            Loaded = true;
+            return;
+        }
+
         string configDir = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
     "PostIt"
@@ -109,16 +123,14 @@ public partial class Settings : ObservableObject
         if (!configFileInfo.Exists)
         {
             Console.Error.WriteLine($"🩎 Settings file not found at {configFileInfo.FullName}");
-            // Only fall back to the embedded default when the in-memory
-            // settings haven't been populated yet. This protects callers
-            // (notably tests) that pre-load Settings with explicit values
-            // from being silently overwritten by the bundled default.
-            if (string.IsNullOrWhiteSpace(this.Authentication?.Authority)
-                && !TryLoadEmbeddedFallback())
+            // No user-level config: fall back to the embedded default.
+            // We only get here when Authentication.Authority is empty
+            // (the early-return above) so the redundant guard is gone.
+            if (!TryLoadEmbeddedFallback())
             {
                 Console.Error.WriteLine("🩎 No embedded default settings; running with empty configuration.");
             }
-            return; // no user settings file
+            return;
         }
 
         Console.WriteLine($"🔎 Loading settings from {configFileInfo.FullName}");
