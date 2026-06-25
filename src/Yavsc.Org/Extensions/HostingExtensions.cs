@@ -640,8 +640,18 @@ public static class HostingExtensions
             // Link each scope to its resource. We re-query both sets after
             // the SaveChanges above so the newly inserted resources have
             // their generated Ids.
+            //
+            // Note: Constants.ApiResourcesScopes is a static readonly array
+            // (not IQueryable), so we have to materialise the names into a
+            // local list before letting EF try to translate the Where into
+            // SQL — otherwise EF throws "The LINQ expression … could not be
+            // translated" at runtime.
+            var wantedResourceNames = Constants.ApiResourcesScopes
+                .Select(s => s.ResourceName)
+                .ToHashSet();
+
             var resourceByName = apiResources
-                .Where(r => Constants.ApiResourcesScopes.Any(s => s.ResourceName == r.Name))
+                .Where(r => wantedResourceNames.Contains(r.Name))
                 .ToDictionary(r => r.Name);
 
             foreach (var scopeSpec in Constants.ApiResourcesScopes)
