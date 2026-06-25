@@ -1,71 +1,296 @@
 @model Client
+@using Microsoft.AspNetCore.Html
+@using System.Text
+
+@functions {
+    // Lifetimes in IdentityServer are stored as seconds (int). Render them
+    // in a human-friendly way: "5 min", "2 h", "30 d", "—" for 0/negative.
+    // Zero typically means "use the global default" — show it as such so
+    // an admin isn't misled into thinking the value is unset.
+    static string HumanLifetime(int? seconds)
+    {
+        if (!seconds.HasValue) return "—";
+        var s = seconds.Value;
+        if (s <= 0) return "default";
+        if (s < 60) return $"{s} s";
+        if (s < 3600) return $"{s / 60} min";
+        if (s < 86400) return $"{s / 3600} h";
+        if (s < 86400 * 30) return $"{s / 86400} d";
+        return $"{s / 86400} d ({s / 86400 / 30} mo)";
+    }
+
+    // IdentityServer8 stores enum-valued config columns as plain `int`
+    // (no enum type metadata at the storage layer). Render the numeric
+    // value directly. The matching enum name lives on the wire side
+    // (Discovery / token claims), not in this admin view.
+    static string IntOrZero(int value) => value.ToString();
+
+    static IHtmlContent BoolBadge(bool value) =>
+        new HtmlString(value
+            ? "<span class=\"label label-success\">yes</span>"
+            : "<span class=\"label label-default\">no</span>");
+
+    static IHtmlContent EnabledBadge(bool value) =>
+        new HtmlString(value
+            ? "<span class=\"label label-success\">enabled</span>"
+            : "<span class=\"label label-danger\">disabled</span>");
+
+    // IdentityServer8: ClientSecret.Expiration is DateTime? (null = no
+    // expiry). ClientSecret.Created is DateTime, defaulted to UtcNow by
+    // the framework, so it never carries a MinValue sentinel — we render
+    // it as-is.
+    static string DateOrDash(DateTime? value) =>
+        value?.ToString("yyyy-MM-dd HH:mm") ?? "—";
+}
 
 <h2>@Localizer["Details"]</h2>
 
-<div>
-    <h4>Client</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.ClientId)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ClientId)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Enabled)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Enabled)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ClientName)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ClientName)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.FrontChannelLogoutUri)
-        </dt>
-            @Html.DisplayFor(model => model.FrontChannelLogoutUri)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.RedirectUris)
-        </dt>
-        <dd>
-            <ul>
-            @foreach (var uri in Model.RedirectUris)
-                { <li>@uri.RedirectUri</li> }
-            </ul>
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.AbsoluteRefreshTokenLifetime)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.AbsoluteRefreshTokenLifetime)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ClientSecrets)
-        </dt>
-        <dd>
-            <ul>
-                @foreach(var secret in Model.ClientSecrets)
-                {
-                <li>@Html.DisplayForModel(secret)</li>
-                }
-            </ul>
-        </dd>
+<h3>
+    <code>@Model.ClientId</code>
+    @EnabledBadge(Model.Enabled)
+    @if (!string.IsNullOrWhiteSpace(Model.ClientName))
+    {
+        <small class="text-muted">— @Model.ClientName</small>
+    }
+</h3>
+<hr />
 
-        <dt>
-            @Html.DisplayNameFor(model => model.AccessTokenType)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.AccessTokenType) 
-        </dd>
-    </dl>
+<div class="row">
+    <div class="col-md-6">
+        <fieldset>
+            <legend>Identity</legend>
+            <dl class="dl-horizontal">
+                <dt>@Html.DisplayNameFor(m => m.ClientId)</dt>
+                <dd><code>@Model.ClientId</code></dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Enabled)</dt>
+                <dd>@EnabledBadge(Model.Enabled)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.ProtocolType)</dt>
+                <dd>@(string.IsNullOrEmpty(Model.ProtocolType) ? "—" : Model.ProtocolType)</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.ClientName)</dt>
+                <dd>@(Model.ClientName ?? "—")</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.Description)</dt>
+                <dd>@(Model.Description ?? "—")</dd>
+
+                <dt>@Html.DisplayNameFor(m => m.ClientUri)</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.ClientUri))
+                    {
+                        <a href="@Model.ClientUri" target="_blank" rel="noopener noreferrer">@Model.ClientUri</a>
+                    }
+                    else
+                    {
+                        <text>—</text>
+                    }
+                </dd>
+
+                <dt>@Html.DisplayNameFor(m => m.LogoUri)</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.LogoUri))
+                    {
+                        <a href="@Model.LogoUri" target="_blank" rel="noopener noreferrer">
+                            <img src="@Model.LogoUri" alt="logo" style="max-height:48px;max-width:120px;" />
+                        </a>
+                    }
+                    else
+                    {
+                        <text>—</text>
+                    }
+                </dd>
+            </dl>
+        </fieldset>
+
+        <fieldset>
+            <legend>Security</legend>
+            <table class="table table-condensed table-striped">
+                <tbody>
+                    <tr><th>@Html.DisplayNameFor(m => m.RequireConsent)</th><td>@BoolBadge(Model.RequireConsent)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.RequirePkce)</th><td>@BoolBadge(Model.RequirePkce)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.RequireRequestObject)</th><td>@BoolBadge(Model.RequireRequestObject)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.RequireClientSecret)</th><td>@BoolBadge(Model.RequireClientSecret)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.AllowPlainTextPkce)</th><td>@BoolBadge(Model.AllowPlainTextPkce)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.AllowOfflineAccess)</th><td>@BoolBadge(Model.AllowOfflineAccess)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.AllowRememberConsent)</th><td>@BoolBadge(Model.AllowRememberConsent)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.EnableLocalLogin)</th><td>@BoolBadge(Model.EnableLocalLogin)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.AlwaysIncludeUserClaimsInIdToken)</th><td>@BoolBadge(Model.AlwaysIncludeUserClaimsInIdToken)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.AlwaysSendClientClaims)</th><td>@BoolBadge(Model.AlwaysSendClientClaims)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.IncludeJwtId)</th><td>@BoolBadge(Model.IncludeJwtId)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.UpdateAccessTokenClaimsOnRefresh)</th><td>@BoolBadge(Model.UpdateAccessTokenClaimsOnRefresh)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.AllowAccessTokensViaBrowser)</th><td>@BoolBadge(Model.AllowAccessTokensViaBrowser)</td></tr>
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+
+    <div class="col-md-6">
+        <fieldset>
+            <legend>Tokens</legend>
+            <table class="table table-condensed table-striped">
+                <tbody>
+                    <tr>
+                        <th>@Html.DisplayNameFor(m => m.AccessTokenType)</th>
+                        <td>@IntOrZero(Model.AccessTokenType)</td>
+                    </tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.IdentityTokenLifetime)</th><td>@HumanLifetime(Model.IdentityTokenLifetime)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.AccessTokenLifetime)</th><td>@HumanLifetime(Model.AccessTokenLifetime)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.AuthorizationCodeLifetime)</th><td>@HumanLifetime(Model.AuthorizationCodeLifetime)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.AbsoluteRefreshTokenLifetime)</th><td>@HumanLifetime(Model.AbsoluteRefreshTokenLifetime)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.SlidingRefreshTokenLifetime)</th><td>@HumanLifetime(Model.SlidingRefreshTokenLifetime)</td></tr>
+                    <tr>
+                        <th>@Html.DisplayNameFor(m => m.RefreshTokenUsage)</th>
+                        <td>@IntOrZero(Model.RefreshTokenUsage)</td>
+                    </tr>
+                    <tr>
+                        <th>@Html.DisplayNameFor(m => m.RefreshTokenExpiration)</th>
+                        <td>@IntOrZero(Model.RefreshTokenExpiration)</td>
+                    </tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.ConsentLifetime)</th><td>@HumanLifetime(Model.ConsentLifetime)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.UserSsoLifetime)</th><td>@HumanLifetime(Model.UserSsoLifetime)</td></tr>
+                    <tr><th>@Html.DisplayNameFor(m => m.DeviceCodeLifetime)</th><td>@HumanLifetime(Model.DeviceCodeLifetime)</td></tr>
+                    <tr>
+                        <th>@Html.DisplayNameFor(m => m.UserCodeType)</th>
+                        <td>@(string.IsNullOrEmpty(Model.UserCodeType) ? "—" : Model.UserCodeType)</td>
+                    </tr>
+                    <tr>
+                        <th>@Html.DisplayNameFor(m => m.AllowedIdentityTokenSigningAlgorithms)</th>
+                        <td>@(string.IsNullOrEmpty(Model.AllowedIdentityTokenSigningAlgorithms) ? "—" : Model.AllowedIdentityTokenSigningAlgorithms)</td>
+                    </tr>
+                    <tr>
+                        <th>@Html.DisplayNameFor(m => m.ClientClaimsPrefix)</th>
+                        <td>@(string.IsNullOrEmpty(Model.ClientClaimsPrefix) ? "—" : Model.ClientClaimsPrefix)</td>
+                    </tr>
+                    <tr>
+                        <th>@Html.DisplayNameFor(m => m.PairWiseSubjectSalt)</th>
+                        <td>@(string.IsNullOrEmpty(Model.PairWiseSubjectSalt) ? "—" : Model.PairWiseSubjectSalt)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+
+        <fieldset>
+            <legend>Logout</legend>
+            <dl class="dl-horizontal">
+                <dt>@Html.DisplayNameFor(m => m.FrontChannelLogoutUri)</dt>
+                <dd>@(string.IsNullOrEmpty(Model.FrontChannelLogoutUri) ? "—" : Model.FrontChannelLogoutUri)</dd>
+                <dt>@Html.DisplayNameFor(m => m.FrontChannelLogoutSessionRequired)</dt>
+                <dd>@BoolBadge(Model.FrontChannelLogoutSessionRequired)</dd>
+                <dt>@Html.DisplayNameFor(m => m.BackChannelLogoutUri)</dt>
+                <dd>@(string.IsNullOrEmpty(Model.BackChannelLogoutUri) ? "—" : Model.BackChannelLogoutUri)</dd>
+                <dt>@Html.DisplayNameFor(m => m.BackChannelLogoutSessionRequired)</dt>
+                <dd>@BoolBadge(Model.BackChannelLogoutSessionRequired)</dd>
+            </dl>
+        </fieldset>
+    </div>
 </div>
+
+<fieldset>
+    <legend>Collections</legend>
+    <div class="list-group">
+        <a asp-action="EditRedirectUris" asp-route-id="@Model.Id" class="list-group-item">
+            <span class="badge">@Model.RedirectUris.Count</span>
+            Redirect URIs
+        </a>
+        <a asp-action="EditPostLogoutRedirectUris" asp-route-id="@Model.Id" class="list-group-item">
+            <span class="badge">@Model.PostLogoutRedirectUris.Count</span>
+            Post-logout Redirect URIs
+        </a>
+        <a asp-action="EditScopes" asp-route-id="@Model.Id" class="list-group-item">
+            <span class="badge">@Model.AllowedScopes.Count</span>
+            Allowed Scopes
+        </a>
+        <a asp-action="EditGrantTypes" asp-route-id="@Model.Id" class="list-group-item">
+            <span class="badge">@Model.AllowedGrantTypes.Count</span>
+            Allowed Grant Types
+        </a>
+        <a asp-action="EditCorsOrigins" asp-route-id="@Model.Id" class="list-group-item">
+            <span class="badge">@Model.AllowedCorsOrigins.Count</span>
+            Allowed CORS Origins
+        </a>
+        <a asp-action="EditIdPRestrictions" asp-route-id="@Model.Id" class="list-group-item">
+            <span class="badge">@Model.IdentityProviderRestrictions.Count</span>
+            Identity Provider Restrictions
+        </a>
+        <a asp-action="EditClaims" asp-route-id="@Model.Id" class="list-group-item">
+            <span class="badge">@Model.Claims.Count</span>
+            Client Claims
+        </a>
+        <a asp-action="EditProperties" asp-route-id="@Model.Id" class="list-group-item">
+            <span class="badge">@Model.Properties.Count</span>
+            Client Properties
+        </a>
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>
+        Client Secrets
+        <small class="text-muted">(@(Model.ClientSecrets?.Count ?? 0))</small>
+    </legend>
+
+    @if (Model.ClientSecrets == null || Model.ClientSecrets.Count == 0)
+    {
+        <p class="text-muted">No secrets on file. The client relies entirely on PKCE (no secret in the handshake).</p>
+    }
+    else
+    {
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Created (UTC)</th>
+                    <th>Expires (UTC)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var secret in Model.ClientSecrets)
+                {
+                    // Expiration is DateTime?: null means "no expiry".
+                    // Created is DateTime, defaulted to UtcNow at insert time.
+                    var hasExpiry = secret.Expiration.HasValue;
+                    var expired = hasExpiry && secret.Expiration.Value < DateTime.UtcNow;
+                    var expiresSoon = hasExpiry && !expired && secret.Expiration.Value < DateTime.UtcNow.AddDays(7);
+                    <tr>
+                        <td>@(secret.Type ?? "SharedSecret")</td>
+                        <td>@(secret.Description ?? "—")</td>
+                        <td>@DateOrDash(secret.Created)</td>
+                        <td>@DateOrDash(secret.Expiration)</td>
+                        <td>
+                            @if (!hasExpiry)
+                            {
+                                <span class="label label-default">no expiry</span>
+                            }
+                            else if (expired)
+                            {
+                                <span class="label label-danger">expired</span>
+                            }
+                            else if (expiresSoon)
+                            {
+                                <span class="label label-warning">expires soon</span>
+                            }
+                            else
+                            {
+                                <span class="label label-success">active</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p class="text-muted">
+            Secret values are never displayed here. IdentityServer stores them
+            hashed; only the freshly generated value is shown once on the
+            Regenerate Secret flow.
+        </p>
+    }
+</fieldset>
+
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.Id">@Localizer["Edit"]</a> |
-    <a asp-action="RegenerateSecret" asp-route-id="@Model.Id">@Localizer["Regenerate secret"]</a> |
-    <a asp-action="Index">@Localizer["Back to List"]</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">@Localizer["Edit"]</a>
+    <a asp-action="RegenerateSecret" asp-route-id="@Model.Id" class="btn btn-warning">@Localizer["Regenerate secret"]</a>
+    <a asp-action="Index" class="btn btn-default">@Localizer["Back to List"]</a>
 </p>
