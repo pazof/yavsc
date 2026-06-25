@@ -534,7 +534,7 @@ public static class HostingExtensions
     {
         return (context, _) =>
         {
-            foreach (String scope in Constants.BuildInApiScopes)
+            foreach (String scope in Org.Constants.BuildInApiScopes)
             {
                 var existentScope = context.Set<IdentityServer8.EntityFramework.Entities.ApiScope>().FirstOrDefault(b => b.Name == scope);
                 if (existentScope == null)
@@ -575,7 +575,7 @@ public static class HostingExtensions
             // access to a downstream resource). Clients like PostIt that
             // request one of these scopes were rejected with "invalid_scope"
             // at the token endpoint. Keep this in ApiScopes.
-            foreach (var scopeSpec in Constants.ApiResourcesScopes)
+            foreach (var scopeSpec in Org.Constants.ApiResourcesScopes)
             {
                 if (!apiScopes.Any(s => s.Name == scopeSpec.ScopeName))
                 {
@@ -613,7 +613,7 @@ public static class HostingExtensions
             var apiResourceScopes = context.Set<IdentityServer8.EntityFramework.Entities.ApiResourceScope>();
 
             // Make sure every resource row referenced by the spec exists.
-            foreach (var resourceGroup in Constants.ApiResourcesScopes
+            foreach (var resourceGroup in Org.Constants.ApiResourcesScopes
                          .GroupBy(s => s.ResourceName))
             {
                 var spec = resourceGroup.First();
@@ -646,7 +646,7 @@ public static class HostingExtensions
             // local list before letting EF try to translate the Where into
             // SQL — otherwise EF throws "The LINQ expression … could not be
             // translated" at runtime.
-            var wantedResourceNames = Constants.ApiResourcesScopes
+            var wantedResourceNames = Org.Constants.ApiResourcesScopes
                 .Select(s => s.ResourceName)
                 .ToHashSet();
 
@@ -654,7 +654,7 @@ public static class HostingExtensions
                 .Where(r => wantedResourceNames.Contains(r.Name))
                 .ToDictionary(r => r.Name);
 
-            foreach (var scopeSpec in Constants.ApiResourcesScopes)
+            foreach (var scopeSpec in Org.Constants.ApiResourcesScopes)
             {
                 if (!resourceByName.TryGetValue(scopeSpec.ResourceName, out var resource))
                     continue;
@@ -665,7 +665,7 @@ public static class HostingExtensions
                 if (alreadyLinked)
                     continue;
 
-                apiResourceScopes.Add(new IdentityServer8.EntityFramework.Entities.ApiResourceScope
+                apiResourceScopes.Add(new ApiResourceScope
                 {
                     ApiResource = resource,
                     ApiResourceId = resource.Id,

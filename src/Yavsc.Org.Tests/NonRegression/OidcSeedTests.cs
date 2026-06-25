@@ -37,7 +37,7 @@ namespace Yavsc
         {
             foreach (var reserved in ReservedIdentityScopeNames)
             {
-                Assert.DoesNotContain(reserved, Constants.BuildInApiScopes);
+                Assert.DoesNotContain(reserved, Org.Constants.BuildInApiScopes);
             }
         }
 
@@ -46,7 +46,7 @@ namespace Yavsc
         {
             foreach (var reserved in ReservedIdentityScopeNames)
             {
-                foreach (var spec in Constants.ApiResourcesScopes)
+                foreach (var spec in Org.Constants.ApiResourcesScopes)
                 {
                     Assert.NotEqual(reserved, spec.ScopeName);
                 }
@@ -59,7 +59,7 @@ namespace Yavsc
             // Same ScopeName appearing twice would mean two ApiScopes
             // (and two ApiResourceScopes rows) trying to claim the same
             // name — IdentityServer8 would reject that on startup.
-            var scopeNames = Constants.ApiResourcesScopes
+            var scopeNames = Org.Constants.ApiResourcesScopes
                 .Select(s => s.ScopeName)
                 .ToList();
             Assert.Equal(scopeNames.Count, scopeNames.Distinct().Count());
@@ -67,7 +67,7 @@ namespace Yavsc
             // Same ResourceName appearing twice would mean two
             // ApiResources rows with the same Name — the EF seed would
             // crash on the unique index.
-            var resourceNames = Constants.ApiResourcesScopes
+            var resourceNames = Org.Constants.ApiResourcesScopes
                 .Select(s => s.ResourceName)
                 .ToList();
             Assert.Equal(resourceNames.Count, resourceNames.Distinct().Count());
@@ -79,7 +79,7 @@ namespace Yavsc
             // An empty ScopeName or ResourceName silently produces an
             // ApiScope / ApiResource row with no key, which breaks the
             // scope validator's string-based lookup later on.
-            foreach (var spec in Constants.ApiResourcesScopes)
+            foreach (var spec in Org.Constants.ApiResourcesScopes)
             {
                 Assert.False(string.IsNullOrWhiteSpace(spec.ScopeName),
                     $"ScopeName must be set (got '{spec.ScopeName}')");
@@ -95,7 +95,7 @@ namespace Yavsc
         {
             // Belt and braces: if someone ever wipes the list thinking
             // it's stale, this test forces them to be explicit about it.
-            Assert.NotEmpty(Constants.ApiResourcesScopes);
+            Assert.NotEmpty(Org.Constants.ApiResourcesScopes);
         }
     }
 }

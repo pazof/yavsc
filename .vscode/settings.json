@@ -24,5 +24,7 @@
     ],
     "cSpell.reportUnknownWords": true,
     "cSpell.language": "fr,en",
-    "makefile.configureOnOpen": false
+    "makefile.configureOnOpen": false,
+    "search.useGlobalIgnoreFiles": true,
+    "search.useParentIgnoreFiles": true
 }

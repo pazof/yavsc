@@ -1,4 +1,5 @@
 
+namespace Yavsc.Org;
 
 using IdentityServer8.EntityFramework.Entities;
 
