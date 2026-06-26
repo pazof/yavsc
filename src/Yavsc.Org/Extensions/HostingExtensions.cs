@@ -19,20 +19,15 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.OpenSsl;
 using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Security;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Yavsc.Helpers;
@@ -44,7 +39,6 @@ using Yavsc.Services;
 using Yavsc.Services.Kyc;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
-using static IdentityServer8.IdentityServerConstants;
 using IdentityServer8.Models;
 using IdentityServer8.EntityFramework.Mappers;
 
@@ -302,6 +296,7 @@ public static class HostingExtensions
 
              // see https://IdentityServer8.readthedocs.io/en/latest/topics/resources.html
              options.EmitStaticAudienceClaim = true;
+             options.UserInteraction.LoginUrl = "/signin";
 
          })
             .AddAspNetIdentity<ApplicationUser>()

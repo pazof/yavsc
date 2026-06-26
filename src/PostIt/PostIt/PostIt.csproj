@@ -19,6 +19,7 @@
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="IdentityModel.OidcClient" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <ProjectReference Include="../../Yavsc.Abstract/Yavsc.Abstract.csproj" />
   </ItemGroup>
   <ItemGroup>

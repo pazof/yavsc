@@ -28,7 +28,8 @@ public class ViewLocator : IDataTemplate
             MainPageViewModel => _services.GetRequiredService<MainPage>(),
             SettingsPageViewModel => _services.GetRequiredService<SettingsPage>(),
             LoginPageViewModel => _services.GetRequiredService<LoginPage>(),
-            _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
+            HomePageViewModel => _services.GetRequiredService<HomePage>(),
+        _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };
     }
 

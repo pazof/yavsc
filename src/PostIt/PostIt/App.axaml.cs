@@ -1,8 +1,11 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -22,49 +25,52 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // Single-instance hand-off: if we were launched with a
-        // custom-scheme URL on the command line, we are a 2nd
-        // instance whose job is to forward the OAuth2 callback
-        // URL to the running PostIt process and exit. The first
-        // instance is parked inside CustomSchemeBrowser.InvokeAsync
-        // waiting on the named pipe for exactly this message.
-        if (TryHandOffCustomSchemeUrl())
-        {
-            return;
-        }
+        if (TryHandOffCustomSchemeUrl()) return;
+
         var settings = new Settings();
-        // Synchronous: Settings.Load is intentionally non-async so we
-        // don't deadlock the Avalonia UI thread. .Wait() on an async
-        // method would block here forever on the await inside the
-        // file read.
         settings.Load();
 
         var tokenStore = new TokenStore(System.IO.Path.Combine(
             System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
             "PostIt", "tokens.json"));
-        var client = new BlogApiClient(new YavscApiClient(settings, tokenStore));
+
+        var api = new YavscApiClient(settings, tokenStore);
+        var client = new BlogApiClient(api);
+
+        // Configure DI
+        var services = new ServiceCollection();
+
+        // Vues
+        services.AddTransient<MainPage>();
+        services.AddTransient<LoginPage>();
+        services.AddTransient<SettingsPage>();
+        services.AddTransient<HomePage>();
+
+        // ViewModels
+        services.AddSingleton(settings);
+        services.AddSingleton(api);
+        services.AddSingleton(client);
+        services.AddTransient<MainPageViewModel>();
+        services.AddTransient<SettingsPageViewModel>();
+        services.AddTransient<LoginPageViewModel>();
+        services.AddTransient<HomePageViewModel>();
+        var provider = services.BuildServiceProvider();
+
+        // Injecter le ViewLocator avec le provider
+        DataTemplates.Clear();
+        DataTemplates.Add(new ViewLocator(provider));
+
+        // Page de départ
+        var homeVm = provider.GetRequiredService<HomePageViewModel>();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainPageViewModel(client, settings)
-            };
+            desktop.MainWindow = new MainWindow { DataContext = homeVm };
         }
-        else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
         {
-            singleViewFactoryApplicationLifetime.MainViewFactory = () =>
-            {
-                return new MainPage { DataContext = new MainPageViewModel(client, settings) };
-            };
+            singleView.MainView = new MainWindow { DataContext = homeVm };
         }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainPage
-            {
-                DataContext = new MainPageViewModel(client, settings)
-            };
-        }
-
     }
 
     private bool TryHandOffCustomSchemeUrl()

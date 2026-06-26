@@ -111,6 +111,10 @@ public partial class LoginPageViewModel : ViewModelBase
         private set => this.SetProperty(ref _isBusy, value);
     }
 
+    private bool _LoginSuccess;
+    public bool LoginSuccess { get => _isBusy;
+        private set => this.SetProperty(ref _LoginSuccess, value); }
+
     /// <summary>
     /// Optional override used by tests. When set, this factory is called
     /// instead of <see cref="Platform.CreateBrowser"/> to obtain the
@@ -132,6 +136,7 @@ public partial class LoginPageViewModel : ViewModelBase
     /// constructing a fresh one.
     /// </summary>
     public YavscApiClient? ApiClientOverride { get; set; }
+    public Action LoginSucceeded { get; internal set; }
 
     private YavscApiClient? _api;
 
@@ -171,7 +176,7 @@ public partial class LoginPageViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-
+            LoginSuccess = false;
             if (SettingsLoadOverride is not null)
                 await SettingsLoadOverride().ConfigureAwait(false);
             else
@@ -222,6 +227,8 @@ public partial class LoginPageViewModel : ViewModelBase
             IsBusy = false;
             AccessToken = _api.CurrentAccessToken;
             StatusMessage = "Interactive token acquired.";
+            LoginSuccess = true;
+            LoginSucceeded?.Invoke();
         }
         catch (Exception ex)
         {
