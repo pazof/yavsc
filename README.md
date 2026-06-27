@@ -10,6 +10,7 @@ C'est une application mettant en oeuvre une prise de contact entre un demandeur 
 
 * [![Build and Push Yavsc Production Image](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml)
 
+* [![CodeQL Advanced](https://github.com/pazof/yavsc/actions/workflows/codeql.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/codeql.yml)
 
 # Documentation
 
