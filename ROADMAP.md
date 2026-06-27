@@ -75,8 +75,8 @@ Trois principes non négociables traversent tous les jalons :
 - ◐ Centralisation des versions NuGet (`Directory.Packages.props`) — **fait pour l'essentiel, à compléter**
 - ◐ Conteneurisation de bout en bout (build env + run + compose)
 - ☐ Tests d'intégration smoke par BC
-- ☐ Découpage `Yavsc.Org` vs `Yavsc.Server` vs `Yavsc.Api` clarifié dans l'Architecture
-- ☐ `CONTRIBUTING.md` (build, tests, conventions, DDD sessions)
+- ✔ Découpage `Yavsc.Org` vs `Yavsc.Server` vs `Yavsc.Api` clarifié dans l'Architecture — [doc/architecture/decoupage-organisation.md](./doc/architecture/decoupage-organisation.md)
+- ✔ `CONTRIBUTING.md` (build, tests, conventions, DDD sessions) — [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 **Critère de sortie** : `dotnet build` + `dotnet test` + `docker compose up` verts sur une machine vierge.
 
