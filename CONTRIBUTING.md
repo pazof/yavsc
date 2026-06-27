@@ -132,17 +132,48 @@ Compose le passe automatiquement à `docker build` via le bloc
 
 ### HTTPS en production
 
-En dev local on n'expose que HTTP. En production, sur chaque
-service runtime de `docker-compose.yaml`, décommenter :
+En dev local les services runtime sont forcés à **HTTP seul** par
+un bloc `environment` explicite dans `docker-compose.yaml` :
 
-1. Le port HTTPS correspondant (`5001` pour Org, `5003` pour Api,
-   `5005` pour Blogs).
-2. Le volume `/etc/letsencrypt:/etc/letsencrypt:ro`.
-3. Dans `appsettings-org.json`, renseigner
-   `Kestrel:Certificates:Default:Path` et `:KeyPath` pour pointer
-   vers les fichiers Let's Encrypt du volume monté.
-4. Surcharger `ASPNETCORE_URLS` pour écouter à la fois HTTP et
-   HTTPS.
+```yaml
+environment:
+  ASPNETCORE_URLS: "http://+:5000"
+  ASPNETCORE_HTTPS_PORT: ""
+```
+
+C'est nécessaire parce que `appsettings-org.Development.json`
+positionne `Site.Authority = https://localhost:5001`, ce qui
+pousse Kestrel à essayer de binder HTTPS même sans certificat
+disponible — et échoue proprement avec « Unable to configure
+HTTPS endpoint. No server certificate was specified ».
+
+En production, sur chaque service runtime de `docker-compose.yaml` :
+
+1. Remplacer l'`environment.ASPNETCORE_URLS` par la forme double-bind
+   `http://+:5000;https://+:5001` (ou équivalent pour Api / Blogs).
+2. Décommenter le port HTTPS correspondant (`5001` pour Org,
+   `5003` pour Api, `5005` pour Blogs).
+3. Décommenter le volume `/etc/letsencrypt:/etc/letsencrypt:ro` —
+   monter le répertoire Let's Encrypt de l'hôte en lecture seule
+   pour que Kestrel accède aux fichiers `.pem`.
+4. Dans `appsettings-org.json`, ajouter un bloc `Kestrel:Endpoints`
+   pointant vers les chemins du volume monté. Exemple :
+
+   ```json
+   "Kestrel": {
+     "Endpoints": {
+       "Https": {
+         "Url": "https://+:5001",
+         "Certificate": {
+           "Path": "/etc/letsencrypt/live/yavsc.example/fullchain.pem",
+           "KeyPath": "/etc/letsencrypt/live/yavsc.example/privkey.pem"
+         }
+       }
+     }
+   }
+   ```
+5. Régénérer l'image runtime (les `appsettings` sont baked dans
+   l'image via BuildKit secret mount — cf. section appsettings-org.json).
 
 ### Bumper l'image de build
 
