@@ -11,7 +11,6 @@ COPY Directory.*.props ./
 COPY src/Yavsc.Org/*.csproj ./src/Yavsc.Org/
 COPY src/Yavsc.Abstract/*.csproj ./src/Yavsc.Abstract/
 COPY src/Yavsc.Server/*.csproj ./src/Yavsc.Server/
-COPY src/Yavsc.Web/*.csproj ./src/Yavsc.Web/
 COPY src/Yavsc.Api/*.csproj ./src/Yavsc.Api/
 COPY src/Yavsc.Blogs/*.csproj ./src/Yavsc.Blogs/
 COPY src/cli/*.csproj ./src/cli/

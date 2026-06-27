@@ -31,7 +31,6 @@
               └────────────────┘
 
 Clients externes :
-  - Yavsc.Web  : front admin / expérimentation, JwtBearer.
   - PostIt     : client desktop Avalonia (cf. postit-oidc.md).
 ```
 
@@ -44,7 +43,6 @@ Clients externes :
 | `Yavsc.Org`        | ASP.NET Web    | Front web utilisateur-facing : Razor views, IdentityServer8 (OP), AccountController. **Héberge aussi les vues (front) des blogs**. |
 | `Yavsc.Api`        | ASP.NET Web    | API REST JSON principale consommée par les clients externes (PostIt, …). JwtBearer auth.     |
 | `Yavsc.Blogs`      | ASP.NET Web    | **Backend API headless** dédié aux blogs (uniquement `*ApiController` + services + modèles — aucune vue Razor). Destiné à être déployé sur un sous-domaine en production, séparé du front web hébergé par `Yavsc.Org`. |
-| `Yavsc.Web`        | ASP.NET Web    | Front admin / expérimentations, JwtBearer, référence `Yavsc.Abstract` et `Yavsc.Server`.    |
 | `Yavsc.Org.Tests`  | Test (xUnit)   | Tests d'isolation du front web (`Yavsc.Org`) — fakes, controller tests.                     |
 
 ## Pourquoi ce découpage

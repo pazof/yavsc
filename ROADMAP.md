@@ -35,7 +35,7 @@ Trois principes non négociables traversent tous les jalons :
 
 | Brique | Module | État |
 |---|---|---|
-| Backend ASP.NET | `Yavsc.Server`, `Yavsc.Web`, `Yavsc.Api`, `Yavsc.Org` | actif, build OK, cible .NET 10 |
+| Backend ASP.NET | `Yavsc.Server`, `Yavsc.Api`, `Yavsc.Org` | actif, build OK, cible .NET 10 |
 | Domaine partagé | `Yavsc.Abstract` | actif |
 | Blogs | `Yavsc.Blogs` | actif |
 | Client chat (`PostIt`) | `PostIt` (Avalonia) + `PostIt.Android` / `PostIt.Browser` / `PostIt.Desktop` | actif, OIDC |
