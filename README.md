@@ -57,12 +57,17 @@ Elle expose une messagerie instantanée, disponible depuis un navigateur Web ou 
 pouvant garantir la preservation du secret sur toute information personnelle,
 du client comme du prestataire.
 
-Ni le client ni le prestataire ne sont anonymes pour l'application,
-ils sont même formellement authentifiés, au moment de leur accord pour une première
-facturation en ligne, à l'occasion:
+Le client et le prestataire sont **dès l'inscription** formellement
+identifiés par l'application : ils sont authentifiés sur la base
+d'un compte nominatif, et **ce n'est qu'au moment de leur premier
+acte de facturation** qu'une vérification renforcée est déclenchée
+(KYC light côté client, validation du profil professionnel côté
+prestataire).
 
-* pour le client, à la validation d'une commande facturée (de prestation à un prestataire, ou autre).
-* pour le prestataire, de la validation de son profil professionnel, qui implique l’acquittement de son adhésion forfaitaire.
+Plus précisément :
+
+* pour le client, lors de la validation d'une commande facturée (de prestation à un prestataire, ou autre).
+* pour le prestataire, lors de la validation de son profil professionnel, qui implique l’acquittement de son adhésion forfaitaire.
 
 La séquence logique (et simplifiable) d'une prestation canonique (sans annulation ni reclamation) est la suivante :
 
