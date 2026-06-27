@@ -28,7 +28,8 @@ services:
       args:
         BUILD_ENV_TAG: debian12-dotnet10-android36-v1
       secrets:
-        - yavsc_appsettings
+        - source: yavsc_appsettings
+          target: yavsc_appsettings
     env_file: .env
     # ASPNETCORE_URLS forcé à HTTP seul en dev. Le HTTPS (port 5001)
     # est désactivé par défaut parce qu'aucun certificat n'est
@@ -74,7 +75,8 @@ services:
       args:
         BUILD_ENV_TAG: debian12-dotnet10-android36-v1
       secrets:
-        - yavsc_appsettings
+        - source: yavsc_appsettings
+          target: yavsc_appsettings
     env_file: .env
     # ASPNETCORE_URLS forcé à HTTP seul en dev. Voir commentaire détaillé
     # dans le service `web` ci-dessus ; même logique pour l'API.
@@ -105,7 +107,8 @@ services:
       args:
         BUILD_ENV_TAG: debian12-dotnet10-android36-v1
       secrets:
-        - yavsc_appsettings
+        - source: yavsc_appsettings
+          target: yavsc_appsettings
     env_file: .env
     # ASPNETCORE_URLS forcé à HTTP seul en dev. Voir commentaire détaillé
     # dans le service `web` ci-dessus ; même logique pour les blogs.
