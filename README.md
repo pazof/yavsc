@@ -62,7 +62,7 @@ ils sont même formellement authentifiés, au moment de leur accord pour une pre
 facturation en ligne, à l'occasion:
 
 * pour le client, à la validation d'une commande facturée (de prestation à un prestataire, ou autre).
-* pour le prestataire, de la validation de son profile professionnel, qui implique l’acquittement de son adhésion forfaitaire.
+* pour le prestataire, de la validation de son profil professionnel, qui implique l’acquittement de son adhésion forfaitaire.
 
 La séquence logique (et simplifiable) d'une prestation canonique (sans annulation ni reclamation) est la suivante :
 
