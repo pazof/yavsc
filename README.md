@@ -90,8 +90,8 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 * **Réclamation post-prestation : aucun support applicatif.** Passée la date de la prestation, le client n'a aucun chemin dans l'UI pour signaler un litige — aucune route, aucun contrôleur, aucun modèle. La fonctionnalité de conciliation est planifiée au **Jalon 5** (cf. [doc/ddd-exploration-2026-06-14.md](../doc/ddd-exploration-2026-06-14.md)) : double vue client/prestataire, dossier de conciliation, décision. En attendant, tout passe par e-mail au propriétaire de l'installation.
 * **Paiement : PayPal uniquement, via l'API NVP/SOAP.** Aucun autre PSP n'est intégré (pas de Stripe, pas d'Adyen). L'API NVP/SOAP que PayPal a dépréciée au profit de REST reste fonctionnelle mais n'est plus recommandée par PayPal ; aucune migration n'est planifiée à court terme.
 * **Périmètre métier étroit.** Pas de saisie de structures de projets complexes ; pas de ticketing associé à la prestation.
-* Les professionnels sont tous considérés comme tierces parties, hormis le propriétaire de l'installation, dont les identifiants PayPal sont utilisés pour collecter tous les paiements.
-* Aucune édition de fiche de paye ni paiement en masse ne sont supportés pour l'instant. Seuls les paiements unitaires sus-cités le sont.
+* **Collecte centralisée.** Tous les paiements PayPal transitent par le compte du propriétaire de l'installation — c'est le seul identifiant configuré côté PSP. Les professionnels apparaissent comme tierces parties du point de vue PayPal.
+* **Pas de gestion de paie.** Aucune édition de fiche de paye, ni paiement en masse. Seuls les paiements unitaires sus-cités sont supportés.
 
 ## Paramétrage
 
