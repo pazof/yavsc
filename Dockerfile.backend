@@ -1,5 +1,5 @@
 # Utilisation de votre image globale pour le build et l'exécution
-FROM pazof/yavsc-build-env:latest AS build-env
+FROM pazof/yavsc-build-env:debian12-dotnet10-android36-v1 AS build-env
 WORKDIR /src
 
 
