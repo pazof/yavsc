@@ -86,7 +86,7 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 ## Limitations
 
 * **Aujourd'hui** : une prestation par commande, sur un axe client → prestataire unique, sans sous-traitance. **Cible roadmap** : montages multi-parties (plusieurs clients et/ou plusieurs fournisseurs collaborant autour d'un même projet, avec sous-traitance validée par le client) — voir la [ROADMAP](../ROADMAP.md).
-* Dans le cas de l'avance, une fois le paiement client autorisé, pour le moment, aucune annulation de la prestation n'est supportée.
+* **Annulation : partielle et non testée.** Côté client, `HairCutCommandController.ClientCancel` / `ClientCancelConfirm` supprime la commande **sans déclencher de refund PayPal** ni logique arrhes vs avance ; aucune action d'annulation côté prestataire. La description du README (arrhes +20%, avance non-annulable) **n'est pas implémentée**. Cible : câbler `RefundTransaction` et le workflow complet, voir [ROADMAP](../ROADMAP.md).
 * Une fois passée la date de la prestation, toute reclamation nécessitera l'intervention d'un système auxiliaire (un processus humain?)
 * Un seul moyen de paiement: PayPal, depuis le Web ou l'application mobile, son interface dite dépréciée NVP/SOAP.
 * Elle ne prendra pas en charge, du moins pas encore, ni la saisie de structures de projets complexes, ni ticketing associé à la prestation.
