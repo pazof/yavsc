@@ -30,9 +30,18 @@ services:
       secrets:
         - yavsc_appsettings
     env_file: .env
+    # ASPNETCORE_URLS forcé à HTTP seul en dev. Le HTTPS (port 5001)
+    # est désactivé par défaut parce qu'aucun certificat n'est
+    # disponible sur la machine hôte du critère Jalon 0 ; pour
+    # l'activer en prod, décommenter le port 5001, monter
+    # /etc/letsencrypt en volume (template commenté ci-dessous), et
+    # ajouter Kestrel:Endpoints:Https dans appsettings-org.json.
+    environment:
+      ASPNETCORE_URLS: "http://+:5000"
+      ASPNETCORE_HTTPS_PORT: ""
     ports:
       - "5000:5000"
-      # - "5001:5001"   # HTTPS : décommenter avec le volume letsencrypt
+      # - "5001:5001"   # HTTPS : activer avec le volume letsencrypt ci-dessous
     depends_on:
       db:
         condition: service_healthy
@@ -53,9 +62,14 @@ services:
       secrets:
         - yavsc_appsettings
     env_file: .env
+    # ASPNETCORE_URLS forcé à HTTP seul en dev. Voir commentaire détaillé
+    # dans le service `web` ci-dessus ; même logique pour l'API.
+    environment:
+      ASPNETCORE_URLS: "http://+:5002"
+      ASPNETCORE_HTTPS_PORT: ""
     ports:
       - "5002:5002"
-      # - "5003:5003"   # HTTPS : décommenter avec le volume letsencrypt
+      # - "5003:5003"   # HTTPS : activer avec le volume letsencrypt ci-dessous
     depends_on:
       db:
         condition: service_healthy
@@ -78,9 +92,14 @@ services:
       secrets:
         - yavsc_appsettings
     env_file: .env
+    # ASPNETCORE_URLS forcé à HTTP seul en dev. Voir commentaire détaillé
+    # dans le service `web` ci-dessus ; même logique pour les blogs.
+    environment:
+      ASPNETCORE_URLS: "http://+:5004"
+      ASPNETCORE_HTTPS_PORT: ""
     ports:
       - "5004:5004"
-      # - "5005:5005"   # HTTPS : décommenter avec le volume letsencrypt
+      # - "5005:5005"   # HTTPS : activer avec le volume letsencrypt ci-dessous
     depends_on:
       db:
         condition: service_healthy
