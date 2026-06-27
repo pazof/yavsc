@@ -82,23 +82,25 @@ Quelques règles non capturées par `.editorconfig` :
 
 Cf. [doc/architecture/decoupage-organisation.md](./doc/architecture/decoupage-organisation.md).
 
-## Conteneurisation
+qui couvre à la fois le build, la publication et les images
+runtime, plus un second Dockerfile minimal (`Dockerfile.backend`)
+utilisé uniquement par le workflow de publication de l'image
+de production.
 
-Le repo expose trois images Docker :
+| Dockerfile              | Stages                                                          | Construit par                                |
+|-------------------------|-----------------------------------------------------------------|----------------------------------------------|
+| `Dockerfile`            | `build-env` (default), `publish-org`/`api`/`blogs`, `web-runtime`, `api-runtime`, `blogs-runtime` | `docker compose build` + `.github/workflows/docker-publish-android.yml` |
+| `Dockerfile.backend`    | Idem limité à `build-env` + `publish-org` (suffisant pour publier l'image `pazof/yavsc`) | `.github/workflows/docker-publish-backend.yml` |
 
-| Dockerfile              | Cible                                                       | Construite par                                  |
-|-------------------------|-------------------------------------------------------------|-------------------------------------------------|
-| `Dockerfile`            | Image de build (Debian + .NET 10 + Android SDK 36). Sert aussi à produire l'APK Android. | `.github/workflows/docker-publish-android.yml` |
-| `Dockerfile.backend`    | Idem, mais ne publie que `Yavsc.Org` (build + publish artifact). | `.github/workflows/docker-publish-backend.yml` |
-| `Dockerfile.runtime*`   | Images runtime ASP.NET pour `Yavsc.Org` (5000), `Yavsc.Blogs` (5004), `Yavsc.Api` (5002). | `docker compose build`                          |
-
-L'image de build est construite depuis le dépôt sibling
+L'image de base est construite depuis le dépôt sibling
 `dotnet-android-build-image` (Debian 12 + .NET 10 SDK + Android
 SDK 36 + workload .NET Android). Elle est poussée sur Docker Hub
 sous le tag `pazof/yavsc-build-env:debian12-dotnet10-android36-v1`.
-Tous les `Dockerfile.runtime*` et les `Dockerfile` /
-`Dockerfile.backend` référencent ce tag — le bumper en lockstep
-quand l'image de build est reconstruite.
+Le tag est déclaré comme `ARG BUILD_ENV_TAG` au début du
+`Dockerfile` (et de `Dockerfile.backend`) — il faut le bumper en
+lockstep dans les deux fichiers **et** dans `docker-compose.yaml`
+(chaque bloc `build.args.BUILD_ENV_TAG`) quand l'image de base
+est reconstruite.
 
 ### `docker compose up`
 
@@ -106,10 +108,11 @@ quand l'image de build est reconstruite.
 sudo docker compose up --build
 ```
 
-Cela démarre 4 services : `db` (PostgreSQL 16), `web` (Yavsc.Org),
-`api` (Yavsc.Api), `blogs` (Yavsc.Blogs). Les services runtime
-s'attendent via `depends_on.condition: service_healthy` sur le
-healthcheck `pg_isready` de `db`.
+Démarre 4 services : `db` (PostgreSQL 16), `web` (Yavsc.Org),
+`api` (Yavsc.Api), `blogs` (Yavsc.Blogs). Chaque service runtime
+pointe sur le stage correspondant du Dockerfile multi-stage via
+`build.target`. Les services runtime attendent le healthcheck
+`pg_isready` de `db` avant de démarrer.
 
 ### appsettings-org.json
 
@@ -153,21 +156,24 @@ docker push pazof/yavsc-build-env:debian12-dotnet10-android36-v2
 ```
 
 Puis bumper en lockstep dans :
-- `Dockerfile`, `Dockerfile.backend`
-- `Dockerfile.runtime`, `Dockerfile.runtime.blogs`, `Dockerfile.runtime.api`
-- `docker-compose.yaml` (chaque bloc `build` qui pointe sur un
-  `Dockerfile.runtime*`).
+- `Dockerfile` (ARG `BUILD_ENV_TAG` en tête de fichier)
+- `Dockerfile.backend` (idem)
+- `docker-compose.yaml` (chaque bloc `build.args.BUILD_ENV_TAG`).
 
-### Vérifier un build isolé d'une image runtime
+### Vérifier un build isolé d'un stage runtime
 
 ```bash
 docker build \
   --secret id=yavsc_appsettings,src=src/Yavsc.Org/appsettings-org.json \
-  -f Dockerfile.runtime \
+  --target web-runtime \
   -t yavsc-org:dev .
 docker run --rm -p 5000:5000 yavsc-org:dev
 ```
 
+et une roadmap à jour dans [ROADMAP.md](./ROADMAP.md). Toute
+modification de modèle doit être précédée d'une note DDD ; les BC
+(Conciliation, etc.) listés dans ces docs sont les cibles de
+conception.
 ## Sessions DDD
 
 Le repo tient un journal de design DDD sous `doc/ddd-exploration-*.md`
