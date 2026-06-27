@@ -16,8 +16,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
 WORKDIR /app
 
-ARG BUILD_ENV_IMAGE=pazof/yavsc-build-env:debian12-dotnet10-android36-v1
-COPY --from=${BUILD_ENV_IMAGE} /app/publish/Yavsc.Blogs/ ./
+COPY --from=pazof/yavsc-build-env:debian12-dotnet10-android36-v1 /app/publish/Yavsc.Blogs/ ./
 
 RUN --mount=type=secret,id=yavsc_appsettings,dst=/run/secrets/yavsc_appsettings \
     cp /run/secrets/yavsc_appsettings /app/appsettings-org.json \

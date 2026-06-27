@@ -31,11 +31,10 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
 WORKDIR /app
 
-# 1. Copier l'artefact publié depuis l'image de build. On ne référence
-#    pas pazof/yavsc-build-env:latest directement — le contexte de
-#    build (compose ou CI) contrôle quelle image source est utilisée.
-ARG BUILD_ENV_IMAGE=pazof/yavsc-build-env:debian12-dotnet10-android36-v1
-COPY --from=${BUILD_ENV_IMAGE} /app/publish/Yavsc.Org/ ./
+# 1. Copier l'artefact publié depuis l'image de build. On référence
+#    l'image de build par son tag pinné : changer le tag veut dire
+#    modifier les trois Dockerfile.runtime* en même temps.
+COPY --from=pazof/yavsc-build-env:debian12-dotnet10-android36-v1 /app/publish/Yavsc.Org/ ./
 
 # 2. appsettings-org.json : injecté via BuildKit secret mount.
 #    Le /run/secrets/... est un tmpfs éphémère, on copie dans /app puis
