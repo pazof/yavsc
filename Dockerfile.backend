@@ -38,5 +38,12 @@ COPY . .
 # 6. Compilation du serveur Web principal
 RUN dotnet build src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-restore -clp:ErrorsOnly
 
+# 7. Publication de l'artefact Yavsc.Org pour l'image runtime (Dockerfile.runtime).
+#    Copie depuis /app/publish/Yavsc.Org/ via --from=build-env. Les appsettings
+#    ne sont PAS publiés ici : fournis au runtime via BuildKit secret mount ou
+#    volume docker-compose.
+RUN mkdir -p /app/publish
+RUN dotnet publish src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-build -o /app/publish/Yavsc.Org
+
 # Définition du répertoire d'exécution par défaut
 CMD ["bash"]

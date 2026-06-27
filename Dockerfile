@@ -45,5 +45,15 @@ RUN dotnet build src/Yavsc.Blogs/Yavsc.Blogs.csproj -c Release --no-restore -clp
 # 6. Compilation du serveur Web principal Injecter l'option -r avec la variable
 RUN dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj -c Release --no-restore -clp:ErrorsOnly -r ${ANDROID_TARGET_RID}
 
+# 7. Publication des artefacts pour les images runtime (Dockerfile.runtime*)
+#    Le repertoire /app/publish/<project>/ est copie tel quel dans l'image
+#    runtime via --from=build-env. Les appsettings ne sont PAS publies ici :
+#    ils sont fournis au runtime soit via BuildKit secret mount, soit via
+#    volume monte par docker-compose.
+RUN mkdir -p /app/publish
+RUN dotnet publish src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-build -o /app/publish/Yavsc.Org
+RUN dotnet publish src/Yavsc.Api/Yavsc.Api.csproj -c Release --no-build -o /app/publish/Yavsc.Api
+RUN dotnet publish src/Yavsc.Blogs/Yavsc.Blogs.csproj -c Release --no-build -o /app/publish/Yavsc.Blogs
+
 # Définition du répertoire d'exécution par défaut
 CMD ["bash"]
