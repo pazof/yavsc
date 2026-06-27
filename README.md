@@ -67,7 +67,7 @@ facturation en ligne, à l'occasion:
 La séquence logique (et simplifiable) d'une prestation canonique (sans annulation ni reclamation) est la suivante :
 
 1. Une commande intervient auprès d'un prestataire, elle est chiffrée et le paiement est provisionné par PayPal, non collecté.
-2. Notifié, le prestataire valide un devis, avec arrhes ou avance. il signe son devis, qui peu contenir des documents attachés à faire signer par le client, un ou des contrats, stokés au format Markdown par le prestataire dans ses contrats à faire signer.
+2. Notifié, le prestataire valide un devis, avec arrhes ou avance. il signe son devis, qui peu contenir des documents attachés à faire signer par le client, un ou des contrats, stockés au format Markdown par le prestataire dans ses contrats à faire signer.
 3. à son tour, le client est notifié et signe le devis aussi
 4. Les arrhes ou avances sont débitées sur le champ
 5. 10 jours avant la date de la prestation le reste du paiement est collecté
