@@ -11,6 +11,14 @@ C'est une application mettant en oeuvre une prise de contact entre un demandeur 
 * [![Build and Push Yavsc Production Image](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml)
 
 
+# Documentation
+
+L'architecture, la roadmap et les détails métier sont documentés
+sous [`doc/`](./doc/). Voir l'[index de la documentation](./doc/README.md)
+pour le sommaire complet. La racine de l'architecture est
+[Architecture.md](./doc/Architecture.md).
+
+
 # Construction et déploiement
 
 ## Construction
