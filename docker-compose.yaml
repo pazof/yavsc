@@ -102,8 +102,9 @@ networks:
   yavsc-public:
 
 secrets:
-  # appsettings-org.json : fichier local non commité. BuildKit le
-  # monte dans /run/secrets/yavsc_appsettings pendant le build de
-  # chaque image runtime.
+  # appsettings-org.json : fichier local non commité. Vit à
+  # src/Yavsc.Org/ dans le repo (template : appsettings-org-template.json).
+  # BuildKit le monte dans /run/secrets/yavsc_appsettings pendant le
+  # build de chaque image runtime.
   yavsc_appsettings:
-    file: ./appsettings-org.json
+    file: ./src/Yavsc.Org/appsettings-org.json
