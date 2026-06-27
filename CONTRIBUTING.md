@@ -114,6 +114,22 @@ pointe sur le stage correspondant du Dockerfile multi-stage via
 `build.target`. Les services runtime attendent le healthcheck
 `pg_isready` de `db` avant de démarrer.
 
+**Sur une machine vierge, `db`, `api` et `blogs` démarrent. Le
+service `web` (Yavsc.Org) échoue avec :**
+
+> Production IdentityServer requires a signing certificate.
+> Configure Kestrel:Endpoints:Https:Certificate:{Path,KeyPath}.
+
+C'est attendu : IdentityServer8 en mode Production exige un cert
+HTTPS pour signer les tokens (cf. `src/Yavsc.Org/Extensions/HostingExtensions.cs:374`).
+Le critère de sortie Jalon 0 « docker compose up vert sur machine
+vierge » n'est donc **pas** « tout démarre sans rien » — c'est
+« tout démarre **après** la procédure d'installation qui monte
+un cert HTTPS valide, cf. HTTPS en production ci-dessous ».
+Le montage de `/etc/letsencrypt` (volume commenté par défaut
+dans `docker-compose.yaml`) est l'étape qui distingue une
+machine configurée d'une machine vierge.
+
 ### appsettings-org.json
 
 Le fichier de configuration de prod (`src/Yavsc.Org/appsettings-org.json`)

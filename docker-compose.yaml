@@ -56,6 +56,13 @@ services:
       - yavsc-internal
       - yavsc-public
     # volumes:
+    #   # Indispensable pour que Yavsc.Org (IdentityServer8) démarre.
+    #   # Sans ce montage, 'docker compose up' échoue côté web avec
+    #   # « Production IdentityServer requires a signing certificate ».
+    #   # Décommenter ici + côté api/blogs + renseigner
+    #   # Kestrel:Endpoints:Https:Certificate:{Path,KeyPath} dans
+    #   # appsettings-org.json (cf. section HTTPS en production dans
+    #   # CONTRIBUTING.md).
     #   - /etc/letsencrypt:/etc/letsencrypt:ro
 
   # ---------- Yavsc.Api (API REST principale) ----------
