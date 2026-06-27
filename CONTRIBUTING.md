@@ -36,8 +36,18 @@ dotnet test
 
 Les tests sont répartis en :
 
-- `src/Yavsc.Org.Tests/` — tests d'isolation du front web
-- `src/PostIt.Tests/` — tests du client desktop PostIt
+- `src/Yavsc.Org.Tests/` — tests d'intégration du front web
+  (`TestWebApplicationFactory<Program>` + EF InMemory). Comprend
+  les **smoke tests par BC** sous `Smoke/` :
+  `AccountSmokeTests` (`GET /signin`), `BlogSmokeTests`
+  (`GET /BlogSpot/Index`). Chaque test couvre une bounded
+  context DDD au sens de `doc/ddd-exploration-2026-06-14.md` :
+  il démarre le host en mémoire via
+  `WebApplicationFactory<Program>` et vérifie qu'une route
+  publique de la BC répond en 2xx/3xx (ou 401/403 si elle
+  exige une authentification). Cf. [ROADMAP.md](./ROADMAP.md)
+  item « Tests d'intégration smoke par BC ».
+- `src/PostIt.Tests/` — tests unitaires du client desktop PostIt.
 
 ## Conventions de code
 

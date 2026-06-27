@@ -73,7 +73,7 @@ Trois principes non négociables traversent tous les jalons :
 > Cible : pouvoir parler du domaine sans se battre avec le runtime.
 
 - ✔ Conteneurisation de bout en bout (build env + run + compose) — Dockerfile multi-stage + `docker-compose.yaml` 4 services + healthchecks ; critère de sortie atteint : db/api/blogs démarrent sur une machine vierge, web documente sa dépendance au cert HTTPS (IdentityServer8 Production). Procédure d'install complète dans [CONTRIBUTING.md](./CONTRIBUTING.md#conteneurisation).
-- ☐ Tests d'intégration smoke par BC
+- ✔ Tests d'intégration smoke par BC — [src/Yavsc.Org.Tests/Smoke/](./src/Yavsc.Org.Tests/Smoke/) : `AccountSmokeTests` (`GET /signin`) + `BlogSmokeTests` (`GET /BlogSpot/Index`) couvrent deux BCs actives (Account, Blog front) en démarrant Yavsc.Org en mémoire via `WebApplicationFactory<Program>`. Coverage Yavsc.Api / Yavsc.Blogs reste à ajouter dans une session ultérieure.
 - ✔ Découpage `Yavsc.Org` vs `Yavsc.Server` vs `Yavsc.Api` clarifié dans l'Architecture — [doc/architecture/decoupage-organisation.md](./doc/architecture/decoupage-organisation.md)
 - ✔ `CONTRIBUTING.md` (build, tests, conventions, DDD sessions) — [CONTRIBUTING.md](./CONTRIBUTING.md)
 
