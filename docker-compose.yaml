@@ -39,6 +39,13 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:5000"
       ASPNETCORE_HTTPS_PORT: ""
+      # Forcer Production sur les services runtime : sans ça,
+      # appsettings-org.Development.json charge un bloc Kestrel
+      # avec un endpoint HTTPS qui crashe Kestrel (« No server
+      # certificate was specified »). Le bloc environment: dans
+      # Compose prend le pas sur la valeur ASPNETCORE_ENVIRONMENT
+      # du env_file: .env (qui contient Development).
+      ASPNETCORE_ENVIRONMENT: "Production"
     ports:
       - "5000:5000"
       # - "5001:5001"   # HTTPS : activer avec le volume letsencrypt ci-dessous
@@ -67,6 +74,7 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:5002"
       ASPNETCORE_HTTPS_PORT: ""
+      ASPNETCORE_ENVIRONMENT: "Production"
     ports:
       - "5002:5002"
       # - "5003:5003"   # HTTPS : activer avec le volume letsencrypt ci-dessous
@@ -97,6 +105,7 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:5004"
       ASPNETCORE_HTTPS_PORT: ""
+      ASPNETCORE_ENVIRONMENT: "Production"
     ports:
       - "5004:5004"
       # - "5005:5005"   # HTTPS : activer avec le volume letsencrypt ci-dessous
