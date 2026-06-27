@@ -1,8 +1,5 @@
 services:
   # ---------- PostgreSQL ----------
-  # Image officielle. Les credentials sont repris du .env (jamais commité).
-  # Healthcheck via pg_isready : web/api/blogs ne démarrent qu'une fois la
-  # base prête à accepter des connexions.
   db:
     image: postgres:16
     env_file: .env
@@ -18,15 +15,18 @@ services:
       start_period: 20s
 
   # ---------- Yavsc.Org (front web) ----------
-  # Build depuis Dockerfile.runtime. ASPNETCORE_URLS=http://+:5000 (HTTP seul
-  # en dev). Pour activer HTTPS en prod, décommenter le montage letsencrypt
-  # ci-dessous et renseigner Kestrel:Certificates dans appsettings-org.json.
+  # Construit depuis le stage `web-runtime` du Dockerfile multi-stage.
+  # ASPNETCORE_URLS=http://+:5000 (HTTP seul en dev). Pour activer
+  # HTTPS en prod, décommenter le port 5001, monter /etc/letsencrypt
+  # en volume, et configurer Kestrel:Certificates dans
+  # appsettings-org.json (cf. CONTRIBUTING.md).
   web:
     build:
       context: .
-      dockerfile: Dockerfile.runtime
+      dockerfile: Dockerfile
+      target: web-runtime
       args:
-        BUILD_ENV_IMAGE: pazof/yavsc-build-env:debian12-dotnet10-android36-v1
+        BUILD_ENV_TAG: debian12-dotnet10-android36-v1
       secrets:
         - yavsc_appsettings
     env_file: .env
@@ -42,13 +42,14 @@ services:
     # volumes:
     #   - /etc/letsencrypt:/etc/letsencrypt:ro
 
-  # ---------- Yavsc.Api (API REST) ----------
+  # ---------- Yavsc.Api (API REST principale) ----------
   api:
     build:
       context: .
-      dockerfile: Dockerfile.runtime.api
+      dockerfile: Dockerfile
+      target: api-runtime
       args:
-        BUILD_ENV_IMAGE: pazof/yavsc-build-env:debian12-dotnet10-android36-v1
+        BUILD_ENV_TAG: debian12-dotnet10-android36-v1
       secrets:
         - yavsc_appsettings
     env_file: .env
@@ -66,14 +67,14 @@ services:
 
   # ---------- Yavsc.Blogs (backend API headless des blogs) ----------
   # Déployé sur un sous-domaine dédié en production (ex: blogs.yavsc.example).
-  # cf. doc/architecture/decoupage-organisation.md pour la séparation avec
-  # le front des blogs (qui reste dans Yavsc.Org).
+  # cf. doc/architecture/decoupage-organisation.md.
   blogs:
     build:
       context: .
-      dockerfile: Dockerfile.runtime.blogs
+      dockerfile: Dockerfile
+      target: blogs-runtime
       args:
-        BUILD_ENV_IMAGE: pazof/yavsc-build-env:debian12-dotnet10-android36-v1
+        BUILD_ENV_TAG: debian12-dotnet10-android36-v1
       secrets:
         - yavsc_appsettings
     env_file: .env
@@ -94,17 +95,15 @@ volumes:
 
 networks:
   # Réseau interne : seuls les services Yavsc et la base s'y voient.
-  # Non attaché à l'hôte.
   yavsc-internal:
     internal: false
-  # Réseau public : exposé à l'hôte via les ports mappés. Conserver
-  # les services web/api/blogs ici, PAS la base.
+  # Réseau public : exposé à l'hôte via les ports mappés.
   yavsc-public:
 
 secrets:
-  # appsettings-org.json : fichier local non commité. Vit à
-  # src/Yavsc.Org/ dans le repo (template : appsettings-org-template.json).
-  # BuildKit le monte dans /run/secrets/yavsc_appsettings pendant le
-  # build de chaque image runtime.
+  # appsettings-org.json vit à src/Yavsc.Org/appsettings-org.json
+  # (non commité). BuildKit le monte dans
+  # /run/secrets/yavsc_appsettings pendant le build de chaque image
+  # runtime via le Dockerfile multi-stage.
   yavsc_appsettings:
     file: ./src/Yavsc.Org/appsettings-org.json
