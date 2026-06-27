@@ -85,7 +85,8 @@ Dans le cas des arrhes, à tout moment, jusqu'avant la date et l'heure de la pre
 * Une fois passée la date de la prestation, toute reclamation nécessitera l'intervention d'un système auxiliaire (un processus humain?)
 * Un seul moyen de paiement: PayPal, depuis le Web ou l'application mobile, son interface dite dépréciée NVP/SOAP.
 * Elle ne prendra pas en charge, du moins pas encore, ni la saisie de structures de projets complexes, ni ticketing associé à la prestation.
-* Les professionnels sont tous considérés comme tierces parties, hormis le propriétaire de l'installation, dont les identifiants PayPal sont utilisés pour collecter tous les paiements. TODO Aucune edition de fiche de paye ni paiement en masse ne sont supportés pour l'instant. Seul les payments unitaires sus-cités le sont.
+* Les professionnels sont tous considérés comme tierces parties, hormis le propriétaire de l'installation, dont les identifiants PayPal sont utilisés pour collecter tous les paiements.
+* Aucune édition de fiche de paye ni paiement en masse ne sont supportés pour l'instant. Seuls les paiements unitaires sus-cités le sont.
 
 ## Paramétrage
 
