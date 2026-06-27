@@ -203,10 +203,3 @@ Repris du `TODO.fr.md.archive`, jalon 1 (sélection) + jalon 2 (interface) :
 
 - ☐ Gestion de contenu des pages du site au format interne (non exposé au Web)
   - Cible : `@Html.SiteContent<AccessRules>(id).Responsible` (style à finaliser)
-
----
-
-## 🗃️ Archive
-
-- [`TODO.fr.md.archive`](./TODO.fr.md.archive) — liste d'origine (2016–2017), conservée pour mémoire.
-  Tout ce qui en a été repris l'est dans le jalon correspondant ci-dessus.
