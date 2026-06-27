@@ -31,6 +31,7 @@
     <PackageReference Include="MailKit" />
     <PackageReference Include="MimeKit" />
     <PackageReference Include="pazof.rules" />
+    <PackageReference Include="YamlDotNet" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Yavsc.Abstract/Yavsc.Abstract.csproj" />
