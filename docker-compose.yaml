@@ -1,24 +1,109 @@
 services:
+  # ---------- PostgreSQL ----------
+  # Image officielle. Les credentials sont repris du .env (jamais commité).
+  # Healthcheck via pg_isready : web/api/blogs ne démarrent qu'une fois la
+  # base prête à accepter des connexions.
   db:
     image: postgres:16
     env_file: .env
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - yavsc-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
+  # ---------- Yavsc.Org (front web) ----------
+  # Build depuis Dockerfile.runtime. ASPNETCORE_URLS=http://+:5000 (HTTP seul
+  # en dev). Pour activer HTTPS en prod, décommenter le montage letsencrypt
+  # ci-dessous et renseigner Kestrel:Certificates dans appsettings-org.json.
   web:
     build:
       context: .
+      dockerfile: Dockerfile.runtime
       args:
-        POSTGRES_HOST: db
-        POSTGRES_PORT: ${POSTGRES_PORT}
-        POSTGRES_DB: ${POSTGRES_DB}
-        POSTGRES_USER: ${POSTGRES_USER}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        BUILD_ENV_IMAGE: pazof/yavsc-build-env:debian12-dotnet10-android36-v1
+      secrets:
+        - yavsc_appsettings
     env_file: .env
     ports:
       - "5000:5000"
+      # - "5001:5001"   # HTTPS : décommenter avec le volume letsencrypt
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - yavsc-internal
+      - yavsc-public
+    # volumes:
+    #   - /etc/letsencrypt:/etc/letsencrypt:ro
+
+  # ---------- Yavsc.Api (API REST) ----------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.runtime.api
+      args:
+        BUILD_ENV_IMAGE: pazof/yavsc-build-env:debian12-dotnet10-android36-v1
+      secrets:
+        - yavsc_appsettings
+    env_file: .env
+    ports:
+      - "5002:5002"
+      # - "5003:5003"   # HTTPS : décommenter avec le volume letsencrypt
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - yavsc-internal
+      - yavsc-public
+    # volumes:
+    #   - /etc/letsencrypt:/etc/letsencrypt:ro
+
+  # ---------- Yavsc.Blogs (backend API headless des blogs) ----------
+  # Déployé sur un sous-domaine dédié en production (ex: blogs.yavsc.example).
+  # cf. doc/architecture/decoupage-organisation.md pour la séparation avec
+  # le front des blogs (qui reste dans Yavsc.Org).
+  blogs:
+    build:
+      context: .
+      dockerfile: Dockerfile.runtime.blogs
+      args:
+        BUILD_ENV_IMAGE: pazof/yavsc-build-env:debian12-dotnet10-android36-v1
+      secrets:
+        - yavsc_appsettings
+    env_file: .env
+    ports:
+      - "5004:5004"
+      # - "5005:5005"   # HTTPS : décommenter avec le volume letsencrypt
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - yavsc-internal
+      - yavsc-public
+    # volumes:
+    #   - /etc/letsencrypt:/etc/letsencrypt:ro
 
 volumes:
   pgdata:
+
+networks:
+  # Réseau interne : seuls les services Yavsc et la base s'y voient.
+  # Non attaché à l'hôte.
+  yavsc-internal:
+    internal: false
+  # Réseau public : exposé à l'hôte via les ports mappés. Conserver
+  # les services web/api/blogs ici, PAS la base.
+  yavsc-public:
+
+secrets:
+  # appsettings-org.json : fichier local non commité. BuildKit le
+  # monte dans /run/secrets/yavsc_appsettings pendant le build de
+  # chaque image runtime.
+  yavsc_appsettings:
+    file: ./appsettings-org.json
