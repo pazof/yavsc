@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             x:Class="PostIt.Views.SessionStatusBanner"
+             x:DataType="vm:SessionStatusViewModel">
+  <Border DockPanel.Dock="Top"
+          Background="#ECEFF1"
+          BorderBrush="#B0BEC5"
+          BorderThickness="0,0,0,1"
+          Padding="12,6">
+    <DockPanel LastChildFill="False">
+      <TextBlock Text="{Binding SessionLabel}"
+                 FontWeight="SemiBold"
+                 VerticalAlignment="Center"
+                 DockPanel.Dock="Left"/>
+      <Button Content="Se déconnecter"
+              Command="{Binding LogoutAsync}"
+              IsVisible="{Binding IsLoggedIn}"
+              DockPanel.Dock="Right"/>
+    </DockPanel>
+  </Border>
+</UserControl>

@@ -84,20 +84,53 @@ public class YavscApiClient : IAsyncDisposable
     public string? CurrentIdToken => _tokens?.IdToken;
 
     /// <summary>Force a new interactive login (PKCE). Throws on failure.</summary>
-    public async Task LoginInteractiveAsync(CancellationToken ct = default)
+    /// <param name="progress">Optional sink for the discrete phases of
+    /// the flow; the UI uses this to render a debug-friendly status
+    /// (Discovering → OpeningBrowser → AwaitingCallback → ExchangingCode
+    /// → Success / Error). The same caller can also rely on
+    /// <see cref="LoginPageViewModel.StatusMessage"/> for the human
+    /// text (URLs, error detail).</param>
+    public async Task LoginInteractiveAsync(
+        IProgress<OidcLoginPhase>? progress = null,
+        CancellationToken ct = default)
     {
+        progress?.Report(OidcLoginPhase.Discovering);
+
         var browser = Platform.CreateBrowser?.Invoke();
         if (browser is null)
+        {
+            progress?.Report(OidcLoginPhase.Error);
             throw new InvalidOperationException("No browser is available on this platform.");
+        }
 
         var client = new OidcClient(_settings.GetOidcClientOptions(browser));
-        var result = await client.LoginAsync(new LoginRequest(), ct);
+
+        // OidcClient.LoginAsync builds the authorize URL, calls
+        // IBrowser.InvokeAsync (which on desktop hands the user off
+        // to the system browser and waits on the named pipe), then
+        // posts the code at the token endpoint. We can't hook each
+        // milestone individually without subclassing OidcClient, so
+        // we bracket the call with the two phases the UI cares about:
+        // the moment we ask the browser to open (covers the entire
+        // user-driven window including the AwaitingCallback wait), and
+        // the moment we trade the code for tokens.
+        progress?.Report(OidcLoginPhase.OpeningBrowser);
+        var result = await client.LoginAsync(new LoginRequest(), ct).ConfigureAwait(false);
+
         if (result.IsError)
+        {
+            progress?.Report(OidcLoginPhase.Error);
             throw new InvalidOperationException($"OIDC login failed: {result.Error}");
+        }
+
+        progress?.Report(OidcLoginPhase.ExchangingCode);
 
         if (string.IsNullOrEmpty(result.RefreshToken))
+        {
+            progress?.Report(OidcLoginPhase.Error);
             throw new InvalidOperationException(
                 "Missing refresh_token — vérifie le scope 'offline_access'.");
+        }
 
         _tokens = new RefreshTokenRecord(
             AccessToken: result.AccessToken,
@@ -106,6 +139,54 @@ public class YavscApiClient : IAsyncDisposable
             IdToken: result.IdentityToken);
 
         _store.Save(_tokens);
+        progress?.Report(OidcLoginPhase.Success);
+    }
+
+    /// <summary>
+    /// Best-effort silent refresh used at boot when a token bundle is
+    /// already on disk. Returns <c>true</c> when the access token is
+    /// usable (either because it was still valid, or because the
+    /// refresh succeeded); <c>false</c> when the refresh token is
+    /// gone / rejected and the caller should route to the login page.
+    /// Never throws on refresh failure — it logs via the returned
+    /// phase and returns false so the UI can keep going.
+    /// </summary>
+    public async Task<bool> TrySilentLoginAsync(
+        IProgress<OidcLoginPhase>? progress = null,
+        CancellationToken ct = default)
+    {
+        if (!HasValidSession) return false;
+        if (_tokens is null) return false;
+
+        // Access token still has plenty of life — nothing to do.
+        if (_tokens.AccessTokenExpiresAt - DateTimeOffset.UtcNow > RefreshSkew)
+        {
+            progress?.Report(OidcLoginPhase.Success);
+            return true;
+        }
+
+        // Access token expired but we have a refresh token: try the
+        // silent refresh once. If the OP rejects (revoked, rotation
+        // theft, network down), the refresh path already purges the
+        // store and throws RefreshFailedException; we catch and route
+        // the user back to the login page.
+        try
+        {
+            progress?.Report(OidcLoginPhase.ExchangingCode);
+            await ForceRefreshAsync(ct).ConfigureAwait(false);
+            progress?.Report(OidcLoginPhase.Success);
+            return true;
+        }
+        catch (RefreshFailedException)
+        {
+            progress?.Report(OidcLoginPhase.Idle);
+            return false;
+        }
+        catch
+        {
+            progress?.Report(OidcLoginPhase.Idle);
+            return false;
+        }
     }
 
     /// <summary>Call a JSON endpoint, transparently refreshing the token if needed.</summary>

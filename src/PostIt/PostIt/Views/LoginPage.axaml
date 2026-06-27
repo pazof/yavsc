@@ -60,6 +60,26 @@
              IsReadOnly="True"
              BorderThickness="0"
              Background="Transparent"/>
+
+    <!--
+      Phase indicator: a single-line label bound to the OIDC flow
+      phase (Discovering / OpeningBrowser / AwaitingCallback / …).
+      Operators use this to debug the postit:// callback hand-off:
+      if AwaitingCallback never advances to ExchangingCode, the OS
+      never re-launched PostIt with the callback URL. Kept as a
+      discrete control (not folded into StatusMessage) so the phase
+      always renders even when StatusMessage is empty or stale.
+    -->
+    <Border Background="#EEF2F7"
+            BorderBrush="#B0BEC5"
+            BorderThickness="1"
+            CornerRadius="4"
+            Padding="6,4">
+      <TextBlock Text="{Binding PhaseLabel}"
+                 FontWeight="SemiBold"
+                 Foreground="#37474F"/>
+    </Border>
+
     <ProgressBar IsIndeterminate="{Binding IsBusy}" />
 
   </StackPanel>

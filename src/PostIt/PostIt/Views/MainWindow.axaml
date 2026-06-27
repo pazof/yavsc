@@ -6,9 +6,22 @@
         x:Class="PostIt.Views.MainWindow"
         >
 
-    <!-- Association des ViewModels aux Vues graphiques (UserControls) -->
-   <NavigationPage>
-    <views:HomePage/>
-    </NavigationPage>
+    <!--
+        Root layout: persistent session banner on top, navigation
+        surface below. The banner is the single source of truth for
+        "Connecté / Déconnecté" and the logout button — visible on
+        every page (HomePage, LoginPage, MainPage) so the user never
+        has to dig through a menu to find their session state.
+
+        The navigation stack is built programmatically in
+        App.OnFrameworkInitializationCompleted: HomePage is the
+        root, MainPage is pushed on top when the silent refresh
+        succeeds at boot.
+    -->
+    <DockPanel LastChildFill="True">
+        <views:SessionStatusBanner x:Name="SessionBanner"
+                                   DockPanel.Dock="Top"/>
+        <NavigationPage x:Name="NavRoot"/>
+    </DockPanel>
 
 </Window>

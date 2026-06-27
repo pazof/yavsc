@@ -213,6 +213,236 @@ public class YavscApiClientTests
                 : null);
         File.WriteAllText(tokensPath, JsonSerializer.Serialize(record));
     }
+
+    // --- OidcLoginPhase progress tests ---------------------------------
+
+    /// <summary>
+    /// Collecting Progress<T> is documented to capture reports
+    /// synchronously inside the awaiter when called on the same
+    /// thread, but our LoginInteractiveAsync awaits across threads;
+    /// we use the post-await snapshot to keep this test deterministic.
+    /// </summary>
+    [Fact]
+    public async Task LoginInteractiveAsync_reports_Discovering_then_Success()
+    {
+        using var authority = await OidcStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        var client = new YavscApiClient(settings, new TokenStore(tokensPath));
+        var browser = new FakeAuthorizingBrowser(authority.LoopbackRedirectUri);
+
+        var reported = new System.Collections.Generic.List<OidcLoginPhase>();
+        var progress = new SyncProgress<OidcLoginPhase>(reported);
+
+        try
+        {
+            await LoginWithBrowserAsync(client, browser.CreateBrowser(), progress);
+            // SyncProgress captures reports synchronously — no flush needed.
+
+            Assert.Contains(OidcLoginPhase.Discovering, reported);
+            Assert.Contains(OidcLoginPhase.OpeningBrowser, reported);
+            Assert.Contains(OidcLoginPhase.ExchangingCode, reported);
+            Assert.Equal(OidcLoginPhase.Success, Last(reported));
+        }
+        finally
+        {
+            if (File.Exists(tokensPath)) File.Delete(tokensPath);
+        }
+    }
+
+    [Fact]
+    public async Task LoginInteractiveAsync_reports_Error_when_browser_missing()
+    {
+        using var authority = await OidcStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var client = new YavscApiClient(settings, new TokenStore(TokensPath()));
+        var reported = new System.Collections.Generic.List<OidcLoginPhase>();
+        var progress = new SyncProgress<OidcLoginPhase>(reported);
+
+        var original = Platform.CreateBrowser;
+        try
+        {
+            Platform.CreateBrowser = () => null; // simulate no browser wired up
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => client.LoginInteractiveAsync(progress));
+            // SyncProgress captures reports synchronously — no flush needed.
+
+            Assert.Equal(OidcLoginPhase.Error, Last(reported));
+        }
+        finally
+        {
+            Platform.CreateBrowser = original;
+        }
+    }
+
+    [Fact]
+    public async Task TrySilentLoginAsync_returns_false_when_no_bundle_on_disk()
+    {
+        using var authority = await OidcStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        // Tokens file deliberately doesn't exist.
+        var client = new YavscApiClient(settings, new TokenStore(tokensPath));
+
+        var ok = await client.TrySilentLoginAsync();
+        Assert.False(ok);
+        Assert.False(client.HasValidSession);
+    }
+
+    [Fact]
+    public async Task TrySilentLoginAsync_returns_true_when_access_token_still_valid()
+    {
+        using var authority = await OidcStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        var client = new YavscApiClient(settings, new TokenStore(tokensPath));
+        var browser = new FakeAuthorizingBrowser(authority.LoopbackRedirectUri);
+
+        try
+        {
+            await LoginWithBrowserAsync(client, browser.CreateBrowser());
+            // Login fresh → access token is far from expiry.
+            var ok = await client.TrySilentLoginAsync();
+            Assert.True(ok);
+            Assert.True(client.HasValidSession);
+        }
+        finally
+        {
+            if (File.Exists(tokensPath)) File.Delete(tokensPath);
+        }
+    }
+
+    [Fact]
+    public async Task TrySilentLoginAsync_returns_true_when_refresh_succeeds()
+    {
+        using var authority = await OidcStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        var store = new TokenStore(tokensPath);
+        var browser = new FakeAuthorizingBrowser(authority.LoopbackRedirectUri);
+
+        try
+        {
+            // Bootstrap: login through one client to persist the
+            // bundle, then expire it on disk so the silent refresh
+            // path has to engage.
+            var firstClient = new YavscApiClient(settings, store);
+            await LoginWithBrowserAsync(firstClient, browser.CreateBrowser());
+            ExpireCachedAccessToken(tokensPath);
+
+            // Build a second API client to mirror the real boot
+            // path (YavscApiClient loads from the store in its
+            // constructor). Its in-memory _tokens snapshot now
+            // matches the disk: access expired, refresh still good.
+            var client = new YavscApiClient(settings, store);
+
+            var reported = new System.Collections.Generic.List<OidcLoginPhase>();
+            var progress = new SyncProgress<OidcLoginPhase>(reported);
+
+            var ok = await client.TrySilentLoginAsync(progress);
+            Assert.True(ok, "silent refresh should succeed via the stub authority.");
+            Assert.Contains(OidcLoginPhase.ExchangingCode, reported);
+            Assert.Equal(OidcLoginPhase.Success, Last(reported));
+        }
+        finally
+        {
+            if (File.Exists(tokensPath)) File.Delete(tokensPath);
+        }
+    }
+
+    // SKIPPED — see comment.
+    //
+    // We can't cover "TrySilentLoginAsync purges the store when the
+    // refresh token is rejected" with OidcStubAuthority: the stub's
+    // /connect/token endpoint is unconditional and hands out a fresh
+    // refresh token regardless of what the caller sends. To exercise
+    // the RefreshFailedException path we'd need an authority option
+    // to fail on a specific refresh-token string; until then the
+    // production refresh-failure path is covered manually (and by
+    // the structural guarantee that _store.Clear() runs in the catch
+    // block of ForceRefreshAsync when result.IsError).
+    //
+    // [Fact]
+    // public async Task TrySilentLoginAsync_purges_store_when_refresh_fails_permanently() { ... }
+
+    private static T Last<T>(System.Collections.Generic.List<T> list)
+    {
+        lock (list)
+        {
+            if (list.Count == 0)
+                throw new InvalidOperationException(
+                    $"IProgress<{typeof(T).Name}> never received any reports before the assertion.");
+            return list[list.Count - 1];
+        }
+    }
+
+    /// <summary>
+    /// Synchronous <see cref="IProgress{T}"/> for tests. The BCL
+    /// <c>Progress&lt;T&gt;</c> posts via <see cref="SynchronizationContext"/>,
+    /// which xUnit only drains between awaits in the test method —
+    /// long enough that two rapid <c>Report</c> calls in the same
+    /// await chain can produce an empty / partial list. A synchronous
+    /// proxy captures every report in the order it was made, which
+    /// is exactly the contract <c>YavscApiClient</c> relies on (it
+    /// never inspects the progress sink, it just calls <c>Report</c>).
+    /// </summary>
+    private sealed class SyncProgress<T> : IProgress<T>
+    {
+        private readonly System.Collections.Generic.List<T> _items;
+        private readonly object _gate = new();
+        public SyncProgress(System.Collections.Generic.List<T> sink) { _items = sink; }
+        public void Report(T value) { lock (_gate) _items.Add(value); }
+    }
+
+
+    private static void CorruptRefreshToken(string tokensPath)
+    {
+        // Kept as a helper even though the test that exercised it is
+        // currently disabled — see SKIPPED note above.
+        var json = File.ReadAllText(tokensPath);
+        var doc = JsonDocument.Parse(json);
+        var record = new RefreshTokenRecord(
+            AccessToken: doc.RootElement.GetProperty("AccessToken").GetString()!,
+            RefreshToken: "definitely-not-a-valid-refresh-token",
+            AccessTokenExpiresAt: DateTimeOffset.UtcNow.AddMinutes(-5),
+            IdToken: doc.RootElement.TryGetProperty("IdToken", out var idt) ? idt.GetString() : null);
+        File.WriteAllText(tokensPath, JsonSerializer.Serialize(record));
+    }
+
+    /// <summary>
+    /// LoginWithBrowserAsync overload that also forwards a progress
+    /// sink to LoginInteractiveAsync. The default (no-progress)
+    /// overload stays for tests that don't care about phase events.
+    /// </summary>
+    private static async Task LoginWithBrowserAsync(
+        YavscApiClient client, IBrowser browser, IProgress<OidcLoginPhase>? progress = null)
+    {
+        var original = Platform.CreateBrowser;
+        try
+        {
+            Platform.CreateBrowser = () => browser;
+            await client.LoginInteractiveAsync(progress);
+        }
+        finally
+        {
+            Platform.CreateBrowser = original;
+        }
+    }
 }
 
 /// <summary>

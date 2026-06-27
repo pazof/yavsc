@@ -83,7 +83,8 @@ public partial class Settings : ObservableObject
             ClientId = Authentication.ClientId,
             RedirectUri = RedirectUri,
             Scope = string.Join(' ', this.Scopes),
-            TokenClientCredentialStyle = IdentityModel.Client.ClientCredentialStyle.PostBody
+            TokenClientCredentialStyle = IdentityModel.Client.ClientCredentialStyle.PostBody,
+            PostLogoutRedirectUri = "https//yavsc.pschneider.fr",
             // PKCE is enabled by default when no client_secret is provided.
         };
 

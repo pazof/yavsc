@@ -97,6 +97,41 @@ public partial class LoginPageViewModel : ViewModelBase
 
     public Settings Settings { get; }
 
+    /// <summary>
+    /// Discrete phase of the OIDC flow the LoginPage is currently
+    /// showing. Surfaced in the UI as a one-line status (Discovering /
+    /// OpeningBrowser / AwaitingCallback / ExchangingCode / Success /
+    /// Error). Operators use this to debug the custom-scheme
+    /// callback hand-off: when AwaitingCallback never resolves,
+    /// the OS never re-launched PostIt with the postit:// URL.
+    /// </summary>
+    private OidcLoginPhase _phase = OidcLoginPhase.Idle;
+    public OidcLoginPhase Phase
+    {
+        get => _phase;
+        private set
+        {
+            if (this.SetProperty(ref _phase, value))
+                OnPropertyChanged(nameof(PhaseLabel));
+        }
+    }
+
+    /// <summary>
+    /// Human-readable label for <see cref="Phase"/>. French to match
+    /// the rest of the UI. Computed once per phase change.
+    /// </summary>
+    public string PhaseLabel => _phase switch
+    {
+        OidcLoginPhase.Idle            => "En attente",
+        OidcLoginPhase.Discovering     => "Découverte OIDC…",
+        OidcLoginPhase.OpeningBrowser  => "Ouverture du navigateur…",
+        OidcLoginPhase.AwaitingCallback => "En attente du callback postit://…",
+        OidcLoginPhase.ExchangingCode  => "Échange du code contre les jetons…",
+        OidcLoginPhase.Success         => "Connecté",
+        OidcLoginPhase.Error           => "Erreur",
+        _ => _phase.ToString(),
+    };
+
     private string _statusMessage = "Ready";
     public string StatusMessage
     {
@@ -222,7 +257,12 @@ public partial class LoginPageViewModel : ViewModelBase
             // per-call (e.g. between desktop and android), so route
             // the interactive login through a callback that reuses
             // BrowserFactoryOverride when present.
-            await LoginInteractiveCoreAsync(_api).ConfigureAwait(false);
+            //
+            // The progress sink drives Phase / PhaseLabel; StatusMessage
+            // keeps the text detail (URLs, error messages). Same
+            // underlying flow, two views.
+            var progress = new Progress<OidcLoginPhase>(p => Phase = p);
+            await LoginInteractiveCoreAsync(_api, progress).ConfigureAwait(false);
 
             IsBusy = false;
             AccessToken = _api.CurrentAccessToken;
@@ -243,7 +283,9 @@ public partial class LoginPageViewModel : ViewModelBase
     /// browser choice, the OidcClient instance, the token persistence
     /// and the refresh path. The VM is just a thin coordinator.
     /// </summary>
-    private async Task LoginInteractiveCoreAsync(YavscApiClient api)
+    private async Task LoginInteractiveCoreAsync(
+        YavscApiClient api,
+        IProgress<OidcLoginPhase>? progress = null)
     {
         var original = Platform.CreateBrowser;
         try
@@ -251,7 +293,7 @@ public partial class LoginPageViewModel : ViewModelBase
             if (BrowserFactoryOverride is not null)
                 Platform.CreateBrowser = BrowserFactoryOverride;
 
-            await api.LoginInteractiveAsync().ConfigureAwait(false);
+            await api.LoginInteractiveAsync(progress).ConfigureAwait(false);
         }
         finally
         {
