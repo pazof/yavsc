@@ -14,8 +14,12 @@ jobs:
         uses: actions/checkout@v7
 
       # 1. Votre étape de build actuelle (on nomme l'image "postit-android")
+      #    --target build-env : on ne veut que le stage de build (qui
+      #    contient les artefacts .apk). Sans --target, Docker ciblerait
+      #    le DERNIER stage du Dockerfile (blogs-runtime, qui est une
+      #    image ASP.NET runtime sans aucun APK à extraire).
       - name: Build de l'image Docker
-        run: docker build --build-arg ANDROID_TARGET_RID=android-arm64 -t postit-android .
+        run: docker build --build-arg ANDROID_TARGET_RID=android-arm64 --target build-env -t postit-android .
       # 2. EXTRACTION : Créer un conteneur éphémère pour copier l'APK vers l'hôte GitHub
       - name: Extraire l'APK du conteneur Docker
         run: |
