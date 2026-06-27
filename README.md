@@ -58,7 +58,7 @@ pouvant garantir la preservation du secret sur toute information personnelle,
 du client comme du prestataire.
 
 Ni le client ni le prestataire ne sont anonymes pour l'application,
-il sont même formellement authentifies, au moment de leur accord pour une première
+ils sont même formellement authentifiés, au moment de leur accord pour une première
 facturation en ligne, à l'occasion:
 
 * pour le client, à la validation d'une commande facturée (de prestation à un prestataire, ou autre).
