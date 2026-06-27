@@ -137,7 +137,14 @@ namespace Yavsc.Org.Tests
 
             builder.AddConfiguration(null).AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory"
+                    [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory",
+                    // SMTP test config: UserName non-null so MailSender
+                    // exercises the Authenticate branch — the
+                    // RecordingSmtpClient captures it.
+                    ["Smtp:Host"] = "smtp.test.local",
+                    ["Smtp:Port"] = "465",
+                    ["Smtp:UserName"] = "test-user",
+                    ["Smtp:Password"] = "test-pass",
                 });
 
             // Configure Kestrel for HTTPS with self-signed certificate on a dynamic port
