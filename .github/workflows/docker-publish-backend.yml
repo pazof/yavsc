@@ -13,7 +13,7 @@ jobs:
     steps:
       # 1. Récupération du code
       - name: Check out the repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # 2. Configuration du moteur de Buildx pour les builds multi-plateformes
       - name: Set up Docker Buildx
