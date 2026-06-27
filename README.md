@@ -35,7 +35,7 @@ Utilisez GNU/Makefile (et visitez le code, dans le dossier `test` ):
 make test
 ```
 
-## Installation / Déploient / Développement
+## Installation / Déploiement / Développement
 
 ### les services et l'API
 
