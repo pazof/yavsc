@@ -82,6 +82,92 @@ Quelques règles non capturées par `.editorconfig` :
 
 Cf. [doc/architecture/decoupage-organisation.md](./doc/architecture/decoupage-organisation.md).
 
+## Conteneurisation
+
+Le repo expose trois images Docker :
+
+| Dockerfile              | Cible                                                       | Construite par                                  |
+|-------------------------|-------------------------------------------------------------|-------------------------------------------------|
+| `Dockerfile`            | Image de build (Debian + .NET 10 + Android SDK 36). Sert aussi à produire l'APK Android. | `.github/workflows/docker-publish-android.yml` |
+| `Dockerfile.backend`    | Idem, mais ne publie que `Yavsc.Org` (build + publish artifact). | `.github/workflows/docker-publish-backend.yml` |
+| `Dockerfile.runtime*`   | Images runtime ASP.NET pour `Yavsc.Org` (5000), `Yavsc.Blogs` (5004), `Yavsc.Api` (5002). | `docker compose build`                          |
+
+L'image de build est construite depuis le dépôt sibling
+`dotnet-android-build-image` (Debian 12 + .NET 10 SDK + Android
+SDK 36 + workload .NET Android). Elle est poussée sur Docker Hub
+sous le tag `pazof/yavsc-build-env:debian12-dotnet10-android36-v1`.
+Tous les `Dockerfile.runtime*` et les `Dockerfile` /
+`Dockerfile.backend` référencent ce tag — le bumper en lockstep
+quand l'image de build est reconstruite.
+
+### `docker compose up`
+
+```bash
+sudo docker compose up --build
+```
+
+Cela démarre 4 services : `db` (PostgreSQL 16), `web` (Yavsc.Org),
+`api` (Yavsc.Api), `blogs` (Yavsc.Blogs). Les services runtime
+s'attendent via `depends_on.condition: service_healthy` sur le
+healthcheck `pg_isready` de `db`.
+
+### appsettings-org.json
+
+Le fichier de configuration de prod (`src/Yavsc.Org/appsettings-org.json`)
+n'est **pas** commité. Il est injecté dans chaque image runtime
+via un **BuildKit secret mount** — le fichier reste sur l'hôte,
+n'apparaît dans aucun layer :
+
+```yaml
+secrets:
+  yavsc_appsettings:
+    file: ./src/Yavsc.Org/appsettings-org.json
+```
+
+Compose le passe automatiquement à `docker build` via le bloc
+`build.secrets` de chaque service runtime.
+
+### HTTPS en production
+
+En dev local on n'expose que HTTP. En production, sur chaque
+service runtime de `docker-compose.yaml`, décommenter :
+
+1. Le port HTTPS correspondant (`5001` pour Org, `5003` pour Api,
+   `5005` pour Blogs).
+2. Le volume `/etc/letsencrypt:/etc/letsencrypt:ro`.
+3. Dans `appsettings-org.json`, renseigner
+   `Kestrel:Certificates:Default:Path` et `:KeyPath` pour pointer
+   vers les fichiers Let's Encrypt du volume monté.
+4. Surcharger `ASPNETCORE_URLS` pour écouter à la fois HTTP et
+   HTTPS.
+
+### Bumper l'image de build
+
+Quand on bumpe Debian, .NET SDK ou Android SDK, reconstruire
+l'image de base :
+
+```bash
+cd ../dotnet-android-build-image
+docker build -t pazof/yavsc-build-env:debian12-dotnet10-android36-v2 .
+docker push pazof/yavsc-build-env:debian12-dotnet10-android36-v2
+```
+
+Puis bumper en lockstep dans :
+- `Dockerfile`, `Dockerfile.backend`
+- `Dockerfile.runtime`, `Dockerfile.runtime.blogs`, `Dockerfile.runtime.api`
+- `docker-compose.yaml` (chaque bloc `build` qui pointe sur un
+  `Dockerfile.runtime*`).
+
+### Vérifier un build isolé d'une image runtime
+
+```bash
+docker build \
+  --secret id=yavsc_appsettings,src=src/Yavsc.Org/appsettings-org.json \
+  -f Dockerfile.runtime \
+  -t yavsc-org:dev .
+docker run --rm -p 5000:5000 yavsc-org:dev
+```
+
 ## Sessions DDD
 
 Le repo tient un journal de design DDD sous `doc/ddd-exploration-*.md`
