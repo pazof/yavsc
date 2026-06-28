@@ -3,6 +3,10 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <InformationalVersion>1.0.1-5+Branch.main.Sha.0617fc6bda7151c70559d87177e2dcfb1b60995f</InformationalVersion>
+    <Version>1.0.1-5</Version>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
@@ -15,5 +19,8 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="GitVersion.MsBuild" />
   </ItemGroup>
 </Project>
