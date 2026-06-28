@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Microsoft.Extensions.DependencyInjection;
 using PostIt.ViewModels;
 
 namespace PostIt.Views;
@@ -15,9 +16,19 @@ public partial class LoginPage : ContentPage
         // HomePage pushes LoginPage via PushModalAsync(new LoginPage())
         // without supplying a DataContext. Attach a freshly-built
         // LoginPageViewModel whenever the caller hasn't wired one up,
-        // so XAML bindings and LoginAsyncCommand resolve.
+        // so XAML bindings and LoginAsyncCommand resolve. We resolve
+        // through the DI container (not `new LoginPageViewModel()`)
+        // so the LoginPageViewModel shares the canonical Settings
+        // singleton with the rest of the app — constructing a fresh
+        // VM here was the original source of the two-Settings
+        // postit://callback crash.
         if (DataContext is null)
-            DataContext = new LoginPageViewModel();
+        {
+            var services = (App.Current as App)?.Services
+                ?? throw new InvalidOperationException(
+                    "App.Services is not bound. OnFrameworkInitializationCompleted must run before any view handler.");
+            DataContext = services.GetRequiredService<LoginPageViewModel>();
+        }
     }
 
     private async void OnCancelClick(object? sender, RoutedEventArgs e)

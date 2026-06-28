@@ -13,6 +13,18 @@ namespace PostIt;
 
 public partial class App : Application
 {
+    /// <summary>
+    /// DI container the platform entry points hand to ViewModels so
+    /// they can resolve the canonical <see cref="Settings"/> singleton
+    /// (and any other shared service) instead of falling back to a
+    /// freshly-constructed <c>new Settings()</c>. The earlier fallback
+    /// path is what created two Settings instances on
+    /// <c>postit://callback</c> re-launches and crashed Avalonia's
+    /// binding sink with a cross-thread exception inside
+    /// <c>DataValidationErrors.SetErrors</c>.
+    /// </summary>
+    public IServiceProvider? Services { get; private set; }
+
     public App()
     {
     }
@@ -69,6 +81,16 @@ public partial class App : Application
         services.AddTransient<SessionStatusBanner>();
 
         var provider = services.BuildServiceProvider();
+
+        // Bind the canonical Settings to the static accessor so any
+        // code path that can't easily take a constructor parameter
+        // (designer surfaces, Avalonia data templates, the
+        // LoginPage.axaml.cs fallback) still gets the same instance
+        // the rest of the app is using. Idempotent: re-binding from
+        // a second App boot (tests) is a no-op.
+        Settings.BindToServiceProvider(provider);
+
+        Services = provider;
 
         DataTemplates.Clear();
         DataTemplates.Add(new ViewLocator(provider));
