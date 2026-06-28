@@ -262,7 +262,7 @@ public partial class LoginPageViewModel : ViewModelBase
             // keeps the text detail (URLs, error messages). Same
             // underlying flow, two views.
             var progress = new Progress<OidcLoginPhase>(p => Phase = p);
-            await LoginInteractiveCoreAsync(_api, progress).ConfigureAwait(false);
+            await LoginInteractiveCoreAsync(_api, progress);
 
             IsBusy = false;
             AccessToken = _api.CurrentAccessToken;
