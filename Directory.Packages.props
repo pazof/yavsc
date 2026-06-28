@@ -13,6 +13,7 @@
   -->
   <ItemGroup>
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="GitVersion.MsBuild" Version="6.7.0" />
     <PackageVersion Include="HigginsSoft.IdentityServer8" Version="8.0.5-preview-net9" />
     <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="8.0.5-preview-net9" />
     <PackageVersion Include="IdentityModel.OidcClient" Version="6.0.0" />

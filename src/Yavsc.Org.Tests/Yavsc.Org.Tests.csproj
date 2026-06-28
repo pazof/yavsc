@@ -9,6 +9,10 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <OutputType>exe</OutputType>
     <RunSettingsFilePath>$(MSBuildProjectDirectory)\test.runsettings</RunSettingsFilePath>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <InformationalVersion>1.0.1-5+Branch.main.Sha.0617fc6bda7151c70559d87177e2dcfb1b60995f</InformationalVersion>
+    <Version>1.0.1-5</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
@@ -26,7 +30,6 @@
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.v3.common" />
     <PackageReference Include="xunit.v3.extensibility.core" />
-
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
@@ -58,8 +61,7 @@
     Mirror them as Yavsc.Org.Tests.staticwebassets.* in the test bin
     directory so the test WebApplicationFactory finds them at boot.
   -->
-  <Target Name="CopyYavscOrgStaticAssets"
-          AfterTargets="Build">
+  <Target Name="CopyYavscOrgStaticAssets" AfterTargets="Build">
     <PropertyGroup>
       <_YavscOrgStaticAssetsDir>$(MSBuildProjectDirectory)\..\Yavsc.Org\bin\$(Configuration)\$(TargetFramework)</_YavscOrgStaticAssetsDir>
     </PropertyGroup>
@@ -81,7 +83,9 @@
       -->
       <_YavscOrgStaticAssetsFiles Include="$(_YavscOrgStaticAssetsDir)\Yavsc.Org.staticwebassets.*.json" />
     </ItemGroup>
-    <Copy SourceFiles="@(_YavscOrgStaticAssetsFiles)"
-        DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="@(_YavscOrgStaticAssetsFiles)" DestinationFolder="$(OutDir)" />
   </Target>
+  <ItemGroup>
+    <PackageReference Include="GitVersion.MsBuild" />
+  </ItemGroup>
 </Project>

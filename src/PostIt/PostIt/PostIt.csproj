@@ -4,6 +4,10 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <InformationalVersion>1.0.1-5+Branch.main.Sha.0617fc6bda7151c70559d87177e2dcfb1b60995f</InformationalVersion>
+    <Version>1.0.1-5</Version>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
@@ -31,5 +35,8 @@
     <EmbeddedResource Include="postit-settings.json">
       <LogicalName>PostIt.postit-settings.json</LogicalName>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="GitVersion.MsBuild" />
   </ItemGroup>
 </Project>
