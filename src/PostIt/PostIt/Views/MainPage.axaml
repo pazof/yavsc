@@ -6,55 +6,82 @@
              xmlns:models="using:PostIt.Models"
              xmlns:views="using:PostIt.Views"
              xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              x:Class="PostIt.Views.MainPage"
-             x:DataType="vm:MainPageViewModel" 
-             HorizontalAlignment="Center" 
-             VerticalAlignment="Center" >
+             x:DataType="vm:MainPageViewModel"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch">
     <Design.DataContext>
         <vm:MainPageViewModel />
     </Design.DataContext>
 
-    <StackPanel Margin="12" Spacing="12" HorizontalAlignment="Center" >
-        <TextBlock Text="PostIt Blog API Interface" FontSize="20" FontWeight="Bold" />
+    <Grid Margin="12" RowSpacing="12"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Spacing="8" >
-            <Button Command="{Binding LoadPosts}" Content="Load posts" />
-            <Button Command="{Binding Search}" Content="Filter" />
-            <Button Command="{Binding New}" Content="New post" />
-            <Button Command="{Binding Save}" Content="Save" />
-            <Button Command="{Binding Delete}" Content="Delete" />
+        <StackPanel Grid.Row="0" Spacing="12"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top">
+            <TextBlock Text="PostIt Blog API Interface" FontSize="20" FontWeight="Bold" />
+
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Command="{Binding LoadPosts}" Content="Load posts" />
+                <Button Command="{Binding Search}" Content="Filter" />
+                <Button Command="{Binding New}" Content="New post" />
+                <Button Command="{Binding Save}" Content="Save" />
+                <Button Command="{Binding Delete}" Content="Delete" />
+            </StackPanel>
         </StackPanel>
-     
-            <Border BorderBrush="Gray" BorderThickness="1" Padding="8">
-                <ListBox ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate x:DataType="models:BlogPost">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
-                                <TextBlock Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" FontSize="10" Foreground="Gray" />
-                                <TextBlock Text="{Binding AuthorId}" FontSize="10" Foreground="DarkSlateGray" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Border>
 
-            <Border BorderBrush="Gray" BorderThickness="1" Padding="8">
-                <StackPanel Spacing="10">
-                    <TextBlock Text="Post detail" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding SelectedPost.Title, Mode=TwoWay}" PlaceholderText="Title" />
-                    <TextBox Text="{Binding SelectedPost.AuthorId, Mode=TwoWay}" PlaceholderText="Author id" />
-                    <AvaloniaEdit:TextEditor
-                        views:TextEditorBinding.Text="{Binding SelectedPost.Article, Mode=TwoWay}"
-                        ShowLineNumbers="True"
-                        FontFamily="Cascadia Code, Consolas, Menlo, Monospace"
-                        Height="320"
-                        VerticalScrollBarVisibility="Auto"
-                        HorizontalScrollBarVisibility="Auto" />
-                    <TextBlock Text="{Binding StatusMessage}" Foreground="Gray" />
-                </StackPanel>
-            </Border>
-        
-    </StackPanel>
+        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Padding="8">
+            <ListBox ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:BlogPost">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" FontSize="10" Foreground="Gray" />
+                            <TextBlock Text="{Binding AuthorId}" FontSize="10" Foreground="DarkSlateGray" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+
+        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" Padding="8">
+            <Grid RowSpacing="10"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Post detail" FontWeight="SemiBold" />
+                <TextBox Grid.Row="1" Text="{Binding SelectedPost.Title, Mode=TwoWay}" PlaceholderText="Title" />
+                <TextBox Grid.Row="2" Text="{Binding SelectedPost.AuthorId, Mode=TwoWay}" PlaceholderText="Author id" />
+                <AvaloniaEdit:TextEditor Grid.Row="3"
+                    views:TextEditorBinding.Text="{Binding SelectedPost.Article, Mode=TwoWay}"
+                    ShowLineNumbers="True"
+                    FontFamily="Cascadia Code, Consolas, Menlo, Monospace"
+                    MinHeight="320"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Auto" />
+                <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Foreground="Gray" />
+            </Grid>
+        </Border>
+    </Grid>
 </ContentPage>
