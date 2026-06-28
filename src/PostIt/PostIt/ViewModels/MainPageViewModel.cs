@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Styling;
@@ -50,17 +51,20 @@ public partial class MainPageViewModel : ViewModelBase
     /// <c>App.axaml.cs</c> so the same client (and its token store)
     /// is shared with the login flow.
     /// </summary>
-    public BlogApiClient BlogClient { get; }
+    public BlogApiClient? BlogClient { get; }
 
     public override bool CanNavigateNext { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
     public override bool CanNavigatePrevious { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
 
-    /// <summary>
-    /// Test-friendly constructor: caller supplies a pre-built
-    /// <see cref="BlogApiClient"/>. Production code uses the
-    /// (Settings, BlogApiClient) overload below.
-    /// </summary>
-    public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null)
+
+    public MainPageViewModel()
+    {
+        Init(null);
+        SettingsModel = new SettingsPageViewModel();
+        BlogClient = null;
+    }
+
+    private void Init(Settings? settings)
     {
         SearchText = string.Empty;
         Posts = new ObservableCollection<BlogPost>();
@@ -71,9 +75,20 @@ public partial class MainPageViewModel : ViewModelBase
         Settings = settings ?? new Settings();
         Title = "PostIt";
         CurrentViewModel = this;
-        SettingsModel = new SettingsPageViewModel();
-        BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient));
     }
+
+    /// <summary>
+    /// Test-friendly constructor: caller supplies a pre-built
+    /// <see cref="BlogApiClient"/>. Production code uses the
+    /// (Settings, BlogApiClient) overload below.
+    /// </summary>
+    public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null)
+    {
+         SettingsModel = new SettingsPageViewModel();
+        BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient));;
+
+        Init(settings);
+        }
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
 
