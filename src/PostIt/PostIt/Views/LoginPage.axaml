@@ -5,10 +5,10 @@
              x:DataType="vm:LoginPageViewModel"
              Header="Login">
   <Design.DataContext>
-    <vm:LoginPageViewModel />
+    <vm:MainPageViewModel />
   </Design.DataContext>
 
-  <StackPanel HorizontalAlignment="Center"
+  <StackPanel HorizontalAlignment="Stretch"
               VerticalAlignment="Center"
               Spacing="20">
 
@@ -27,18 +27,7 @@
                FontSize="24"
                HorizontalAlignment="Center"/>
 
-    <StackPanel Spacing="4">
-      <TextBlock Text="Email"/>
-      <TextBox Name="EmailBox"
-               PlaceholderText="Enter your email"/>
-    </StackPanel>
 
-    <StackPanel Spacing="4">
-      <TextBlock Text="Password"/>
-      <TextBox Name="PasswordBox"
-               PlaceholderText="Enter your password"
-               PasswordChar="•"/>
-    </StackPanel>
 
     <Button Content="Login"
             Command="{Binding LoginAsync}"/>
