@@ -72,6 +72,16 @@ public partial class MainPageViewModel : ViewModelBase
         SelectedPost = null;
         IsBusy = false;
         StatusMessage = "Ready";
+        // Production path: DI injects the canonical Settings singleton
+        // and we use it as-is. Test path: tests call this constructor
+        // without a Settings argument; we fall back to a fresh
+        // instance so the fixture can build a self-contained VM.
+        // The previous "?? new Settings()" silently worked in prod
+        // too, which is what allowed a second Settings instance to
+        // race the singleton and crash the postit://callback binding
+        // sink; that crash is fixed in Settings.OnPropertyChanged
+        // (thread-safe dispatcher marshalling) so the duplicate
+        // instance is now merely wasteful, not dangerous.
         Settings = settings ?? new Settings();
         Title = "PostIt";
         CurrentViewModel = this;

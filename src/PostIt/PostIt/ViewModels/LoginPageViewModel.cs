@@ -175,7 +175,21 @@ public partial class LoginPageViewModel : ViewModelBase
 
     private YavscApiClient? _api;
 
-    public LoginPageViewModel() : this(new Settings(), apiClient: null, browserFactoryOverride: null)
+    /// <summary>
+    /// Designer / Avalonia-data-template fallback. Resolves the
+    /// canonical Settings singleton through the running App's DI
+    /// container. Throws when called outside a bound App (e.g. a
+    /// stray unit test instantiating the VM directly) so we cannot
+    /// silently end up with a second Settings instance racing the
+    /// singleton at runtime — that race is the exact bug that
+    /// crashed <c>postit://callback</c> re-launches. Tests that
+    /// don't want the DI bind pass an explicit <c>Settings</c> to
+    /// the parameterised constructor. The cross-thread crash is
+    /// also fixed at the Settings layer (thread-safe PropertyChanged
+    /// marshalling) so the duplicate-instance race is now caught
+    /// loudly instead of corrupting Avalonia state.
+    /// </summary>
+    public LoginPageViewModel() : this(Settings.RequireCurrent(), apiClient: null, browserFactoryOverride: null)
     {
         // Load settings eagerly so RegisterUrl / ForgotPasswordUrl are
         // populated as soon as the page renders (XAML bindings fire
