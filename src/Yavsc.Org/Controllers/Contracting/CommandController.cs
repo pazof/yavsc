@@ -7,7 +7,6 @@ using Microsoft.Extensions.Localization;
 namespace Yavsc.Controllers
 {
     using Helpers;
-    using Microsoft.AspNetCore.Identity.UI.Services;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Options;
     using Models;
@@ -16,8 +15,6 @@ namespace Yavsc.Controllers
     using Models.Workflow;
     using Services;
     using Yavsc.Interface;
-    using Yavsc.Models.Billing;
-    using Yavsc.Models.Haircut;
     using Yavsc.Server.Helpers;
     using Yavsc.Settings;
 

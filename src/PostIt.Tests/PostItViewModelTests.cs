@@ -1,21 +1,12 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using PostIt.Models;
 using PostIt.Services;
 using PostIt.ViewModels;
-using Xunit;
 
-namespace PostIt;
+namespace PostIt.Tests;
 
 public class PostItViewModelTests
 {
+
     [Fact]
     public void SearchCommand_filters_posts_by_title_article_or_author()
     {

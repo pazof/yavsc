@@ -72,7 +72,7 @@ namespace Yavsc.Helpers
                     foreach (var c in a.GetTypes())
                     {
                         if (c.IsClass && !c.IsAbstract &&
-                            c.GetInterface("ISpecializationSettings") != null)
+                            c.GetInterface(nameof(IUserSettings)) != null)
                         {
                             Config.ProfileTypes.Add(c);
                         }

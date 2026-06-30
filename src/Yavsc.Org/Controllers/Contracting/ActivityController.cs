@@ -8,7 +8,6 @@ namespace Yavsc.Controllers
     using Microsoft.EntityFrameworkCore;
     using Models;
     using Models.Workflow;
-    using Yavsc.Helpers;
     using Yavsc.Server.Helpers;
 
     [Authorize("AdministratorOnly")]
@@ -18,7 +17,7 @@ namespace Yavsc.Controllers
         readonly IStringLocalizer<ActivityController> SR;
         readonly ILogger logger;
 
-        public ActivityController(ApplicationDbContext context, 
+        public ActivityController(ApplicationDbContext context,
         IStringLocalizer<ActivityController> SR,
         ILoggerFactory loggerFactory)
         {
@@ -65,15 +64,15 @@ namespace Yavsc.Controllers
             var existing = _context.Activities.Include(a => a.Children).FirstOrDefault(a => a.Code == code);
             if (existing == null) return acts;
             var pi = acts.FirstOrDefault(i => i.Value == existing.ParentCode);
-            if (pi!=null) pi.Selected = true; 
+            if (pi!=null) pi.Selected = true;
             else nullItem.Selected = true;
-            RecursivelyFilterChild(acts, existing); 
+            RecursivelyFilterChild(acts, existing);
             return acts;
         }
 
         /// <summary>
         /// Filters a activity selection list
-        /// in order to exclude any descendant 
+        /// in order to exclude any descendant
         /// from the eligible list at the <c>Parent</c> property.
         /// WARN! results in a infinite loop when
         /// data is corrupted and there is a circularity
@@ -172,6 +171,7 @@ namespace Yavsc.Controllers
                 _context.SaveChanges(User.GetUserId());
                 return RedirectToAction("Index");
             }
+            SetSettingClasseInfo();
             return View(activity);
         }
 
