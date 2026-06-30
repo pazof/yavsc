@@ -279,7 +279,7 @@ namespace Yavsc.Models
         public DbSet<FormationSettings> FormationSettings { get; set; }
 
         [ActivitySettings]
-        public DbSet<GeneralSettings> GeneralSettings { get; set; }
+        public DbSet<MusicLoverSettings> GeneralSettings { get; set; }
         public DbSet<CoWorking> CoWorking { get; set; }
 
         private void AddTimestamps(string userId)

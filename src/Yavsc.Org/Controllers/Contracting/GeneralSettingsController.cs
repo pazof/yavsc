@@ -11,7 +11,7 @@ namespace Yavsc.Controllers
 
         public GeneralSettingsController(ApplicationDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: GeneralSettings
@@ -28,7 +28,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            GeneralSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
+            MusicLoverSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
             if (generalSettings == null)
             {
                 return NotFound();
@@ -46,7 +46,7 @@ namespace Yavsc.Controllers
         // POST: GeneralSettings/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(GeneralSettings generalSettings)
+        public async Task<IActionResult> Create(MusicLoverSettings generalSettings)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            GeneralSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
+            MusicLoverSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
             if (generalSettings == null)
             {
                 return NotFound();
@@ -76,7 +76,7 @@ namespace Yavsc.Controllers
         // POST: GeneralSettings/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(GeneralSettings generalSettings)
+        public async Task<IActionResult> Edit(MusicLoverSettings generalSettings)
         {
             if (ModelState.IsValid)
             {
@@ -96,7 +96,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            GeneralSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
+            MusicLoverSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
             if (generalSettings == null)
             {
                 return NotFound();
@@ -110,7 +110,7 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            GeneralSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
+            MusicLoverSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
             _context.GeneralSettings.Remove(generalSettings);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
