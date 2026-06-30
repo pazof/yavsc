@@ -59,5 +59,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="noAttachedFID"><value>Pas de fonctionalité attachée</value></data>
+  <data name="Inserted"><value> inséré</value></data>
+  <data name="Confirmed"><value> Confirmé</value></data>
+  <data name="Rejected"><value> Rejeté</value></data>
+  <data name="Feature"><value> Fonctionnalité</value></data>
+  <data name="Fixed"><value> Fixé</value></data>
 </root>
 

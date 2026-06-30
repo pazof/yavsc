@@ -14,16 +14,13 @@ namespace Yavsc.Controllers
     {
         readonly ApplicationDbContext _context;
         readonly IStringLocalizer<BugController> _localizer;
-        readonly IStringLocalizer<Yavsc.Models.IT.Fixing.Resources> _statusLocalizer;
 
-        public BugController(ApplicationDbContext context, 
-                IStringLocalizer<BugController> localizer,
-                IStringLocalizer<Resources> statusLocalizer
+        public BugController(ApplicationDbContext context,
+                IStringLocalizer<BugController> localizer
                 )
         {
             _context = context;
-            _localizer = localizer; 
-            _statusLocalizer = statusLocalizer;
+            _localizer = localizer;
         }
 
         // GET: Bug
@@ -61,11 +58,11 @@ namespace Yavsc.Controllers
         }
 
         IEnumerable<SelectListItem> Statuses(BugStatus ?status) =>
-            _statusLocalizer.CreateSelectListItems(typeof(BugStatus), status); 
+            _localizer.CreateSelectListItems(typeof(BugStatus), status);
 
-        IEnumerable<SelectListItem> Features(ApplicationDbContext context) => 
+        IEnumerable<SelectListItem> Features(ApplicationDbContext context) =>
          context.Feature.CreateSelectListItems<Feature>(f => f.Id.ToString(), f => $"{f.ShortName} ({f.Description})", null)
-         .AddNull(_localizer["noAttachedFID"]); 
+         .AddNull(_localizer["noAttachedFID"]);
 
         // POST: Bug/Create
         [HttpPost]
@@ -152,20 +149,20 @@ namespace Yavsc.Controllers
             return RedirectToAction("Index");
         }
 
-        
+
         [Authorize("AdministratorOnly")]
         public async Task<IActionResult> DeleteAllLike(long? id)
         {
             if (id == null)
             {
                 return NotFound();
-            }  
-            Bug bugref = await _context.Bug.SingleAsync(m => m.Id == id);
-            if (bugref == null)
+            }
+            Bug bugRef = await _context.Bug.SingleAsync(m => m.Id == id);
+            if (bugRef == null)
             {
                 return null;
             }
-            var bugs =  _context.Bug.Where(b => b.Description == bugref.Description);
+            var bugs =  _context.Bug.Where(b => b.Description == bugRef.Description);
             return View(bugs);
         }
 
