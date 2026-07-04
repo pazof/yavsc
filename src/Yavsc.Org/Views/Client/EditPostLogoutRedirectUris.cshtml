@@ -1,5 +1,9 @@
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientPostLogoutRedirectUri>
 @{
+    ViewBag.Title = Localizer["Client"];
+}
+
+@{
     ViewData["Title"] = "Edit Post-logout Redirect URIs";
     ViewData["addAction"] = "AddPostLogoutRedirectUri";
     ViewData["removeAction"] = "RemovePostLogoutRedirectUri";

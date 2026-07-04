@@ -1,5 +1,9 @@
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientRedirectUri>
 @{
+    ViewBag.Title = Localizer["Client"];
+}
+
+@{
     ViewData["Title"] = "Edit Redirect URIs";
     ViewData["addAction"] = "AddRedirectUri";
     ViewData["removeAction"] = "RemoveRedirectUri";

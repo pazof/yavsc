@@ -1,5 +1,9 @@
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientScope>
 @{
+    ViewBag.Title = Localizer["Client"];
+}
+
+@{
     ViewData["Title"] = "Edit Allowed Scopes";
     ViewData["addAction"] = "AddScope";
     ViewData["removeAction"] = "RemoveScope";

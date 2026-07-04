@@ -1,5 +1,9 @@
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientProperty>
 @{
+    ViewBag.Title = Localizer["Client"];
+}
+
+@{
     ViewData["Title"] = "Edit Client Properties";
     var clientId = Model.FirstOrDefault()?.ClientId ?? 0;
 }
