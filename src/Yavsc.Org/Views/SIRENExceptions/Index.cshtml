@@ -1,5 +1,9 @@
 @model IEnumerable<Yavsc.Models.Billing.ExceptionSIREN>
 
+@{
+    ViewBag.Title = Localizer["SIRENExceptions"];
+}
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -7,7 +11,7 @@
     <tr>
         <th>Exceptions à la validation des codes SIREN</th>
     </tr>
-    
+
 @foreach (var item in Model) {
     <tr>
         <td>@item.SIREN</td>
