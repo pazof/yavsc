@@ -43,6 +43,11 @@ namespace Yavsc.Models.Workflow
         [Display(Name = "Photo")]
         public string? Photo { get; set; }
 
+        /// <summary>
+        /// Moderated activity
+        /// </summary>
+        public bool Moderated { get; set; }
+
         [InverseProperty("Context")]
         [DisplayAttribute(Name = "Services liés")]
         public List<Service> Services { get; set; }

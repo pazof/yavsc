@@ -12,12 +12,16 @@ namespace Yavsc.Helpers {
             this ApplicationDbContext _dbContext, List<UserActivity> activity)
         {
             var activities = activity.ToArray();
+            var activityCodes = activities.Select(a=>a.DoesCode).ToArray();
 
-            List<SelectListItem> items = _dbContext.Activities.Select(
+            var systemActivities = _dbContext.Activities.Where(a=>!a.Moderated
+            && activityCodes.Contains(a.Code)).ToArray();
+
+            List<SelectListItem> items = systemActivities.Select(
             x=> new SelectListItem() {
                 Value = x.Code, Text = x.Name, Selected = activities.Any(a=>a.DoesCode == x.Code)
                 } ).ToList();
-           
+
             return items;
         }
     }
