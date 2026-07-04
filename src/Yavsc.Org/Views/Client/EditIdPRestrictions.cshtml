@@ -1,5 +1,9 @@
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientIdPRestriction>
 @{
+    ViewBag.Title = Localizer["Client"];
+}
+
+@{
     ViewData["Title"] = "Edit Identity Provider Restrictions";
     ViewData["addAction"] = "AddIdPRestriction";
     ViewData["removeAction"] = "RemoveIdPRestriction";

@@ -1,5 +1,9 @@
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientGrantType>
 @{
+    ViewBag.Title = Localizer["Client"];
+}
+
+@{
     ViewData["Title"] = "Edit Allowed Grant Types";
     ViewData["addAction"] = "AddGrantType";
     ViewData["removeAction"] = "RemoveGrantType";
