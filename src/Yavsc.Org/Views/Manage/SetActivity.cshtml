@@ -1,5 +1,5 @@
-@model PerformerProfile 
-@{ ViewBag.Title = "Your performer profile"; } 
+@model PerformerProfile
+@{ ViewBag.Title = "Your performer profile"; }
 @section header {
 <style>
     #map {
@@ -17,32 +17,33 @@
     <h4>Setup below your activity parameters:</h4>
     <hr />
     <div asp-validation-summary="All" class="text-danger" id="valsum"></div>
-    
+
     <div class="form-group">
-        <label asp-for="AcceptNotifications" class="col-md-2 control-label">
-            AcceptNotifications"]
+        <label asp-for="AcceptNotifications" class="control-label">
+          @Localizer["AcceptNotifications"]
         </label>
-        <div class="col-md-10">
-            <input asp-for="AcceptNotifications" class="form-control" />
+        <div>
+            <input class="form-check-input" type="checkbox" asp-for="AcceptNotifications"  />
             <span asp-validation-for="AcceptNotifications" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
 
-        <label asp-for="AcceptPublicContact" class="col-md-2 control-label">AcceptPublicContact</label>
-        <div class="col-md-10">
-            <input asp-for="AcceptPublicContact" class="form-control" />
+        <label asp-for="AcceptPublicContact" class="control-label">
+          @Localizer["AcceptPublicContact"]</label>
+        <div >
+           <input class="form-check-input" type="checkbox" asp-for="AcceptPublicContact" id="AcceptPublicContact">
 
             <span asp-validation-for="AcceptPublicContact" class="text-danger"></span>
         </div>
     </div>
     <div class="form-group">
 
-        <label asp-for="UseGeoLocalizationToReduceDistanceWithClients" class="col-md-2 control-label">
-            UseGeoLocalizationToReduceDistanceWithClients"]
+        <label asp-for="UseGeoLocalizationToReduceDistanceWithClients" class="control-label">
+            @Localizer["UseGeoLocalizationToReduceDistanceWithClients"]
         </label>
-        <div class="col-md-10">
-            <input asp-for="UseGeoLocalizationToReduceDistanceWithClients" class="form-control" />
+        <div>
+            <input class="form-check-input" type="checkbox" asp-for="UseGeoLocalizationToReduceDistanceWithClients" />
 
             <span asp-validation-for="UseGeoLocalizationToReduceDistanceWithClients" class="text-danger"></span>
         </div>
@@ -56,28 +57,11 @@
             <span asp-validation-for="WebSite" class="text-danger"></span>
         </div>
     </div>
-    <div class="form-group">
 
-        <label asp-for="MinDailyCost" class="col-md-2 control-label">MinDailyCost</label>
-        <div class="col-md-10">
-            <input asp-for="MinDailyCost" class="form-control" />
-
-            <span asp-validation-for="MinDailyCost" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group">
-
-        <label asp-for="MaxDailyCost" class="col-md-2 control-label">MaxDailyCost</label>
-        <div class="col-md-10">
-            <input asp-for="MaxDailyCost" class="form-control" />
-
-            <span asp-validation-for="MaxDailyCost" class="text-danger"></span>
-        </div>
-    </div>
     <div class="form-group">
 
         <label asp-for="Active" class="col-md-2 control-label">ActivateMyProSettings</label>
-        <div class="col-md-10">
+        <div>
             <input asp-for="Active" class="form-control" />
 
             <span asp-validation-for="Active" class="text-danger"></span>
@@ -95,7 +79,7 @@
     <div class="form-group">
 
         <label asp-for="OrganizationAddress.Address" class="col-md-2 control-label">Address</label>
-        <div class="col-md-10">
+        <div>
             <input asp-for="OrganizationAddress.Address" class="form-control" type="text" />
 
             <span id="AddressError" asp-validation-for="OrganizationAddress.Address" class="text-danger"></span>
@@ -105,8 +89,8 @@
 
         </div>
     </div>
-    @Html.Hidden("OrganizationAddress.Latitude") 
-    @Html.Hidden("OrganizationAddress.Longitude") 
+    @Html.Hidden("OrganizationAddress.Latitude")
+    @Html.Hidden("OrganizationAddress.Longitude")
     @Html.Hidden("PerformerId")
     <button type="submit" class="btn btn-primary">Save these settings</button>
 
@@ -118,7 +102,7 @@
     @Html.Hidden("PerfomerId")
     <button type="submit" class="btn btn-primary">UnsetActivity</button>
 </form>
-@section scripts { 
+@section scripts {
 @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 @{ await Html.RenderPartialAsync("_MapScriptsPartial"); }
 <script>
