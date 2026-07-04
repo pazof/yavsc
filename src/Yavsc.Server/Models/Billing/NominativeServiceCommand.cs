@@ -78,7 +78,7 @@ namespace Yavsc.Models.Billing
         [ForeignKey("ActivityCode"),JsonIgnore,Display(Name="Domaine d'activité")]
         public virtual Activity Context  { get; set ; }
 
-        public bool Decided { get; set; }
+        public bool Reviewed { get; set; }
 
 
         public abstract System.Collections.Generic.List<IBillItem> GetBillItems();
@@ -95,9 +95,9 @@ namespace Yavsc.Models.Billing
             var bcode = billingService.BillingMap[type];
             return $"facture-{bcode}-{Id}{ack}";
         }
-        
+
         [ForeignKey("Regularisation")]
-     
+
         public string? PaymentId { get; set; }
 
         [Display(Name = "Acquittement de la facture")]

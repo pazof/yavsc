@@ -65,14 +65,14 @@ namespace Yavsc.Controllers
         }
 
         [AllowAnonymous]
-        public async Task <ActionResult> HairCut(string id)
+        public async Task <ActionResult> ListPerformersAsync(string activityCode)
         {
-            if (id == null)
+            if (activityCode == null)
             {
                 throw new NotImplementedException("No Activity code");
             }
-            ViewBag.Activity = await _context.Activities.FirstOrDefaultAsync(a => a.Code == id);
-            var result = await _context.ListPerformersAsync(_billing, id);
+            ViewBag.Activity = await _context.Activities.FirstOrDefaultAsync(a => a.Code == activityCode);
+            var result = await _context.ListPerformersAsync(_billing, activityCode);
             return View(result);
         }
 

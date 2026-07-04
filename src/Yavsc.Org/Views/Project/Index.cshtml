@@ -33,7 +33,7 @@
             @Html.DisplayNameFor(model => model.Previsional)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Decided)
+            @Html.DisplayNameFor(model => model.Reviewed)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.DateModified)
@@ -55,7 +55,7 @@
         </th>
         <th></th>
     </tr>
-    
+
 @foreach (var item in Model) {
     <tr>
         <td>
@@ -80,7 +80,7 @@
             @Html.DisplayFor(modelItem => item.Previsional)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Decided)
+            @Html.DisplayFor(modelItem => item.Reviewed)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.DateModified)
