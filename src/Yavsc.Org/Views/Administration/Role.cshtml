@@ -21,7 +21,19 @@
 @foreach (var user in Model.Users) {
     <tr>
         <td>
-            <img src="~/avatars/@(user.UserName).xs.png" alt="avatar"/>
+           @if (user.UserId==User.GetUserId()) {
+                <span class="badge badge-warning">You</span>
+            }
+            @if (SiteSettings.Value.Admin.EMail == user.Email) {
+                <span class="badge badge-success">Admin</span>
+            }
+            @if (SiteSettings.Value.Owner.EMail == user.Email) {
+                <span class="badge badge-success">Owner</span>
+            }
+            @if (!String.IsNullOrWhiteSpace(user.Avatar))
+            {
+                <img src="@user.Avatar" alt="avatar" class="user-icon"/>
+            }
             <span> @user.UserName &lt;@(user.Email)&gt; </span>
         </td>
             <td>
