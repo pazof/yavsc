@@ -1,6 +1,10 @@
 @using IdentityServer8.Models;
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.Client>
 
+@{
+    ViewBag.Title = Localizer["Client"];
+}
+
 <h2>@Localizer["Index"]</h2>
 
 <p>
@@ -10,7 +14,7 @@
 @foreach (var item in Model)
 {
     <div class="list-item">
-        
+
     <div class="card">
     <h5 class="card-title">Identifier</h5>
     <h6 class="card-subtitle mb-2 text-muted">and activation</h6>
@@ -36,7 +40,7 @@
             </dd>
         </dl>
     </div>
-    
+
     <div class="card">
 
     <h5 class="card-title">Urls</h5>
@@ -56,7 +60,7 @@
             </dd>
             <dt>@Html.DisplayNameFor(model => model.AbsoluteRefreshTokenLifetime)</dt>
             <dd>@Html.DisplayFor(model => item.AbsoluteRefreshTokenLifetime)</dd>
-                
+
         </dl>
     </div>
 
@@ -78,7 +82,7 @@
             </dt>
             <dd>
                 @Enum.GetName(typeof(AccessTokenType), item.AccessTokenType)
-    
+
             </dd>
         </dl>
     </div>
@@ -86,6 +90,6 @@
     <a class="btn btn-primary btn-lg" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
     <a class="btn btn-secondary btn-lg" asp-action="Details" asp-route-id="@item.Id">Details</a>
     <a class="btn btn-danger btn-lg" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-       
+
     </div>
 }
