@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
 using Yavsc.Server.Helpers;
@@ -50,7 +49,13 @@ namespace Yavsc.Controllers
         private void SetViewBag(CommandForm commandForm = null)
         {
             ViewBag.ActivityCode = new SelectList(_context.Activities, "Code", "Name", commandForm?.ActivityCode);
-            ViewBag.ActionName = new SelectList(_context.CommandForm, nameof(CommandForm.Id), nameof(CommandForm.Title), commandForm?.Id);
+            ViewBag.ActionName = new SelectList(
+            new[]{
+                new SelectListItem { Value = "Create", Text = "Create" },
+                new SelectListItem { Value = "Update", Text = "Update" },
+                new SelectListItem { Value = "Delete", Text = "Delete" }
+            });
+
         }
         // POST: CommandForms/Create
         [HttpPost]
