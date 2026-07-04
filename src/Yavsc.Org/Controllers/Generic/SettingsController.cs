@@ -6,7 +6,6 @@ namespace Yavsc.Controllers.Generic
     using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using Models;
-    using Yavsc.Helpers;
     using Yavsc.Server.Helpers;
     using Yavsc.Services;
 
@@ -37,7 +36,7 @@ namespace Yavsc.Controllers.Generic
         {
             _context = context;
         }
-        
+
         public async Task<IActionResult> Index()
         {
             return View(await GetSettingsAsync(User.GetUserId()));
