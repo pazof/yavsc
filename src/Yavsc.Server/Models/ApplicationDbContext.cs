@@ -69,16 +69,17 @@ namespace Yavsc.Models
             builder.Entity<DeviceDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql(NOW_SQL);
             builder.Entity<BlogTag>().HasKey(x => new { x.PostId, x.TagId });
 
-            // Signature: composite index (EstimateId, Type,
-            // CapturedAtUtc DESC) to support the controller's
-            // "most recent signature per type" read pattern
-            // without an extra ORDER BY cost. The default
-            // EF-generated FK index on EstimateId alone is
-            // replaced by the composite to avoid duplicate
-            // indexes.
+            // Signature: unique constraint on (EstimateId, Type)
+            // — the most recent version replaces the previous
+            // one, so a partial unique index (not a regular one)
+            // is the right shape. The controller does a
+            // Find-or-Add so EF translates an upsert into a
+            // single UPDATE when the row already exists; the
+            // unique index is the database-level guarantee that
+            // the contract holds.
             builder.Entity<Signature>()
-                .HasIndex(s => new { s.EstimateId, s.Type, s.CapturedAtUtc })
-                .IsDescending(false, false, true);
+                .HasIndex(s => new { s.EstimateId, s.Type })
+                .IsUnique();
             builder.Entity<Signature>()
                 .HasOne(s => s.Estimate)
                 .WithMany(e => e.Signatures)

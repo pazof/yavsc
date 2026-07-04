@@ -264,21 +264,53 @@ namespace Yavsc.ApiControllers
                 return BadRequest(new { Error = "file write failed", Detail = ex.Message });
             }
 
-            // Now persist the database row. The int[] is round-
-            // tripped via Npgsql's native int[] mapping; the
-            // migration (separate commit) introduces the column
-            // and the index.
-            var signature = new Signature
+            // Find-or-add: the (EstimateId, Type) pair is
+            // unique, so a second POST for the same side of the
+            // estimate replaces the previous signature. EF
+            // translates this into a single UPDATE when the
+            // row exists and an INSERT otherwise; the unique
+            // index in ApplicationDbContext is the
+            // database-level guarantee that the contract
+            // holds if two requests race.
+            var signature = await dbContext.Signatures
+                .FirstOrDefaultAsync(s => s.EstimateId == id && s.Type == type, token);
+
+            if (signature is null)
             {
-                EstimateId = id,
-                SignerId = userId,
-                Type = type,
-                CoordinateMax = payload.CoordinateMax,
-                Strokes = payload.Strokes,
-                CapturedAtUtc = payload.CapturedAtUtc,
-                FilePath = Path.Combine(fi.DestDir, fi.FileName),
-            };
-            dbContext.Signatures.Add(signature);
+                signature = new Signature
+                {
+                    EstimateId = id,
+                    SignerId = userId,
+                    Type = type,
+                };
+                dbContext.Signatures.Add(signature);
+            }
+            else
+            {
+                // Roll the signer's quota back by the size of
+                // the file we're about to orphan: the old
+                // FilePath is no longer referenced once we
+                // overwrite FilePath below.
+                try
+                {
+                    var orphan = new FileInfo(signature.FilePath);
+                    if (orphan.Exists)
+                    {
+                        var signerForOrphan = await dbContext.Users
+                            .FirstOrDefaultAsync(u => u.Id == userId, token);
+                        if (signerForOrphan is not null)
+                            signerForOrphan.DiskUsage =
+                                Math.Max(0, signerForOrphan.DiskUsage - orphan.Length);
+                    }
+                }
+                catch { /* best effort — the file is being replaced anyway */ }
+            }
+
+            signature.SignerId = userId;
+            signature.CoordinateMax = payload.CoordinateMax;
+            signature.Strokes = payload.Strokes;
+            signature.CapturedAtUtc = payload.CapturedAtUtc;
+            signature.FilePath = Path.Combine(fi.DestDir, fi.FileName);
 
             // Bump the signer's quota. The Signature row's
             // SignerId is the IdentityUser.Id (a string), so we
