@@ -69,6 +69,25 @@ namespace Yavsc.Models
             builder.Entity<DeviceDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql(NOW_SQL);
             builder.Entity<BlogTag>().HasKey(x => new { x.PostId, x.TagId });
 
+            // Signature: composite index (EstimateId, Type,
+            // CapturedAtUtc DESC) to support the controller's
+            // "most recent signature per type" read pattern
+            // without an extra ORDER BY cost. The default
+            // EF-generated FK index on EstimateId alone is
+            // replaced by the composite to avoid duplicate
+            // indexes.
+            builder.Entity<Signature>()
+                .HasIndex(s => new { s.EstimateId, s.Type, s.CapturedAtUtc })
+                .IsDescending(false, false, true);
+            builder.Entity<Signature>()
+                .HasOne(s => s.Estimate)
+                .WithMany(e => e.Signatures)
+                .HasForeignKey(s => s.EstimateId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Signature>()
+                .Property(s => s.CoordinateMax)
+                .HasDefaultValue(10_000);
+
             builder.Entity<ApplicationUser>().Property(u => u.FullName).IsRequired(false);
             builder.Entity<ApplicationUser>().Property(u => u.DedicatedGoogleCalendar).IsRequired(false);
             builder.Entity<ApplicationUser>().HasMany<ChatConnection>(c => c.Connections);
@@ -235,6 +254,7 @@ namespace Yavsc.Models
         public DbSet<PerformerProfile> Performers { get; set; }
 
         public DbSet<Estimate> Estimates { get; set; }
+        public DbSet<Signature> Signatures { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
         public DbSet<BalanceImpact> BalanceImpact { get; set; }
 
