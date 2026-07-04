@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Yavsc.Interface;
@@ -8,6 +7,7 @@ using Yavsc.Models;
 using Yavsc.Models.Google.Messaging;
 using Yavsc.Models.Haircut;
 using Yavsc.Models.Messaging;
+using Yavsc.Server.Hubs;
 
 namespace Yavsc.Services
 {
@@ -92,25 +92,25 @@ namespace Yavsc.Services
 
 
                     _logger.LogDebug($"Sending to {user.UserName} <{user.Email}> : {body}");
-                    
+
                         result.message_id = await _emailSender.SendEmailAsync(user.UserName, user.Email,
                         $"{ev.Sender} (un client) vous demande un rendez-vous",
                     body + Environment.NewLine);
                         response.success++;
-                  
-                    var cxids = _cxManager.GetConnexionIds(user.UserName);
-                    if (cxids == null)
+
+                    var cxIds = _cxManager.GetConnexionIds(user.UserName);
+                    if (cxIds == null)
                     {
                         _logger.LogDebug($"no cx to {user.UserName} <{user.Email}> ");
                     }
                     else
                     {
-                        _logger.LogDebug($"Sending signal to {string.Join(" ", cxids)}  : " + JsonConvert.SerializeObject(ev));
+                        _logger.LogDebug($"Sending signal to {string.Join(" ", cxIds)}  : " + JsonConvert.SerializeObject(ev));
 
-                        foreach (var cxid in cxids)
+                        foreach (var cxId in cxIds)
                         {
                             // from usr asp.net Id : var hubClient = hubContext.Clients.User(userId);
-                            var hubClient = hubContext.Clients.Client(cxid);
+                            var hubClient = hubContext.Clients.Client(cxId);
                             var data = new Dictionary<string, object>
                             {
                                 ["event"] = JsonConvert.SerializeObject(ev)
@@ -152,22 +152,9 @@ namespace Yavsc.Services
             return await NotifyEvent<HairCutQueryEvent>(userIds, ev);
         }
 
-        public async Task<MessageWithPayloadResponse> NotifyAsync(IEnumerable<string> userIds, IEvent yaev)
+        public async Task<MessageWithPayloadResponse> NotifyAsync(IEnumerable<string> userIds, IEvent yavscEvent)
         {
-            return await NotifyEvent<IEvent>(userIds, yaev);
+            return await NotifyEvent<IEvent>(userIds, yavscEvent);
         }
-
-        /* SMS with Twilio:
-public Task SendSmsAsync(TwilioSettings twilioSettigns, string number, string message)
-{
-var Twilio = new TwilioRestClient(twilioSettigns.AccountSID, twilioSettigns.Token);
-var result = Twilio.SendMessage( twilioSettigns.SMSAccountFrom, number, message);
-// Status is one of Queued, Sending, Sent, Failed or null if the number is not valid
-Trace.TraceInformation(result.Status);
-// Twilio doesn't currently have an async API, so return success.
-
-return Task.FromResult(result.Status != "Failed");
-
-}  */
     }
 }
