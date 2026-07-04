@@ -78,4 +78,26 @@ public sealed class SignaturePadData
             return n;
         }
     }
+
+    /// <summary>
+    /// Total number of (x, y) pairs across all strokes. Useful
+    /// for sanity-checks and for displaying capture density
+    /// without re-walking the wire format.
+    /// </summary>
+    public int PointCount
+    {
+        get
+        {
+            int n = 0;
+            int i = 0;
+            while (i < Strokes.Length)
+            {
+                int k = Strokes[i];
+                if (k <= 0) break;
+                n += k;
+                i += 1 + 2 * k;
+            }
+            return n;
+        }
+    }
 }
