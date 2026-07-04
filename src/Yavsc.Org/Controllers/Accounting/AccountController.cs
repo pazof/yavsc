@@ -42,11 +42,11 @@ namespace Yavsc.Controllers
         readonly TwilioSettings _twilioSettings;
 
         readonly IStringLocalizer _localizer;
-    private readonly IStringLocalizer _sharedLocalizer;
+        private readonly IStringLocalizer _sharedLocalizer;
 
-    //  TwilioSettings _twilioSettings;
+        //  TwilioSettings _twilioSettings;
 
-    readonly ApplicationDbContext _dbContext;
+        readonly ApplicationDbContext _dbContext;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
@@ -90,7 +90,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                 "ConfirmYourAccountTitle"
                 })
                 Debug.Assert(!_localizer[name].ResourceNotFound);
-            
+
         }
 
 
@@ -116,7 +116,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                             {
                                 await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
 
-                                // only set explicit expiration here if user chooses "remember me". 
+                                // only set explicit expiration here if user chooses "remember me".
                                 // otherwise we rely upon expiration configured in cookie middleware.
                                 await HttpContext.SignInAsync(user, _roleManager, model.RememberMe, _dbContext);
                                 var authResult = await HttpContext.AuthenticateAsync();
@@ -216,11 +216,11 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         /// <summary>
         /// Handle postback from username/password login
         /// </summary>
-        /// 
+        ///
         [HttpPost(YavscConstants.SigninPath)]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-  
+
         public async Task<IActionResult> Signin([FromForm] SignInModel model, [FromForm] string button)
         {
 
@@ -232,7 +232,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             {
                 if (context != null)
                 {
-                    // if the user cancels, send a result back into IdentityServer as if they 
+                    // if the user cancels, send a result back into IdentityServer as if they
                     // denied the consent (even if this client does not require consent).
                     // this will send back an access denied OIDC error response to the client.
                     await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
@@ -269,7 +269,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                     {
                         await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
 
-                        // only set explicit expiration here if user chooses "remember me". 
+                        // only set explicit expiration here if user chooses "remember me".
                         // otherwise we rely upon expiration configured in cookie middleware.
                         await HttpContext.SignInAsync(user, _roleManager, model.RememberMe, _dbContext);
 
@@ -396,7 +396,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                 var local = context.IdP == IdentityServer8.IdentityServerConstants.LocalIdentityProvider;
 
                 // this is meant to short circuit the UI and only trigger the one external IdP
-                
+
                 model.EnableLocalLogin = local;
                 model.UserName = context?.LoginHint;
                 model.IsExternalLoginOnly = false;
@@ -579,12 +579,12 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                     // Send an email with this link
 
                     Uri authority = new Uri(Config.Authority);
-                    
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account",
                     new { userId = user.Id, code },
                     protocol: authority.Scheme,
-                     host: authority.Host+":"+authority.Port);
+                     host: authority.Host + ":" + authority.Port);
                     await _emailSender.SendEmailAsync(model.UserName, model.Email, _localizer["ConfirmYourAccountTitle"],
                       string.Format(_localizer["ConfirmYourAccountBody"],
                        _siteSettings.Title,
@@ -867,7 +867,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                 // Username should not contain any '@'
                 if (model.LoginOrEmail.Contains('@'))
                 {
-                    user = await _userManager.FindByEmailAsync(model.LoginOrEmail);
+                    user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == model.LoginOrEmail); // || u.UserName == (model.LoginOrEmail);
                 }
                 else
                 {
