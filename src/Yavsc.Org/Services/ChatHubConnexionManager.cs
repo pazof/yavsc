@@ -80,7 +80,7 @@ namespace Yavsc.Services
         public void OnConnected(string cxId,  bool isCop)
         {
             var username = ChatUserNames[cxId];
-            if (!IsConnected(username)) 
+            if (!IsConnected(username))
                 ChatRoomPresence[username] = new List<string>();
             _isCop[username] = isCop;
         }
@@ -101,7 +101,7 @@ namespace Yavsc.Services
             return _isCop[userName];
         }
 
-        public void OnDisctonnected(string connectionId)
+        public void OnDisconnected(string connectionId)
         {
             string uname;
 
@@ -136,7 +136,7 @@ namespace Yavsc.Services
                     return false;
                 }
                 // FIXME only remove cx, not username,
-                // as long as he might be connected 
+                // as long as he might be connected
                 // from another device, to the same room
                 chanInfo.Users.Remove(cxId);
                 if (chanInfo.Users.Count == 0)
@@ -183,7 +183,7 @@ namespace Yavsc.Services
                         }
                         else{
                             chanInfo.Users.Add(cxId);
-                        } 
+                        }
                         _logger.LogInformation($"existing room joint: {userName}=>{roomName}");
                         if (!ChatRoomPresence[userName].Contains(roomName))
                             ChatRoomPresence[userName].Add(roomName);
@@ -200,7 +200,7 @@ namespace Yavsc.Services
             // room was closed.
             var room = _dbContext.ChatRoom.FirstOrDefault(r => r.Name == roomName);
             chanInfo = new ChatRoomInfo();
-            
+
 
             if (room != null)
             {
@@ -244,7 +244,7 @@ namespace Yavsc.Services
             throw new System.NotImplementedException();
         }
 
-        public bool Dehop(string roomName, string userName)
+        public bool DeHop(string roomName, string userName)
         {
             throw new System.NotImplementedException();
         }
@@ -292,12 +292,12 @@ namespace Yavsc.Services
                 return false;
             }
 
-            if (!Channels.TryGetValue(roomName, out chanInfo)) 
+            if (!Channels.TryGetValue(roomName, out chanInfo))
             {
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchChan).ToString());
                 return false;
             }
-            
+
             var kickerName = GetUserName(cxId);
             if (!chanInfo.Ops.Contains(cxId))
             if (!chanInfo.Hops.Contains(cxId))
@@ -325,19 +325,19 @@ namespace Yavsc.Services
             }
 
             // all good, time to kick :-)
-            foreach (var ucx in ucxs) { 
-            if (chanInfo.Users.Contains(ucx)) 
+            foreach (var ucx in ucxs) {
+            if (chanInfo.Users.Contains(ucx))
                 chanInfo.Users.Remove(ucx);
 
-            else if (chanInfo.Ops.Contains(ucx)) 
+            else if (chanInfo.Ops.Contains(ucx))
                 chanInfo.Ops.Remove(ucx);
 
-            else if (chanInfo.Hops.Contains(ucx)) 
+            else if (chanInfo.Hops.Contains(ucx))
                 chanInfo.Hops.Remove(ucx);
             }
 
             return true;
-            
+
         }
     }
 }

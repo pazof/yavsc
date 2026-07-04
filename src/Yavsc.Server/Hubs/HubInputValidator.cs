@@ -19,40 +19,47 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using Yavsc;
+using Microsoft.Extensions.Localization;
 
-namespace Yavsc
+namespace Yavsc.Server.Hubs
 {
     public class HubInputValidator {
+
+        public IStringLocalizer _locator;
+        public HubInputValidator(IStringLocalizer locator) {
+            _locator = locator;
+        }
 
         public Action<string,string,string> NotifyUser {get;set;}
         public bool ValidateRoomName (string roomName)
         {
             bool valid = ValidateStringLength(roomName,1,25);
             if (valid) valid = IsLetterOrDigit(roomName);
-            if (!valid) NotifyUser(NotificationTypes.Error, "roomName", ChatHubLabels.InvalidRoomName);
+            if (!valid) NotifyUser(NotificationTypes.Error, "roomName", _locator.GetString(ChatHubLabels.InvalidRoomName));
             return valid;
         }
         public bool ValidateUserName (string userName)
         {
             bool valid = true;
-            
+
             if (userName.Length<1 || userName[0] == '?' && userName.Length<2) valid = false;
             if (valid) {
                     string suname = (userName[0] == '?') ? userName.Substring(1) : userName;
                     if (valid) valid = ValidateStringLength(suname, 1,12);
                     if (valid) valid = IsLetterOrDigit(userName);
             }
-            if (!valid) NotifyUser(NotificationTypes.Error, "userName" , ChatHubLabels.InvalidUserName);
+            if (!valid)
+                NotifyUser(
+                    NotificationTypes.Error,
+                    "userName",
+                     _locator.GetString(ChatHubLabels.InvalidUserName));
             return valid;
         }
         public bool ValidateMessage (string message)
         {
             if (!ValidateStringLength(message, 1, 10240))
             {
-                NotifyUser(NotificationTypes.Error, "message", ChatHubLabels.InvalidMessage);
+                NotifyUser(NotificationTypes.Error, "message", _locator.GetString(ChatHubLabels.InvalidMessage));
                 return false;
             }
             return true;

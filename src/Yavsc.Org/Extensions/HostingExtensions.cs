@@ -41,6 +41,7 @@ using Yavsc.Settings;
 using Yavsc.ViewModels.Auth;
 using IdentityServer8.Models;
 using IdentityServer8.EntityFramework.Mappers;
+using Yavsc.Server.Hubs;
 
 namespace Yavsc.Extensions;
 

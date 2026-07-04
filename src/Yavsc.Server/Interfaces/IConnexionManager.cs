@@ -11,9 +11,9 @@ namespace Yavsc.Services
         void OnConnected(string cxId, bool isCop);
         bool IsConnected(string candidate);
 
-        void OnDisctonnected (string cxId);
+        void OnDisconnected (string cxId);
         bool IsPresent(string roomName, string userName);
-        
+
         ChatRoomInfo Join(string roomName, string cxId);
 
         bool Part(string cxId, string roomName,  string reason);
@@ -23,13 +23,13 @@ namespace Yavsc.Services
         bool Op(string roomName, string userName);
         bool Deop(string roomName, string userName);
         bool Hop(string roomName, string userName);
-        bool Dehop(string roomName, string userName);
-        bool TryGetChanInfo(string room, out ChatRoomInfo chanInfo);
+        bool DeHop(string roomName, string userName);
+        bool TryGetChanInfo(string room, out ChatRoomInfo channelInfo);
 
         IEnumerable<string> GetConnexionIds(string userName);
 
         void SetErrorHandler(Action<string,string> errorHandler);
         IEnumerable<ChannelShortInfo> ListChannels(string pattern);
-        
+
     }
 }
