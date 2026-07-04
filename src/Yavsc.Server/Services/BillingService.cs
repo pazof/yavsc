@@ -8,8 +8,8 @@ namespace Yavsc.Services
     public class BillingService : IBillingService
     {
         public ApplicationDbContext DbContext { get; private set; }
-        public static Dictionary<string, Func<ApplicationDbContext, long, IDecidableQuery>> Billing =
-        new Dictionary<string, Func<ApplicationDbContext, long, IDecidableQuery>>();
+        public static Dictionary<string, Func<ApplicationDbContext, long, IQuery>> Billing =
+        new Dictionary<string, Func<ApplicationDbContext, long, IQuery>>();
         public static List<PropertyInfo> UserSettings = new List<PropertyInfo>();
 
         public static Dictionary<string, string> GlobalBillingMap =
@@ -25,12 +25,12 @@ namespace Yavsc.Services
             DbContext = dbContext;
         }
 
-        public Task<IDecidableQuery> GetBillAsync(string billingCode, long queryId)
+        public Task<IQuery> GetBillAsync(string billingCode, long queryId)
         {
             return Task.FromResult(GetBillable(DbContext, billingCode, queryId));
         }
 
-        public static IDecidableQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId) => Billing[billingCode](context, queryId);
+        public static IQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId) => Billing[billingCode](context, queryId);
         public async Task<IUserSettings> GetPerformersSettingsAsync(string activityCode, string userId)
         {
             var activity = await DbContext.Activities.SingleAsync(a => a.Code == activityCode);
@@ -39,7 +39,7 @@ namespace Yavsc.Services
 
             var dbSetGetter =
             UserSettings.SingleOrDefault(s => s.Name == activity.SettingsClassName);
-            
+
             if (dbSetGetter==null) return null;
             var dbSet = dbSetGetter.GetValue(DbContext);
 

@@ -41,7 +41,7 @@ namespace Yavsc.Helpers
         }
 
         public static void RegisterBilling<T>(string code, Func<ApplicationDbContext, long,
-        IDecidableQuery> getter) where T : IBillable
+        IQuery> getter) where T : IBillable
         {
             lock (_billingLock)
             {
@@ -91,7 +91,7 @@ namespace Yavsc.Helpers
                     }
                 }
 
-                RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext, long, IDecidableQuery>
+                RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext, long, IQuery>
                 ((db, id) =>
                 {
                     var query = db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularisation).Single(q => q.Id == id);
@@ -99,10 +99,10 @@ namespace Yavsc.Helpers
                     return query;
                 }));
 
-                RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush, new Func<ApplicationDbContext, long, IDecidableQuery>
+                RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush, new Func<ApplicationDbContext, long, IQuery>
                 ((db, id) => db.HairMultiCutQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
 
-                RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext, long, IDecidableQuery>
+                RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext, long, IQuery>
                 ((db, id) => db.RdvQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
             }
         }
