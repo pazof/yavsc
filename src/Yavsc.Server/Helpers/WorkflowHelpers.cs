@@ -55,6 +55,7 @@ namespace Yavsc.Helpers
                     throw new InvalidOperationException($"Billing setup: code '{code}' already registered with different type");
                 }
                 BillingService.Billing.Add(code, getter);
+                BillingService.GlobalBillingMap.Add(typeName, code);
             }
         }
 

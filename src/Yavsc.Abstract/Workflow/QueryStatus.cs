@@ -9,12 +9,9 @@ namespace Yavsc
     public enum QueryStatus: int
     {
         Inserted,
-        OwnerValidated,
-        Visited,
         Rejected,
         Accepted,
         InProgress,
-
         // final states
         Failed,
         Success

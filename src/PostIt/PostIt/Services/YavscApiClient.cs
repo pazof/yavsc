@@ -205,6 +205,16 @@ public class YavscApiClient : IAsyncDisposable
         return dto!;
     }
 
+    /// <summary>
+    /// Call a JSON endpoint with no request body while still allowing a
+    /// positional cancellation token argument.
+    /// </summary>
+    public Task<T> CallAsync<T>(
+        HttpMethod method,
+        string path,
+        CancellationToken ct)
+        => CallAsync<T>(method, path, body: null, ct);
+
     /// <summary>Call an endpoint that returns no useful body (DELETE, etc.).</summary>
     public async Task CallAsync(
         HttpMethod method,
@@ -215,6 +225,16 @@ public class YavscApiClient : IAsyncDisposable
         using var response = await SendAsync(method, path, body, ct).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
     }
+
+    /// <summary>
+    /// Call an endpoint with no request body while still allowing a
+    /// positional cancellation token argument.
+    /// </summary>
+    public Task CallAsync(
+        HttpMethod method,
+        string path,
+        CancellationToken ct)
+        => CallAsync(method, path, body: null, ct);
 
     private async Task<HttpResponseMessage> SendAsync(
         HttpMethod method, string path, object? body, CancellationToken ct)
