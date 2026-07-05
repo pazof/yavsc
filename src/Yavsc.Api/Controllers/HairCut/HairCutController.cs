@@ -41,7 +41,7 @@ namespace Yavsc.ApiControllers
         // user, as a client
         public IActionResult Index()
         {
-            
+
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var now = DateTime.Now;
@@ -151,7 +151,7 @@ namespace Yavsc.ApiControllers
         {
 
             HairCutQuery query = await _context.HairCutQueries.Include(q => q.Client).
-            Include(q => q.Client.PostalAddress).Include(q => q.Prestation).Include(q=>q.Regularisation)
+            Include(q => q.Client.PostalAddress).Include(q => q.Prestation).Include(q=>q.Regularization)
             .SingleAsync(q => q.Id == id);
             if (query.PaymentId!=null)
                 return new BadRequestObjectResult(new { error = "An existing payment process already exists" });

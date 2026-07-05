@@ -91,15 +91,15 @@ public class YavscApiClient : IAsyncDisposable
     /// <see cref="LoginPageViewModel.StatusMessage"/> for the human
     /// text (URLs, error detail).</param>
     public async Task LoginInteractiveAsync(
-        IProgress<OidcLoginPhase>? progress = null,
+        IProgress<OIDCLoginPhase>? progress = null,
         CancellationToken ct = default)
     {
-        progress?.Report(OidcLoginPhase.Discovering);
+        progress?.Report(OIDCLoginPhase.Discovering);
 
         var browser = Platform.CreateBrowser?.Invoke();
         if (browser is null)
         {
-            progress?.Report(OidcLoginPhase.Error);
+            progress?.Report(OIDCLoginPhase.Error);
             throw new InvalidOperationException("No browser is available on this platform.");
         }
 
@@ -114,20 +114,20 @@ public class YavscApiClient : IAsyncDisposable
         // the moment we ask the browser to open (covers the entire
         // user-driven window including the AwaitingCallback wait), and
         // the moment we trade the code for tokens.
-        progress?.Report(OidcLoginPhase.OpeningBrowser);
+        progress?.Report(OIDCLoginPhase.OpeningBrowser);
         var result = await client.LoginAsync(new LoginRequest(), ct).ConfigureAwait(false);
 
         if (result.IsError)
         {
-            progress?.Report(OidcLoginPhase.Error);
+            progress?.Report(OIDCLoginPhase.Error);
             throw new InvalidOperationException($"OIDC login failed: {result.Error}");
         }
 
-        progress?.Report(OidcLoginPhase.ExchangingCode);
+        progress?.Report(OIDCLoginPhase.ExchangingCode);
 
         if (string.IsNullOrEmpty(result.RefreshToken))
         {
-            progress?.Report(OidcLoginPhase.Error);
+            progress?.Report(OIDCLoginPhase.Error);
             throw new InvalidOperationException(
                 "Missing refresh_token — vérifie le scope 'offline_access'.");
         }
@@ -139,7 +139,7 @@ public class YavscApiClient : IAsyncDisposable
             IdToken: result.IdentityToken);
 
         _store.Save(_tokens);
-        progress?.Report(OidcLoginPhase.Success);
+        progress?.Report(OIDCLoginPhase.Success);
     }
 
     /// <summary>
@@ -152,7 +152,7 @@ public class YavscApiClient : IAsyncDisposable
     /// phase and returns false so the UI can keep going.
     /// </summary>
     public async Task<bool> TrySilentLoginAsync(
-        IProgress<OidcLoginPhase>? progress = null,
+        IProgress<OIDCLoginPhase>? progress = null,
         CancellationToken ct = default)
     {
         if (!HasValidSession) return false;
@@ -161,7 +161,7 @@ public class YavscApiClient : IAsyncDisposable
         // Access token still has plenty of life — nothing to do.
         if (_tokens.AccessTokenExpiresAt - DateTimeOffset.UtcNow > RefreshSkew)
         {
-            progress?.Report(OidcLoginPhase.Success);
+            progress?.Report(OIDCLoginPhase.Success);
             return true;
         }
 
@@ -172,19 +172,19 @@ public class YavscApiClient : IAsyncDisposable
         // the user back to the login page.
         try
         {
-            progress?.Report(OidcLoginPhase.ExchangingCode);
+            progress?.Report(OIDCLoginPhase.ExchangingCode);
             await ForceRefreshAsync(ct).ConfigureAwait(false);
-            progress?.Report(OidcLoginPhase.Success);
+            progress?.Report(OIDCLoginPhase.Success);
             return true;
         }
         catch (RefreshFailedException)
         {
-            progress?.Report(OidcLoginPhase.Idle);
+            progress?.Report(OIDCLoginPhase.Idle);
             return false;
         }
         catch
         {
-            progress?.Report(OidcLoginPhase.Idle);
+            progress?.Report(OIDCLoginPhase.Idle);
             return false;
         }
     }

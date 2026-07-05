@@ -14,7 +14,7 @@ public class LoginPageViewModelTests
         // short-circuits the system browser. The authority signs its
         // access_token with RS256; the fake browser captures the redirect
         // URI so the authority can complete the token exchange.
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         var browser = new FakeAuthorizingBrowser(authority.LoopbackRedirectUri);
 
         var settings = new PostIt.Settings
@@ -96,7 +96,7 @@ public class LoginPageViewModelTests
         // double slash before /.well-known/openid-configuration. The
         // stub advertises itself without the trailing slash; OidcClient
         // must bridge.
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         var browser = new FakeAuthorizingBrowser(authority.LoopbackRedirectUri);
 
         var settings = new PostIt.Settings

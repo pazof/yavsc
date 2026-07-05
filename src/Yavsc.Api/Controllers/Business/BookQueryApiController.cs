@@ -41,7 +41,7 @@ namespace Yavsc.Controllers
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var now = DateTime.Now;
-            
+
             var result = _context.RdvQueries.Include(c => c.Location).
             Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now
             && c.ValidationDate == null).
@@ -49,12 +49,12 @@ namespace Yavsc.Controllers
             {
                 Client = new ClientProviderInfo {
                      UserName = c.Client.UserName,
-                     UserId = c.ClientId, 
+                     UserId = c.ClientId,
                      Avatar = c.Client.Avatar },
                 Location = c.Location,
                 EventDate = c.EventDate,
                 Id = c.Id,
-                Previsional = c.Previsional,
+                Previsional = c.Provisional,
                 Reason = c.Reason,
                 ActivityCode = c.ActivityCode,
                 BillingCode = BillingCodes.Rdv

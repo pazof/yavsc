@@ -1,25 +1,25 @@
 @model NominativeServiceCommand
 
 @if (Model!=null && Model.PaymentId!=null) {
-   
-    @if (Model.Regularisation.Executor.Id == User.GetUserId()) {
+
+    @if (Model.Regularization.Executor.Id == User.GetUserId()) {
         <text>
            Votre paiment
         </text>
     } else {
         <text>
-           Le paiment de @Html.DisplayFor(m=>m.Regularisation.Executor.UserName) 
+           Le paiment de @Html.DisplayFor(m=>m.Regularization.Executor.UserName)
         </text>
     }
-    <text> : 
+    <text> :
 
     </text>
       <label>@Model.GetIsAcquitted()
-      <input type="checkbox" checked="@Model.GetIsAcquitted()" disabled/> 
-      <a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.Regularisation.CreationToken">@Model.Regularisation.CreationToken</a>
+      <input type="checkbox" checked="@Model.GetIsAcquitted()" disabled/>
+      <a asp-controller="Manage" asp-action="PaymentInfo" asp-route-id="@Model.Regularization.CreationToken">@Model.Regularization.CreationToken</a>
       </label>
 
-} 
+}
 
 @if (!Model.GetIsAcquitted()) {
 <div id="paypalzone"></div>
