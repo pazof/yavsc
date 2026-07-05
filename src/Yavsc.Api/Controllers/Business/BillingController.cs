@@ -204,6 +204,7 @@ namespace Yavsc.ApiControllers
         /// the URL surface.</para>
         /// </summary>
         [HttpPost("estimate/{id:long}/sign")]
+        [ValidateAntiForgeryToken]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
