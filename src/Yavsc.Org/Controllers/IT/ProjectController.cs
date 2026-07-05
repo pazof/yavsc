@@ -18,7 +18,7 @@ namespace Yavsc.Controllers
         private readonly ApplicationDbContext _context;
         readonly IStringLocalizer<ProjectController> _localizer;
         readonly IStringLocalizer<BugController> _bugLocalizer;
-          
+
         public ProjectController(ApplicationDbContext context,
         IStringLocalizer<ProjectController> localizer,
         IStringLocalizer<BugController> bugLocalizer
@@ -32,7 +32,7 @@ namespace Yavsc.Controllers
         // GET: Project
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Project.Include(p => p.Client).Include(p => p.Context).Include(p => p.PerformerProfile).Include(p => p.Regularisation).Include(p => p.Repository);
+            var applicationDbContext = _context.Project.Include(p => p.Client).Include(p => p.Context).Include(p => p.PerformerProfile).Include(p => p.Regularization).Include(p => p.Repository);
             return View(await applicationDbContext.ToListAsync());
         }
 

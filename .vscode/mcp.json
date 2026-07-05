@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "openclaw": {
+      "type": "stdio",
+      "command": "/home/paul/.nvm/versions/node/v22.23.0/bin/node",
+      "args": [
+        "/home/paul/Workspace/tools/openclaw-mcp-server.js"
+      ]
+    }
+  }
+}

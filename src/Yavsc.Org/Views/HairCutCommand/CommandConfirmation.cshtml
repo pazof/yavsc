@@ -54,7 +54,7 @@
         <dt> @Html.DisplayNameFor(m => m.Location)
         </dt>
         <dd>@if (Model.Location == null) {
-         <p>Pas de lieu convenu ...</p> 
+         <p>Pas de lieu convenu ...</p>
          } else {
         <label for="Location">Location</label>
          @Html.DisplayFor(m => m.Location)
@@ -62,7 +62,7 @@
         </dd>
         <dt>Notification
         </dt>
-        <dd>@if (ViewBag.GooglePayload !=null) 
+        <dd>@if (ViewBag.GooglePayload !=null)
         {
             @if (ViewBag.GooglePayload.success>0) {
                 <h4>GCM Notifications sent</h4>
@@ -85,10 +85,10 @@
         </dt>
         <dd>@await Component.InvokeAsync("Bill", Model)
         </dd>
-        
-        <dt>@Html.DisplayNameFor(m=>m.Regularisation)</dt>
+
+        <dt>@Html.DisplayNameFor(m=>m.Regularization)</dt>
         <dd> @await Component.InvokeAsync("PayPalButton", Model)
         </dd>
      </dl>
-    
+
 </div>

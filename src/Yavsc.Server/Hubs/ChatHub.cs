@@ -19,23 +19,19 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-using System;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
+#pragma warning disable CS4014 // Dans la mesure où cet appel n'est pas attendu, l'exécution de la méthode actuelle continue avant la fin de l'appel
 
-namespace Yavsc
+namespace Yavsc.Server.Hubs
 {
     using System.Diagnostics;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.EntityFrameworkCore;
-    using Models;
-    using Models.Chat;
     using Yavsc.Abstract.Chat;
-    using Yavsc.Helpers;
+    using Yavsc.Models;
+    using Yavsc.Models.Chat;
     using Yavsc.Server.Helpers;
     using Yavsc.Services;
     public partial class ChatHub : Hub, IDisposable
@@ -47,21 +43,23 @@ namespace Yavsc
 
         public HubInputValidator InputValidator { get; }
 
-        public ChatHub(ApplicationDbContext dbContext, 
-        ILoggerFactory loggerFactory, 
-        IStringLocalizerFactory stringLocalizerFactory, 
+        public ChatHub(ApplicationDbContext dbContext,
+        ILoggerFactory loggerFactory,
+        IStringLocalizerFactory stringLocalizerFactory,
         IConnexionManager connexionManager)
         {
             _dbContext = dbContext;
             _localizer = stringLocalizerFactory.Create(typeof(ChatHub));
-            
+
             _cxManager =  connexionManager;
-            _cxManager.SetErrorHandler ((context, error) => 
+            _cxManager.SetErrorHandler ((context, error) =>
             {
                 NotifyUser(NotificationTypes.Error, context, error);
             });
             _logger = loggerFactory.CreateLogger<ChatHub>();
-            InputValidator = new HubInputValidator { NotifyUser = async (type, target, msg) => await this.NotifyUser(type, target, msg) };
+            InputValidator = new HubInputValidator(_localizer) {
+
+                NotifyUser = async (type, target, msg) => await this.NotifyUser(type, target, msg) };
         }
 
         void SetUserName(string cxId, string userName)
@@ -114,14 +112,14 @@ namespace Yavsc
                     return Context.User.Identity.Name;
                 }
             anonymousSequence++;
-            var aname = $"{ChatHubConstants.AnonymousUserNamePrefix}{queryUname}{anonymousSequence}";
-            SetUserName(Context.ConnectionId, aname);
-            return aname;
+            var anonymousName = $"{ChatHubConstants.AnonymousUserNamePrefix}{queryUname}{anonymousSequence}";
+            SetUserName(Context.ConnectionId, anonymousName);
+            return anonymousName;
         }
 
         static long anonymousSequence = 0;
 
-        public override async Task OnDisconnectedAsync(Exception ?ex)
+        public override async Task OnDisconnectedAsync(Exception ex)
         {
             string userName = Context.User?.Identity.Name;
             if (userName != null)
@@ -130,12 +128,12 @@ namespace Yavsc
                 var userId = user.Id;
                 await Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).SendAsync("notifyUser", NotificationTypes.DisConnected, userName, null);
 
-                _cxManager.OnDisctonnected(Context.ConnectionId);
+                _cxManager.OnDisconnected(Context.ConnectionId);
             }
               await base.OnDisconnectedAsync(ex);
         }
 
-     
+
         public async Task Nick(string nickName)
         {
             if (!InputValidator.ValidateUserName(nickName)) return;
@@ -156,33 +154,33 @@ namespace Yavsc
 
         public async Task<ChatRoomInfo> Join(string roomName)
         {
-            _logger.LogInformation($"Join:{roomName}"); 
+            _logger.LogInformation($"Join:{roomName}");
             if (!InputValidator.ValidateRoomName(roomName))
             {
-               _logger.LogError("!InputValidator.ValidateRoomName(roomName)"); 
+               _logger.LogError("!InputValidator.ValidateRoomName(roomName)");
                 return null;
             }
 
             var roomGroupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
             var user = _cxManager.GetUserName(Context.ConnectionId);
             await Groups.AddToGroupAsync(Context.ConnectionId, roomGroupName);
-            ChatRoomInfo chanInfo;
+            ChatRoomInfo channelInfo;
             if (!_cxManager.IsPresent(roomName, user))
             {
-                _logger.LogInformation($"Joining"); 
-                chanInfo = _cxManager.Join(roomName, Context.ConnectionId);
+                _logger.LogInformation($"Joining");
+                channelInfo = _cxManager.Join(roomName, Context.ConnectionId);
                 await Clients.Group(roomGroupName).SendAsync("notifyRoom", NotificationTypes.UserJoin, roomName, user);
             } else {
-                _logger.LogInformation($"already present"); 
-                // in case in an additional connection, 
-                // one only send info on room without 
+                _logger.LogInformation($"already present");
+                // in case in an additional connection,
+                // one only send info on room without
                 // warning any other user.
-                _cxManager.TryGetChanInfo(roomName, out chanInfo);
-            } 
+                _cxManager.TryGetChanInfo(roomName, out channelInfo);
+            }
 
-            _logger.LogInformation($"returning chan info"); 
-            await Clients.Caller.SendAsync("joint", chanInfo);
-            return chanInfo;
+            _logger.LogInformation($"returning channel info");
+            await Clients.Caller.SendAsync("joint", channelInfo);
+            return channelInfo;
         }
 
         [Authorize]
@@ -192,23 +190,23 @@ namespace Yavsc
             var existent = _dbContext.ChatRoom.Any(r => r.Name == room);
             if (existent)
             {
-                NotifyUserInRoom(NotificationTypes.Error, room, "already registered.");
+               NotifyUserInRoom(NotificationTypes.Error, room, "already registered.");
                 return;
             }
             Debug.Assert(Context.User != null);
             string userName = Context.User.GetUserName();
             var user = _dbContext.Users.FirstOrDefault(u => u.UserName == userName);
 
-            var newroom = new ChatRoom { Name = room, OwnerId = Context.User.GetUserId() };
-            ChatRoomInfo chanInfo;
-            if (_cxManager.TryGetChanInfo(room, out chanInfo))
+            var newRoom = new ChatRoom { Name = room, OwnerId = Context.User.GetUserId() };
+            ChatRoomInfo channelInfo;
+            if (_cxManager.TryGetChanInfo(room, out channelInfo))
             {
-                // TODO get and require some admin status for current user on this chan
-                newroom.Topic = chanInfo.Topic;
+                // TODO get and require some admin status for current user on this channel
+                newRoom.Topic = channelInfo.Topic;
             }
-            newroom.LatestJoinPart = DateTime.Now;
+            newRoom.LatestJoinPart = DateTime.Now;
 
-            _dbContext.ChatRoom.Add(newroom);
+            _dbContext.ChatRoom.Add(newRoom);
             _dbContext.SaveChanges(user.Id);
         }
 
@@ -228,22 +226,22 @@ namespace Yavsc
             if (!InputValidator.ValidateRoomName(roomName)) return ;
             if (!InputValidator.ValidateUserName(userName)) return ;
             if (!InputValidator.ValidateReason(reason)) return;
-            ChatRoomInfo chanInfo;
+            ChatRoomInfo channelInfo;
             var roomGroupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
-            if (_cxManager.TryGetChanInfo(roomName, out chanInfo))
+            if (_cxManager.TryGetChanInfo(roomName, out channelInfo))
             {
                 if (!_cxManager.IsPresent(roomName,userName))
                 {
                     NotifyErrorToCallerInRoom(roomName, $"{userName} was not found in {roomName}.");
                     return;
                 }
-                // in case of Kick returned false, being not allowed to, or for what ever other else failure, 
+                // in case of Kick returned false, being not allowed to, or for what ever other else failure,
                 // the error handler will send an error message while handling the error.
                 if (!_cxManager.Kick(Context.ConnectionId, userName, roomName, reason)) return;
             }
-            var ukeys = _cxManager.GetConnexionIds(userName);
-            if (ukeys!=null) foreach(var ukey in ukeys)
-                await Groups.RemoveFromGroupAsync(ukey, roomGroupName);
+            var cxIds = _cxManager.GetConnexionIds(userName);
+            if (cxIds!=null) foreach(var cx in cxIds)
+                await Groups.RemoveFromGroupAsync(cx, roomGroupName);
             await Clients.Group(roomGroupName).SendAsync("notifyRoom", NotificationTypes.Kick, roomName, $"{userName}: {reason}");
         }
 
@@ -258,13 +256,13 @@ namespace Yavsc
         }
 
         [Authorize]
-        public void Gline(string userName,  string reason)
+        public void GLine(string userName,  string reason)
         {
             if (!InputValidator.ValidateUserName(userName)) return ;
             if (!InputValidator.ValidateReason(reason)) return;
             throw new NotImplementedException();
         }
-       
+
         public void Part(string roomName,  string reason)
         {
             if (!InputValidator.ValidateRoomName(roomName)) return ;
@@ -299,9 +297,9 @@ namespace Yavsc
                 _logger.LogError($"Invalid message : {message}");
                 return ;
             }
-            var groupname = ChatHubConstants.HubGroupRomsPrefix + roomName;
-            ChatRoomInfo chanInfo ;
-            if (!_cxManager.TryGetChanInfo(roomName, out chanInfo))
+            var groupName = ChatHubConstants.HubGroupRomsPrefix + roomName;
+            ChatRoomInfo channelInfo ;
+            if (!_cxManager.TryGetChanInfo(roomName, out channelInfo))
             {
                 _logger.LogError($"No such room : {roomName}");
                 var noChanMsg = _localizer.GetString(ChatHubConstants.LabNoSuchChan).ToString();
@@ -312,11 +310,11 @@ namespace Yavsc
             if (!_cxManager.IsPresent(roomName, userName))
             {
                 _logger.LogError($"{userName} Not present in room : {roomName}");
-                var notSentMsg = _localizer.GetString(ChatHubConstants.LabnoJoinNoSend).ToString();
+                var notSentMsg = _localizer.GetString(ChatHubConstants.LabNoJoinNoSend).ToString();
                 NotifyUserInRoom(NotificationTypes.Error, roomName, notSentMsg);
                 return;
             }
-            var group = Clients.Group(groupname);
+            var group = Clients.Group(groupName);
             var msg = new { Name = userName, Room = roomName, Message = message};
             await group.SendAsync("ReceiveMessage", msg);
         }
@@ -339,12 +337,12 @@ namespace Yavsc
             Debug.Assert(Context.User != null);
             _logger.LogInformation($"Sending pv to {userName}");
 
-            if (!InputValidator.ValidateUserName(userName)) 
+            if (!InputValidator.ValidateUserName(userName))
             {
                 _logger.LogError($"Invalid username : {userName}");
                 return ;
             }
-            if (!InputValidator.ValidateMessage(message)) 
+            if (!InputValidator.ValidateMessage(message))
             {
                 _logger.LogError($"Invalid message : {message}");
                 return ;
@@ -399,3 +397,4 @@ namespace Yavsc
 
     }
 }
+#pragma warning restore CS4014 // Dans la mesure où cet appel n'est pas attendu, l'exécution de la méthode actuelle continue avant la fin de l'appel

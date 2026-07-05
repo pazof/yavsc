@@ -1,5 +1,9 @@
 @model IEnumerable<IdentityServer8.EntityFramework.Entities.ClientCorsOrigin>
 @{
+    ViewBag.Title = Localizer["Client"];
+}
+
+@{
     ViewData["Title"] = "Edit Allowed CORS Origins";
     ViewData["addAction"] = "AddCorsOrigin";
     ViewData["removeAction"] = "RemoveCorsOrigin";

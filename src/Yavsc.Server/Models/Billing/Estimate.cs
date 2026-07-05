@@ -62,20 +62,30 @@ namespace Yavsc.Models.Billing
         public string OwnerId { get; set; }
 
         [ForeignKey("OwnerId"),JsonIgnore]
-        public virtual PerformerProfile Owner { get; set; }
+        public virtual PerformerProfile Owner { get; set; }
 
         [Required]
         public string ClientId { get; set; }
         [ForeignKey("ClientId"),JsonIgnore]
-        public virtual ApplicationUser Client { get; set; }
+        public virtual ApplicationUser Client { get; set; }
 
         [Required]
         public string CommandType
         {
             get; set;
         }
-        public DateTime ProviderValidationDate { get; set; }
-        public DateTime ClientValidationDate { get; set; }
+        public DateTime ProviderValidationDate { get; set; }
+        public DateTime ClientValidationDate { get; set; }
+
+        /// <summary>
+        /// All signatures captured against this estimate, in
+        /// capture order. Multiple versions per (Type, SignerId)
+        /// are allowed; the controller reads the most recent
+        /// when asked. See <see cref="Signature"/>.
+        /// </summary>
+        [InverseProperty(nameof(Signature.Estimate))]
+        public virtual ICollection<Signature> Signatures { get; set; }
+            = new List<Signature>();
 
     }
 }

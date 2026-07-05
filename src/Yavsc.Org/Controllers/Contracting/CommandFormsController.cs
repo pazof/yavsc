@@ -1,20 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Helpers;
+using Microsoft.Extensions.Localization;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
 using Yavsc.Server.Helpers;
+using Yavsc.Services;
 
 namespace Yavsc.Controllers
 {
     public class CommandFormsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IStringLocalizer<CommandFormsController> _localizer;
 
-        public CommandFormsController(ApplicationDbContext context)
+        public CommandFormsController(ApplicationDbContext context,
+        IStringLocalizer<CommandFormsController> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         // GET: CommandForms
@@ -47,11 +51,14 @@ namespace Yavsc.Controllers
             SetViewBag();
             return View();
         }
+
         private void SetViewBag(CommandForm commandForm = null)
         {
             ViewBag.ActivityCode = new SelectList(_context.Activities, "Code", "Name", commandForm?.ActivityCode);
-            ViewBag.ActionName = _context.CommandForm.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Title, Selected = commandForm.Id == c.Id });
+            ViewBag.ActionName = BillingService.Billing.Keys
+                .Select((string b) => new SelectListItem { Value = b, Text = _localizer[b] }).ToList();
         }
+
         // POST: CommandForms/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -1,5 +1,9 @@
 @model DoDirectCreditViewModel
   
+@{
+    ViewBag.Title = Localizer["Manage"];
+}
+
 <form asp-action="DoDirectCredit">
 <div asp-validation-summary="All" class="text-danger" id="ValidationSummary"></div>
 

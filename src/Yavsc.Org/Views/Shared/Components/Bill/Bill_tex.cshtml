@@ -54,7 +54,7 @@
     \global\let\TotalHT\TotalHT
     \global\let\TotalTVA\TotalTVA
     \global\let\TotalTTC\TotalTTC
-    \cr 
+    \cr
     \hline
     \textbf{Total}    & & &    \TotalHT
 }
@@ -82,7 +82,7 @@
 % Infos Client
 \def\ClientNom{@TeXHelpers.ToTeX(to.UserName)}    % Nom du client
 
-\def\ClientAdresse{                    
+\def\ClientAdresse{
 % Adresse du client
 @PostalAddress @if (!string.IsNullOrWhiteSpace(to.PhoneNumber)) {<text>\\
     @TeXHelpers.ToTeX(to.PhoneNumber)
@@ -109,7 +109,7 @@
 
 \renewcommand{\headrulewidth}{0pt}
 \cfoot{   @TeXHelpers.ToTeX(from.UserName) - @ViewBag.FooterPerformerOrganizationAddress \\
-    \small{ E-mail:  @TeXHelpers.ToTeX(from.Email) @if (!string.IsNullOrWhiteSpace(from.PhoneNumber)) {  <text> - Téléphone :  @TeXHelpers.ToTeX(from.PhoneNumber) </text>  } 
+    \small{ E-mail:  @TeXHelpers.ToTeX(from.Email) @if (!string.IsNullOrWhiteSpace(from.PhoneNumber)) {  <text> - Téléphone :  @TeXHelpers.ToTeX(from.PhoneNumber) </text>  }
     }
 }
 
@@ -117,9 +117,9 @@
 
 % Logo de la société
 @if (from.Avatar != null) {
-<text>\includegraphics[height=60pt]{@(ViewBag.AvatarsDir)/@(from.UserName).png}  
+<text>\includegraphics[height=60pt]{@(ViewBag.AvatarsDir)/@(from.UserName).png}
 </text>
-} else { 
+} else {
 <text>%\includegraphics{logo.png}
 </text>
 }
@@ -180,12 +180,12 @@
     \begin{center}
         \begin{tabular}{|c c c c|}
 @if (!string.IsNullOrWhiteSpace(bi.BankCode) && !string.IsNullOrWhiteSpace(bi.WicketCode)
-        && !string.IsNullOrWhiteSpace(bi.AccountNumber) ) { 
+        && !string.IsNullOrWhiteSpace(bi.AccountNumber) ) {
 <text>\hline \textbf{Code banque} & \textbf{Code guichet} & \textbf{N\textdegree de Compte} & \textbf{Clé RIB} \\
 @bi.BankCode                      &  @bi.WicketCode       & @bi.AccountNumber     & @bi.BankedKey   \\
 </text>
          }
-        @if (!string.IsNullOrWhiteSpace(@bi.IBAN) && !string.IsNullOrWhiteSpace(@bi.BIC)) { 
+        @if (!string.IsNullOrWhiteSpace(@bi.IBAN) && !string.IsNullOrWhiteSpace(@bi.BIC)) {
             <text>
                \hline     \textbf{IBAN N\textdegree}        & \multicolumn{3}{|l|}{  @bi.IBAN  }         \\
             \hline     \textbf{Code BIC}        & \multicolumn{3}{|l|}{  @bi.BIC  }

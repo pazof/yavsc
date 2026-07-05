@@ -49,7 +49,7 @@ namespace Yavsc.Controllers
             this.haircutLocalizer = haircutLocalizer;
         }
 
-        
+
         private async Task<HairCutQuery> GetQuery(long id)
         {
             var query = await _context.HairCutQueries
@@ -58,7 +58,7 @@ namespace Yavsc.Controllers
             .Include(x => x.Prestation)
             .Include(x => x.PerformerProfile.Performer)
             .Include(x => x.PerformerProfile.Performer.DeviceDeclaration)
-            .Include(x => x.Regularisation)
+            .Include(x => x.Regularization)
             .SingleAsync(m => m.Id == id);
             query.SelectedProfile = await _context.BrusherProfile.SingleAsync(b => b.UserId == query.PerformerId);
             return query;
@@ -82,11 +82,11 @@ namespace Yavsc.Controllers
             }
             var paymentInfo = await _context.ConfirmPayment(User.GetUserId(), PayerID, token);
             ViewBag.paymentinfo = paymentInfo;
-            command.Regularisation = paymentInfo.DbContent;
+            command.Regularization = paymentInfo.DbContent;
             command.PaymentId = token;
             bool paymentOk = false;
             if (paymentInfo.DetailsFromPayPal != null)
-                if (paymentInfo.DetailsFromPayPal.Ack == AckCodeType.SUCCESS) 
+                if (paymentInfo.DetailsFromPayPal.Ack == AckCodeType.SUCCESS)
                 {
                     // FIXME Assert (command.ValidationDate == null)
                     if (command.ValidationDate == null) {
@@ -174,7 +174,7 @@ namespace Yavsc.Controllers
             .Include(x => x.PerformerProfile)
             .Include(x => x.Prestation)
             .Include(x => x.PerformerProfile.Performer)
-            .Include(x => x.Regularisation)
+            .Include(x => x.Regularization)
             .SingleOrDefaultAsync(m => m.Id == id);
             if (command == null)
             {
@@ -224,7 +224,7 @@ namespace Yavsc.Controllers
                  .FirstOrDefault(
                      x => x.PerformerId == model.PerformerId
                  );
-              
+
 
                   if (taintIds != null)
                   {

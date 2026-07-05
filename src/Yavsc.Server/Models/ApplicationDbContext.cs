@@ -69,6 +69,26 @@ namespace Yavsc.Models
             builder.Entity<DeviceDeclaration>().Property(x => x.DeclarationDate).HasDefaultValueSql(NOW_SQL);
             builder.Entity<BlogTag>().HasKey(x => new { x.PostId, x.TagId });
 
+            // Signature: unique constraint on (EstimateId, Type)
+            // — the most recent version replaces the previous
+            // one, so a partial unique index (not a regular one)
+            // is the right shape. The controller does a
+            // Find-or-Add so EF translates an upsert into a
+            // single UPDATE when the row already exists; the
+            // unique index is the database-level guarantee that
+            // the contract holds.
+            builder.Entity<Signature>()
+                .HasIndex(s => new { s.EstimateId, s.Type })
+                .IsUnique();
+            builder.Entity<Signature>()
+                .HasOne(s => s.Estimate)
+                .WithMany(e => e.Signatures)
+                .HasForeignKey(s => s.EstimateId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Signature>()
+                .Property(s => s.CoordinateMax)
+                .HasDefaultValue(10_000);
+
             builder.Entity<ApplicationUser>().Property(u => u.FullName).IsRequired(false);
             builder.Entity<ApplicationUser>().Property(u => u.DedicatedGoogleCalendar).IsRequired(false);
             builder.Entity<ApplicationUser>().HasMany<ChatConnection>(c => c.Connections);
@@ -235,6 +255,7 @@ namespace Yavsc.Models
         public DbSet<PerformerProfile> Performers { get; set; }
 
         public DbSet<Estimate> Estimates { get; set; }
+        public DbSet<Signature> Signatures { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
         public DbSet<BalanceImpact> BalanceImpact { get; set; }
 
@@ -269,22 +290,17 @@ namespace Yavsc.Models
 
         public DbSet<Instrument> Instrument { get; set; }
 
-        [ActivitySettings]
         public DbSet<DjSettings> DjSettings { get; set; }
 
-        [ActivitySettings]
         public DbSet<Instrumentation> Instrumentation { get; set; }
 
-        [ActivitySettings]
         public DbSet<FormationSettings> FormationSettings { get; set; }
 
-        [ActivitySettings]
-        public DbSet<MusicLoverSettings> GeneralSettings { get; set; }
+        public DbSet<MusicLoverSettings> MusicLoverSettings { get; set; }
         public DbSet<CoWorking> CoWorking { get; set; }
 
-        private void AddTimestamps(string userId)
-        {
-            var entities =
+        private void AddTimestamps(string userId) 
+        {            var entities =
             ChangeTracker.Entries()
             .Where(x => x.Entity.GetType().GetInterface(nameof(ITrackedEntity)) != null
             && (x.State == EntityState.Added || x.State == EntityState.Modified));
@@ -339,7 +355,6 @@ namespace Yavsc.Models
         public DbSet<DismissClicked> DismissClicked { get; set; }
 
 
-        [ActivitySettings]
         public DbSet<BrusherProfile> BrusherProfile { get; set; }
 
         public DbSet<BankIdentity> BankIdentity { get; set; }

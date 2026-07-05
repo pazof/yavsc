@@ -1,5 +1,9 @@
 ﻿@model GrantsViewModel
 
+@{
+    ViewBag.Title = Localizer["Grants"];
+}
+
 <div class="grants-page">
     <div class="lead">
         <h1>Client Application Permissions</h1>
@@ -39,13 +43,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <ul class="list-group list-group-flush">
                     @if (grant.Description != null)
                     {
                         <li class="list-group-item">
                             <label>Description:</label> @grant.Description
-                        </li>   
+                        </li>
                     }
                     <li class="list-group-item">
                         <label>Created:</label> @grant.Created.ToString("yyyy-MM-dd")

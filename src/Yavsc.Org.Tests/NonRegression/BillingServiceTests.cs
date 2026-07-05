@@ -36,11 +36,11 @@ namespace Yavsc
         {
             WorkflowHelpers.ConfigureBillingService();
 
-            var firstRegistrar = new Func<ApplicationDbContext, long, IDecidableQuery>((db, id) =>
-                db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularisation).Single(q => q.Id == id));
+            var firstRegistrar = new Func<ApplicationDbContext, long, IQuery>((db, id) =>
+                db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularization).Single(q => q.Id == id));
 
             const string testCode = "Brush";
-            
+
             Assert.Throws<InvalidOperationException>(() =>
                 WorkflowHelpers.RegisterBilling<HairCutQuery>(testCode, firstRegistrar));
         }

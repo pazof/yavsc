@@ -17,11 +17,11 @@ namespace Yavsc.Helpers
             {
                 Sender = query.ClientId,
                 Reason = query.Reason,
-                Client =  new ClientProviderInfo { 
+                Client =  new ClientProviderInfo {
                     UserName = query.Client.UserName ,
                     UserId = query.ClientId,
                     Avatar = query.Client.Avatar }  ,
-                Previsional = query.Previsional,
+                Previsional = query.Provisional,
                 EventDate = query.EventDate,
                 Location = query.Location,
                 Id = query.Id,
@@ -44,7 +44,7 @@ namespace Yavsc.Helpers
             var yaev = query.CreateEvent("NewHairCutQuery",
              string.Format(SR["HairCutQueryValidation"],query.Client.UserName),
               $"{query.Client.Id}");
-              
+
 
             return yaev;
         }
@@ -58,12 +58,12 @@ namespace Yavsc.Helpers
             var yaev = new HairCutQueryEvent("newCommand")
             {
                 Sender = query.ClientId,
-                
-                Client =  new ClientProviderInfo { 
+
+                Client =  new ClientProviderInfo {
                     UserName = query.Client.UserName ,
                     UserId = query.ClientId,
                     Avatar = query.Client.Avatar }  ,
-                Previsional = query.Previsional,
+                Previsional = query.Provisional,
                 EventDate = query.EventDate,
                 Location = query.Location,
                 Id = query.Id,

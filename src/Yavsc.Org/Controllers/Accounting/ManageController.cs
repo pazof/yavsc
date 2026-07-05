@@ -93,10 +93,10 @@ namespace Yavsc.Controllers
                 : "";
 
             var user = await GetCurrentUserAsync();
-            
+
             long pc = _dbContext.BlogSpot.Count(x => x.AuthorId == user.Id);
-           
-           
+
+
 
             var model = new IndexViewModel
             {
@@ -123,14 +123,14 @@ namespace Yavsc.Controllers
                 AllowMonthlyEmail = user.AllowMonthlyEmail,
                 Address = user.PostalAddress?.Address
             };
-            
+
             model.HaveProfessionalSettings = _dbContext.Performers.Any(x => x.PerformerId == user.Id);
             var usrActs = _dbContext.UserActivities.Include(a=>a.Does).Where(a=> a.UserId == user.Id).ToArray();
 // TODO remember me who this magical a.Settings is built
             var usrActToSet = usrActs.Where( a => ( a.Settings == null && a.Does.SettingsClassName != null )).ToArray();
             model.HaveActivityToConfigure = usrActToSet .Count()>0;
             model.Activity = _dbContext.UserActivities.Include(a=>a.Does).Where(u=>u.UserId == user.Id).ToList();
-            
+
             return View(model);
         }
 
@@ -152,7 +152,7 @@ namespace Yavsc.Controllers
             var user = await GetCurrentUserAsync();
             user.AllowMonthlyEmail = model.Allow;
             await this._dbContext.SaveChangesAsync(User.GetUserId());
-           
+
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetMonthlyEmailSuccess });
         }
 
@@ -302,8 +302,8 @@ namespace Yavsc.Controllers
           var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
           var calendars = await _calendarManager.GetCalendarsAsync(pageToken);
-          return View(new SetGoogleCalendarViewModel { 
-              ReturnUrl = returnUrl, 
+          return View(new SetGoogleCalendarViewModel {
+              ReturnUrl = returnUrl,
               Calendars = calendars
               });
         }
@@ -343,9 +343,9 @@ namespace Yavsc.Controllers
                 )) return BadRequest(new { message = "data already present" });
 
                 user.BankInfo.Add(model);
-                
+
                 _dbContext.Update(user);
-               
+
                 await _dbContext.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.SetBankInfoSuccess });
@@ -495,7 +495,7 @@ namespace Yavsc.Controllers
                 return View("Error");
             }
             var userLogins = await _userManager.GetLoginsAsync(user);
-          
+
             ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
 
             return View(new ManageLoginsViewModel
