@@ -76,11 +76,6 @@ namespace Yavsc.Helpers
                         {
                             Config.ProfileTypes.Add(c);
                         }
-                        if (c.IsClass && !c.IsAbstract &&
-                            c.GetInterface(nameof(IBillable)) != null)
-                        {
-                            BillingService.GlobalBillingMap.Add(c.Name, c.AssemblyQualifiedName);
-                        }
                     }
                 }
 
