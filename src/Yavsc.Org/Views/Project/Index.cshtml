@@ -30,10 +30,7 @@
             @Html.DisplayNameFor(model => model.OwnerId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Previsional)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Decided)
+            @Html.DisplayNameFor(model => model.Provisional)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.DateModified)
@@ -55,7 +52,7 @@
         </th>
         <th></th>
     </tr>
-    
+
 @foreach (var item in Model) {
     <tr>
         <td>
@@ -77,10 +74,7 @@
             @Html.DisplayFor(modelItem => item.OwnerId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Previsional)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Decided)
+            @Html.DisplayFor(modelItem => item.Provisional)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.DateModified)

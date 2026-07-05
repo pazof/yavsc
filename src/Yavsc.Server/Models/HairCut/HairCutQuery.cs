@@ -400,7 +400,7 @@ Prestation.Gender == HairCutGenders.Women ?
                     UserId = ClientId,
                     Avatar = Client.Avatar
                 },
-                Previsional = Previsional,
+                Previsional = Provisional,
                 EventDate = EventDate,
                 Location = Location,
                 Id = Id,

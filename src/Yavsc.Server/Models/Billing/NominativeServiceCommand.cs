@@ -13,7 +13,7 @@ namespace Yavsc.Models.Billing
     using Yavsc.Abstract.Workflow;
     using Yavsc.Services;
 
-    public abstract class NominativeServiceCommand : IDecidableQuery, IIdentified<long>, IBillable
+    public abstract class NominativeServiceCommand : IQuery, IIdentified<long>, IBillable
   {
         public string GetInvoiceId() { return GetType().Name +  "/" + Id;  }
 
@@ -59,14 +59,14 @@ namespace Yavsc.Models.Billing
     /// <summary>
     /// The performer identifier
     /// </summary>
-    [ForeignKey("PerformerId"),Display(Name="Préstataire")]
+    [ForeignKey("PerformerId"),Display(Name="PerformerProfile")]
     public PerformerProfile PerformerProfile { get; set; }
 
     public DateTime? ValidationDate {get; set;}
 
 
-    [Display(Name="Previsional")]
-    public decimal? Previsional { get; set; }
+    [Display(Name="Provisional")]
+    public decimal? Provisional { get; set; }
     /// <summary>
     /// The bill
     /// </summary>
@@ -78,14 +78,11 @@ namespace Yavsc.Models.Billing
         [ForeignKey("ActivityCode"),JsonIgnore,Display(Name="Domaine d'activité")]
         public virtual Activity Context  { get; set ; }
 
-        public bool Decided { get; set; }
-
-
         public abstract System.Collections.Generic.List<IBillItem> GetBillItems();
 
         public bool GetIsAcquitted()
         {
-            return Regularisation?.IsOk() ?? false;
+            return Regularization?.IsOk() ?? false;
         }
 
         public string GetFileBaseName(IBillingService billingService)
@@ -95,13 +92,12 @@ namespace Yavsc.Models.Billing
             var bcode = billingService.BillingMap[type];
             return $"facture-{bcode}-{Id}{ack}";
         }
-        
-        [ForeignKey("Regularisation")]
-     
+
+        [ForeignKey("Regularization")]
+
         public string? PaymentId { get; set; }
 
         [Display(Name = "Acquittement de la facture")]
-        public virtual PayPalPayment Regularisation { get; set; }
-        public bool Accepted { get; set; }
+        public virtual PayPalPayment Regularization { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace Yavsc.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.8")
+                .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -1413,6 +1413,50 @@ namespace Yavsc.Migrations
                     b.ToTable("ExceptionsSIREN");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Billing.Signature", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CapturedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CoordinateMax")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(10000);
+
+                    b.Property<long>("EstimateId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SignerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.PrimitiveCollection<int[]>("Strokes")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SignerId");
+
+                    b.HasIndex("EstimateId", "Type")
+                        .IsUnique();
+
+                    b.ToTable("Signatures");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Blog.BlogAttachedFile", b =>
                 {
                     b.Property<long>("FileId")
@@ -2157,7 +2201,8 @@ namespace Yavsc.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(10240)
+                        .HasColumnType("character varying(10240)");
 
                     b.Property<long?>("FeatureId")
                         .HasColumnType("bigint");
@@ -2534,7 +2579,7 @@ namespace Yavsc.Migrations
                     b.Property<string>("DjSettingsUserId")
                         .HasColumnType("text");
 
-                    b.Property<string>("GeneralSettingsUserId")
+                    b.Property<string>("MusicLoverSettingsUserId")
                         .HasColumnType("text");
 
                     b.Property<int>("Rate")
@@ -2547,7 +2592,7 @@ namespace Yavsc.Migrations
 
                     b.HasIndex("DjSettingsUserId");
 
-                    b.HasIndex("GeneralSettingsUserId");
+                    b.HasIndex("MusicLoverSettingsUserId");
 
                     b.HasIndex("TendencyId");
 
@@ -2585,16 +2630,6 @@ namespace Yavsc.Migrations
                     b.ToTable("DjSettings");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Musical.Profiles.GeneralSettings", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("GeneralSettings");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Musical.Profiles.Instrumentation", b =>
                 {
                     b.Property<long>("InstrumentId")
@@ -2608,6 +2643,16 @@ namespace Yavsc.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Instrumentation");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Musical.Profiles.MusicLoverSettings", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("GeneralSettings");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Payment.PayPalPayment", b =>
@@ -2892,6 +2937,9 @@ namespace Yavsc.Migrations
                         .HasColumnType("text");
 
                     b.Property<bool>("Hidden")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Moderated")
                         .HasColumnType("boolean");
 
                     b.Property<string>("ModeratorGroupName")
@@ -3737,6 +3785,25 @@ namespace Yavsc.Migrations
                     b.Navigation("Query");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Billing.Signature", b =>
+                {
+                    b.HasOne("Yavsc.Models.Billing.Estimate", "Estimate")
+                        .WithMany("Signatures")
+                        .HasForeignKey("EstimateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yavsc.Models.ApplicationUser", "Signer")
+                        .WithMany()
+                        .HasForeignKey("SignerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Estimate");
+
+                    b.Navigation("Signer");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Blog.BlogAttachedFile", b =>
                 {
                     b.HasOne("Yavsc.Models.Blog.UploadedFile", "File")
@@ -4162,9 +4229,9 @@ namespace Yavsc.Migrations
                         .WithMany("SoundColor")
                         .HasForeignKey("DjSettingsUserId");
 
-                    b.HasOne("Yavsc.Models.Musical.Profiles.GeneralSettings", null)
+                    b.HasOne("Yavsc.Models.Musical.Profiles.MusicLoverSettings", null)
                         .WithMany("SoundColor")
-                        .HasForeignKey("GeneralSettingsUserId");
+                        .HasForeignKey("MusicLoverSettingsUserId");
 
                     b.HasOne("Yavsc.Models.Musical.MusicalTendency", "MusicalTendency")
                         .WithMany()
@@ -4519,6 +4586,8 @@ namespace Yavsc.Migrations
             modelBuilder.Entity("Yavsc.Models.Billing.Estimate", b =>
                 {
                     b.Navigation("Bill");
+
+                    b.Navigation("Signatures");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Billing.EstimateTemplate", b =>
@@ -4580,7 +4649,7 @@ namespace Yavsc.Migrations
                     b.Navigation("SoundColor");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Musical.Profiles.GeneralSettings", b =>
+            modelBuilder.Entity("Yavsc.Models.Musical.Profiles.MusicLoverSettings", b =>
                 {
                     b.Navigation("SoundColor");
                 });

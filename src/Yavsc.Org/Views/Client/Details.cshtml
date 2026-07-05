@@ -2,7 +2,12 @@
 @using Microsoft.AspNetCore.Html
 @using System.Text
 
+@{
+    ViewBag.Title = Localizer["Client"];
+}
+
 @functions {
+
     // Lifetimes in IdentityServer are stored as seconds (int). Render them
     // in a human-friendly way: "5 min", "2 h", "30 d", "—" for 0/negative.
     // Zero typically means "use the global default" — show it as such so

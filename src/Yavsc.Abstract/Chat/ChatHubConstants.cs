@@ -14,11 +14,11 @@ namespace Yavsc.Abstract.Chat
 
         public const string JustCreatedBy = "just created by ";
         public const string LabYouNotOp  = "you're no op.";
-        public const string LabNoSuchUser = "No such user";  
-        public const string LabNoSuchChan = "No such chan";  
+        public const string LabNoSuchUser = "No such user";
+        public const string LabNoSuchChan = "No such chan";
         public const string HopWontKickOp  = "Half operator cannot kick any operator";
         public const string LabAuthChatUser  = "Authenticated chat user";
         public const string NoKickOnCop  = "No, you won´t, you´ĺl never do kick a cop, it is the bad.";
-        public const string LabnoJoinNoSend = "LabnoJoinNoSend";
+        public const string LabNoJoinNoSend = "LabnoJoinNoSend";
     }
 }

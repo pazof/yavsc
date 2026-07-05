@@ -35,6 +35,17 @@
                 <Button Command="{Binding New}" Content="New post" />
                 <Button Command="{Binding Save}" Content="Save" />
                 <Button Command="{Binding Delete}" Content="Delete" />
+                <!--
+                    DEV ONLY: temporary shortcut to open the signature
+                    capture page. Production entry point is a SignalR
+                    push from Yavsc.Org ("devis received, sign here").
+                    Remove this button and its Click handler in
+                    MainPage.axaml.cs once the SignalR handler lands.
+                -->
+                <Button x:Name="OpenSignatureDevButton"
+                        Content="[DEV] Signature"
+                        Click="OpenSignatureDev"
+                        ToolTip.Tip="DEV ONLY — to remove when SignalR handler lands" />
             </StackPanel>
         </StackPanel>
 

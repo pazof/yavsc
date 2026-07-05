@@ -12,7 +12,7 @@ namespace PostIt.Services;
 /// The set is deliberately small: each value is a milestone an
 /// operator can grep for in logs / StatusMessage, not a heartbeat.
 /// </summary>
-public enum OidcLoginPhase
+public enum OIDCLoginPhase
 {
     /// <summary>No login in flight (or login has settled).</summary>
     Idle,

@@ -17,8 +17,8 @@ namespace Yavsc.Services
         /// <summary>
     /// Renvoye la facture associée à une clé de facturation,
     /// à partir du couple suivant :
-    /// 
-    /// * un code de facturation 
+    ///
+    /// * un code de facturation
     ///   (identifiant associé à un type de demande du client)
     /// * un entier long identifiant la demande du client
     ///   (à une demande, on associe au maximum une seule facture)
@@ -26,10 +26,10 @@ namespace Yavsc.Services
     /// <param name="billingCode">Identifiant du type de facturation</param>
     /// <param name="queryId">Identifiant de la demande du client</param>
     /// <returns>La facture</returns>
-    Task<IDecidableQuery> GetBillAsync(string billingCode, long queryId);
-    
+    Task<IQuery> GetBillAsync(string billingCode, long queryId);
+
     /// <summary>
-    /// Perfomer settings for the specified performer in the activity 
+    /// Perfomer settings for the specified performer in the activity
     /// </summary>
     /// <param name="activityCode">activityCode</param>
     /// <param name="userId">performer uid</param>

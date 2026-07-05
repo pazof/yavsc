@@ -26,5 +26,16 @@
     "cSpell.language": "fr,en",
     "makefile.configureOnOpen": false,
     "search.useGlobalIgnoreFiles": true,
-    "search.useParentIgnoreFiles": true
+    "search.useParentIgnoreFiles": true,
+    "chat.mcp.serverSampling": {
+        "yavsc/.vscode/mcp.json: openclaw": {
+            "allowedModels": [
+                "copilot/auto",
+                "copilotcli/claude-haiku-4.5",
+                "copilotcli/gpt-4.1",
+                "copilotcli/gpt-5-mini",
+                "copilotcli/mai-code-1-flash-picker"
+            ]
+        }
+    }
 }

@@ -41,7 +41,7 @@ namespace Yavsc.Helpers
         }
 
         public static void RegisterBilling<T>(string code, Func<ApplicationDbContext, long,
-        IDecidableQuery> getter) where T : IBillable
+        IQuery> getter) where T : IBillable
         {
             lock (_billingLock)
             {
@@ -55,6 +55,7 @@ namespace Yavsc.Helpers
                     throw new InvalidOperationException($"Billing setup: code '{code}' already registered with different type");
                 }
                 BillingService.Billing.Add(code, getter);
+                BillingService.GlobalBillingMap.Add(typeName, code);
             }
         }
 
@@ -81,29 +82,30 @@ namespace Yavsc.Helpers
 
                 foreach (var propertyInfo in typeof(ApplicationDbContext).GetProperties())
                 {
-                    foreach (var attr in propertyInfo.CustomAttributes)
+                    if (propertyInfo.PropertyType.IsGenericType &&
+                        propertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>))
                     {
-                        // something like a DbSet?
-                        if (typeof(Yavsc.Attributes.ActivitySettingsAttribute).IsAssignableFrom(attr.AttributeType))
+                        var entityType = propertyInfo.PropertyType.GetGenericArguments()[0];
+                        if (typeof(IUserSettings).IsAssignableFrom(entityType))
                         {
                             BillingService.UserSettings.Add(propertyInfo);
                         }
                     }
                 }
 
-                RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext, long, IDecidableQuery>
+                RegisterBilling<HairCutQuery>(BillingCodes.Brush, new Func<ApplicationDbContext, long, IQuery>
                 ((db, id) =>
                 {
-                    var query = db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularisation).Single(q => q.Id == id);
+                    var query = db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularization).Single(q => q.Id == id);
                     query.SelectedProfile = db.BrusherProfile.Single(b => b.UserId == query.PerformerId);
                     return query;
                 }));
 
-                RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush, new Func<ApplicationDbContext, long, IDecidableQuery>
-                ((db, id) => db.HairMultiCutQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
+                RegisterBilling<HairMultiCutQuery>(BillingCodes.MBrush, new Func<ApplicationDbContext, long, IQuery>
+                ((db, id) => db.HairMultiCutQueries.Include(q => q.Regularization).Single(q => q.Id == id)));
 
-                RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext, long, IDecidableQuery>
-                ((db, id) => db.RdvQueries.Include(q => q.Regularisation).Single(q => q.Id == id)));
+                RegisterBilling<RdvQuery>(BillingCodes.Rdv, new Func<ApplicationDbContext, long, IQuery>
+                ((db, id) => db.RdvQueries.Include(q => q.Regularization).Single(q => q.Id == id)));
             }
         }
 

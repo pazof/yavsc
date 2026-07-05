@@ -36,16 +36,16 @@ namespace Yavsc.Controllers
         public ActionResult Index()
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             var model = new FrontOfficeIndexViewModel
             {
-                EstimateToProduceCount = _context.RdvQueries.Where(c => c.PerformerId == uid && c.EventDate > now
-               && c.ValidationDate == null && !_context.Estimates.Any(e => (e.CommandId == c.Id && e.ProviderValidationDate != null))).Count(),
-                EstimateToSignAsProCount = _context.RdvQueries.Where(c => (c.PerformerId == uid && c.EventDate > now
-                && c.ValidationDate == null && _context.Estimates.Any(e => (e.CommandId == c.Id && e.ProviderValidationDate != null)))).Count(),
-                EstimateToSignAsCliCount = _context.Estimates.Where(e => e.ClientId == uid && e.ClientValidationDate == null).Count(),
-                BillToSignAsProCount = 0,
+                EstimateToProduceCount = _context.RdvQueries.Where(c => c.PerformerId == uid && c.EventDate > now &&  c.Status == QueryStatus.Inserted
+               && c.ValidationDate == null && !_context.Estimates.Any(e => e.CommandId == c.Id)).Count(),
+                EstimateToHonorAsProCount = _context.RdvQueries.Where(c => c.PerformerId == uid && c.EventDate > now &&  c.Status == QueryStatus.Accepted
+                && c.ValidationDate == null && _context.Estimates.Any(e => e.CommandId == c.Id )).Count(),
+                EstimateToSignAsCliCount = _context.Estimates.Where(e => e.ClientId == uid && e.Query.Status == QueryStatus.Accepted).Count(),
+
                 BillToSignAsCliCount = 0,
                 NewPayementsCount = 0
             };
@@ -65,14 +65,14 @@ namespace Yavsc.Controllers
         }
 
         [AllowAnonymous]
-        public async Task <ActionResult> HairCut(string id)
+        public async Task <ActionResult> ListPerformersAsync(string activityCode)
         {
-            if (id == null)
+            if (activityCode == null)
             {
                 throw new NotImplementedException("No Activity code");
             }
-            ViewBag.Activity = await _context.Activities.FirstOrDefaultAsync(a => a.Code == id);
-            var result = await _context.ListPerformersAsync(_billing, id);
+            ViewBag.Activity = await _context.Activities.FirstOrDefaultAsync(a => a.Code == activityCode);
+            var result = await _context.ListPerformersAsync(_billing, activityCode);
             return View(result);
         }
 
