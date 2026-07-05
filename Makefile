@@ -10,8 +10,8 @@ include .env
 all:
 	dotnet build --nologo
 
-clean: 
-	dotnet clean
+clean:
+	dotnet clean -c $(CONFIG)
 
 src/Yavsc/bin/output/wwwroot:
 	dotnet --project src/Yavsc.Org/Yavsc.Org.csproj publish
@@ -31,7 +31,7 @@ src/Yavsc.Server/bin/$(CONFIG)/$(FRAMEWORK)/Yavsc.Server.dll:
 src/Yavsc/bin/$(CONFIG)/$(FRAMEWORK)/Yavsc.dll:
 	dotnet build -p:Configuration=$(CONFIG) --project src/Yavsc.Org/Yavsc.Org.csproj
 
-$(DESTDIR): 
+$(DESTDIR):
 	mkdir $(DESTDIR)
 
 install: $(DESTDIR)

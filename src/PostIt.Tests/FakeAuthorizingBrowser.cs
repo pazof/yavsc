@@ -10,7 +10,7 @@ namespace PostIt.Tests;
 /// URL emitted by OidcClient, extracts its <c>state</c>, and returns a
 /// BrowserResult that mimics the OIDC redirect-with-code callback.
 ///
-/// The paired <see cref="OidcStubAuthority"/>'s token endpoint accepts
+/// The paired <see cref="OIDCStubAuthority"/>'s token endpoint accepts
 /// any authorization code, so we don't need to mint a real one here.
 /// </summary>
 public sealed class FakeAuthorizingBrowser

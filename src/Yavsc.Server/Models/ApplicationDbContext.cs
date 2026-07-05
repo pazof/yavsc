@@ -290,22 +290,17 @@ namespace Yavsc.Models
 
         public DbSet<Instrument> Instrument { get; set; }
 
-        [ActivitySettings]
         public DbSet<DjSettings> DjSettings { get; set; }
 
-        [ActivitySettings]
         public DbSet<Instrumentation> Instrumentation { get; set; }
 
-        [ActivitySettings]
         public DbSet<FormationSettings> FormationSettings { get; set; }
 
-        [ActivitySettings]
-        public DbSet<MusicLoverSettings> GeneralSettings { get; set; }
+        public DbSet<MusicLoverSettings> MusicLoverSettings { get; set; }
         public DbSet<CoWorking> CoWorking { get; set; }
 
-        private void AddTimestamps(string userId)
-        {
-            var entities =
+        private void AddTimestamps(string userId) 
+        {            var entities =
             ChangeTracker.Entries()
             .Where(x => x.Entity.GetType().GetInterface(nameof(ITrackedEntity)) != null
             && (x.State == EntityState.Added || x.State == EntityState.Modified));
@@ -360,7 +355,6 @@ namespace Yavsc.Models
         public DbSet<DismissClicked> DismissClicked { get; set; }
 
 
-        [ActivitySettings]
         public DbSet<BrusherProfile> BrusherProfile { get; set; }
 
         public DbSet<BankIdentity> BankIdentity { get; set; }

@@ -59,14 +59,14 @@ namespace Yavsc.Models.Billing
     /// <summary>
     /// The performer identifier
     /// </summary>
-    [ForeignKey("PerformerId"),Display(Name="Préstataire")]
+    [ForeignKey("PerformerId"),Display(Name="PerformerProfile")]
     public PerformerProfile PerformerProfile { get; set; }
 
     public DateTime? ValidationDate {get; set;}
 
 
-    [Display(Name="Previsional")]
-    public decimal? Previsional { get; set; }
+    [Display(Name="Provisional")]
+    public decimal? Provisional { get; set; }
     /// <summary>
     /// The bill
     /// </summary>
@@ -82,7 +82,7 @@ namespace Yavsc.Models.Billing
 
         public bool GetIsAcquitted()
         {
-            return Regularisation?.IsOk() ?? false;
+            return Regularization?.IsOk() ?? false;
         }
 
         public string GetFileBaseName(IBillingService billingService)
@@ -93,11 +93,11 @@ namespace Yavsc.Models.Billing
             return $"facture-{bcode}-{Id}{ack}";
         }
 
-        [ForeignKey("Regularisation")]
+        [ForeignKey("Regularization")]
 
         public string? PaymentId { get; set; }
 
         [Display(Name = "Acquittement de la facture")]
-        public virtual PayPalPayment Regularisation { get; set; }
+        public virtual PayPalPayment Regularization { get; set; }
     }
 }

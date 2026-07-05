@@ -26,7 +26,7 @@ COPY src/PostIt/PostIt.Desktop/*.csproj ./src/PostIt/PostIt.Desktop/
 COPY . .
 
 # 3. Restauration des dépendances avec vos workloads actifs
-RUN dotnet nuget add source https://isn.pschneider.fr/v3/index.json --allow-insecure-connections
+RUN dotnet nuget add source https://isn.pschneider.fr/api/v3/index.json
 
 # 4. Restauration des dépendances pour tous les projets
 RUN dotnet restore

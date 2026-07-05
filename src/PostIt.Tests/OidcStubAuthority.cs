@@ -20,7 +20,7 @@ namespace PostIt.Tests;
 /// the browser intercepts the authorize redirect, the server completes
 /// the token exchange.
 /// </summary>
-public sealed class OidcStubAuthority : IAsyncDisposable, IDisposable
+public sealed class OIDCStubAuthority : IAsyncDisposable, IDisposable
 {
     private readonly HttpListener _listener;
     private readonly RSA _rsa;
@@ -30,7 +30,7 @@ public sealed class OidcStubAuthority : IAsyncDisposable, IDisposable
     public string Issuer { get; }
     public string LoopbackRedirectUri { get; }
 
-    private OidcStubAuthority(HttpListener listener, RSA rsa, string kid, string issuer, string loopback)
+    private OIDCStubAuthority(HttpListener listener, RSA rsa, string kid, string issuer, string loopback)
     {
         _listener = listener;
         _rsa = rsa;
@@ -39,7 +39,7 @@ public sealed class OidcStubAuthority : IAsyncDisposable, IDisposable
         LoopbackRedirectUri = loopback;
     }
 
-    public static async Task<OidcStubAuthority> StartAsync()
+    public static async Task<OIDCStubAuthority> StartAsync()
     {
         // Pick a free loopback port.
         var port = GetFreePort();
@@ -53,7 +53,7 @@ public sealed class OidcStubAuthority : IAsyncDisposable, IDisposable
         var rsa = RSA.Create(2048);
         var kid = "test-key-1";
 
-        var authority = new OidcStubAuthority(listener, rsa, kid, prefix.TrimEnd('/'), loopback);
+        var authority = new OIDCStubAuthority(listener, rsa, kid, prefix.TrimEnd('/'), loopback);
         _ = Task.Run(() => authority.AcceptLoopAsync(authority._cts.Token));
         return authority;
     }

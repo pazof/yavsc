@@ -20,7 +20,7 @@ namespace PostIt.Tests;
 /// End-to-end coverage of <see cref="YavscApiClient"/>: silent
 /// refresh on a near-expiry access token, 401-driven refresh + retry,
 /// and persistence of the token bundle via <see cref="TokenStore"/>.
-/// Uses the project's <see cref="OidcStubAuthority"/> for the IdP and
+/// Uses the project's <see cref="OIDCStubAuthority"/> for the IdP and
 /// a tiny in-process HTTP listener for the API server side.
 /// </summary>
 public class YavscApiClientTests
@@ -45,7 +45,7 @@ public class YavscApiClientTests
         // in-memory access token as expired and re-run a call. The
         // refresh path must rotate the refresh token transparently
         // and the API call must succeed with the new token.
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         using var apiServer = new StubApiServer();
         await apiServer.StartAsync();
 
@@ -63,7 +63,7 @@ public class YavscApiClientTests
             var reloaded = new YavscApiClient(settings, new TokenStore(tokensPath));
 
             var posts = await reloaded.CallAsync<List<StubApiServer.Post>>(
-                HttpMethod.Get, "posts");
+                HttpMethod.Get, "posts", TestContext.Current.CancellationToken);
 
             Assert.NotNull(posts);
             Assert.NotEmpty(posts);
@@ -85,7 +85,7 @@ public class YavscApiClientTests
     {
         // API server returns 401 on the first request, 200 on the next.
         // YavscApiClient must refresh, then retry exactly once.
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         using var apiServer = new StubApiServer(forceFirstRequest: true);
         await apiServer.StartAsync();
 
@@ -97,7 +97,7 @@ public class YavscApiClientTests
                 settings, authority, tokensPath);
 
             var posts = await client.CallAsync<List<StubApiServer.Post>>(
-                HttpMethod.Get, "posts");
+                HttpMethod.Get, "posts", TestContext.Current.CancellationToken);
 
             Assert.NotEmpty(posts);
             Assert.Equal(2, apiServer.RequestCount);
@@ -125,14 +125,15 @@ public class YavscApiClientTests
         var client = new YavscApiClient(settings, new TokenStore(Path.Combine(
             Path.GetTempPath(), $"postit-tests-noop-{Guid.NewGuid():N}.json")));
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            client.CallAsync<JsonElement>(HttpMethod.Get, "posts"));
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () =>
+            client.CallAsync<JsonElement>(HttpMethod.Get, "posts", TestContext.Current.CancellationToken));
     }
 
     [Fact]
     public async Task HasValidSession_is_true_after_login()
     {
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         using var apiServer = new StubApiServer();
         await apiServer.StartAsync();
 
@@ -154,7 +155,7 @@ public class YavscApiClientTests
 
     // --- helpers --------------------------------------------------------
 
-    private static PostIt.Settings BuildSettings(OidcStubAuthority authority, string apiBaseUrl) => new()
+    private static PostIt.Settings BuildSettings(OIDCStubAuthority authority, string apiBaseUrl) => new()
     {
         Authentication = new AuthenticationSettings
         {
@@ -167,7 +168,7 @@ public class YavscApiClientTests
     };
 
     private static async Task<YavscApiClient> LoginAndPersistAsync(
-        PostIt.Settings settings, OidcStubAuthority authority, string tokensPath)
+        PostIt.Settings settings, OIDCStubAuthority authority, string tokensPath)
     {
         var browser = new FakeAuthorizingBrowser(authority.LoopbackRedirectUri);
         var client = new YavscApiClient(settings, new TokenStore(tokensPath));
@@ -181,7 +182,7 @@ public class YavscApiClientTests
     /// <summary>
     /// YavscApiClient.LoginInteractiveAsync delegates to
     /// Platform.CreateBrowser. We can't override that static cleanly
-    /// from xunit.v3, so we rebuild the call by re-routing the
+    /// from XUnit.v3, so we rebuild the call by re-routing the
     /// Platform.CreateBrowser delegate for the duration of the call.
     /// </summary>
     private static async Task LoginWithBrowserAsync(
@@ -214,7 +215,7 @@ public class YavscApiClientTests
         File.WriteAllText(tokensPath, JsonSerializer.Serialize(record));
     }
 
-    // --- OidcLoginPhase progress tests ---------------------------------
+    // --- OIDCLoginPhase progress tests ---------------------------------
 
     /// <summary>
     /// Collecting Progress<T> is documented to capture reports
@@ -225,7 +226,7 @@ public class YavscApiClientTests
     [Fact]
     public async Task LoginInteractiveAsync_reports_Discovering_then_Success()
     {
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         using var apiServer = new StubApiServer();
         await apiServer.StartAsync();
 
@@ -234,18 +235,18 @@ public class YavscApiClientTests
         var client = new YavscApiClient(settings, new TokenStore(tokensPath));
         var browser = new FakeAuthorizingBrowser(authority.LoopbackRedirectUri);
 
-        var reported = new System.Collections.Generic.List<OidcLoginPhase>();
-        var progress = new SyncProgress<OidcLoginPhase>(reported);
+        var reported = new System.Collections.Generic.List<OIDCLoginPhase>();
+        var progress = new SyncProgress<OIDCLoginPhase>(reported);
 
         try
         {
             await LoginWithBrowserAsync(client, browser.CreateBrowser(), progress);
             // SyncProgress captures reports synchronously — no flush needed.
 
-            Assert.Contains(OidcLoginPhase.Discovering, reported);
-            Assert.Contains(OidcLoginPhase.OpeningBrowser, reported);
-            Assert.Contains(OidcLoginPhase.ExchangingCode, reported);
-            Assert.Equal(OidcLoginPhase.Success, Last(reported));
+            Assert.Contains(OIDCLoginPhase.Discovering, reported);
+            Assert.Contains(OIDCLoginPhase.OpeningBrowser, reported);
+            Assert.Contains(OIDCLoginPhase.ExchangingCode, reported);
+            Assert.Equal(OIDCLoginPhase.Success, Last(reported));
         }
         finally
         {
@@ -256,24 +257,24 @@ public class YavscApiClientTests
     [Fact]
     public async Task LoginInteractiveAsync_reports_Error_when_browser_missing()
     {
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         using var apiServer = new StubApiServer();
         await apiServer.StartAsync();
 
         var settings = BuildSettings(authority, apiServer.BaseUrl);
         var client = new YavscApiClient(settings, new TokenStore(TokensPath()));
-        var reported = new System.Collections.Generic.List<OidcLoginPhase>();
-        var progress = new SyncProgress<OidcLoginPhase>(reported);
+        var reported = new System.Collections.Generic.List<OIDCLoginPhase>();
+        var progress = new SyncProgress<OIDCLoginPhase>(reported);
 
         var original = Platform.CreateBrowser;
         try
         {
             Platform.CreateBrowser = () => null; // simulate no browser wired up
             await Assert.ThrowsAsync<InvalidOperationException>(
-                () => client.LoginInteractiveAsync(progress));
+                () => client.LoginInteractiveAsync(progress, TestContext.Current.CancellationToken));
             // SyncProgress captures reports synchronously — no flush needed.
 
-            Assert.Equal(OidcLoginPhase.Error, Last(reported));
+            Assert.Equal(OIDCLoginPhase.Error, Last(reported));
         }
         finally
         {
@@ -284,7 +285,7 @@ public class YavscApiClientTests
     [Fact]
     public async Task TrySilentLoginAsync_returns_false_when_no_bundle_on_disk()
     {
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         using var apiServer = new StubApiServer();
         await apiServer.StartAsync();
 
@@ -293,7 +294,7 @@ public class YavscApiClientTests
         // Tokens file deliberately doesn't exist.
         var client = new YavscApiClient(settings, new TokenStore(tokensPath));
 
-        var ok = await client.TrySilentLoginAsync();
+        var ok = await client.TrySilentLoginAsync(null, TestContext.Current.CancellationToken);
         Assert.False(ok);
         Assert.False(client.HasValidSession);
     }
@@ -301,7 +302,7 @@ public class YavscApiClientTests
     [Fact]
     public async Task TrySilentLoginAsync_returns_true_when_access_token_still_valid()
     {
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         using var apiServer = new StubApiServer();
         await apiServer.StartAsync();
 
@@ -314,7 +315,7 @@ public class YavscApiClientTests
         {
             await LoginWithBrowserAsync(client, browser.CreateBrowser());
             // Login fresh → access token is far from expiry.
-            var ok = await client.TrySilentLoginAsync();
+            var ok = await client.TrySilentLoginAsync(null, TestContext.Current.CancellationToken);
             Assert.True(ok);
             Assert.True(client.HasValidSession);
         }
@@ -327,7 +328,7 @@ public class YavscApiClientTests
     [Fact]
     public async Task TrySilentLoginAsync_returns_true_when_refresh_succeeds()
     {
-        using var authority = await OidcStubAuthority.StartAsync();
+        using var authority = await OIDCStubAuthority.StartAsync();
         using var apiServer = new StubApiServer();
         await apiServer.StartAsync();
 
@@ -351,13 +352,13 @@ public class YavscApiClientTests
             // matches the disk: access expired, refresh still good.
             var client = new YavscApiClient(settings, store);
 
-            var reported = new System.Collections.Generic.List<OidcLoginPhase>();
-            var progress = new SyncProgress<OidcLoginPhase>(reported);
+            var reported = new System.Collections.Generic.List<OIDCLoginPhase>();
+            var progress = new SyncProgress<OIDCLoginPhase>(reported);
 
-            var ok = await client.TrySilentLoginAsync(progress);
+            var ok = await client.TrySilentLoginAsync(progress, TestContext.Current.CancellationToken);
             Assert.True(ok, "silent refresh should succeed via the stub authority.");
-            Assert.Contains(OidcLoginPhase.ExchangingCode, reported);
-            Assert.Equal(OidcLoginPhase.Success, Last(reported));
+            Assert.Contains(OIDCLoginPhase.ExchangingCode, reported);
+            Assert.Equal(OIDCLoginPhase.Success, Last(reported));
         }
         finally
         {
@@ -430,7 +431,7 @@ public class YavscApiClientTests
     /// overload stays for tests that don't care about phase events.
     /// </summary>
     private static async Task LoginWithBrowserAsync(
-        YavscApiClient client, IBrowser browser, IProgress<OidcLoginPhase>? progress = null)
+        YavscApiClient client, IBrowser browser, IProgress<OIDCLoginPhase>? progress = null)
     {
         var original = Platform.CreateBrowser;
         try

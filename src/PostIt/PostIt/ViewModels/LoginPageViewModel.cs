@@ -105,8 +105,8 @@ public partial class LoginPageViewModel : ViewModelBase
     /// callback hand-off: when AwaitingCallback never resolves,
     /// the OS never re-launched PostIt with the postit:// URL.
     /// </summary>
-    private OidcLoginPhase _phase = OidcLoginPhase.Idle;
-    public OidcLoginPhase Phase
+    private OIDCLoginPhase _phase = OIDCLoginPhase.Idle;
+    public OIDCLoginPhase Phase
     {
         get => _phase;
         private set
@@ -122,13 +122,13 @@ public partial class LoginPageViewModel : ViewModelBase
     /// </summary>
     public string PhaseLabel => _phase switch
     {
-        OidcLoginPhase.Idle            => "En attente",
-        OidcLoginPhase.Discovering     => "Découverte OIDC…",
-        OidcLoginPhase.OpeningBrowser  => "Ouverture du navigateur…",
-        OidcLoginPhase.AwaitingCallback => "En attente du callback postit://…",
-        OidcLoginPhase.ExchangingCode  => "Échange du code contre les jetons…",
-        OidcLoginPhase.Success         => "Connecté",
-        OidcLoginPhase.Error           => "Erreur",
+        OIDCLoginPhase.Idle            => "En attente",
+        OIDCLoginPhase.Discovering     => "Découverte OIDC…",
+        OIDCLoginPhase.OpeningBrowser  => "Ouverture du navigateur…",
+        OIDCLoginPhase.AwaitingCallback => "En attente du callback postit://…",
+        OIDCLoginPhase.ExchangingCode  => "Échange du code contre les jetons…",
+        OIDCLoginPhase.Success         => "Connecté",
+        OIDCLoginPhase.Error           => "Erreur",
         _ => _phase.ToString(),
     };
 
@@ -275,7 +275,7 @@ public partial class LoginPageViewModel : ViewModelBase
             // The progress sink drives Phase / PhaseLabel; StatusMessage
             // keeps the text detail (URLs, error messages). Same
             // underlying flow, two views.
-            var progress = new Progress<OidcLoginPhase>(p => Phase = p);
+            var progress = new Progress<OIDCLoginPhase>(p => Phase = p);
             await LoginInteractiveCoreAsync(_api, progress);
 
             IsBusy = false;
@@ -299,7 +299,7 @@ public partial class LoginPageViewModel : ViewModelBase
     /// </summary>
     private async Task LoginInteractiveCoreAsync(
         YavscApiClient api,
-        IProgress<OidcLoginPhase>? progress = null)
+        IProgress<OIDCLoginPhase>? progress = null)
     {
         var original = Platform.CreateBrowser;
         try

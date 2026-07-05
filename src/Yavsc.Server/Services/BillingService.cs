@@ -12,6 +12,9 @@ namespace Yavsc.Services
         new Dictionary<string, Func<ApplicationDbContext, long, IQuery>>();
         public static List<PropertyInfo> UserSettings = new List<PropertyInfo>();
 
+        /// <summary>
+        /// Mapping from activity codes to IUserSettings
+        /// </summary>
         public static Dictionary<string, string> GlobalBillingMap =
           new Dictionary<string, string>();
 
@@ -30,7 +33,12 @@ namespace Yavsc.Services
             return Task.FromResult(GetBillable(DbContext, billingCode, queryId));
         }
 
-        public static IQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId) => Billing[billingCode](context, queryId);
+        public static IQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId)
+        {
+            throw new NotImplementedException();
+        }
+
+
         public async Task<IUserSettings> GetPerformersSettingsAsync(string activityCode, string userId)
         {
             var activity = await DbContext.Activities.SingleAsync(a => a.Code == activityCode);

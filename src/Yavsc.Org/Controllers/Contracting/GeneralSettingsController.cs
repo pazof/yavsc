@@ -17,7 +17,7 @@ namespace Yavsc.Controllers
         // GET: GeneralSettings
         public async Task<IActionResult> Index()
         {
-            return View(await _context.GeneralSettings.ToListAsync());
+            return View(await _context.MusicLoverSettings.ToListAsync());
         }
 
         // GET: GeneralSettings/Details/5
@@ -28,7 +28,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            MusicLoverSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
+            MusicLoverSettings generalSettings = await _context.MusicLoverSettings.SingleAsync(m => m.UserId == id);
             if (generalSettings == null)
             {
                 return NotFound();
@@ -50,7 +50,7 @@ namespace Yavsc.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.GeneralSettings.Add(generalSettings);
+                _context.MusicLoverSettings.Add(generalSettings);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -65,7 +65,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            MusicLoverSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
+            MusicLoverSettings generalSettings = await _context.MusicLoverSettings.SingleAsync(m => m.UserId == id);
             if (generalSettings == null)
             {
                 return NotFound();
@@ -96,7 +96,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            MusicLoverSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
+            MusicLoverSettings generalSettings = await _context.MusicLoverSettings.SingleAsync(m => m.UserId == id);
             if (generalSettings == null)
             {
                 return NotFound();
@@ -110,8 +110,8 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            MusicLoverSettings generalSettings = await _context.GeneralSettings.SingleAsync(m => m.UserId == id);
-            _context.GeneralSettings.Remove(generalSettings);
+            MusicLoverSettings generalSettings = await _context.MusicLoverSettings.SingleAsync(m => m.UserId == id);
+            _context.MusicLoverSettings.Remove(generalSettings);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }

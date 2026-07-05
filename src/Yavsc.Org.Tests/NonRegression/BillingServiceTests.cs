@@ -37,7 +37,7 @@ namespace Yavsc
             WorkflowHelpers.ConfigureBillingService();
 
             var firstRegistrar = new Func<ApplicationDbContext, long, IQuery>((db, id) =>
-                db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularisation).Single(q => q.Id == id));
+                db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularization).Single(q => q.Id == id));
 
             const string testCode = "Brush";
 
