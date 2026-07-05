@@ -36,16 +36,16 @@ namespace Yavsc.Controllers
         public ActionResult Index()
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             var model = new FrontOfficeIndexViewModel
             {
-                EstimateToProduceCount = _context.RdvQueries.Where(c => c.PerformerId == uid && c.EventDate > now
-               && c.ValidationDate == null && !_context.Estimates.Any(e => (e.CommandId == c.Id && e.ProviderValidationDate != null))).Count(),
-                EstimateToSignAsProCount = _context.RdvQueries.Where(c => (c.PerformerId == uid && c.EventDate > now
-                && c.ValidationDate == null && _context.Estimates.Any(e => (e.CommandId == c.Id && e.ProviderValidationDate != null)))).Count(),
-                EstimateToSignAsCliCount = _context.Estimates.Where(e => e.ClientId == uid && e.ClientValidationDate == null).Count(),
-                BillToSignAsProCount = 0,
+                EstimateToProduceCount = _context.RdvQueries.Where(c => c.PerformerId == uid && c.EventDate > now &&  c.Status == QueryStatus.Inserted
+               && c.ValidationDate == null && !_context.Estimates.Any(e => e.CommandId == c.Id)).Count(),
+                EstimateToHonorAsProCount = _context.RdvQueries.Where(c => c.PerformerId == uid && c.EventDate > now &&  c.Status == QueryStatus.Accepted
+                && c.ValidationDate == null && _context.Estimates.Any(e => e.CommandId == c.Id )).Count(),
+                EstimateToSignAsCliCount = _context.Estimates.Where(e => e.ClientId == uid && e.Query.Status == QueryStatus.Accepted).Count(),
+
                 BillToSignAsCliCount = 0,
                 NewPayementsCount = 0
             };

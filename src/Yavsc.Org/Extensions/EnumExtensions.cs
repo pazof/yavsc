@@ -1,8 +1,5 @@
 ﻿
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
@@ -23,7 +20,7 @@ namespace Yavsc.Extensions
             var typeInfo = type.GetTypeInfo();
             var values = Enum.GetValues(type).Cast<Enum>();
             var items = new List<SelectListItem>();
-            
+
             foreach (var value in values)
             {
                 items.Add(new SelectListItem {
