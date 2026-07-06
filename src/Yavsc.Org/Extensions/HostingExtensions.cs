@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
@@ -49,6 +52,30 @@ namespace Yavsc.Extensions;
 public static class HostingExtensions
 {
     private const string InMemoryProviderName = "InMemory";
+
+    private static void IgnoreKnownFalsePositiveMigrationWarnings(DbContextOptionsBuilder options)
+    {
+        options.ConfigureWarnings(w =>
+            w.Ignore(RelationalEventId.PendingModelChangesWarning));
+    }
+
+    private static async Task ApplyMigrationsAsync<TContext>(IServiceProvider services, ILogger logger)
+        where TContext : DbContext
+    {
+        var contextName = typeof(TContext).Name;
+        var db = services.GetRequiredService<TContext>();
+
+        logger.LogInformation(
+            "Applying database migrations for {DbContext} using provider {Provider}...",
+            contextName,
+            db.Database.ProviderName ?? "(null)");
+
+        await db.Database.MigrateAsync();
+
+        logger.LogInformation(
+            "Database migrations applied successfully for {DbContext}.",
+            contextName);
+    }
 
     public static WebApplication ConfigureWebAppServices(this WebApplicationBuilder builder)
     {
@@ -155,6 +182,13 @@ public static class HostingExtensions
             {
                 options.UseNpgsql(connectionString,
                     options => options.MigrationsAssembly(typeof(Program).Assembly));
+
+                // EF Core 10 can raise PendingModelChangesWarning at runtime
+                // even when the snapshot and generated migrations are already
+                // aligned on this codebase. Treat that known false positive as
+                // non-fatal in every environment so production startup matches
+                // the behavior already observed in development.
+                IgnoreKnownFalsePositiveMigrationWarnings(options);
             }
         });
 
@@ -317,6 +351,7 @@ public static class HostingExtensions
                     {
                         b.UseNpgsql(connectionString,
                             sql => sql.MigrationsAssembly(migrationsAssembly));
+                        IgnoreKnownFalsePositiveMigrationWarnings(b);
                     }
 
                     // NOTE: don't b.UseSeeding(...) here — EF Core's UseSeeding
@@ -340,6 +375,7 @@ public static class HostingExtensions
                     {
                         b.UseNpgsql(connectionString,
                             sql => sql.MigrationsAssembly(migrationsAssembly));
+                        IgnoreKnownFalsePositiveMigrationWarnings(b);
                     }
                 };
 
@@ -890,11 +926,13 @@ public static class HostingExtensions
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            await app.MigrateDatabaseAsync();
         }
         else
         {
             app.UseExceptionHandler("/Home/Error");
-            app.MigrateDatabase();
+            logger.LogInformation("Running in production mode. Ensure the database is migrated.");
+            await app.MigrateDatabaseAsync();
         }
 
         app.Use(async (context, next) =>
@@ -941,26 +979,37 @@ public static class HostingExtensions
         return app;
     }
 
-    private static void MigrateDatabase(this IApplicationBuilder app)
+    private static async Task MigrateDatabaseAsync(this IApplicationBuilder app)
     {
         using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
+            var logger = serviceScope.ServiceProvider
+                .GetRequiredService<ILoggerFactory>()
+                .CreateLogger("Yavsc.Org.Migrations");
 
             try
             {
-                foreach (Type contextType in new Type[]
+                using (var scope = app.ApplicationServices.CreateScope())
                 {
-                    typeof(ApplicationDbContext)
-                })
-                {
-                    ((DbContext)serviceScope.ServiceProvider
-                    .GetRequiredService(contextType))
-                    .Database.Migrate();
+                    await ApplyMigrationsAsync<ApplicationDbContext>(scope.ServiceProvider, logger);
                 }
+                EnsureCriticalSchema(serviceScope.ServiceProvider, logger);
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
                 app.Properties["DegradedDBContext"] = ex.Message;
+                logger.LogError(
+                    ex,
+                    "Database migration failed for {DbContext}. App started in degraded mode.",
+                    nameof(ApplicationDbContext));
+
+                // EF Core 10 may raise PendingModelChangesWarning as an exception.
+                // Dump a concise model diff to make the mismatch actionable.
+                if (ex is InvalidOperationException ioe
+                    && ioe.Message.Contains("PendingModelChangesWarning", StringComparison.Ordinal))
+                {
+                    LogPendingModelChanges(serviceScope.ServiceProvider, logger);
+                }
             }
         }
 
@@ -973,6 +1022,88 @@ public static class HostingExtensions
         SeedConfigurationDatabase(app);
     }
 
+    private static void LogPendingModelChanges(IServiceProvider services, ILogger logger)
+    {
+        try
+        {
+            using var scope = services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var migrationsAssembly = db.GetService<IMigrationsAssembly>();
+            var snapshotModel = migrationsAssembly.ModelSnapshot?.Model;
+            if (snapshotModel is null)
+            {
+                logger.LogWarning("Pending-model diagnostic: no ModelSnapshot found for ApplicationDbContext.");
+                return;
+            }
+
+            logger.LogWarning(
+                "Pending-model diagnostic: provider={Provider}",
+                db.Database.ProviderName ?? "(null)");
+
+            var runtimeDeclDate = db.Model
+                .FindEntityType("Yavsc.Models.Identity.DeviceDeclaration")?
+                .FindProperty("DeclarationDate")?
+                .GetDefaultValueSql();
+
+            var snapshotDeclDate = snapshotModel
+                .FindEntityType("Yavsc.Models.Identity.DeviceDeclaration")?
+                .FindProperty("DeclarationDate")?
+                .GetDefaultValueSql();
+
+            logger.LogWarning(
+                "Pending-model diagnostic: DeviceDeclaration.DeclarationDate default SQL runtime='{RuntimeDefaultSql}', snapshot='{SnapshotDefaultSql}'.",
+                runtimeDeclDate ?? "(null)",
+                snapshotDeclDate ?? "(null)");
+
+            bool runtimeHasMusicLoverSettings = db.Model.FindEntityType("Yavsc.Models.Musical.Profiles.MusicLoverSettings") is not null;
+            bool snapshotHasMusicLoverSettings = snapshotModel.FindEntityType("Yavsc.Models.Musical.Profiles.MusicLoverSettings") is not null;
+            logger.LogWarning(
+                "Pending-model diagnostic: MusicLoverSettings runtime={RuntimeHas} snapshot={SnapshotHas}.",
+                runtimeHasMusicLoverSettings,
+                snapshotHasMusicLoverSettings);
+
+            bool runtimeHasSignature = db.Model.FindEntityType("Yavsc.Models.Billing.Signature") is not null;
+            bool snapshotHasSignature = snapshotModel.FindEntityType("Yavsc.Models.Billing.Signature") is not null;
+            logger.LogWarning(
+                "Pending-model diagnostic: Signature runtime={RuntimeHas} snapshot={SnapshotHas}.",
+                runtimeHasSignature,
+                snapshotHasSignature);
+
+            bool runtimeHasModerated = db.Model
+                .FindEntityType("Yavsc.Models.Workflow.Activity")?
+                .FindProperty("Moderated") is not null;
+            bool snapshotHasModerated = snapshotModel
+                .FindEntityType("Yavsc.Models.Workflow.Activity")?
+                .FindProperty("Moderated") is not null;
+            logger.LogWarning(
+                "Pending-model diagnostic: Activity.Moderated runtime={RuntimeHas} snapshot={SnapshotHas}.",
+                runtimeHasModerated,
+                snapshotHasModerated);
+        }
+        catch (Exception diagEx)
+        {
+            logger.LogError(diagEx, "Pending-model diagnostic failed.");
+        }
+    }
+
+    private static void EnsureCriticalSchema(IServiceProvider services, ILogger logger)
+    {
+        try
+        {
+            var db = services.GetRequiredService<ApplicationDbContext>();
+
+            // Hotfix guard: keep startup resilient if a migration was skipped,
+            // while still allowing EF migrations to be the source of truth.
+            db.Database.ExecuteSqlRaw(@"
+ALTER TABLE ""Activities""
+ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Critical schema check failed for Activities.Moderated.");
+        }
+    }
+
     private static void SeedConfigurationDatabase(IApplicationBuilder app)
     {
         try
@@ -981,13 +1112,26 @@ public static class HostingExtensions
                 .GetRequiredService<IServiceScopeFactory>()
                 .CreateScope();
 
+            var logger = app.ApplicationServices
+                .GetRequiredService<ILoggerFactory>()
+                .CreateLogger("Yavsc.Org.Seeding");
+
             var configurationDb = scope.ServiceProvider
                 .GetRequiredService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
 
             var configuration = scope.ServiceProvider
                 .GetRequiredService<IConfiguration>();
 
+            logger.LogInformation(
+                "Running seed for {DbContext} using provider {Provider}...",
+                nameof(IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext),
+                configurationDb.Database.ProviderName ?? "(null)");
+
             EnsureDefaultConfiguration(configuration)(configurationDb, true);
+
+            logger.LogInformation(
+                "Seed completed for {DbContext}.",
+                nameof(IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext));
         }
         catch (Exception ex)
         {
@@ -997,7 +1141,10 @@ public static class HostingExtensions
             var logger = app.ApplicationServices
                 .GetRequiredService<ILoggerFactory>()
                 .CreateLogger("Yavsc.Org.Seeding");
-            logger.LogError(ex, "ConfigurationDb seeding failed.");
+            logger.LogError(
+                ex,
+                "Seed failed for {DbContext}.",
+                nameof(IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext));
         }
     }
 

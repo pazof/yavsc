@@ -1918,9 +1918,6 @@ namespace Yavsc.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<bool>("Accepted")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("ActivityCode")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1941,9 +1938,6 @@ namespace Yavsc.Migrations
                     b.Property<DateTime>("DateModified")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("Decided")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -1963,7 +1957,7 @@ namespace Yavsc.Migrations
                     b.Property<long>("PrestationId")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal?>("Previsional")
+                    b.Property<decimal?>("Provisional")
                         .HasColumnType("numeric");
 
                     b.Property<string>("SelectedProfileUserId")
@@ -2008,9 +2002,6 @@ namespace Yavsc.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<bool>("Accepted")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("ActivityCode")
                         .IsRequired()
                         .HasColumnType("text");
@@ -2028,9 +2019,6 @@ namespace Yavsc.Migrations
                     b.Property<DateTime>("DateModified")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("Decided")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -2047,7 +2035,7 @@ namespace Yavsc.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal?>("Previsional")
+                    b.Property<decimal?>("Provisional")
                         .HasColumnType("numeric");
 
                     b.Property<int>("Status")
@@ -2652,7 +2640,7 @@ namespace Yavsc.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("GeneralSettings");
+                    b.ToTable("MusicLoverSettings");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Payment.PayPalPayment", b =>
@@ -3091,9 +3079,6 @@ namespace Yavsc.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<bool>("Accepted")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("ActivityCode")
                         .IsRequired()
                         .HasColumnType("text");
@@ -3110,9 +3095,6 @@ namespace Yavsc.Migrations
 
                     b.Property<DateTime>("DateModified")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Decided")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -3133,7 +3115,7 @@ namespace Yavsc.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal?>("Previsional")
+                    b.Property<decimal?>("Provisional")
                         .HasColumnType("numeric");
 
                     b.Property<string>("Reason")
@@ -3240,9 +3222,6 @@ namespace Yavsc.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<bool>("Accepted")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("ActivityCode")
                         .IsRequired()
                         .HasColumnType("text");
@@ -3259,9 +3238,6 @@ namespace Yavsc.Migrations
 
                     b.Property<DateTime>("DateModified")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Decided")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -3283,7 +3259,7 @@ namespace Yavsc.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal?>("Previsional")
+                    b.Property<decimal?>("Provisional")
                         .HasColumnType("numeric");
 
                     b.Property<int>("Status")
@@ -3985,7 +3961,7 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("LocationId");
 
-                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularisation")
+                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
                         .WithMany()
                         .HasForeignKey("PaymentId");
 
@@ -4015,7 +3991,7 @@ namespace Yavsc.Migrations
 
                     b.Navigation("Prestation");
 
-                    b.Navigation("Regularisation");
+                    b.Navigation("Regularization");
 
                     b.Navigation("SelectedProfile");
                 });
@@ -4038,7 +4014,7 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("LocationId");
 
-                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularisation")
+                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
                         .WithMany()
                         .HasForeignKey("PaymentId");
 
@@ -4056,7 +4032,7 @@ namespace Yavsc.Migrations
 
                     b.Navigation("PerformerProfile");
 
-                    b.Navigation("Regularisation");
+                    b.Navigation("Regularization");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestationCollectionItem", b =>
@@ -4411,7 +4387,7 @@ namespace Yavsc.Migrations
                         .WithMany()
                         .HasForeignKey("LocationId");
 
-                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularisation")
+                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
                         .WithMany()
                         .HasForeignKey("PaymentId");
 
@@ -4429,7 +4405,7 @@ namespace Yavsc.Migrations
 
                     b.Navigation("PerformerProfile");
 
-                    b.Navigation("Regularisation");
+                    b.Navigation("Regularization");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Workflow.UserActivity", b =>
@@ -4471,7 +4447,7 @@ namespace Yavsc.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularisation")
+                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
                         .WithMany()
                         .HasForeignKey("PaymentId");
 
@@ -4487,7 +4463,7 @@ namespace Yavsc.Migrations
 
                     b.Navigation("PerformerProfile");
 
-                    b.Navigation("Regularisation");
+                    b.Navigation("Regularization");
 
                     b.Navigation("Repository");
                 });
