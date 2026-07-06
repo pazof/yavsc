@@ -14,7 +14,7 @@
             "name": "Yavsc.Org",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj"
+            "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj",
         },
         {
             "name": "Yavsc.Blogs",

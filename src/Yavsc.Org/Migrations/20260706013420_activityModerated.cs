@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Yavsc.Migrations
 {
     /// <inheritdoc />
-    public partial class moderatedActivities : Migration
+    public partial class activityModerated : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,6 +15,51 @@ namespace Yavsc.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_MusicalPreference_GeneralSettings_GeneralSettingsUserId",
                 table: "MusicalPreference");
+
+            migrationBuilder.DropTable(
+                name: "GeneralSettings");
+
+            migrationBuilder.DropColumn(
+                name: "Accepted",
+                table: "RdvQueries");
+
+            migrationBuilder.DropColumn(
+                name: "Decided",
+                table: "RdvQueries");
+
+            migrationBuilder.DropColumn(
+                name: "Accepted",
+                table: "Project");
+
+            migrationBuilder.DropColumn(
+                name: "Decided",
+                table: "Project");
+
+            migrationBuilder.DropColumn(
+                name: "Accepted",
+                table: "HairMultiCutQueries");
+
+            migrationBuilder.DropColumn(
+                name: "Decided",
+                table: "HairMultiCutQueries");
+
+            migrationBuilder.DropColumn(
+                name: "Accepted",
+                table: "HairCutQueries");
+
+            migrationBuilder.DropColumn(
+                name: "Decided",
+                table: "HairCutQueries");
+
+            migrationBuilder.RenameColumn(
+                name: "Previsional",
+                table: "RdvQueries",
+                newName: "Provisional");
+
+            migrationBuilder.RenameColumn(
+                name: "Previsional",
+                table: "Project",
+                newName: "Provisional");
 
             migrationBuilder.RenameColumn(
                 name: "GeneralSettingsUserId",
@@ -25,6 +70,16 @@ namespace Yavsc.Migrations
                 name: "IX_MusicalPreference_GeneralSettingsUserId",
                 table: "MusicalPreference",
                 newName: "IX_MusicalPreference_MusicLoverSettingsUserId");
+
+            migrationBuilder.RenameColumn(
+                name: "Previsional",
+                table: "HairMultiCutQueries",
+                newName: "Provisional");
+
+            migrationBuilder.RenameColumn(
+                name: "Previsional",
+                table: "HairCutQueries",
+                newName: "Provisional");
 
             migrationBuilder.AlterColumn<string>(
                 name: "Description",
@@ -42,6 +97,17 @@ namespace Yavsc.Migrations
                 type: "boolean",
                 nullable: false,
                 defaultValue: false);
+
+            migrationBuilder.CreateTable(
+                name: "MusicLoverSettings",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MusicLoverSettings", x => x.UserId);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Signatures",
@@ -86,10 +152,10 @@ namespace Yavsc.Migrations
                 column: "SignerId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_MusicalPreference_GeneralSettings_MusicLoverSettingsUserId",
+                name: "FK_MusicalPreference_MusicLoverSettings_MusicLoverSettingsUser~",
                 table: "MusicalPreference",
                 column: "MusicLoverSettingsUserId",
-                principalTable: "GeneralSettings",
+                principalTable: "MusicLoverSettings",
                 principalColumn: "UserId");
         }
 
@@ -97,8 +163,11 @@ namespace Yavsc.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_MusicalPreference_GeneralSettings_MusicLoverSettingsUserId",
+                name: "FK_MusicalPreference_MusicLoverSettings_MusicLoverSettingsUser~",
                 table: "MusicalPreference");
+
+            migrationBuilder.DropTable(
+                name: "MusicLoverSettings");
 
             migrationBuilder.DropTable(
                 name: "Signatures");
@@ -106,6 +175,16 @@ namespace Yavsc.Migrations
             migrationBuilder.DropColumn(
                 name: "Moderated",
                 table: "Activities");
+
+            migrationBuilder.RenameColumn(
+                name: "Provisional",
+                table: "RdvQueries",
+                newName: "Previsional");
+
+            migrationBuilder.RenameColumn(
+                name: "Provisional",
+                table: "Project",
+                newName: "Previsional");
 
             migrationBuilder.RenameColumn(
                 name: "MusicLoverSettingsUserId",
@@ -117,6 +196,72 @@ namespace Yavsc.Migrations
                 table: "MusicalPreference",
                 newName: "IX_MusicalPreference_GeneralSettingsUserId");
 
+            migrationBuilder.RenameColumn(
+                name: "Provisional",
+                table: "HairMultiCutQueries",
+                newName: "Previsional");
+
+            migrationBuilder.RenameColumn(
+                name: "Provisional",
+                table: "HairCutQueries",
+                newName: "Previsional");
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Accepted",
+                table: "RdvQueries",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Decided",
+                table: "RdvQueries",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Accepted",
+                table: "Project",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Decided",
+                table: "Project",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Accepted",
+                table: "HairMultiCutQueries",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Decided",
+                table: "HairMultiCutQueries",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Accepted",
+                table: "HairCutQueries",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "Decided",
+                table: "HairCutQueries",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AlterColumn<string>(
                 name: "Description",
                 table: "Bug",
@@ -126,6 +271,17 @@ namespace Yavsc.Migrations
                 oldType: "character varying(10240)",
                 oldMaxLength: 10240,
                 oldNullable: true);
+
+            migrationBuilder.CreateTable(
+                name: "GeneralSettings",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GeneralSettings", x => x.UserId);
+                });
 
             migrationBuilder.AddForeignKey(
                 name: "FK_MusicalPreference_GeneralSettings_GeneralSettingsUserId",

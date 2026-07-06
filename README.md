@@ -152,6 +152,13 @@ d'abord `appsettings-org.json` du serveur ; sinon, laisse-le en place.
   (utilisateur, mot de passe, hôte, base). Privilégier
   `dotnet user-secrets` ou des variables d'environnement `ASPNETCORE_*`
   plutôt qu'un mot de passe en clair dans le fichier.
+- Au démarrage, Yavsc.Org applique automatiquement ses migrations EF
+  Core. Sur cette base de code, EF Core 10 peut encore lever un
+  `PendingModelChangesWarning` malgré des migrations et snapshots déjà
+  alignés ; ce faux positif est ignoré sur les contextes PostgreSQL pour
+  éviter un démarrage inutilement en mode dégradé. Si une erreur de
+  migration apparaît encore en production, elle doit être traitée comme
+  une vraie divergence de schéma ou de connexion.
 - `Smtp.*` — hôte, port, identifiants SMTP pour l'envoi d'e-mails
   transactionnels.
 - `Authentication.PayPal.*` et `Authentication.Google.*` — clés d'API
