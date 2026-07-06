@@ -22,7 +22,7 @@ namespace PostIt.Services;
 /// </summary>
 public sealed class BlogApiClient
 {
-    private const string DefaultPathPrefix = "api/blog";
+    private const string DefaultPathPrefix = "blog";
 
     private readonly YavscApiClient _api;
     private readonly string _pathPrefix;
