@@ -1,7 +1,6 @@
 **/bin/
 **/obj/
 **/.playwright/
-.git/
 .vs/
 .github/
 # Exclure uniquement les dossiers de sortie de compilation
@@ -14,5 +13,4 @@ test/*/obj/
 
 # Exclure les caches lourds
 **/.playwright/
-.git/
 .vs/
