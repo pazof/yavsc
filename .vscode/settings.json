@@ -34,7 +34,8 @@
                 "copilotcli/claude-haiku-4.5",
                 "copilotcli/gpt-4.1",
                 "copilotcli/gpt-5-mini",
-                "copilotcli/mai-code-1-flash-picker"
+                "copilotcli/mai-code-1-flash-picker",
+                "copilotcli/gpt-5.3-codex"
             ]
         }
     }
