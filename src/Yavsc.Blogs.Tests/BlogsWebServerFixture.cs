@@ -1,13 +1,10 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Yavsc;
+using Yavsc.Blogs.Controllers;
 using Yavsc.Models;
-using Yavsc.Server.Services;
 using Yavsc.Services;
 using Yavsc.Tests.Shared;
 
@@ -59,9 +56,12 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         // IFileSystemAuthManager).
         builder.Services.AddScoped<BlogSpotService>();
 
-        // The BlogApiController is reached through MVC, so register
-        // MVC + the BlogScope authorization policy.
-        builder.Services.AddControllers();
+        // The BlogApiController is reached through MVC. AddControllers()
+        // by default scans the test assembly only; we explicitly add the
+        // Yavsc.Blogs application part so the controller is discovered
+        // and routed.
+        builder.Services.AddControllers()
+            .AddApplicationPart(typeof(BlogApiController).Assembly);
         builder.Services.AddAuthorization(opt =>
         {
             // Mirror the production "BlogScope" policy: any
