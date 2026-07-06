@@ -92,7 +92,29 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest(ModelState);
             }
 
-            var post = blogSpotService.Create(User.GetUserId(), blog, Request.Form.Files);
+            // The BlogSpotService.Create() signature requires an
+            // IFormFileCollection for file uploads. Reading
+            // Request.Form.Files when the request is a plain JSON
+            // body (e.g. from PostIt) throws
+            // "This request does not have a Content-Type header.
+            //  Forms are available from requests with bodies like
+            //  POSTs and a form Content-Type of either
+            //  application/x-www-form-urlencoded or
+            //  multipart/form-data."
+            //
+            // Two valid use cases for this endpoint:
+            //   1. JSON body only (no files) — PostIt path.
+            //   2. multipart/form-data with a 'blog' field + 0..N
+            //      files — future browser / server-rendered path.
+            //
+            // Branch on HasFormContentType: pass the form files when
+            // present, pass an empty collection otherwise. The
+            // FileSystem branch in BlogSpotService.Create then
+            // short-circuits to "no files to handle".
+            var files = Request.HasFormContentType
+                ? Request.Form.Files
+                : (IFormFileCollection)new FormFileCollection();
+            var post = blogSpotService.Create(User.GetUserId(), blog, files);
             return CreatedAtRoute("GetBlog", new { id = post.Id }, post);
         }
 
