@@ -15,6 +15,16 @@ namespace PostIt.Services;
 /// <see cref="YavscApiClient"/>. This class is a thin DTO↔path
 /// mapper, nothing more.
 ///
+/// <para><b>URL convention.</b> <see cref="YavscApiClient"/>'s
+/// <c>BaseAddress</c> already terminates with <c>/api/v1/</c>
+/// (see <c>Settings.ApiUrl</c>). The path prefix below is
+/// therefore <i>relative</i> to that version segment: a prefix of
+/// <c>"blog"</c> resolves to <c>…/api/v1/blog</c>, which matches
+/// the <c>[Route(APIPrefix + "/blog")]</c> attribute on
+/// <c>Yavsc.Blogs.Controllers.BlogApiController</c>. Do not
+/// re-include the <c>api/</c> segment here — that produced 404s
+/// in the past (see commit "PostIt: fix blog API double-prefix").</para>
+///
 /// The class is intentionally non-IDisposable: it does not own the
 /// <see cref="YavscApiClient"/> it depends on. Lifetimes are managed
 /// by the consumer (typically a singleton service registered with
@@ -22,7 +32,7 @@ namespace PostIt.Services;
 /// </summary>
 public sealed class BlogApiClient
 {
-    private const string DefaultPathPrefix = "api/blog";
+    private const string DefaultPathPrefix = "blog";
 
     private readonly YavscApiClient _api;
     private readonly string _pathPrefix;

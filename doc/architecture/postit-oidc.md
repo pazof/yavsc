@@ -56,6 +56,7 @@ pas vers un serveur HTTP.
 |---------------------------------|-------------------------------------------------------------------|
 | `Services/OidcLoginPhase`       | Enum des étapes du flow : `Idle / Discovering / OpeningBrowser / AwaitingCallback / ExchangingCode / Success / Error` |
 | `Services/YavscApiClient`       | Client HTTP de l'API Yavsc. Porte `LoginInteractiveAsync(IProgress<OidcLoginPhase>)` et `TrySilentLoginAsync`. Refresh silencieux sur 401 et sur access-token bientôt expiré. |
+| `Services/BlogApiClient`        | Mapper DTO↔path pour la sous-API blog. **Note** : `pathPrefix` est *relatif* à `/api/v1/` (que porte déjà `BaseAddress`) — ex. `"blog"` pour matcher `[Route(APIPrefix + "/blog")]`. Ne pas ré-inclure `api/`. |
 | `Services/SingleInstance`       | Named-pipe helper. `TryHandOffAsync` côté 2ᵉ instance, `StartServerAsync` côté instance vivante. |
 | `Services/CustomSchemeBrowser`  | `IBrowser` OidcClient qui ouvre le système + attend le pipe.      |
 | `Services/SchemeUrlDetector`    | Détection pure, testable, du `postit://callback` dans argv.       |

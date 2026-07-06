@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
+using Yavsc.Tests.Shared;
 
 namespace Yavsc.Org.Tests.Controllers;
 

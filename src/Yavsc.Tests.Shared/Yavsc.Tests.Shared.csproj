@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Yavsc.Tests.Shared</RootNamespace>
+    <!--
+      Shared library of test fixtures (WebHostFixture, auth bypass,
+      etc.) consumed by both Yavsc.Org.Tests and Yavsc.Blogs.Tests.
+      Not a test project itself: no xUnit, no test runner, no
+      TestSdk. The consumer projects own the test execution and
+      inherit from the shared base classes.
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+</Project>
