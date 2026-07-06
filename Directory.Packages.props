@@ -2,15 +2,6 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-  <!--
-    Shared package versions: declared in two-or-more top-level products in src/.
-
-    Each product directory (src/<Product>/) has its own Directory.Packages.props
-    that <Import>s this file via GetPathOfFileAbove and adds the
-    product-specific versions. Adding a new shared package means editing this
-    file only; adding a product-local package means editing the per-product
-    Directory.Packages.props only.
-  -->
   <ItemGroup>
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="GitVersion.MsBuild" Version="6.8.1" />
