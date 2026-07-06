@@ -48,7 +48,7 @@ COPY . .
 
 # (3) Source NuGet interne (Letsencrypt, certificat auto-signé côté
 # serveur, justifié par build privé).
-RUN dotnet nuget add source https://isn.pschneider.fr/v3/index.json --allow-insecure-connections
+RUN dotnet nuget add source https://isn.pschneider.fr/api/v3/index.json --allow-insecure-connections
 
 # (4) Restore
 RUN dotnet restore
