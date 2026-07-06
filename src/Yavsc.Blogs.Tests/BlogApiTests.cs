@@ -1,5 +1,11 @@
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Yavsc.Models;
+using Yavsc.Models.Blog;
+using Yavsc.Tests.Shared;
 
 namespace Yavsc.Blogs.Tests;
 
@@ -17,6 +23,19 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     public BlogApiTests(BlogsWebServerFixture fixture)
     {
         _fixture = fixture;
+    }
+
+    /// <summary>Reset the in-memory database to a known empty state.
+    /// <c>UseInMemoryDatabase</c> shares its store across the
+    /// lifetime of the <see cref="BlogsWebServerFixture"/> instance,
+    /// so without a per-test reset the test order would leak
+    /// state between tests.</summary>
+    private void ResetDatabase()
+    {
+        using var scope = _fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.EnsureDeleted();
+        db.Database.EnsureCreated();
     }
 
     /// <summary>The fixture's <c>WebApplication</c> is bound to
@@ -48,6 +67,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task GetBlogs_returns_200_with_empty_list_when_no_posts()
     {
+        ResetDatabase();
         using var http = NewClient();
 
         var response = await http.GetAsync("/api/v1/blog");
@@ -61,5 +81,43 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         using var doc = JsonDocument.Parse(body);
         Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
         Assert.Equal(0, doc.RootElement.GetArrayLength());
+    }
+
+    [Fact]
+    public async Task PostBlog_creates_a_post_and_Get_returns_it_in_the_list()
+    {
+        ResetDatabase();
+        using var http = NewClient();
+
+        // Create a minimal BlogPost. The server assigns Id, so we
+        // send 0 + an explicit AuthorId; the production
+        // BlogSpotService.Create() tolerates that.
+        var draft = new BlogPost
+        {
+            Id = 0,
+            Title = "Premier billet",
+            AuthorId = "tester",
+            Article = "Contenu de test.",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
+        };
+
+        var postResponse = await http.PostAsJsonAsync("/api/v1/blog", draft);
+        Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+
+        // The POST returns the server-issued post (with a real Id).
+        var created = await postResponse.Content.ReadFromJsonAsync<BlogPost>();
+        Assert.NotNull(created);
+        Assert.NotEqual(0, created!.Id);
+        Assert.Equal(draft.Title, created.Title);
+
+        // The list should now contain exactly one entry.
+        var listResponse = await http.GetAsync("/api/v1/blog");
+        Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
+
+        using var doc = JsonDocument.Parse(await listResponse.Content.ReadAsStringAsync());
+        Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
+        Assert.Equal(1, doc.RootElement.GetArrayLength());
+        Assert.Equal(created.Id, doc.RootElement[0].GetProperty("id").GetInt64());
     }
 }
