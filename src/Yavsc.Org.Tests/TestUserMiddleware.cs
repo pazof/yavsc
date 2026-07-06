@@ -2,6 +2,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Yavsc.Tests.Shared;
 
 namespace Yavsc.Org.Tests;
 

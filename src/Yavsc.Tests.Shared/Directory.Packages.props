@@ -1,0 +1,8 @@
+<Project>
+  <!--
+    Yavsc.Tests.Shared has no project-specific package versions.
+    The shared library only needs the canonical Hosting / Mvc.Testing
+    versions, all of which are declared at the repository root.
+  -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))" />
+</Project>

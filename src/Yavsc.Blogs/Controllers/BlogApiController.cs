@@ -10,7 +10,6 @@ namespace Yavsc.Blogs.Controllers
     [Authorize("BlogScope")]
     [Produces("application/json")]
     [Route(APIPrefix + "/blog")]
-
     public class BlogApiController : Controller
     {
         private readonly BlogSpotService blogSpotService;
