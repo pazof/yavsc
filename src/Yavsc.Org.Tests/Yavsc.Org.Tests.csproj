@@ -46,6 +46,7 @@
     <ProjectReference Include="..\Yavsc.Org\Yavsc.Org.csproj" />
     <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
     <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj" />
+    <ProjectReference Include="..\Yavsc.Tests.Shared\Yavsc.Tests.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
