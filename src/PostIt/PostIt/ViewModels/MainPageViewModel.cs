@@ -128,9 +128,28 @@ public partial class MainPageViewModel : ViewModelBase
     [RelayCommand]
     internal async Task Save()
     {
+        // No selection means "create a new post from the editor".
+        // The server is the source of truth, so we POST without an id
+        // and let BlogApiController assign one. The local view-model
+        // is then rebound to the server-issued record.
         if (SelectedPost is null)
         {
-            StatusMessage = "A post must be selected before saving.";
+            var draft = new BlogPost
+            {
+                Title = string.Empty,
+                Article = string.Empty,
+                DateCreated = DateTime.UtcNow,
+                DateModified = DateTime.UtcNow
+            };
+            await ExecuteAsync(async () =>
+            {
+                var created = await BlogClient.CreatePostAsync(draft);
+                if (created is not null)
+                {
+                    SelectedPost = created;
+                    StatusMessage = $"Created post {created.Id}.";
+                }
+            });
             return;
         }
 
@@ -174,19 +193,6 @@ public partial class MainPageViewModel : ViewModelBase
             SelectedPost = null;
             await RefreshPostsAsync();
         });
-    }
-
-    [RelayCommand]
-    internal void New()
-    {
-        SelectedPost = new BlogPost
-        {
-            Title = string.Empty,
-            Article = string.Empty,
-            DateCreated = DateTime.UtcNow,
-            DateModified = DateTime.UtcNow
-        };
-        StatusMessage = "New blog post ready.";
     }
 
     [RelayCommand]
@@ -253,7 +259,6 @@ public partial class MainPageViewModel : ViewModelBase
         LoadPostsCommand.NotifyCanExecuteChanged();
         SaveCommand.NotifyCanExecuteChanged();
         DeleteCommand.NotifyCanExecuteChanged();
-        NewCommand.NotifyCanExecuteChanged();
     }
 
     private bool CanSave() => SelectedPost is not null && !IsBusy;
