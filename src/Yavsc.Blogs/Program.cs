@@ -88,6 +88,7 @@ internal class Program
                 .UseAuthorization()
                 .UseCors("default")
                 ;
+            app.MapControllers();
             app.MapIdentityApi<ApplicationUser>().RequireAuthorization("BlogScope");
 
             app.MapGet("/identity", (HttpContext context) =>
