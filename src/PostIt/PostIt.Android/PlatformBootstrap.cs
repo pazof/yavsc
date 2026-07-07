@@ -5,10 +5,10 @@ namespace PostIt.Android;
 
 /// <summary>
 /// One-shot platform bootstrap. Called from
-/// <see cref="MainActivity.OnCreate"/> so that the shared
-/// <c>LoginPageViewModel</c> sees the Android-specific redirect URI and a
-/// working <c>IBrowser</c> (Chrome Custom Tabs) without referencing
-/// Android APIs from the shared library.
+/// <see cref="MainActivity.OnCreate"/> so that the shared OIDC login
+/// path sees the Android-specific redirect URI and a working
+/// <c>IBrowser</c> (Chrome Custom Tabs) without referencing Android
+/// APIs from the shared library.
 /// </summary>
 internal static class PlatformBootstrap
 {

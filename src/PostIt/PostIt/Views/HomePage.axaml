@@ -9,8 +9,5 @@
                            FontSize="22"
                            FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
-                <Button Content="Login"
-                        Click="OnLoginClick"
-                        HorizontalAlignment="Center"/>
         </StackPanel>
 </ContentPage>

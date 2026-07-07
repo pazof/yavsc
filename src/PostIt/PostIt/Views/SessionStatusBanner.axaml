@@ -17,6 +17,10 @@
               Command="{Binding LogoutAsync}"
               IsVisible="{Binding IsLoggedIn}"
               DockPanel.Dock="Right"/>
+      <Button Content="Se connecter"
+              Command="{Binding LoginCommand}"
+              IsVisible="{Binding IsLoggedOut}"
+              DockPanel.Dock="Right"/>
     </DockPanel>
   </Border>
 </UserControl>

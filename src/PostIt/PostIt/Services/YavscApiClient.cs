@@ -57,7 +57,7 @@ public class YavscApiClient : IAsyncDisposable
 
     /// <summary>
     /// True if a non-expired access token (or a refreshable bundle) is
-    /// already in memory. UI uses this to skip the LoginPage on warm
+    /// already in memory. UI uses this to skip the login flow on warm
     /// starts.
     /// </summary>
     public bool HasValidSession
@@ -74,9 +74,9 @@ public class YavscApiClient : IAsyncDisposable
 
     /// <summary>
     /// The current access token, or null if no session is active.
-    /// Surfaced so the LoginPageViewModel can mirror it onto its own
-    /// observable property (and so the OIDC id_token / claims can be
-    /// shown in the UI).
+    /// Surfaced so consumers (e.g. <c>HomePage</c>) can mirror it onto
+    /// their own observable properties and so the OIDC id_token / claims
+    /// can be shown in the UI.
     /// </summary>
     public string? CurrentAccessToken => _tokens?.AccessToken;
 
@@ -87,9 +87,7 @@ public class YavscApiClient : IAsyncDisposable
     /// <param name="progress">Optional sink for the discrete phases of
     /// the flow; the UI uses this to render a debug-friendly status
     /// (Discovering → OpeningBrowser → AwaitingCallback → ExchangingCode
-    /// → Success / Error). The same caller can also rely on
-    /// <see cref="LoginPageViewModel.StatusMessage"/> for the human
-    /// text (URLs, error detail).</param>
+    /// → Success / Error).</param>
     public async Task LoginInteractiveAsync(
         IProgress<OIDCLoginPhase>? progress = null,
         CancellationToken ct = default)
