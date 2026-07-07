@@ -60,7 +60,6 @@ public partial class App : Application
 
         // Vues
         services.AddTransient<MainPage>();
-        services.AddTransient<LoginPage>();
         services.AddTransient<SettingsPage>();
         services.AddTransient<HomePage>();
         services.AddTransient<SignaturePage>();
@@ -71,7 +70,6 @@ public partial class App : Application
         services.AddSingleton(client);
         services.AddTransient<MainPageViewModel>();
         services.AddTransient<SettingsPageViewModel>();
-        services.AddTransient<LoginPageViewModel>();
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<SignaturePageViewModel>();
 
@@ -86,10 +84,9 @@ public partial class App : Application
 
         // Bind the canonical Settings to the static accessor so any
         // code path that can't easily take a constructor parameter
-        // (designer surfaces, Avalonia data templates, the
-        // LoginPage.axaml.cs fallback) still gets the same instance
-        // the rest of the app is using. Idempotent: re-binding from
-        // a second App boot (tests) is a no-op.
+        // (designer surfaces, Avalonia data templates) still gets
+        // the same instance the rest of the app is using. Idempotent:
+        // re-binding from a second App boot (tests) is a no-op.
         Settings.BindToServiceProvider(provider);
 
         Services = provider;
@@ -125,6 +122,14 @@ public partial class App : Application
                 _ = nav.PopToRootAsync();
             };
 
+            // When the user signs in interactively (Login button on
+            // the session banner), push MainPage on top of HomePage.
+            sessionStatus.LoginSucceeded += () =>
+            {
+                var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
+                _ = PushMainPageAsync(provider, w);
+            };
+
             window.Opened += async (_, _) => await BootAsync(provider, api, window);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
@@ -154,10 +159,22 @@ public partial class App : Application
         sessionStatus.Refresh();
         if (!refreshed) return;
 
+        await PushMainPageAsync(provider, window).ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Resolve a fresh <c>MainPage</c> + VM from DI and push it on top
+    /// of the current navigation stack. Used both by <see cref="BootAsync"/>
+    /// (silent refresh at boot) and by <c>SessionStatusViewModel.LoginSucceeded</c>
+    /// (interactive login from the banner). Pulled out as a helper so
+    /// the two callers can't drift apart.
+    /// </summary>
+    private static async Task PushMainPageAsync(IServiceProvider provider, MainWindow window)
+    {
         var mainVm = provider.GetRequiredService<MainPageViewModel>();
         var mainPage = provider.GetRequiredService<MainPage>();
         mainPage.DataContext = mainVm;
-        await window.NavRoot.PushAsync(mainPage);
+        await window.NavRoot.PushAsync(mainPage).ConfigureAwait(true);
     }
 
     private bool TryHandOffCustomSchemeUrl()
