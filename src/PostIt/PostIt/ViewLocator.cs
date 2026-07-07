@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +20,7 @@ public class ViewLocator : IDataTemplate
         _services = services;
     }
 
-    public Control Build(object data)
+    public Control Build(object? data)
     {
         return data switch
         {
@@ -29,9 +28,10 @@ public class ViewLocator : IDataTemplate
             SettingsPageViewModel => _services.GetRequiredService<SettingsPage>(),
             HomePageViewModel => _services.GetRequiredService<HomePage>(),
             SignaturePageViewModel => _services.GetRequiredService<SignaturePage>(),
+            null => new TextBlock { Text = "No view for <null>" },
         _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };
     }
 
-    public bool Match(object data) => data is ViewModelBase;
+    public bool Match(object? data) => data is ViewModelBase;
 }

@@ -1,7 +1,4 @@
 using System.Runtime.CompilerServices;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IdentityModel.OidcClient;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +15,6 @@ namespace PostIt;
 public partial class Settings : ObservableObject
 {
     const string SettingsFileName = "postit-settings.json";
-    IStorageFolder? folder = null;
 
     /// <summary>
     /// Legacy loopback redirect URI. The post-2026.6 production flow
