@@ -24,7 +24,7 @@ internal static class PlatformBootstrap
         // Use the custom-scheme redirect on Desktop. Loopback is only
         // a fallback for platforms that cannot register postit://
         // (see Settings.DefaultLoopbackRedirectUri for that path).
-        Platform.DefaultRedirectUri = Settings.DefaultDesktopRedirectUri;
+        Platform.DefaultRedirectUri = AuthenticationSettings.DefaultDesktopRedirectUri;
         Platform.CustomScheme = "postit";
     }
 }
