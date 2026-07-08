@@ -20,10 +20,10 @@ request:
     flow: authorization_code
     authorizationUrl: "{{Authority}}/connect/authorize"
     accessTokenUrl: "{{Authority}}/connect/token"
-    callbackUrl: https://localhost:5001
+    callbackUrl: "{{Authority}}"
     credentials:
       clientId: postit
-      placement: body
+      placement: basic_auth_header
     scope: openid blogs
     pkce: {}
     tokenConfig:
