@@ -1,0 +1,42 @@
+opencollection: 1.0.0
+
+info:
+  name: blogs
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: oauth2
+    flow: authorization_code
+    authorizationUrl: "{{Authority}}/connect/authorize"
+    accessTokenUrl: "{{Authority}}/connect/token"
+    callbackUrl: https://localhost:5001
+    credentials:
+      clientId: postit
+      placement: body
+    scope: openid blogs
+    pkce: {}
+    tokenConfig:
+      id: credentials
+      placement:
+        header: Bearer
+      source: access_token
+    settings:
+      autoFetchToken: true
+      autoRefreshToken: false
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
