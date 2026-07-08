@@ -2,17 +2,17 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IdentityModel.OidcClient;
 using Microsoft.Extensions.DependencyInjection;
-using PostIt.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
 
 [assembly: InternalsVisibleTo("PostIt.Tests")]
 
-namespace PostIt;
+namespace PostIt.ViewModels;
 
-public partial class Settings : ObservableObject
+public partial class Settings : ViewModelBase
 {
     const string SettingsFileName = "postit-settings.json";
 
@@ -36,13 +36,7 @@ public partial class Settings : ObservableObject
     /// </summary>
     public const string AndroidRedirectUri = "android://postit-signin";
 
-    /// <summary>
-    /// Default custom-scheme redirect URI on Desktop. The OS routes the
-    /// callback to the running PostIt instance via the named-pipe
-    /// hand-off in <see cref="PostIt.Services.SingleInstance"/>
-    /// (RFC 8252 §7.1). Production Desktop builds use this.
-    /// </summary>
-    public const string DefaultDesktopRedirectUri = "postit://callback";
+
 
     /// <summary>
     /// Process-wide canonical <see cref="Settings"/> instance, wired up
@@ -107,20 +101,11 @@ public partial class Settings : ObservableObject
     public partial bool DarkMode { get; set; } = false;
 
     [ObservableProperty]
-    public partial string ApiUrl { get; set; } = "https://blogs.pschneider.fr/api/v1/";
-
-    /// <summary>
-    /// OAuth redirect URI. Defaults to <see cref="DefaultDesktopRedirectUri"/>
-    /// (custom URI scheme) which is the right answer for desktop
-    /// production builds. Mobile platforms must set this to
-    /// <see cref="AndroidRedirectUri"/> before calling <c>LoginAsync</c>.
-    /// </summary>
-    [ObservableProperty]
-    public partial string RedirectUri { get; set; } = DefaultDesktopRedirectUri;
-
+    public partial string BlogsApiUrl { get; set; } = "https://blogs.pschneider.fr/api/v1/";
 
     [ObservableProperty]
-    public partial string[] Scopes { get; set; }
+    public partial string BusinessApiUrl { get; set; } = "https://business.pschneider.fr/api/v1/";
+
     public bool Loaded { get; private set; } = false;
 
     /// <summary>
@@ -154,8 +139,8 @@ public partial class Settings : ObservableObject
             {
                 Authority = Authentication.Authority,
                 ClientId = Authentication.ClientId,
-                RedirectUri = RedirectUri,
-                Scope = string.Join(' ', this.Scopes),
+                RedirectUri = Authentication.RedirectUri,
+                Scope = string.Join(' ', MergeScopes(this.Authentication.Scopes)),
                 TokenClientCredentialStyle = IdentityModel.Client.ClientCredentialStyle.PostBody,
                 PostLogoutRedirectUri = "https//yavsc.pschneider.fr",
                 // PKCE is enabled by default when no client_secret is provided.
@@ -165,6 +150,48 @@ public partial class Settings : ObservableObject
                 options.Browser = browser;
 
             return options;
+        }
+    }
+
+    /// <summary>
+    /// Scopes the PostIt client always requires from the OIDC provider,
+    /// regardless of what the user has in their settings file.
+    ///
+    /// <para>PostIt calls into the Blog API (and any other Yavsc API
+    /// gated by an <c>[Authorize("…Scope")]</c> policy) and is silent
+    /// about the contract: a missing scope here surfaces as a 401
+    /// on the very first API call after login, with no obvious link
+    /// to the settings. The "feature" scopes the user must opt into
+    /// (e.g. <c>blogs</c>) are still their choice — we only force the
+    /// structural ones that OIDC itself needs.</para>
+    /// </summary>
+    private static readonly string[] BuiltInScopes = new[]
+    {
+        "openid",        // OIDC: required for the id_token
+        "profile",       // OIDC: standard profile claims
+        "offline_access" // OIDC: required to receive a refresh_token
+    };
+
+    /// <summary>
+    /// Merge user-configured scopes with the built-in ones. User scopes
+    /// come first (preserves author intent), then the built-ins, with
+    /// duplicates removed case-sensitively. <c>null</c> or empty input
+    /// is fine — we still emit the built-ins.
+    /// </summary>
+    internal static IEnumerable<string> MergeScopes(string[]? userScopes)
+    {
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        if (userScopes is not null)
+        {
+            foreach (var s in userScopes)
+            {
+                if (string.IsNullOrWhiteSpace(s)) continue;
+                if (seen.Add(s)) yield return s;
+            }
+        }
+        foreach (var s in BuiltInScopes)
+        {
+            if (seen.Add(s)) yield return s;
         }
     }
 
@@ -280,9 +307,17 @@ public partial class Settings : ObservableObject
             {
                 this.Authentication = settings.Authentication;
                 this.DarkMode = settings.DarkMode;
-                this.ApiUrl = settings.ApiUrl;
-                this.RedirectUri = string.IsNullOrWhiteSpace(settings.RedirectUri) ? DefaultDesktopRedirectUri : settings.RedirectUri;
-                this.Scopes = settings.Scopes;
+                if (!(settings.Authentication is null))
+                {
+                    this.Authentication = new AuthenticationSettings();
+                    this.Authentication.Authority = string.IsNullOrWhiteSpace(settings.Authentication.Authority) ?
+                    AuthenticationSettings.DefaultAuthority : settings.Authentication.Authority;
+                    this.Authentication.ClientId = string.IsNullOrWhiteSpace(settings.Authentication.ClientId) ?
+                     AuthenticationSettings.DefaultClientId : settings.Authentication.ClientId;
+                    this.Authentication.RedirectUri = string.IsNullOrWhiteSpace(settings.Authentication.RedirectUri) ?
+                     AuthenticationSettings.DefaultDesktopRedirectUri : settings.Authentication.RedirectUri;
+                    this.Authentication.Scopes = settings.Authentication.Scopes;
+                }
             }
         }
         catch (Exception ex)
@@ -291,31 +326,6 @@ public partial class Settings : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Marshals every <see cref="ObservableObject.PropertyChanged"/>
-    /// notification onto the Avalonia UI thread before it leaves this
-    /// instance. Without this, a background worker (OIDC discovery
-    /// running on a Task, the file I/O continuation in <see cref="Load"/>,
-    /// any HTTP callback) would raise <c>PropertyChanged</c> from a
-    /// thread-pool thread and Avalonia's binding sink would then reach
-    /// into <c>DataValidationErrors.SetErrors</c> from off-thread,
-    /// blowing up with <c>InvalidOperationException: The calling thread
-    /// cannot access this object because a different thread owns it</c>.
-    /// We keep the mutation lock separate (above) and let the property
-    /// setters do their work synchronously — only the notification
-    /// fan-out is bounced to the UI thread.
-    /// </summary>
-    protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (UiDispatcher.IsOnUiThread)
-        {
-            base.OnPropertyChanged(e);
-            return;
-        }
-        // Capture by value: the args object is mutable in some binding
-        // sinks, and we don't want a background thread to keep mutating
-        // it after we hand it to the dispatcher.
-        var snapshot = new System.ComponentModel.PropertyChangedEventArgs(e.PropertyName);
-        UiDispatcher.Post(() => base.OnPropertyChanged(snapshot));
-    }
+    public override bool CanNavigateNext { get => false; protected set => throw new System.NotImplementedException(); }
+    public override bool CanNavigatePrevious { get => true; protected set => throw new System.NotImplementedException(); }
 }

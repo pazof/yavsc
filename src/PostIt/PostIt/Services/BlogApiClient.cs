@@ -40,6 +40,11 @@ public sealed class BlogApiClient
     public BlogApiClient(YavscApiClient api, string pathPrefix = DefaultPathPrefix)
     {
         _api = api ?? throw new ArgumentNullException(nameof(api));
+
+        // ApiUrl is e.g. "https://blogs.pschneider.fr/api/v1/" — keep the
+        // trailing slash so relative paths ("posts") resolve correctly.
+        api.Http.BaseAddress = new Uri(api.Settings.BusinessApiUrl);
+
         _pathPrefix = pathPrefix?.TrimStart('/') ?? DefaultPathPrefix;
     }
 

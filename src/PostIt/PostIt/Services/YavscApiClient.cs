@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.OidcClient;
+using PostIt.ViewModels;
 
 namespace PostIt.Services;
 
@@ -29,10 +30,10 @@ public class YavscApiClient : IAsyncDisposable
     // network latency + JWT validation on the server side.
     private static readonly TimeSpan RefreshSkew = TimeSpan.FromSeconds(60);
 
-    private readonly Settings _settings;
+    public  Settings Settings {  get; }
     private readonly OidcClient _oidc;
     private readonly TokenStore _store;
-    private readonly HttpClient _http;
+    public HttpClient Http { get; }
     private readonly BearerTokenHandler _bearer;
     private readonly SemaphoreSlim _refreshGate = new(1, 1);
 
@@ -40,17 +41,12 @@ public class YavscApiClient : IAsyncDisposable
 
     public YavscApiClient(Settings settings, TokenStore store, OidcClient? oidc = null)
     {
-        _settings = settings;
+        Settings = settings;
         _store = store;
         _oidc = oidc ?? new OidcClient(settings.GetOidcClientOptions());
 
         _bearer = new BearerTokenHandler(this);
-        _http = new HttpClient(_bearer, disposeHandler: true)
-        {
-            // ApiUrl is e.g. "https://blogs.pschneider.fr/api/v1/" — keep the
-            // trailing slash so relative paths ("posts") resolve correctly.
-            BaseAddress = new Uri(settings.ApiUrl)
-        };
+        Http = new HttpClient(_bearer, disposeHandler: true);
 
         _tokens = store.Load();
     }
@@ -101,7 +97,7 @@ public class YavscApiClient : IAsyncDisposable
             throw new InvalidOperationException("No browser is available on this platform.");
         }
 
-        var client = new OidcClient(_settings.GetOidcClientOptions(browser));
+        var client = new OidcClient(Settings.GetOidcClientOptions(browser));
 
         // OidcClient.LoginAsync builds the authorize URL, calls
         // IBrowser.InvokeAsync (which on desktop hands the user off
@@ -245,7 +241,7 @@ public class YavscApiClient : IAsyncDisposable
         using var req = new HttpRequestMessage(method, path);
         if (body is not null)
             req.Content = JsonContent.Create(body);
-        var response = await _http.SendAsync(req, ct).ConfigureAwait(false);
+        var response = await Http.SendAsync(req, ct).ConfigureAwait(false);
 
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
@@ -257,7 +253,7 @@ public class YavscApiClient : IAsyncDisposable
             using var retry = new HttpRequestMessage(method, path);
             if (body is not null)
                 retry.Content = JsonContent.Create(body);
-            response = await _http.SendAsync(retry, ct).ConfigureAwait(false);
+            response = await Http.SendAsync(retry, ct).ConfigureAwait(false);
         }
 
         return response;
@@ -324,7 +320,7 @@ public class YavscApiClient : IAsyncDisposable
 
     public ValueTask DisposeAsync()
     {
-        _http.Dispose();
+        Http.Dispose();
         _refreshGate.Dispose();
         return ValueTask.CompletedTask;
     }
