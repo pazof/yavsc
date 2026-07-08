@@ -18,20 +18,6 @@ public partial class Settings : ViewModelBase
     const string SettingsFileName = "postit-settings.json";
 
     /// <summary>
-    /// Legacy loopback redirect URI. The post-2026.6 production flow
-    /// uses the custom URI scheme (<see cref="DefaultDesktopRedirectUri"/>
-    /// on desktop, <see cref="AndroidRedirectUri"/> on Android) so the
-    /// OS hands the callback to the running instance without a TCP
-    /// listener. The loopback constant stays here so test fixtures
-    /// (which spin up an in-process OidcStubAuthority) keep working,
-    /// but it is no longer used as a default anywhere in production.
-    /// If you are still pointing your production <c>postit-settings.json</c>
-    /// at this URI, switch to <c>postit://callback</c> and remove the
-    /// matching entry from the Yavsc.Org server's allowed redirect URIs.
-    /// </summary>
-    public const string DefaultLoopbackRedirectUri = "http://127.0.0.1:7890/";
-
-    /// <summary>
     /// Redirect URI used by the Android app. The corresponding IntentFilter
     /// in <c>PostIt.Android/Properties/AndroidManifest.xml</c> must match.
     /// </summary>
