@@ -43,7 +43,7 @@ public sealed class BlogApiClient
 
         // ApiUrl is e.g. "https://blogs.pschneider.fr/api/v1/" — keep the
         // trailing slash so relative paths ("posts") resolve correctly.
-        api.Http.BaseAddress = new Uri(api.Settings.BusinessApiUrl);
+        api.Http.BaseAddress = new Uri(api.Settings.BlogsApiUrl);
 
         _pathPrefix = pathPrefix?.TrimStart('/') ?? DefaultPathPrefix;
     }
