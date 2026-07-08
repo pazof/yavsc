@@ -4,7 +4,7 @@
         xmlns:controls="cl:avalonia.Controls"
         x:Class="PostIt.Views.SettingsPage"
         xmlns:vm="using:PostIt.ViewModels"
-        x:DataType="vm:SettingsPageViewModel"
+        x:DataType="vm:Settings"
         Width="400"
         Height="300">
     <Grid>
@@ -16,9 +16,23 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="Authority"/>
-        <TextBox Grid.Row="1" x:Name="AuthorityTextBox" Text="{Binding Authority, Mode=TwoWay}"/>
+        <TextBox Grid.Row="1" x:Name="AuthorityTextBox"
+        Text="{Binding Authentication.Authority, Mode=TwoWay}"/>
 
         <TextBlock Grid.Row="2" Text="ClientId"/>
-        <TextBox Grid.Row="3" x:Name="ClientIdTextBox" Text="{Binding ClientId, Mode=TwoWay}"/>
+        <TextBox Grid.Row="3" x:Name="ClientIdTextBox"
+        Text="{Binding Authentication.ClientId, Mode=TwoWay}"/>
+
+        <TextBlock Grid.Row="4" Text="Blogs API URL"/>
+        <TextBox Grid.Row="5" x:Name="BlogsApiUrlTextBox"
+        Text="{Binding BlogsApiUrl, Mode=TwoWay}"/>
+
+        <TextBlock Grid.Row="6" Text="Business API URL"/>
+        <TextBox Grid.Row="7" x:Name="BusinessApiUrlTextBox"
+        Text="{Binding BusinessApiUrl, Mode=TwoWay}"/>
+
+        <TextBlock Grid.Row="8" Text="Dark mode"/>
+        <CheckBox Grid.Row="9" x:Name="DarkModeCheckBox" IsChecked="{Binding DarkMode, Mode=TwoWay}"/>
+
     </Grid>
 </ContentPage>

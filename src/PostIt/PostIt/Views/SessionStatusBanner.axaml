@@ -21,6 +21,9 @@
               Command="{Binding LoginCommand}"
               IsVisible="{Binding IsLoggedOut}"
               DockPanel.Dock="Right"/>
+      <Button Content="Paramètres"
+              Command="{Binding OpenSettingsCommand}"
+              DockPanel.Dock="Right"/>
     </DockPanel>
   </Border>
 </UserControl>

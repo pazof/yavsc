@@ -69,7 +69,7 @@ public partial class App : Application
         services.AddSingleton(api);
         services.AddSingleton(client);
         services.AddTransient<MainPageViewModel>();
-        services.AddTransient<SettingsPageViewModel>();
+        services.AddTransient<Settings>();
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<SignaturePageViewModel>();
 
@@ -128,6 +128,22 @@ public partial class App : Application
             {
                 var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
                 _ = PushMainPageAsync(provider, w);
+            };
+
+            // When the user clicks the "Paramètres" button on the
+            // session banner, push the SettingsPage on top of the
+            // current navigation stack. Resolved from DI so the
+            // ViewLocator + service-locator dance stays out of the
+            // VM, and bound to the same Settings singleton the rest
+            // of the app is using (the one we Load()'d at startup).
+            // Two-way bindings on the page mutate that singleton
+            // in place; callers re-read on next access.
+            sessionStatus.OpenSettingsRequested += () =>
+            {
+                var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
+                var settingsPage = provider.GetRequiredService<SettingsPage>();
+                settingsPage.DataContext = provider.GetRequiredService<Settings>();
+                _ = w.NavRoot.PushAsync(settingsPage);
             };
 
             window.Opened += async (_, _) => await BootAsync(provider, api, window);

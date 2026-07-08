@@ -25,7 +25,7 @@ public class ViewLocator : IDataTemplate
         return data switch
         {
             MainPageViewModel => _services.GetRequiredService<MainPage>(),
-            SettingsPageViewModel => _services.GetRequiredService<SettingsPage>(),
+            Settings => _services.GetRequiredService<SettingsPage>(),
             HomePageViewModel => _services.GetRequiredService<HomePage>(),
             SignaturePageViewModel => _services.GetRequiredService<SignaturePage>(),
             null => new TextBlock { Text = "No view for <null>" },

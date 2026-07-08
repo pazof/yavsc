@@ -32,6 +32,15 @@ public partial class SessionStatusViewModel : ViewModelBase
     /// <c>HomePage</c> so the user lands on the blog editor.</summary>
     public event System.Action? LoginSucceeded;
 
+    /// <summary>Raised when the user clicks the "Paramètres" button on
+    /// the session banner. <c>App.axaml.cs</c> listens and pushes
+    /// <c>SettingsPage</c> (resolved from DI, bound to the canonical
+    /// <c>Settings</c> singleton) on top of the current navigation
+    /// stack. Same event pattern as <see cref="LogoutCompleted"/> and
+    /// <see cref="LoginSucceeded"/> so the VM stays decoupled from
+    /// <c>NavigationPage</c> / window lifetime.</summary>
+    public event System.Action? OpenSettingsRequested;
+
     [ObservableProperty]
     public partial bool IsLoggedIn { get; private set; }
 
@@ -132,5 +141,12 @@ public partial class SessionStatusViewModel : ViewModelBase
         await Api.LogoutAsync().ConfigureAwait(false);
         Refresh();
         LogoutCompleted?.Invoke();
+    }
+
+    [RelayCommand]
+    public async System.Threading.Tasks.Task OpenSettingsCommand()
+    {
+        OpenSettingsRequested?.Invoke();
+        await System.Threading.Tasks.Task.CompletedTask;
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Styling;
@@ -19,7 +18,7 @@ public partial class MainPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial ViewModelBase? CurrentViewModel { get; set; }
 
-    public SettingsPageViewModel SettingsModel { get; }
+    public Settings SettingsModel { get; }
 
     [ObservableProperty]
     public partial string StatusMessage { get; set; }
@@ -60,7 +59,7 @@ public partial class MainPageViewModel : ViewModelBase
     public MainPageViewModel()
     {
         Init(null);
-        SettingsModel = new SettingsPageViewModel();
+        SettingsModel = new Settings();
         BlogClient = null;
     }
 
@@ -94,7 +93,7 @@ public partial class MainPageViewModel : ViewModelBase
     /// </summary>
     public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null)
     {
-         SettingsModel = new SettingsPageViewModel();
+         SettingsModel = new Settings();
         BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient));;
 
         Init(settings);
