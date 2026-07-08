@@ -90,9 +90,9 @@ public class SettingsLoadTests
                     {
                         bool flip = ((workerId + i) & 1) == 0;
                         settings.DarkMode = flip;
-                        settings.Authentication.RedirectUri = flip
-                            ? global::AuthenticationSettings.DefaultDesktopRedirectUri
-                            : PostIt.ViewModels.Settings.DefaultLoopbackRedirectUri;
+                        settings.Authentication.RedirectUri =
+                            global::AuthenticationSettings.DefaultDesktopRedirectUri;
+
                         settings.BusinessApiUrl = flip
                             ? "https://a.example.test/api/v1/"
                             : "https://b.example.test/api/v1/";
