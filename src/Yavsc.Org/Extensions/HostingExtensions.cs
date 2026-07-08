@@ -478,6 +478,21 @@ public static class HostingExtensions
         // Validate the cert is readable (used downstream for token
         // audience/subject validation; signing itself uses the key).
 
+        // Derive a stable KeyId from the certificate's SHA-256
+        // thumbprint. Without an explicit KeyId, IdentityServer emits
+        // JWTs without a 'kid' header and the JWKS without per-key
+        // identifiers, which breaks signature validation on resource
+        // servers (they cannot match a token to a key in the JWKS,
+        // they fail with IDX10500 "The signature key was not found").
+        // Truncating to 16 hex chars is enough to be globally unique
+        // within a deployment and keeps the JWT header compact. The
+        // thumbprint changes on cert renewal, which is the desired
+        // behaviour: old tokens age out, resource servers refresh
+        // their JWKS cache for the new kid.
+        var certForKid = new X509Certificate2(certPath);
+        var certHash = certForKid.GetCertHash();
+        var kid = Convert.ToHexString(certHash)[..Math.Min(16, certHash.Length * 2)];
+
         string keyPem = File.ReadAllText(keyPath);
 
         // BouncyCastle's PemReader accepts every flavour of unencrypted
@@ -513,7 +528,7 @@ public static class HostingExtensions
 #pragma warning disable CA1416 // Valider la compatibilité de la plateforme
                     var rsaDotNet = DotNetUtilities.ToRSA(rsa);
 #pragma warning restore CA1416 // Valider la compatibilité de la plateforme
-                    var key = new RsaSecurityKey(rsaDotNet);
+                    var key = new RsaSecurityKey(rsaDotNet) { KeyId = kid };
                     return new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
                 }
             case ECPrivateKeyParameters ec:
@@ -525,7 +540,7 @@ public static class HostingExtensions
                     };
                     var ecdsa = ECDsa.Create();
                     ecdsa.ImportParameters(ecParams);
-                    var key = new ECDsaSecurityKey(ecdsa);
+                    var key = new ECDsaSecurityKey(ecdsa) { KeyId = kid };
                     return new SigningCredentials(key, SecurityAlgorithms.EcdsaSha256);
                 }
             default:
