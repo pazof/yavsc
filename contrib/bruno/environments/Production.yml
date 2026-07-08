@@ -1,0 +1,6 @@
+name: Production
+variables:
+  - name: Authority
+    value: https://yavsc.pschneider.fr
+  - name: Blogs
+    value: https://blogs.pschneider.fr
