@@ -2,7 +2,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PostIt.Models;
@@ -37,9 +36,6 @@ public partial class MainPageViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
-
-    [ObservableProperty]
-    ThemeVariant themeVariant = ThemeVariant.Default;
 
     [ObservableProperty]
     public partial Settings Settings { get; private set; }
