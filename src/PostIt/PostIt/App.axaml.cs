@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -112,8 +113,24 @@ public partial class App : Application
         // DataContext, and the TwoWay bindings inside the page keep
         // mutating the same in-memory Settings instance that the rest
         // of the app reads (OidcClientOptions construction, etc.).
-        provider.GetRequiredService<SettingsPage>().DataContext =
-            provider.GetRequiredService<Settings>();
+        provider.GetRequiredService<SettingsPage>().DataContext = settings;
+
+        // Settings.DarkMode was previously a dead field: it round-
+        // tripped through the settings file and the SettingsPage
+        // CheckBox, but no consumer ever read it. Wire it here to
+        // Application.RequestedThemeVariant so the toggle takes
+        // effect immediately, and seed the initial theme from the
+        // value Load() just populated (so a dark-mode user lands on
+        // a dark window on first launch, not on a default-light
+        // window that flips after the user touches the toggle).
+        ApplyDarkMode(settings);
+        settings.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(Settings.DarkMode))
+            {
+                ApplyDarkMode(settings);
+            }
+        };
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -188,6 +205,12 @@ public partial class App : Application
                 DataContext = provider.GetRequiredService<HomePageViewModel>()
             };
         }
+    }
+
+    private static void ApplyDarkMode(Settings settings)
+    {
+        Application.Current!.RequestedThemeVariant =
+                            settings.DarkMode ? ThemeVariant.Dark : ThemeVariant.Light;
     }
 
     /// <summary>
