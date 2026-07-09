@@ -478,20 +478,19 @@ public static class HostingExtensions
         // Validate the cert is readable (used downstream for token
         // audience/subject validation; signing itself uses the key).
 
-        // Derive a stable KeyId from the certificate's SHA-256
-        // thumbprint. Without an explicit KeyId, IdentityServer emits
-        // JWTs without a 'kid' header and the JWKS without per-key
-        // identifiers, which breaks signature validation on resource
-        // servers (they cannot match a token to a key in the JWKS,
-        // they fail with IDX10500 "The signature key was not found").
-        // Truncating to 16 hex chars is enough to be globally unique
-        // within a deployment and keeps the JWT header compact. The
-        // thumbprint changes on cert renewal, which is the desired
+        // Derive a stable KeyId from the certificate's SHA-1
+        // thumbprint (the default for X509Certificate2.GetCertHash()).
+        // Without an explicit KeyId, IdentityServer emits JWTs without
+        // a 'kid' header and the JWKS without per-key identifiers,
+        // which breaks signature validation on resource servers (they
+        // cannot match a token to a key in the JWKS, they fail with
+        // IDX10500 "The signature key was not found"). Truncating the
+        // 40-hex-char SHA-1 to 16 hex chars is enough to be globally
+        // unique within a deployment and keeps the JWT header compact.
+        // The thumbprint changes on cert renewal, which is the desired
         // behaviour: old tokens age out, resource servers refresh
         // their JWKS cache for the new kid.
-        var certForKid = new X509Certificate2(certPath);
-        var certHash = certForKid.GetCertHash();
-        var kid = Convert.ToHexString(certHash)[..Math.Min(16, certHash.Length * 2)];
+        var kid = ComputeKid(certPath);
 
         string keyPem = File.ReadAllText(keyPath);
 
@@ -548,6 +547,34 @@ public static class HostingExtensions
                     $"Unsupported private key algorithm '{bcKey.GetType().Name}' " +
                     $"in {keyPath}; expected RSA or EC.");
         }
+    }
+
+    /// <summary>
+    /// Derive the <c>kid</c> used to identify the signing key in the
+    /// JWT header and the JWKS. Takes the first 16 hex characters of
+    /// the certificate's SHA-1 thumbprint. See the inline rationale in
+    /// <see cref="LoadSigningCredentialsInner"/> for why this is
+    /// needed (IdentityServer8 + IDX10500).
+    /// </summary>
+    /// <remarks>
+    /// Internal so unit tests in <c>Yavsc.Org.Tests</c> can exercise
+    /// the truncation/encoding without going through the full PEM /
+    /// BouncyCastle pipeline. The input is a path rather than a
+    /// pre-loaded <see cref="X509Certificate2"/> to match the
+    /// production call site.
+    /// </remarks>
+    internal static string ComputeKid(string certPath)
+    {
+        // X509CertificateLoader is the .NET 9+ replacement for the
+        // obsolete `new X509Certificate2(string)` ctor (SYSLIB0057).
+        // Same on-disk format (PEM or DER), same thumbprint, just
+        // doesn't trip the obsolete-API warning at build time.
+        var certForKid = X509CertificateLoader.LoadCertificateFromFile(certPath);
+        var certHash = certForKid.GetCertHash();
+        // GetCertHash() returns a SHA-1 thumbprint (20 bytes, 40 hex
+        // chars). Truncating to 16 hex chars keeps the JWT header
+        // compact; Math.Min guards against an unexpected short hash.
+        return Convert.ToHexString(certHash)[..Math.Min(16, certHash.Length * 2)];
     }
 
     /// <summary>
