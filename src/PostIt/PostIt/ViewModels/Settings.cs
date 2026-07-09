@@ -361,6 +361,15 @@ public partial class Settings : ViewModelBase
             // triggered by the assignments above doesn't leave it
             // stuck at true.
             IsDirty = false;
+            // Refresh the space-separated ScopeListText view after
+            // hydration so the SettingsPage TextBox reflects the
+            // loaded scopes (and not the default empty string the
+            // ObservableProperty was constructed with). OnScopesChanged
+            // already tries to do this, but it skips when the new
+            // array parses to the same text — calling explicitly
+            // forces a re-sync and normalises any whitespace the
+            // JSON might have introduced.
+            this.Authentication?.RefreshScopeListText();
             // Re-notify the command in case the button was bound
             // before Load finished and the CanExecute cache is
             // stale.
