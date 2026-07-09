@@ -4,7 +4,6 @@
              x:Class="PostIt.Views.SessionStatusBanner"
              x:DataType="vm:SessionStatusViewModel">
   <Border DockPanel.Dock="Top"
-          Background="#ECEFF1"
           BorderBrush="#B0BEC5"
           BorderThickness="0,0,0,1"
           Padding="12,6">
