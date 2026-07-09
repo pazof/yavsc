@@ -5,8 +5,7 @@
         x:Class="PostIt.Views.SettingsPage"
         xmlns:vm="using:PostIt.ViewModels"
         x:DataType="vm:Settings"
-        Width="400"
-        Height="300">
+      >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -47,12 +46,16 @@
         <TextBlock Grid.Row="10" Text="Dark mode"/>
         <CheckBox Grid.Row="11" x:Name="DarkModeCheckBox" IsChecked="{Binding DarkMode, Mode=TwoWay}"/>
 
-        <!-- Sauver: bound to the SaveCommand on the Settings VM, with
-             IsEnabled driven by the inverse of IsDirty so the button
-             auto-disables when there's nothing to persist. -->
+        <!-- Sauver: bound to the Save RelayCommand on the Settings
+             VM. The source generator emits an ICommand property whose
+             name matches the source method exactly (no "Command"
+             suffix is added), so we bind {Binding Save} here. See
+             AGENTS.md "Avalonia + CommunityToolkit.Mvvm : conventions
+             de binding pour [RelayCommand]" for the full rationale.
+             IsEnabled tracks IsDirty so the button auto-disables
+             when there's nothing to persist. -->
         <Button Grid.Row="12" Content="Sauver"
                 HorizontalAlignment="Right"
-                Margin="0,12,0,0"
                 Command="{Binding Save}"
                 IsEnabled="{Binding IsDirty}"/>
 
