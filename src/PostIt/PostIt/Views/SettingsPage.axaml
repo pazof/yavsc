@@ -20,6 +20,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="Authority"/>
@@ -30,25 +32,29 @@
         <TextBox Grid.Row="3" x:Name="ClientIdTextBox"
         Text="{Binding Authentication.ClientId, Mode=TwoWay}"/>
 
-        <TextBlock Grid.Row="4" Text="Blogs API URL"/>
-        <TextBox Grid.Row="5" x:Name="BlogsApiUrlTextBox"
+        <TextBlock Grid.Row="4" Text="Scopes (space-separated)"/>
+        <TextBox Grid.Row="5" x:Name="ScopesTextBox"
+        Text="{Binding Authentication.ScopeListText, Mode=TwoWay}"/>
+
+        <TextBlock Grid.Row="6" Text="Blogs API URL"/>
+        <TextBox Grid.Row="7" x:Name="BlogsApiUrlTextBox"
         Text="{Binding BlogsApiUrl, Mode=TwoWay}"/>
 
-        <TextBlock Grid.Row="6" Text="Business API URL"/>
-        <TextBox Grid.Row="7" x:Name="BusinessApiUrlTextBox"
+        <TextBlock Grid.Row="8" Text="Business API URL"/>
+        <TextBox Grid.Row="9" x:Name="BusinessApiUrlTextBox"
         Text="{Binding BusinessApiUrl, Mode=TwoWay}"/>
 
-        <TextBlock Grid.Row="8" Text="Dark mode"/>
-        <CheckBox Grid.Row="9" x:Name="DarkModeCheckBox" IsChecked="{Binding DarkMode, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="10" Text="Dark mode"/>
+        <CheckBox Grid.Row="11" x:Name="DarkModeCheckBox" IsChecked="{Binding DarkMode, Mode=TwoWay}"/>
 
         <!-- Sauver: bound to the SaveCommand on the Settings VM, with
              IsEnabled driven by the inverse of IsDirty so the button
              auto-disables when there's nothing to persist. -->
-        <Button Grid.Row="10" Content="Sauver"
+        <Button Grid.Row="12" Content="Sauver"
                 HorizontalAlignment="Right"
                 Margin="0,12,0,0"
-                Command="{Binding SaveCommand}"
-                IsEnabled="{Binding !IsDirty}"/>
+                Command="{Binding Save}"
+                IsEnabled="{Binding IsDirty}"/>
 
     </Grid>
 </ContentPage>

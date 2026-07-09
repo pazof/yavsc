@@ -69,7 +69,6 @@ public partial class App : Application
         services.AddSingleton(api);
         services.AddSingleton(client);
         services.AddTransient<MainPageViewModel>();
-        services.AddTransient<Settings>();
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<SignaturePageViewModel>();
 
