@@ -19,7 +19,6 @@ internal class Program
         Console.Title = "Yavsc.Blogs";
 
         var builder = WebApplication.CreateBuilder(args);
-
         builder.AddConfiguration("blogs");
 
         var services = builder.Services;
@@ -37,10 +36,23 @@ internal class Program
             })
             .AddYavscCors(builder.Configuration)
             .AddControllers();
+        String authority = builder.Configuration.GetValue<string>("Site:Authority");
+        String audience = builder.Configuration.GetValue<string>("Site:Audience");
+        if (string.IsNullOrEmpty(authority))
+        {
+            throw new Exception("Site:Authority is not configured in appsettings.json");
+        }
+
 
         // AuthenticationBuilder
         services.AddAuthentication("Bearer")
-                 .AddYavscJwtBearer(builder.Configuration);
+                 .AddYavscJwtBearer(builder.Configuration,
+                 options =>
+                 {
+                     options.Authority = authority;
+                     options.Audience = builder.Configuration.GetValue<string>
+                     ("Site:Audience");
+                 });
 
         // DbContextBuilder
         services.AddDbContext<ApplicationDbContext>(options =>
@@ -81,15 +93,20 @@ internal class Program
         {
             if (app.Environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
-
             app
                 .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseCors("default")
                 ;
+            app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Program")
+            .LogInformation($"Yavsc.Blogs started, Authority is '{authority}', Audience is '{audience}'");
             app.MapControllers();
-            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("BlogScope");
+            app.MapIdentityApi<ApplicationUser>().RequireAuthorization("BlogScope")
+            .WithHttpLogging(Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All)
+            .WithTags("Identity")
+            .WithDescription("Identity API for Yavsc.Blogs")
+            .WithMetadata(new ApiExplorerSettingsAttribute { GroupName = "Identity" });
 
             app.UseSession();
             await app.RunAsync();
