@@ -113,7 +113,8 @@ le DI est construit. Ordre, dans cet ordre :
 | `Settings`                    | **Singleton** | État partagé (`Loaded`, `IsDirty`, `Authentication`) — doit être unique.                  |
 | `YavscApiClient`              | Singleton  | Porte le `TokenStore` et le cache de tokens ; un seul par process.                         |
 | `BlogApiClient`               | Singleton  | Mapper stateless, partagé.                                                                  |
-| `MainPage` / `SettingsPage` / `HomePage` / `SignaturePage` | Transient | Résolution à la demande par le `ViewLocator`.                                              |
+| `SettingsPage`                | **Singleton** | Une seule instance pour la vie de l'app : le `DataContext` est câblé une fois au boot, le push est idempotent (cf. section *Garde anti-empilement* ci-dessous). |
+| `MainPage` / `HomePage` / `SignaturePage` | Transient | Résolution à la demande par le `ViewLocator`.                                              |
 | `MainPageViewModel` / `HomePageViewModel` / `SignaturePageViewModel` | Transient | VM reconstruites à chaque navigation ; pas d'état partagé à conserver.                    |
 | `SessionStatusViewModel` + `SessionStatusBanner` | Singleton + Transient | Le VM est un singleton (survit à la navigation), le bandeau est transient (réinstancié quand la fenêtre le recrée). |
 
@@ -139,22 +140,31 @@ posé sur `MainWindow.axaml`. La pile est gérée par les
 
 ### Garde anti-empilement
 
-Le handler `OpenSettingsRequested` doit garantir qu'une seule
-`SettingsPage` est au sommet de la pile à un instant donné.
-Sans garde, plusieurs clics sur **Paramètres** empilent
-plusieurs instances (chacune résolue en `Transient`), et
-l'utilisateur doit appuyer N fois sur **Retour** pour sortir.
+`NavigationPage.PushAsync` n'est pas idempotent : pousser deux
+fois la même instance l'empile deux fois, et l'utilisateur doit
+taper **Retour** N fois pour sortir. Le handler
+`OpenSettingsRequested` est gardé pour bloquer ce cas :
 
-L'invariant à implémenter dans le handler :
+```csharp
+var settingsPage = provider.GetRequiredService<SettingsPage>();
+var stack = w.NavRoot.NavigationStack;
+if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], settingsPage))
+{
+    return;  // déjà au sommet, no-op silencieux
+}
+_ = w.NavRoot.PushAsync(settingsPage);
+```
 
-> Si la page du sommet de `NavRoot.NavigationStack` est déjà
-> une `SettingsPage`, ne pas empiler une nouvelle instance
-> (no-op silencieux). Sinon, `PushAsync` une nouvelle instance
-> comme aujourd'hui.
-
-Le détail d'implémentation (lecture de la pile, gestion des
-cas "SettingsPage est plus bas dans la pile") reste à coder
-quand l'UI le demandera.
+La comparaison est par référence, pas par type : on ne veut
+empêcher qu'un push de *cette* instance particulière, pas
+celui d'une éventuelle autre `SettingsPage` (il n'en existe
+qu'une, mais l'invariant est plus clair comme ça). La garde
+repose sur le fait que `SettingsPage` est un singleton ; si on
+repassait en `Transient`, `ReferenceEquals` resterait correct
+mais la pertinence de la garde s'évaporerait (chaque push
+apporterait une nouvelle instance et l'anti-empilement
+reposerait sur l'invariant « la même est déjà au sommet »,
+qui ne tiendrait plus).
 
 ## ViewModels et invariants d'état
 

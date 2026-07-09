@@ -60,7 +60,18 @@ public partial class App : Application
 
         // Vues
         services.AddTransient<MainPage>();
-        services.AddTransient<SettingsPage>();
+        // SettingsPage is a singleton: there must be one and only one
+        // instance of the settings UI for the lifetime of the app.
+        // This guarantees that (a) the bindings always reflect the
+        // current in-memory Settings state, (b) the page already has
+        // its DataContext wired up at composition-root time (see
+        // below), and (c) the OpenSettingsRequested handler is a
+        // pure push with a no-op-if-already-on-top guard, never a
+        // re-resolution from DI. Transient would let the user
+        // accumulate stale SettingsPage instances on the navigation
+        // stack, each bound to a fresh SettingsViewModel and missing
+        // any in-flight edits.
+        services.AddSingleton<SettingsPage>();
         services.AddTransient<HomePage>();
         services.AddTransient<SignaturePage>();
 
@@ -92,6 +103,17 @@ public partial class App : Application
 
         DataTemplates.Clear();
         DataTemplates.Add(new ViewLocator(provider));
+
+        // Wire the Settings singleton onto the SettingsPage singleton
+        // once, at composition time. The page is registered as a
+        // singleton (see above) precisely so this binding is stable
+        // for the lifetime of the app: every push to / pop from the
+        // navigation stack finds the same ContentPage with the same
+        // DataContext, and the TwoWay bindings inside the page keep
+        // mutating the same in-memory Settings instance that the rest
+        // of the app reads (OidcClientOptions construction, etc.).
+        provider.GetRequiredService<SettingsPage>().DataContext =
+            provider.GetRequiredService<Settings>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -130,18 +152,30 @@ public partial class App : Application
             };
 
             // When the user clicks the "Paramètres" button on the
-            // session banner, push the SettingsPage on top of the
-            // current navigation stack. Resolved from DI so the
-            // ViewLocator + service-locator dance stays out of the
-            // VM, and bound to the same Settings singleton the rest
-            // of the app is using (the one we Load()'d at startup).
-            // Two-way bindings on the page mutate that singleton
-            // in place; callers re-read on next access.
+            // session banner, push the SettingsPage singleton on top
+            // of the current navigation stack. The DataContext is
+            // already wired at composition time (see the
+            // provider.GetRequiredService<SettingsPage>().DataContext
+            // assignment above), so this handler is a pure
+            // navigation concern.
+            //
+            // Anti-empilement guard: if the SettingsPage is already
+            // at the top of the stack, do nothing. NavigationPage's
+            // PushAsync does not deduplicate; calling it twice with
+            // the same instance would push it a second time and the
+            // user would have to tap Back twice to leave. Reference
+            // comparison is correct here because SettingsPage is a
+            // singleton — there is exactly one instance to compare
+            // against.
             sessionStatus.OpenSettingsRequested += () =>
             {
                 var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
                 var settingsPage = provider.GetRequiredService<SettingsPage>();
-                settingsPage.DataContext = provider.GetRequiredService<Settings>();
+                var stack = w.NavRoot.NavigationStack;
+                if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], settingsPage))
+                {
+                    return;
+                }
                 _ = w.NavRoot.PushAsync(settingsPage);
             };
 
