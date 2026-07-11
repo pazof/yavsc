@@ -2,7 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Yavsc.Models;
 using Yavsc.Tests.Shared;
 
 namespace Yavsc.Org.Tests;
@@ -24,6 +28,21 @@ namespace Yavsc.Org.Tests;
 /// </summary>
 public class TestWebApplicationFactory : WebApplicationFactory<Program>
 {
+    // SQLite in-memory: the connection must stay open for the lifetime
+    // of the host, otherwise the in-memory database is destroyed and
+    // every new DbContext sees an empty store. We hold the connection
+    // here so it is disposed only when the factory is disposed. The
+    // Microsoft.Data.Sqlite pool reuses the underlying in-memory store
+    // across additional connections opened against the same connection
+    // string, as long as the original connection is alive. This is the
+    // SQLite equivalent of the EF Core InMemoryDatabaseRoot pattern.
+    private readonly SqliteConnection _sharedSqliteConnection = new("Data Source=:memory:");
+
+    public TestWebApplicationFactory()
+    {
+        _sharedSqliteConnection.Open();
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         // UseEnvironment("Testing") puts the host in a dedicated
@@ -38,6 +57,25 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 
         builder.ConfigureTestServices(services =>
         {
+            // The production Program.Main calls AddConfiguration("org")
+            // and then AddIdentityDBAndStores which calls
+            // GetConnectionString("YavscConnection"). The result is
+            // "Data Source=:memory:" (from appsettings-org.Testing.json),
+            // and the production code path in HostingExtensions routes
+            // that to UseSqlite. However, the EF Core in-memory test
+            // pattern needs all DbContext instances to see the same
+            // store; with a raw "Data Source=:memory:" connection string,
+            // each connection opens its own private database. We
+            // therefore drop the production DbContext registration and
+            // re-register ApplicationDbContext with the shared
+            // SqliteConnection held by this factory. Tests that need
+            // the schema to exist call EnsureCreated on the resulting
+            // DbContext (e.g. ClientControllerCollectionTests seeds a
+            // Client row in its constructor).
+            services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+            services.AddDbContext<ApplicationDbContext>(opt =>
+                opt.UseSqlite(_sharedSqliteConnection));
+
             // Replace the production IAuthorizationPolicyProvider with
             // the test one. The default registered by AddAuthorization
             // becomes irrelevant: any GetPolicyAsync call is routed here.
@@ -48,6 +86,37 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
             // TestUserMiddleware runs after UseAuthentication/Authorization.
             services.AddTransient<TestUserMiddleware>();
             services.AddTransient<IStartupFilter, TestUserStartupFilter>();
+
+            // Run EnsureCreated once at host start. With SQLite in-memory
+            // and a shared connection, this creates the schema once
+            // and the schema persists for the host lifetime. The
+            // test code (e.g. ClientControllerCollectionTests seed) can
+            // then write rows without having to call EnsureCreated
+            // itself. EnsureCreated is idempotent: re-running it on
+            // an existing schema is a no-op.
+            services.AddHostedService<SqliteEnsureCreatedHostedService>();
         });
+    }
+
+    private sealed class SqliteEnsureCreatedHostedService : IHostedService
+    {
+        private readonly IServiceProvider _services;
+        public SqliteEnsureCreatedHostedService(IServiceProvider services)
+        {
+            _services = services;
+        }
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            using var scope = _services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            return db.Database.EnsureCreatedAsync(cancellationToken);
+        }
+        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing) _sharedSqliteConnection.Dispose();
+        base.Dispose(disposing);
     }
 }
