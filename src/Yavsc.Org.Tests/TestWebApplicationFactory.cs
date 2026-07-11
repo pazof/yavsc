@@ -26,10 +26,15 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // UseDevelopmentEnvironment triggers the dev signing credential
-        // path in the production startup, so we don't need a real cert
-        // to satisfy IdentityServer at boot.
-        builder.UseEnvironment("Development");
+        // UseEnvironment("Testing") puts the host in a dedicated
+        // configuration environment so AddConfiguration("org") in
+        // Program.Main loads the optional appsettings-org.Testing.json
+        // file (which overrides the connection string and SMTP section
+        // for the test host). See that file for the values.
+        // We don't use "Development" because that environment is also
+        // used by the dev launcher and would change the signing
+        // credential path in IdentityServer; "Testing" is unambiguous.
+        builder.UseEnvironment("Testing");
 
         builder.ConfigureTestServices(services =>
         {
