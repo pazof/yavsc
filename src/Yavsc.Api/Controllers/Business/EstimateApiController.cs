@@ -134,7 +134,7 @@ namespace Yavsc.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                query.ValidationDate = DateTime.Now;
+                query.ValidationDate = DateTime.UtcNow;
                 _context.SaveChanges(User.GetUserId());
                 _context.Entry(query).State = EntityState.Detached;
             }
