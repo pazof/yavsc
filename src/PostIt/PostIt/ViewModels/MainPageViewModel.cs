@@ -11,8 +11,28 @@ namespace PostIt.ViewModels;
 
 public partial class MainPageViewModel : ViewModelBase
 {
+    /// <summary>Window/tab title. Cosmetic — bound by
+    /// <c>MainPage.axaml</c> if at all. Not the post title.</summary>
     [ObservableProperty]
-    public partial string Title { get; set; }
+    public partial string WindowTitle { get; set; }
+
+    /// <summary>Editor buffer for the post title. Bound TwoWay to
+    /// the title <c>TextBox</c> in <c>MainPage.axaml</c>. The Save
+    /// command reads from this buffer (not from
+    /// <see cref="SelectedPost"/>) so that typing into a freshly
+    /// mounted editor (no post selected yet) is captured. With the
+    /// previous "{Binding SelectedPost.Title}" binding, the user's
+    /// keystrokes were silently dropped whenever
+    /// <c>SelectedPost was null</c>, which made the editor a trap
+    /// and caused Save to POST a <c>BlogPost</c> with an empty
+    /// title — hence the 400 "The Title field is required".</summary>
+    [ObservableProperty]
+    public partial string DraftTitle { get; set; }
+
+    /// <summary>Editor buffer for the post body. Same pattern as
+    /// <see cref="DraftTitle"/>.</summary>
+    [ObservableProperty]
+    public partial string DraftArticle { get; set; }
 
     [ObservableProperty]
     public partial ViewModelBase? CurrentViewModel { get; set; }
@@ -78,7 +98,9 @@ public partial class MainPageViewModel : ViewModelBase
         // (thread-safe dispatcher marshalling) so the duplicate
         // instance is now merely wasteful, not dangerous.
         Settings = settings ?? new Settings();
-        Title = "PostIt";
+        WindowTitle = "PostIt";
+        DraftTitle = string.Empty;
+        DraftArticle = string.Empty;
         CurrentViewModel = this;
     }
 
@@ -97,9 +119,27 @@ public partial class MainPageViewModel : ViewModelBase
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
 
-    partial void OnSelectedPostChanged(BlogPost? value) => UpdateCommandStates();
+    partial void OnSelectedPostChanged(BlogPost? value)
+    {
+        // Mirror the selection into the editor buffer so the
+        // XAML-bound TextBox/TextEditor show the right content
+        // when the user clicks a post in the list. When the
+        // selection is cleared (e.g. after a successful create
+        // rebinds to the server-issued record, or Delete
+        // nulls it out), the buffer is reset so the editor
+        // doesn't show stale content.
+        DraftTitle = value?.Title ?? string.Empty;
+        DraftArticle = value?.Article ?? string.Empty;
+        UpdateCommandStates();
+    }
 
     partial void OnIsBusyChanged(bool value) => UpdateCommandStates();
+
+    // Save's CanExecute depends on the buffer: the button must
+    // enable as soon as the user has typed a non-whitespace
+    // title, regardless of whether a post is selected.
+    partial void OnDraftTitleChanged(string value) => SaveCommand.NotifyCanExecuteChanged();
+    partial void OnDraftArticleChanged(string value) => SaveCommand.NotifyCanExecuteChanged();
 
     [RelayCommand]
     internal async Task LoadPosts()
@@ -123,38 +163,39 @@ public partial class MainPageViewModel : ViewModelBase
     [RelayCommand]
     internal async Task Save()
     {
-        // No selection means "create a new post from the editor".
-        // The server is the source of truth, so we POST without an id
-        // and let BlogApiController assign one. The local view-model
-        // is then rebound to the server-issued record.
-        if (SelectedPost is null)
+        // The button is already disabled when the title is empty
+        // (see CanSave), but the test path (and any programmatic
+        // ICommand.Execute) bypasses CanExecute, so we still
+        // guard here. Better to no-op with a status message
+        // than to send a request the server will reject.
+        if (string.IsNullOrWhiteSpace(DraftTitle))
         {
-            var draft = new BlogPost
-            {
-                Title = string.Empty,
-                Article = string.Empty,
-                DateCreated = DateTime.UtcNow,
-                DateModified = DateTime.UtcNow
-            };
-            await ExecuteAsync(async () =>
-            {
-                var created = await BlogClient.CreatePostAsync(draft);
-                if (created is not null)
-                {
-                    SelectedPost = created;
-                    StatusMessage = $"Created post {created.Id}.";
-                }
-            });
+            StatusMessage = "Title is required.";
             return;
         }
 
         await ExecuteAsync(async () =>
         {
-            if (SelectedPost.Id == 0)
+            // Build a fresh BlogPost from the editor buffer on
+            // every Save — we no longer mutate SelectedPost in
+            // place. The previous behaviour copied the buffer
+            // (which was a no-op when SelectedPost was null)
+            // back onto the model and relied on a
+            // [Required] violation to surface the missing
+            // input; the new shape keeps the editor buffer as
+            // the single source of truth for outgoing payloads
+            // and the selected post as a read-only hint for
+            // the update path.
+            if (SelectedPost is null || SelectedPost.Id == 0)
             {
-                SelectedPost.DateCreated = DateTime.UtcNow;
-                SelectedPost.DateModified = DateTime.UtcNow;
-                var created = await BlogClient.CreatePostAsync(SelectedPost);
+                var draft = new BlogPost
+                {
+                    Title = DraftTitle,
+                    Article = DraftArticle ?? string.Empty,
+                    DateCreated = DateTime.UtcNow,
+                    DateModified = DateTime.UtcNow,
+                };
+                var created = await BlogClient.CreatePostAsync(draft);
                 if (created is not null)
                 {
                     SelectedPost = created;
@@ -163,8 +204,17 @@ public partial class MainPageViewModel : ViewModelBase
             }
             else
             {
-                SelectedPost.DateModified = DateTime.UtcNow;
-                await BlogClient.UpdatePostAsync(SelectedPost.Id, SelectedPost);
+                var update = new BlogPost
+                {
+                    Id = SelectedPost.Id,
+                    AuthorId = SelectedPost.AuthorId,
+                    Photo = SelectedPost.Photo,
+                    Title = DraftTitle,
+                    Article = DraftArticle ?? string.Empty,
+                    DateCreated = SelectedPost.DateCreated,
+                    DateModified = DateTime.UtcNow,
+                };
+                await BlogClient.UpdatePostAsync(SelectedPost.Id, update);
                 StatusMessage = $"Saved post {SelectedPost.Id}.";
             }
 
@@ -256,6 +306,14 @@ public partial class MainPageViewModel : ViewModelBase
         DeleteCommand.NotifyCanExecuteChanged();
     }
 
-    private bool CanSave() => SelectedPost is not null && !IsBusy;
+    /// <summary>Save is enabled as soon as the user has typed
+    /// a non-whitespace title in the editor, regardless of
+    /// whether a post is selected. The "no selection" case is
+    /// the create-new-post path; the "with selection" case is
+    /// the update path. Both read from the editor buffer.
+    /// Previously this also required <c>SelectedPost is not null</c>
+    /// — which contradicted the create-new-post intent and
+    /// forced the buggy "draft with empty title" branch.</summary>
+    private bool CanSave() => !IsBusy && !string.IsNullOrWhiteSpace(DraftTitle);
     private bool CanDelete() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
 }
