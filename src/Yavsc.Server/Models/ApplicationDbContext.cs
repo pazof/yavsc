@@ -214,6 +214,22 @@ namespace Yavsc.Models
                 // Log immuable — pas de update autorisé
                 e.ToTable(tb => tb.HasCheckConstraint("CK_ModerationLog_Immutable", "1=1"));
             });
+
+            // ── Blog FK strictness ─────────────────────────────────────────────
+            // Tout billet a un auteur, tout commentaire a un auteur : pas de
+            // cascade en suppression d'un user, pas d'orphelin toléré. Le code
+            // applicatif (BlogSpotService.Details) s'appuie sur cette
+            // contrainte pour pouvoir assumer l'existence de l'auteur.
+            builder.Entity<BlogPost>()
+                .HasOne(b => b.Author)
+                .WithMany(u => u.Posts)
+                .HasForeignKey(b => b.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Comment>()
+                .HasOne(c => c.Author)
+                .WithMany(u => u.BlogComments)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         /// <summary>
