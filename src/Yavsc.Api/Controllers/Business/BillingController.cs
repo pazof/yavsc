@@ -53,18 +53,18 @@ namespace Yavsc.ApiControllers
 
         [HttpGet("facture-{billingCode}-{id}.pdf"), Authorize]
         public async Task<IActionResult> GetPdf(string billingCode, long id)
-        {     
+        {
             var bill = await billingService.GetBillAsync(billingCode, id);
 
             if ( authorizationService.AuthorizeAsync(User, bill, new ReadPermission()).IsFaulted)
             {
                 return new ChallengeResult();
             }
- 
+
             var fi = bill.GetBillInfo(billingService);
 
             if (!fi.Exists) return Ok(new { Error = "Not generated" });
-            return File(fi.OpenRead(), "application/x-pdf", fi.Name); 
+            return File(fi.OpenRead(), "application/x-pdf", fi.Name);
         }
 
         [HttpGet("facture-{billingCode}-{id}.tex"), Authorize]
@@ -90,7 +90,7 @@ namespace Yavsc.ApiControllers
         public async Task<IActionResult> GeneratePdf(string billingCode, long id)
         {
             var bill = await billingService.GetBillAsync(billingCode, id);
-           
+
             if (bill==null) {
                logger.LogCritical ( $"# not found !! {id} in {billingCode}");
                return this.NotFound();
@@ -111,20 +111,20 @@ namespace Yavsc.ApiControllers
                 return new BadRequestResult();
             if (!(await authorizationService.AuthorizeAsync(User, estimate, new ReadPermission())).Succeeded)
 
-          
+
             {
                 return new ChallengeResult();
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
             await User.ReceiveProSignatureAsync(billingCode,id,Request.Form.Files[0],"pro");
-            estimate.ProviderValidationDate = DateTime.Now;
+            estimate.ProviderValidationDate = DateTime.UtcNow;
             dbContext.SaveChanges(User.GetUserId());
             // Notify the client
             var locstr = _localizer["EstimationMessageToClient"];
 
             var yaev = new EstimationEvent(estimate,_localizer);
-            
+
             var regids = new [] { estimate.Client.Id };
             bool gcmSent = false;
                 var grep = await _GCMSender.NotifyEstimateAsync(regids,yaev);
@@ -138,7 +138,7 @@ namespace Yavsc.ApiControllers
             // For authorization purpose
             var estimate = dbContext.Estimates.FirstOrDefault(e=>e.Id == id);
             if (!(await authorizationService.AuthorizeAsync(User, estimate, new ReadPermission())).Succeeded)
-            
+
             {
                 return new ChallengeResult();
             }
@@ -163,7 +163,7 @@ namespace Yavsc.ApiControllers
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
             await User.ReceiveProSignatureAsync(billingCode,id,Request.Form.Files[0],"cli");
-            estimate.ClientValidationDate = DateTime.Now;
+            estimate.ClientValidationDate = DateTime.UtcNow;
             dbContext.SaveChanges(User.GetUserId());
             return Ok (new { ClientValidationDate = estimate.ClientValidationDate });
         }
@@ -177,7 +177,7 @@ namespace Yavsc.ApiControllers
             {
                 return new ChallengeResult();
             }
-            
+
             var filename = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, id);
             FileInfo fi = new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
             if (!fi.Exists) return NotFound(new { Error = "Professional signature not found" });

@@ -40,14 +40,14 @@ public class NativeConfidentialController : Controller
         _logger.LogError("Invalid model for GCMD");
         return new BadRequestObjectResult(ModelState);
       }
-      declaration.LatestActivityUpdate = DateTime.Now;
+      declaration.LatestActivityUpdate = DateTime.UtcNow;
 
       _logger.LogInformation($"Registering device with id:{declaration.DeviceId} for {uid}");
         DeviceDeclaration? alreadyRegisteredDevice = _context.DeviceDeclaration.FirstOrDefault(d => d.DeviceId == declaration.DeviceId);
       var deviceAlreadyRegistered = (alreadyRegisteredDevice!=null);
       if (alreadyRegisteredDevice==null)
       {
-        declaration.DeclarationDate = DateTime.Now;
+        declaration.DeclarationDate = DateTime.UtcNow;
         declaration.DeviceOwnerId = uid;
         _context.DeviceDeclaration.Add(declaration);
       }
@@ -59,12 +59,12 @@ public class NativeConfidentialController : Controller
         _context.Update(alreadyRegisteredDevice);
         _context.SaveChanges(User.GetUserId());
       }
-        
+
         _context.SaveChanges(User.GetUserId());
-    
+
       var latestActivityUpdate = _context.Activities.Max(a=>a.DateModified);
-      return Json(new { 
-          IsAnUpdate = deviceAlreadyRegistered, 
+      return Json(new {
+          IsAnUpdate = deviceAlreadyRegistered,
           UpdateActivities = latestActivityUpdate != declaration.LatestActivityUpdate
           });
     }

@@ -91,7 +91,7 @@ namespace Yavsc.Controllers
                     // FIXME Assert (command.ValidationDate == null)
                     if (command.ValidationDate == null) {
                         paymentOk = true;
-                        command.ValidationDate = DateTime.Now;
+                        command.ValidationDate = DateTime.UtcNow;
                     }
                     else _logger.LogError
                       ("This Command were yet validated, and is now paied one more ...");

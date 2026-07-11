@@ -40,7 +40,7 @@ namespace Yavsc.Controllers
         public IEnumerable<RdvQueryProviderInfo> GetCommands(long maxId=long.MaxValue)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             var result = _context.RdvQueries.Include(c => c.Location).
             Include(c => c.Client).Where(c => c.PerformerId == uid && c.Id < maxId && c.EventDate > now
