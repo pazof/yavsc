@@ -75,20 +75,7 @@ public sealed class WebServerFixture : WebHostFixture
         // that plus the in-memory overrides below.
         builder.AddConfiguration(null).AddInMemoryCollection(new Dictionary<string, string?>
             {
-                // The EF Core in-memory provider cannot materialise
-                // entity types from IdentityServer8 (see forgejo#3):
-                // it crashes with IndexOutOfRangeException on the
-                // multi-Include query in ClientController.LoadClientAsync
-                // and on per-collection LoadAsync. SQLite in-memory is
-                // a transient, file-less store that uses the same
-                // connection string semantics as the InMemory provider
-                // ("keep the connection open for the host lifetime")
-                // but actually executes SQL, so it handles
-                // navigation-property entities correctly. The
-                // HostingExtensions code path detects this connection
-                // string and routes to UseSqlite. See
-                // doc/testing.md for the test-driver policy.
-                [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "Data Source=:memory:",
+                [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory",
                 // SMTP test config: UserName non-null so MailSender
                 // exercises the Authenticate branch — the
                 // RecordingSmtpClient captures it.

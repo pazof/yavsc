@@ -174,22 +174,8 @@ public static class HostingExtensions
 
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            if (UsesSqliteInMemoryProvider(connectionString))
+            if (UsesInMemoryProvider(connectionString))
             {
-                // The Sqlite connection must be kept open for the
-                // lifetime of the host: closing the connection
-                // destroys the in-memory database. The fixture
-                // manages this; the provider just receives the
-                // connection string and opens its own pooled
-                // connections.
-                options.UseSqlite(connectionString);
-            }
-            else if (UsesInMemoryProvider(connectionString))
-            {
-                // Legacy in-memory provider (Microsoft.EntityFrameworkCore.InMemory).
-                // Kept for tests that do not exercise navigation
-                // properties from IdentityServer8 entity types. The
-                // general case is SQLite in-memory, above.
                 options.UseInMemoryDatabase(connectionString);
             }
             else
@@ -357,11 +343,7 @@ public static class HostingExtensions
             {
                 options.ConfigureDbContext = b =>
                 {
-                    if (UsesSqliteInMemoryProvider(connectionString))
-                    {
-                        b.UseSqlite(connectionString);
-                    }
-                    else if (UsesInMemoryProvider(connectionString))
+                    if (UsesInMemoryProvider(connectionString))
                     {
                         b.UseInMemoryDatabase(connectionString);
                     }
@@ -385,11 +367,7 @@ public static class HostingExtensions
             {
                 options.ConfigureDbContext = b =>
                 {
-                    if (UsesSqliteInMemoryProvider(connectionString))
-                    {
-                        b.UseSqlite(connectionString);
-                    }
-                    else if (UsesInMemoryProvider(connectionString))
+                    if (UsesInMemoryProvider(connectionString))
                     {
                         b.UseInMemoryDatabase(connectionString);
                     }
@@ -623,34 +601,8 @@ public static class HostingExtensions
 
     private static bool UsesInMemoryProvider(string connectionString)
     {
-        // The legacy in-memory marker (EF Core InMemory provider).
-        if (string.Equals(connectionString, InMemoryProviderName, StringComparison.OrdinalIgnoreCase))
-            return true;
-        // SQLite in-memory is a separate driver (Microsoft.EntityFrameworkCore.Sqlite)
-        // but is conceptually the same: a transient, file-less store
-        // that lives only for the duration of a test. Tests use it for
-        // entity types (IdentityServer8 navigation properties) that the
-        // InMemory provider cannot materialise. The check is intentionally
-        // liberal: any SQLite connection string that opens an in-memory
-        // database qualifies.
-        return IsSqliteInMemoryConnectionString(connectionString);
+        return string.Equals(connectionString, InMemoryProviderName, StringComparison.OrdinalIgnoreCase);
     }
-
-    private static bool IsSqliteInMemoryConnectionString(string connectionString)
-    {
-        if (string.IsNullOrEmpty(connectionString)) return false;
-        // The canonical Microsoft.Data.Sqlite form: "Data Source=:memory:"
-        // (with or without spaces around the colon). The keyword is
-        // case-insensitive.
-        if (connectionString.Contains("Data Source=:memory:", StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (connectionString.Contains("DataSource=:memory:", StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
-    }
-
-    private static bool UsesSqliteInMemoryProvider(string connectionString)
-        => IsSqliteInMemoryConnectionString(connectionString);
 
     private static Action<DbContext, bool> EnsureDefaultApplicationScopes()
     {
