@@ -20,7 +20,7 @@ namespace Yavsc.ViewComponents
             string htmlFieldName,
             string calId )
         {
-            var minDate = DateTime.Now;
+            var minDate = DateTime.UtcNow;
             var maxDate = minDate.AddDays(20);
 
             var model = await _manager.CreateViewModelAsync(
@@ -30,6 +30,6 @@ namespace Yavsc.ViewComponents
 
             return View(model);
         }
-       
+
     }
 }

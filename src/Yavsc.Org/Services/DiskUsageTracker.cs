@@ -10,7 +10,7 @@ public class DiskUsageTracker : IDiskUsageTracker
     {
         public DUTInfo()
         {
-            Creation = DateTime.Now;
+            Creation = DateTime.UtcNow;
         }
         public long Usage { get; set; }
         public long Quota { get; set; }
@@ -46,7 +46,7 @@ public class DiskUsageTracker : IDiskUsageTracker
             if (DiskUsage.Count > ulistLength)
             {
                 // remove the oldest
-                var oldestts = DateTime.Now;
+                var oldestts = DateTime.UtcNow;
                 DUTInfo oinfo = null;
                 string ouname = null;
                 foreach (var diskusage in DiskUsage)

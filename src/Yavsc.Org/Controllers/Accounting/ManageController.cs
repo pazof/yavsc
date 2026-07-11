@@ -108,7 +108,7 @@ namespace Yavsc.Controllers
                 UserName = user.UserName,
                 PostsCounter = pc,
                 Balance = user.AccountBalance,
-                ActiveCommandCount = _dbContext.RdvQueries.Count(x => (x.ClientId == user.Id) && (x.EventDate > DateTime.Now)),
+                ActiveCommandCount = _dbContext.RdvQueries.Count(x => (x.ClientId == user.Id) && (x.EventDate > DateTime.UtcNow)),
                 HasDedicatedCalendar = !string.IsNullOrEmpty(user.DedicatedGoogleCalendar),
                 Roles = await _userManager.GetRolesAsync(user),
                 PostalAddress = user.PostalAddress?.Address,

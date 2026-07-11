@@ -44,7 +44,7 @@ namespace Yavsc.ApiControllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var result = _context.HairCutQueries
                          .Include(q => q.Prestation)
                          .Include(q => q.Client)

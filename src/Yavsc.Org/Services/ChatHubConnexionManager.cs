@@ -145,7 +145,7 @@ namespace Yavsc.Services
                     if (Channels.TryRemove(roomName, out deadchanInfo))
                     {
                         var room = _dbContext.ChatRoom.FirstOrDefault(r => r.Name == roomName);
-                        room.LatestJoinPart = DateTime.Now;
+                        room.LatestJoinPart = DateTime.UtcNow;
                         _dbContext.SaveChanges();
                     }
                 }

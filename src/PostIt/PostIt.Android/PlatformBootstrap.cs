@@ -19,7 +19,7 @@ internal static class PlatformBootstrap
         if (System.Threading.Interlocked.Exchange(ref _initialized, 1) != 0)
             return;
 
-        Platform.DefaultRedirectUri = Settings.AndroidRedirectUri;
+        Platform.DefaultRedirectUri = ViewModels.Settings.AndroidRedirectUri;
         Platform.CreateBrowser = () =>
         {
             var activity = MainActivity.Current;
