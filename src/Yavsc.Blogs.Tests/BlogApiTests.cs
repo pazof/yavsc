@@ -242,4 +242,89 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         using var doc = JsonDocument.Parse(await listResponse.Content.ReadAsStringAsync());
         Assert.Equal(0, doc.RootElement.GetArrayLength());
     }
+
+    [Fact]
+    public async Task PostBlog_from_PostIt_shape_returns_201_not_400()
+    {
+        // Regression test for the "Save" button in PostIt: from the
+        // user's point of view, they type a Title and an Article in
+        // the editor pane and tap "Save". The VM serialises the
+        // SelectedPost via JsonContent.Create (camelCase, System.Text.Json
+        // defaults) and POSTs it to /api/v1/blog. This test sends
+        // exactly that payload — same fields, same types, same
+        // serialiser (PostAsJsonAsync is wired to the same
+        // System.Net.Http.Json pipeline that YavscApiClient uses on
+        // the PostIt side) — and asserts that the server accepts it
+        // with 201 Created, not 400 BadRequest. If the controller's
+        // ModelState validation starts rejecting the PostIt payload
+        // (missing field, wrong casing, etc.), this test fails
+        // before the regression reaches a user.
+        ResetDatabase();
+        using var http = NewClient(subject: "tester");
+
+        // Mirrors what MainPageViewModel.Save builds: a BlogPost with
+        // Id=0 (so the controller treats it as a create), Title and
+        // Article filled in by the user, and DateCreated/DateModified
+        // stamped by the VM. AuthorId is what the OIDC sub resolves
+        // to in the test fixture.
+        var draft = new BlogPost
+        {
+            Id = 0,
+            Title = "Mon premier billet",
+            AuthorId = "tester",
+            Article = "Contenu du billet de test.",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
+        };
+
+        var response = await http.PostAsJsonAsync("/api/v1/blog", draft);
+
+        // Dump the body on failure so the test name + the response
+        // payload are enough to start a fix; the framework's
+        // assertion message is otherwise opaque (just "Expected
+        // Created, got BadRequest").
+        if (response.StatusCode != HttpStatusCode.Created)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.Fail(string.Format("Expected 201 Created, got {0} {1}. Body: {2}", (int)response.StatusCode, response.StatusCode, body));
+        }
+    }
+
+    [Fact]
+    public async Task PostBlog_with_empty_title_returns_400()
+    {
+        // Mirrors the buggy branch in MainPageViewModel.Save: when
+        // the user taps "Save" without a SelectedPost (e.g. they
+        // typed into the editor without first clicking an item in
+        // the list, so the {Binding SelectedPost.Title, Mode=TwoWay}
+        // XAML binding had no target and the keystrokes were
+        // silently dropped), the VM builds a BlogPost with
+        // Title = string.Empty and POSTs it. BlogPost.Title carries
+        // [Required] → ModelState.IsValid fails → 400 BadRequest.
+        // This is the regression we are hunting. The 400 is
+        // expected here: the test pins the *current* controller
+        // behaviour so a future change that, say, makes Title
+        // nullable in the model or drops [Required], triggers a
+        // conscious update of the test (and probably of the VM).
+        ResetDatabase();
+        using var http = NewClient(subject: "tester");
+
+        var draft = new BlogPost
+        {
+            Id = 0,
+            Title = string.Empty,
+            AuthorId = "tester",
+            Article = "Article non vide, mais titre vide.",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
+        };
+
+        var response = await http.PostAsJsonAsync("/api/v1/blog", draft);
+
+        if (response.StatusCode != HttpStatusCode.BadRequest)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            Assert.Fail(string.Format("Expected 400 BadRequest (empty Title is invalid), got {0} {1}. Body: {2}", (int)response.StatusCode, response.StatusCode, body));
+        }
+    }
 }

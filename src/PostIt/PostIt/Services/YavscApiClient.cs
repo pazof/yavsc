@@ -191,7 +191,7 @@ public class YavscApiClient : IAsyncDisposable
         CancellationToken ct = default)
     {
         using var response = await SendAsync(method, path, body, ct).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
+        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
 
         var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
         var dto = await JsonSerializer.DeserializeAsync<T>(stream,
@@ -217,7 +217,7 @@ public class YavscApiClient : IAsyncDisposable
         CancellationToken ct = default)
     {
         using var response = await SendAsync(method, path, body, ct).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
+        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -257,6 +257,48 @@ public class YavscApiClient : IAsyncDisposable
         }
 
         return response;
+    }
+
+    /// <summary>
+    /// Replaces the bare <c>response.EnsureSuccessStatusCode()</c>
+    /// call site with one that surfaces the response body in the
+    /// thrown exception. The default behaviour truncates the
+    /// diagnostic to "Response status code does not indicate
+    /// success: 400 (Bad Request)." — useless when the server is
+    /// an ASP.NET Core action returning a <c>ProblemDetails</c>
+    /// that names the field that failed ModelState validation.
+    /// The VM's <c>catch (Exception ex)</c> in
+    /// <c>MainPageViewModel.ExecuteAsync</c> shows
+    /// <c>ex.Message</c> on the status bar, so embedding the body
+    /// here is enough to make the next "click Save" self-explanatory
+    /// (e.g. <i>"Error: 400 — The Title field is required."</i>).
+    /// </summary>
+    private static async Task EnsureSuccessOrThrowAsync(HttpResponseMessage response, CancellationToken ct)
+    {
+        if (response.IsSuccessStatusCode) return;
+
+        // Read the body before throwing; once the response is
+        // disposed, the stream is gone. We bound the read to a few
+        // KB so a hostile server can't make us buffer megabytes
+        // just to format an error message.
+        string body = string.Empty;
+        try
+        {
+            var raw = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(raw))
+            {
+                body = raw.Length > 1024 ? raw[..1024] + "…" : raw;
+            }
+        }
+        catch
+        {
+            // Body unreadable: fall back to the default message.
+        }
+
+        var msg = body.Length > 0
+            ? $"{(int)response.StatusCode} {response.ReasonPhrase}: {body}"
+            : $"{(int)response.StatusCode} {response.ReasonPhrase}";
+        throw new HttpRequestException(msg, inner: null, statusCode: response.StatusCode);
     }
 
     /// <summary>
