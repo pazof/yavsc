@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Browser;
 using PostIt.Services;
+using PostIt.ViewModels;
 using Xunit;
 
 namespace PostIt.Tests;
@@ -61,6 +62,12 @@ public class YavscApiClientTests
 
             // Reload — YavscApiClient constructor reads the store.
             var reloaded = new YavscApiClient(settings, new TokenStore(tokensPath));
+            // Same BaseAddress dance as LoginAndPersistAsync: a fresh
+            // YavscApiClient starts with no BaseAddress, and the test
+            // calls CallAsync("posts", ...) directly (bypassing
+            // BlogApiClient, which is the only thing that would set
+            // it in production). Mirror prod here.
+            reloaded.Http.BaseAddress = new Uri(settings.BusinessApiUrl);
 
             var posts = await reloaded.CallAsync<List<StubApiServer.Post>>(
                 HttpMethod.Get, "posts", TestContext.Current.CancellationToken);
@@ -111,16 +118,16 @@ public class YavscApiClientTests
     [Fact]
     public async Task CallAsync_throws_when_no_token_and_no_interactive_login()
     {
-        var settings = new PostIt.Settings
+        var settings = new Settings
         {
             Authentication = new AuthenticationSettings
             {
                 Authority = "https://127.0.0.1:5001",
                 ClientId = "postit-tests",
+                RedirectUri = "postit://callback",
+                Scopes = new[] { "openid" },
             },
-            RedirectUri = "postit://callback",
-            Scopes = new[] { "openid" },
-            ApiUrl = "https://127.0.0.1:5003/api/v1",
+            BusinessApiUrl = "https://127.0.0.1:5003/api/v1",
         };
         var client = new YavscApiClient(settings, new TokenStore(Path.Combine(
             Path.GetTempPath(), $"postit-tests-noop-{Guid.NewGuid():N}.json")));
@@ -155,23 +162,29 @@ public class YavscApiClientTests
 
     // --- helpers --------------------------------------------------------
 
-    private static PostIt.Settings BuildSettings(OIDCStubAuthority authority, string apiBaseUrl) => new()
+    private static Settings BuildSettings(OIDCStubAuthority authority, string apiBaseUrl) => new()
     {
         Authentication = new AuthenticationSettings
         {
             Authority = authority.Issuer,
             ClientId = "postit-tests",
+            RedirectUri = authority.LoopbackRedirectUri,
+            Scopes = new[] { "openid", "profile", "blog" }
         },
-        RedirectUri = authority.LoopbackRedirectUri,
-        Scopes = new[] { "openid", "profile", "blog" },
-        ApiUrl = apiBaseUrl,
+        BusinessApiUrl = apiBaseUrl
     };
 
     private static async Task<YavscApiClient> LoginAndPersistAsync(
-        PostIt.Settings settings, OIDCStubAuthority authority, string tokensPath)
+        Settings settings, OIDCStubAuthority authority, string tokensPath)
     {
         var browser = new FakeAuthorizingBrowser(authority.LoopbackRedirectUri);
         var client = new YavscApiClient(settings, new TokenStore(tokensPath));
+
+        // The two integration tests that call CallAsync("posts", ...)
+        // directly (bypassing BlogApiClient) rely on the same
+        // BaseAddress the production chain sets in BlogApiClient's
+        // ctor. Mirror that here so "posts" resolves to the stub.
+        client.Http.BaseAddress = new Uri(settings.BusinessApiUrl);
 
         // Force the API client to use the test browser by routing the
         // LoginInteractiveAsync call through a small wrapper.

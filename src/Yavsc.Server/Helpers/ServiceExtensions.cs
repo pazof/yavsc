@@ -91,6 +91,30 @@ public static class ServiceExtensions
                 RoleClaimType = YavscConstants.RoleClaimType
             };
             options.MapInboundClaims = true;
+
+            // Dev: every Yavsc resource service (Yavsc.Api, Yavsc.Blogs,
+            // Yavsc.Org itself) validates JWTs against the OP that runs
+            // on https://localhost:5001 with a self-signed dev cert.
+            // The default .NET HttpClient rejects self-signed certs, so
+            // JwtBearer's backchannel silently fails to fetch the OIDC
+            // discovery + JWKS. With an empty ValidIssuer, every token
+            // is rejected with IDX10204 ("ValidIssuer is null or
+            // whitespace"). Telling the backchannel to skip TLS
+            // validation unblocks discovery in dev. Production uses a
+            // real CA-signed cert and the default validation path; the
+            // override is gated on HostingEnvironment == Development
+            // and only fires when the consumer opt-in via the
+            // 'Yavsc:Dev:TlsInsecure' configuration flag (default
+            // false), so a misconfigured production environment cannot
+            // silently downgrade TLS.
+            if (configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                options.BackchannelHttpHandler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        (_, _, _, _) => true
+                };
+            }
             configure?.Invoke(options);
         });
     }

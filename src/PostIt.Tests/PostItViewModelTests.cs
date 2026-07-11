@@ -60,11 +60,11 @@ public class PostItViewModelTests
         public ThrowingYavscApiClient() : base(
             new Settings
             {
-                Scopes = new[] { "openid" },
                 Authentication = new AuthenticationSettings
                 {
                     Authority = "https://stub.invalid",
                     ClientId = "stub",
+                    Scopes = new[] { "openid" },
                 },
             },
             new TokenStore(System.IO.Path.GetTempFileName()))
@@ -81,11 +81,11 @@ public class PostItViewModelTests
             : base(
                 new Settings
                 {
-                    Scopes = new[] { "openid" },
                     Authentication = new AuthenticationSettings
                     {
                         Authority = "https://stub.invalid",
                         ClientId = "stub",
+                        Scopes = new[] { "openid" },
                     },
                 },
                 new TokenStore(System.IO.Path.GetTempFileName()))

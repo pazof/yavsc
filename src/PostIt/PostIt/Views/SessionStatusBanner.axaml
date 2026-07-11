@@ -4,7 +4,6 @@
              x:Class="PostIt.Views.SessionStatusBanner"
              x:DataType="vm:SessionStatusViewModel">
   <Border DockPanel.Dock="Top"
-          Background="#ECEFF1"
           BorderBrush="#B0BEC5"
           BorderThickness="0,0,0,1"
           Padding="12,6">
@@ -16,6 +15,13 @@
       <Button Content="Se déconnecter"
               Command="{Binding LogoutAsync}"
               IsVisible="{Binding IsLoggedIn}"
+              DockPanel.Dock="Right"/>
+      <Button Content="Se connecter"
+              Command="{Binding LoginCommand}"
+              IsVisible="{Binding IsLoggedOut}"
+              DockPanel.Dock="Right"/>
+      <Button Content="Paramètres"
+              Command="{Binding OpenSettingsCommand}"
               DockPanel.Dock="Right"/>
     </DockPanel>
   </Border>

@@ -1,0 +1,43 @@
+opencollection: 1.0.0
+
+info:
+  name: blogs
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: oauth2
+    flow: authorization_code
+    authorizationUrl: "{{Authority}}/connect/authorize"
+    accessTokenUrl: "{{Authority}}/connect/token"
+    refreshTokenUrl: https://yavsc.pschneider.fr/connect/token
+    callbackUrl: "{{Authority}}"
+    credentials:
+      clientId: postit
+      placement: basic_auth_header
+    scope: openid blogs
+    pkce: {}
+    tokenConfig:
+      id: credentials
+      placement:
+        header: Bearer
+      source: access_token
+    settings:
+      autoFetchToken: true
+      autoRefreshToken: true
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

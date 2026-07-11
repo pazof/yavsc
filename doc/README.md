@@ -15,6 +15,7 @@ La racine de l'architecture est [Architecture.md](Architecture.md).
 | [architecture/dictionnaires-metier.md](architecture/dictionnaires-metier.md) | Dictionnaires métier, héritage en arbre, cycle de vie d'un terme |
 | [architecture/offres-frontmatter.md](architecture/offres-frontmatter.md) | Offre fournisseur, ClasseFormulaire, ClasseDevis, parsing frontmatter |
 | [architecture/postit-oidc.md](architecture/postit-oidc.md) | Client desktop PostIt, custom URI scheme, silent refresh |
+| [architecture/postit.md](architecture/postit.md) | PostIt — topologie des projets, ViewLocator custo, navigation, DI, conventions de binding |
 | [architecture/decoupage-organisation.md](architecture/decoupage-organisation.md) | Découpage des projets .NET (Abstract, Server, Org, Api, Blogs, Web, Org.Tests) |
 
 ## Roadmap & design exploration
