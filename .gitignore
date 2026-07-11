@@ -24,6 +24,15 @@ data/
 appsettings.*.json
 appsettings-*.*.json
 
+# Exception: the Testing-environment override for Yavsc.Org is a tracked
+# configuration source, not a secrets file. TestWebApplicationFactory
+# (Yavsc.Org.Tests) flips ASPNETCORE_ENVIRONMENT to "Testing" so
+# AddConfiguration("org") in Program.Main loads this file as the
+# last in the chain (it is optional). It overrides the connection
+# string and SMTP section for the in-memory test host and contains
+# no production secrets.
+!src/Yavsc.Org/appsettings-org.Testing.json
+
 generated/
 *.tmp
 DataDir/
