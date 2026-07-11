@@ -48,19 +48,6 @@ namespace Yavsc.Blogs.Tests;
 /// </summary>
 public sealed class BlogsWebServerFixture : WebHostFixture
 {
-    // SQLite in-memory database is created once and shared across all
-    // DbContext instances for the test lifetime. The connection must
-    // stay open: closing it destroys the in-memory database. The
-    // Microsoft.Data.Sqlite pool will then open additional connections
-    // to the same in-memory store, as long as the original connection
-    // is alive. This is the SQLite equivalent of the EF Core
-    // InMemoryDatabaseRoot we used to use.
-    private Microsoft.Data.Sqlite.SqliteConnection? _sharedSqliteConnection;
-    // Legacy field kept to make the migration diff readable. The
-    // InMemory provider path is no longer used by this fixture, but
-    // removing it is out of scope for the SQLite-in-memory migration
-    // (forgejo#3 follow-up).
-    [System.Obsolete("Replaced by SQLite in-memory (forgejo#3).")]
     private InMemoryDatabaseRoot? _inMemoryRoot;
 
     protected override WebApplication BuildApp(WebApplicationBuilder builder)
@@ -71,18 +58,15 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         // against an empty table returns an empty list, which is
         // exactly what the first test wants to assert.
         //
-        // We use SQLite in-memory (not the EF Core InMemory provider)
-        // because the InMemory provider cannot materialise navigation
-        // properties from IdentityServer8 entity types (see forgejo#3).
-        // SQLite in-memory is a transient, file-less store that
-        // executes real SQL, so navigation properties work as
-        // expected. The shared SqliteConnection keeps the database
-        // alive for the test lifetime, mirroring the
-        // InMemoryDatabaseRoot pattern we used previously.
-        _sharedSqliteConnection = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
-        _sharedSqliteConnection.Open();
+        // Share a single InMemoryDatabaseRoot across the test
+        // lifetime so POST + GET on the same fixture see the same
+        // store. Without the root, EF Core's In-Memory provider
+        // creates independent stores per DbContext in some
+        // configurations, and the second request would see an
+        // empty list even after the first wrote a row.
+        _inMemoryRoot = new InMemoryDatabaseRoot();
         builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-            opt.UseSqlite(_sharedSqliteConnection));
+            opt.UseInMemoryDatabase("Yavsc.Blogs.Tests", _inMemoryRoot));
 
         // Trivial file-system auth: the GET index path never calls
         // into it, but the DI container needs an instance.
