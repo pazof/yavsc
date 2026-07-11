@@ -30,10 +30,11 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     }
 
     /// <summary>Reset the in-memory database to a known empty state.
-    /// <c>UseInMemoryDatabase</c> shares its store across the
-    /// lifetime of the <see cref="BlogsWebServerFixture"/> instance,
-    /// so without a per-test reset the test order would leak
-    /// state between tests.</summary>
+    /// The fixture now uses SQLite in-memory (see forgejo#3), which
+    /// shares its store across the lifetime of the
+    /// <see cref="BlogsWebServerFixture"/> instance, so without a
+    /// per-test reset the test order would leak state between
+    /// tests.</summary>
     private void ResetDatabase()
     {
         using var scope = _fixture.Services.CreateScope();
