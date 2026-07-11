@@ -27,7 +27,7 @@ public class SettingsLoadTests
             return; // nothing to assert: user file wins.
         }
 
-        var settings = new PostIt.Settings();
+        var settings = new PostIt.ViewModels.Settings();
         settings.Load();
 
         // The bundled postit-settings.json points at yavsc.pschneider.fr.
@@ -48,7 +48,7 @@ public class SettingsLoadTests
     [Fact]
     public async Task Concurrent_load_and_mutate_does_not_throw_or_corrupt_state()
     {
-        var settings = new PostIt.Settings();
+        var settings = new PostIt.ViewModels.Settings();
 
         // First load pre-populates Authentication.Authority so the
         // early-return path in Load() runs (we don't want file I/O
@@ -58,9 +58,9 @@ public class SettingsLoadTests
         settings.Authentication = new AuthenticationSettings
         {
             Authority = "https://example.test/",
-            ClientId = "postit-tests"
+            ClientId = "postit-tests",
+            Scopes = new[] { "openid" },
         };
-        settings.Scopes = new[] { "openid" };
         // Load() takes the early-return path because Authority is
         // already populated; flips Loaded=true under the gate.
         settings.Load();
@@ -90,10 +90,10 @@ public class SettingsLoadTests
                     {
                         bool flip = ((workerId + i) & 1) == 0;
                         settings.DarkMode = flip;
-                        settings.RedirectUri = flip
-                            ? PostIt.Settings.DefaultDesktopRedirectUri
-                            : PostIt.Settings.DefaultLoopbackRedirectUri;
-                        settings.ApiUrl = flip
+                        settings.Authentication.RedirectUri =
+                            global::AuthenticationSettings.DefaultDesktopRedirectUri;
+
+                        settings.BusinessApiUrl = flip
                             ? "https://a.example.test/api/v1/"
                             : "https://b.example.test/api/v1/";
 
@@ -102,7 +102,7 @@ public class SettingsLoadTests
                         // invariants that the gate protects.
                         Assert.True(settings.Loaded);
                         Assert.NotNull(settings.Authentication);
-                        Assert.NotNull(settings.Scopes);
+                        Assert.NotNull(settings.Authentication.Scopes);
                     }
                 }
                 catch (Exception ex)
@@ -131,7 +131,7 @@ public class SettingsLoadTests
     [Fact]
     public void Load_is_idempotent_under_concurrent_calls()
     {
-        var settings = new PostIt.Settings
+        var settings = new PostIt.ViewModels.Settings
         {
             Authentication = new AuthenticationSettings
             {

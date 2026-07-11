@@ -1,0 +1,6 @@
+name: Development
+variables:
+  - name: Blogs
+    value: https://localhost:5003
+  - name: Authority
+    value: https://localhost:5001

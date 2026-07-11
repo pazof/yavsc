@@ -1,38 +1,21 @@
 using System.Runtime.CompilerServices;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using IdentityModel.OidcClient;
 using Microsoft.Extensions.DependencyInjection;
-using PostIt.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
 
 [assembly: InternalsVisibleTo("PostIt.Tests")]
 
-namespace PostIt;
+namespace PostIt.ViewModels;
 
-public partial class Settings : ObservableObject
+public partial class Settings : ViewModelBase
 {
     const string SettingsFileName = "postit-settings.json";
-    IStorageFolder? folder = null;
-
-    /// <summary>
-    /// Legacy loopback redirect URI. The post-2026.6 production flow
-    /// uses the custom URI scheme (<see cref="DefaultDesktopRedirectUri"/>
-    /// on desktop, <see cref="AndroidRedirectUri"/> on Android) so the
-    /// OS hands the callback to the running instance without a TCP
-    /// listener. The loopback constant stays here so test fixtures
-    /// (which spin up an in-process OidcStubAuthority) keep working,
-    /// but it is no longer used as a default anywhere in production.
-    /// If you are still pointing your production <c>postit-settings.json</c>
-    /// at this URI, switch to <c>postit://callback</c> and remove the
-    /// matching entry from the Yavsc.Org server's allowed redirect URIs.
-    /// </summary>
-    public const string DefaultLoopbackRedirectUri = "http://127.0.0.1:7890/";
 
     /// <summary>
     /// Redirect URI used by the Android app. The corresponding IntentFilter
@@ -40,13 +23,7 @@ public partial class Settings : ObservableObject
     /// </summary>
     public const string AndroidRedirectUri = "android://postit-signin";
 
-    /// <summary>
-    /// Default custom-scheme redirect URI on Desktop. The OS routes the
-    /// callback to the running PostIt instance via the named-pipe
-    /// hand-off in <see cref="PostIt.Services.SingleInstance"/>
-    /// (RFC 8252 §7.1). Production Desktop builds use this.
-    /// </summary>
-    public const string DefaultDesktopRedirectUri = "postit://callback";
+
 
     /// <summary>
     /// Process-wide canonical <see cref="Settings"/> instance, wired up
@@ -111,21 +88,61 @@ public partial class Settings : ObservableObject
     public partial bool DarkMode { get; set; } = false;
 
     [ObservableProperty]
-    public partial string ApiUrl { get; set; } = "https://blogs.pschneider.fr/api/v1/";
+    public partial string BlogsApiUrl { get; set; } = "https://blogs.pschneider.fr/api/v1/";
+
+    [ObservableProperty]
+    public partial string BusinessApiUrl { get; set; } = "https://business.pschneider.fr/api/v1/";
 
     /// <summary>
-    /// OAuth redirect URI. Defaults to <see cref="DefaultDesktopRedirectUri"/>
-    /// (custom URI scheme) which is the right answer for desktop
-    /// production builds. Mobile platforms must set this to
-    /// <see cref="AndroidRedirectUri"/> before calling <c>LoginAsync</c>.
+    /// Catch top-level mutations: the four ObservableProperty
+    /// setters above all funnel through here, and we flip
+    /// <see cref="IsDirty"/> in lock-step. Sub-property mutations
+    /// (e.g. <c>Authentication.Authority</c>) are caught by the
+    /// subscription wired up in <see cref="OnAuthenticationChanged"/>
+    /// below. <see cref="ApplyJson"/> disables the flag during bulk
+    /// hydration so the disk load itself does not count as a user
+    /// edit.
+    /// </summary>
+    private void MarkDirty() => IsDirty = true;
+
+    partial void OnDarkModeChanged(bool value) => MarkDirty();
+    partial void OnBlogsApiUrlChanged(string value) => MarkDirty();
+    partial void OnBusinessApiUrlChanged(string value) => MarkDirty();
+
+    /// <summary>
+    /// Authentication can be reassigned wholesale by
+    /// <see cref="ApplyJson"/>; on each reassignment we (re)wire a
+    /// <c>PropertyChanged</c> listener so sub-property edits
+    /// (Authority, ClientId, RedirectUri, Scopes) are picked up
+    /// by the dirty tracker. We don't filter on PropertyName: any
+    /// nested setter is treated as a user edit, which matches the
+    /// user's mental model ("I typed in a field, the page is now
+    /// dirty").
+    /// </summary>
+    partial void OnAuthenticationChanged(AuthenticationSettings value)
+    {
+        if (value is not null)
+        {
+            value.PropertyChanged += (_, _) => MarkDirty();
+        }
+        MarkDirty();
+    }
+
+    public bool Loaded { get; private set; } = false;
+
+    /// <summary>
+    /// True when the in-memory state has drifted from the last
+    /// <see cref="Load"/> or <see cref="Save"/> snapshot. The
+    /// Settings page binds the Sauver button's <c>IsEnabled</c> to
+    /// this flag, so it only enables when the user has actually
+    /// touched something since the last load / save. Cleared by
+    /// <see cref="Load"/> (and by <see cref="ApplyJson"/>), set by
+    /// every successful setter on the four top-level mutable
+    /// properties and on the sub-properties of
+    /// <see cref="Authentication"/>.
     /// </summary>
     [ObservableProperty]
-    public partial string RedirectUri { get; set; } = DefaultDesktopRedirectUri;
-
-
-    [ObservableProperty]
-    public partial string[] Scopes { get; set; }
-    public bool Loaded { get; private set; } = false;
+    public partial bool IsDirty { get; private set; } = false;
 
     /// <summary>
     /// Guards every mutation of the observable state. <c>[ObservableProperty]</c>
@@ -158,8 +175,8 @@ public partial class Settings : ObservableObject
             {
                 Authority = Authentication.Authority,
                 ClientId = Authentication.ClientId,
-                RedirectUri = RedirectUri,
-                Scope = string.Join(' ', this.Scopes),
+                RedirectUri = Authentication.RedirectUri,
+                Scope = string.Join(' ', MergeScopes(this.Authentication.Scopes)),
                 TokenClientCredentialStyle = IdentityModel.Client.ClientCredentialStyle.PostBody,
                 PostLogoutRedirectUri = "https//yavsc.pschneider.fr",
                 // PKCE is enabled by default when no client_secret is provided.
@@ -169,6 +186,48 @@ public partial class Settings : ObservableObject
                 options.Browser = browser;
 
             return options;
+        }
+    }
+
+    /// <summary>
+    /// Scopes the PostIt client always requires from the OIDC provider,
+    /// regardless of what the user has in their settings file.
+    ///
+    /// <para>PostIt calls into the Blog API (and any other Yavsc API
+    /// gated by an <c>[Authorize("…Scope")]</c> policy) and is silent
+    /// about the contract: a missing scope here surfaces as a 401
+    /// on the very first API call after login, with no obvious link
+    /// to the settings. The "feature" scopes the user must opt into
+    /// (e.g. <c>blogs</c>) are still their choice — we only force the
+    /// structural ones that OIDC itself needs.</para>
+    /// </summary>
+    private static readonly string[] BuiltInScopes = new[]
+    {
+        "openid",        // OIDC: required for the id_token
+        "profile",       // OIDC: standard profile claims
+        "offline_access" // OIDC: required to receive a refresh_token
+    };
+
+    /// <summary>
+    /// Merge user-configured scopes with the built-in ones. User scopes
+    /// come first (preserves author intent), then the built-ins, with
+    /// duplicates removed case-sensitively. <c>null</c> or empty input
+    /// is fine — we still emit the built-ins.
+    /// </summary>
+    internal static IEnumerable<string> MergeScopes(string[]? userScopes)
+    {
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        if (userScopes is not null)
+        {
+            foreach (var s in userScopes)
+            {
+                if (string.IsNullOrWhiteSpace(s)) continue;
+                if (seen.Add(s)) yield return s;
+            }
+        }
+        foreach (var s in BuiltInScopes)
+        {
+            if (seen.Add(s)) yield return s;
         }
     }
 
@@ -284,10 +343,37 @@ public partial class Settings : ObservableObject
             {
                 this.Authentication = settings.Authentication;
                 this.DarkMode = settings.DarkMode;
-                this.ApiUrl = settings.ApiUrl;
-                this.RedirectUri = string.IsNullOrWhiteSpace(settings.RedirectUri) ? DefaultDesktopRedirectUri : settings.RedirectUri;
-                this.Scopes = settings.Scopes;
+                if (!(settings.Authentication is null))
+                {
+                    this.Authentication = new AuthenticationSettings();
+                    this.Authentication.Authority = string.IsNullOrWhiteSpace(settings.Authentication.Authority) ?
+                    AuthenticationSettings.DefaultAuthority : settings.Authentication.Authority;
+                    this.Authentication.ClientId = string.IsNullOrWhiteSpace(settings.Authentication.ClientId) ?
+                     AuthenticationSettings.DefaultClientId : settings.Authentication.ClientId;
+                    this.Authentication.RedirectUri = string.IsNullOrWhiteSpace(settings.Authentication.RedirectUri) ?
+                     AuthenticationSettings.DefaultDesktopRedirectUri : settings.Authentication.RedirectUri;
+                    this.Authentication.Scopes = settings.Authentication.Scopes;
+                }
             }
+            // A disk load (or an embedded-resource fallback) is the
+            // baseline, not a user edit. Clear the dirty flag last
+            // so the OnAuthenticationChanged / sub-property fan-out
+            // triggered by the assignments above doesn't leave it
+            // stuck at true.
+            IsDirty = false;
+            // Refresh the space-separated ScopeListText view after
+            // hydration so the SettingsPage TextBox reflects the
+            // loaded scopes (and not the default empty string the
+            // ObservableProperty was constructed with). OnScopesChanged
+            // already tries to do this, but it skips when the new
+            // array parses to the same text — calling explicitly
+            // forces a re-sync and normalises any whitespace the
+            // JSON might have introduced.
+            this.Authentication?.RefreshScopeListText();
+            // Re-notify the command in case the button was bound
+            // before Load finished and the CanExecute cache is
+            // stale.
+            SaveCommand.NotifyCanExecuteChanged();
         }
         catch (Exception ex)
         {
@@ -296,30 +382,63 @@ public partial class Settings : ObservableObject
     }
 
     /// <summary>
-    /// Marshals every <see cref="ObservableObject.PropertyChanged"/>
-    /// notification onto the Avalonia UI thread before it leaves this
-    /// instance. Without this, a background worker (OIDC discovery
-    /// running on a Task, the file I/O continuation in <see cref="Load"/>,
-    /// any HTTP callback) would raise <c>PropertyChanged</c> from a
-    /// thread-pool thread and Avalonia's binding sink would then reach
-    /// into <c>DataValidationErrors.SetErrors</c> from off-thread,
-    /// blowing up with <c>InvalidOperationException: The calling thread
-    /// cannot access this object because a different thread owns it</c>.
-    /// We keep the mutation lock separate (above) and let the property
-    /// setters do their work synchronously — only the notification
-    /// fan-out is bounced to the UI thread.
+    /// Persist the current in-memory state to
+    /// <c>~/.config/PostIt/postit-settings.json</c> (Linux) /
+    /// equivalent <c>%APPDATA%\PostIt\postit-settings.json</c>
+    /// (Windows). Symmetrical to <see cref="Load"/>: same path,
+    /// same directory creation, same <c>0600</c> file mode (POSIX)
+    /// as <c>TokenStore.Save</c>. Clears <see cref="IsDirty"/>
+    /// on success.
+    ///
+    /// <para>Synchronous on purpose: matches <see cref="Load"/>'s
+    /// contract (the file is a few KiB at most, and the Avalonia
+    /// UI thread cannot await here without risking the same
+    /// deadlock <see cref="Load"/>'s docstring describes).
+    /// </para>
     /// </summary>
-    protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+    [RelayCommand(CanExecute = nameof(CanSave))]
+    public void Save()
     {
-        if (UiDispatcher.IsOnUiThread)
+        var configDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "PostIt");
+        Directory.CreateDirectory(configDir);
+        var configPath = Path.Combine(configDir, SettingsFileName);
+
+        lock (_mutationGate)
         {
-            base.OnPropertyChanged(e);
-            return;
+            try
+            {
+                var json = JsonSerializer.Serialize(this, new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                });
+                File.WriteAllText(configPath, json);
+                if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+                    File.SetUnixFileMode(configPath,
+                        UnixFileMode.UserRead | UnixFileMode.UserWrite);
+                IsDirty = false;
+                Console.WriteLine($"💾 Settings saved to {configPath}");
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"🩎 Error saving settings to {configPath}: {ex.Message}");
+                throw;
+            }
         }
-        // Capture by value: the args object is mutable in some binding
-        // sinks, and we don't want a background thread to keep mutating
-        // it after we hand it to the dispatcher.
-        var snapshot = new System.ComponentModel.PropertyChangedEventArgs(e.PropertyName);
-        UiDispatcher.Post(() => base.OnPropertyChanged(snapshot));
     }
+
+    private bool CanSave() => IsDirty;
+
+    /// <summary>
+    /// Re-notify the <c>SaveCommand</c> (generated by
+    /// <c>[RelayCommand]</c> on <see cref="Save"/>) so XAML
+    /// re-evaluates <c>CanExecute</c> when the dirty flag flips
+    /// outside the scope of a direct save (e.g. on <see cref="Load"/>
+    /// / <see cref="ApplyJson"/>).
+    /// </summary>
+    partial void OnIsDirtyChanged(bool value) => SaveCommand.NotifyCanExecuteChanged();
+
+    public override bool CanNavigateNext { get => false; protected set => throw new System.NotImplementedException(); }
+    public override bool CanNavigatePrevious { get => true; protected set => throw new System.NotImplementedException(); }
 }

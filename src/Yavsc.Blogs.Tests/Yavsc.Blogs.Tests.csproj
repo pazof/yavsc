@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Yavsc.Blogs.Tests</RootNamespace>
+    <UserSecretsId>b1a9d0d6-3f5e-4a07-9f0a-7e4d5b6c1a82</UserSecretsId>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <InformationalVersion>1.0.1-5+Branch.main.Sha.0617fc6bda7151c70559d87177e2dcfb1b60995f</InformationalVersion>
+    <Version>1.0.1-5</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.v3.common" />
+    <PackageReference Include="xunit.v3.extensibility.core" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
+    <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj" />
+    <ProjectReference Include="..\Yavsc.Blogs\Yavsc.Blogs.csproj" />
+    <ProjectReference Include="..\Yavsc.Tests.Shared\Yavsc.Tests.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="GitVersion.MsBuild" />
+  </ItemGroup>
+</Project>

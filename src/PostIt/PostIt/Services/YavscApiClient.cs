@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.OidcClient;
+using PostIt.ViewModels;
 
 namespace PostIt.Services;
 
@@ -29,10 +30,10 @@ public class YavscApiClient : IAsyncDisposable
     // network latency + JWT validation on the server side.
     private static readonly TimeSpan RefreshSkew = TimeSpan.FromSeconds(60);
 
-    private readonly Settings _settings;
+    public  Settings Settings {  get; }
     private readonly OidcClient _oidc;
     private readonly TokenStore _store;
-    private readonly HttpClient _http;
+    public HttpClient Http { get; }
     private readonly BearerTokenHandler _bearer;
     private readonly SemaphoreSlim _refreshGate = new(1, 1);
 
@@ -40,24 +41,19 @@ public class YavscApiClient : IAsyncDisposable
 
     public YavscApiClient(Settings settings, TokenStore store, OidcClient? oidc = null)
     {
-        _settings = settings;
+        Settings = settings;
         _store = store;
         _oidc = oidc ?? new OidcClient(settings.GetOidcClientOptions());
 
         _bearer = new BearerTokenHandler(this);
-        _http = new HttpClient(_bearer, disposeHandler: true)
-        {
-            // ApiUrl is e.g. "https://blogs.pschneider.fr/api/v1/" — keep the
-            // trailing slash so relative paths ("posts") resolve correctly.
-            BaseAddress = new Uri(settings.ApiUrl)
-        };
+        Http = new HttpClient(_bearer, disposeHandler: true);
 
         _tokens = store.Load();
     }
 
     /// <summary>
     /// True if a non-expired access token (or a refreshable bundle) is
-    /// already in memory. UI uses this to skip the LoginPage on warm
+    /// already in memory. UI uses this to skip the login flow on warm
     /// starts.
     /// </summary>
     public bool HasValidSession
@@ -74,9 +70,9 @@ public class YavscApiClient : IAsyncDisposable
 
     /// <summary>
     /// The current access token, or null if no session is active.
-    /// Surfaced so the LoginPageViewModel can mirror it onto its own
-    /// observable property (and so the OIDC id_token / claims can be
-    /// shown in the UI).
+    /// Surfaced so consumers (e.g. <c>HomePage</c>) can mirror it onto
+    /// their own observable properties and so the OIDC id_token / claims
+    /// can be shown in the UI.
     /// </summary>
     public string? CurrentAccessToken => _tokens?.AccessToken;
 
@@ -87,9 +83,7 @@ public class YavscApiClient : IAsyncDisposable
     /// <param name="progress">Optional sink for the discrete phases of
     /// the flow; the UI uses this to render a debug-friendly status
     /// (Discovering → OpeningBrowser → AwaitingCallback → ExchangingCode
-    /// → Success / Error). The same caller can also rely on
-    /// <see cref="LoginPageViewModel.StatusMessage"/> for the human
-    /// text (URLs, error detail).</param>
+    /// → Success / Error).</param>
     public async Task LoginInteractiveAsync(
         IProgress<OIDCLoginPhase>? progress = null,
         CancellationToken ct = default)
@@ -103,7 +97,7 @@ public class YavscApiClient : IAsyncDisposable
             throw new InvalidOperationException("No browser is available on this platform.");
         }
 
-        var client = new OidcClient(_settings.GetOidcClientOptions(browser));
+        var client = new OidcClient(Settings.GetOidcClientOptions(browser));
 
         // OidcClient.LoginAsync builds the authorize URL, calls
         // IBrowser.InvokeAsync (which on desktop hands the user off
@@ -197,7 +191,7 @@ public class YavscApiClient : IAsyncDisposable
         CancellationToken ct = default)
     {
         using var response = await SendAsync(method, path, body, ct).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
+        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
 
         var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
         var dto = await JsonSerializer.DeserializeAsync<T>(stream,
@@ -223,7 +217,7 @@ public class YavscApiClient : IAsyncDisposable
         CancellationToken ct = default)
     {
         using var response = await SendAsync(method, path, body, ct).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
+        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -247,7 +241,7 @@ public class YavscApiClient : IAsyncDisposable
         using var req = new HttpRequestMessage(method, path);
         if (body is not null)
             req.Content = JsonContent.Create(body);
-        var response = await _http.SendAsync(req, ct).ConfigureAwait(false);
+        var response = await Http.SendAsync(req, ct).ConfigureAwait(false);
 
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
@@ -259,10 +253,52 @@ public class YavscApiClient : IAsyncDisposable
             using var retry = new HttpRequestMessage(method, path);
             if (body is not null)
                 retry.Content = JsonContent.Create(body);
-            response = await _http.SendAsync(retry, ct).ConfigureAwait(false);
+            response = await Http.SendAsync(retry, ct).ConfigureAwait(false);
         }
 
         return response;
+    }
+
+    /// <summary>
+    /// Replaces the bare <c>response.EnsureSuccessStatusCode()</c>
+    /// call site with one that surfaces the response body in the
+    /// thrown exception. The default behaviour truncates the
+    /// diagnostic to "Response status code does not indicate
+    /// success: 400 (Bad Request)." — useless when the server is
+    /// an ASP.NET Core action returning a <c>ProblemDetails</c>
+    /// that names the field that failed ModelState validation.
+    /// The VM's <c>catch (Exception ex)</c> in
+    /// <c>MainPageViewModel.ExecuteAsync</c> shows
+    /// <c>ex.Message</c> on the status bar, so embedding the body
+    /// here is enough to make the next "click Save" self-explanatory
+    /// (e.g. <i>"Error: 400 — The Title field is required."</i>).
+    /// </summary>
+    private static async Task EnsureSuccessOrThrowAsync(HttpResponseMessage response, CancellationToken ct)
+    {
+        if (response.IsSuccessStatusCode) return;
+
+        // Read the body before throwing; once the response is
+        // disposed, the stream is gone. We bound the read to a few
+        // KB so a hostile server can't make us buffer megabytes
+        // just to format an error message.
+        string body = string.Empty;
+        try
+        {
+            var raw = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(raw))
+            {
+                body = raw.Length > 1024 ? raw[..1024] + "…" : raw;
+            }
+        }
+        catch
+        {
+            // Body unreadable: fall back to the default message.
+        }
+
+        var msg = body.Length > 0
+            ? $"{(int)response.StatusCode} {response.ReasonPhrase}: {body}"
+            : $"{(int)response.StatusCode} {response.ReasonPhrase}";
+        throw new HttpRequestException(msg, inner: null, statusCode: response.StatusCode);
     }
 
     /// <summary>
@@ -326,7 +362,7 @@ public class YavscApiClient : IAsyncDisposable
 
     public ValueTask DisposeAsync()
     {
-        _http.Dispose();
+        Http.Dispose();
         _refreshGate.Dispose();
         return ValueTask.CompletedTask;
     }

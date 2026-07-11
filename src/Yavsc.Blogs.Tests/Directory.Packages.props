@@ -1,0 +1,7 @@
+<Project>
+  <!--
+    Yavsc.Blogs.Tests has no project-specific package versions. All
+    package versions are declared at the repository root.
+  -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Packages.props', '$(MSBuildThisFileDirectory)../'))" />
+</Project>

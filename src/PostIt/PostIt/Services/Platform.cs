@@ -7,8 +7,8 @@ namespace PostIt.Services;
 /// Authorization Code + PKCE flow. The shared <c>PostIt</c> library does
 /// not reference any UI framework; platform projects (PostIt.Android,
 /// PostIt.Desktop, PostIt.Browser) populate this class once at startup so
-/// the shared <c>LoginPageViewModel</c> can drive a native browser without
-/// taking a hard dependency on any specific UI toolkit.
+/// the shared OIDC login path can drive a native browser without taking
+/// a hard dependency on any specific UI toolkit.
 /// </summary>
 public static class Platform
 {

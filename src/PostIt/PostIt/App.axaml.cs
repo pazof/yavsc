@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -60,8 +61,18 @@ public partial class App : Application
 
         // Vues
         services.AddTransient<MainPage>();
-        services.AddTransient<LoginPage>();
-        services.AddTransient<SettingsPage>();
+        // SettingsPage is a singleton: there must be one and only one
+        // instance of the settings UI for the lifetime of the app.
+        // This guarantees that (a) the bindings always reflect the
+        // current in-memory Settings state, (b) the page already has
+        // its DataContext wired up at composition-root time (see
+        // below), and (c) the OpenSettingsRequested handler is a
+        // pure push with a no-op-if-already-on-top guard, never a
+        // re-resolution from DI. Transient would let the user
+        // accumulate stale SettingsPage instances on the navigation
+        // stack, each bound to a fresh SettingsViewModel and missing
+        // any in-flight edits.
+        services.AddSingleton<SettingsPage>();
         services.AddTransient<HomePage>();
         services.AddTransient<SignaturePage>();
 
@@ -70,8 +81,6 @@ public partial class App : Application
         services.AddSingleton(api);
         services.AddSingleton(client);
         services.AddTransient<MainPageViewModel>();
-        services.AddTransient<SettingsPageViewModel>();
-        services.AddTransient<LoginPageViewModel>();
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<SignaturePageViewModel>();
 
@@ -86,16 +95,42 @@ public partial class App : Application
 
         // Bind the canonical Settings to the static accessor so any
         // code path that can't easily take a constructor parameter
-        // (designer surfaces, Avalonia data templates, the
-        // LoginPage.axaml.cs fallback) still gets the same instance
-        // the rest of the app is using. Idempotent: re-binding from
-        // a second App boot (tests) is a no-op.
+        // (designer surfaces, Avalonia data templates) still gets
+        // the same instance the rest of the app is using. Idempotent:
+        // re-binding from a second App boot (tests) is a no-op.
         Settings.BindToServiceProvider(provider);
 
         Services = provider;
 
         DataTemplates.Clear();
         DataTemplates.Add(new ViewLocator(provider));
+
+        // Wire the Settings singleton onto the SettingsPage singleton
+        // once, at composition time. The page is registered as a
+        // singleton (see above) precisely so this binding is stable
+        // for the lifetime of the app: every push to / pop from the
+        // navigation stack finds the same ContentPage with the same
+        // DataContext, and the TwoWay bindings inside the page keep
+        // mutating the same in-memory Settings instance that the rest
+        // of the app reads (OidcClientOptions construction, etc.).
+        provider.GetRequiredService<SettingsPage>().DataContext = settings;
+
+        // Settings.DarkMode was previously a dead field: it round-
+        // tripped through the settings file and the SettingsPage
+        // CheckBox, but no consumer ever read it. Wire it here to
+        // Application.RequestedThemeVariant so the toggle takes
+        // effect immediately, and seed the initial theme from the
+        // value Load() just populated (so a dark-mode user lands on
+        // a dark window on first launch, not on a default-light
+        // window that flips after the user touches the toggle).
+        ApplyDarkMode(settings);
+        settings.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(Settings.DarkMode))
+            {
+                ApplyDarkMode(settings);
+            }
+        };
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -125,6 +160,42 @@ public partial class App : Application
                 _ = nav.PopToRootAsync();
             };
 
+            // When the user signs in interactively (Login button on
+            // the session banner), push MainPage on top of HomePage.
+            sessionStatus.LoginSucceeded += () =>
+            {
+                var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
+                _ = PushMainPageAsync(provider, w);
+            };
+
+            // When the user clicks the "Paramètres" button on the
+            // session banner, push the SettingsPage singleton on top
+            // of the current navigation stack. The DataContext is
+            // already wired at composition time (see the
+            // provider.GetRequiredService<SettingsPage>().DataContext
+            // assignment above), so this handler is a pure
+            // navigation concern.
+            //
+            // Anti-empilement guard: if the SettingsPage is already
+            // at the top of the stack, do nothing. NavigationPage's
+            // PushAsync does not deduplicate; calling it twice with
+            // the same instance would push it a second time and the
+            // user would have to tap Back twice to leave. Reference
+            // comparison is correct here because SettingsPage is a
+            // singleton — there is exactly one instance to compare
+            // against.
+            sessionStatus.OpenSettingsRequested += () =>
+            {
+                var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
+                var settingsPage = provider.GetRequiredService<SettingsPage>();
+                var stack = w.NavRoot.NavigationStack;
+                if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], settingsPage))
+                {
+                    return;
+                }
+                _ = w.NavRoot.PushAsync(settingsPage);
+            };
+
             window.Opened += async (_, _) => await BootAsync(provider, api, window);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
@@ -134,6 +205,12 @@ public partial class App : Application
                 DataContext = provider.GetRequiredService<HomePageViewModel>()
             };
         }
+    }
+
+    private static void ApplyDarkMode(Settings settings)
+    {
+        Application.Current!.RequestedThemeVariant =
+                            settings.DarkMode ? ThemeVariant.Dark : ThemeVariant.Light;
     }
 
     /// <summary>
@@ -154,10 +231,22 @@ public partial class App : Application
         sessionStatus.Refresh();
         if (!refreshed) return;
 
+        await PushMainPageAsync(provider, window).ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Resolve a fresh <c>MainPage</c> + VM from DI and push it on top
+    /// of the current navigation stack. Used both by <see cref="BootAsync"/>
+    /// (silent refresh at boot) and by <c>SessionStatusViewModel.LoginSucceeded</c>
+    /// (interactive login from the banner). Pulled out as a helper so
+    /// the two callers can't drift apart.
+    /// </summary>
+    private static async Task PushMainPageAsync(IServiceProvider provider, MainWindow window)
+    {
         var mainVm = provider.GetRequiredService<MainPageViewModel>();
         var mainPage = provider.GetRequiredService<MainPage>();
         mainPage.DataContext = mainVm;
-        await window.NavRoot.PushAsync(mainPage);
+        await window.NavRoot.PushAsync(mainPage).ConfigureAwait(true);
     }
 
     private bool TryHandOffCustomSchemeUrl()

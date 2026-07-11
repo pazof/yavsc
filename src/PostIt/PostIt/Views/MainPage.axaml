@@ -79,10 +79,9 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Post detail" FontWeight="SemiBold" />
-                <TextBox Grid.Row="1" Text="{Binding SelectedPost.Title, Mode=TwoWay}" PlaceholderText="Title" />
-                <TextBox Grid.Row="2" Text="{Binding SelectedPost.AuthorId, Mode=TwoWay}" PlaceholderText="Author id" />
-                <AvaloniaEdit:TextEditor Grid.Row="3"
-                    views:TextEditorBinding.Text="{Binding SelectedPost.Article, Mode=TwoWay}"
+                <TextBox Grid.Row="1" Text="{Binding DraftTitle, Mode=TwoWay}" PlaceholderText="Title" />
+                <AvaloniaEdit:TextEditor Grid.Row="2"
+                    views:TextEditorBinding.Text="{Binding DraftArticle, Mode=TwoWay}"
                     ShowLineNumbers="True"
                     FontFamily="Cascadia Code, Consolas, Menlo, Monospace"
                     MinHeight="320"
@@ -90,7 +89,7 @@
                     VerticalAlignment="Stretch"
                     VerticalScrollBarVisibility="Auto"
                     HorizontalScrollBarVisibility="Auto" />
-                <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Foreground="Gray" />
+                <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="Gray" />
             </Grid>
         </Border>
     </Grid>

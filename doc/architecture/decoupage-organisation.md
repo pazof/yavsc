@@ -31,7 +31,19 @@
               └────────────────┘
 
 Clients externes :
-  - PostIt     : client desktop Avalonia (cf. postit-oidc.md).
+  - PostIt (Avalonia, code-base unique multi-cible) :
+      · PostIt              — lib partagée (pages, VM, services)
+      · PostIt.Desktop      — front-end Linux/Windows
+      · PostIt.Android      — front-end APK
+      · PostIt.Browser      — front-end WASM
+    Cf. postit.md et postit-oidc.md.
+
+Outils et tests :
+  - cli                   — outillage CLI
+  - Yavsc.Tests.Shared    — helpers de tests partagés
+  - Yavsc.Org.Tests       — tests du front web
+  - Yavsc.Blogs.Tests     — tests du backend blogs
+  - PostIt.Tests          — tests du client PostIt
 ```
 
 ## Par projet
@@ -44,6 +56,14 @@ Clients externes :
 | `Yavsc.Api`        | ASP.NET Web    | API REST JSON principale consommée par les clients externes (PostIt, …). JwtBearer auth.     |
 | `Yavsc.Blogs`      | ASP.NET Web    | **Backend API headless** dédié aux blogs (uniquement `*ApiController` + services + modèles — aucune vue Razor). Destiné à être déployé sur un sous-domaine en production, séparé du front web hébergé par `Yavsc.Org`. |
 | `Yavsc.Org.Tests`  | Test (xUnit)   | Tests d'isolation du front web (`Yavsc.Org`) — fakes, controller tests.                     |
+| `Yavsc.Blogs.Tests`| Test (xUnit)   | Tests d'isolation du backend blogs (`Yavsc.Blogs`).                                          |
+| `Yavsc.Tests.Shared` | Library     | Helpers de tests partagés (fixtures, fakes, builders) entre les projets de tests.           |
+| `PostIt`           | Library        | Code-base partagée du client PostIt (Avalonia) : pages, ViewModels, services, `ViewLocator` custo. Multi-cible — produit PostIt.Desktop / PostIt.Android / PostIt.Browser. |
+| `PostIt.Desktop`   | Avalonia.Desktop | Front-end Desktop Linux/Windows : `Program.Main`, `Platform.CreateBrowser` (CustomSchemeBrowser), custom URI scheme `postit://`. |
+| `PostIt.Android`   | Avalonia.Android | Front-end Android : `MainActivity` SingleTask, Chrome Custom Tabs, scheme `android://postit-signin`. |
+| `PostIt.Browser`   | Avalonia.Browser | Front-end WASM : pas de process distinct, IBrowser N/A.                                     |
+| `PostIt.Tests`     | Test (xUnit)   | Tests du client PostIt : settings, scopes Bearer, OIDC stub (`OidcStubAuthority`).           |
+| `cli`              | exe / tool     | Outillage CLI (build, packaging, génération de clés).                                         |
 
 ## Pourquoi ce découpage
 
