@@ -204,7 +204,7 @@ namespace Yavsc.Server.Hubs
                 // TODO get and require some admin status for current user on this channel
                 newRoom.Topic = channelInfo.Topic;
             }
-            newRoom.LatestJoinPart = DateTime.Now;
+            newRoom.LatestJoinPart = DateTime.UtcNow;
 
             _dbContext.ChatRoom.Add(newRoom);
             _dbContext.SaveChanges(user.Id);

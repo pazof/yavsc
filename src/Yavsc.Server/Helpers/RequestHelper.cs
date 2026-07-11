@@ -17,7 +17,7 @@ namespace Yavsc.Server.Helpers
         string WRPostMultipart(string url, Dictionary<string, object> parameters, string authorizationHeader = null)
         {
 
-            string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+            string boundary = "---------------------------" + DateTime.UtcNow.Ticks.ToString("x");
             byte[] boundaryBytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -99,7 +99,7 @@ namespace Yavsc.Server.Helpers
             {
                 var client = new HttpClient();
                 var formData = new MultipartFormDataContent();
-                
+
                     if (access_token != null)
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
                     foreach (var formFile in formFiles)
@@ -108,7 +108,7 @@ namespace Yavsc.Server.Helpers
                         if (formFile.ContentType!=null)
                             fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue(formFile.ContentType);
                             else fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                        
+
                         // fileStreamContent.Headers.ContentDisposition = formFile.ContentDisposition!=null? new ContentDispositionHeaderValue(
                            //     formFile.ContentDisposition) : new ContentDispositionHeaderValue("form-data; name=\"file\"; filename=\"" + formFile.Name + "\"");
                         fileStreamContent.Headers.Add("Content-Disposition", formFile.ContentDisposition);

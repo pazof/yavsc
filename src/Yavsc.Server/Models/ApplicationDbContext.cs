@@ -299,7 +299,7 @@ namespace Yavsc.Models
         public DbSet<MusicLoverSettings> MusicLoverSettings { get; set; }
         public DbSet<CoWorking> CoWorking { get; set; }
 
-        private void AddTimestamps(string userId) 
+        private void AddTimestamps(string userId)
         {            var entities =
             ChangeTracker.Entries()
             .Where(x => x.Entity.GetType().GetInterface(nameof(ITrackedEntity)) != null
@@ -310,11 +310,11 @@ namespace Yavsc.Models
             {
                 if (entity.State == EntityState.Added)
                 {
-                    ((ITrackedEntity)entity.Entity).DateCreated = DateTime.Now;
+                    ((ITrackedEntity)entity.Entity).DateCreated = DateTime.UtcNow;
                     ((ITrackedEntity)entity.Entity).UserCreated = userId;
                 }
 
-                ((ITrackedEntity)entity.Entity).DateModified = DateTime.Now;
+                ((ITrackedEntity)entity.Entity).DateModified = DateTime.UtcNow;
                 ((ITrackedEntity)entity.Entity).UserModified = userId;
             }
         }

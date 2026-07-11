@@ -109,7 +109,7 @@ namespace Yavsc.Controllers
             ViewBag.GoogleSettings = _googleSettings;
             var userid = User.GetUserId();
             var user = _userManager.FindByIdAsync(userid).Result;
-            return View("Create", new RdvQuery(activityCode, new Location(), DateTime.Now.AddHours(4))
+            return View("Create", new RdvQuery(activityCode, new Location(), DateTime.UtcNow.AddHours(4))
             {
                 PerformerProfile = pro,
                 PerformerId = pro.PerformerId,
