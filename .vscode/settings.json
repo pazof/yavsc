@@ -14,6 +14,7 @@
         "envsubst",
         "Newtonsoft",
         "Npgsql",
+        "PKCE",
         "postit",
         "pschneider",
         "SLNDIR",
