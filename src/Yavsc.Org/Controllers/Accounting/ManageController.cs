@@ -1,6 +1,5 @@
 
 using System.Security.Claims;
-using System.IO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -490,12 +489,7 @@ namespace Yavsc.Controllers
                 : message == ManageMessageId.Error ? "An error has occurred."
                 : "";
             var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return View("Error");
-            }
             var userLogins = await _userManager.GetLoginsAsync(user);
-
             ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
 
             return View(new ManageLoginsViewModel
@@ -522,15 +516,7 @@ namespace Yavsc.Controllers
         public async Task<ActionResult> LinkLoginCallback()
         {
             var user = await GetCurrentUserAsync();
-            if (user == null)
-            {
-                return View("Error");
-            }
             var info = await _signInManager.GetExternalLoginInfoAsync(User.GetUserId());
-            if (info == null)
-            {
-                return RedirectToAction(nameof(ManageLogins), new { Message = ManageMessageId.Error });
-            }
             var result = await _userManager.AddLoginAsync(user, info);
             var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
