@@ -131,13 +131,10 @@ namespace Yavsc.Models
 
             //    builder.Entity<IdentityUserLogin<String>>().HasKey(i=> new { i.LoginProvider, i.UserId, i.ProviderKey });
             builder.Entity<ClientSecret>().HasOne<Client>().WithMany(e => e.ClientSecrets).HasForeignKey(e => e.ClientId);
-            builder.Entity<ClientScope>().HasOne<Client>().WithMany(e => e.AllowedScopes).HasForeignKey(e => e.ClientId);
             builder.Entity<ClientIdPRestriction>().HasOne<Client>().WithMany(e => e.IdentityProviderRestrictions).HasForeignKey(e => e.ClientId);
             builder.Entity<ClientProperty>().HasOne<Client>().WithMany(e => e.Properties).HasForeignKey(e => e.ClientId);
             builder.Entity<ClientPostLogoutRedirectUri>().HasOne<Client>().WithMany(e => e.PostLogoutRedirectUris).HasForeignKey(e => e.ClientId);
-            builder.Entity<ClientRedirectUri>().HasOne<Client>().WithMany(e => e.RedirectUris).HasForeignKey(e => e.ClientId);
             builder.Entity<ClientCorsOrigin>().HasOne<Client>().WithMany(e => e.AllowedCorsOrigins).HasForeignKey(e => e.ClientId);
-            builder.Entity<ClientGrantType>().HasOne<Client>().WithMany(e => e.AllowedGrantTypes).HasForeignKey(e => e.ClientId);
             builder.Entity<ApiResourceSecret>().HasOne<ApiResource>().WithMany(e => e.Secrets).HasForeignKey(e => e.ApiResourceId);
             builder.Entity<ApiResourceScope>().HasOne<ApiResource>().WithMany(e => e.Scopes).HasForeignKey(e => e.ApiResourceId);
             builder.Entity<ApiResourceClaim>().HasOne<ApiResource>().WithMany(e => e.UserClaims).HasForeignKey(e => e.ApiResourceId);
