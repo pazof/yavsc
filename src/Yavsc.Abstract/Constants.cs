@@ -57,6 +57,8 @@ namespace Yavsc
 
         public const string StreamingPath = "/api/stream/put";
 
+        public static string NameClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/name";
+
         public static string RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
     }
 }

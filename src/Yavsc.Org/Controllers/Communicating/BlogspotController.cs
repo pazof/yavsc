@@ -10,7 +10,7 @@ using Yavsc.Server.Helpers;
 
 // For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Yavsc.Controllers
+namespace Yavsc.Org.Controllers
 {
     public class BlogSpotController : Controller
     {
@@ -28,7 +28,7 @@ namespace Yavsc.Controllers
             BlogSpotService blogSpotService)
         {
             _context = context;
-            _logger = loggerFactory.CreateLogger<AccountController>();
+            _logger = loggerFactory.CreateLogger<BlogSpotController>();
             _authorizationService = authorizationService;
             _localisationOptions = localisationOptions.Value;
             this.blogSpotService = blogSpotService;
@@ -76,7 +76,7 @@ namespace Yavsc.Controllers
                 return View(blog);
 
             }
-            catch (AuthorizationFailureException ex)
+            catch (AuthorizationFailureException)
             {
                 return Challenge();
             }

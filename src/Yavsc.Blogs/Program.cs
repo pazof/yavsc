@@ -37,22 +37,16 @@ internal class Program
             .AddYavscCors(builder.Configuration)
             .AddControllers();
         String authority = builder.Configuration.GetValue<string>("Site:Authority");
-        String audience = builder.Configuration.GetValue<string>("Site:Audience");
+
         if (string.IsNullOrEmpty(authority))
         {
             throw new Exception("Site:Authority is not configured in appsettings.json");
         }
 
-
         // AuthenticationBuilder
         services.AddAuthentication("Bearer")
-                 .AddYavscJwtBearer(builder.Configuration,
-                 options =>
-                 {
-                     options.Authority = authority;
-                     options.Audience = builder.Configuration.GetValue<string>
-                     ("Site:Audience");
-                 });
+            .AddYavscJwtBearer(builder.Configuration);
+
 
         // DbContextBuilder
         services.AddDbContext<ApplicationDbContext>(options =>
@@ -100,7 +94,7 @@ internal class Program
                 .UseCors("default")
                 ;
             app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Program")
-            .LogInformation($"Yavsc.Blogs started, Authority is '{authority}', Audience is '{audience}'");
+            .LogInformation($"Yavsc.Blogs started, Authority is '{authority}''");
             app.MapControllers();
             app.MapIdentityApi<ApplicationUser>().RequireAuthorization("BlogScope")
             .WithHttpLogging(Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All)
