@@ -179,7 +179,7 @@ public partial class Settings : ViewModelBase
                 RedirectUri = Authentication.RedirectUri,
                 Scope = string.Join(' ', MergeScopes(this.Authentication.Scopes)),
                 TokenClientCredentialStyle = IdentityModel.Client.ClientCredentialStyle.PostBody,
-                PostLogoutRedirectUri = "https//yavsc.pschneider.fr",
+                PostLogoutRedirectUri = Authentication.Authority,
                 // PKCE is enabled by default when no client_secret is provided.
             };
 
