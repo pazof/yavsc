@@ -48,6 +48,8 @@ namespace Yavsc.Blogs.Tests;
 /// </summary>
 public sealed class BlogsWebServerFixture : WebHostFixture
 {
+    protected override int HttpsPort => 5103;
+
     private InMemoryDatabaseRoot? _inMemoryRoot;
 
     protected override WebApplication BuildApp(WebApplicationBuilder builder)

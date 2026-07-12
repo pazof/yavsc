@@ -18,7 +18,7 @@ namespace Yavsc.Org.Tests
         [Fact]
         public async Task ObtainServiceToken()
         {
-            var serverUrl = _serverFixture.Addresses.FirstOrDefault(u => u.StartsWith("https:"));
+            var serverUrl = _serverFixture.SiteSettings.Authority;
             if (string.IsNullOrEmpty(serverUrl))
                 throw new InvalidOperationException("No HTTPS server address found");
 
@@ -45,7 +45,7 @@ namespace Yavsc.Org.Tests
         [Fact]
         public async Task ObtainResourceOwnerPasswordToken()
         {
-            var serverUrl = _serverFixture.Addresses.FirstOrDefault(u => u.StartsWith("https:"));
+            var serverUrl = _serverFixture.SiteSettings.Authority;
             if (string.IsNullOrEmpty(serverUrl))
                 throw new InvalidOperationException("No HTTPS server address found");
 

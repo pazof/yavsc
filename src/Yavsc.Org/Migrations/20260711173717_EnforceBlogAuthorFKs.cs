@@ -10,29 +10,6 @@ namespace Yavsc.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // Assainir les orphelins AVANT d'enforcer la FK Restrict.
-            // En prod (Postgres), la migration aurait sinon planté
-            // sur des billets/commentaires dont l'AuthorId pointe
-            // vers un user déjà supprimé. La logique métier refuse
-            // désormais l'orphelin (cf. BlogSpotService.Details) — on
-            // aligne l'état de la base avec ce contrat.
-            migrationBuilder.Sql(@"
-                DO $$
-                DECLARE n_comments int;
-                        n_posts    int;
-                BEGIN
-                    DELETE FROM ""Comment""
-                    WHERE ""AuthorId"" NOT IN (SELECT ""Id"" FROM ""AspNetUsers"");
-                    GET DIAGNOSTICS n_comments = ROW_COUNT;
-
-                    DELETE FROM ""BlogSpot""
-                    WHERE ""AuthorId"" NOT IN (SELECT ""Id"" FROM ""AspNetUsers"");
-                    GET DIAGNOSTICS n_posts = ROW_COUNT;
-
-                    RAISE NOTICE 'EnforceBlogAuthorFKs: % orphaned comments deleted, % orphaned blog posts deleted',
-                        n_comments, n_posts;
-                END $$;
-            ");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_BlogSpot_AspNetUsers_AuthorId",
