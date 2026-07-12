@@ -1,14 +1,41 @@
-﻿@model ErrorViewModel
+@using Microsoft.AspNetCore.Hosting
+@using Yavsc.Models
+@inject IWebHostEnvironment Env
+@model object
 @{
     ViewBag.Title = "Error";
 }
 
 <h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
 
-@if (Model!=null) if (Model.ShowRequestId)
+@if (Env.IsDevelopment())
 {
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
+    <h2 class="text-danger">An unhandled exception occurred while processing your request.</h2>
+    if (Model is Exception exception)
+    {
+        <pre class="text-danger">@exception.ToString()</pre>
+    }
+    else if (Model is ErrorViewModel errorViewModel && !string.IsNullOrWhiteSpace(errorViewModel.Description))
+    {
+        <pre class="text-danger">@errorViewModel.Description</pre>
+    }
+}
+else
+{
+    <h2 class="text-danger">An error occurred while processing your request.</h2>
+
+    if (Model is ErrorViewModel errorViewModel)
+    {
+        if (errorViewModel.ShowRequestId)
+        {
+            <p>
+                <strong>Request ID:</strong> <code>@errorViewModel.RequestId</code>
+            </p>
+        }
+
+        if (!string.IsNullOrWhiteSpace(errorViewModel.Description))
+        {
+            <p class="text-danger">@errorViewModel.Description</p>
+        }
+    }
 }
