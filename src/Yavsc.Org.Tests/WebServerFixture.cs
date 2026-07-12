@@ -73,19 +73,6 @@ public sealed class WebServerFixture : WebHostFixture
         // that plus the in-memory overrides below.
         builder.AddConfiguration(null).AddInMemoryCollection(new Dictionary<string, string?>
             {
-                // Test host: fixed authority + external URL. Matches
-                // the Kestrel bind in WebHostFixture.InitializeAsync
-                // (https://localhost:44300) so IdentityServer8's
-                // discovery document and the test client agree on the
-                // same base URL. IdentityServer8 reads Site:Authority
-                // to populate the `issuer` claim, the discovery
-                // document's `issuer` and endpoint URLs — leaving it
-                // pointed at the production host (e.g.
-                // mercure.pschneider.fr) made /.well-known/openid-configuration
-                // return URLs unreachable from the test, hence
-                // "Internal Server Error" in the discovery call.
-                ["Site:Authority"] = "https://localhost:44300",
-                ["Site:ExternalUrl"] = "https://localhost:44300",
                 [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory",
                 // SMTP test config: UserName non-null so MailSender
                 // exercises the Authenticate branch — the
