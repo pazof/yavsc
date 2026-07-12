@@ -972,7 +972,8 @@ public static class HostingExtensions
         else
         {
             app.UseExceptionHandler("/Home/Error");
-            logger.LogInformation("Running in production mode. Ensure the database is migrated.");
+            app.UseHsts();
+            logger.LogInformation("⨝ Running in production mode. Ensure the database is migrated.");
             await app.MigrateDatabaseAsync();
         }
 
