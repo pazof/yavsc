@@ -23,7 +23,6 @@ namespace Yavsc.Org.Tests
                 throw new InvalidOperationException("No HTTPS server address found");
 
             HttpClient client = NewHttpClient();
-
             var disco = await client.GetDiscoveryDocumentAsync(serverUrl);
             if (disco.IsError) throw new Exception(disco.Error);
 
