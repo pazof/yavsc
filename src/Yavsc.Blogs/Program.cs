@@ -43,22 +43,9 @@ internal class Program
             throw new Exception("Site:Authority is not configured in appsettings.json");
         }
 
-
-        foreach (var audience in builder.Configuration.GetValue<string[]>("Site:Audience"))
-        {
-            if (string.IsNullOrEmpty(audience))
-            {
-                throw new Exception("Site:Audience is not configured in appsettings.json");
-            }
-            // AuthenticationBuilder
-            services.AddAuthentication("Bearer")
-                .AddYavscJwtBearer(builder.Configuration,
-                options =>
-                {
-                    options.Authority = authority;
-                    options.Audience = audience;
-                });
-        }
+        // AuthenticationBuilder
+        services.AddAuthentication("Bearer")
+            .AddYavscJwtBearer(builder.Configuration);
 
 
         // DbContextBuilder
