@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using IdentityModel.Client;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Yavsc.Org.Tests
 {
@@ -24,7 +25,43 @@ namespace Yavsc.Org.Tests
 
             HttpClient client = NewHttpClient();
             var disco = await client.GetDiscoveryDocumentAsync(serverUrl);
-            if (disco.IsError) throw new Exception(disco.Error);
+            if (disco.IsError)
+            {
+                // Diagnostic 2026-07-12 : capture the raw HTTP response
+                // AND dump the OIDC-related DB state so we can pinpoint
+                // which state is corrupt when the discovery is broken.
+                var rawResp = await client.GetAsync(serverUrl + "/.well-known/openid-configuration");
+                var body = await rawResp.Content.ReadAsStringAsync();
+
+                string dbState = "no logger";
+                try
+                {
+                    using var scope = _serverFixture.Services.CreateScope();
+                    var cfg = scope.ServiceProvider
+                        .GetRequiredService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
+                    var clients = cfg.Clients.Select(c => new {
+                        c.Id, c.ClientId, c.Enabled, c.RequireClientSecret
+                    }).ToList();
+                    var apiScopes = cfg.ApiScopes.Select(s => new { s.Name, s.Enabled }).ToList();
+                    var apiResources = cfg.ApiResources.Select(r => new { r.Name, r.Enabled }).ToList();
+                    var identityResources = cfg.IdentityResources.Select(r => new { r.Name, r.Enabled }).ToList();
+                    dbState = $"clients={System.Text.Json.JsonSerializer.Serialize(clients)}\n" +
+                              $"apiScopes={System.Text.Json.JsonSerializer.Serialize(apiScopes)}\n" +
+                              $"apiResources={System.Text.Json.JsonSerializer.Serialize(apiResources)}\n" +
+                              $"identityResources={System.Text.Json.JsonSerializer.Serialize(identityResources)}";
+                }
+                catch (Exception dumpEx)
+                {
+                    dbState = $"dump failed: {dumpEx.Message}";
+                }
+
+                throw new Exception(
+                    $"disco.Error={disco.Error}\n" +
+                    $"HTTP status={(int)rawResp.StatusCode}\n" +
+                    $"Body[0..2000]:\n{body.Substring(0, Math.Min(2000, body.Length))}\n" +
+                    $"---\n" +
+                    $"OIDC DB state at failure:\n{dbState}");
+            }
 
             var response = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
             {
