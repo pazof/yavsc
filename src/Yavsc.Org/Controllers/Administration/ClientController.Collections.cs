@@ -287,6 +287,7 @@ public partial class ClientController
 
     private async Task<Client?> LoadClientAsync(int id)
         => await dbContext.Clients
+            .AsSplitQuery()
             .Include(c => c.RedirectUris)
             .Include(c => c.PostLogoutRedirectUris)
             .Include(c => c.AllowedScopes)

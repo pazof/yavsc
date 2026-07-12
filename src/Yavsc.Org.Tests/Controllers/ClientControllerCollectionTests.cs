@@ -110,6 +110,77 @@ public class ClientControllerCollectionTests : IClassFixture<TestWebApplicationF
         Assert.Contains("https://app.example.com/cb", body);
     }
 
+    // Repro: GET /Client/EditRedirectUris/{id} après qu'une seconde
+    // RedirectUri a été ajoutée via POST. LoadClientAsync(id) réhydrate
+    // le Client avec 9 Includes (RedirectUris, AllowedScopes, ClientSecrets,
+    // etc.) via l'InMemory provider. Sur l'Id=2 seedé, la matérialisation
+    // des nav properties sur les entités IdentityServer8 lève
+    // IndexOutOfRangeException — l'action renvoie un 500 et la page
+    // d'erreur masque le diagnostic.
+    //
+    // Ce test reproduit le chemin qui plante : GET initial (lit l'AF
+    // token) → POST AddRedirectUri → GET final qui exerce LoadClientAsync
+    // avec une collection RedirectUris non triviale (2 entrées).
+    // Il doit ÉCHOUER tant que le bug n'est pas traité.
+    [Fact]
+    public async Task EditRedirectUris_GET_after_add_lists_both_uris()
+    {
+        var http = CreateAdminClient();
+        var id = TargetClientDbId();
+        const string newUri = "https://app.example.com/cb-repro";
+
+        // Premier GET pour récupérer l'antiforgery token du form Add.
+        var pageResp = await http.GetAsync(
+            $"/Client/EditRedirectUris/{id}", TestContext.Current.CancellationToken);
+        pageResp.EnsureSuccessStatusCode();
+        var token = ExtractAntiforgeryToken(
+            await pageResp.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        Assert.False(string.IsNullOrEmpty(token));
+
+        // Ajout d'une seconde RedirectUri — c'est l'état non-trivial
+        // qui déclenche la matérialisation problématique côté
+        // InMemory provider.
+        var form = new MultipartFormDataContent
+        {
+            { new StringContent(newUri), "redirectUri" },
+            { new StringContent(token!), "__RequestVerificationToken" },
+        };
+        var addResp = await http.PostAsync(
+            $"/Client/AddRedirectUri/{id}", form, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, addResp.StatusCode);
+
+        try
+        {
+            // GET final : exerce LoadClientAsync(id) sur le client
+            // avec 2 RedirectUris, 1 AllowedScope, 1 GrantType, etc.
+            // Si la matérialisation échoue (IndexOutOfRange), ce GET
+            // renvoie 500 et EnsureSuccessStatusCode fait échouer le test.
+            var finalResp = await http.GetAsync(
+                $"/Client/EditRedirectUris/{id}", TestContext.Current.CancellationToken);
+            finalResp.EnsureSuccessStatusCode();
+            var finalBody = await finalResp.Content.ReadAsStringAsync(
+                TestContext.Current.CancellationToken);
+
+            // La page doit lister les DEUX URIs.
+            Assert.Contains("https://app.example.com/cb", finalBody);
+            Assert.Contains(newUri, finalBody);
+        }
+        finally
+        {
+            // Cleanup idempotent : on retire l'URI ajoutée pour ne
+            // pas polluer les autres tests de la collection.
+            using var scope = _factory.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var row = db.ClientRedirectUris
+                .FirstOrDefault(r => r.RedirectUri == newUri);
+            if (row is not null)
+            {
+                db.ClientRedirectUris.Remove(row);
+                db.SaveChanges();
+            }
+        }
+    }
+
     [Fact]
     public async Task AddRedirectUri_POST_appends_to_database()
     {
@@ -204,6 +275,164 @@ public class ClientControllerCollectionTests : IClassFixture<TestWebApplicationF
         var resp = await http.PostAsync($"/Client/RemoveRedirectUri", form,
         TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
+    }
+
+    // ---------- Bisection de l'Include qui plante ----------
+    //
+    // LoadClientAsync charge le Client avec 9 Includes :
+    //   RedirectUris, PostLogoutRedirectUris, AllowedScopes,
+    //   AllowedGrantTypes, AllowedCorsOrigins,
+    //   IdentityProviderRestrictions, Claims, Properties, ClientSecrets.
+    //
+    // Le test EditRedirectUris_GET_after_add_lists_both_uris échoue
+    // avec IndexOutOfRangeException au shaper de l'InMemory provider,
+    // sans préciser lequel des Includes pose problème. La stack
+    // indique IncludeCollection (donc un Include de collection, pas
+    // de référence).
+    //
+    // Ces tests exécutent la même query EF qu'un Include à la fois,
+    // sur le client cible déjà seedé par EnsureTargetClient, pour
+    // isoler le coupable. Tant que l'InMemory provider est
+    // incapable de matérialiser la nav, le test correspondant est
+    // rouge. Quand on a l'Include, on peut soit le charger autrement
+    // (AsSplitQuery, projection, etc.), soit basculer la fixture
+    // vers SQLite in-memory (cf. la discussion laissée ouverte
+    // 2026-07-11 sur fix/issue-3-splitquery).
+    private async Task<int> BisectClientDbId()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        return db.Clients.Single(c => c.ClientId == TargetClientId).Id;
+    }
+
+    [Fact]
+    public async Task Bisect_RedirectUris_alone()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .Include(c => c.RedirectUris)
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
+        Assert.NotNull(client!.RedirectUris);
+    }
+
+    [Fact]
+    public async Task Bisect_PostLogoutRedirectUris_alone()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .Include(c => c.PostLogoutRedirectUris)
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
+        Assert.NotNull(client!.PostLogoutRedirectUris);
+    }
+
+    [Fact]
+    public async Task Bisect_AllowedScopes_alone()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .Include(c => c.AllowedScopes)
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
+        Assert.NotNull(client!.AllowedScopes);
+    }
+
+    [Fact]
+    public async Task Bisect_AllowedGrantTypes_alone()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .Include(c => c.AllowedGrantTypes)
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
+        Assert.NotNull(client!.AllowedGrantTypes);
+    }
+
+    [Fact]
+    public async Task Bisect_AllowedCorsOrigins_alone()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .Include(c => c.AllowedCorsOrigins)
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
+        Assert.NotNull(client!.AllowedCorsOrigins);
+    }
+
+    [Fact]
+    public async Task Bisect_IdentityProviderRestrictions_alone()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .Include(c => c.IdentityProviderRestrictions)
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
+        Assert.NotNull(client!.IdentityProviderRestrictions);
+    }
+
+    [Fact]
+    public async Task Bisect_Claims_alone()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .Include(c => c.Claims)
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
+        Assert.NotNull(client!.Claims);
+    }
+
+    [Fact]
+    public async Task Bisect_Properties_alone()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .Include(c => c.Properties)
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
+        Assert.NotNull(client!.Properties);
+    }
+
+    [Fact]
+    public async Task Bisect_ClientSecrets_alone()
+    {
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .Include(c => c.ClientSecrets)
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
+        Assert.NotNull(client!.ClientSecrets);
+    }
+
+    [Fact]
+    public async Task Bisect_baseline_no_include()
+    {
+        // Sanity check : la query de base (sans Include) doit passer.
+        // Si celle-ci échoue, le problème n'est pas un Include.
+        await using var scope = _factory.Services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var id = await BisectClientDbId();
+        var client = await db.Clients
+            .SingleOrDefaultAsync(c => c.Id == id, TestContext.Current.CancellationToken);
+        Assert.NotNull(client);
     }
 
     private static string? ExtractAntiforgeryToken(string html)
