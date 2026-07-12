@@ -16,8 +16,8 @@ namespace Yavsc.Tests.Shared;
 ///
 /// <list type="bullet">
 ///   <item><description>Kestrel with a self-signed HTTPS certificate
-///   on a dynamically-allocated port (no port collisions between
-///   parallel xUnit test classes).</description></item>
+///   on a fixture-defined fixed port for deterministic integration
+///   test endpoints.</description></item>
 ///   <item><description>A per-process single-instance host initialised
 ///   on first construction and torn down when the last fixture is
 ///   disposed — same lazy + lock + count pattern as the original Org
@@ -86,11 +86,12 @@ public abstract class WebHostFixture : IDisposable
     protected virtual void CopySpecialisedSharedState() { }
 
     /// <summary>Specialisations register their services and middleware
-    /// here. The base class has already configured Kestrel HTTPS on a
-    /// dynamic port — do not bind additional listeners.</summary>
+    /// here. The base class has already configured Kestrel HTTPS on
+    /// the fixture-defined test port — do not bind additional
+    /// listeners.</summary>
     /// <param name="builder">The <see cref="WebApplicationBuilder"/>
-    /// configured with Kestrel HTTPS on a dynamic port and the shared
-    /// self-signed certificate.</param>
+    /// configured with Kestrel HTTPS on the fixture-defined test port
+    /// and the shared self-signed certificate.</param>
     /// <returns>The fully built <see cref="WebApplication"/>, ready
     /// for <c>ConfigurePipeline</c> + <c>StartAsync</c>.</returns>
     protected abstract WebApplication BuildApp(WebApplicationBuilder builder);
@@ -104,13 +105,18 @@ public abstract class WebHostFixture : IDisposable
         return app;
     }
 
+    /// <summary>HTTPS port used by this fixture's Kestrel host.
+    /// Override in derived fixtures when they must not share the same
+    /// listen port.</summary>
+    protected virtual int HttpsPort => 5101;
+
     private async Task InitializeAsync()
     {
         var builder = WebApplication.CreateBuilder();
 
         builder.WebHost.ConfigureKestrel(options =>
         {
-            options.Listen(IPAddress.Loopback, 0, listenOptions =>
+            options.Listen(IPAddress.Loopback, HttpsPort, listenOptions =>
             {
                 listenOptions.UseHttps(_selfSignedCertificate.Value);
             });
