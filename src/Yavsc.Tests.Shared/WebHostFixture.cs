@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Security.Cryptography;
@@ -16,14 +14,17 @@ namespace Yavsc.Tests.Shared;
 ///
 /// <list type="bullet">
 ///   <item><description>Kestrel with a self-signed HTTPS certificate
-///   on a dynamically-allocated port (no port collisions between
-///   parallel xUnit test classes).</description></item>
+///   bound to the URL declared in configuration under
+///   <c>Site:Authority</c> (port fixed by the specialisation — no
+///   port collisions since all Yavsc.Org tests share a single
+///   collection).</description></item>
 ///   <item><description>A per-process single-instance host initialised
 ///   on first construction and torn down when the last fixture is
 ///   disposed — same lazy + lock + count pattern as the original Org
 ///   fixture, lifted out of the specialisation.</description></item>
-///   <item><description>Address discovery via
-///   <see cref="IServerAddressesFeature"/>.</description></item>
+///   <item><description>Address list sourced from
+///   <c>Site:Authority</c> so the listen URL and the OIDC
+///   discovery / <c>issuer</c> URLs always match.</description></item>
 /// </list>
 ///
 /// The actual service registration, middleware pipeline and route
@@ -108,9 +109,20 @@ public abstract class WebHostFixture : IDisposable
     {
         var builder = WebApplication.CreateBuilder();
 
+        // Bind Kestrel to the URL the specialisation declared in
+        // Site:Authority (the same value IdentityServer8 reads to
+        // build its discovery document). Reading it from
+        // configuration makes the server URL and the issuer URLs
+        // refer to the same base — tests can just take
+        // _sharedAddresses[0] and trust it.
+        var authority = builder.Configuration["Site:Authority"]
+            ?? throw new InvalidOperationException(
+                "WebHostFixture: Site:Authority must be configured before InitializeAsync runs.");
+        var authorityUri = new Uri(authority);
+
         builder.WebHost.ConfigureKestrel(options =>
         {
-            options.Listen(IPAddress.Loopback, 0, listenOptions =>
+            options.Listen(IPAddress.Loopback, authorityUri.Port, listenOptions =>
             {
                 listenOptions.UseHttps(_selfSignedCertificate.Value);
             });
@@ -123,16 +135,13 @@ public abstract class WebHostFixture : IDisposable
         _app = app;
         _sharedServices = app.Services;
 
-        var server = app.Services.GetRequiredService<IServer>();
-        var addressFeatures = server.Features.Get<IServerAddressesFeature>();
+        // Source of truth for the listen URL is the configuration
+        // (Site:Authority) — not the IServerAddressesFeature, which
+        // can be a different representation (e.g. 127.0.0.1 vs
+        // localhost) and causes discovery / issuer mismatches when
+        // tests contact the host.
         _sharedAddresses.Clear();
-        if (addressFeatures?.Addresses is not null)
-        {
-            foreach (var address in addressFeatures.Addresses)
-            {
-                _sharedAddresses.Add(address);
-            }
-        }
+        _sharedAddresses.Add(authority.TrimEnd('/') + "/");
         Addresses = _sharedAddresses.ToArray();
         IsInitialized = true;
     }
