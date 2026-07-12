@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Net;
+using System.Net.Sockets;
 using Yavsc;
 using Yavsc.Extensions;
 using Yavsc.Interfaces;
@@ -39,6 +41,10 @@ namespace Yavsc.Org.Tests;
 [CollectionDefinition("Yavsc Server")]
 public sealed class WebServerFixture : WebHostFixture
 {
+    private static readonly int _httpsPort = GetAvailableLoopbackPort();
+
+    protected override int HttpsPort => _httpsPort;
+
     private static IConfiguration? _sharedConfiguration;
     private static SiteSettings? _sharedSiteSettings;
     private static ILogger? _sharedLogger;
@@ -64,6 +70,8 @@ public sealed class WebServerFixture : WebHostFixture
 
     protected override WebApplication BuildApp(WebApplicationBuilder builder)
     {
+        var authority = $"https://localhost:{_httpsPort}";
+
         // WebApplication.CreateBuilder defaults WebRootPath to
         // {ContentRoot}/wwwroot. The test assembly runs from
         // src/Yavsc.Org.Tests/bin/.../, which has no wwwroot of
@@ -81,6 +89,7 @@ public sealed class WebServerFixture : WebHostFixture
                 ["Smtp:Port"] = "465",
                 ["Smtp:UserName"] = "test-user",
                 ["Smtp:Password"] = "test-pass",
+                ["Site:Authority"] = authority
             });
 
         Configuration = builder.Configuration;
@@ -274,6 +283,21 @@ public sealed class WebServerFixture : WebHostFixture
 
             ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             TestingUser = dbContext.Users.FirstOrDefault(u => u.UserName == testingUserName);
+        }
+    }
+
+    private static int GetAvailableLoopbackPort()
+    {
+        var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+
+        try
+        {
+            return ((IPEndPoint)listener.LocalEndpoint).Port;
+        }
+        finally
+        {
+            listener.Stop();
         }
     }
 }
