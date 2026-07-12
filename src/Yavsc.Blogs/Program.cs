@@ -44,15 +44,22 @@ internal class Program
         }
 
 
-        // AuthenticationBuilder
-        services.AddAuthentication("Bearer")
-                 .AddYavscJwtBearer(builder.Configuration,
-                 options =>
-                 {
-                     options.Authority = authority;
-                     options.Audience = builder.Configuration.GetValue<string>
-                     ("Site:Audience");
-                 });
+        foreach (var audience in builder.Configuration.GetValue<string[]>("Site:Audience"))
+        {
+            if (string.IsNullOrEmpty(audience))
+            {
+                throw new Exception("Site:Audience is not configured in appsettings.json");
+            }
+            // AuthenticationBuilder
+            services.AddAuthentication("Bearer")
+                .AddYavscJwtBearer(builder.Configuration,
+                options =>
+                {
+                    options.Authority = authority;
+                    options.Audience = audience;
+                });
+        }
+
 
         // DbContextBuilder
         services.AddDbContext<ApplicationDbContext>(options =>
