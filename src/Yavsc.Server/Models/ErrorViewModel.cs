@@ -7,4 +7,5 @@ public class ErrorViewModel
 
     public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
+    public Dictionary<string, string> ModelErrors { get; set; }
 }

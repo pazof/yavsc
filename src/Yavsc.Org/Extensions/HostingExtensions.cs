@@ -967,7 +967,6 @@ public static class HostingExtensions
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            await app.MigrateDatabaseAsync();
         }
         else
         {
