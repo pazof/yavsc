@@ -131,13 +131,10 @@ namespace Yavsc.Models
 
             //    builder.Entity<IdentityUserLogin<String>>().HasKey(i=> new { i.LoginProvider, i.UserId, i.ProviderKey });
             builder.Entity<ClientSecret>().HasOne<Client>().WithMany(e => e.ClientSecrets).HasForeignKey(e => e.ClientId);
-            builder.Entity<ClientScope>().HasOne<Client>().WithMany(e => e.AllowedScopes).HasForeignKey(e => e.ClientId);
             builder.Entity<ClientIdPRestriction>().HasOne<Client>().WithMany(e => e.IdentityProviderRestrictions).HasForeignKey(e => e.ClientId);
             builder.Entity<ClientProperty>().HasOne<Client>().WithMany(e => e.Properties).HasForeignKey(e => e.ClientId);
             builder.Entity<ClientPostLogoutRedirectUri>().HasOne<Client>().WithMany(e => e.PostLogoutRedirectUris).HasForeignKey(e => e.ClientId);
-            builder.Entity<ClientRedirectUri>().HasOne<Client>().WithMany(e => e.RedirectUris).HasForeignKey(e => e.ClientId);
             builder.Entity<ClientCorsOrigin>().HasOne<Client>().WithMany(e => e.AllowedCorsOrigins).HasForeignKey(e => e.ClientId);
-            builder.Entity<ClientGrantType>().HasOne<Client>().WithMany(e => e.AllowedGrantTypes).HasForeignKey(e => e.ClientId);
             builder.Entity<ApiResourceSecret>().HasOne<ApiResource>().WithMany(e => e.Secrets).HasForeignKey(e => e.ApiResourceId);
             builder.Entity<ApiResourceScope>().HasOne<ApiResource>().WithMany(e => e.Scopes).HasForeignKey(e => e.ApiResourceId);
             builder.Entity<ApiResourceClaim>().HasOne<ApiResource>().WithMany(e => e.UserClaims).HasForeignKey(e => e.ApiResourceId);
@@ -214,6 +211,22 @@ namespace Yavsc.Models
                 // Log immuable — pas de update autorisé
                 e.ToTable(tb => tb.HasCheckConstraint("CK_ModerationLog_Immutable", "1=1"));
             });
+
+            // ── Blog FK strictness ─────────────────────────────────────────────
+            // Tout billet a un auteur, tout commentaire a un auteur : pas de
+            // cascade en suppression d'un user, pas d'orphelin toléré. Le code
+            // applicatif (BlogSpotService.Details) s'appuie sur cette
+            // contrainte pour pouvoir assumer l'existence de l'auteur.
+            builder.Entity<BlogPost>()
+                .HasOne(b => b.Author)
+                .WithMany(u => u.Posts)
+                .HasForeignKey(b => b.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Comment>()
+                .HasOne(c => c.Author)
+                .WithMany(u => u.BlogComments)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         /// <summary>

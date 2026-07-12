@@ -114,6 +114,13 @@ namespace Yavsc.Models
         [InverseProperty("Member")]
         public virtual List<CircleMember>? Membership { get; set; }
 
+        /// <summary>
+        /// User's blog comments
+        /// </summary>
+        [JsonIgnore]
+        [InverseProperty("Author")]
+        public virtual List<Blog.Comment>? BlogComments { get; set; }
+
         IAccountBalance? IApplicationUser.AccountBalance => AccountBalance;
 
         ILocation? IApplicationUser.PostalAddress { get => PostalAddress; }

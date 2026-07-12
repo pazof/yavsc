@@ -110,6 +110,77 @@ public class ClientControllerCollectionTests : IClassFixture<TestWebApplicationF
         Assert.Contains("https://app.example.com/cb", body);
     }
 
+    // Repro: GET /Client/EditRedirectUris/{id} après qu'une seconde
+    // RedirectUri a été ajoutée via POST. LoadClientAsync(id) réhydrate
+    // le Client avec 9 Includes (RedirectUris, AllowedScopes, ClientSecrets,
+    // etc.) via l'InMemory provider. Sur l'Id=2 seedé, la matérialisation
+    // des nav properties sur les entités IdentityServer8 lève
+    // IndexOutOfRangeException — l'action renvoie un 500 et la page
+    // d'erreur masque le diagnostic.
+    //
+    // Ce test reproduit le chemin qui plante : GET initial (lit l'AF
+    // token) → POST AddRedirectUri → GET final qui exerce LoadClientAsync
+    // avec une collection RedirectUris non triviale (2 entrées).
+    // Il doit ÉCHOUER tant que le bug n'est pas traité.
+    [Fact]
+    public async Task EditRedirectUris_GET_after_add_lists_both_uris()
+    {
+        var http = CreateAdminClient();
+        var id = TargetClientDbId();
+        const string newUri = "https://app.example.com/cb-repro";
+
+        // Premier GET pour récupérer l'antiforgery token du form Add.
+        var pageResp = await http.GetAsync(
+            $"/Client/EditRedirectUris/{id}", TestContext.Current.CancellationToken);
+        pageResp.EnsureSuccessStatusCode();
+        var token = ExtractAntiforgeryToken(
+            await pageResp.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        Assert.False(string.IsNullOrEmpty(token));
+
+        // Ajout d'une seconde RedirectUri — c'est l'état non-trivial
+        // qui déclenche la matérialisation problématique côté
+        // InMemory provider.
+        var form = new MultipartFormDataContent
+        {
+            { new StringContent(newUri), "redirectUri" },
+            { new StringContent(token!), "__RequestVerificationToken" },
+        };
+        var addResp = await http.PostAsync(
+            $"/Client/AddRedirectUri/{id}", form, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, addResp.StatusCode);
+
+        try
+        {
+            // GET final : exerce LoadClientAsync(id) sur le client
+            // avec 2 RedirectUris, 1 AllowedScope, 1 GrantType, etc.
+            // Si la matérialisation échoue (IndexOutOfRange), ce GET
+            // renvoie 500 et EnsureSuccessStatusCode fait échouer le test.
+            var finalResp = await http.GetAsync(
+                $"/Client/EditRedirectUris/{id}", TestContext.Current.CancellationToken);
+            finalResp.EnsureSuccessStatusCode();
+            var finalBody = await finalResp.Content.ReadAsStringAsync(
+                TestContext.Current.CancellationToken);
+
+            // La page doit lister les DEUX URIs.
+            Assert.Contains("https://app.example.com/cb", finalBody);
+            Assert.Contains(newUri, finalBody);
+        }
+        finally
+        {
+            // Cleanup idempotent : on retire l'URI ajoutée pour ne
+            // pas polluer les autres tests de la collection.
+            using var scope = _factory.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var row = db.ClientRedirectUris
+                .FirstOrDefault(r => r.RedirectUri == newUri);
+            if (row is not null)
+            {
+                db.ClientRedirectUris.Remove(row);
+                db.SaveChanges();
+            }
+        }
+    }
+
     [Fact]
     public async Task AddRedirectUri_POST_appends_to_database()
     {
@@ -205,6 +276,26 @@ public class ClientControllerCollectionTests : IClassFixture<TestWebApplicationF
         TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
     }
+
+    // ---------- Bisection de l'Include qui plante ----------
+    //
+    // LoadClientAsync charge le Client avec 9 Includes :
+    //   RedirectUris, PostLogoutRedirectUris, AllowedScopes,
+    //   AllowedGrantTypes, AllowedCorsOrigins,
+    //   IdentityProviderRestrictions, Claims, Properties, ClientSecrets.
+    //
+    // Le test EditRedirectUris_GET_after_add_lists_both_uris échoue
+    // avec IndexOutOfRangeException au shaper de l'InMemory provider,
+    // sans préciser lequel des Includes pose problème. La stack
+    // indique IncludeCollection (donc un Include de collection, pas
+    // de référence).
+    //
+    // 2026-07-11 fix/issue-3-splitquery: tests retirés car leur hypothèse
+    // ("bug de provider InMemory sur ces 3 entités") n'est pas la cause
+    // racine — c'est une redondance de mapping HasOne dans
+    // ApplicationDbContext.OnModelCreating. Le test gardien
+    // EditRedirectUris_GET_after_add_lists_both_uris reste en place
+    // comme sentinelle de régression sur le fix.
 
     private static string? ExtractAntiforgeryToken(string html)
     {

@@ -17,6 +17,7 @@ La racine de l'architecture est [Architecture.md](Architecture.md).
 | [architecture/postit-oidc.md](architecture/postit-oidc.md) | Client desktop PostIt, custom URI scheme, silent refresh |
 | [architecture/postit.md](architecture/postit.md) | PostIt — topologie des projets, ViewLocator custo, navigation, DI, conventions de binding |
 | [architecture/decoupage-organisation.md](architecture/decoupage-organisation.md) | Découpage des projets .NET (Abstract, Server, Org, Api, Blogs, Web, Org.Tests) |
+| [testing.md](testing.md) | Stratégie de test : conventions des dossiers, EF Core in-memory, auth stubs, scaffold partagé |
 
 ## Roadmap & design exploration
 
