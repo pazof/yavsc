@@ -74,48 +74,59 @@ public static class ServiceExtensions
     public static AuthenticationBuilder AddYavscJwtBearer(
         this AuthenticationBuilder builder,
         IConfiguration configuration,
-        Action<JwtBearerOptions>? configure = null,
         string schemeName = "Bearer")
     {
         var authority = configuration.GetSection("Site")["Authority"]
             ?? throw new InvalidOperationException(
                 "Site:Authority is required to configure Yavsc JWT Bearer authentication.");
 
-        return builder.AddJwtBearer(schemeName, options =>
-        {
-            options.IncludeErrorDetails = true;
-            options.Authority = authority;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                RoleClaimType = YavscConstants.RoleClaimType
-            };
-            options.MapInboundClaims = true;
 
-            // Dev: every Yavsc resource service (Yavsc.Api, Yavsc.Blogs,
-            // Yavsc.Org itself) validates JWTs against the OP that runs
-            // on https://localhost:5001 with a self-signed dev cert.
-            // The default .NET HttpClient rejects self-signed certs, so
-            // JwtBearer's backchannel silently fails to fetch the OIDC
-            // discovery + JWKS. With an empty ValidIssuer, every token
-            // is rejected with IDX10204 ("ValidIssuer is null or
-            // whitespace"). Telling the backchannel to skip TLS
-            // validation unblocks discovery in dev. Production uses a
-            // real CA-signed cert and the default validation path; the
-            // override is gated on HostingEnvironment == Development
-            // and only fires when the consumer opt-in via the
-            // 'Yavsc:Dev:TlsInsecure' configuration flag (default
-            // false), so a misconfigured production environment cannot
-            // silently downgrade TLS.
-            if (configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT") == "Development")
+        string[] audiences = configuration.GetSection("Site").GetSection("Audience").Get<string[]>() ?? Array.Empty<string>();
+        AuthenticationBuilder result = builder;
+        foreach (var audience in audiences)
+        {
+            result = builder.AddJwtBearer(schemeName, options =>
             {
-                options.BackchannelHttpHandler = new HttpClientHandler
+                options.IncludeErrorDetails = true;
+                options.Authority = authority;
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ServerCertificateCustomValidationCallback =
-                        (_, _, _, _) => true
+                    ValidateAudience = true,
+                    ValidAudience = audience,
+                    RoleClaimType = YavscConstants.RoleClaimType,
+                    NameClaimType = YavscConstants.NameClaimType,
                 };
-            }
-            configure?.Invoke(options);
-        });
+                options.MapInboundClaims = true;
+                options.ClaimsIssuer = authority;
+                options.Audience = audience;
+
+                // Dev: every Yavsc resource service (Yavsc.Api, Yavsc.Blogs,
+                // Yavsc.Org itself) validates JWTs against the OP that runs
+                // on https://localhost:5001 with a self-signed dev cert.
+                // The default .NET HttpClient rejects self-signed certs, so
+                // JwtBearer's backchannel silently fails to fetch the OIDC
+                // discovery + JWKS. With an empty ValidIssuer, every token
+                // is rejected with IDX10204 ("ValidIssuer is null or
+                // whitespace"). Telling the backchannel to skip TLS
+                // validation unblocks discovery in dev. Production uses a
+                // real CA-signed cert and the default validation path; the
+                // override is gated on HostingEnvironment == Development
+                // and only fires when the consumer opt-in via the
+                // 'Yavsc:Dev:TlsInsecure' configuration flag (default
+                // false), so a misconfigured production environment cannot
+                // silently downgrade TLS.
+                if (configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    options.BackchannelHttpHandler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback =
+                            (_, _, _, _) => true
+                    };
+                }
+            });
+        }
+
+        return result;
+
     }
 }

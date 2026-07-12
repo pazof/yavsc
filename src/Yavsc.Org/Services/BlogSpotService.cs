@@ -1,26 +1,24 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore;
 using Yavsc;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
 using Yavsc.ViewModels.Auth;
-using Yavsc.Abstract.Helpers;
-using Microsoft.AspNetCore.Http;
 
-public class BlogSpotService
+
+[Obsolete]
+public class OldBlogSpotService
 {
     private readonly ApplicationDbContext _context;
     private readonly IAuthorizationService _authorizationService;
     private readonly IFileSystemAuthManager fileSystemAuthManager;
 
-    public BlogSpotService(ApplicationDbContext context,
+    public OldBlogSpotService(ApplicationDbContext context,
     IAuthorizationService authorizationService,
     IFileSystemAuthManager fileSystemAuthManager)
     {
@@ -93,13 +91,13 @@ public class BlogSpotService
     public async Task<BlogPostEditViewModel> GetPostForEdition(ClaimsPrincipal user, long blogPostId)
     {
         var blog = await _context.BlogSpot.Include(x => x.Author).Include(x => x.ACL).SingleAsync(m => m.Id == blogPostId);
-         var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
+        var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
         if (!auth.Succeeded)
         {
             throw new AuthorizationFailureException(auth);
-        }  
+        }
         var pub = await _context.blogSpotPublications.AnyAsync(x => x.BlogpostId == blog.Id);
-     
+
         return new BlogPostEditViewModel(blog, pub);
     }
 

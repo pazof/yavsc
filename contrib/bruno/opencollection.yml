@@ -25,7 +25,7 @@ request:
     credentials:
       clientId: postit
       placement: basic_auth_header
-    scope: openid blogs
+    scope: openid blogs profile
     pkce: {}
     tokenConfig:
       id: credentials
