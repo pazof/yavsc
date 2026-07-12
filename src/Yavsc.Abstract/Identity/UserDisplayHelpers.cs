@@ -28,7 +28,7 @@ namespace Yavsc.Abstract.Identity
         /// </remarks>
         public static string AvatarSrc(IApplicationUser? user)
         {
-            if (string.IsNullOrWhiteSpace(user?.UserName))
+            if (user==null || string.IsNullOrWhiteSpace(user?.UserName))
                 return YavscConstants.DefaultAvatar;
             return $"{YavscConstants.AvatarsPath}/{user!.UserName}.s.png";
         }

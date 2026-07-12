@@ -157,8 +157,7 @@ public static class HostingExtensions
 
 
         services.AddAuthentication("Bearer")
-                 .AddYavscJwtBearer(builder.Configuration,
-                     configure: o => o.Audience = builder.Configuration.GetSection("Site")["ExternalUrl"]);
+                 .AddYavscJwtBearer(builder.Configuration);
 
         services.AddTransient<RoleManager<IdentityRole>>();
         services.AddTransient<IRoleStore<IdentityRole>, RoleStore<IdentityRole, ApplicationDbContext>>();
