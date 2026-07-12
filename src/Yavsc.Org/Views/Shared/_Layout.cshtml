@@ -1,49 +1,52 @@
 ﻿@using Yavsc.Models.Messaging;
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-    <link rel="icon" type="image/svg+xml" href="~/images/yavsc-logo.svg" asp-append-version="true" />
-    <link rel="alternate icon" type="image/x-icon" href="@SiteSettings.Value.FavIcon" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
-    <link rel="stylesheet" href="~/lib/bootstrap.quartz.min.css"  asp-append-version="true"/>
-    <link rel="stylesheet" href="~/css/site.css"  asp-append-version="true"/>
-    <script src="~/lib/jquery-ui/external/jquery/jquery.js"></script>
-    <script src="~/lib/jquery-ui/jquery-ui.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <title>@ViewBag.Title - Yavsc</title>
-    @await RenderSectionAsync("header", false)
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <link rel="icon" type="image/svg+xml" href="~/images/yavsc-logo.svg" asp-append-version="true" />
+  <link rel="alternate icon" type="image/x-icon" href="@SiteSettings.Value.FavIcon" asp-append-version="true" />
+  <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css">
+  <link rel="stylesheet" href="~/lib/bootstrap.quartz.min.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+  <script src="~/lib/jquery-ui/external/jquery/jquery.js"></script>
+  <script src="~/lib/jquery-ui/jquery-ui.js"></script>
+  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  <title>@ViewBag.Title - Yavsc</title>
+  @await RenderSectionAsync("header", false)
 </head>
+
 <body>
-        <partial name="_Nav" />
-        @RenderSection("ctxmenu", required: false)
-          @if (ViewBag.Notify != null)
+  <partial name="_Nav" />
+  @RenderSection("ctxmenu", required: false)
+  @if (ViewBag.Notify != null)
+  {
+    foreach (Notification n in ViewBag.Notify as IEnumerable<Notification>)
     {
-        foreach (Notification n in ViewBag.Notify as IEnumerable<Notification>)
-        {
-            <div class="alert alert-info alert-dismissable" data-nid="@n.Id">
-                <img src="~/images/Notifications/@(n.icon).png" style="max-height:3em; float: left; margin:1em;" />
-                <h2 markdown="@n.title"></h2>
-                <a class="close" data-dismiss="alert" aria-label="close"
-                    onclick="notifClick(@n.Id)">@((n.click_action == null) ? Localizer["Fermer"] : Localizer[n.click_action])</a>
-                <asciidoc>@n.body</asciidoc>
-            </div>
-        }
+      <div class="alert alert-info alert-dismissable" data-nid="@n.Id">
+        <img src="~/images/Notifications/@(n.icon).png" style="max-height:3em; float: left; margin:1em;" />
+        <h2 markdown="@n.title"></h2>
+        <a class="close" data-dismiss="alert" aria-label="close" onclick="notifClick(@n.Id)">@((n.click_action == null) ?
+                Localizer["Fermer"] : Localizer[n.click_action])</a>
+          <asciidoc>@n.body</asciidoc>
+        </div>
+      }
     }
     @await RenderSectionAsync("subbanner", false)
-        <div class="container py-4">
-            @RenderBody()
-        </div>
+    <div class="container py-4">
+      @RenderBody()
+    </div>
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; WTFPL 2025 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+      <div class="container">
+        &copy; WTFPL 2025 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+      </div>
     </footer>
 
-@await RenderSectionAsync("scripts", false)
+    @await RenderSectionAsync("scripts", false)
 
-</body>
+  </body>
+
 </html>
