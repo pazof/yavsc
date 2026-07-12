@@ -39,6 +39,8 @@ namespace Yavsc.Org.Tests;
 [CollectionDefinition("Yavsc Server")]
 public sealed class WebServerFixture : WebHostFixture
 {
+    protected override int HttpsPort => 5101;
+
     private static IConfiguration? _sharedConfiguration;
     private static SiteSettings? _sharedSiteSettings;
     private static ILogger? _sharedLogger;
@@ -81,6 +83,11 @@ public sealed class WebServerFixture : WebHostFixture
                 ["Smtp:Port"] = "465",
                 ["Smtp:UserName"] = "test-user",
                 ["Smtp:Password"] = "test-pass",
+                // Kestrel test config: override the default port from
+                // WebApplication.CreateBuilder() so that the test host
+                // binds to the same port as the production host would.
+                ["Kestrel:Endpoints:Http:Url"] =  "http://localhost:5100",
+                ["Kestrel:Endpoints:Https:Url"] = builder.Configuration["Site:Authority"] ?? "https://localhost:5101"
             });
 
         Configuration = builder.Configuration;
