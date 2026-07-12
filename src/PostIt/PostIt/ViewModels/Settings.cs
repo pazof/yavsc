@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 
@@ -182,6 +183,16 @@ public partial class Settings : ViewModelBase
                 // PKCE is enabled by default when no client_secret is provided.
             };
 
+            if (IsDevelopmentEnvironment())
+            {
+                // Dev only: allow local/self-signed TLS for discovery/token
+                // endpoints when the machine does not trust a custom root.
+                options.BackchannelHandler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+                };
+            }
+
             if (browser is not null)
                 options.Browser = browser;
 
@@ -229,6 +240,14 @@ public partial class Settings : ViewModelBase
         {
             if (seen.Add(s)) yield return s;
         }
+    }
+
+    private static bool IsDevelopmentEnvironment()
+    {
+        return string.Equals(
+            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"),
+            "Development",
+            StringComparison.OrdinalIgnoreCase);
     }
 
     internal void Load()
