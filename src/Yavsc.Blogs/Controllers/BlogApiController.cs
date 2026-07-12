@@ -83,7 +83,7 @@ namespace Yavsc.Blogs.Controllers
             return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
-        // POST: api/BlogApi
+        // POST: api/v1/blog
         [HttpPost]
         public IActionResult PostBlog([FromBody] Models.Blog.BlogPost blog)
         {

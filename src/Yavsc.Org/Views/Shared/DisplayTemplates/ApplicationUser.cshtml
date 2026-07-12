@@ -1,14 +1,19 @@
 @using Yavsc.Abstract.Identity
 @model ApplicationUser
-@{
-    // Le helper défend contre Model null et contre UserName vide
-    // ou whitespace. Sans cette garde, Razor lève
-    // NullReferenceException ici, ce qui propage un 500 et
-    // masque aussi la page d'erreur.
-    var avuri = UserDisplayHelpers.AvatarSrc(Model);
-}
+
 <div class="userinfo">
-    <a title="Posts" asp-controller="Blogspot" asp-action="Index" asp-route-id="@Model.UserName" class="btn btn-primary">
+@if (Model != null && !string.IsNullOrWhiteSpace(Model.UserName))
+{
+   string avuri = UserDisplayHelpers.AvatarSrc(Model);
+
+  <a title="Posts" asp-controller="Blogspot" asp-action="Index" asp-route-id="@Model.UserName" class="btn btn-primary">
         <img src="@avuri" asp-append-version="true" class="smalltofhol" alt="@Model.UserName" title="@Model.UserName" />
     </a>
+
+ } else {
+  <div class="alert alert-warning">
+      <strong>Utilisateur inconnu</strong>
+      <img src="@YavscConstants.DefaultAvatar" class="smalltofhol" alt="Utilisateur inconnu" title="Utilisateur inconnu" />
+  </div>
+ }
 </div>

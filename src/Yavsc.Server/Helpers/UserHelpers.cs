@@ -29,7 +29,7 @@ namespace Yavsc.Server.Helpers
                               (x.ACL.Count == 0 || x.ACL.Any(a => readerCirclesMemberships.Contains(a.CircleId))));
             }
         }
-        
+
         public static string GetUserId(this ClaimsPrincipal user)
         {
             return user.FindFirstValue("sub");

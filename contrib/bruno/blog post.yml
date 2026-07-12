@@ -1,0 +1,22 @@
+info:
+  name: blog post
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{Blogs}}/api/v1/blog"
+  body:
+    type: json
+    data: |-
+      {
+      "Title": "lkijlk",
+      "Article": "test"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
