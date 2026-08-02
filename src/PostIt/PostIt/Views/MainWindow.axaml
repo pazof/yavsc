@@ -20,7 +20,7 @@
     -->
     <DockPanel LastChildFill="True">
         <views:SessionStatusBanner x:Name="SessionBanner"
-                                   DockPanel.Dock="Top"/>
+                                   DockPanel.Dock="Bottom"/>
         <NavigationPage x:Name="NavRoot"/>
     </DockPanel>
 
