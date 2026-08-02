@@ -29,6 +29,8 @@ public class BlogSpotService
     public BlogPost Create(string userId, BlogPost post, IFormFileCollection files)
     {
         // Sauvegarder le post d'abord pour obtenir son ID
+        // Le créateur vient de l'authentification, donc on ne le prend pas du post
+        post.AuthorId = userId;
         _context.BlogSpot.Add(post);
         _context.SaveChanges(userId);
 
@@ -94,9 +96,9 @@ public class BlogSpotService
         if (!auth.Succeeded)
         {
             throw new AuthorizationFailureException(auth);
-        }  
+        }
         var pub = await _context.blogSpotPublications.AnyAsync(x => x.BlogpostId == blog.Id);
-     
+
         return new BlogPostEditViewModel(blog, pub);
     }
 
