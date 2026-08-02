@@ -13,16 +13,17 @@
       "isBackground": true
     },
     {
-      "label": "build-web",
+      "label": "test blogs backend",
       "type": "process",
       "problemMatcher": ["$msCompile"],
       "command": "dotnet",
-      "args": ["build"],
+      "args": ["test"],
       "options": {
-        "cwd": "src/Yavsc.Org"
+        "cwd": "src/Yavsc.Blogs.Tests"
       },
       "group": {
-        "kind": "build"
+        "kind": "test",
+        "isDefault": false
       }
     },
     {
@@ -40,17 +41,23 @@
       "isBackground": true
     },
     {
-      "label": "build-web",
+      "label": "test blogs",
       "type": "process",
       "problemMatcher": ["$msCompile"],
       "command": "dotnet",
-      "args": ["build"],
-      "runOptions": {},
+      "args": ["test"],
+      "runOptions": {
+        "instanceLimit": 1
+      },
       "options": {
-        "cwd": "src/Yavsc.Web"
+        "cwd": "src/Yavsc.Blogs",
+        "env": {
+          "DOTNET_CLI_UI_LANGUAGE": "en-US",
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
       },
       "group": {
-        "kind": "build"
+        "kind": "test"
       },
       "isBackground": true,
       "presentation": {
@@ -82,7 +89,7 @@
     ],
       "problemMatcher": "$msCompile",
       "runOptions": {
-        
+
       }
 
     }
