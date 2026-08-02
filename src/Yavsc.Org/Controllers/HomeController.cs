@@ -15,18 +15,24 @@ namespace Yavsc.Controllers
     public class HomeController : Controller
     {
         readonly ApplicationDbContext _dbContext;
-
+        readonly ILogger<HomeController> _logger;
+        private readonly bool _isDevelopment;
         readonly IHtmlLocalizer _localizer;
 
         private SiteSettings siteSettings;
         public HomeController(ILogger<HomeController> logger, 
         IHtmlLocalizer<HomeController> localizer, 
         ApplicationDbContext context,
-        IOptions<SiteSettings> settingsOptions)
+        IOptions<SiteSettings> settingsOptions, 
+        IWebHostEnvironment env
+        )
         {
             _localizer = localizer;
             _dbContext = context;
             siteSettings = settingsOptions.Value;
+            _logger = logger;
+            _isDevelopment = env.IsDevelopment();
+
         }
 
         public async Task<IActionResult> Index(string id)
@@ -99,18 +105,44 @@ namespace Yavsc.Controllers
 
         public IActionResult Error()
         {
-            var feature = this.HttpContext.Features.Get<IExceptionHandlerFeature>();
-            if (feature == null) return View();
-            var errorType = feature?.Error;
-            if (errorType == null) return View();
-            if (errorType is NotSupportedException notSupported)
+            if (_isDevelopment)
             {
-                return View(new ErrorViewModel { 
-                    Description = notSupported.Message,
-                    RequestId = this.HttpContext.TraceIdentifier
-                });
+                _logger.LogInformation(
+                    "Home/Error requested in Development. This endpoint is disabled because DeveloperExceptionPage should handle unhandled exceptions.");
+
+                return NotFound(
+                    "In Development, /Home/Error is disabled. Unhandled exceptions are rendered by DeveloperExceptionPage.");
             }
-            return View("~/Views/Shared/Error.cshtml", feature?.Error);
+
+            var errorViewModel = new ErrorViewModel
+            {
+                RequestId = HttpContext.TraceIdentifier
+            };
+
+            var exceptionHandlerPathFeature =
+            HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+
+            if (exceptionHandlerPathFeature is null)
+            {
+                _logger.LogWarning(
+                    "Home/Error called without IExceptionHandlerPathFeature in non-development environment.");
+
+                return View("~/Views/Shared/Error.cshtml", errorViewModel);
+            }
+
+            if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
+            {
+                errorViewModel.Description = "The file was not found.";
+            }
+
+            if (exceptionHandlerPathFeature?.Path == "/")
+            {
+                errorViewModel.Description ??= string.Empty;
+                errorViewModel.Description += " Page: Home.";
+            }
+    
+          
+            return View("~/Views/Shared/Error.cshtml", errorViewModel);
         }
         public IActionResult Status(int id)
         {

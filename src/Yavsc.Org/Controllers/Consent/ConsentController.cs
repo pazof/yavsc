@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System;
 using Yavsc;
 using Yavsc.Extensions;
+using Yavsc.Models;
 
 namespace IdentityServerHost.Quickstart.UI
 {
@@ -53,9 +54,10 @@ namespace IdentityServerHost.Quickstart.UI
             {
                 return View("Index", vm);
             }
-
-            return View("Error");
+            return this.ErrorView<ConsentController>("No consent request matching request: " + returnUrl);
         }
+
+       
 
         /// <summary>
         /// Handles the consent screen postback
@@ -88,8 +90,8 @@ namespace IdentityServerHost.Quickstart.UI
             {
                 return View("Index", result.ViewModel);
             }
-
-            return View("Error");
+            return this.ErrorView<ConsentController>($"ReturnUrl: {model}, result: {result}" );
+        
         }
 
         /*****************************************/
@@ -170,11 +172,6 @@ namespace IdentityServerHost.Quickstart.UI
             {
                 return CreateConsentViewModel(model, returnUrl, request);
             }
-            else
-            {
-                _logger.LogError("No consent request matching request: {0}", returnUrl);
-            }
-
             return null;
         }
 
@@ -199,7 +196,7 @@ namespace IdentityServerHost.Quickstart.UI
             vm.IdentityScopes = request.ValidatedResources.Resources.IdentityResources.Select(x => CreateScopeViewModel(x, vm.ScopesConsented.Contains(x.Name) || model == null)).ToArray();
 
             var apiScopes = new List<ScopeViewModel>();
-            foreach(var parsedScope in request.ValidatedResources.ParsedScopes)
+            foreach (var parsedScope in request.ValidatedResources.ParsedScopes)
             {
                 var apiScope = request.ValidatedResources.Resources.FindApiScope(parsedScope.ParsedName);
                 if (apiScope != null)

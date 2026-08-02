@@ -791,12 +791,12 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         {
             if (userId == null || code == null)
             {
-                return View("Error");
+                return this.ErrorView<AccountController>("Error: userId or code is null.");
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return View("Error");
+                return this.ErrorView<AccountController>("Error: user not found.");
             }
             IdentityResult result = null;
             try
@@ -819,12 +819,12 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         {
             if (userId == null || code == null)
             {
-                return View("Error");
+                return this.ErrorView<AccountController>("Error: userId or code is null.");
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return View("Error");
+                return this.ErrorView<AccountController>("Error: user not found.");
             }
             bool result = false;
             try
@@ -837,7 +837,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                 _logger.LogError(ex.StackTrace);
                 _logger.LogError(ex.Message);
             }
-            return View(result ? "EmailConfirmed" : "Error");
+            return result ? View("EmailConfirmed") : this.ErrorView<AccountController>("Error confirming two factor token.");
         }
 
         //
