@@ -114,7 +114,8 @@ namespace Yavsc.Blogs.Controllers
             var files = Request.HasFormContentType
                 ? Request.Form.Files
                 : (IFormFileCollection)new FormFileCollection();
-            var post = blogSpotService.Create(User.GetUserId(), blog, files);
+            var uid = User.GetUserId();
+            var post = blogSpotService.Create(uid, blog, files);
             return CreatedAtRoute("GetBlog", new { id = post.Id }, post);
         }
 
