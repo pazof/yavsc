@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Yavsc.Models;
 using Yavsc.Models.Access;
 
 namespace Yavsc.Controllers
@@ -49,7 +50,7 @@ namespace Yavsc.Controllers
             if (string.IsNullOrWhiteSpace(userCode)) return View("UserCodeCapture");
 
             var vm = await BuildViewModelAsync(userCode);
-            if (vm == null) return View("Error");
+            if (vm == null)  return this.ErrorView<DeviceController>($"ViewModel is null! userCodeParamName: {userCodeParamName}, userCode: {userCode}" );;
 
             vm.ConfirmUserCode = true;
             return View("UserCodeConfirmation", vm);
@@ -60,7 +61,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> UserCodeCapture(string userCode)
         {
             var vm = await BuildViewModelAsync(userCode);
-            if (vm == null) return View("Error");
+            if (vm == null)  return this.ErrorView<DeviceController>($"UserCodeCapture: ViewModel is null! userCode: {userCode}" );
 
             return View("UserCodeConfirmation", vm);
         }
@@ -72,7 +73,20 @@ namespace Yavsc.Controllers
             if (model == null) throw new ArgumentNullException(nameof(model));
 
             var result = await ProcessConsent(model);
-            if (result.HasValidationError) return View("Error");
+            if (result.HasValidationError)
+            {
+                if (HttpContext.RequestServices.GetRequiredService<IHostEnvironment>().IsDevelopment())
+                {
+                    throw new InvalidOperationException("Device Authorization Input validation error: " + result.ValidationError);
+                }
+
+                return View("Error", 
+                    new ErrorViewModel {
+                        RequestId = HttpContext.TraceIdentifier,
+                        Description = "Device Authorization Input validation error: " + result.ValidationError 
+                        }
+                );
+            }
 
             return View("Success");
         }

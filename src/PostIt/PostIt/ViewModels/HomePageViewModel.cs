@@ -1,6 +1,7 @@
+using CommunityToolkit.Mvvm.Input;
 using PostIt;
 using PostIt.Services;
-using PostIt.ViewModels;
+namespace PostIt.ViewModels;
 
 public class HomePageViewModel : ViewModelBase
 {
@@ -22,7 +23,7 @@ public class HomePageViewModel : ViewModelBase
         Api = api;
         Settings = settings;
     }
-
+    public RelayCommand OpenBlogs { get; set; } = new RelayCommand(() => App.PushMainPageAsync());
     /// <summary>
     /// Avalonia designer constructor. Builds a self-contained VM
     /// with a freshly-constructed Settings so the XAML preview can

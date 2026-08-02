@@ -25,7 +25,7 @@ public partial class App : Application
     /// <c>DataValidationErrors.SetErrors</c>.
     /// </summary>
     public IServiceProvider? Services { get; private set; }
-
+    private MainWindow window;
     public App()
     {
     }
@@ -137,7 +137,7 @@ public partial class App : Application
             var homePage = provider.GetRequiredService<HomePage>();
             homePage.DataContext = provider.GetRequiredService<HomePageViewModel>();
 
-            var window = new MainWindow();
+            window = new MainWindow();
             window.SessionBanner.DataContext = sessionStatus;
 
             // Build the navigation stack from scratch: HomePage is the
@@ -165,7 +165,7 @@ public partial class App : Application
             sessionStatus.LoginSucceeded += () =>
             {
                 var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
-                _ = PushMainPageAsync(provider, w);
+                _ = PushMainPageAsync();
             };
 
             // When the user clicks the "Paramètres" button on the
@@ -196,7 +196,7 @@ public partial class App : Application
                 _ = w.NavRoot.PushAsync(settingsPage);
             };
 
-            window.Opened += async (_, _) => await BootAsync(provider, api, window);
+            window.Opened += async (_, _) => await BootAsync(provider, api);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
         {
@@ -223,15 +223,14 @@ public partial class App : Application
     /// </summary>
     private static async Task BootAsync(
         IServiceProvider provider,
-        YavscApiClient api,
-        MainWindow window)
+        YavscApiClient api)
     {
         var refreshed = await api.TrySilentLoginAsync().ConfigureAwait(true);
         var sessionStatus = provider.GetRequiredService<SessionStatusViewModel>();
         sessionStatus.Refresh();
         if (!refreshed) return;
 
-        await PushMainPageAsync(provider, window).ConfigureAwait(true);
+        await PushMainPageAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -241,12 +240,13 @@ public partial class App : Application
     /// (interactive login from the banner). Pulled out as a helper so
     /// the two callers can't drift apart.
     /// </summary>
-    private static async Task PushMainPageAsync(IServiceProvider provider, MainWindow window)
+    public static async Task PushMainPageAsync()
     {
-        var mainVm = provider.GetRequiredService<MainPageViewModel>();
-        var mainPage = provider.GetRequiredService<MainPage>();
+        var app = (App)Current;
+        var mainVm = app.Services.GetRequiredService<MainPageViewModel>();
+        var mainPage = app.Services.GetRequiredService<MainPage>();
         mainPage.DataContext = mainVm;
-        await window.NavRoot.PushAsync(mainPage).ConfigureAwait(true);
+        await app.window.FindControl<NavigationPage>("NavRoot").PushAsync(mainPage).ConfigureAwait(true);
     }
 
     private bool TryHandOffCustomSchemeUrl()
