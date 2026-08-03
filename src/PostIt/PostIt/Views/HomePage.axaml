@@ -16,6 +16,7 @@
                            HorizontalAlignment="Center"/>
           <Button Content="Open Blog Interface"
                   Command="{Binding OpenBlogs}"
-                  HorizontalAlignment="Center"/>
+                  HorizontalAlignment="Center"
+                  IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
         </StackPanel>
 </ContentPage>
