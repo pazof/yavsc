@@ -44,7 +44,7 @@ jobs:
   publish-release:
     # Uniquement déclenché par un tag v*. Le job apk-deploy tourne en
     # parallèle, on partage l'artefact entre jobs.
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/')
     needs: apk-deploy
     runs-on: ubuntu-latest
     steps:
