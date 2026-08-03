@@ -1,3 +1,4 @@
+
 @model IEnumerable<IBlogPost>
 @{
     ViewBag.Title = "Blogs, l'index";
@@ -43,20 +44,20 @@
     <a asp-action="Create">Create a new article</a>
 </p>
 }
-     
+
 <div class="blog-index">
 @{
     int maxTextLen = 75;
   foreach (var post in Model) {
     <div class="post card">
-    
 
-        <a asp-action="Details" asp-route-id="@post.Id" class="bloglink" >
+
+        <a asp-action="Details" asp-route-id="@((IBlogPost)post).Id" class="bloglink" >
             <div class="float-left"><img class="photo card-photo" src="@post.Photo" ></div>
             <h3 class="index-post-title">@post.Title</h3>
         </a>
         <div>
-          <a asp-action="Details" asp-route-id="@post.Id">
+          <a asp-action="Details" asp-route-id="@((IBlogPost)post).Id">
             <asciidoc summary="@maxTextLen">@post.Article</asciidoc></a>
             <span style="font-size:x-small;">@Html.DisplayFor(m => post.Author)</span>
             <span style="font-size:xx-small;">
@@ -67,20 +68,20 @@
             </span>
         </div>
         <div class="actiongroup">
-            @if ((await AuthorizationService.AuthorizeAsync(User, post, new ReadPermission())).Succeeded) 
+            @if ((await AuthorizationService.AuthorizeAsync(User, post, new ReadPermission())).Succeeded)
             {
-                <a asp-action="Details" asp-route-id="@post.Id"  class="btn btn-light">Details</a>
+                <a asp-action="Details" asp-route-id="@((IBlogPost)post).Id"  class="btn btn-light">Details</a>
             }
-            else 
+            else
             {
-            <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-light">Details</a>
+            <a asp-action="Details" asp-route-id="@((IBlogPost)post).Id" class="btn btn-light">Details</a>
             }
-            @if ((await AuthorizationService.AuthorizeAsync(User, post, new EditPermission())).Succeeded) 
+            @if ((await AuthorizationService.AuthorizeAsync(User, post, new EditPermission())).Succeeded)
             {
-           <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-primary">Edit</a>
-            
-            <a asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete</a>
-            
+           <a asp-action="Edit" asp-route-id="@((IBlogPost)post).Id" class="btn btn-primary">Edit</a>
+
+            <a asp-action="Delete" asp-route-id="@((IBlogPost)post).Id" class="btn btn-danger">Delete</a>
+
             }
         </div>
     </div>
