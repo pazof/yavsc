@@ -24,7 +24,7 @@ public partial class App : Application
     /// binding sink with a cross-thread exception inside
     /// <c>DataValidationErrors.SetErrors</c>.
     /// </summary>
-    public IServiceProvider? Services { get; private set; }
+    public IServiceProvider? ServiceProvider { get; private set; }
     private MainWindow window;
     public App()
     {
@@ -91,19 +91,17 @@ public partial class App : Application
         services.AddSingleton(sessionStatus);
         services.AddTransient<SessionStatusBanner>();
 
-        var provider = services.BuildServiceProvider();
+        ServiceProvider  = services.BuildServiceProvider();
 
         // Bind the canonical Settings to the static accessor so any
         // code path that can't easily take a constructor parameter
         // (designer surfaces, Avalonia data templates) still gets
         // the same instance the rest of the app is using. Idempotent:
         // re-binding from a second App boot (tests) is a no-op.
-        Settings.BindToServiceProvider(provider);
-
-        Services = provider;
+        Settings.BindToServiceProvider(ServiceProvider);
 
         DataTemplates.Clear();
-        DataTemplates.Add(new ViewLocator(provider));
+        DataTemplates.Add(new ViewLocator(ServiceProvider));
 
         // Wire the Settings singleton onto the SettingsPage singleton
         // once, at composition time. The page is registered as a
@@ -113,7 +111,7 @@ public partial class App : Application
         // DataContext, and the TwoWay bindings inside the page keep
         // mutating the same in-memory Settings instance that the rest
         // of the app reads (OidcClientOptions construction, etc.).
-        provider.GetRequiredService<SettingsPage>().DataContext = settings;
+        ServiceProvider.GetRequiredService<SettingsPage>().DataContext = settings;
 
         // Settings.DarkMode was previously a dead field: it round-
         // tripped through the settings file and the SettingsPage
@@ -134,8 +132,8 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var homePage = provider.GetRequiredService<HomePage>();
-            homePage.DataContext = provider.GetRequiredService<HomePageViewModel>();
+            var homePage = ServiceProvider.GetRequiredService<HomePage>();
+            homePage.DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>();
 
             window = new MainWindow();
             window.SessionBanner.DataContext = sessionStatus;
@@ -155,8 +153,8 @@ public partial class App : Application
             {
                 var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
                 var nav = w.NavRoot;
-                var hp = provider.GetRequiredService<HomePage>();
-                hp.DataContext = provider.GetRequiredService<HomePageViewModel>();
+                var hp = ServiceProvider.GetRequiredService<HomePage>();
+                hp.DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>();
                 _ = nav.PopToRootAsync();
             };
 
@@ -187,7 +185,7 @@ public partial class App : Application
             sessionStatus.OpenSettingsRequested += () =>
             {
                 var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
-                var settingsPage = provider.GetRequiredService<SettingsPage>();
+                var settingsPage = ServiceProvider.GetRequiredService<SettingsPage>();
                 var stack = w.NavRoot.NavigationStack;
                 if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], settingsPage))
                 {
@@ -196,13 +194,13 @@ public partial class App : Application
                 _ = w.NavRoot.PushAsync(settingsPage);
             };
 
-            window.Opened += async (_, _) => await BootAsync(provider, api);
+            window.Opened += async (_, _) => await BootAsync(ServiceProvider, api);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
         {
             singleView.MainView = new MainWindow
             {
-                DataContext = provider.GetRequiredService<HomePageViewModel>()
+                DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>()
             };
         }
     }
@@ -243,8 +241,8 @@ public partial class App : Application
     public static async Task PushMainPageAsync()
     {
         var app = (App)Current;
-        var mainVm = app.Services.GetRequiredService<MainPageViewModel>();
-        var mainPage = app.Services.GetRequiredService<MainPage>();
+        var mainVm = app.ServiceProvider.GetRequiredService<MainPageViewModel>();
+        var mainPage = app.ServiceProvider.GetRequiredService<MainPage>();
         mainPage.DataContext = mainVm;
         await app.window.FindControl<NavigationPage>("NavRoot").PushAsync(mainPage).ConfigureAwait(true);
     }

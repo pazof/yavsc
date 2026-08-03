@@ -3,15 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using Yavsc.Abstract.Identity;
 using Yavsc.Abstract.Identity.Security;
-using Yavsc.Interfaces;
 using Yavsc.Models.Access;
 using Yavsc.Models.Relationship;
+using Yavsc.Blogspot;
 
 namespace Yavsc.Models.Blog
 {
-    
-    public class BlogPost :
-     IBlogPost, ICircleAuthorized, ITaggable<long>
+
+    public class BlogPost : IBlogPost
     {
         [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Identifiant du post")]
