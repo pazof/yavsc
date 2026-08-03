@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using PostIt;
 using PostIt.Services;
 namespace PostIt.ViewModels;
@@ -7,6 +8,7 @@ public class HomePageViewModel : ViewModelBase
 {
     public YavscApiClient Api { get; }
     public Settings Settings { get; }
+    public SessionStatusViewModel SessionStatus { get; }
 
     private string _welcomeText = "Welcome to PostIt!";
     public string WelcomeText
@@ -18,10 +20,12 @@ public class HomePageViewModel : ViewModelBase
     public override bool CanNavigateNext { get => true; protected set => throw new System.NotImplementedException(); }
     public override bool CanNavigatePrevious { get => false; protected set => throw new System.NotImplementedException(); }
 
-    public HomePageViewModel(YavscApiClient api, Settings settings)
+    public HomePageViewModel(YavscApiClient api, Settings settings, SessionStatusViewModel sessionStatus)
     {
         Api = api;
         Settings = settings;
+        SessionStatus = sessionStatus;
+
     }
     public RelayCommand OpenBlogs { get; set; } = new RelayCommand(() => App.PushMainPageAsync());
     /// <summary>
@@ -33,5 +37,8 @@ public class HomePageViewModel : ViewModelBase
     /// (thread-safe dispatcher marshalling on PropertyChanged) — a
     /// designer-only duplicate instance is therefore harmless.
     /// </summary>
-    public HomePageViewModel() : this(null!, new Settings()) { }
+    public HomePageViewModel() : this(null!, new Settings(), new SessionStatusViewModel())
+    {
+
+    }
 }
