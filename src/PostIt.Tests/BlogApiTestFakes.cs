@@ -1,6 +1,7 @@
 using PostIt.Models;
 using PostIt.Services;
 using PostIt.ViewModels;
+using Yavsc.Models;
 
 namespace PostIt.Tests;
 

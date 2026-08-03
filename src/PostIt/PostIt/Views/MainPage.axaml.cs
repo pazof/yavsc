@@ -28,7 +28,7 @@ public partial class MainPage : ContentPage
         // Resolve via the App's DI container so the page gets
         // the canonical services (Api client, settings, ...).
         var app = Application.Current as App;
-        var services = app?.Services;
+        var services = app?.ServiceProvider;
         if (services is null) return;
 
         var page = services.GetRequiredService<SignaturePage>();
