@@ -239,7 +239,8 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
 
         // The list should now be empty.
         var listResponse = await http.GetAsync("/api/v1/blog");
-        using var doc = JsonDocument.Parse(await listResponse.Content.ReadAsStringAsync());
+        String response = await listResponse.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(response);
         Assert.Equal(0, doc.RootElement.GetArrayLength());
     }
 
