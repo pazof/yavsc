@@ -35,7 +35,7 @@ namespace Yavsc.Models.Blog
         public string? AuthorId { get; set; }
 
         [Display(Name = "Auteur")]
-        public virtual ApplicationUser? Author { set; get; }
+        public virtual ApplicationUser Author { set; get; }
 
 
         [Display(Name = "Date de création")]
@@ -95,6 +95,6 @@ namespace Yavsc.Models.Blog
         [InverseProperty("Post")]
         public virtual List<Comment> Comments { get; set; }
 
-        IApplicationUser IBlogPost.Author { get => this.Author; }
+        IApplicationUser IBlogPost.Author => Author;
     }
 }

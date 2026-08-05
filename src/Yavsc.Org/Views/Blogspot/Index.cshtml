@@ -52,19 +52,19 @@
     <div class="post card">
 
 
-        <a asp-action="Details" asp-route-id="@((IBlogPost)post).Id" class="bloglink" >
+        <a asp-action="Details" asp-route-id="@post.Id" class="bloglink" >
             <div class="float-left"><img class="photo card-photo" src="@post.Photo" ></div>
             <h3 class="index-post-title">@post.Title</h3>
         </a>
         <div>
-          <a asp-action="Details" asp-route-id="@((IBlogPost)post).Id">
+          <a asp-action="Details" asp-route-id="@post.Id">
             <asciidoc summary="@maxTextLen">@post.Article</asciidoc></a>
             <span style="font-size:x-small;">@Html.DisplayFor(m => post.Author)</span>
             <span style="font-size:xx-small;">
             posté le @post.DateCreated.ToString("dddd d MMM yyyy à H:mm")
             @if ((post.DateModified - post.DateCreated).Minutes > 0){ 
                 @:- Modifié le @post.DateModified.ToString("dddd d MMM yyyy à H:mm")
-            })
+            }
             </span>
         </div>
         <div class="actiongroup">
@@ -74,13 +74,13 @@
             }
             else
             {
-            <a asp-action="Details" asp-route-id="@((IBlogPost)post).Id" class="btn btn-light">Details</a>
+            <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-light">Details</a>
             }
             @if ((await AuthorizationService.AuthorizeAsync(User, post, new EditPermission())).Succeeded)
             {
-           <a asp-action="Edit" asp-route-id="@((IBlogPost)post).Id" class="btn btn-primary">Edit</a>
+           <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-primary">Edit</a>
 
-            <a asp-action="Delete" asp-route-id="@((IBlogPost)post).Id" class="btn btn-danger">Delete</a>
+            <a asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete</a>
 
             }
         </div>

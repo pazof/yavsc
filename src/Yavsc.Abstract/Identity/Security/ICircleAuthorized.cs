@@ -1,10 +1,14 @@
+using Yavsc.Interfaces;
+
 namespace Yavsc.Abstract.Identity.Security
 {
-    public interface ICircleAuthorized
+    public interface ICircleAuthorized :  ITaggable<long>
     {
-        long Id { get; set; }
+
         string AuthorId { get; }
+
         bool AuthorizeCircle(long circleId);
+
         ICircleAuthorization [] GetACL();
 
     }

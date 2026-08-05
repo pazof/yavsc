@@ -22,9 +22,9 @@ namespace Yavsc.Blogs.Controllers
 
         // GET: api/BlogApi
         [HttpGet]
-        public async Task<IEnumerable<IBlogPost>> GetBlogspot(int start = 0, int take = 25)
+        public async Task<IEnumerable<BlogPost>> GetBlogspot(int start = 0, int take = 25)
         {
-            return await blogSpotService.Index(User, null, start, take);
+            return (await blogSpotService.Index(User, null, start, take)).Cast<BlogPost>();
         }
 
         // GET: api/BlogApi/5
