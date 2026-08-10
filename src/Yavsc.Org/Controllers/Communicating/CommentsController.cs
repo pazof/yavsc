@@ -2,16 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
+
     /// <summary>
     /// Comment some post.
     /// </summary>
+    [Route("~/api/v1/blogcomments")]
     public class CommentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,7 +22,68 @@ namespace Yavsc.Controllers
             _context = context;    
         }
 
+        [HttpGet("{id:long}", Name = "GetComment")]
+        public async Task<IActionResult> GetComment(long id)
+        {
+            var comment = await _context.Comment.SingleOrDefaultAsync(m => m.Id == id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(comment);
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        [Consumes("application/json")]
+        public async Task<IActionResult> Post([FromBody] CommentPost post)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var uid = User.GetUserId();
+            if (string.IsNullOrEmpty(uid))
+            {
+                return Challenge();
+            }
+
+            var article = await _context.BlogSpot.FirstOrDefaultAsync(p => p.Id == post.ReceiverId);
+            if (article == null)
+            {
+                ModelState.AddModelError(nameof(post.ReceiverId), "not found");
+                return BadRequest(ModelState);
+            }
+
+            if (post.ParentId != null)
+            {
+                var parentExists = await _context.Comment.AnyAsync(c => c.Id == post.ParentId);
+                if (!parentExists)
+                {
+                    ModelState.AddModelError(nameof(post.ParentId), "not found");
+                    return BadRequest(ModelState);
+                }
+            }
+
+            var comment = new Comment
+            {
+                ReceiverId = post.ReceiverId,
+                Article = post.Article,
+                ParentId = post.ParentId,
+                AuthorId = uid,
+                UserModified = uid
+            };
+
+            _context.Comment.Add(comment);
+            await _context.SaveChangesAsync(uid);
+
+            return CreatedAtRoute("GetComment", new { id = comment.Id }, new { id = comment.Id, dateCreated = comment.DateCreated });
+        }
+
         // GET: Comments
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Comment.Include(c => c.Post);
@@ -45,19 +107,24 @@ namespace Yavsc.Controllers
             return View(comment);
         }
 
-        // GET: Comments/Create
+        // GET: Comments/Create (MVC form endpoint)
+        [HttpGet("form")]
         public IActionResult Create()
         {
-            ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Post");
+            ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Title");
             return View();
         }
 
-        // POST: Comments/Create
-        [HttpPost]
+        // POST: Comments/Create (MVC form endpoint)
+        [HttpPost("form")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Comment comment)
         {
             comment.UserCreated = User.GetUserId();
+            // AuthorId/UserCreated is set server-side after model binding;
+            // remove the stale binding error so a valid authenticated POST
+            // does not fall into the invalid branch.
+            ModelState.Remove(nameof(Comment.AuthorId));
             
             if (ModelState.IsValid)
             {
@@ -65,7 +132,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Post", comment.ReceiverId);
+            ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Title", comment.ReceiverId);
             return View(comment);
         }
 
@@ -82,7 +149,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Post", comment.ReceiverId);
+            ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Title", comment.ReceiverId);
             return View(comment);
         }
 
@@ -97,7 +164,7 @@ namespace Yavsc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Post", comment.ReceiverId);
+            ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Title", comment.ReceiverId);
             return View(comment);
         }
 

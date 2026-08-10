@@ -33,15 +33,11 @@ public class TestUserStartupFilter : IStartupFilter
     {
         return app =>
         {
-            // Replay the production pipeline first (this is what
-            // Program.Main + ConfigurePipeline set up, including
-            // UseAuthentication and UseAuthorization).
-            next(app);
-            // Then add our middleware on top. UseMiddleware<T> wires
-            // it through the same IMiddlewareActivator the framework
-            // uses, so the dependency on TestUserMiddleware is
-            // resolved from the request scope.
             app.UseMiddleware<TestUserMiddleware>();
+            // Replay the production pipeline after the test middleware,
+            // so downstream auth and controllers can see the injected
+            // principal when no real login flow is used.
+            next(app);
         };
     }
 }

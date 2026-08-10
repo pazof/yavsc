@@ -3,7 +3,7 @@ var notifClick =
     function(nid) {
         if (nid > 0) {
             $.get({
-                url: '/api/dimiss/click/' + nid,
+                url: '/api/v1/dimiss/click/' + nid,
                 success: $('div[data-nid='+nid+']').remove()
             });
         }
