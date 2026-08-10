@@ -11,5 +11,6 @@
       from without conflicting names.
     -->
     <UseProjectNamespaceForGitVersionInformation>true</UseProjectNamespaceForGitVersionInformation>
+    <NoWarn>NU1701, NU1901, NU1902</NoWarn>
   </PropertyGroup>
 </Project>

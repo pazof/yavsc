@@ -15,7 +15,6 @@ namespace Yavsc.Controllers
 {
     [Produces("application/json")]
     [Route("api/activity")]
-    [AllowAnonymous]
     public class ActivityApiController : Controller
     {
         private ApplicationDbContext _context;
@@ -88,7 +87,7 @@ namespace Yavsc.Controllers
         }
 
         // POST: api/ActivityApi
-        [HttpPost,Authorize("AdministratorOnly")]
+        [HttpPost, Authorize("AdministratorOnly")]
         public async Task<IActionResult> PostActivity([FromBody] Activity activity)
         {
             if (!ModelState.IsValid)
