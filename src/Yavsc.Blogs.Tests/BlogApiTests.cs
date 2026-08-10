@@ -184,6 +184,42 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     }
 
     [Fact]
+    public async Task PostBlogComment_returns_201_for_existing_post()
+    {
+        ResetDatabase();
+        using var http = NewClient(subject: "tester");
+
+        var draft = new BlogPost
+        {
+            Id = 0,
+            Title = "Billet commentable",
+            AuthorId = "payload-attacker",
+            Article = "Contenu de test.",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
+        };
+
+        var postResponse = await http.PostAsJsonAsync("/api/v1/blog", draft);
+        Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+
+        var createdPost = await postResponse.Content.ReadFromJsonAsync<BlogPost>();
+        Assert.NotNull(createdPost);
+
+        var commentResponse = await http.PostAsJsonAsync("/api/v1/blogcomments", new
+        {
+            Article = "Premier commentaire",
+            ReceiverId = createdPost!.Id
+        });
+
+        Assert.Equal(HttpStatusCode.Created, commentResponse.StatusCode);
+
+        using var doc = JsonDocument.Parse(await commentResponse.Content.ReadAsStringAsync());
+        Assert.True(doc.RootElement.TryGetProperty("id", out var id));
+        Assert.True(id.GetInt64() > 0);
+        Assert.True(doc.RootElement.TryGetProperty("dateCreated", out _));
+    }
+
+    [Fact]
     public void GetUserId_reads_NameIdentifier_when_sub_was_mapped()
     {
         var principal = new ClaimsPrincipal(

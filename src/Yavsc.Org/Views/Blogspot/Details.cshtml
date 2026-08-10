@@ -7,7 +7,7 @@
     <script src="~/js/comment.js" asp-append-version="true"></script>
     <script>
         $.psc.blogcomment.prototype.options.lang = '@System.Globalization.CultureInfo.CurrentUICulture.Name';
-        $.psc.blogcomment.prototype.options.apictrlr = '/api/blogcomments';
+        $.psc.blogcomment.prototype.options.apictrlr = '/api/v1/blogcomments';
         $.psc.blogcomment.prototype.options.authorId = '@User.GetUserId()';
         $.psc.blogcomment.prototype.options.authorName = '@User.GetUserName()';
         $(document).ready(function() {
@@ -23,7 +23,7 @@
                         ReceiverId: @Model.Id
                         }),
                     error: function(xhr,data) {
-                        if (xhr.status=400)
+                        if (xhr.status === 400)
                         {
                             if (xhr.responseJSON)
                             {
@@ -45,7 +45,7 @@ $('#commentValidation').html(
                         var nnode = '<div data-type="blogcomment" data-id="'+data.id+'" data-allow-edit="True" data-allow-moderate="@ViewBag.moderatoFlag" data-date="'+data.dateCreated+'" data-username="@User.GetUserName()">'+comment+'</div>';
                         $('#comments').append($(nnode).blogcomment())
                     },
-                    url:'/api/blogcomments'
+                    url:'/api/v1/blogcomments'
                     });
             });
         })
