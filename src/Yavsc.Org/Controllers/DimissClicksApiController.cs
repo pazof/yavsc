@@ -10,7 +10,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/dimiss")]
+    [Route("api/v1/dimiss")]
     public class DimissClicksApiController : Controller
     {
         private readonly ApplicationDbContext _context;
