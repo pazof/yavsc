@@ -1,10 +1,12 @@
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
+using Yavsc.Server.Helpers;
 using Yavsc.Tests.Shared;
 
 namespace Yavsc.Blogs.Tests;
@@ -20,6 +22,7 @@ namespace Yavsc.Blogs.Tests;
 /// header (or sending a token signed with the wrong key) gets a
 /// 401 back from the framework.
 /// </summary>
+[Collection("JwtClaimMapping")]
 public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
 {
     private readonly BlogsWebServerFixture _fixture;
@@ -178,6 +181,17 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
         Assert.Equal(1, doc.RootElement.GetArrayLength());
         Assert.Equal("tester", doc.RootElement[0].GetProperty("authorId").GetString());
+    }
+
+    [Fact]
+    public void GetUserId_reads_NameIdentifier_when_sub_was_mapped()
+    {
+        var principal = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                [new Claim(ClaimTypes.NameIdentifier, "tester")],
+                authenticationType: "Bearer"));
+
+        Assert.Equal("tester", principal.GetUserId());
     }
 
     [Fact]
