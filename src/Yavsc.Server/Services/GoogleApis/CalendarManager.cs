@@ -197,7 +197,7 @@ namespace Yavsc.Services
                 if (credential.IsCreateScopedRequired)
                 {
                     credential = credential.CreateScoped(scopesCalendar);
-                }/* 
+                }/*
                 var credential = await GoogleHelpers.GetCredentialForApi(new string [] { scopeCalendar });
                 if (credential.IsCreateScopedRequired)
                 {

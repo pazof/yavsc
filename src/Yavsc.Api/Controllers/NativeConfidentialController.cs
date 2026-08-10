@@ -1,14 +1,14 @@
 ﻿
-using System;
-using System.Linq;
+
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Yavsc.Helpers;
+
 using Yavsc.Models;
 using Yavsc.Models.Identity;
 using Yavsc.Server.Helpers;
+
+#nullable enable
 
 [Authorize, Route("~/api/gcm")]
 public class NativeConfidentialController : Controller

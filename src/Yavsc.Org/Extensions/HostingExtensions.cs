@@ -1189,6 +1189,8 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
         }
     }
 
+#nullable enable
+
     static void LoadGoogleConfig(IConfigurationRoot configuration)
     {
         string? googleClientFile = configuration["Authentication:Google:GoogleWebClientJson"];
@@ -1204,6 +1206,7 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
             Config.GServiceAccount = JsonConvert.DeserializeObject<GoogleServiceAccount>(safile.OpenText().ReadToEnd());
         }
     }
+#nullable disable
 
     public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
                 bool enableDirectoryBrowsing = false)

@@ -149,6 +149,38 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     }
 
     [Fact]
+    public async Task PostBlog_sets_AuthorId_on_created_post_and_list_entry()
+    {
+        ResetDatabase();
+        using var http = NewClient(subject: "tester");
+
+        var draft = new BlogPost
+        {
+            Id = 0,
+            Title = "Billet avec auteur",
+            AuthorId = "payload-attacker",
+            Article = "Contenu de test.",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
+        };
+
+        var postResponse = await http.PostAsJsonAsync("/api/v1/blog", draft);
+        Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+
+        var created = await postResponse.Content.ReadFromJsonAsync<BlogPost>();
+        Assert.NotNull(created);
+        Assert.Equal("tester", created!.AuthorId);
+
+        var listResponse = await http.GetAsync("/api/v1/blog");
+        Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
+
+        using var doc = JsonDocument.Parse(await listResponse.Content.ReadAsStringAsync());
+        Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
+        Assert.Equal(1, doc.RootElement.GetArrayLength());
+        Assert.Equal("tester", doc.RootElement[0].GetProperty("authorId").GetString());
+    }
+
+    [Fact]
     public async Task GetBlog_returns_401_when_no_token_is_provided()
     {
         ResetDatabase();
