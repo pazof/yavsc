@@ -37,14 +37,10 @@ jobs:
 
   build:
 
-    runs-on: debian-latest
+    runs-on: docker://pazof/yavsc-build-env:debian12-dotnet10-android36-v1
 
     steps:
     - uses: actions/checkout@v6
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
