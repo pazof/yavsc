@@ -157,13 +157,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Récupérer l'APK depuis l'artefact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: application-apk-release
           path: ./
 
       - name: Publier la release GitHub et uploader l'APK
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           # Le nom de fichier final dans la release. C'est ce qui
           # apparaîtra dans l'asset et donc dans le permalink :
