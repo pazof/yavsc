@@ -40,10 +40,19 @@ jobs:
     runs-on: docker
 
     steps:
-    - uses: actions/checkout@v6
+    - name: Clone yavsc
+      run: |
+        cd "$RUNNER_WORKSPACE"
+        git clone --depth 1 --branch "${GITHUB_REF_NAME:-main}" \
+          https://forgejo.pschneider.fr/notazof/yavsc.git _src
+        cd _src
+        git submodule update --init --recursive --depth 1
     - name: Restore dependencies
+      working-directory: ${{ runner.workspace }}/_src
       run: dotnet restore
     - name: Build
+      working-directory: ${{ runner.workspace }}/_src
       run: dotnet build --no-restore
     - name: Test
+      working-directory: ${{ runner.workspace }}/_src
       run: dotnet test --no-build --verbosity normal
