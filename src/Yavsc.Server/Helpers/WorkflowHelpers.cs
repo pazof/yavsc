@@ -70,7 +70,27 @@ namespace Yavsc.Helpers
 
                 foreach (var a in System.AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    foreach (var c in a.GetTypes())
+                    Type[] types;
+                    try
+                    {
+                        types = a.GetTypes();
+                    }
+                    catch (System.Reflection.ReflectionTypeLoadException rtle)
+                    {
+                        // Some referenced types failed to load; keep the
+                        // ones that did and skip the rest so a flaky
+                        // dependency in one assembly does not break
+                        // billing initialization for every other assembly.
+                        types = rtle.Types.Where(t => t != null).ToArray();
+                    }
+                    catch
+                    {
+                        // Assembly itself cannot be loaded (FileNotFoundException
+                        // on a referenced assembly, etc.). Skip it entirely.
+                        continue;
+                    }
+
+                    foreach (var c in types)
                     {
                         if (c.IsClass && !c.IsAbstract &&
                             c.GetInterface(nameof(IUserSettings)) != null)
