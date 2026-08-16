@@ -25,9 +25,6 @@ COPY src/PostIt/PostIt.Desktop/*.csproj ./src/PostIt/PostIt.Desktop/
 # 4. Copie de l'intégralité du code source
 COPY . .
 
-# 3. Restauration des dépendances avec vos workloads actifs
-RUN dotnet nuget add source https://isn.pschneider.fr/api/v3/index.json
-
 # 4. Restauration des dépendances pour tous les projets
 RUN dotnet restore
 
