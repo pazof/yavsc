@@ -1,0 +1,227 @@
+# Build and publish a release on the Forgejo source-of-truth instance
+# with the PostIt Android APK as an attached asset.
+#
+# Triggered by a push of a git tag. Validates the tag/changelog pair,
+# builds the APK using the existing Dockerfile (--target build-env), then
+# publishes a Forgejo release via rasterstate/forgejo-release-action and
+# uploads the APK as an asset.
+#
+# Authentication uses ${{ secrets.RELEASE_TOKEN }}, a Forgejo PAT scoped
+# to `write:repository` configured in the repository's Actions secrets.
+# The runner-provided ${{ secrets.GITHUB_TOKEN }} would also work, but
+# a dedicated PAT is preferred for least-privilege and revocability.
+#
+# This workflow complements .github/workflows/docker-publish-android.yml
+# which targets the GitHub mirror; the validate-release logic mirrors
+# the GitHub-side job so the two channels stay consistent.
+name: Forgejo Release
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag à publier (requis en dispatch, ex. 1.0.6 ou 1.0.7-rc1).'
+        required: true
+        type: string
+      force_unstable:
+        description: 'Publier une release avec suffixe (ex. 1.0.0-rc1) malgré le fail-fast par défaut.'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  # Parse le tag, applique la règle de parité du patch
+  # (pair=stable / impair=preview / suffixe=unstable), fail-fast sur
+  # instable sauf opt-in, et vérifie que CHANGELOG.md contient une
+  # section `## [TAG] - <channel>` cohérente. Le body est extrait
+  # dans un artifact consommé par le job release.
+  validate-release:
+    runs-on: docker
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Valider le tag et la section CHANGELOG
+        env:
+          # En push tag : github.ref_name est le tag.
+          # En workflow_dispatch : on lit l'input 'tag' (obligatoire).
+          TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+          FORCE_UNSTABLE: ${{ inputs.force_unstable || 'false' }}
+        run: |
+          if [[ -z "$TAG" ]]; then
+            echo "::error::No tag provided. In workflow_dispatch, set the 'tag' input."
+            exit 1
+          fi
+
+          # Parse semver : MAJOR.MINOR.PATCH[-SUFFIX]
+          if [[ ! "$TAG" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)(-.*)?$ ]]; then
+            echo "::error::Tag '$TAG' does not match MAJOR.MINOR.PATCH[-SUFFIX] format."
+            exit 1
+          fi
+
+          MAJOR="${BASH_REMATCH[1]}"
+          MINOR="${BASH_REMATCH[2]}"
+          PATCH="${BASH_REMATCH[3]}"
+          SUFFIX="${BASH_REMATCH[4]}"
+
+          # Classification du canal par parité du patch.
+          # Patch pair + pas de suffixe -> stable.
+          # Patch impair + pas de suffixe -> preview.
+          # Suffixe présent -> instable.
+          if [[ -n "$SUFFIX" ]]; then
+            CHANNEL="unstable"
+          elif (( PATCH % 2 == 0 )); then
+            CHANNEL="stable"
+          else
+            CHANNEL="preview"
+          fi
+
+          echo "Tag $TAG classifié comme channel=$CHANNEL"
+
+          # Fail-fast sur instable sauf opt-in explicite.
+          if [[ "$CHANNEL" == "unstable" && "$FORCE_UNSTABLE" != "true" ]]; then
+            echo "::error::Tag '$TAG' is unstable (suffix '$SUFFIX'). Refusing to publish."
+            echo "Set force_unstable=true via workflow_dispatch to override."
+            exit 1
+          fi
+
+          # Lecture du CHANGELOG.md (doit exister à la racine du repo).
+          if [[ ! -f CHANGELOG.md ]]; then
+            echo "::error::CHANGELOG.md not found at repo root."
+            exit 1
+          fi
+
+          # Extraction de la section [TAG]. On cherche la première ligne
+          # commençant par '## [' qui contient '[TAG]' (entre '## [' et
+          # la prochaine ligne '## [' ou fin de fichier). awk en mode
+          # paragraphe suffit et reste POSIX.
+          BODY=$(awk -v tag="[$TAG]" '
+            /^## \[/ {
+              if (in_section) exit
+              if (index($0, tag) > 0) in_section=1
+              next
+            }
+            in_section { print }
+          ' CHANGELOG.md)
+
+          if [[ -z "$BODY" ]]; then
+            echo "::error::No section matching '## [$TAG]' found in CHANGELOG.md."
+            echo "Add a '## [$TAG] - $CHANNEL' section before tagging."
+            exit 1
+          fi
+
+          # Vérification cohérence du canal déclaré dans le suffixe.
+          # Format attendu : "## [TAG] - stable" / "- preview" / "- unstable".
+          if [[ "$BODY" != *" - $CHANNEL"* ]]; then
+            echo "::error::Section '## [$TAG]' must declare suffix '- $CHANNEL' to match tag parity."
+            echo "Current section body (first 5 lines):"
+            echo "$BODY" | head -5
+            exit 1
+          fi
+
+          echo "Section CHANGELOG validée pour [$TAG] - $CHANNEL"
+
+          # Écrit le body dans un fichier pour transmission via artifact.
+          # Le body est multi-ligne, donc artifact > heredoc $GITHUB_ENV.
+          mkdir -p release-body
+          printf '%s\n' "$BODY" > release-body/body.md
+
+      - name: Uploader le body de la release comme artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-body
+          path: release-body/body.md
+          retention-days: 1
+
+  # Construit l'APK via le Dockerfile (stage build-env), puis publie
+  # la release Forgejo avec le body validé et l'APK en asset.
+  release:
+    needs: validate-release
+    runs-on: docker
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Checkout du tag (workflow_dispatch uniquement)
+        # En push tag, le runner checkout déjà au bon commit.
+        # En workflow_dispatch, on checkout explicitement le tag demandé
+        # pour que l'APK soit bien construit depuis ce commit.
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          if [[ -z "$TAG" ]]; then
+            echo "::error::No tag provided. In workflow_dispatch, set the 'tag' input."
+            exit 1
+          fi
+          git checkout "$TAG"
+
+      - name: Build de l'image Docker (stage build-env uniquement)
+        run: docker build --build-arg ANDROID_TARGET_RID=android-arm64 --target build-env -t postit-android .
+
+      - name: Extraire l'APK signé du conteneur
+        run: |
+          docker create --name extractor postit-android
+          docker cp extractor:/src/src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/com.CompanyName.PostIt-Signed.apk ./PostIt.Android.apk
+          docker rm extractor
+
+      - name: Récupérer le body validé
+        uses: actions/download-artifact@v7
+        with:
+          name: release-body
+          path: release-body
+
+      - name: Calculer le canal (stable / preview / unstable) depuis le tag
+        # On re-parse le tag ici plutôt que de transporter le channel
+        # via artifact. Le calcul est trivial (parité du patch + suffixe)
+        # et reste ainsi explicite.
+        id: set-channel
+        env:
+          # En push tag : github.ref_name est le tag.
+          # En workflow_dispatch : on lit l'input 'tag'.
+          TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+        run: |
+          if [[ -z "$TAG" ]]; then
+            echo "::error::No tag provided. In workflow_dispatch, set the 'tag' input."
+            exit 1
+          fi
+          if [[ ! "$TAG" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)(-.*)?$ ]]; then
+            echo "::error::Tag '$TAG' does not match MAJOR.MINOR.PATCH[-SUFFIX] format."
+            exit 1
+          fi
+          PATCH="${BASH_REMATCH[3]}"
+          SUFFIX="${BASH_REMATCH[4]}"
+          if [[ -n "$SUFFIX" ]]; then
+            CHANNEL="unstable"
+          elif (( PATCH % 2 == 0 )); then
+            CHANNEL="stable"
+          else
+            CHANNEL="preview"
+          fi
+          echo "channel=$CHANNEL" >> "$GITHUB_OUTPUT"
+          echo "is_prerelease=$([[ $CHANNEL != stable ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Publier la release Forgejo et uploader l'APK
+        uses: https://rasterhub.com/rasterstate/forgejo-release-action@v1
+        with:
+          # tag_name defaults to the pushed tag (GITHUB_REF_NAME).
+          body_path: release-body/body.md
+          # Stable -> Latest (false).
+          # Preview et Unstable -> prerelease (true).
+          prerelease: ${{ steps.set-channel.outputs.is_prerelease }}
+          files: |
+            PostIt.Android.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
