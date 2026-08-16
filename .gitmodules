@@ -1,0 +1,3 @@
+[submodule "external/dotnet-android-build-image"]
+	path = external/dotnet-android-build-image
+	url = https://forgejo.pschneider.fr/notazof/dotnet-android-build-image.git
