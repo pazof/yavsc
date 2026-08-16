@@ -43,9 +43,12 @@ jobs:
     - name: Clone yavsc
       run: |
         cd "$RUNNER_WORKSPACE"
-        git clone --depth 1 --branch "${GITHUB_REF_NAME:-main}" \
-          https://forgejo.pschneider.fr/notazof/yavsc.git _src
+        git clone https://forgejo.pschneider.fr/notazof/yavsc.git _src
         cd _src
+        if [ -n "${GITHUB_REF:-}" ]; then
+          git fetch --depth 1 origin "$GITHUB_REF"
+          git checkout FETCH_HEAD
+        fi
         git submodule update --init --recursive --depth 1
     - name: Restore dependencies
       working-directory: ${{ runner.workspace }}/_src
