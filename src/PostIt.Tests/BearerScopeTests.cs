@@ -8,6 +8,9 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Yavsc.Blogspot;
+using Yavsc.Api.Client;
+using PostIt.Services;
 using PostIt.Services;
 using Xunit;
 
@@ -119,7 +122,7 @@ public class BearerScopeTests
             // Resolve a BlogApiClient on top. We don't need real
             // posts; we just need the outbound HTTP request to be
             // the one we capture.
-            var blog = new BlogApiClient(subClient);
+            var blog = new BlogApiClient(subClient, "http://localhost/");
 
             await blog.GetPostsAsync(ct: TestContext.Current.CancellationToken);
 

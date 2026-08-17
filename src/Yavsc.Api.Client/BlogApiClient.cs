@@ -5,15 +5,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Yavsc.Blogspot;
 
-namespace PostIt.Services;
+namespace Yavsc.Api.Client;
 
 /// <summary>
 /// High-level client for the Blog subsystem of the Yavsc API
 /// (deployed at <c>https://blogs.pschneider.fr</c>). All transport
 /// concerns — base URL, JSON serialisation, Bearer auth, silent
 /// refresh on 401, request body shaping — are delegated to
-/// <see cref="YavscApiClient"/>. This class is a thin DTO↔path
-/// mapper, nothing more.
+/// <see cref="YavscApiClient"/>, which lives in the consuming
+/// application (PostIt). This class is a thin DTO↔path mapper,
+/// nothing more.
 ///
 /// <para><b>URL convention.</b> <see cref="YavscApiClient"/>'s
 /// <c>BaseAddress</c> already terminates with <c>/api/v1/</c>
@@ -34,16 +35,20 @@ public sealed class BlogApiClient
 {
     private const string DefaultPathPrefix = "blog";
 
-    private readonly YavscApiClient _api;
+    private readonly IYavscApiClient _api;
+    private readonly Uri _baseAddress;
     private readonly string _pathPrefix;
 
-    public BlogApiClient(YavscApiClient api, string pathPrefix = DefaultPathPrefix)
+    public BlogApiClient(IYavscApiClient api, string blogsBaseAddress, string pathPrefix = DefaultPathPrefix)
     {
         _api = api ?? throw new ArgumentNullException(nameof(api));
+        if (string.IsNullOrEmpty(blogsBaseAddress))
+            throw new ArgumentException("Base address is required.", nameof(blogsBaseAddress));
 
-        // ApiUrl is e.g. "https://blogs.pschneider.fr/api/v1/" — keep the
+        // e.g. "https://blogs.pschneider.fr/api/v1/" — keep the
         // trailing slash so relative paths ("posts") resolve correctly.
-        api.Http.BaseAddress = new Uri(api.Settings.BlogsApiUrl);
+        _baseAddress = new Uri(blogsBaseAddress);
+        api.Http.BaseAddress = _baseAddress;
 
         _pathPrefix = pathPrefix?.TrimStart('/') ?? DefaultPathPrefix;
     }

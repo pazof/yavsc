@@ -1,4 +1,5 @@
 using Yavsc.Blogspot;
+using Yavsc.Api.Client;
 using PostIt.Services;
 using PostIt.ViewModels;
 
@@ -14,7 +15,7 @@ public class PostItViewModelTests
         // default; tests construct one with a fake YavscApiClient that
         // throws on any call (we never call the API in this test).
         var fakeApi = new ThrowingYavscApiClient();
-        var blog = new BlogApiClient(fakeApi);
+        var blog = new BlogApiClient(fakeApi, "http://localhost/");
         var viewModel = new MainPageViewModel(blog);
 
         viewModel.Posts.Add(new BlogPost { Id = 1, Title = "First post", Article = "Hello world", AuthorId = "alice" });
@@ -46,7 +47,7 @@ public class PostItViewModelTests
             new() { Id = 2, Title = "World" }
         };
         var api = new StubYavscApiClient(expected);
-        var blog = new BlogApiClient(api);
+        var blog = new BlogApiClient(api, "http://localhost/");
 
         var posts = await blog.GetPostsAsync();
 
