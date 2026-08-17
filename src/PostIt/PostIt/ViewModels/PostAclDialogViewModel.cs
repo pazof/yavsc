@@ -34,7 +34,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
 
     /// <summary>The post whose ACL is being edited. Set by the
     /// caller (MainPage) when opening the dialog.</summary>
-    public BlogPost Post { get; }
+    public BlogPostDto Post { get; }
 
     [ObservableProperty]
     public partial ObservableCollection<CircleDto> MyCircles { get; set; } = new();
@@ -52,7 +52,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
     public partial string StatusMessage { get; set; } = string.Empty;
 
     public PostAclDialogViewModel(
-        BlogPost post,
+        BlogPostDto post,
         BlogAclApiClient aclClient,
         CircleApiClient circleClient)
     {

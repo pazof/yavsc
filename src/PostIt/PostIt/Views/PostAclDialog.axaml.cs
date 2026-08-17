@@ -22,7 +22,7 @@ public partial class PostAclDialog : ContentPage
         InitializeComponent();
     }
 
-    public PostAclDialog(BlogPost post, BlogAclApiClient aclClient, CircleApiClient circleClient)
+    public PostAclDialog(BlogPostDto post, BlogAclApiClient aclClient, CircleApiClient circleClient)
     {
         InitializeComponent();
         DataContext = new PostAclDialogViewModel(post, aclClient, circleClient);

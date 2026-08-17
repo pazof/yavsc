@@ -53,7 +53,7 @@
             <ListBox ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="models:BlogPost">
+                    <DataTemplate x:DataType="models:BlogPostDto">
                         <StackPanel Spacing="4">
                             <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
                             <TextBlock Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" FontSize="10" Foreground="Gray" />

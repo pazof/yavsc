@@ -25,7 +25,7 @@ public partial class MainPageViewModel : ViewModelBase
     /// previous "{Binding SelectedPost.Title}" binding, the user's
     /// keystrokes were silently dropped whenever
     /// <c>SelectedPost was null</c>, which made the editor a trap
-    /// and caused Save to POST a <c>BlogPost</c> with an empty
+    /// and caused Save to POST a <c>BlogPostDto</c> with an empty
     /// title — hence the 400 "The Title field is required".</summary>
     [ObservableProperty]
     public partial string DraftTitle { get; set; }
@@ -47,13 +47,13 @@ public partial class MainPageViewModel : ViewModelBase
     public partial string SearchText { get; set; }
 
     [ObservableProperty]
-    public partial ObservableCollection<BlogPost> Posts { get; set; }
+    public partial ObservableCollection<BlogPostDto> Posts { get; set; }
 
     [ObservableProperty]
-    public partial ObservableCollection<BlogPost> FilteredPosts { get; set; }
+    public partial ObservableCollection<BlogPostDto> FilteredPosts { get; set; }
 
     [ObservableProperty]
-    public partial BlogPost? SelectedPost { get; set; }
+    public partial BlogPostDto? SelectedPost { get; set; }
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
@@ -83,8 +83,8 @@ public partial class MainPageViewModel : ViewModelBase
     private void Init(Settings? settings)
     {
         SearchText = string.Empty;
-        Posts = new ObservableCollection<BlogPost>();
-        FilteredPosts = new ObservableCollection<BlogPost>();
+        Posts = new ObservableCollection<BlogPostDto>();
+        FilteredPosts = new ObservableCollection<BlogPostDto>();
         SelectedPost = null;
         IsBusy = false;
         StatusMessage = "Ready";
@@ -120,7 +120,7 @@ public partial class MainPageViewModel : ViewModelBase
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
 
-    partial void OnSelectedPostChanged(BlogPost? value)
+    partial void OnSelectedPostChanged(BlogPostDto? value)
     {
         // Mirror the selection into the editor buffer so the
         // XAML-bound TextBox/TextEditor show the right content
@@ -177,7 +177,7 @@ public partial class MainPageViewModel : ViewModelBase
 
         await ExecuteAsync(async () =>
         {
-            // Build a fresh BlogPost from the editor buffer on
+            // Build a fresh BlogPostDto from the editor buffer on
             // every Save — we no longer mutate SelectedPost in
             // place. The previous behaviour copied the buffer
             // (which was a no-op when SelectedPost was null)
@@ -189,7 +189,7 @@ public partial class MainPageViewModel : ViewModelBase
             // the update path.
             if (SelectedPost is null || SelectedPost.Id == 0)
             {
-                var draft = new BlogPost
+                var draft = new BlogPostDto
                 {
                     Title = DraftTitle,
                     Article = DraftArticle ?? string.Empty,
@@ -205,7 +205,7 @@ public partial class MainPageViewModel : ViewModelBase
             }
             else
             {
-                var update = new BlogPost
+                var update = new BlogPostDto
                 {
                     Id = SelectedPost.Id,
                     AuthorId = SelectedPost.AuthorId,
@@ -327,7 +327,7 @@ public partial class MainPageViewModel : ViewModelBase
     /// because the navigation surface (<c>NavigationPage</c>) lives
     /// in the View layer.
     /// </summary>
-    public event EventHandler<BlogPost>? ManageAclRequested;
+    public event EventHandler<BlogPostDto>? ManageAclRequested;
 
     [RelayCommand(CanExecute = nameof(CanManageAcl))]
     public void ManageAcl()

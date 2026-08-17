@@ -97,7 +97,7 @@ public class BearerScopeTests
             // CapturingHttpHandler is the assertion point. It
             // records the first request's Authorization header and
             // returns 200 with an empty array (BlogApiClient
-            // deserialises to List<BlogPost>).
+            // deserialises to List<BlogPostDto>).
             var captured = new CapturingHttpHandler();
             var client = new YavscApiClient(
                 settings,
