@@ -25,6 +25,9 @@ jobs:
     steps:
       - name: Checkout du code
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       # 1. Votre étape de build actuelle (on nomme l'image "postit-android")
       #    --target build-env : on ne veut que le stage de build (qui
@@ -59,6 +62,9 @@ jobs:
     steps:
       - name: Checkout du code
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Valider le tag et la section CHANGELOG
         env:
