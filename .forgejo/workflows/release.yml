@@ -3,8 +3,8 @@
 #
 # Triggered by a push of a git tag. Validates the tag/changelog pair,
 # builds the APK using the existing Dockerfile (--target build-env), then
-# publishes a Forgejo release via rasterstate/forgejo-release-action and
-# uploads the APK as an asset.
+# publishes a Forgejo release via the Forgejo REST API and uploads the
+# APK as an asset.
 #
 # Authentication uses ${{ secrets.GITHUB_TOKEN }} (auto-provided by the
 # Forgejo runner, scoped to contents: write for the current repo). A
@@ -14,6 +14,12 @@
 # UTF-8 byte-sequence error, probably a text-vs-bytea column type on
 # the secret table). Bumping to Forgejo v16 should fix it; until then,
 # the runner-provided token keeps the workflow operational.
+#
+# Why bash + curl, no third-party actions: the runner's docker label
+# points at pazof/yavsc-build-env, a Debian image without Node.js. Any
+# action like actions/checkout, rasterstate/forgejo-release-action, etc.
+# fails with "executable file not found in $PATH". Same constraint as
+# .forgejo/workflows/buildAndTest.yml.
 #
 # This workflow complements .github/workflows/docker-publish-android.yml
 # which targets the GitHub mirror; the validate-release logic mirrors
@@ -40,24 +46,15 @@ permissions:
   contents: write
 
 jobs:
-  # Parse le tag, applique la règle de parité du patch
-  # (pair=stable / impair=preview / suffixe=unstable), fail-fast sur
-  # instable sauf opt-in, et vérifie que CHANGELOG.md contient une
-  # section `## [TAG] - <channel>` cohérente. Le body est extrait
-  # dans un artifact consommé par le job release.
-  validate-release:
+  # Job unique : validation tag/CHANGELOG + build APK + publication
+  # via l'API REST Forgejo (pas d'actions tierces Node).
+  release:
     runs-on: docker
     steps:
-      - name: Checkout du code
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: Valider le tag et la section CHANGELOG
+      - name: Clone du repo au tag demandé
         env:
           # En push tag : github.ref_name est le tag.
-          # En workflow_dispatch : on lit l'input 'tag' (obligatoire).
+          # En workflow_dispatch : on lit l'input 'tag'.
           TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
           FORCE_UNSTABLE: ${{ inputs.force_unstable || 'false' }}
         run: |
@@ -65,6 +62,27 @@ jobs:
             echo "::error::No tag provided. In workflow_dispatch, set the 'tag' input."
             exit 1
           fi
+
+          # WORKDIR de l'image (cf. dotnet-android-build-image/Dockerfile).
+          cd /src
+
+          # Clone unshallow pour que GitVersion.MsBuild ait l'historique
+          # et les tags (sinon MSB3073 sur la cible Android cf. PR #21).
+          if [[ ! -d _src/.git ]]; then
+            git clone https://forgejo.pschneider.fr/notazof/yavsc.git _src
+          fi
+
+          cd _src
+          git fetch --tags --force --prune origin
+          git checkout "$TAG"
+
+          echo "Checked out at $(git rev-parse HEAD) on $(git describe --tags --always 2>/dev/null || echo unknown)"
+
+      - name: Valider le tag et la section CHANGELOG
+        run: |
+          cd /src/_src
+          TAG="$(git describe --tags --exact-match HEAD 2>/dev/null || git rev-parse --short HEAD)"
+          echo "Validating tag $TAG"
 
           # Parse semver : MAJOR.MINOR.PATCH[-SUFFIX]
           if [[ ! "$TAG" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)(-.*)?$ ]]; then
@@ -92,7 +110,7 @@ jobs:
           echo "Tag $TAG classifié comme channel=$CHANNEL"
 
           # Fail-fast sur instable sauf opt-in explicite.
-          if [[ "$CHANNEL" == "unstable" && "$FORCE_UNSTABLE" != "true" ]]; then
+          if [[ "$CHANNEL" == "unstable" && "${FORCE_UNSTABLE:-false}" != "true" ]]; then
             echo "::error::Tag '$TAG' is unstable (suffix '$SUFFIX'). Refusing to publish."
             echo "Set force_unstable=true via workflow_dispatch to override."
             exit 1
@@ -134,98 +152,115 @@ jobs:
 
           echo "Section CHANGELOG validée pour [$TAG] - $CHANNEL"
 
-          # Écrit le body dans un fichier pour transmission via artifact.
-          # Le body est multi-ligne, donc artifact > heredoc $GITHUB_ENV.
-          mkdir -p release-body
-          printf '%s\n' "$BODY" > release-body/body.md
-
-      - name: Uploader le body de la release comme artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-body
-          path: release-body/body.md
-          retention-days: 1
-
-  # Construit l'APK via le Dockerfile (stage build-env), puis publie
-  # la release Forgejo avec le body validé et l'APK en asset.
-  release:
-    needs: validate-release
-    runs-on: docker
-    steps:
-      - name: Checkout du code
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: Checkout du tag (workflow_dispatch uniquement)
-        # En push tag, le runner checkout déjà au bon commit.
-        # En workflow_dispatch, on checkout explicitement le tag demandé
-        # pour que l'APK soit bien construit depuis ce commit.
-        if: github.event_name == 'workflow_dispatch'
-        env:
-          TAG: ${{ inputs.tag }}
-        run: |
-          if [[ -z "$TAG" ]]; then
-            echo "::error::No tag provided. In workflow_dispatch, set the 'tag' input."
-            exit 1
-          fi
-          git checkout "$TAG"
+          # Expose channel + body pour les étapes suivantes via $GITHUB_ENV.
+          echo "RELEASE_CHANNEL=$CHANNEL" >> "$GITHUB_ENV"
+          echo "RELEASE_BODY<<EOF" >> "$GITHUB_ENV"
+          echo "$BODY" >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
+          echo "IS_PRERELEASE=$([ "$CHANNEL" = "stable" ] && echo false || echo true)" >> "$GITHUB_ENV"
 
       - name: Build de l'image Docker (stage build-env uniquement)
-        run: docker build --build-arg ANDROID_TARGET_RID=android-arm64 --target build-env -t postit-android .
+        run: cd /src/_src && docker build --build-arg ANDROID_TARGET_RID=android-arm64 --target build-env -t postit-android .
 
       - name: Extraire l'APK signé du conteneur
         run: |
           docker create --name extractor postit-android
-          docker cp extractor:/src/src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/com.CompanyName.PostIt-Signed.apk ./PostIt.Android.apk
+          docker cp extractor:/src/src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/com.CompanyName.PostIt-Signed.apk /src/_src/PostIt.Android.apk
           docker rm extractor
 
-      - name: Récupérer le body validé
-        uses: actions/download-artifact@v7
-        with:
-          name: release-body
-          path: release-body
-
-      - name: Calculer le canal (stable / preview / unstable) depuis le tag
-        # On re-parse le tag ici plutôt que de transporter le channel
-        # via artifact. Le calcul est trivial (parité du patch + suffixe)
-        # et reste ainsi explicite.
-        id: set-channel
-        env:
-          # En push tag : github.ref_name est le tag.
-          # En workflow_dispatch : on lit l'input 'tag'.
-          TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
-        run: |
-          if [[ -z "$TAG" ]]; then
-            echo "::error::No tag provided. In workflow_dispatch, set the 'tag' input."
-            exit 1
-          fi
-          if [[ ! "$TAG" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)(-.*)?$ ]]; then
-            echo "::error::Tag '$TAG' does not match MAJOR.MINOR.PATCH[-SUFFIX] format."
-            exit 1
-          fi
-          PATCH="${BASH_REMATCH[3]}"
-          SUFFIX="${BASH_REMATCH[4]}"
-          if [[ -n "$SUFFIX" ]]; then
-            CHANNEL="unstable"
-          elif (( PATCH % 2 == 0 )); then
-            CHANNEL="stable"
-          else
-            CHANNEL="preview"
-          fi
-          echo "channel=$CHANNEL" >> "$GITHUB_OUTPUT"
-          echo "is_prerelease=$([[ $CHANNEL != stable ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
-
-      - name: Publier la release Forgejo et uploader l'APK
-        uses: https://rasterhub.com/rasterstate/forgejo-release-action@v1
-        with:
-          # tag_name defaults to the pushed tag (GITHUB_REF_NAME).
-          body_path: release-body/body.md
-          # Stable -> Latest (false).
-          # Preview et Unstable -> prerelease (true).
-          prerelease: ${{ steps.set-channel.outputs.is_prerelease }}
-          files: |
-            PostIt.Android.apk
+      - name: Publier la release Forgejo via l'API REST
+        # Pas d'action tierce (pas de Node dans l'image runner).
+        # On parle à l'API Forgejo directement via curl.
+        # Docs : https://forgejo.pschneider.fr/api/swagger#/repository/release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_API_URL: ${{ github.api_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+          RELEASE_BODY: ${{ env.RELEASE_BODY }}
+          IS_PRERELEASE: ${{ env.IS_PRERELEASE }}
+        run: |
+          if [[ -z "$TAG" ]]; then
+            echo "::error::No tag resolved for the API call."
+            exit 1
+          fi
+
+          # Le runner Forgejo expose l'API sur github.api_url (par
+          # défaut http://…/api/v1). On retire le suffixe /api/v1 s'il
+          # est présent pour dériver la base du serveur, puis on
+          # reconstruit l'URL de l'API proprement.
+          API_BASE="${GITHUB_API_URL%/}"
+          API_BASE="${API_BASE%/api/v1}"
+
+          # 1. Vérifier si la release existe déjà pour ce tag.
+          echo "::group::Check existing release for tag $TAG"
+          HTTP=$(curl -sS -o /tmp/existing.json -w '%{http_code}' \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/json" \
+            "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/tags/$TAG")
+          echo "GET releases/tags/$TAG -> HTTP $HTTP"
+          EXISTING_ID=""
+          if [[ "$HTTP" == "200" ]]; then
+            EXISTING_ID=$(python3 -c "import json,sys; print(json.load(open('/tmp/existing.json')).get('id',''))" 2>/dev/null || true)
+            echo "Existing release id: ${EXISTING_ID:-none}"
+          fi
+          echo "::endgroup::"
+
+          # 2. Créer ou mettre à jour la release.
+          # On utilise python3 pour générer le body JSON proprement
+          # (jq n'est pas garanti dans l'image runner).
+          if [[ -n "$EXISTING_ID" ]]; then
+            echo "::group::Update release id=$EXISTING_ID"
+            BODY=$(IS_PRERELEASE="$IS_PRERELEASE" RELEASE_BODY="$RELEASE_BODY" python3 -c 'import json,os; print(json.dumps({"body":os.environ["RELEASE_BODY"],"prerelease":os.environ["IS_PRERELEASE"].lower()=="true"}))')
+            HTTP=$(curl -sS -o /tmp/release.json -w '%{http_code}' \
+              -X PATCH \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/json" \
+              --data-binary "$BODY" \
+              "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/$EXISTING_ID")
+            echo "PATCH release -> HTTP $HTTP"
+            echo "::endgroup::"
+          else
+            echo "::group::Create release"
+            BODY=$(IS_PRERELEASE="$IS_PRERELEASE" RELEASE_BODY="$RELEASE_BODY" TAG="$TAG" python3 -c 'import json,os; print(json.dumps({"tag_name":os.environ["TAG"],"name":os.environ["TAG"],"body":os.environ["RELEASE_BODY"],"prerelease":os.environ["IS_PRERELEASE"].lower()=="true"}))')
+            HTTP=$(curl -sS -o /tmp/release.json -w '%{http_code}' \
+              -X POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              -H "Accept: application/json" \
+              --data-binary "$BODY" \
+              "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases")
+            echo "POST release -> HTTP $HTTP"
+            echo "::endgroup::"
+          fi
+
+          if [[ "$HTTP" != "200" && "$HTTP" != "201" ]]; then
+            echo "::error::Release creation/update failed (HTTP $HTTP):"
+            cat /tmp/release.json
+            exit 1
+          fi
+
+          RELEASE_ID=$(python3 -c "import json; print(json.load(open('/tmp/release.json'))['id'])")
+          echo "Release id=$RELEASE_ID"
+
+          # 3. Upload l'APK en asset.
+          echo "::group::Upload APK asset"
+          HTTP=$(curl -sS -o /tmp/asset.json -w '%{http_code}' \
+            -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/octet-stream" \
+            -H "Accept: application/json" \
+            --data-binary "@/src/_src/PostIt.Android.apk" \
+            "?name=PostIt.Android.apk" \
+            "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets")
+          echo "POST asset -> HTTP $HTTP"
+          echo "::endgroup::"
+
+          if [[ "$HTTP" != "201" ]]; then
+            echo "::error::Asset upload failed (HTTP $HTTP):"
+            cat /tmp/asset.json
+            exit 1
+          fi
+
+          echo "Release publiée: $API_BASE/$GITHUB_REPOSITORY/releases/tag/$TAG"
