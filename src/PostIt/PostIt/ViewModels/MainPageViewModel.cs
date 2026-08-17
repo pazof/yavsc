@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Yavsc.Blogspot;
+using Yavsc.Api.Client;
 using PostIt.Services;
 
 namespace PostIt.ViewModels;

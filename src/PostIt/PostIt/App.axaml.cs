@@ -7,6 +7,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using PostIt.Services;
+using Yavsc.Api.Client;
 using PostIt.ViewModels;
 using PostIt.Views;
 
@@ -55,7 +56,7 @@ public partial class App : Application
             "PostIt", "tokens.json"));
 
         var api = new YavscApiClient(settings, tokenStore);
-        var client = new BlogApiClient(api);
+        var client = new BlogApiClient(api, settings.BlogsApiUrl);
 
         var services = new ServiceCollection();
 

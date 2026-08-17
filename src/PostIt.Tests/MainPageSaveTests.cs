@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
 using Yavsc.Blogspot;
+using Yavsc.Api.Client;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -40,7 +41,7 @@ public class MainPageSaveTests
         // not a Control, so it needs a navigation host).
         var recorder = new CallRecorder();
         var api = new RecordingYavscApiClient(recorder);
-        var blog = new BlogApiClient(api);
+        var blog = new BlogApiClient(api, "http://localhost/");
         var viewModel = new MainPageViewModel(blog);
 
         var page = new MainPage { DataContext = viewModel };
