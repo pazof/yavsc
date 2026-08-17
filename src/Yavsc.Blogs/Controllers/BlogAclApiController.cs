@@ -1,12 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Access;
 using Yavsc.Server.Helpers;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
     [Route("api/blogacl")]
@@ -86,7 +85,7 @@ namespace Yavsc.Controllers
         }
         private bool CheckOwner (long circleId)
         {
-            
+
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var circle = _context.Circle.First(c=>c.Id==circleId);
             _context.Entry(circle).State = EntityState.Detached;

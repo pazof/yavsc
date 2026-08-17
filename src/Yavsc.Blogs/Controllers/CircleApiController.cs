@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 using Yavsc.Server.Helpers;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
-    [Route("api/cirle")]
+    [Route("api/circle")]
     public class CircleApiController : Controller
     {
         private readonly ApplicationDbContext _context;
