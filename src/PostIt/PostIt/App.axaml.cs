@@ -78,6 +78,7 @@ public partial class App : Application
         services.AddSingleton<SettingsPage>();
         services.AddTransient<HomePage>();
         services.AddTransient<SignaturePage>();
+        services.AddTransient<CirclesPage>();
 
         // ViewModels
         services.AddSingleton(settings);
@@ -89,6 +90,7 @@ public partial class App : Application
         services.AddTransient<MainPageViewModel>();
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<SignaturePageViewModel>();
+        services.AddTransient<CirclesPageViewModel>();
 
         // Persistent session banner: one instance for the lifetime of
         // the app so the same VM survives page navigation.
