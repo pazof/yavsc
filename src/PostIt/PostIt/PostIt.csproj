@@ -25,6 +25,7 @@
     <PackageReference Include="IdentityModel.OidcClient" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <ProjectReference Include="../../Yavsc.Abstract/Yavsc.Abstract.csproj" />
+    <ProjectReference Include="../../Yavsc.Api.Client/Yavsc.Api.Client.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="postit-settings.json">
