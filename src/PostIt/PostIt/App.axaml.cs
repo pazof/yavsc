@@ -60,6 +60,7 @@ public partial class App : Application
         var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
         var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
         var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
+        var contactService = new ContactService(userSearchClient);
 
         var services = new ServiceCollection();
 
@@ -89,6 +90,7 @@ public partial class App : Application
         services.AddSingleton(circleClient);
         services.AddSingleton(blogAclClient);
         services.AddSingleton(userSearchClient);
+        services.AddSingleton<IContactService>(contactService);
         services.AddTransient<MainPageViewModel>();
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<SignaturePageViewModel>();
