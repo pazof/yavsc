@@ -1,9 +1,8 @@
 using System;
 using Yavsc.Abstract.Identity;
 using Yavsc.Abstract.Identity.Security;
-using Yavsc.Blogspot;
 
-namespace PostIt.Models;
+namespace Yavsc.Blogspot;
 
 public class BlogPost : IBlogPost
 {
@@ -13,12 +12,12 @@ public class BlogPost : IBlogPost
 
     public string Article { get; set ; }
     public string Photo { get; set ; }
-    public long Id { get; set ; }
-    public DateTime DateCreated { get; set ; }
-    public string UserCreated { get; set ; }
-    public DateTime DateModified { get; set ; }
-    public string UserModified { get; set ; }
-    public string Title { get; set ; }
+    public long Id { get; set; }
+    public DateTime DateCreated { get; set; }
+    public string UserCreated { get; set; }
+    public DateTime DateModified { get; set; }
+    public string UserModified { get; set; }
+    public string Title { get; set; }
 
     public bool AuthorizeCircle(long circleId)
     {
