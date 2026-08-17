@@ -166,14 +166,37 @@ jobs:
           echo "EOF" >> "$GITHUB_ENV"
           echo "IS_PRERELEASE=$([ "$CHANNEL" = "stable" ] && echo false || echo true)" >> "$GITHUB_ENV"
 
-      - name: Build de l'image Docker (stage build-env uniquement)
-        run: cd /src/_src && docker build --build-arg ANDROID_TARGET_RID=android-arm64 --target build-env -t postit-android .
-
-      - name: Extraire l'APK signé du conteneur
+      - name: Build des projets .NET (sans docker)
+        # L'image runner (pazof/yavsc-build-env) a le SDK .NET 10 + le
+        # workload Android, mais PAS le binaire `docker` ni de daemon
+        # Docker. On exécute donc les commandes dotnet directement
+        # au lieu de passer par `docker build`.
+        # Equivalent des stages build-env du Dockerfile (lignes
+        # restore + build Yavsc.Org + build Yavsc.Api + build
+        # Yavsc.Blogs + build PostIt.Android -r android-arm64).
         run: |
-          docker create --name extractor postit-android
-          docker cp extractor:/src/src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/com.CompanyName.PostIt-Signed.apk /src/_src/PostIt.Android.apk
-          docker rm extractor
+          cd /src/_src
+          dotnet restore
+          dotnet build src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-restore -clp:ErrorsOnly
+          dotnet build src/Yavsc.Api/Yavsc.Api.csproj -c Release --no-restore -clp:ErrorsOnly
+          dotnet build src/Yavsc.Blogs/Yavsc.Blogs.csproj -c Release --no-restore -clp:ErrorsOnly
+          dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
+            -c Release --no-restore -clp:ErrorsOnly -r android-arm64
+
+      - name: Copier l'APK signé vers un emplacement connu
+        # Le build Android avec -r android-arm64 produit l'APK dans
+        # bin/Release/net10.0-android/android-arm64/. On le copie à
+        # la racine du checkout pour que l'étape d'upload le trouve.
+        run: |
+          cd /src/_src
+          APK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/com.CompanyName.PostIt-Signed.apk
+          if [[ ! -f "$APK" ]]; then
+            echo "::error::APK not found at $APK"
+            ls -la src/PostIt/PostIt.Android/bin/Release/net10.0-android/ 2>/dev/null || true
+            exit 1
+          fi
+          cp "$APK" /src/_src/PostIt.Android.apk
+          ls -la /src/_src/PostIt.Android.apk
 
       - name: Publier la release Forgejo via l'API REST
         # Pas d'action tierce (pas de Node dans l'image runner).
