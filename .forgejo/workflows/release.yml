@@ -306,6 +306,11 @@ jobs:
           echo "Release id=$RELEASE_ID"
 
           # 3. Upload l'APK en asset.
+          # Le nom du fichier passe en query string (?name=...), pas
+          # en argument positionnel entre --data-binary et l'URL :
+          # sinon curl l'interprète comme un second fichier d'input
+          # (un fichier nommé '?name=PostIt.Android.apk') et l'API
+          # Forgejo renvoie 400 "Missing 'name' parameter".
           echo "::group::Upload APK asset"
           HTTP=$(curl -sS -o /tmp/asset.json -w '%{http_code}' \
             -X POST \
@@ -313,8 +318,7 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             -H "Accept: application/json" \
             --data-binary "@/src/_src/PostIt.Android.apk" \
-            "?name=PostIt.Android.apk" \
-            "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets")
+            "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=PostIt.Android.apk")
           echo "POST asset -> HTTP $HTTP"
           echo "::endgroup::"
 
