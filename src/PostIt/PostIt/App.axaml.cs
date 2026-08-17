@@ -57,6 +57,8 @@ public partial class App : Application
 
         var api = new YavscApiClient(settings, tokenStore);
         var client = new BlogApiClient(api, settings.BlogsApiUrl);
+        var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
+        var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
 
         var services = new ServiceCollection();
 
@@ -79,8 +81,11 @@ public partial class App : Application
 
         // ViewModels
         services.AddSingleton(settings);
-        services.AddSingleton(api);
+        services.AddSingleton<YavscApiClient>(api);
+        services.AddSingleton<IYavscApiClient>(api);
         services.AddSingleton(client);
+        services.AddSingleton(circleClient);
+        services.AddSingleton(blogAclClient);
         services.AddTransient<MainPageViewModel>();
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<SignaturePageViewModel>();
