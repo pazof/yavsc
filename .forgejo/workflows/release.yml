@@ -125,12 +125,16 @@ jobs:
           # Extraction de la section [TAG]. On cherche la première ligne
           # commençant par '## [' qui contient '[TAG]' (entre '## [' et
           # la prochaine ligne '## [' ou fin de fichier). awk en mode
-          # paragraphe suffit et reste POSIX.
+          # paragraphe suffit et reste POSIX. On garde aussi le titre
+          # (ligne `## [TAG] - channel`) pour la vérification du canal.
           BODY=$(awk -v tag="[$TAG]" '
             /^## \[/ {
               if (in_section) exit
-              if (index($0, tag) > 0) in_section=1
-              next
+              if (index($0, tag) > 0) {
+                in_section=1
+                print
+                next
+              }
             }
             in_section { print }
           ' CHANGELOG.md)
@@ -143,12 +147,15 @@ jobs:
 
           # Vérification cohérence du canal déclaré dans le suffixe.
           # Format attendu : "## [TAG] - stable" / "- preview" / "- unstable".
-          if [[ "$BODY" != *" - $CHANNEL"* ]]; then
-            echo "::error::Section '## [$TAG]' must declare suffix '- $CHANNEL' to match tag parity."
-            echo "Current section body (first 5 lines):"
-            echo "$BODY" | head -5
+          # On lit la première ligne du body qui contient le titre.
+          TITLE=$(echo "$BODY" | head -1)
+          if [[ "$TITLE" != *" - $CHANNEL"* ]]; then
+            echo "::error::Section title '$TITLE' must declare suffix '- $CHANNEL' to match tag parity."
             exit 1
           fi
+
+          # Body pour la release : retire la première ligne (titre).
+          BODY=$(echo "$BODY" | tail -n +2)
 
           echo "Section CHANGELOG validée pour [$TAG] - $CHANNEL"
 
