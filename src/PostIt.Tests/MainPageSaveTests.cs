@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
-using PostIt.Models;
+using Yavsc.Blogspot;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;

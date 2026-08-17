@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:PostIt.ViewModels"
-             xmlns:models="using:PostIt.Models"
+             xmlns:models="using:Yavsc.Blogspot"
              xmlns:views="using:PostIt.Views"
              xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
              mc:Ignorable="d"

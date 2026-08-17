@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using PostIt.Models;
+using Yavsc.Blogspot;
 
 namespace PostIt.Services;
 
