@@ -129,12 +129,12 @@ jobs:
             exit 1
           fi
 
-          # Vérification cohérence du canal déclaré dans le suffixe.
+          # Vérification cohérence du canal déclaré dans le titre de section.
           # Format attendu : "## [TAG] - stable" / "- preview" / "- unstable".
-          if [[ "$BODY" != *" - $CHANNEL"* ]]; then
+          HEADER=$(grep -m1 "^## \[$TAG\]" CHANGELOG.md)
+          if [[ "$HEADER" != *" - $CHANNEL"* ]]; then
             echo "::error::Section '## [$TAG]' must declare suffix '- $CHANNEL' to match tag parity."
-            echo "Current section body (first 5 lines):"
-            echo "$BODY" | head -5
+            echo "Current section header: $HEADER"
             exit 1
           fi
 
