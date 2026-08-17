@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,19 @@ namespace Yavsc.Blogs.Controllers
             _context = context;
         }
 
-        // GET: api/BlogAclApi
+        /// <summary>
+        /// Returns the ACL entries for the caller's own blog posts.
+        /// Blog posts (and therefore their ACLs) are private to their
+        /// author — the API never exposes another user's ACL.
+        /// </summary>
+        // GET: api/blogacl
         [HttpGet]
         public IEnumerable<CircleAuthorizationToBlogPost> GetBlogACL()
         {
-            return _context.CircleAuthorizationToBlogPost;
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return _context.CircleAuthorizationToBlogPost
+                .Include(a => a.Allowed)
+                .Where(a => a.Allowed.OwnerId == uid);
         }
 
         // GET: api/BlogAclApi/5
