@@ -4,7 +4,7 @@ using Yavsc.Abstract.Identity.Security;
 
 namespace Yavsc.Blogspot;
 
-public class BlogPost : IBlogPost
+public class BlogPostDto : IBlogPost
 {
     public string AuthorId { get; set; }
 

@@ -37,7 +37,7 @@ public partial class MainPage : ContentPage
         }
     }
 
-    void OnManageAclRequested(object? sender, BlogPost post)
+    void OnManageAclRequested(object? sender, BlogPostDto post)
     {
         var app = Application.Current as App;
         var services = app?.ServiceProvider;

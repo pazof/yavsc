@@ -11,7 +11,7 @@ namespace Yavsc.Api.Client;
 /// HTTP client for <c>/api/blogacl</c> on the Yavsc Blogs server.
 ///
 /// <para>Each <see cref="CircleAuthorizationDto"/> grants a single
-/// <c>Circle</c> access to a single <c>BlogPost</c>. The server
+/// <c>Circle</c> access to a single <c>BlogPostDto</c>. The server
 /// scopes every endpoint to the caller's uid: only the author of
 /// the underlying blog post can list, create, modify, or delete
 /// its ACL entries.</para>

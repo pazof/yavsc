@@ -53,19 +53,19 @@ public sealed class BlogApiClient
         _pathPrefix = pathPrefix?.TrimStart('/') ?? DefaultPathPrefix;
     }
 
-    public Task<List<BlogPost>> GetPostsAsync(int start = 0, int take = 25, CancellationToken ct = default)
-        => _api.CallAsync<List<BlogPost>>(
+    public Task<List<BlogPostDto>> GetPostsAsync(int start = 0, int take = 25, CancellationToken ct = default)
+        => _api.CallAsync<List<BlogPostDto>>(
             HttpMethod.Get,
             $"{_pathPrefix}?start={start}&take={take}",
             ct: ct);
 
-    public Task<BlogPost?> GetPostAsync(long id, CancellationToken ct = default)
-        => _api.CallAsync<BlogPost?>(HttpMethod.Get, $"{_pathPrefix}/{id}", ct: ct);
+    public Task<BlogPostDto?> GetPostAsync(long id, CancellationToken ct = default)
+        => _api.CallAsync<BlogPostDto?>(HttpMethod.Get, $"{_pathPrefix}/{id}", ct: ct);
 
-    public Task<BlogPost?> CreatePostAsync(BlogPost post, CancellationToken ct = default)
-        => _api.CallAsync<BlogPost?>(HttpMethod.Post, _pathPrefix, body: post, ct: ct);
+    public Task<BlogPostDto?> CreatePostAsync(BlogPostDto post, CancellationToken ct = default)
+        => _api.CallAsync<BlogPostDto?>(HttpMethod.Post, _pathPrefix, body: post, ct: ct);
 
-    public Task UpdatePostAsync(long id, BlogPost post, CancellationToken ct = default)
+    public Task UpdatePostAsync(long id, BlogPostDto post, CancellationToken ct = default)
         => _api.CallAsync(HttpMethod.Put, $"{_pathPrefix}/{id}", body: post, ct: ct);
 
     public Task DeletePostAsync(long id, CancellationToken ct = default)
