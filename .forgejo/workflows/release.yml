@@ -6,10 +6,14 @@
 # publishes a Forgejo release via rasterstate/forgejo-release-action and
 # uploads the APK as an asset.
 #
-# Authentication uses ${{ secrets.RELEASE_TOKEN }}, a Forgejo PAT scoped
-# to `write:repository` configured in the repository's Actions secrets.
-# The runner-provided ${{ secrets.GITHUB_TOKEN }} would also work, but
-# a dedicated PAT is preferred for least-privilege and revocability.
+# Authentication uses ${{ secrets.GITHUB_TOKEN }} (auto-provided by the
+# Forgejo runner, scoped to contents: write for the current repo). A
+# dedicated PAT (${{ secrets.RELEASE_TOKEN }}) was the preferred option
+# for least-privilege, but creating repo-level secrets is currently
+# broken on this Forgejo instance (InsertEncryptedSecret fails with a
+# UTF-8 byte-sequence error, probably a text-vs-bytea column type on
+# the secret table). Bumping to Forgejo v16 should fix it; until then,
+# the runner-provided token keeps the workflow operational.
 #
 # This workflow complements .github/workflows/docker-publish-android.yml
 # which targets the GitHub mirror; the validate-release logic mirrors
@@ -224,4 +228,4 @@ jobs:
           files: |
             PostIt.Android.apk
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
