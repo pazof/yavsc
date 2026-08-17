@@ -15,10 +15,16 @@
 # the secret table). Bumping to Forgejo v16 should fix it; until then,
 # the runner-provided token keeps the workflow operational.
 #
-# Why bash + curl, no third-party actions: the runner's docker label
-# points at pazof/yavsc-build-env, a Debian image without Node.js. Any
-# action like actions/checkout, rasterstate/forgejo-release-action, etc.
-# fails with "executable file not found in $PATH". Same constraint as
+# Why bash + jq + curl, no third-party actions: the runner's docker
+# label points at pazof/yavsc-build-env, a Debian image with jq but
+# without Node.js or python3. Any action like actions/checkout,
+# rasterstate/forgejo-release-action, etc. fails with "executable
+# file not found in $PATH". jq is shipped in the image from
+# debian12-dotnet10-android36-v2 onward; earlier tags fell back to
+# hand-rolled JSON building via sed, which was fragile (cf. PR #30:
+# sed greedy + head -3 still matched author.id instead of the
+# release id on the minified JSON this instance returns, PATCH
+# /releases/1 → 404). Same constraint as
 # .forgejo/workflows/buildAndTest.yml.
 #
 # This workflow complements .github/workflows/docker-publish-android.yml
@@ -222,31 +228,22 @@ jobs:
           API_BASE="${GITHUB_API_URL%/}"
           API_BASE="${API_BASE%/api/v1}"
 
-          # Pas de python3, pas de jq dans l'image runner. On génère
-          # le JSON à la main : escaping minimal des caractères
-          # spéciaux JSON dans les chaînes (\\, \", \n, \r, \t).
-          # Suffisant pour un CHANGELOG.md bien formé.
-          json_escape() {
-            local s="$1"
-            s="${s//\\/\\\\}"
-            s="${s//\"/\\\"}"
-            s="${s//$'\n'/\\n}"
-            s="${s//$'\r'/\\r}"
-            s="${s//$'\t'/\\t}"
-            printf '%s' "$s"
-          }
-
-          # Extraction d'un champ JSON scalaire de premier niveau depuis un
-          # fichier. On ne lit que les premières lignes pour éviter de
-          # matcher un champ homonyme dans un objet imbriqué (par ex.
-          # le champ "id" de l'auteur d'une release Forgejo, qui vaut
-          # typiquement 1 pour le premier user du repo). Sans cette
-          # restriction, le PATCH sur /releases/<id extrait> tombe en
-          # 404 "The target couldn't be found".
-          json_field() {
-            local file="$1" field="$2"
-            head -3 "$file" | sed -n "s/.*\"$field\"[[:space:]]*:[[:space:]]*\"\?\([0-9][0-9]*\)\"\?.*/\1/p" | head -1
-          }
+          # Construction des bodies JSON et extraction de champs via
+          # jq. L'image runner pazof/yavsc-build-env installe jq
+          # (>= 1.7) depuis debian12-dotnet10-android36-v2. La
+          # chaîne de construction --arg/--argjson garantit un
+          # escaping correct (backslashes, guillemets, newlines,
+          # caractères de contrôle Unicode) sans avoir à le
+          # reproduire à la main.
+          #
+          # json_escape et json_field à base de sed ont vécu : le
+          # sed greedy matche la dernière occurrence d'un champ
+          # dans la ligne, et l'API renvoie sur cette instance un
+          # JSON minifié d'une seule ligne où l'id de l'auteur
+          # (1, premier user du repo) suit l'id de la release
+          # (10706). PATCH /releases/<sed-captured-id> tombait
+          # alors en 404 "The target couldn't be found". jq
+          # résout les deux problèmes en une fois.
 
           # 1. Vérifier si la release existe déjà pour ce tag.
           echo "::group::Check existing release for tag $TAG"
@@ -257,7 +254,7 @@ jobs:
           echo "GET releases/tags/$TAG -> HTTP $HTTP"
           EXISTING_ID=""
           if [[ "$HTTP" == "200" ]]; then
-            EXISTING_ID=$(json_field /tmp/existing.json id)
+            EXISTING_ID=$(jq -r '.id // empty' /tmp/existing.json)
             echo "Existing release id: ${EXISTING_ID:-none}"
           fi
           echo "::endgroup::"
@@ -265,30 +262,35 @@ jobs:
           # 2. Créer ou mettre à jour la release.
           if [[ -n "$EXISTING_ID" ]]; then
             echo "::group::Update release id=$EXISTING_ID"
-            BODY=$(printf '{"body":"%s","prerelease":%s}' \
-              "$(json_escape "$RELEASE_BODY")" "$IS_PRERELEASE")
+            jq -n \
+              --arg body "$RELEASE_BODY" \
+              --argjson prerelease "$IS_PRERELEASE" \
+              '{body: $body, prerelease: $prerelease}' \
+              > /tmp/patch.json
             HTTP=$(curl -sS -o /tmp/release.json -w '%{http_code}' \
               -X PATCH \
               -H "Authorization: token $GITHUB_TOKEN" \
               -H "Content-Type: application/json" \
               -H "Accept: application/json" \
-              --data-binary "$BODY" \
+              --data-binary @/tmp/patch.json \
               "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/$EXISTING_ID")
             echo "PATCH release -> HTTP $HTTP"
             echo "::endgroup::"
           else
             echo "::group::Create release"
-            BODY=$(printf '{"tag_name":"%s","name":"%s","body":"%s","prerelease":%s}' \
-              "$(json_escape "$TAG")" \
-              "$(json_escape "$TAG")" \
-              "$(json_escape "$RELEASE_BODY")" \
-              "$IS_PRERELEASE")
+            jq -n \
+              --arg tag "$TAG" \
+              --arg name "$TAG" \
+              --arg body "$RELEASE_BODY" \
+              --argjson prerelease "$IS_PRERELEASE" \
+              '{tag_name: $tag, name: $name, body: $body, prerelease: $prerelease}' \
+              > /tmp/post.json
             HTTP=$(curl -sS -o /tmp/release.json -w '%{http_code}' \
               -X POST \
               -H "Authorization: token $GITHUB_TOKEN" \
               -H "Content-Type: application/json" \
               -H "Accept: application/json" \
-              --data-binary "$BODY" \
+              --data-binary @/tmp/post.json \
               "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases")
             echo "POST release -> HTTP $HTTP"
             echo "::endgroup::"
@@ -300,7 +302,7 @@ jobs:
             exit 1
           fi
 
-          RELEASE_ID=$(json_field /tmp/release.json id)
+          RELEASE_ID=$(jq -r '.id' /tmp/release.json)
           echo "Release id=$RELEASE_ID"
 
           # 3. Upload l'APK en asset.
