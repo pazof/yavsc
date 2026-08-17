@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
@@ -17,14 +19,22 @@ namespace Yavsc.Blogs.Controllers
             _context = context;
         }
 
-        // GET: api/CircleApi
+        /// <summary>
+        /// Returns the caller's own circles. Circles are personal —
+        /// the API never exposes another user's circles, even by id.
+        /// </summary>
+        // GET: api/circle
         [HttpGet]
         public IEnumerable<Circle> GetCircle()
         {
-            return _context.Circle;
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return _context.Circle.Where(c => c.OwnerId == uid);
         }
 
-        // GET: api/CircleApi/5
+        /// <summary>
+        /// Returns a single circle only when it belongs to the caller.
+        /// </summary>
+        // GET: api/circle/5
         [HttpGet("{id}", Name = "GetCircle")]
         public async Task<IActionResult> GetCircle([FromRoute] long id)
         {
@@ -33,7 +43,9 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest(ModelState);
             }
 
-            Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Circle circle = await _context.Circle.SingleOrDefaultAsync(
+                m => m.Id == id && m.OwnerId == uid);
 
             if (circle == null)
             {
@@ -43,7 +55,12 @@ namespace Yavsc.Blogs.Controllers
             return Ok(circle);
         }
 
-        // PUT: api/CircleApi/5
+        /// <summary>
+        /// Replaces a circle. The caller must own it; the server
+        /// reasserts ownership regardless of any OwnerId the client
+        /// tries to put in the body.
+        /// </summary>
+        // PUT: api/circle/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCircle([FromRoute] long id, [FromBody] Circle circle)
         {
@@ -57,6 +74,16 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest();
             }
 
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var existing = await _context.Circle.SingleOrDefaultAsync(
+                c => c.Id == id && c.OwnerId == uid);
+            if (existing is null)
+            {
+                return new ChallengeResult();
+            }
+
+            // Force OwnerId to the caller; the body value is ignored.
+            circle.OwnerId = uid;
             _context.Entry(circle).State = EntityState.Modified;
 
             try
@@ -78,7 +105,11 @@ namespace Yavsc.Blogs.Controllers
             return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
-        // POST: api/CircleApi
+        /// <summary>
+        /// Creates a circle owned by the caller. The server overwrites
+        /// any OwnerId the client sends in the body.
+        /// </summary>
+        // POST: api/circle
         [HttpPost]
         public async Task<IActionResult> PostCircle([FromBody] Circle circle)
         {
@@ -86,6 +117,9 @@ namespace Yavsc.Blogs.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            circle.OwnerId = uid;
 
             _context.Circle.Add(circle);
             try
@@ -107,7 +141,13 @@ namespace Yavsc.Blogs.Controllers
             return CreatedAtRoute("GetCircle", new { id = circle.Id }, circle);
         }
 
-        // DELETE: api/CircleApi/5
+        /// <summary>
+        /// Deletes a circle only if the caller owns it. Returns 404
+        /// (not 403) when the circle does not exist or is not owned
+        /// by the caller, to avoid leaking the existence of someone
+        /// else's circle.
+        /// </summary>
+        // DELETE: api/circle/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCircle([FromRoute] long id)
         {
@@ -116,7 +156,9 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest(ModelState);
             }
 
-            Circle circle = await _context.Circle.SingleAsync(m => m.Id == id);
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Circle circle = await _context.Circle.SingleOrDefaultAsync(
+                m => m.Id == id && m.OwnerId == uid);
             if (circle == null)
             {
                 return NotFound();
