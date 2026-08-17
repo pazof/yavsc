@@ -317,4 +317,32 @@ public partial class MainPageViewModel : ViewModelBase
     /// forced the buggy "draft with empty title" branch.</summary>
     private bool CanSave() => !IsBusy && !string.IsNullOrWhiteSpace(DraftTitle);
     private bool CanDelete() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
+    private bool CanManageAcl() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
+
+    /// <summary>
+    /// Raised when the user asks to open the "manage ACL" dialog for
+    /// the currently selected post. The <c>MainPage</c> code-behind
+    /// listens to this event and pushes a <c>PostAclDialog</c> on the
+    /// navigation stack. The VM itself can't navigate directly
+    /// because the navigation surface (<c>NavigationPage</c>) lives
+    /// in the View layer.
+    /// </summary>
+    public event EventHandler<BlogPost>? ManageAclRequested;
+
+    [RelayCommand(CanExecute = nameof(CanManageAcl))]
+    public void ManageAcl()
+    {
+        if (SelectedPost is null) return;
+        ManageAclRequested?.Invoke(this, SelectedPost);
+    }
+
+    /// <summary>
+    /// Raised when the user asks to open the circles page (full
+    /// CRUD on their own circles). Same routing as
+    /// <see cref="ManageAclRequested"/>.
+    /// </summary>
+    public event EventHandler? OpenCirclesRequested;
+
+    [RelayCommand]
+    public void OpenCircles() => OpenCirclesRequested?.Invoke(this, EventArgs.Empty);
 }
