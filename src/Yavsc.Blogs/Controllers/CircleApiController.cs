@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
@@ -27,7 +26,7 @@ namespace Yavsc.Blogs.Controllers
         [HttpGet]
         public IEnumerable<Circle> GetCircle()
         {
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             return _context.Circle.Where(c => c.OwnerId == uid);
         }
 
@@ -43,7 +42,7 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest(ModelState);
             }
 
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             Circle circle = await _context.Circle.SingleOrDefaultAsync(
                 m => m.Id == id && m.OwnerId == uid);
 
@@ -74,7 +73,7 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest();
             }
 
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             var existing = await _context.Circle.SingleOrDefaultAsync(
                 c => c.Id == id && c.OwnerId == uid);
             if (existing is null)
@@ -118,7 +117,7 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest(ModelState);
             }
 
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             circle.OwnerId = uid;
 
             _context.Circle.Add(circle);
@@ -156,7 +155,7 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest(ModelState);
             }
 
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             Circle circle = await _context.Circle.SingleOrDefaultAsync(
                 m => m.Id == id && m.OwnerId == uid);
             if (circle == null)
