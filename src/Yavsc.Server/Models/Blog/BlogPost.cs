@@ -107,6 +107,32 @@ namespace Yavsc.Models.Blog
         [NotMapped]
         public bool IsPublished { get; set; }
 
-        IApplicationUser IBlogPost.Author => Author;
+        /// <summary>
+        /// Explicit interface implementation of
+        /// <see cref="IBlogPost.Author"/>. The underlying
+        /// navigation property is <see cref="Author"/>
+        /// (an <c>ApplicationUser</c> entity), but the wire
+        /// DTO is a thin <see cref="BlogPostAuthorDto"/> with
+        /// only the fields the client UI consumes. We project
+        /// on demand so EF can lazy-load the navigation
+        /// without forcing an eager join on every read.
+        /// Returns <c>null</c> when the navigation hasn't been
+        /// loaded (caller should pre-Include <c>Author</c> if
+        /// they need it).
+        /// </summary>
+        BlogPostAuthorDto? IBlogPost.Author
+        {
+            get
+            {
+                var a = Author;
+                if (a == null) return null;
+                return new BlogPostAuthorDto
+                {
+                    Id = a.Id,
+                    UserName = a.UserName,
+                    Avatar = a.Avatar
+                };
+            }
+        }
     }
 }
