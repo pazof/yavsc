@@ -1,5 +1,4 @@
 using System;
-using Yavsc.Abstract.Identity;
 using Yavsc.Abstract.Identity.Security;
 
 namespace Yavsc.Blogspot;
@@ -8,7 +7,7 @@ public class BlogPostDto : IBlogPost
 {
     public string AuthorId { get; set; }
 
-    public IApplicationUser Author { get; set; }
+    public BlogPostAuthorDto? Author { get; set; }
 
     public string Article { get; set ; }
     public string Photo { get; set ; }
