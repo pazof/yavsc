@@ -1,8 +1,18 @@
 
 
 # Yavsc
+  [![The latest release made in the repository](https://forgejo.pschneider.fr/notazof/yavsc/badges/release.svg)](https://forgejo.pschneider.fr/notazof/yavsc/releases/latest)
 
 C'est une application mettant en oeuvre une prise de contact entre un demandeur de services et son éventuel prestataire associé.
+
+# Statut actuel des actions Forgejo
+
+* [![Build and test](https://forgejo.pschneider.fr/notazof/yavsc/badges/workflows/buildAndTest.yml/badge.svg)](https://forgejo.pschneider.fr/notazof/yavsc/actions?workflow=buildAndTest.yml)
+
+* [![Release](https://forgejo.pschneider.fr/notazof/yavsc/badges/workflows/release.yml/badge.svg)](
+https://forgejo.pschneider.fr/notazof/yavsc/actions?workflow=release.yml
+)
+
 
 # Statut actuel des actions GitHub
 
