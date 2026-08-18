@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Yavsc.Blogspot;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 
@@ -23,10 +24,21 @@ namespace Yavsc.Server.Helpers
                 dbContext.Circle.Include(c => c.Members)
                 .Where(c => c.Members.Any(m => m.MemberId == readerId))
                 .Select(c => c.Id).ToArray();
+                // Mirror of BlogSpotService.Index for an
+                // authenticated reader: Private restricts to the
+                // author; Public is read-through-ACL.
                 return dbContext.BlogSpot.Include(
                               b => b.Author
                               ).Include(p => p.ACL).Where(x => x.Author.Id == posterId &&
-                              (x.ACL.Count == 0 || x.ACL.Any(a => readerCirclesMemberships.Contains(a.CircleId))));
+                              (
+                                  (x.Visibility == Visibility.Private && x.AuthorId == readerId)
+                                  || (x.Visibility == Visibility.Public
+                                      && (x.ACL == null
+                                          || x.ACL.Count == 0
+                                          || x.AuthorId == readerId
+                                          || (readerCirclesMemberships != null
+                                              && x.ACL.Any(a => readerCirclesMemberships.Contains(a.CircleId)))))
+                              ));
             }
         }
 

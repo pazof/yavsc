@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,6 +35,25 @@ public partial class MainPageViewModel : ViewModelBase
     /// <see cref="DraftTitle"/>.</summary>
     [ObservableProperty]
     public partial string DraftArticle { get; set; }
+
+    /// <summary>Editor buffer for the post visibility. Same
+    /// pattern as <see cref="DraftTitle"/> and
+    /// <see cref="DraftArticle"/>: the Save command reads from
+    /// here so the user can flip a draft to Public without
+    /// selecting an existing post first. Defaults to
+    /// <see cref="Visibility.Private"/> on a fresh draft so
+    /// new posts are private-by-default, matching the server
+    /// contract.</summary>
+    [ObservableProperty]
+    public partial Visibility DraftVisibility { get; set; } = Visibility.Private;
+
+    /// <summary>List of values offered in the visibility
+    /// ComboBox. Exposed as a VM property (rather than an
+    /// <c>x:Array</c> resource) because Avalonia XAML doesn't
+    /// author <c>x:Array</c> cleanly. Order: Private first,
+    /// matching the server default.</summary>
+    public IReadOnlyList<Visibility> AllVisibilities { get; } =
+        new[] { Visibility.Private, Visibility.Public };
 
     [ObservableProperty]
     public partial ViewModelBase? CurrentViewModel { get; set; }
@@ -102,6 +122,7 @@ public partial class MainPageViewModel : ViewModelBase
         WindowTitle = "PostIt";
         DraftTitle = string.Empty;
         DraftArticle = string.Empty;
+        DraftVisibility = Visibility.Private;
         CurrentViewModel = this;
     }
 
@@ -131,6 +152,9 @@ public partial class MainPageViewModel : ViewModelBase
         // doesn't show stale content.
         DraftTitle = value?.Title ?? string.Empty;
         DraftArticle = value?.Article ?? string.Empty;
+        // Mirror visibility too. Defaults to Private on null
+        // selection so a fresh draft starts private.
+        DraftVisibility = value?.Visibility ?? Visibility.Private;
         UpdateCommandStates();
     }
 
@@ -195,6 +219,7 @@ public partial class MainPageViewModel : ViewModelBase
                     Article = DraftArticle ?? string.Empty,
                     DateCreated = DateTime.UtcNow,
                     DateModified = DateTime.UtcNow,
+                    Visibility = DraftVisibility,
                 };
                 var created = await BlogClient.CreatePostAsync(draft);
                 if (created is not null)
@@ -214,6 +239,7 @@ public partial class MainPageViewModel : ViewModelBase
                     Article = DraftArticle ?? string.Empty,
                     DateCreated = SelectedPost.DateCreated,
                     DateModified = DateTime.UtcNow,
+                    Visibility = DraftVisibility,
                 };
                 await BlogClient.UpdatePostAsync(SelectedPost.Id, update);
                 StatusMessage = $"Saved post {SelectedPost.Id}.";
