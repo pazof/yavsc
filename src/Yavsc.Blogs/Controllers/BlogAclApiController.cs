@@ -1,12 +1,12 @@
+using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Access;
 using Yavsc.Server.Helpers;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
     [Route("api/blogacl")]
@@ -19,11 +19,19 @@ namespace Yavsc.Controllers
             _context = context;
         }
 
-        // GET: api/BlogAclApi
+        /// <summary>
+        /// Returns the ACL entries for the caller's own blog posts.
+        /// Blog posts (and therefore their ACLs) are private to their
+        /// author — the API never exposes another user's ACL.
+        /// </summary>
+        // GET: api/blogacl
         [HttpGet]
         public IEnumerable<CircleAuthorizationToBlogPost> GetBlogACL()
         {
-            return _context.CircleAuthorizationToBlogPost;
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return _context.CircleAuthorizationToBlogPost
+                .Include(a => a.Allowed)
+                .Where(a => a.Allowed.OwnerId == uid);
         }
 
         // GET: api/BlogAclApi/5
@@ -86,7 +94,7 @@ namespace Yavsc.Controllers
         }
         private bool CheckOwner (long circleId)
         {
-            
+
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var circle = _context.Circle.First(c=>c.Id==circleId);
             _context.Entry(circle).State = EntityState.Detached;

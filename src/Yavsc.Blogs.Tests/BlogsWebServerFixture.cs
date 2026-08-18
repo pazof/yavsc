@@ -154,6 +154,12 @@ public sealed class BlogsWebServerFixture : WebHostFixture
 
     protected override async Task<WebApplication> ConfigurePipelineAsync(WebApplication app)
     {
+        // UseDeveloperExceptionPage gives full stack traces on
+        // 500s during tests — much easier to debug than the
+        // default empty InternalServerError body. Production
+        // (Yavsc.Org) wires its own exception handler; this
+        // fixture is test-only.
+        app.UseDeveloperExceptionPage();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();

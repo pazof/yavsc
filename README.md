@@ -7,12 +7,12 @@ C'est une application mettant en oeuvre une prise de contact entre un demandeur 
 
 # Statut actuel des actions Forgejo
 
+
 * [![Build and test](https://forgejo.pschneider.fr/notazof/yavsc/badges/workflows/buildAndTest.yml/badge.svg)](https://forgejo.pschneider.fr/notazof/yavsc/actions?workflow=buildAndTest.yml)
 
 * [![Release](https://forgejo.pschneider.fr/notazof/yavsc/badges/workflows/release.yml/badge.svg)](
 https://forgejo.pschneider.fr/notazof/yavsc/actions?workflow=release.yml
 )
-
 
 # Statut actuel des actions GitHub
 
