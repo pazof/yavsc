@@ -50,4 +50,36 @@ public sealed class CircleApiClient
 
     public Task DeleteCircleAsync(long id, CancellationToken ct = default)
         => _api.CallAsync(HttpMethod.Delete, $"{Path}/{id}", ct: ct);
+
+    /// <summary>
+    /// Returns the members of one of the caller's circles.
+    /// Returns null when the circle does not exist or is not
+    /// owned by the caller (the server scopes the endpoint
+    /// with a 404 in either case to avoid leaking existence
+    /// — this client flattens that into a null result).
+    /// </summary>
+    public Task<List<CircleMemberDto>?> GetMembersAsync(long id, CancellationToken ct = default)
+        => _api.CallAsync<List<CircleMemberDto>?>(HttpMethod.Get, $"{Path}/{id}/members", ct: ct);
+
+    /// <summary>
+    /// Adds a Yavsc user (resolved client-side via
+    /// <c>/api/user-search</c>) to one of the caller's
+    /// circles. Returns null when the circle does not exist
+    /// or is not owned by the caller, or when the target
+    /// user does not exist. Throws on 409 (already a
+    /// member) — callers that want idempotent behaviour
+    /// can swallow the exception or dedupe beforehand.
+    /// </summary>
+    public Task AddMemberAsync(long id, string userId, CancellationToken ct = default)
+        => _api.CallAsync(HttpMethod.Post, $"{Path}/{id}/members",
+            body: new { userId }, ct: ct);
+
+    /// <summary>
+    /// Removes a user from one of the caller's circles.
+    /// Returns null on success (the server returns 200 OK
+    /// with no body) or when the membership does not
+    /// exist — both treated as success by the caller.
+    /// </summary>
+    public Task RemoveMemberAsync(long id, string userId, CancellationToken ct = default)
+        => _api.CallAsync(HttpMethod.Delete, $"{Path}/{id}/members/{userId}", ct: ct);
 }

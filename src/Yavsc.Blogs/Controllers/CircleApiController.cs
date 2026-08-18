@@ -169,6 +169,143 @@ namespace Yavsc.Blogs.Controllers
             return Ok(circle);
         }
 
+        /// <summary>
+        /// Returns the members of one of the caller's circles.
+        /// Returns 404 (not 403) when the circle does not exist
+        /// or is not owned by the caller, mirroring the scoping
+        /// of the rest of this controller.
+        /// </summary>
+        // GET: api/circle/5/members
+        [HttpGet("{id}/members")]
+        public async Task<IActionResult> GetMembers([FromRoute] long id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var uid = User.GetUserId();
+            var ownsIt = await _context.Circle.AnyAsync(c => c.Id == id && c.OwnerId == uid);
+            if (!ownsIt)
+            {
+                return NotFound();
+            }
+
+            var members = await _context.CircleMembers
+                .Where(m => m.CircleId == id)
+                .Select(m => new CircleMemberDto
+                {
+                    Id = m.MemberId,
+                    UserName = m.Member.UserName ?? string.Empty,
+                    FullName = m.Member.FullName,
+                    Avatar = m.Member.Avatar,
+                })
+                .ToListAsync();
+
+            return Ok(members);
+        }
+
+        /// <summary>
+        /// Adds a Yavsc user to one of the caller's circles. The
+        /// body carries the user id (resolved client-side via the
+        /// central <c>/api/user-search</c> endpoint). Returns
+        /// 404 (not 403) when the circle does not exist or is not
+        /// owned by the caller, and 404 when the target user does
+        /// not exist, so the caller can't probe whether an email
+        /// belongs to a real account.
+        ///
+        /// <para>Returns 409 Conflict if the user is already a
+        /// member of the circle; the client treats this as a
+        /// no-op success.</para>
+        /// </summary>
+        // POST: api/circle/5/members
+        // body: { "userId": "..." }
+        [HttpPost("{id}/members")]
+        public async Task<IActionResult> AddMember(
+            [FromRoute] long id,
+            [FromBody] AddCircleMemberDto body)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var uid = User.GetUserId();
+            var ownsIt = await _context.Circle.AnyAsync(c => c.Id == id && c.OwnerId == uid);
+            if (!ownsIt)
+            {
+                return NotFound();
+            }
+
+            // Reject unknown user ids the same way as an unknown
+            // circle: 404. Probing the user table by id should not
+            // be possible through this endpoint.
+            var userExists = await _context.Users.AnyAsync(u => u.Id == body.UserId);
+            if (!userExists)
+            {
+                return NotFound();
+            }
+
+            // Idempotency: re-adding an existing member is a
+            // 409, not a silent success. Clients that don't
+            // dedupe beforehand will at least get an actionable
+            // status code rather than a misleading "created".
+            var alreadyMember = await _context.CircleMembers.AnyAsync(
+                m => m.CircleId == id && m.MemberId == body.UserId);
+            if (alreadyMember)
+            {
+                return new StatusCodeResult(StatusCodes.Status409Conflict);
+            }
+
+            _context.CircleMembers.Add(new CircleMember
+            {
+                CircleId = id,
+                MemberId = body.UserId,
+            });
+            await _context.SaveChangesAsync(User.GetUserId());
+
+            return CreatedAtRoute("GetCircle", new { id }, body);
+        }
+
+        /// <summary>
+        /// Removes a user from one of the caller's circles.
+        /// Returns 404 when the circle does not exist or is not
+        /// owned by the caller, mirroring the rest of this
+        /// controller's scoping. Returns 404 when the user is
+        /// not a member of the circle (idempotent: removing a
+        /// non-member is the same as having nothing to remove).
+        /// </summary>
+        // DELETE: api/circle/5/members/tester
+        [HttpDelete("{id}/members/{userId}")]
+        public async Task<IActionResult> RemoveMember(
+            [FromRoute] long id,
+            [FromRoute] string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var uid = User.GetUserId();
+            var ownsIt = await _context.Circle.AnyAsync(c => c.Id == id && c.OwnerId == uid);
+            if (!ownsIt)
+            {
+                return NotFound();
+            }
+
+            var membership = await _context.CircleMembers.SingleOrDefaultAsync(
+                m => m.CircleId == id && m.MemberId == userId);
+            if (membership is null)
+            {
+                return NotFound();
+            }
+
+            _context.CircleMembers.Remove(membership);
+            await _context.SaveChangesAsync(User.GetUserId());
+
+            return Ok();
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -182,5 +319,31 @@ namespace Yavsc.Blogs.Controllers
         {
             return _context.Circle.Count(e => e.Id == id) > 0;
         }
+    }
+
+    /// <summary>
+    /// Wire shape for <c>GET /api/circle/{id}/members</c>.
+    /// Mirrors <see cref="UserSearchResultDto"/> but stops
+    /// short of the Email field — circle membership UI only
+    /// needs to render a name and an avatar, not contact
+    /// details.
+    /// </summary>
+    public sealed class CircleMemberDto
+    {
+        public string Id { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+        public string? FullName { get; set; }
+        public string? Avatar { get; set; }
+    }
+
+    /// <summary>
+    /// Wire shape for <c>POST /api/circle/{id}/members</c>.
+    /// The body is intentionally tiny: the client resolves
+    /// the user id via <c>/api/user-search</c> before
+    /// posting, so all we need is the resolved id.
+    /// </summary>
+    public sealed class AddCircleMemberDto
+    {
+        public string UserId { get; set; } = string.Empty;
     }
 }
