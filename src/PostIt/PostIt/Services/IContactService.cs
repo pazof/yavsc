@@ -1,61 +1,57 @@
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace PostIt.Services;
 
 /// <summary>
-/// Abstraction over device contact providers (MAUI Essentials on
-/// mobile, the central /api/user-search endpoint on desktop).
+/// Abstraction over the device-local address book. Used by
+/// the "invite someone" flow to enumerate people the user
+/// already has in their phone — including people who have
+/// never heard of Yavsc.
 ///
-/// Implementations live next to this file in platform-conditional
-/// source files: ContactService.Mobile.cs (ANDROID/IOS) and
-/// ContactService.Desktop.cs (everything else).
+/// <para>Distinct from <see cref="IUserDirectory"/>, which
+/// reads the central Yavsc user table. A device contact may
+/// not have a Yavsc account; a directory entry always does.
+/// The two are exposed as separate interfaces so a UI that
+/// needs both can take both by constructor injection and
+/// present them under separate sections (e.g. "Contacts from
+/// your phone" vs "Yavsc members").</para>
+///
+/// <para>Implementations live next to this file in
+/// platform-conditional source files:
+/// <c>ContactService.Mobile.cs</c> (ANDROID/IOS) and
+/// <c>ContactService.Desktop.cs</c> (everything else). On
+/// desktop the implementation is a stub that returns an
+/// empty list: the desktop has no equivalent of the mobile
+/// address book, and inviting from a desktop is a separate
+/// flow.</para>
 /// </summary>
 public interface IContactService
 {
     /// <summary>
-    /// Returns the contacts known so far. On mobile this is the
-    /// full device address book (after permission grant); on
-    /// desktop this is the in-memory cache populated by previous
-    /// <see cref="SearchAsync"/> calls — empty until the user
-    /// has searched for something.
+    /// Read the device address book. Returns the contacts
+    /// known to the local provider; on desktop (no local
+    /// provider) this is always an empty list.
     /// </summary>
     Task<IReadOnlyList<ContactDto>> GetDeviceContactsAsync(CancellationToken ct = default);
-
-    /// <summary>
-    /// On desktop: hits <c>GET /api/user-search?q=…</c> and
-    /// appends matching users to the in-memory cache exposed via
-    /// <see cref="Contacts"/>. On mobile: throws
-    /// <see cref="PlatformNotSupportedException"/> — the mobile
-    /// provider uses the device-local address book, not a
-    /// network search.
-    /// </summary>
-    Task SearchAsync(string query, CancellationToken ct = default);
-
-    /// <summary>
-    /// Live view of the in-memory contact cache. UI binds to
-    /// this directly for a \"search results\" panel; on mobile
-    /// implementations this is populated eagerly by
-    /// <see cref="GetDeviceContactsAsync"/>.
-    /// </summary>
-    ObservableCollection<ContactDto> Contacts { get; }
 }
 
 /// <summary>
-/// Platform-neutral contact DTO. Source-of-truth shape for the UI
-/// layer; concrete providers (MAUI Essentials on mobile,
-/// UserSearchClient on desktop) map to this type.
+/// Platform-neutral contact DTO. Source-of-truth shape for
+/// the UI layer; concrete providers (MAUI Essentials on
+/// mobile) map to this type.
 ///
-/// <para><c>Email</c> is a single string on purpose: the central
-/// search endpoint returns one email per user, and the UI use
-/// case is \"pick someone to invite / add to a circle\", which
-/// never needs more than one. Multi-email contacts on mobile
-/// flatten to the primary address (first non-empty).</para>
+/// <para><c>Emails</c> is a list on purpose: a real device
+/// contact may carry several addresses (home / work / other).
+/// The UI use case ("invite / add to a circle") can then
+/// decide which address to use, or let the user pick. This
+/// is intentionally richer than the Yavsc directory's
+/// single-<c>Email</c> shape — the two flows answer different
+/// questions and shouldn't be flattened onto the same
+/// wire.</para>
 /// </summary>
 public sealed record ContactDto(
     string Id,
     string DisplayName,
-    string? Email);
+    IReadOnlyList<string> Emails);
