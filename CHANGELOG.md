@@ -16,15 +16,111 @@ Cette convention est partagée avec le dépôt
 [`postit-debian`](https://forgejo.pschneider.fr/notazof/postit-debian)
 pour la production des paquets `.deb`.
 
-## [Unreleased]
+## [1.0.7] - preview
 
 ### Added
+- Per-post ACL in PostIt: a new “Manage ACL” page, opened from the ACL
+  button on a selected post, lets the post author grant or revoke
+  grants for individuals or circles. The server scopes each grant
+  operation to `caller == post.AuthorId` and returns `404` (not `403`)
+  for posts the caller does not own, so the existence of another
+  user's post is not leaked.
+- Circle membership API + UI: three new REST endpoints under
+  `/api/circle/{id}/members` (`GET` list, `POST` add, `DELETE`
+  remove) and a new “Members” column on the *My Circles* page with an
+  “Add a member” button that opens a search modal. The search modal
+  reuses `IUserDirectory` (introduced by the `IContactService` split
+  in this same release) — exactly the use case the abstraction was
+  carved out for.
+- Publish toggle for blog posts: a new `PUT /api/BlogApi/{id}/publish`
+  endpoint, and a `Published` checkbox in the post toolbar that
+  toggles a `BlogSpotPublication` row for the post. The publish
+  signal flows through the pre-existing `PermissionHandler.IsPublic`
+  path, so no new column was needed and the server-side authorisation
+  logic is unchanged.
+- `UserSearchApiController` in `Yavsc.Blogs`:
+  `GET /api/user-search?q=...&e=...&take=...`. Any-authenticated-
+  caller endpoint that exposes the user's email under a closed-
+  community assumption (documented in the controller's XML doc).
+  Wired to the PostIt Desktop address book so the user search modal
+  picks it up.
+- `IYavscApiClient` abstraction in `Yavsc.Api.Client`. The transport
+  for the blog/circle/blog-acl/user-search clients is now accessed
+  through this interface, so `PostIt.Tests` can stub the HTTP layer
+  without spinning up a real WebAPI host.
+- Forgejo Actions release workflow: a `.forgejo/workflows/release.yml`
+  pipeline that builds and publishes a release with the PostIt APK
+  on tag push. Written in pure bash (the runner image has no Node),
+  uses `jq` for JSON body construction and response parsing, uses the
+  runner-provided `GITHUB_TOKEN` (no repo-level secret needed),
+  validates the CHANGELOG section heading before allowing the tag
+  to ship.
+- `make release V=<version>` target: creates a `release/<V>` branch
+  from `main`, bumps the `<Version>` property in every `.csproj` via
+  `dotnet-gitversion /updateprojectfiles`, commits the bump on the
+  release branch, and pushes to `origin`. Fails fast if the working
+  tree is dirty or if `HEAD` is not on `main`.
+- Forgejo status badges in the README.
 
 ### Changed
+- The new Publish toggle replaces the “Visibility enum” approach
+  originally drafted in this branch: the existing `BlogSpotPublication`
+  table already carried enough information to expose a publish
+  switch, so no schema change was needed. The original `feat(blog):
+  add Visibility { Private, Public }` commit and its EF migration
+  were reverted in favour of the endpoint-only toggle.
+- `BlogPost` DTO and `IBlogPost` moved from `PostIt.Models` to
+  `Yavsc.Abstract.Blogspot`, the shared assembly where the server-side
+  entity and the wire DTO both live. Renamed `Yavsc.Blogspot.BlogPost`
+  to `BlogPostDto` to make the wire/entity distinction explicit.
+- `BlogAclApiController` and `CircleApiController` moved from
+  `Yavsc.Api` (not yet enabled in production) to `Yavsc.Blogs`, where
+  they belong next to the `BlogSpotService` they depend on.
+- `IContactService` split from `IUserDirectory`: the two interfaces
+  previously conflated the local address-book access (mobile-only,
+  via `Contacts.Default`) and the Yavsc user-search access
+  (Desktop-only, via `/api/user-search`) behind a single facade. The
+  split restores the `ContactDto.Emails` multi-value shape that was
+  being silently flattened to a single string before.
+- CI: the Forgejo Actions build now compiles `.csproj` projects
+  directly inside the runner container (which ships the .NET SDK +
+  Android workload), instead of relying on a separate Docker build
+  step. Node-based third-party actions were replaced with bash + curl
+  + `jq`. The validate-release job parses the CHANGELOG section
+  heading to derive the channel (`stable` / `preview` / `unstable`)
+  rather than the patch-version parity alone.
 
 ### Fixed
+- `CircleApiController` used to read the caller's user id via
+  `FindFirstValue(ClaimTypes.NameIdentifier)`, which does not match
+  when JWT Bearer middleware has `MapInboundClaims = false`. Switched
+  to `User.GetUserId()` (tries `sub` first, then
+  `ClaimTypes.NameIdentifier`, then `nameid`). This was a latent
+  bug visible in tests but easy to ship to production if a host
+  ever disabled the remap.
+- `CircleApiController` and `BlogAclApiController` reads and writes
+  were not always scoped to the caller's own data. Tightened the
+  authorisation checks: cross-user reads now return `404`, not the
+  raw record.
+- `validate-release` CHANGELOG channel check used to parse the
+  patch-version parity only, which disagreed with the channel
+  suffix in the section heading (e.g. `## [1.0.7] - preview`
+  would be flagged as `stable` from the parity alone). The job now
+  inspects the heading line and trusts the suffix when present.
+- `.forgejo/workflows/release.yml`: the asset-upload URL now carries
+  the asset name as a query-string parameter instead of a `curl`
+  positional argument. The previous shape triggered Forgejo's
+  “Missing `name` parameter” 400 in some cases.
 
 ### Removed
+- The `## [Unreleased]` block has been moved into this section.
+- The abandoned `Visibility { Private, Public }` enum and its EF
+  migration, reverted in this release. The publish toggle covers
+  the same user-visible switch without a schema change.
+
+[Unreleased]: https://github.com/pazof/yavsc/compare/HEAD
+[1.0.7]: https://github.com/pazof/yavsc/compare/1.0.6...1.0.7
+[1.0.6]: https://github.com/pazof/yavsc/compare/1.0.5...1.0.6
 
 ## [1.0.6] - stable
 
@@ -58,5 +154,4 @@ pour la production des paquets `.deb`.
   actual release id. Switched to `jq` for both body construction and
   field extraction.
 
-[Unreleased]: https://github.com/pazof/yavsc/compare/HEAD
 [1.0.6]: https://github.com/pazof/yavsc/compare/1.0.5...1.0.6
