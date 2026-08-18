@@ -95,6 +95,18 @@ namespace Yavsc.Models.Blog
         [InverseProperty("Post")]
         public virtual List<Comment> Comments { get; set; }
 
+        /// <summary>
+        /// Whether this post is published. Not a column: the
+        /// existence of a row in <c>BlogSpotPublication</c>
+        /// is the source of truth. EF skips this property via
+        /// <c>[NotMapped]</c> so no migration is needed. The
+        /// service hydrates it after each fetch (single bulk
+        /// lookup, not N+1) and it surfaces through the wire
+        /// as part of the JSON-serialised <c>BlogPost</c>.
+        /// </summary>
+        [NotMapped]
+        public bool IsPublished { get; set; }
+
         IApplicationUser IBlogPost.Author => Author;
     }
 }
