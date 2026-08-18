@@ -1,0 +1,57 @@
+<ContentPage
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="PostIt.Views.AddCircleMemberDialog"
+        xmlns:vm="using:PostIt.ViewModels"
+        xmlns:services="using:PostIt.Services"
+        x:DataType="vm:AddCircleMemberDialogViewModel"
+      >
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12">
+
+        <!-- Search box + button -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8"
+              IsEnabled="{Binding !IsBusy}">
+            <TextBox Grid.Column="0"
+                     Text="{Binding SearchQuery, Mode=TwoWay}"
+                     PlaceholderText="Nom ou email d'un utilisateur Yavsc..."
+                     HorizontalAlignment="Stretch"/>
+            <Button Grid.Column="1" Content="Rechercher"
+                    Command="{Binding SearchCommand}"
+                    Margin="8,0,0,0"/>
+        </Grid>
+
+        <!-- Selection hint -->
+        <TextBlock Grid.Row="1"
+                   Text="Sélectionnez un résultat puis cliquez Ajouter."
+                   FontSize="11" Opacity="0.6"
+                   Margin="0,0,0,8"/>
+
+        <!-- Search results -->
+        <ListBox Grid.Row="2"
+                 ItemsSource="{Binding Results}"
+                 SelectedItem="{Binding Selected, Mode=TwoWay}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="services:UserSummary">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="{Binding DisplayName}"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="{Binding UserName}"
+                                   FontSize="11" Opacity="0.6"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Action buttons -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto" Margin="0,8,0,0">
+            <TextBlock Grid.Column="0" Text="{Binding StatusMessage}"
+                       VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Content="Ajouter"
+                    Command="{Binding AddCommand}"
+                    IsEnabled="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Margin="0,0,8,0"/>
+            <Button Grid.Column="2" Content="Fermer"
+                    Click="OnCloseClicked"/>
+        </Grid>
+    </Grid>
+</ContentPage>

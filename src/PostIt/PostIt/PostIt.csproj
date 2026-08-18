@@ -4,10 +4,10 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <InformationalVersion>1.0.1-5+Branch.main.Sha.0617fc6bda7151c70559d87177e2dcfb1b60995f</InformationalVersion>
-    <Version>1.0.1-5</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <InformationalVersion>1.1.0-beta.1+2.Branch.release-1.0.7-rc1.Sha.6e50967702ba9d310017c86a2d7ee636a9e94ada</InformationalVersion>
+    <Version>1.1.0-beta.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
@@ -25,6 +25,7 @@
     <PackageReference Include="IdentityModel.OidcClient" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <ProjectReference Include="../../Yavsc.Abstract/Yavsc.Abstract.csproj" />
+    <ProjectReference Include="../../Yavsc.Api.Client/Yavsc.Api.Client.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="postit-settings.json">

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.OidcClient;
 using PostIt.ViewModels;
+using Yavsc.Api.Client;
 
 namespace PostIt.Services;
 
@@ -24,7 +25,7 @@ namespace PostIt.Services;
 /// <see cref="BearerTokenHandler"/> only refreshes once even if many
 /// concurrent requests are in flight.
 /// </summary>
-public class YavscApiClient : IAsyncDisposable
+public class YavscApiClient : IYavscApiClient, IAsyncDisposable
 {
     // 60s of slack before the access_token's nominal expiry. Covers
     // network latency + JWT validation on the server side.
