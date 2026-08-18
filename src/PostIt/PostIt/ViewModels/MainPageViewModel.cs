@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using PostIt.Models;
+using Yavsc.Blogspot;
+using Yavsc.Api.Client;
 using PostIt.Services;
 
 namespace PostIt.ViewModels;
@@ -24,7 +25,7 @@ public partial class MainPageViewModel : ViewModelBase
     /// previous "{Binding SelectedPost.Title}" binding, the user's
     /// keystrokes were silently dropped whenever
     /// <c>SelectedPost was null</c>, which made the editor a trap
-    /// and caused Save to POST a <c>BlogPost</c> with an empty
+    /// and caused Save to POST a <c>BlogPostDto</c> with an empty
     /// title — hence the 400 "The Title field is required".</summary>
     [ObservableProperty]
     public partial string DraftTitle { get; set; }
@@ -33,6 +34,18 @@ public partial class MainPageViewModel : ViewModelBase
     /// <see cref="DraftTitle"/>.</summary>
     [ObservableProperty]
     public partial string DraftArticle { get; set; }
+
+    /// <summary>Editor buffer for the post's publication state.
+    /// Reflects the server-side <c>IsPublished</c> flag (the
+    /// existence of a row in <c>BlogSpotPublication</c>) and
+    /// is pushed to the server via
+    /// <see cref="BlogApiClient.SetPublishAsync"/> on explicit
+    /// toggle — it is NOT included in the regular Save
+    /// payload, mirroring the wire contract where
+    /// <c>BlogPostDto</c> doesn't carry <c>Publish</c> as a
+    /// mutable field. Toggling is its own action.</summary>
+    [ObservableProperty]
+    public partial bool DraftIsPublished { get; set; }
 
     [ObservableProperty]
     public partial ViewModelBase? CurrentViewModel { get; set; }
@@ -46,13 +59,13 @@ public partial class MainPageViewModel : ViewModelBase
     public partial string SearchText { get; set; }
 
     [ObservableProperty]
-    public partial ObservableCollection<BlogPost> Posts { get; set; }
+    public partial ObservableCollection<BlogPostDto> Posts { get; set; }
 
     [ObservableProperty]
-    public partial ObservableCollection<BlogPost> FilteredPosts { get; set; }
+    public partial ObservableCollection<BlogPostDto> FilteredPosts { get; set; }
 
     [ObservableProperty]
-    public partial BlogPost? SelectedPost { get; set; }
+    public partial BlogPostDto? SelectedPost { get; set; }
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
@@ -82,8 +95,8 @@ public partial class MainPageViewModel : ViewModelBase
     private void Init(Settings? settings)
     {
         SearchText = string.Empty;
-        Posts = new ObservableCollection<BlogPost>();
-        FilteredPosts = new ObservableCollection<BlogPost>();
+        Posts = new ObservableCollection<BlogPostDto>();
+        FilteredPosts = new ObservableCollection<BlogPostDto>();
         SelectedPost = null;
         IsBusy = false;
         StatusMessage = "Ready";
@@ -101,6 +114,7 @@ public partial class MainPageViewModel : ViewModelBase
         WindowTitle = "PostIt";
         DraftTitle = string.Empty;
         DraftArticle = string.Empty;
+        DraftIsPublished = false;
         CurrentViewModel = this;
     }
 
@@ -119,7 +133,7 @@ public partial class MainPageViewModel : ViewModelBase
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
 
-    partial void OnSelectedPostChanged(BlogPost? value)
+    partial void OnSelectedPostChanged(BlogPostDto? value)
     {
         // Mirror the selection into the editor buffer so the
         // XAML-bound TextBox/TextEditor show the right content
@@ -130,6 +144,9 @@ public partial class MainPageViewModel : ViewModelBase
         // doesn't show stale content.
         DraftTitle = value?.Title ?? string.Empty;
         DraftArticle = value?.Article ?? string.Empty;
+        // Mirror publication state too. Defaults to false on
+        // null selection so a fresh draft starts unpublished.
+        DraftIsPublished = value?.IsPublished ?? false;
         UpdateCommandStates();
     }
 
@@ -176,7 +193,7 @@ public partial class MainPageViewModel : ViewModelBase
 
         await ExecuteAsync(async () =>
         {
-            // Build a fresh BlogPost from the editor buffer on
+            // Build a fresh BlogPostDto from the editor buffer on
             // every Save — we no longer mutate SelectedPost in
             // place. The previous behaviour copied the buffer
             // (which was a no-op when SelectedPost was null)
@@ -188,7 +205,7 @@ public partial class MainPageViewModel : ViewModelBase
             // the update path.
             if (SelectedPost is null || SelectedPost.Id == 0)
             {
-                var draft = new BlogPost
+                var draft = new BlogPostDto
                 {
                     Title = DraftTitle,
                     Article = DraftArticle ?? string.Empty,
@@ -204,7 +221,7 @@ public partial class MainPageViewModel : ViewModelBase
             }
             else
             {
-                var update = new BlogPost
+                var update = new BlogPostDto
                 {
                     Id = SelectedPost.Id,
                     AuthorId = SelectedPost.AuthorId,
@@ -237,6 +254,46 @@ public partial class MainPageViewModel : ViewModelBase
             StatusMessage = $"Deleted post {SelectedPost.Id}.";
             SelectedPost = null;
             await RefreshPostsAsync();
+        });
+    }
+
+    /// <summary>
+    /// Toggle the publication state of the currently selected
+    /// post. Pushes the new state to
+    /// <c>PUT /api/BlogApi/{id}/publish</c> and reflects it
+    /// locally in <see cref="DraftIsPublished"/> + the
+    /// selected post so the UI updates without a full
+    /// refresh.
+    ///
+    /// <para>The toggle is its own action — separate from Save
+    /// — because <c>Publish</c> is not part of the
+    /// <c>BlogPostDto</c> payload. Bundling it into Save
+    /// would require a wire-shape change and a second server
+    /// overload; the dedicated endpoint keeps the wire
+    /// contract clean.</para>
+    /// </summary>
+    [RelayCommand]
+    internal async Task TogglePublish()
+    {
+        if (SelectedPost is null || SelectedPost.Id == 0)
+        {
+            StatusMessage = "Sélectionnez un billet existant pour changer sa publication.";
+            return;
+        }
+
+        await ExecuteAsync(async () =>
+        {
+            var desired = !DraftIsPublished;
+            await BlogClient.SetPublishAsync(SelectedPost.Id, desired);
+            DraftIsPublished = desired;
+            // Mirror into the selected post so a subsequent
+            // RefreshPostsAsync() doesn't blow away the
+            // locally flipped state until the round-trip
+            // re-hydrates it.
+            SelectedPost.IsPublished = desired;
+            StatusMessage = desired
+                ? $"Billet {SelectedPost.Id} publié."
+                : $"Billet {SelectedPost.Id} remis en brouillon.";
         });
     }
 
@@ -316,4 +373,32 @@ public partial class MainPageViewModel : ViewModelBase
     /// forced the buggy "draft with empty title" branch.</summary>
     private bool CanSave() => !IsBusy && !string.IsNullOrWhiteSpace(DraftTitle);
     private bool CanDelete() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
+    private bool CanManageAcl() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
+
+    /// <summary>
+    /// Raised when the user asks to open the "manage ACL" dialog for
+    /// the currently selected post. The <c>MainPage</c> code-behind
+    /// listens to this event and pushes a <c>PostAclDialog</c> on the
+    /// navigation stack. The VM itself can't navigate directly
+    /// because the navigation surface (<c>NavigationPage</c>) lives
+    /// in the View layer.
+    /// </summary>
+    public event EventHandler<BlogPostDto>? ManageAclRequested;
+
+    [RelayCommand(CanExecute = nameof(CanManageAcl))]
+    public void ManageAcl()
+    {
+        if (SelectedPost is null) return;
+        ManageAclRequested?.Invoke(this, SelectedPost);
+    }
+
+    /// <summary>
+    /// Raised when the user asks to open the circles page (full
+    /// CRUD on their own circles). Same routing as
+    /// <see cref="ManageAclRequested"/>.
+    /// </summary>
+    public event EventHandler? OpenCirclesRequested;
+
+    [RelayCommand]
+    public void OpenCircles() => OpenCirclesRequested?.Invoke(this, EventArgs.Empty);
 }

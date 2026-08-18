@@ -1,4 +1,5 @@
-using PostIt.Models;
+using Yavsc.Blogspot;
+using Yavsc.Api.Client;
 using PostIt.Services;
 using PostIt.ViewModels;
 
@@ -14,12 +15,12 @@ public class PostItViewModelTests
         // default; tests construct one with a fake YavscApiClient that
         // throws on any call (we never call the API in this test).
         var fakeApi = new ThrowingYavscApiClient();
-        var blog = new BlogApiClient(fakeApi);
+        var blog = new BlogApiClient(fakeApi, "http://localhost/");
         var viewModel = new MainPageViewModel(blog);
 
-        viewModel.Posts.Add(new BlogPost { Id = 1, Title = "First post", Article = "Hello world", AuthorId = "alice" });
-        viewModel.Posts.Add(new BlogPost { Id = 2, Title = "Second post", Article = "Nothing here", AuthorId = "bob" });
-        viewModel.Posts.Add(new BlogPost { Id = 3, Title = "Third post", Article = "Search me", AuthorId = "carol" });
+        viewModel.Posts.Add(new BlogPostDto { Id = 1, Title = "First post", Article = "Hello world", AuthorId = "alice" });
+        viewModel.Posts.Add(new BlogPostDto { Id = 2, Title = "Second post", Article = "Nothing here", AuthorId = "bob" });
+        viewModel.Posts.Add(new BlogPostDto { Id = 3, Title = "Third post", Article = "Search me", AuthorId = "carol" });
 
         viewModel.SearchText = "search";
         viewModel.SearchCommand.Execute(null);
@@ -40,13 +41,13 @@ public class PostItViewModelTests
         // The new BlogApiClient delegates transport to YavscApiClient.
         // We feed it a fake YavscApiClient that returns the expected
         // list straight from CallAsync.
-        var expected = new List<BlogPost>
+        var expected = new List<BlogPostDto>
         {
             new() { Id = 1, Title = "Hello" },
             new() { Id = 2, Title = "World" }
         };
         var api = new StubYavscApiClient(expected);
-        var blog = new BlogApiClient(api);
+        var blog = new BlogApiClient(api, "http://localhost/");
 
         var posts = await blog.GetPostsAsync();
 
@@ -76,8 +77,8 @@ public class PostItViewModelTests
     /// <summary>Test fake that hands back a canned list of posts from any CallAsync.</summary>
     private sealed class StubYavscApiClient : YavscApiClient
     {
-        private readonly List<BlogPost> _posts;
-        public StubYavscApiClient(List<BlogPost> posts)
+        private readonly List<BlogPostDto> _posts;
+        public StubYavscApiClient(List<BlogPostDto> posts)
             : base(
                 new Settings
                 {
@@ -97,7 +98,7 @@ public class PostItViewModelTests
         {
             // The canned fake only knows about a list of posts; the
             // BlogApiClient test asserts on that list directly.
-            if (typeof(T) == typeof(List<BlogPost>))
+            if (typeof(T) == typeof(List<BlogPostDto>))
                 return Task.FromResult((T)(object)_posts);
             return Task.FromResult(default(T)!);
         }
