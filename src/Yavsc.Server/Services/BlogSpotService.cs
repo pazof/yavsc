@@ -200,28 +200,46 @@ public class BlogSpotService
                 Where(c => c.Members.Any(m => m.MemberId == viewerId))
                 .Select(c => c.Id).ToArrayAsync();
 
+            // Visibility drives the read gate:
+            //   * Public  : the ACL decides. Open if the ACL is
+            //               empty, narrowed otherwise to author +
+            //               ACL circles + admin.
+            //   * Private : ACL is ignored at read time. Only the
+            //               author (and administrators, checked
+            //               elsewhere) can read.
+            // Admin reads (the Administrator role) go through
+            // IsInMsRole("Administrator") upstream in
+            // PermissionHandler; we don't repeat that here so the
+            // listing query stays role-agnostic.
             posts = _context.BlogSpot
                 .Include(b => b.Author)
                 .Include(p => p.ACL)
                 .Include(p => p.Tags)
                 .Include(p => p.Comments)
-                .Where(p => p.ACL == null
-                || p.ACL.Count == 0
-                || (p.AuthorId == viewerId)
-                || (userCircles != null &&
-                    p.ACL.Any(a => userCircles.Contains(a.CircleId)))
-                );
+                .Where(p =>
+                    (p.Visibility == Visibility.Private && p.AuthorId == viewerId)
+                    || (p.Visibility == Visibility.Public
+                        && (p.ACL == null
+                            || p.ACL.Count == 0
+                            || p.AuthorId == viewerId
+                            || (userCircles != null
+                                && p.ACL.Any(a => userCircles.Contains(a.CircleId))))));
         }
         else
         {
+            // Anonymous callers only see Public posts with no
+            // ACL — anything else either requires membership
+            // (which we have no way to check without an
+            // identity) or is Private.
             posts = _context.blogSpotPublications
             .Include(p => p.BlogPost)
            .Include(b => b.BlogPost.Author)
            .Include(p => p.BlogPost.ACL)
            .Include(p => p.BlogPost.Tags)
            .Include(p => p.BlogPost.Comments)
-           .Where(p => p.BlogPost.ACL == null
-           || p.BlogPost.ACL.Count == 0)
+           .Where(p => p.BlogPost.Visibility == Visibility.Public
+            && (p.BlogPost.ACL == null
+            || p.BlogPost.ACL.Count == 0))
            .Select(p => p.BlogPost).ToArray();
         }
 

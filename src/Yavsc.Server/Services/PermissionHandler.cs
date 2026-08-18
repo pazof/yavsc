@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Yavsc.Blogspot;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;
@@ -55,9 +56,15 @@ public class PermissionHandler : IAuthorizationHandler
     {
         if (resource is BlogPost blogPost)
         {
-            return
-                applicationDbContext.blogSpotPublications
-                .Any(p=>p.BlogpostId == blogPost.Id);
+            // IsPublic is the authz twin of the Index/listing
+            // filter in BlogSpotService: a post is "publicly
+            // readable" (no membership required) iff its
+            // Visibility is Public and its ACL is empty.
+            // Visibility.Public + non-empty ACL is narrowed by
+            // the ACL, so it does NOT pass IsPublic here; the
+            // caller has to match IsSponsor for that.
+            return blogPost.Visibility == Visibility.Public
+                && (blogPost.ACL == null || blogPost.ACL.Count == 0);
         }
         return false;
     }

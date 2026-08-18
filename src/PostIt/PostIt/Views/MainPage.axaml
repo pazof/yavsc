@@ -81,7 +81,26 @@
 
                 <TextBlock Grid.Row="0" Text="Post detail" FontWeight="SemiBold" />
                 <TextBox Grid.Row="1" Text="{Binding DraftTitle, Mode=TwoWay}" PlaceholderText="Title" />
-                <AvaloniaEdit:TextEditor Grid.Row="2"
+                <!-- Visibility toggle: a ComboBox bound to the
+                     Yavsc.Blogspot.Visibility enum (Private /
+                     Public). The enum serialises as int on the
+                     wire; user-facing labels come from the
+                     visibility label converter registered in
+                     App.axaml. Default is Visibility.Private
+                     (set on DraftVisibility), so a fresh draft
+                     is private by default. -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="Visibilité :" VerticalAlignment="Center"/>
+                    <ComboBox SelectedItem="{Binding DraftVisibility, Mode=TwoWay}"
+                              ItemsSource="{Binding AllVisibilities}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:Visibility">
+                                <TextBlock Text="{Binding Converter={StaticResource VisibilityLabelConverter}}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                <AvaloniaEdit:TextEditor Grid.Row="3"
                     views:TextEditorBinding.Text="{Binding DraftArticle, Mode=TwoWay}"
                     ShowLineNumbers="True"
                     FontFamily="Cascadia Code, Consolas, Menlo, Monospace"
@@ -90,7 +109,7 @@
                     VerticalAlignment="Stretch"
                     VerticalScrollBarVisibility="Auto"
                     HorizontalScrollBarVisibility="Auto" />
-                <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="Gray" />
+                <TextBlock Grid.Row="4" Text="{Binding StatusMessage}" Foreground="Gray" />
             </Grid>
         </Border>
     </Grid>
