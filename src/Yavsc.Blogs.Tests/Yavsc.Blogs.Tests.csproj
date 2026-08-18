@@ -7,10 +7,10 @@
     <RootNamespace>Yavsc.Blogs.Tests</RootNamespace>
     <UserSecretsId>b1a9d0d6-3f5e-4a07-9f0a-7e4d5b6c1a82</UserSecretsId>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <InformationalVersion>1.0.1-5+Branch.main.Sha.0617fc6bda7151c70559d87177e2dcfb1b60995f</InformationalVersion>
-    <Version>1.0.1-5</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <InformationalVersion>1.1.0-beta.1+2.Branch.release-1.0.8-rc1.Sha.6e50967702ba9d310017c86a2d7ee636a9e94ada</InformationalVersion>
+    <Version>1.1.0-beta.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
