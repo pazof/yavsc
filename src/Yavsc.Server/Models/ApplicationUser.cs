@@ -41,31 +41,31 @@ namespace Yavsc.Models
         /// User's posts
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("Author"), JsonIgnore]
+        [InverseProperty("Author"), JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         public virtual List<Blog.BlogPost>? Posts { get; set; }
 
         /// <summary>
         /// User's contact list
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("Owner"), JsonIgnore]
+        [InverseProperty("Owner"), JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         public virtual List<Contact>? Book { get; set; }
 
         /// <summary>
         /// External devices using the API
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("DeviceOwner"), JsonIgnore]
+        [InverseProperty("DeviceOwner"), JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         public virtual List<DeviceDeclaration>? DeviceDeclaration { get; set; }
 
-        [InverseProperty("Owner"), JsonIgnore]
+        [InverseProperty("Owner"), JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         public virtual List<ChatConnection>? Connections { get; set; }
 
         /// <summary>
         /// User's circles
         /// </summary>
         /// <returns></returns>
-        [InverseProperty("Owner"), JsonIgnore]
+        [InverseProperty("Owner"), JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
 
         public virtual List<Circle>? Circles { get; set; }
 
@@ -96,28 +96,28 @@ namespace Yavsc.Models
 
         public long MaxFileSize { get; set; } = 512 * 1024 * 1024;
 
-        [JsonIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         [InverseProperty("Owner")]
         public virtual List<BlackListed>? BlackList { get; set; }
 
         public bool AllowMonthlyEmail { get; set; } = false;
 
-        [JsonIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         [InverseProperty("Owner")]
         public virtual List<ChatRoom>? Rooms { get; set; }
 
-        [JsonIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         [InverseProperty("User")]
         public virtual List<ChatRoomAccess>? RoomAccess { get; set; }
 
-        [JsonIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         [InverseProperty("Member")]
         public virtual List<CircleMember>? Membership { get; set; }
 
         /// <summary>
         /// User's blog comments
         /// </summary>
-        [JsonIgnore]
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         [InverseProperty("Author")]
         public virtual List<Blog.Comment>? BlogComments { get; set; }
 

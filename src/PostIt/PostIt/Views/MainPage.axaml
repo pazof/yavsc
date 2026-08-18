@@ -35,6 +35,18 @@
                 <Button Command="{Binding Delete}" Content="Delete" />
                 <Button Command="{Binding ManageAcl}" Content="ACL" />
                 <Button Command="{Binding OpenCircles}" Content="Mes cercles" />
+                <!-- Publication toggle: a CheckBox wired to
+                     DraftIsPublished. Clicking it fires
+                     TogglePublishCommand, which pushes the
+                     new state to /api/blog/{id}/publish.
+                     The CheckBox is the canonical
+                     AvaloniaXaml 'toggle' surface; binding
+                     IsChecked TwoWay keeps the visual state
+                     and the buffer in sync. -->
+                <CheckBox Content="Publié"
+                          IsChecked="{Binding DraftIsPublished, Mode=TwoWay}"
+                          Command="{Binding TogglePublishCommand}"
+                          VerticalAlignment="Center"/>
                 <!--
                     DEV ONLY: temporary shortcut to open the signature
                     capture page. Production entry point is a SignalR
