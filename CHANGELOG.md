@@ -31,9 +31,13 @@ pour la production des paquets `.deb`.
 ### Added
 - Self-hosted Forgejo Actions runner now drives the CI build for the
   yavsc repository, using the
-  `pazof/yavsc-build-env:debian12-dotnet10-android36-v1` image pulled
+  `pazof/yavsc-build-env:debian12-dotnet10-android36-v2` image pulled
   from Docker Hub. Workflow runs end-to-end: clone, restore, build,
   test, with NuGet.config picking up the `isn.pschneider.fr` feed.
+- The build-env image now ships `jq` (Debian package, ≥ 1.7), so the
+  release workflow can build JSON bodies and parse API responses
+  without a hand-rolled `sed`-based extractor that was matching the
+  wrong `id` field on minified responses.
 
 ### Changed
 - CI workflow `.forgejo/workflows/buildAndTest.yml` no longer relies on
@@ -47,6 +51,12 @@ pour la production des paquets `.deb`.
   Actions APK build (`--allow-insecure-connections` on an HTTPS
   endpoint, exit 1). `NuGet.config` at the repo root supplies the
   `isn.pschneider.fr` feed for every restore, including inside Docker.
+- `.forgejo/workflows/release.yml`: PATCH on `/releases/{id}` no longer
+  404s on existing releases. The previous `sed`-based `json_field`
+  matched the last `id` on the line (the author's), so it tried to
+  PATCH `/releases/1` (the first user of the instance) instead of the
+  actual release id. Switched to `jq` for both body construction and
+  field extraction.
 
 [Unreleased]: https://github.com/pazof/yavsc/compare/HEAD
 [1.0.6]: https://github.com/pazof/yavsc/compare/1.0.5...1.0.6
