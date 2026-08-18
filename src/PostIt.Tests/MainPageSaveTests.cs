@@ -2,7 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
-using PostIt.Models;
+using Yavsc.Blogspot;
+using Yavsc.Api.Client;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -24,7 +25,7 @@ namespace PostIt.Tests;
 /// in which a brand-new post can be created), the binding has
 /// no target and the user's keystrokes are silently dropped.
 /// Clicking "Save" then routes to the VM branch
-/// <c>if (SelectedPost is null) { new BlogPost { Title = string.Empty, ... } }</c>
+/// <c>if (SelectedPost is null) { new BlogPostDto { Title = string.Empty, ... } }</c>
 /// which the controller rejects with 400 "The Title field is
 /// required." This test fails on that branch today and will
 /// pass once the VM owns a dedicated <c>Title</c>/<c>Article</c>
@@ -40,7 +41,7 @@ public class MainPageSaveTests
         // not a Control, so it needs a navigation host).
         var recorder = new CallRecorder();
         var api = new RecordingYavscApiClient(recorder);
-        var blog = new BlogApiClient(api);
+        var blog = new BlogApiClient(api, "http://localhost/");
         var viewModel = new MainPageViewModel(blog);
 
         var page = new MainPage { DataContext = viewModel };
@@ -76,14 +77,14 @@ public class MainPageSaveTests
         // we inspect the recorder.
         await Task.Delay(200);
 
-        // Assert: the first POST to "blog" carried a BlogPost
+        // Assert: the first POST to "blog" carried a BlogPostDto
         // whose Title is exactly what the user typed. The bug
         // fails this assertion with Title == string.Empty.
         Assert.NotEmpty(recorder.Calls);
         var (method, path, body) = recorder.FirstCall;
         Assert.Equal(HttpMethod.Post, method);
         Assert.Equal("blog", path);
-        var sent = Assert.IsType<BlogPost>(body);
+        var sent = Assert.IsType<BlogPostDto>(body);
         Assert.Equal(typed, sent.Title);
     }
 }
