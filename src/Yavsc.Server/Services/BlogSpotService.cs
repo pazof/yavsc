@@ -115,6 +115,10 @@ public class BlogSpotService
         {
             return null;
         }
+        // Hydrate the [NotMapped] IsPublished flag from the
+        // publication table so the wire JSON carries it.
+        blog.IsPublished = await _context.blogSpotPublications
+            .AnyAsync(pub => pub.BlogpostId == blogPostId);
         var auth = await _authorizationService.AuthorizeAsync(user, blog, new ReadPermission());
         if (!auth.Succeeded)
         {
@@ -225,10 +229,31 @@ public class BlogSpotService
            .Select(p => p.BlogPost).ToArray();
         }
 
-        var data = posts.OrderByDescending(p => p.DateModified)
+        // Materialise before hydrating IsPublished: it's a
+        // computed [NotMapped] property that needs to be set
+        // on each BlogPost instance after the query runs.
+        var materialised = posts.ToList();
+
+        // Single bulk lookup for the IsPublished flag — avoid
+        // the N+1 of one AnyAsync per post. The published ids
+        // are loaded once and matched against the post list
+        // in memory.
+        var postIds = materialised.OfType<BlogPost>().Select(p => p.Id).ToList();
+        if (postIds.Count > 0)
+        {
+            var publishedIds = await _context.blogSpotPublications
+                .Where(pub => postIds.Contains(pub.BlogpostId))
+                .Select(pub => pub.BlogpostId)
+                .ToListAsync();
+            var publishedSet = publishedIds.ToHashSet();
+            foreach (var post in materialised.OfType<BlogPost>())
+                post.IsPublished = publishedSet.Contains(post.Id);
+        }
+
+        return materialised
+            .OrderByDescending(p => p.DateModified)
             .Skip(skip)
             .Take(take);
-        return data;
     }
 
     public async Task Delete(ClaimsPrincipal user, long id)
@@ -266,6 +291,57 @@ public class BlogSpotService
         .Include(b => b.Author)
         .Include(b => b.ACL)
         .SingleOrDefaultAsync(x => x.Id == value);
+    }
+
+    /// <summary>
+    /// Toggle a post's publication state. <paramref name="publish"/>
+    /// true adds a row to <c>blogSpotPublications</c> (the post
+    /// becomes visible to anonymous callers via
+    /// <see cref="PermissionHandler.IsPublic"/>); false removes
+    /// the row if present.
+    ///
+    /// <para>The post must already exist (caller must be the
+    /// author — this is gated by the controller's EditPermission
+    /// check). Returns false when the post does not exist; true
+    /// on a successful toggle.</para>
+    ///
+    /// <para>This is the same toggle the
+    /// <see cref="BlogPostEditViewModel"/>-flavoured
+    /// <see cref="Modify(ClaimsPrincipal, BlogPostEditViewModel)"/>
+    /// overload performs inline; extracted here so the
+    /// /api/blog/{id}/publish endpoint can hit it without
+    /// forcing the caller to round-trip the full BlogPost in
+    /// the request body.</para>
+    /// </summary>
+    public async Task<bool> SetPublishAsync(ClaimsPrincipal user, long postId, bool publish)
+    {
+        var blog = await _context.BlogSpot.SingleOrDefaultAsync(b => b.Id == postId);
+        if (blog == null) return false;
+
+        var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
+        if (!auth.Succeeded)
+        {
+            throw new AuthorizationFailureException(auth);
+        }
+
+        var existing = await _context.blogSpotPublications.SingleOrDefaultAsync(
+            p => p.BlogpostId == postId);
+        if (publish)
+        {
+            if (existing == null)
+            {
+                _context.blogSpotPublications.Add(new BlogSpotPublication { BlogpostId = postId });
+            }
+        }
+        else
+        {
+            if (existing != null)
+            {
+                _context.blogSpotPublications.Remove(existing);
+            }
+        }
+        await _context.SaveChangesAsync(user.GetUserId());
+        return true;
     }
 
 }

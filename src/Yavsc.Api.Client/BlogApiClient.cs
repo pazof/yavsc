@@ -70,4 +70,15 @@ public sealed class BlogApiClient
 
     public Task DeletePostAsync(long id, CancellationToken ct = default)
         => _api.CallAsync(HttpMethod.Delete, $"{_pathPrefix}/{id}", ct: ct);
+
+    /// <summary>
+    /// Set a post's publication state. <c>true</c> publishes
+    /// it (visible to anonymous readers via
+    /// <c>PermissionHandler.IsPublic</c>); <c>false</c> takes
+    /// it back to draft. Idempotent: the resulting state
+    /// matches the call, regardless of the previous state.
+    /// </summary>
+    public Task SetPublishAsync(long id, bool publish, CancellationToken ct = default)
+        => _api.CallAsync(HttpMethod.Put, $"{_pathPrefix}/{id}/publish",
+            body: new { publish }, ct: ct);
 }

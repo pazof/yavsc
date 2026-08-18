@@ -19,6 +19,18 @@ public class BlogPostDto : IBlogPost
     public string UserModified { get; set; }
     public string Title { get; set; }
 
+    /// <summary>
+    /// Whether this post is published. Derived server-side from
+    /// the existence of a row in <c>BlogSpotPublication</c>
+    /// (a row means published, no row means draft). Not stored
+    /// on <c>BlogPost</c> — it's a computed projection of the
+    /// publication table, surfaced through the wire DTO so
+    /// clients can render the current state without a
+    /// follow-up request. Toggled via
+    /// <c>PUT /api/BlogApi/{id}/publish</c>.
+    /// </summary>
+    public bool IsPublished { get; set; }
+
     public bool AuthorizeCircle(long circleId)
     {
         throw new NotImplementedException();
