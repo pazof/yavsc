@@ -35,6 +35,18 @@ public partial class MainPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string DraftArticle { get; set; }
 
+    /// <summary>Editor buffer for the post's publication state.
+    /// Reflects the server-side <c>IsPublished</c> flag (the
+    /// existence of a row in <c>BlogSpotPublication</c>) and
+    /// is pushed to the server via
+    /// <see cref="BlogApiClient.SetPublishAsync"/> on explicit
+    /// toggle — it is NOT included in the regular Save
+    /// payload, mirroring the wire contract where
+    /// <c>BlogPostDto</c> doesn't carry <c>Publish</c> as a
+    /// mutable field. Toggling is its own action.</summary>
+    [ObservableProperty]
+    public partial bool DraftIsPublished { get; set; }
+
     [ObservableProperty]
     public partial ViewModelBase? CurrentViewModel { get; set; }
 
@@ -102,6 +114,7 @@ public partial class MainPageViewModel : ViewModelBase
         WindowTitle = "PostIt";
         DraftTitle = string.Empty;
         DraftArticle = string.Empty;
+        DraftIsPublished = false;
         CurrentViewModel = this;
     }
 
@@ -131,6 +144,9 @@ public partial class MainPageViewModel : ViewModelBase
         // doesn't show stale content.
         DraftTitle = value?.Title ?? string.Empty;
         DraftArticle = value?.Article ?? string.Empty;
+        // Mirror publication state too. Defaults to false on
+        // null selection so a fresh draft starts unpublished.
+        DraftIsPublished = value?.IsPublished ?? false;
         UpdateCommandStates();
     }
 
@@ -238,6 +254,46 @@ public partial class MainPageViewModel : ViewModelBase
             StatusMessage = $"Deleted post {SelectedPost.Id}.";
             SelectedPost = null;
             await RefreshPostsAsync();
+        });
+    }
+
+    /// <summary>
+    /// Toggle the publication state of the currently selected
+    /// post. Pushes the new state to
+    /// <c>PUT /api/BlogApi/{id}/publish</c> and reflects it
+    /// locally in <see cref="DraftIsPublished"/> + the
+    /// selected post so the UI updates without a full
+    /// refresh.
+    ///
+    /// <para>The toggle is its own action — separate from Save
+    /// — because <c>Publish</c> is not part of the
+    /// <c>BlogPostDto</c> payload. Bundling it into Save
+    /// would require a wire-shape change and a second server
+    /// overload; the dedicated endpoint keeps the wire
+    /// contract clean.</para>
+    /// </summary>
+    [RelayCommand]
+    internal async Task TogglePublish()
+    {
+        if (SelectedPost is null || SelectedPost.Id == 0)
+        {
+            StatusMessage = "Sélectionnez un billet existant pour changer sa publication.";
+            return;
+        }
+
+        await ExecuteAsync(async () =>
+        {
+            var desired = !DraftIsPublished;
+            await BlogClient.SetPublishAsync(SelectedPost.Id, desired);
+            DraftIsPublished = desired;
+            // Mirror into the selected post so a subsequent
+            // RefreshPostsAsync() doesn't blow away the
+            // locally flipped state until the round-trip
+            // re-hydrates it.
+            SelectedPost.IsPublished = desired;
+            StatusMessage = desired
+                ? $"Billet {SelectedPost.Id} publié."
+                : $"Billet {SelectedPost.Id} remis en brouillon.";
         });
     }
 

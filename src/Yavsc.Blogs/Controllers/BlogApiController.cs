@@ -139,9 +139,56 @@ namespace Yavsc.Blogs.Controllers
             return Ok(blog);
         }
 
+        /// <summary>
+        /// Toggle a post's publication state. <c>true</c> adds
+        /// a row to <c>blogSpotPublications</c> (the post
+        /// becomes publicly readable via
+        /// <c>PermissionHandler.IsPublic</c>); <c>false</c>
+        /// removes it.
+        ///
+        /// <para>PUT (not POST) because the operation is
+        /// idempotent — the resulting state is determined by
+        /// the body, not by the request. Returns 204 No
+        /// Content on success, 404 when the post does not
+        /// exist, 403 (Challenge) when the caller is not the
+        /// author.</para>
+        /// </summary>
+        // PUT: api/BlogApi/5/publish
+        // body: { "publish": true }
+        [HttpPut("{id}/publish")]
+        public async Task<IActionResult> PutPublish(
+            [FromRoute] long id,
+            [FromBody] SetPublishBody body)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var ok = await blogSpotService.SetPublishAsync(User, id, body.Publish);
+                if (!ok) return NotFound();
+                return new StatusCodeResult(StatusCodes.Status204NoContent);
+            }
+            catch (AuthorizationFailureException)
+            {
+                return Challenge();
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
         }
+    }
+
+    /// <summary>
+    /// Wire body for <c>PUT /api/BlogApi/{id}/publish</c>.
+    /// Intentionally tiny: just the desired publication state.
+    /// </summary>
+    public sealed class SetPublishBody
+    {
+        public bool Publish { get; set; }
     }
 }
