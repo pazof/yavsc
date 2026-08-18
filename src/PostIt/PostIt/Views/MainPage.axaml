@@ -33,8 +33,12 @@
                 <Button Command="{Binding Search}" Content="Filter" />
                 <Button Command="{Binding Save}" Content="Save" />
                 <Button Command="{Binding Delete}" Content="Delete" />
-                <Button Command="{Binding ManageAcl}" Content="ACL" />
-                <Button Command="{Binding OpenCircles}" Content="Mes cercles" />
+                <Button x:Name="ManageAclButton"
+                        Command="{Binding ManageAcl}"
+                        Content="ACL" />
+                <Button x:Name="OpenCirclesButton"
+                        Command="{Binding OpenCircles}"
+                        Content="Mes cercles" />
                 <!-- Publication toggle: a CheckBox wired to
                      DraftIsPublished. Clicking it fires
                      TogglePublishCommand, which pushes the
