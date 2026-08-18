@@ -13,7 +13,6 @@ namespace Yavsc.Models
     using Bank;
     using Billing;
     using Blog;
-    using Blogspot;
     using Chat;
     using Drawing;
     using Forms;
@@ -223,17 +222,6 @@ namespace Yavsc.Models
                 .WithMany(u => u.Posts)
                 .HasForeignKey(b => b.AuthorId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            // Store Visibility as a plain int (NOT NULL, default
-            // 0 = Private) so existing rows land on the pre-ACL
-            // behaviour by default. System.Text.Json serialises
-            // the enum as its underlying int, so the wire shape
-            // is a plain number — no JsonConverter needed.
-            builder.Entity<BlogPost>()
-                .Property(b => b.Visibility)
-                .HasConversion<int>()
-                .HasDefaultValue(Visibility.Private)
-                .IsRequired();
             builder.Entity<Comment>()
                 .HasOne(c => c.Author)
                 .WithMany(u => u.BlogComments)
