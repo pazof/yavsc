@@ -7,6 +7,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using PostIt.Services;
+using Yavsc.Api.Client;
 using PostIt.ViewModels;
 using PostIt.Views;
 
@@ -55,7 +56,12 @@ public partial class App : Application
             "PostIt", "tokens.json"));
 
         var api = new YavscApiClient(settings, tokenStore);
-        var client = new BlogApiClient(api);
+        var client = new BlogApiClient(api, settings.BlogsApiUrl);
+        var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
+        var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
+        var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
+        var contactService = new ContactService();
+        var userDirectory = new UserDirectory(userSearchClient);
 
         var services = new ServiceCollection();
 
@@ -75,14 +81,22 @@ public partial class App : Application
         services.AddSingleton<SettingsPage>();
         services.AddTransient<HomePage>();
         services.AddTransient<SignaturePage>();
+        services.AddTransient<CirclesPage>();
 
         // ViewModels
         services.AddSingleton(settings);
-        services.AddSingleton(api);
+        services.AddSingleton<YavscApiClient>(api);
+        services.AddSingleton<IYavscApiClient>(api);
         services.AddSingleton(client);
+        services.AddSingleton(circleClient);
+        services.AddSingleton(blogAclClient);
+        services.AddSingleton(userSearchClient);
+        services.AddSingleton<IContactService>(contactService);
+        services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddTransient<MainPageViewModel>();
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<SignaturePageViewModel>();
+        services.AddTransient<CirclesPageViewModel>();
 
         // Persistent session banner: one instance for the lifetime of
         // the app so the same VM survives page navigation.
