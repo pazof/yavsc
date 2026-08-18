@@ -1,21 +1,11 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:PostIt"
-             xmlns:views="using:PostIt.Views"
              x:Class="PostIt.App">
-
+          
     <Application.DataTemplates>
         <local:ViewLocator/>
-    </Application.DataTemplates>
-
-    <Application.Resources>
-        <!-- French labels for the Visibility enum. Used by the
-             ComboBox ItemTemplate in MainPage.axaml. The list
-             of available values lives on MainPageViewModel
-             (AllVisibilities) rather than here — x:Array is
-             awkward to author in Avalonia XAML. -->
-        <views:VisibilityLabelConverter x:Key="VisibilityLabelConverter"/>
-    </Application.Resources>
+    </Application.DataTemplates>    
 
     <Application.Styles>
         <FluentTheme />

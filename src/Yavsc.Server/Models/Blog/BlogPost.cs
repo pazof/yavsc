@@ -30,21 +30,6 @@ namespace Yavsc.Models.Blog
         [Display(Name = "Liste de contrôle d'accès")]
         public virtual List<CircleAuthorizationToBlogPost>? ACL { get; set; }
 
-        /// <summary>
-        /// Visibility of this post.
-        /// <para><see cref="Visibility.Public"/> reads through the
-        /// ACL (open when the ACL is empty, narrowed by the ACL
-        /// when it is non-empty). <see cref="Visibility.Private"/>
-        /// ignores the ACL at read time and restricts to author +
-        /// administrators. The ACL list is preserved across
-        /// Private/Public flips so re-opening is lossless.</para>
-        /// <para>Configured as <c>int</c> with default
-        /// <see cref="Visibility.Private"/> in
-        /// <c>ApplicationDbContext.OnModelCreating</c>.</para>
-        /// </summary>
-        [Display(Name = "Visibilité")]
-        public Visibility Visibility { get; set; } = Visibility.Private;
-
         [Display(Name = "Identifiant de l'auteur")]
         [ForeignKey("Author")]
         public string? AuthorId { get; set; }

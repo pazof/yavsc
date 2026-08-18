@@ -476,12 +476,17 @@ namespace Yavsc.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("GrantType")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
 
                     b.ToTable("ClientGrantTypes");
                 });
@@ -578,12 +583,17 @@ namespace Yavsc.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("RedirectUri")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
 
                     b.ToTable("ClientRedirectUris");
                 });
@@ -599,12 +609,17 @@ namespace Yavsc.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ClientId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Scope")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("ClientId1");
 
                     b.ToTable("ClientScopes");
                 });
@@ -1492,11 +1507,6 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("UserModified")
                         .HasColumnType("text");
-
-                    b.Property<int>("Visibility")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
@@ -3450,11 +3460,15 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientGrantType", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("AllowedGrantTypes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
@@ -3506,22 +3520,30 @@ namespace Yavsc.Migrations
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientRedirectUri", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("RedirectUris")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ClientScope", b =>
                 {
-                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", null)
                         .WithMany("AllowedScopes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IdentityServer8.EntityFramework.Entities.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
