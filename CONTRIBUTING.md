@@ -49,6 +49,57 @@ Les tests sont répartis en :
   item « Tests d'intégration smoke par BC ».
 - `src/PostIt.Tests/` — tests unitaires du client desktop PostIt.
 
+## Navigation (PostIt)
+
+La navigation est centralisée dans
+`App.PushPageAsync(ViewModelBase vm)` (`src/PostIt/PostIt/App.axaml.cs`).
+Pour ouvrir un écran, un ViewModel (généralement dans une
+commande `[RelayCommand]`) appelle
+`await ((App)App.Current!).PushPageAsync(targetVm).ConfigureAwait(true);`.
+`PushPageAsync` résout la `Control` correspondante via le
+`ViewLocator` (un `IDataTemplate` enregistré dans
+`Application.DataTemplates` au boot), l'identifie comme
+`Page`, lui assigne le VM comme `DataContext`, et appelle
+`NavRoot.PushAsync(page)`. Une garde anti-empilement
+compare par référence la nouvelle page au sommet courant
+de la stack pour éviter un push doublon.
+
+Pour qu'une nouvelle page soit navigable, il faut *deux*
+enregistrements : la page dans le DI (`AddTransient<TPage>`
+ou `AddSingleton<TPage>`) **et** une case dans le `switch`
+de `ViewLocator.Build`. Si l'un manque, l'app affiche
+"No view for X" sans crash.
+
+Règles :
+
+- On n'instancie jamais une `View` à la main depuis un
+  ViewModel, on ne récupère jamais une `View` depuis la DI
+  directement dans un ViewModel.
+- Le ViewModel qui déclenche la nav ne pousse pas lui-même
+  la page ; il appelle `App.PushPageAsync(vm)` et laisse
+  `App` orchestrer le `PushAsync` physique.
+- Le ViewModel qui déclenche la nav ne capture pas de
+  référence à `MainWindow` ou `NavigationPage`. Il passe
+  par `App.Current` (l'app Avalonia est un singleton).
+
+Exemple canonique (depuis `MainPageViewModel`) :
+
+```csharp
+[RelayCommand]
+internal async Task OpenSettings()
+{
+    var settingsVm = ((App)App.Current!).ServiceProvider
+        .GetRequiredService<Settings>();
+    await ((App)App.Current!).PushPageAsync(settingsVm)
+        .ConfigureAwait(true);
+}
+```
+
+Cf. [doc/architecture/postit.md](./doc/architecture/postit.md)
+pour la topologie complète (host de navigation,
+`SessionStatusViewModel`, signaux de cycle de vie vs nav
+utilisateur).
+
 ## Conventions de code
 
 Le repo applique `.editorconfig` (UTF-8, LF, `indent_size = 4` en

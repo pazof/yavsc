@@ -1,4 +1,4 @@
-namespace Yavsc.Api.Client.Dtos;
+namespace Yavsc.Abstract.Identity.Security;
 
 /// <summary>
 /// Wire format for <c>GET /api/blogacl</c> and friends.
@@ -11,9 +11,7 @@ namespace Yavsc.Api.Client.Dtos;
 /// UI already has the post, and the circles are looked up by id
 /// against the list returned by <c>GET /api/circle</c>.</para>
 /// </summary>
-public sealed class CircleAuthorizationDto
+public sealed class CircleAuthorization : ICircleAuthorization
 {
     public long CircleId { get; set; }
-    public long BlogPostId { get; set; }
-    public bool Comment { get; set; }
 }
