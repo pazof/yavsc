@@ -324,10 +324,12 @@ public partial class App : Application
                 $"Template for {vm.GetType().Name} returned <null>.");
         }
 
-        if (view is not Page page)
+        var page = view as Page;
+        if (page is null)
         {
-            throw new InvalidOperationException(
-                $"Template for {vm.GetType().Name} returned {view.GetType().Name}, expected a Page.");
+            // NavigationPage expects Page instances. Wrap any fallback control
+            // (e.g. ViewLocator error TextBlock) into a ContentPage so it can render.
+            page = new ContentPage { Content = view };
         }
 
         page.DataContext = vm;
