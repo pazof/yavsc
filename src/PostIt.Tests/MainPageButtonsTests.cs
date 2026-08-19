@@ -79,17 +79,23 @@ public class MainPageButtonsTests
     {
         var api = new ThrowingApi();
         var blog = new BlogApiClient(api, "http://localhost/");
+        var circle = new CircleApiClient(api, "http://localhost/");
+        var acl = new BlogAclApiClient(api, "http://localhost/");
         // Minimal DI graph: only what MainPageViewModel resolves
         // when the user clicks a navigation button. Today that's
-        // SignaturePageViewModel (for the [DEV] Signature toolbar
-        // shortcut). Anything the SignaturePage or its VM touch
-        // transitively must be registered here too — the test
-        // refuses to share App.BuildServices() because that one
-        // constructs a real YavscApiClient pointing at the host's
-        // token store, which is exactly the noise we want out of
-        // a UI-driving test.
+        // SignaturePageViewModel / CirclesPageViewModel / ACL
+        // dependencies. The graph intentionally stays local to this
+        // suite to avoid side effects from App.BuildServices() (real
+        // token-store wiring).
         var services = new ServiceCollection();
+        services.AddSingleton(new Settings());
+        services.AddSingleton(circle);
+        services.AddSingleton(acl);
         services.AddTransient<SignaturePageViewModel>();
+        services.AddTransient<CirclesPageViewModel>();
+        services.AddTransient<SignaturePage>();
+        services.AddTransient<CirclesPage>();
+        services.AddTransient<PostAclDialog>();
         var vm = new MainPageViewModel(blog, services: services.BuildServiceProvider());
         if (selectedPost is not null) vm.SelectedPost = selectedPost;
         return vm;
@@ -110,6 +116,13 @@ public class MainPageButtonsTests
     {
         var window = new MainWindow();
         var page = new MainPage { DataContext = vm };
+        var app = (PostIt.App)Application.Current!;
+        if (vm.Services is not null)
+        {
+            app.DataTemplates.Clear();
+            app.DataTemplates.Add(new ViewLocator(vm.Services));
+        }
+        app.AttachMainWindow(window);
         window.Show();
         window.NavRoot.PushAsync(page).GetAwaiter().GetResult();
         return (window, page);
@@ -132,8 +145,11 @@ public class MainPageButtonsTests
     private static int ClickAndCapture(MainWindow window, Button button)
     {
         var stackBefore = window.NavRoot.NavigationStack.Count;
-        button.Focus();
-        window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None);
+        button.Command?.Execute(button.CommandParameter);
+        if (button.Command is IAsyncRelayCommand asyncCommand)
+        {
+            asyncCommand.ExecutionTask?.GetAwaiter().GetResult();
+        }
         return stackBefore;
     }
 
@@ -200,7 +216,7 @@ public class MainPageButtonsTests
         // The click must push SignaturePage on top of NavRoot.
         // The ServiceCollection registered in MakeViewModel provides
         // SignaturePageViewModel so the command can resolve it via
-        // DI and assign it to CurrentViewModel; the ViewLocator
+        // DI and call App.PushPage; the ViewLocator
         // then maps SignaturePageViewModel -> SignaturePage and
         // the binding pushes the page.
         var vm = MakeViewModel();
