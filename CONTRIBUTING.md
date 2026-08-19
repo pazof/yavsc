@@ -64,23 +64,47 @@ Quelques règles non capturées par `.editorconfig` :
 - Préférer les types BCL (`int`, `string`) aux types framework
   (`Int32`, `String`).
 - Préférer les expressions de pattern matching aux casts explicites.
-- **Navigation (PostIt)** : la navigation est contrôlée par
-  `src/PostIt/PostIt/ViewLocator.cs`. Pour ouvrir un écran,
-  on affecte le ViewModel cible à la propriété `CurrentViewModel`
-  du `MainPageViewModel` (qui binde l'`IContentControl.Content`
-  de la page hôte). Tant que la vue correspondante est supportée
-  par le `ViewLocator`, ce dernier décide de l'instance de
-  `Control` à pousser en navigation, et il l'obtient de la DI
-  (`_services.GetRequiredService<TView>()`). On n'instancie
-  jamais une `View` à la main depuis un ViewModel, on ne
-  récupère jamais une `View` depuis la DI directement dans un
-  ViewModel. Exemple canonique :
+- **Navigation (PostIt)** : la navigation est centralisée dans
+  `App.PushPageAsync(ViewModelBase vm)` (`src/PostIt/PostIt/App.axaml.cs`).
+  Pour ouvrir un écran, un ViewModel (généralement dans une
+  commande `[RelayCommand]`) appelle
+  `await ((App)App.Current!).PushPageAsync(targetVm).ConfigureAwait(true);`.
+  `PushPageAsync` résout la `Control` correspondante via le
+  `ViewLocator` (un `IDataTemplate` enregistré dans
+  `Application.DataTemplates` au boot), l'identifie comme
+  `Page`, lui assigne le VM comme `DataContext`, et appelle
+  `NavRoot.PushAsync(page)`. Une garde anti-empilement
+  compare par référence la nouvelle page au sommet courant
+  de la stack pour éviter un push doublon.
+
+  Pour qu'une nouvelle page soit navigable, il faut *deux*
+  enregistrements : la page dans le DI (`AddTransient<TPage>`
+  ou `AddSingleton<TPage>`) **et** une case dans le `switch`
+  de `ViewLocator.Build`. Si l'un manque, l'app affiche
+  "No view for X" sans crash.
+
+  Règles :
+
+  - On n'instancie jamais une `View` à la main depuis un
+    ViewModel, on ne récupère jamais une `View` depuis la DI
+    directement dans un ViewModel.
+  - Le ViewModel qui déclenche la nav ne pousse pas lui-même
+    la page ; il appelle `App.PushPageAsync(vm)` et laisse
+    `App` orchestrer le `PushAsync` physique.
+  - Le ViewModel qui déclenche la nav ne capture pas de
+    référence à `MainWindow` ou `NavigationPage`. Il passe
+    par `App.Current` (l'app Avalonia est un singleton).
+
+  Exemple canonique (depuis `MainPageViewModel`) :
 
   ```csharp
   [RelayCommand]
-  internal void OpenSettings()
+  internal async Task OpenSettings()
   {
-      CurrentViewModel = SettingsModel;
+      var settingsVm = ((App)App.Current!).ServiceProvider
+          .GetRequiredService<Settings>();
+      await ((App)App.Current!).PushPageAsync(settingsVm)
+          .ConfigureAwait(true);
   }
   ```
 

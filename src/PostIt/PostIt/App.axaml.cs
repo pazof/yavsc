@@ -165,12 +165,12 @@ public partial class App : Application
         // This guarantees that (a) the bindings always reflect the
         // current in-memory Settings state, (b) the page already has
         // its DataContext wired up at composition-root time (see
-        // below), and (c) the OpenSettingsRequested handler is a
-        // pure push with a no-op-if-already-on-top guard, never a
-        // re-resolution from DI. Transient would let the user
-        // accumulate stale SettingsPage instances on the navigation
-        // stack, each bound to a fresh SettingsViewModel and missing
-        // any in-flight edits.
+        // below), and (c) PushPageAsync's anti-empilement guard sees
+        // the same instance across pushes, so a second Settings tap
+        // is a no-op rather than re-pushing the page. Transient would
+        // let the user accumulate stale SettingsPage instances on
+        // the navigation stack, each bound to a fresh
+        // SettingsViewModel and missing any in-flight edits.
         services.AddSingleton<SettingsPage>();
         services.AddTransient<HomePage>();
         services.AddTransient<SignaturePage>();
