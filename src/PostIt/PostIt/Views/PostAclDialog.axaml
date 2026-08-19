@@ -4,6 +4,7 @@
         x:Class="PostIt.Views.PostAclDialog"
         xmlns:vm="using:PostIt.ViewModels"
         xmlns:dtos="using:Yavsc.Api.Client.Dtos"
+        xmlns:yabst="using:Yavsc.Abstract.Identity.Security"
         x:DataType="vm:PostAclDialogViewModel"
       >
     <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="12">
@@ -31,13 +32,11 @@
         <ListBox Grid.Row="1"
                  ItemsSource="{Binding AclEntries}">
             <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="dtos:CircleAuthorizationDto">
+                <DataTemplate x:DataType="yabst:CircleAuthorization">
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0" Spacing="2">
                             <TextBlock Text="{Binding CircleId, StringFormat='Cercle #{0}'}"
                                        FontWeight="Bold"/>
-                            <TextBlock Text="{Binding Comment, StringFormat='Commentaires : {0}'}"
-                                       FontSize="11" Opacity="0.6"/>
                         </StackPanel>
                         <Button Grid.Column="1" Content="Révoquer"
                                 Command="{Binding $parent[ContentPage].((vm:PostAclDialogViewModel)DataContext).RevokeCommand}"

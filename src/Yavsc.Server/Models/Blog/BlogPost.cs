@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
-using Yavsc.Abstract.Identity;
 using Yavsc.Abstract.Identity.Security;
 using Yavsc.Models.Access;
 using Yavsc.Models.Relationship;
@@ -69,7 +68,7 @@ namespace Yavsc.Models.Blog
 
         public ICircleAuthorization[] GetACL()
         {
-            return ACL.ToArray();
+            return ACL?.ToArray() ?? Array.Empty<ICircleAuthorization>();
         }
 
         public void Tag(Tag tag)

@@ -31,6 +31,6 @@
     <ProjectReference Include="..\PostIt\PostIt.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" />
+    <PackageReference Include="Microsoft.Maui.Essentials" />
   </ItemGroup>
 </Project>

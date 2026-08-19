@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.Maui.ApplicationModel.Communication;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Devices;
+using PostIt.Services;
+using System.Linq;
 
-namespace PostIt.Services;
+namespace PostIt.Android.Services;
 
 /// <summary>
 /// Mobile implementation backed by MAUI Essentials
@@ -49,7 +51,7 @@ public sealed class ContactService : IContactService
             // shape is intentionally richer than the Yavsc
             // directory's single-Email shape — the two flows
             // answer different questions.
-            var result = new List<ContactDto>(contacts.Count);
+            var result = new List<ContactDto>(contacts.Count());
             foreach (var c in contacts)
             {
                 var emails = ExtractEmails(c.Emails);
@@ -67,7 +69,7 @@ public sealed class ContactService : IContactService
         }
     }
 
-    private static IReadOnlyList<string> ExtractEmails(IEnumerable<EmailAddress>? emails)
+    private static IReadOnlyList<string> ExtractEmails(IEnumerable<ContactEmail>? emails)
     {
         if (emails is null) return Array.Empty<string>();
         var list = new List<string>();

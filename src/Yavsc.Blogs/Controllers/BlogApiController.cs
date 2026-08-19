@@ -54,7 +54,7 @@ namespace Yavsc.Blogs.Controllers
 
         // PUT: api/BlogApi/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBlog(long id, [FromBody] BlogPost blog)
+        public async Task<IActionResult> PutBlog(long id, [FromBody] Models.Blog.BlogPost blog)
         {
             if (!ModelState.IsValid)
             {

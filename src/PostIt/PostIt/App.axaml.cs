@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Avalonia;
@@ -48,71 +49,11 @@ public partial class App : Application
         // build is ever reconfigured to skip the early check.
         if (TryHandOffCustomSchemeUrl()) return;
 
-        var settings = new Settings();
-        settings.Load();
-
-        var tokenStore = new TokenStore(System.IO.Path.Combine(
-            System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
-            "PostIt", "tokens.json"));
-
-        var api = new YavscApiClient(settings, tokenStore);
-        var client = new BlogApiClient(api, settings.BlogsApiUrl);
-        var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
-        var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
-        var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
-        var contactService = new ContactService();
-        var userDirectory = new UserDirectory(userSearchClient);
-
-        var services = new ServiceCollection();
-
-        // Vues
-        services.AddTransient<MainPage>();
-        // SettingsPage is a singleton: there must be one and only one
-        // instance of the settings UI for the lifetime of the app.
-        // This guarantees that (a) the bindings always reflect the
-        // current in-memory Settings state, (b) the page already has
-        // its DataContext wired up at composition-root time (see
-        // below), and (c) the OpenSettingsRequested handler is a
-        // pure push with a no-op-if-already-on-top guard, never a
-        // re-resolution from DI. Transient would let the user
-        // accumulate stale SettingsPage instances on the navigation
-        // stack, each bound to a fresh SettingsViewModel and missing
-        // any in-flight edits.
-        services.AddSingleton<SettingsPage>();
-        services.AddTransient<HomePage>();
-        services.AddTransient<SignaturePage>();
-        services.AddTransient<CirclesPage>();
-
-        // ViewModels
-        services.AddSingleton(settings);
-        services.AddSingleton<YavscApiClient>(api);
-        services.AddSingleton<IYavscApiClient>(api);
-        services.AddSingleton(client);
-        services.AddSingleton(circleClient);
-        services.AddSingleton(blogAclClient);
-        services.AddSingleton(userSearchClient);
-        services.AddSingleton<IContactService>(contactService);
-        services.AddSingleton<IUserDirectory>(userDirectory);
-        services.AddTransient<MainPageViewModel>();
-        services.AddTransient<HomePageViewModel>();
-        services.AddTransient<SignaturePageViewModel>();
-        services.AddTransient<CirclesPageViewModel>();
-
-        // Persistent session banner: one instance for the lifetime of
-        // the app so the same VM survives page navigation.
-        var sessionStatus = new SessionStatusViewModel { Api = api };
-        sessionStatus.Refresh();
-        services.AddSingleton(sessionStatus);
-        services.AddTransient<SessionStatusBanner>();
-
-        ServiceProvider  = services.BuildServiceProvider();
-
-        // Bind the canonical Settings to the static accessor so any
-        // code path that can't easily take a constructor parameter
-        // (designer surfaces, Avalonia data templates) still gets
-        // the same instance the rest of the app is using. Idempotent:
-        // re-binding from a second App boot (tests) is a no-op.
-        Settings.BindToServiceProvider(ServiceProvider);
+        this.ServiceProvider = BuildServices();
+        AttachServiceProvider(ServiceProvider);
+        var settings = ServiceProvider.GetRequiredService<Settings>();
+        var sessionStatus = ServiceProvider.GetRequiredService<SessionStatusViewModel>();
+        var api = ServiceProvider.GetRequiredService<YavscApiClient>();
 
         DataTemplates.Clear();
         DataTemplates.Add(new ViewLocator(ServiceProvider));
@@ -146,8 +87,7 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var homePage = ServiceProvider.GetRequiredService<HomePage>();
-            homePage.DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>();
+            var homeVm = ServiceProvider.GetRequiredService<HomePageViewModel>();
 
             window = new MainWindow();
             window.SessionBanner.DataContext = sessionStatus;
@@ -155,9 +95,8 @@ public partial class App : Application
             // Build the navigation stack from scratch: HomePage is the
             // root in both cases. App.BootAsync will push MainPage on
             // top if the silent refresh succeeds.
-            window.DataContext = homePage.DataContext;
             desktop.MainWindow = window;
-            _ = window.NavRoot.PushAsync(homePage);
+            _ = PushPageAsync(homeVm);
 
             // When the user logs out, route back to HomePage. We
             // ReplaceAsync the current top so we don't grow the stack
@@ -167,8 +106,6 @@ public partial class App : Application
             {
                 var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
                 var nav = w.NavRoot;
-                var hp = ServiceProvider.GetRequiredService<HomePage>();
-                hp.DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>();
                 _ = nav.PopToRootAsync();
             };
 
@@ -180,35 +117,7 @@ public partial class App : Application
                 _ = PushMainPageAsync();
             };
 
-            // When the user clicks the "Paramètres" button on the
-            // session banner, push the SettingsPage singleton on top
-            // of the current navigation stack. The DataContext is
-            // already wired at composition time (see the
-            // provider.GetRequiredService<SettingsPage>().DataContext
-            // assignment above), so this handler is a pure
-            // navigation concern.
-            //
-            // Anti-empilement guard: if the SettingsPage is already
-            // at the top of the stack, do nothing. NavigationPage's
-            // PushAsync does not deduplicate; calling it twice with
-            // the same instance would push it a second time and the
-            // user would have to tap Back twice to leave. Reference
-            // comparison is correct here because SettingsPage is a
-            // singleton — there is exactly one instance to compare
-            // against.
-            sessionStatus.OpenSettingsRequested += () =>
-            {
-                var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
-                var settingsPage = ServiceProvider.GetRequiredService<SettingsPage>();
-                var stack = w.NavRoot.NavigationStack;
-                if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], settingsPage))
-                {
-                    return;
-                }
-                _ = w.NavRoot.PushAsync(settingsPage);
-            };
-
-            window.Opened += async (_, _) => await BootAsync(ServiceProvider, api);
+            window.Opened += async (_, _) => await BootAsync(this.ServiceProvider, api);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
         {
@@ -217,6 +126,112 @@ public partial class App : Application
                 DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>()
             };
         }
+    }
+
+    /// <summary>
+    /// Build the DI container the app uses. Pulled out of
+    /// <see cref="OnFrameworkInitializationCompleted"/> so headless
+    /// tests can construct the same container at <c>TestApp</c> boot
+    /// without going through the full Avalonia desktop lifetime
+    /// (which never runs in a unit test). The container returned is
+    /// the exact one production uses — no test-only fakes, no
+    /// trimmed service list — so a test that exercises a VM, page,
+    /// or service resolves through the same wiring the real app
+    /// does, and a green test is a green contract for prod.
+    /// </summary>
+    internal static IServiceProvider BuildServices()
+    {
+        var settings = new Settings();
+        settings.Load();
+
+        var tokenStore = new TokenStore(System.IO.Path.Combine(
+            System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
+            "PostIt", "tokens.json"));
+
+        var api = new YavscApiClient(settings, tokenStore);
+        var client = new BlogApiClient(api, settings.BlogsApiUrl);
+        var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
+        var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
+        var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
+        var contactService = new ContactService();
+        var userDirectory = new UserDirectory(userSearchClient);
+
+        var services = new ServiceCollection();
+
+        // Vues
+        services.AddTransient<MainPage>();
+        // SettingsPage is a singleton: there must be one and only one
+        // instance of the settings UI for the lifetime of the app.
+        // This guarantees that (a) the bindings always reflect the
+        // current in-memory Settings state, (b) the page already has
+        // its DataContext wired up at composition-root time (see
+        // below), and (c) PushPageAsync's anti-empilement guard sees
+        // the same instance across pushes, so a second Settings tap
+        // is a no-op rather than re-pushing the page. Transient would
+        // let the user accumulate stale SettingsPage instances on
+        // the navigation stack, each bound to a fresh
+        // SettingsViewModel and missing any in-flight edits.
+        services.AddSingleton<SettingsPage>();
+        services.AddTransient<HomePage>();
+        services.AddTransient<SignaturePage>();
+        services.AddTransient<CirclesPage>();
+        // Dialogs (modal-light pages): the ViewLocator resolves
+        // them when a caller pushes a PostAclDialogViewModel or
+        // AddCircleMemberDialogViewModel via App.PushPageAsync.
+        // App.PushPageAsync overwrites the page's DataContext with
+        // the caller-built VM, so the parameterless ctor is enough
+        // here — the parametrised ctors stay for direct test wiring.
+        services.AddTransient<PostAclDialog>();
+        services.AddTransient<AddCircleMemberDialog>();
+
+        // ViewModels
+        services.AddSingleton(settings);
+        services.AddSingleton<YavscApiClient>(api);
+        services.AddSingleton<IYavscApiClient>(api);
+        services.AddSingleton(client);
+        services.AddSingleton(circleClient);
+        services.AddSingleton(blogAclClient);
+        services.AddSingleton(userSearchClient);
+        services.AddSingleton<IContactService>(contactService);
+        services.AddSingleton<IUserDirectory>(userDirectory);
+        services.AddTransient<MainPageViewModel>();
+        services.AddTransient<HomePageViewModel>();
+        services.AddTransient<SignaturePageViewModel>();
+        services.AddTransient<CirclesPageViewModel>();
+
+        // Persistent session banner: one instance for the lifetime of
+        // the app so the same VM survives page navigation.
+        var sessionStatus = new SessionStatusViewModel { Api = api };
+        sessionStatus.Refresh();
+        services.AddSingleton(sessionStatus);
+        services.AddTransient<SessionStatusBanner>();
+
+        return services.BuildServiceProvider();
+    }
+
+    /// <summary>
+    /// Attach a pre-built DI container to this <see cref="App"/>
+    /// instance. Used by headless tests after
+    /// <see cref="BuildServices"/>; in production this happens
+    /// implicitly via <see cref="OnFrameworkInitializationCompleted"/>.
+    /// Idempotent w.r.t. <see cref="Settings.BindToServiceProvider"/>:
+    /// re-binding from a second App boot is a no-op.
+    /// </summary>
+    internal void AttachServiceProvider(IServiceProvider sp)
+    {
+        ServiceProvider = sp;
+        Settings.BindToServiceProvider(sp);
+    }
+
+    /// <summary>
+    /// Test-only hook: bind a concrete <see cref="MainWindow"/> so
+    /// command-driven navigation paths (<see cref="PushPage"/>) can
+    /// push onto a real <see cref="NavigationPage"/> in headless
+    /// fixtures that do not run the full desktop lifetime bootstrap.
+    /// </summary>
+    internal void AttachMainWindow(MainWindow mainWindow)
+    {
+        window = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
     }
 
     private static void ApplyDarkMode(Settings settings)
@@ -246,19 +261,18 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Resolve a fresh <c>MainPage</c> + VM from DI and push it on top
+    /// Resolve a fresh <c>MainPageViewModel</c> from DI and push its
+    /// mapped page (via <see cref="ViewLocator"/>) on top
     /// of the current navigation stack. Used both by <see cref="BootAsync"/>
     /// (silent refresh at boot) and by <c>SessionStatusViewModel.LoginSucceeded</c>
     /// (interactive login from the banner). Pulled out as a helper so
     /// the two callers can't drift apart.
     /// </summary>
-    public static async Task PushMainPageAsync()
+    public static Task PushMainPageAsync()
     {
         var app = (App)Current;
         var mainVm = app.ServiceProvider.GetRequiredService<MainPageViewModel>();
-        var mainPage = app.ServiceProvider.GetRequiredService<MainPage>();
-        mainPage.DataContext = mainVm;
-        await app.window.FindControl<NavigationPage>("NavRoot").PushAsync(mainPage).ConfigureAwait(true);
+        return app.PushPageAsync(mainVm);
     }
 
     private bool TryHandOffCustomSchemeUrl()
@@ -293,4 +307,48 @@ public partial class App : Application
         return true;
     }
 
+    internal void PushPage(ViewModelBase vm)
+    {
+        _ = PushPageAsync(vm);
+    }
+
+    internal Task PushPageAsync(ViewModelBase vm)
+    {
+        if (window is null)
+        {
+            throw new InvalidOperationException("MainWindow is not initialized yet.");
+        }
+
+        var template = DataTemplates.FirstOrDefault(t => t.Match(vm));
+        if (template is null)
+        {
+            throw new InvalidOperationException($"No IDataTemplate found for {vm.GetType().Name}.");
+        }
+
+        var view = template.Build(vm);
+        if (view is null)
+        {
+            throw new InvalidOperationException(
+                $"Template for {vm.GetType().Name} returned <null>.");
+        }
+
+        var page = view as Page;
+        if (page is null)
+        {
+            // NavigationPage expects Page instances. Wrap any fallback control
+            // (e.g. ViewLocator error TextBlock) into a ContentPage so it can render.
+            page = new ContentPage { Content = view };
+        }
+
+        page.DataContext = vm;
+
+        // Avoid stacking the same singleton page twice (e.g. SettingsPage).
+        var stack = window.NavRoot.NavigationStack;
+        if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], page))
+        {
+            return Task.CompletedTask;
+        }
+
+        return window.NavRoot.PushAsync(page);
+    }
 }
