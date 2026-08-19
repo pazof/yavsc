@@ -175,6 +175,14 @@ public partial class App : Application
         services.AddTransient<HomePage>();
         services.AddTransient<SignaturePage>();
         services.AddTransient<CirclesPage>();
+        // Dialogs (modal-light pages): the ViewLocator resolves
+        // them when a caller pushes a PostAclDialogViewModel or
+        // AddCircleMemberDialogViewModel via App.PushPageAsync.
+        // App.PushPageAsync overwrites the page's DataContext with
+        // the caller-built VM, so the parameterless ctor is enough
+        // here — the parametrised ctors stay for direct test wiring.
+        services.AddTransient<PostAclDialog>();
+        services.AddTransient<AddCircleMemberDialog>();
 
         // ViewModels
         services.AddSingleton(settings);
