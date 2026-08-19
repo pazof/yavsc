@@ -87,8 +87,7 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var homePage = ServiceProvider.GetRequiredService<HomePage>();
-            homePage.DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>();
+            var homeVm = ServiceProvider.GetRequiredService<HomePageViewModel>();
 
             window = new MainWindow();
             window.SessionBanner.DataContext = sessionStatus;
@@ -96,9 +95,8 @@ public partial class App : Application
             // Build the navigation stack from scratch: HomePage is the
             // root in both cases. App.BootAsync will push MainPage on
             // top if the silent refresh succeeds.
-            window.DataContext = homePage.DataContext;
             desktop.MainWindow = window;
-            _ = window.NavRoot.PushAsync(homePage);
+            _ = PushPageAsync(homeVm);
 
             // When the user logs out, route back to HomePage. We
             // ReplaceAsync the current top so we don't grow the stack
@@ -108,8 +106,6 @@ public partial class App : Application
             {
                 var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
                 var nav = w.NavRoot;
-                var hp = ServiceProvider.GetRequiredService<HomePage>();
-                hp.DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>();
                 _ = nav.PopToRootAsync();
             };
 
@@ -119,34 +115,6 @@ public partial class App : Application
             {
                 var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
                 _ = PushMainPageAsync();
-            };
-
-            // When the user clicks the "Paramètres" button on the
-            // session banner, push the SettingsPage singleton on top
-            // of the current navigation stack. The DataContext is
-            // already wired at composition time (see the
-            // provider.GetRequiredService<SettingsPage>().DataContext
-            // assignment above), so this handler is a pure
-            // navigation concern.
-            //
-            // Anti-empilement guard: if the SettingsPage is already
-            // at the top of the stack, do nothing. NavigationPage's
-            // PushAsync does not deduplicate; calling it twice with
-            // the same instance would push it a second time and the
-            // user would have to tap Back twice to leave. Reference
-            // comparison is correct here because SettingsPage is a
-            // singleton — there is exactly one instance to compare
-            // against.
-            sessionStatus.OpenSettingsRequested += () =>
-            {
-                var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
-                var settingsPage = ServiceProvider.GetRequiredService<SettingsPage>();
-                var stack = w.NavRoot.NavigationStack;
-                if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], settingsPage))
-                {
-                    return;
-                }
-                _ = w.NavRoot.PushAsync(settingsPage);
             };
 
             window.Opened += async (_, _) => await BootAsync(this.ServiceProvider, api);
@@ -247,6 +215,17 @@ public partial class App : Application
         Settings.BindToServiceProvider(sp);
     }
 
+    /// <summary>
+    /// Test-only hook: bind a concrete <see cref="MainWindow"/> so
+    /// command-driven navigation paths (<see cref="PushPage"/>) can
+    /// push onto a real <see cref="NavigationPage"/> in headless
+    /// fixtures that do not run the full desktop lifetime bootstrap.
+    /// </summary>
+    internal void AttachMainWindow(MainWindow mainWindow)
+    {
+        window = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
+    }
+
     private static void ApplyDarkMode(Settings settings)
     {
         Application.Current!.RequestedThemeVariant =
@@ -274,19 +253,18 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Resolve a fresh <c>MainPage</c> + VM from DI and push it on top
+    /// Resolve a fresh <c>MainPageViewModel</c> from DI and push its
+    /// mapped page (via <see cref="ViewLocator"/>) on top
     /// of the current navigation stack. Used both by <see cref="BootAsync"/>
     /// (silent refresh at boot) and by <c>SessionStatusViewModel.LoginSucceeded</c>
     /// (interactive login from the banner). Pulled out as a helper so
     /// the two callers can't drift apart.
     /// </summary>
-    public static async Task PushMainPageAsync()
+    public static Task PushMainPageAsync()
     {
         var app = (App)Current;
         var mainVm = app.ServiceProvider.GetRequiredService<MainPageViewModel>();
-        var mainPage = app.ServiceProvider.GetRequiredService<MainPage>();
-        mainPage.DataContext = mainVm;
-        await app.window.FindControl<NavigationPage>("NavRoot").PushAsync(mainPage).ConfigureAwait(true);
+        return app.PushPageAsync(mainVm);
     }
 
     private bool TryHandOffCustomSchemeUrl()
@@ -323,6 +301,11 @@ public partial class App : Application
 
     internal void PushPage(ViewModelBase vm)
     {
+        _ = PushPageAsync(vm);
+    }
+
+    internal Task PushPageAsync(ViewModelBase vm)
+    {
         if (window is null)
         {
             throw new InvalidOperationException("MainWindow is not initialized yet.");
@@ -353,9 +336,9 @@ public partial class App : Application
         var stack = window.NavRoot.NavigationStack;
         if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], page))
         {
-            return;
+            return Task.CompletedTask;
         }
 
-        _ = window.NavRoot.PushAsync(page);
+        return window.NavRoot.PushAsync(page);
     }
 }

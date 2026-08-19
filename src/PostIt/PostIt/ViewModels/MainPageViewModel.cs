@@ -109,16 +109,16 @@ public partial class MainPageViewModel : ViewModelBase
 
     private SignaturePageViewModel ResolveSignatureModel()
     {
-        var sp = Services ?? (Application.Current as App)?.ServiceProvider;
-        if (sp is null)
-        {
-            throw new InvalidOperationException(
-                "Cannot resolve SignaturePageViewModel: no IServiceProvider " +
-                "was injected and App.ServiceProvider is null. This is a " +
-                "test-time wiring bug — the test must construct an " +
-                "IServiceProvider that registers SignaturePageViewModel.");
-        }
+        var sp = ResolveServices();
         return sp.GetRequiredService<SignaturePageViewModel>();
+    }
+
+    private IServiceProvider ResolveServices()
+    {
+        return Services ?? (Application.Current as App)?.ServiceProvider ??
+            throw new InvalidOperationException(
+                "No IServiceProvider available for navigation. Inject one in tests " +
+                "or ensure App.ServiceProvider is initialized in production.");
     }
 
 
@@ -351,7 +351,7 @@ public partial class MainPageViewModel : ViewModelBase
     /// entry point is a SignalR push from Yavsc.Org ("devis
     /// received, sign here"); this command is the dev-time
     /// shortcut to reach the page without that infrastructure.
-    /// Aligned on the same nav-via-CurrentViewModel pattern as
+    /// Aligned on the same VM-first navigation pattern as
     /// <see cref="OpenSettings"/>: the VM resolves the target VM
     /// through <see cref="Services"/>, the <c>ViewLocator</c> picks
     /// the matching <c>Control</c> at bind time. No
@@ -359,14 +359,17 @@ public partial class MainPageViewModel : ViewModelBase
     /// access from the view layer.
     /// </summary>
     [RelayCommand]
-    internal void OpenSignatureDev()
+    internal async Task OpenSignatureDev()
     {
-        ((App)App.Current).PushPage(SignatureModel);
+        await ((App)App.Current!).PushPageAsync(SignatureModel).ConfigureAwait(true);
     }
 
-    private ViewModelBase? GetACLViewModel(BlogPostDto selectedPost)
+    private ViewModelBase GetACLViewModel(BlogPostDto selectedPost)
     {
-        throw new NotImplementedException();
+        var sp = ResolveServices();
+        var aclClient = sp.GetRequiredService<BlogAclApiClient>();
+        var circleClient = sp.GetRequiredService<CircleApiClient>();
+        return new PostAclDialogViewModel(selectedPost, aclClient, circleClient);
     }
 
     private async Task RefreshPostsAsync()
@@ -432,19 +435,16 @@ public partial class MainPageViewModel : ViewModelBase
 
 
     [RelayCommand(CanExecute = nameof(CanManageAcl))]
-    public void ManageAcl()
+    public async Task ManageAcl()
     {
         if (SelectedPost is null) return;
-        ((App)App.Current).PushPage(GetACLViewModel(SelectedPost));
+        await ((App)App.Current!).PushPageAsync(GetACLViewModel(SelectedPost)).ConfigureAwait(true);
     }
 
-    /// <summary>
-    /// Raised when the user asks to open the circles page (full
-    /// CRUD on their own circles). Same routing as
-    /// <see cref="ManageAclRequested"/>.
-    /// </summary>
-    public event EventHandler? OpenCirclesRequested;
-
     [RelayCommand]
-    public void OpenCircles() => OpenCirclesRequested?.Invoke(this, EventArgs.Empty);
+    public async Task OpenCircles()
+    {
+        var circlesVm = ResolveServices().GetRequiredService<CirclesPageViewModel>();
+        await ((App)App.Current!).PushPageAsync(circlesVm).ConfigureAwait(true);
+    }
 }
