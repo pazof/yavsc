@@ -109,7 +109,7 @@ public class OldBlogSpotService
        .Include(p => p.Tags)
        .Include(p => p.Comments)
        .Include(p => p.ACL)
-       .SingleAsync((object m) => m.Id == blogPostId);
+       .SingleAsync(m => m.Id == blogPostId);
         if (blog == null)
         {
             return null;
