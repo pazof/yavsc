@@ -59,8 +59,8 @@
                     MainPage.axaml.cs once the SignalR handler lands.
                 -->
                 <Button x:Name="OpenSignatureDevButton"
+                        Command="{Binding OpenSignatureDev}"
                         Content="[DEV] Signature"
-                        Click="OpenSignatureDev"
                         ToolTip.Tip="DEV ONLY — to remove when SignalR handler lands" />
             </StackPanel>
         </StackPanel>

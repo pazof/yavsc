@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Avalonia;
@@ -48,11 +49,11 @@ public partial class App : Application
         // build is ever reconfigured to skip the early check.
         if (TryHandOffCustomSchemeUrl()) return;
 
-        var serviceProvider = BuildServices();
-        AttachServiceProvider(serviceProvider);
-        var settings = serviceProvider.GetRequiredService<Settings>();
-        var sessionStatus = serviceProvider.GetRequiredService<SessionStatusViewModel>();
-        var api = serviceProvider.GetRequiredService<YavscApiClient>();
+        this.ServiceProvider = BuildServices();
+        AttachServiceProvider(ServiceProvider);
+        var settings = ServiceProvider.GetRequiredService<Settings>();
+        var sessionStatus = ServiceProvider.GetRequiredService<SessionStatusViewModel>();
+        var api = ServiceProvider.GetRequiredService<YavscApiClient>();
 
         DataTemplates.Clear();
         DataTemplates.Add(new ViewLocator(ServiceProvider));
@@ -148,7 +149,7 @@ public partial class App : Application
                 _ = w.NavRoot.PushAsync(settingsPage);
             };
 
-            window.Opened += async (_, _) => await BootAsync(ServiceProvider, api);
+            window.Opened += async (_, _) => await BootAsync(this.ServiceProvider, api);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
         {
@@ -320,4 +321,41 @@ public partial class App : Application
         return true;
     }
 
+    internal void PushPage(ViewModelBase vm)
+    {
+        if (window is null)
+        {
+            throw new InvalidOperationException("MainWindow is not initialized yet.");
+        }
+
+        var template = DataTemplates.FirstOrDefault(t => t.Match(vm));
+        if (template is null)
+        {
+            throw new InvalidOperationException($"No IDataTemplate found for {vm.GetType().Name}.");
+        }
+
+        var view = template.Build(vm);
+        if (view is null)
+        {
+            throw new InvalidOperationException(
+                $"Template for {vm.GetType().Name} returned <null>.");
+        }
+
+        if (view is not Page page)
+        {
+            throw new InvalidOperationException(
+                $"Template for {vm.GetType().Name} returned {view.GetType().Name}, expected a Page.");
+        }
+
+        page.DataContext = vm;
+
+        // Avoid stacking the same singleton page twice (e.g. SettingsPage).
+        var stack = window.NavRoot.NavigationStack;
+        if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], page))
+        {
+            return;
+        }
+
+        _ = window.NavRoot.PushAsync(page);
+    }
 }

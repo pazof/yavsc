@@ -2,11 +2,14 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using PostIt.Services;
+using PostIt.Views;
 
 namespace PostIt.ViewModels;
 
@@ -47,9 +50,6 @@ public partial class MainPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool DraftIsPublished { get; set; }
 
-    [ObservableProperty]
-    public partial ViewModelBase? CurrentViewModel { get; set; }
-
     public Settings SettingsModel { get; }
 
     [ObservableProperty]
@@ -81,8 +81,45 @@ public partial class MainPageViewModel : ViewModelBase
     /// </summary>
     public BlogApiClient? BlogClient { get; }
 
+    /// <summary>
+    /// DI container the VM uses to resolve navigation targets
+    /// (other ViewModels) when the user clicks a toolbar button
+    /// that opens a sub-screen. Owned by <c>App.ServiceProvider</c>
+    /// in production; injected directly in tests. The VM resolves
+    /// <em>ViewModels</em> via this provider, never Views — the
+    /// actual <see cref="Control"/> to push is decided by
+    /// <see cref="ViewLocator"/> at bind time, per CONTRIBUTING.md
+    /// §"Navigation (PostIt)".
+    /// </summary>
+    public IServiceProvider? Services { get; }
+
+    private SignaturePageViewModel? _signatureModel;
+
+    /// <summary>
+    /// Resolved on first access. Lazy so the test path (which
+    /// never pushes <c>SignaturePage</c>) does not require a
+    /// fully-built DI graph just to construct the VM. Mirrors the
+    /// pattern of <see cref="SettingsModel"/> for the Settings case.
+    /// </summary>
+    public SignaturePageViewModel SignatureModel =>
+        _signatureModel ??= ResolveSignatureModel();
+
     public override bool CanNavigateNext { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
     public override bool CanNavigatePrevious { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
+
+    private SignaturePageViewModel ResolveSignatureModel()
+    {
+        var sp = Services ?? (Application.Current as App)?.ServiceProvider;
+        if (sp is null)
+        {
+            throw new InvalidOperationException(
+                "Cannot resolve SignaturePageViewModel: no IServiceProvider " +
+                "was injected and App.ServiceProvider is null. This is a " +
+                "test-time wiring bug — the test must construct an " +
+                "IServiceProvider that registers SignaturePageViewModel.");
+        }
+        return sp.GetRequiredService<SignaturePageViewModel>();
+    }
 
 
     public MainPageViewModel()
@@ -115,7 +152,6 @@ public partial class MainPageViewModel : ViewModelBase
         DraftTitle = string.Empty;
         DraftArticle = string.Empty;
         DraftIsPublished = false;
-        CurrentViewModel = this;
     }
 
     /// <summary>Save is enabled as soon as the user has typed
@@ -135,10 +171,11 @@ public partial class MainPageViewModel : ViewModelBase
     /// <see cref="BlogApiClient"/>. Production code uses the
     /// (Settings, BlogApiClient) overload below.
     /// </summary>
-    public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null)
+    public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null, IServiceProvider? services = null)
     {
         SettingsModel = new Settings();
         BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient)); ;
+        Services = services;
 
         Init(settings);
     }
@@ -309,10 +346,22 @@ public partial class MainPageViewModel : ViewModelBase
         });
     }
 
+    /// <summary>
+    /// DEV ONLY: open the signature capture page. The production
+    /// entry point is a SignalR push from Yavsc.Org ("devis
+    /// received, sign here"); this command is the dev-time
+    /// shortcut to reach the page without that infrastructure.
+    /// Aligned on the same nav-via-CurrentViewModel pattern as
+    /// <see cref="OpenSettings"/>: the VM resolves the target VM
+    /// through <see cref="Services"/>, the <c>ViewLocator</c> picks
+    /// the matching <c>Control</c> at bind time. No
+    /// <c>Click</code> handler, no <c>App.ServiceProvider</c>
+    /// access from the view layer.
+    /// </summary>
     [RelayCommand]
-    internal void OpenSettings()
+    internal void OpenSignatureDev()
     {
-        CurrentViewModel = SettingsModel;
+        ((App)App.Current).PushPage(SignatureModel);
     }
 
     private ViewModelBase? GetACLViewModel(BlogPostDto selectedPost)
@@ -386,7 +435,7 @@ public partial class MainPageViewModel : ViewModelBase
     public void ManageAcl()
     {
         if (SelectedPost is null) return;
-        CurrentViewModel = GetACLViewModel(SelectedPost);
+        ((App)App.Current).PushPage(GetACLViewModel(SelectedPost));
     }
 
     /// <summary>
