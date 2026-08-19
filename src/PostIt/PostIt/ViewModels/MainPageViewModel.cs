@@ -437,7 +437,11 @@ public partial class MainPageViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanManageAcl))]
     public async Task ManageAcl()
     {
-        if (SelectedPost is null) return;
+        if (SelectedPost is null)
+        {
+            StatusMessage = "Select an existing post before managing ACL.";
+            return;
+        }
         await ((App)App.Current!).PushPageAsync(GetACLViewModel(SelectedPost)).ConfigureAwait(true);
     }
 

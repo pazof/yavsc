@@ -22,6 +22,18 @@ public class ViewLocator : IDataTemplate
 
     public Control Build(object? data)
     {
+        try
+        {
+            return BuildCore(data);
+        }
+        catch (Exception ex)
+        {
+            return new TextBlock { Text = $"ViewLocator threw: {ex}" };
+        }
+    }
+
+    private Control BuildCore(object? data)
+    {
         return data switch
         {
             MainPageViewModel => _services.GetRequiredService<MainPage>(),
@@ -32,7 +44,7 @@ public class ViewLocator : IDataTemplate
             CirclesPageViewModel => _services.GetRequiredService<CirclesPage>(),
             PostAclDialogViewModel => _services.GetRequiredService<PostAclDialog>(),
             null => new TextBlock { Text = "No view for <null>" },
-        _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
+            _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };
     }
 
