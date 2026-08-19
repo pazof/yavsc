@@ -1,4 +1,3 @@
-using System;
 using Yavsc.Abstract.Identity.Security;
 
 namespace Yavsc.Blogspot;
@@ -30,18 +29,17 @@ public class BlogPostDto : IBlogPost
     /// </summary>
     public bool IsPublished { get; set; }
 
-    public bool AuthorizeCircle(long circleId)
+    public virtual bool AuthorizeCircle(long circleId)
     {
-        throw new NotImplementedException();
+        ACL.Add(new CircleAuthorization { CircleId = circleId });
+        return true;
     }
 
-    public ICircleAuthorization[] GetACL()
-    {
-        throw new NotImplementedException();
-    }
+    private List<CircleAuthorization> ACL { get; set; } = new List<CircleAuthorization>();
 
-    public string[] GetTags()
-    {
-        throw new NotImplementedException();
-    }
+    public string[] Tags { get; set; }
+
+    public string[] GetTags() => Tags;
+
+    public ICircleAuthorization[] GetACL() => ACL.ToArray();
 }

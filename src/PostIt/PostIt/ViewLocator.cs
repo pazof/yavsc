@@ -28,6 +28,9 @@ public class ViewLocator : IDataTemplate
             Settings => _services.GetRequiredService<SettingsPage>(),
             HomePageViewModel => _services.GetRequiredService<HomePage>(),
             SignaturePageViewModel => _services.GetRequiredService<SignaturePage>(),
+            AddCircleMemberDialogViewModel => _services.GetRequiredService<AddCircleMemberDialog>(),
+            CirclesPageViewModel => _services.GetRequiredService<CirclesPage>(),
+            PostAclDialogViewModel => _services.GetRequiredService<PostAclDialog>(),
             null => new TextBlock { Text = "No view for <null>" },
         _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };
