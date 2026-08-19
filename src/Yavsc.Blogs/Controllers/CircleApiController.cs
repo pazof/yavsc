@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 using Yavsc.Server.Helpers;
+using static Yavsc.Blogs.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
-    [Route("api/circle")]
+    [Route(APIPrefix +"/circle")]
     public class CircleApiController : Controller
     {
         private readonly ApplicationDbContext _context;
