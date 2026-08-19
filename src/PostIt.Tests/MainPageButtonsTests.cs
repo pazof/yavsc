@@ -5,6 +5,7 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Api.Client;
 using Yavsc.Blogspot;
 using PostIt.Services;
@@ -78,7 +79,18 @@ public class MainPageButtonsTests
     {
         var api = new ThrowingApi();
         var blog = new BlogApiClient(api, "http://localhost/");
-        var vm = new MainPageViewModel(blog);
+        // Minimal DI graph: only what MainPageViewModel resolves
+        // when the user clicks a navigation button. Today that's
+        // SignaturePageViewModel (for the [DEV] Signature toolbar
+        // shortcut). Anything the SignaturePage or its VM touch
+        // transitively must be registered here too — the test
+        // refuses to share App.BuildServices() because that one
+        // constructs a real YavscApiClient pointing at the host's
+        // token store, which is exactly the noise we want out of
+        // a UI-driving test.
+        var services = new ServiceCollection();
+        services.AddTransient<SignaturePageViewModel>();
+        var vm = new MainPageViewModel(blog, services: services.BuildServiceProvider());
         if (selectedPost is not null) vm.SelectedPost = selectedPost;
         return vm;
     }
@@ -183,16 +195,20 @@ public class MainPageButtonsTests
     [AvaloniaFact]
     public void Signature_dev_button_click_pushes_a_page_onto_nav_stack()
     {
-        // Arrange: the "[DEV] Signature" button uses XAML's
-        // Click="OpenSignatureDev" attribute, so we don't bind
-        // a Command here — we drive the click directly. The
-        // handler resolves App.ServiceProvider, which is null
-        // in a unit test, and early-returns; that is the
-        // failure mode the test pins.
+        // Arrange: the "[DEV] Signature" button is bound to the
+        // MainPageViewModel.OpenSignatureDevCommand [RelayCommand].
+        // The click must push SignaturePage on top of NavRoot.
+        // The ServiceCollection registered in MakeViewModel provides
+        // SignaturePageViewModel so the command can resolve it via
+        // DI and assign it to CurrentViewModel; the ViewLocator
+        // then maps SignaturePageViewModel -> SignaturePage and
+        // the binding pushes the page.
         var vm = MakeViewModel();
         var (window, page) = MountMainPage(vm);
 
         var signatureButton = page.OpenSignatureDevButton;
+        Assert.NotNull(signatureButton.Command);
+        Assert.True(signatureButton.Command.CanExecute(null));
 
         // Act
         var stackBefore = ClickAndCapture(window, signatureButton);

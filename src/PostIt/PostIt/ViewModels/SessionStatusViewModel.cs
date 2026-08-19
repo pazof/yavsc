@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 
 namespace PostIt.ViewModels;
@@ -144,9 +145,10 @@ public partial class SessionStatusViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async System.Threading.Tasks.Task OpenSettingsCommand()
+    internal void OpenSettings()
     {
-        OpenSettingsRequested?.Invoke();
-        await System.Threading.Tasks.Task.CompletedTask;
+        var app = (App)App.Current;
+        app.PushPage(app.ServiceProvider.GetRequiredService<Settings>());
     }
+
 }
