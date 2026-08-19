@@ -64,6 +64,25 @@ Quelques règles non capturées par `.editorconfig` :
 - Préférer les types BCL (`int`, `string`) aux types framework
   (`Int32`, `String`).
 - Préférer les expressions de pattern matching aux casts explicites.
+- **Navigation (PostIt)** : la navigation est contrôlée par
+  `src/PostIt/PostIt/ViewLocator.cs`. Pour ouvrir un écran,
+  on affecte le ViewModel cible à la propriété `CurrentViewModel`
+  du `MainPageViewModel` (qui binde l'`IContentControl.Content`
+  de la page hôte). Tant que la vue correspondante est supportée
+  par le `ViewLocator`, ce dernier décide de l'instance de
+  `Control` à pousser en navigation, et il l'obtient de la DI
+  (`_services.GetRequiredService<TView>()`). On n'instancie
+  jamais une `View` à la main depuis un ViewModel, on ne
+  récupère jamais une `View` depuis la DI directement dans un
+  ViewModel. Exemple canonique :
+
+  ```csharp
+  [RelayCommand]
+  internal void OpenSettings()
+  {
+      CurrentViewModel = SettingsModel;
+  }
+  ```
 
 ## Branches & commits
 
