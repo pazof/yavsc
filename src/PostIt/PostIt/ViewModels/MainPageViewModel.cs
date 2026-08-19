@@ -118,6 +118,18 @@ public partial class MainPageViewModel : ViewModelBase
         CurrentViewModel = this;
     }
 
+    /// <summary>Save is enabled as soon as the user has typed
+    /// a non-whitespace title in the editor, regardless of
+    /// whether a post is selected. The "no selection" case is
+    /// the create-new-post path; the "with selection" case is
+    /// the update path. Both read from the editor buffer.
+    /// Previously this also required <c>SelectedPost is not null</c>
+    /// — which contradicted the create-new-post intent and
+    /// forced the buggy "draft with empty title" branch.</summary>
+    private bool CanSave() => !IsBusy && !string.IsNullOrWhiteSpace(DraftTitle);
+    private bool CanDelete() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
+    private bool CanManageAcl() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
+
     /// <summary>
     /// Test-friendly constructor: caller supplies a pre-built
     /// <see cref="BlogApiClient"/>. Production code uses the
@@ -125,11 +137,11 @@ public partial class MainPageViewModel : ViewModelBase
     /// </summary>
     public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null)
     {
-         SettingsModel = new Settings();
-        BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient));;
+        SettingsModel = new Settings();
+        BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient)); ;
 
         Init(settings);
-        }
+    }
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
 
@@ -303,6 +315,11 @@ public partial class MainPageViewModel : ViewModelBase
         CurrentViewModel = SettingsModel;
     }
 
+    private ViewModelBase? GetACLViewModel(BlogPostDto selectedPost)
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task RefreshPostsAsync()
     {
         var posts = await BlogClient.GetPostsAsync();
@@ -363,33 +380,13 @@ public partial class MainPageViewModel : ViewModelBase
         DeleteCommand.NotifyCanExecuteChanged();
     }
 
-    /// <summary>Save is enabled as soon as the user has typed
-    /// a non-whitespace title in the editor, regardless of
-    /// whether a post is selected. The "no selection" case is
-    /// the create-new-post path; the "with selection" case is
-    /// the update path. Both read from the editor buffer.
-    /// Previously this also required <c>SelectedPost is not null</c>
-    /// — which contradicted the create-new-post intent and
-    /// forced the buggy "draft with empty title" branch.</summary>
-    private bool CanSave() => !IsBusy && !string.IsNullOrWhiteSpace(DraftTitle);
-    private bool CanDelete() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
-    private bool CanManageAcl() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
 
-    /// <summary>
-    /// Raised when the user asks to open the "manage ACL" dialog for
-    /// the currently selected post. The <c>MainPage</c> code-behind
-    /// listens to this event and pushes a <c>PostAclDialog</c> on the
-    /// navigation stack. The VM itself can't navigate directly
-    /// because the navigation surface (<c>NavigationPage</c>) lives
-    /// in the View layer.
-    /// </summary>
-    public event EventHandler<BlogPostDto>? ManageAclRequested;
 
     [RelayCommand(CanExecute = nameof(CanManageAcl))]
     public void ManageAcl()
     {
         if (SelectedPost is null) return;
-        ManageAclRequested?.Invoke(this, SelectedPost);
+        CurrentViewModel = GetACLViewModel(SelectedPost);
     }
 
     /// <summary>

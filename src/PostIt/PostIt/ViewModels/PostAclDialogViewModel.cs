@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using Yavsc.Api.Client.Dtos;
+using Yavsc.Abstract.Identity.Security;
 
 namespace PostIt.ViewModels;
 
@@ -40,7 +41,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
     public partial ObservableCollection<CircleDto> MyCircles { get; set; } = new();
 
     [ObservableProperty]
-    public partial ObservableCollection<CircleAuthorizationDto> AclEntries { get; set; } = new();
+    public partial ObservableCollection<CircleAuthorization> AclEntries { get; set; } = new();
 
     [ObservableProperty]
     public partial CircleDto? SelectedCircleToAdd { get; set; }
@@ -80,9 +81,6 @@ public partial class PostAclDialogViewModel : ViewModelBase
             var circles = circlesTask.Result ?? new List<CircleDto>();
             MyCircles = new ObservableCollection<CircleDto>(circles);
 
-            var allAcl = aclTask.Result ?? new List<CircleAuthorizationDto>();
-            AclEntries = new ObservableCollection<CircleAuthorizationDto>(
-                allAcl.Where(a => a.BlogPostId == Post.Id));
 
             StatusMessage = $"{AclEntries.Count} autorisation(s)";
         }
@@ -108,11 +106,9 @@ public partial class PostAclDialogViewModel : ViewModelBase
         IsBusy = true;
         try
         {
-            var created = await _aclClient.GrantAsync(new CircleAuthorizationDto
+            var created = await _aclClient.GrantAsync(new CircleAuthorization
             {
-                CircleId = SelectedCircleToAdd.Id,
-                BlogPostId = Post.Id,
-                Comment = false,
+                CircleId = SelectedCircleToAdd.Id
             });
             if (created is not null)
             {
@@ -135,7 +131,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async Task RevokeAsync(CircleAuthorizationDto? acl)
+    public async Task RevokeAsync(CircleAuthorization? acl)
     {
         if (acl is null) return;
         IsBusy = true;

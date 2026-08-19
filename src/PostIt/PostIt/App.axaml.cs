@@ -48,71 +48,11 @@ public partial class App : Application
         // build is ever reconfigured to skip the early check.
         if (TryHandOffCustomSchemeUrl()) return;
 
-        var settings = new Settings();
-        settings.Load();
-
-        var tokenStore = new TokenStore(System.IO.Path.Combine(
-            System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
-            "PostIt", "tokens.json"));
-
-        var api = new YavscApiClient(settings, tokenStore);
-        var client = new BlogApiClient(api, settings.BlogsApiUrl);
-        var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
-        var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
-        var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
-        var contactService = new ContactService();
-        var userDirectory = new UserDirectory(userSearchClient);
-
-        var services = new ServiceCollection();
-
-        // Vues
-        services.AddTransient<MainPage>();
-        // SettingsPage is a singleton: there must be one and only one
-        // instance of the settings UI for the lifetime of the app.
-        // This guarantees that (a) the bindings always reflect the
-        // current in-memory Settings state, (b) the page already has
-        // its DataContext wired up at composition-root time (see
-        // below), and (c) the OpenSettingsRequested handler is a
-        // pure push with a no-op-if-already-on-top guard, never a
-        // re-resolution from DI. Transient would let the user
-        // accumulate stale SettingsPage instances on the navigation
-        // stack, each bound to a fresh SettingsViewModel and missing
-        // any in-flight edits.
-        services.AddSingleton<SettingsPage>();
-        services.AddTransient<HomePage>();
-        services.AddTransient<SignaturePage>();
-        services.AddTransient<CirclesPage>();
-
-        // ViewModels
-        services.AddSingleton(settings);
-        services.AddSingleton<YavscApiClient>(api);
-        services.AddSingleton<IYavscApiClient>(api);
-        services.AddSingleton(client);
-        services.AddSingleton(circleClient);
-        services.AddSingleton(blogAclClient);
-        services.AddSingleton(userSearchClient);
-        services.AddSingleton<IContactService>(contactService);
-        services.AddSingleton<IUserDirectory>(userDirectory);
-        services.AddTransient<MainPageViewModel>();
-        services.AddTransient<HomePageViewModel>();
-        services.AddTransient<SignaturePageViewModel>();
-        services.AddTransient<CirclesPageViewModel>();
-
-        // Persistent session banner: one instance for the lifetime of
-        // the app so the same VM survives page navigation.
-        var sessionStatus = new SessionStatusViewModel { Api = api };
-        sessionStatus.Refresh();
-        services.AddSingleton(sessionStatus);
-        services.AddTransient<SessionStatusBanner>();
-
-        ServiceProvider  = services.BuildServiceProvider();
-
-        // Bind the canonical Settings to the static accessor so any
-        // code path that can't easily take a constructor parameter
-        // (designer surfaces, Avalonia data templates) still gets
-        // the same instance the rest of the app is using. Idempotent:
-        // re-binding from a second App boot (tests) is a no-op.
-        Settings.BindToServiceProvider(ServiceProvider);
+        var serviceProvider = BuildServices();
+        AttachServiceProvider(serviceProvider);
+        var settings = serviceProvider.GetRequiredService<Settings>();
+        var sessionStatus = serviceProvider.GetRequiredService<SessionStatusViewModel>();
+        var api = serviceProvider.GetRequiredService<YavscApiClient>();
 
         DataTemplates.Clear();
         DataTemplates.Add(new ViewLocator(ServiceProvider));
@@ -217,6 +157,93 @@ public partial class App : Application
                 DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>()
             };
         }
+    }
+
+    /// <summary>
+    /// Build the DI container the app uses. Pulled out of
+    /// <see cref="OnFrameworkInitializationCompleted"/> so headless
+    /// tests can construct the same container at <c>TestApp</c> boot
+    /// without going through the full Avalonia desktop lifetime
+    /// (which never runs in a unit test). The container returned is
+    /// the exact one production uses — no test-only fakes, no
+    /// trimmed service list — so a test that exercises a VM, page,
+    /// or service resolves through the same wiring the real app
+    /// does, and a green test is a green contract for prod.
+    /// </summary>
+    internal static IServiceProvider BuildServices()
+    {
+        var settings = new Settings();
+        settings.Load();
+
+        var tokenStore = new TokenStore(System.IO.Path.Combine(
+            System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
+            "PostIt", "tokens.json"));
+
+        var api = new YavscApiClient(settings, tokenStore);
+        var client = new BlogApiClient(api, settings.BlogsApiUrl);
+        var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
+        var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
+        var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
+        var contactService = new ContactService();
+        var userDirectory = new UserDirectory(userSearchClient);
+
+        var services = new ServiceCollection();
+
+        // Vues
+        services.AddTransient<MainPage>();
+        // SettingsPage is a singleton: there must be one and only one
+        // instance of the settings UI for the lifetime of the app.
+        // This guarantees that (a) the bindings always reflect the
+        // current in-memory Settings state, (b) the page already has
+        // its DataContext wired up at composition-root time (see
+        // below), and (c) the OpenSettingsRequested handler is a
+        // pure push with a no-op-if-already-on-top guard, never a
+        // re-resolution from DI. Transient would let the user
+        // accumulate stale SettingsPage instances on the navigation
+        // stack, each bound to a fresh SettingsViewModel and missing
+        // any in-flight edits.
+        services.AddSingleton<SettingsPage>();
+        services.AddTransient<HomePage>();
+        services.AddTransient<SignaturePage>();
+        services.AddTransient<CirclesPage>();
+
+        // ViewModels
+        services.AddSingleton(settings);
+        services.AddSingleton<YavscApiClient>(api);
+        services.AddSingleton<IYavscApiClient>(api);
+        services.AddSingleton(client);
+        services.AddSingleton(circleClient);
+        services.AddSingleton(blogAclClient);
+        services.AddSingleton(userSearchClient);
+        services.AddSingleton<IContactService>(contactService);
+        services.AddSingleton<IUserDirectory>(userDirectory);
+        services.AddTransient<MainPageViewModel>();
+        services.AddTransient<HomePageViewModel>();
+        services.AddTransient<SignaturePageViewModel>();
+        services.AddTransient<CirclesPageViewModel>();
+
+        // Persistent session banner: one instance for the lifetime of
+        // the app so the same VM survives page navigation.
+        var sessionStatus = new SessionStatusViewModel { Api = api };
+        sessionStatus.Refresh();
+        services.AddSingleton(sessionStatus);
+        services.AddTransient<SessionStatusBanner>();
+
+        return services.BuildServiceProvider();
+    }
+
+    /// <summary>
+    /// Attach a pre-built DI container to this <see cref="App"/>
+    /// instance. Used by headless tests after
+    /// <see cref="BuildServices"/>; in production this happens
+    /// implicitly via <see cref="OnFrameworkInitializationCompleted"/>.
+    /// Idempotent w.r.t. <see cref="Settings.BindToServiceProvider"/>:
+    /// re-binding from a second App boot is a no-op.
+    /// </summary>
+    internal void AttachServiceProvider(IServiceProvider sp)
+    {
+        ServiceProvider = sp;
+        Settings.BindToServiceProvider(sp);
     }
 
     private static void ApplyDarkMode(Settings settings)
