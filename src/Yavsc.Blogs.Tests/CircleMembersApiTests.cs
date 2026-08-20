@@ -88,7 +88,7 @@ public sealed class CircleMembersApiTests : IClassFixture<BlogsWebServerFixture>
     }
 
     private string MembersUrl(long circleId)
-        => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/api/circle/{circleId}/members";
+        => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/{Constants.APIPrefix}/circle/{circleId}/members";
 
     private HttpClient NewClient(string subject)
     {
