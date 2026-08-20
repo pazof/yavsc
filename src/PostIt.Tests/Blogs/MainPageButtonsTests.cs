@@ -1,6 +1,4 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -50,43 +48,43 @@ namespace PostIt.Tests;
 ///   <item>"[DEV] Signature" — click pushes a page onto the
 ///     stack.</item>
 /// </list>
+///
+/// <para>Lifecycle: shared <see cref="PostItHeadlessFixture"/>
+/// owns the <see cref="MainWindow"/> and the production DI graph.
+/// Each test builds a local <see cref="ServiceCollection"/> with
+/// the fake <see cref="YavscApiClient"/> + the page VMs and
+/// registers the destination pages, then swaps it in via
+/// <see cref="PostItHeadlessFixture.UseServiceProvider"/>. The
+/// fixture re-attaches the ViewLocator and the MainWindow so
+/// subsequent <see cref="App.PushPageAsync"/> calls route through
+/// the overridden graph.</para>
 /// </summary>
-public class MainPageButtonsTests
+[Collection("PostIt Headless")]
+public sealed class MainPageButtonsTests
 {
-    /// <summary>
-    /// Fake <see cref="YavscApiClient"/> that throws on any
-    /// wire call. These tests never invoke a command that hits
-    /// the API — only the click → nav side of the pipeline is
-    /// asserted.
-    /// </summary>
-    private sealed class ThrowingApi : YavscApiClient
+    private readonly PostItHeadlessCollection _host;
+
+    public MainPageButtonsTests(PostItHeadlessCollection host)
     {
-        public ThrowingApi() : base(
-            new Settings
-            {
-                Authentication = new AuthenticationSettings
-                {
-                    Authority = "https://stub.invalid",
-                    ClientId = "stub",
-                    Scopes = new[] { "openid" },
-                },
-            },
-            new TokenStore(System.IO.Path.GetTempFileName()))
-        { }
+        _host = host;
     }
 
-    private static MainPageViewModel MakeViewModel(BlogPostDto? selectedPost = null)
+    /// <summary>
+    /// Build the test DI graph: <see cref="ThrowingApi"/> for
+    /// the API clients (the click tests never hit the wire;
+    /// any traffic would be a wiring bug), the real
+    /// <see cref="BlogApiClient"/> / <see cref="CircleApiClient"/>
+    /// / <see cref="BlogAclApiClient"/> that the page VM
+    /// resolves, and the page + dialog + VM registrations the
+    /// <see cref="ViewLocator"/> needs to resolve the three
+    /// push targets.
+    /// </summary>
+    private MainPageViewModel BuildViewModel(BlogPostDto? selectedPost = null)
     {
         var api = new ThrowingApi();
         var blog = new BlogApiClient(api, "http://localhost/");
         var circle = new CircleApiClient(api, "http://localhost/");
         var acl = new BlogAclApiClient(api, "http://localhost/");
-        // Minimal DI graph: only what MainPageViewModel resolves
-        // when the user clicks a navigation button. Today that's
-        // SignaturePageViewModel / CirclesPageViewModel / ACL
-        // dependencies. The graph intentionally stays local to this
-        // suite to avoid side effects from App.BuildServices() (real
-        // token-store wiring).
         var services = new ServiceCollection();
         services.AddSingleton(new Settings());
         services.AddSingleton(circle);
@@ -96,51 +94,31 @@ public class MainPageButtonsTests
         services.AddTransient<SignaturePage>();
         services.AddTransient<CirclesPage>();
         services.AddTransient<PostAclDialog>();
-        var vm = new MainPageViewModel(blog, services: services.BuildServiceProvider());
+        var sp = services.BuildServiceProvider();
+
+        var vm = new MainPageViewModel(blog, services: sp);
         if (selectedPost is not null) vm.SelectedPost = selectedPost;
         return vm;
     }
 
     /// <summary>
-    /// Mount a real <see cref="MainWindow"/> (as
-    /// <c>SessionStatusBannerTests</c> does), push a
-    /// <see cref="MainPage"/> with the given VM onto
-    /// <c>NavRoot</c>. <c>PushAsync</c> is awaited (via
-    /// <c>GetAwaiter().GetResult()</c>) so the page is on the
-    /// nav stack before the test tries to interact with its
-    /// named buttons. The window is shown so the visual tree is
-    /// realised and <c>KeyPressQwerty</c> has a real
-    /// <see cref="TopLevel"/> to dispatch against.
+    /// Push a <see cref="MainPage"/> with the given VM onto
+    /// the shared <see cref="MainWindow"/>'s nav stack. Clears
+    /// any pages the previous test left behind (the fixture's
+    /// MainWindow is shared across every test class). Returns
+    /// the live page so the test can access its named buttons.
     /// </summary>
-    private static (MainWindow window, MainPage page) MountMainPage(MainPageViewModel vm)
+    private MainPage MountAsync(MainPageViewModel vm)
     {
-        var window = new MainWindow();
         var page = new MainPage { DataContext = vm };
-        var app = (PostIt.App)Application.Current!;
-        if (vm.Services is not null)
-        {
-            app.DataTemplates.Clear();
-            app.DataTemplates.Add(new ViewLocator(vm.Services));
-        }
-        app.AttachMainWindow(window);
-        window.Show();
-        window.NavRoot.PushAsync(page).GetAwaiter().GetResult();
-        return (window, page);
+        _host.PushAsync(page);
+        return page;
     }
 
     /// <summary>
-    /// Click a button by focusing it and pressing Enter — the
-    /// supported headless pattern (cf. CalculatorTests in the
-    /// Avalonia.Samples repo). Returns the nav-stack count
-    /// before the click so the caller can assert on the delta.
-    /// KeyPressQwerty is dispatched on the <see cref="MainWindow"/>
-    /// itself — it is the <see cref="TopLevel"/> that owns the
-    /// headless implementation, and routing the key through any
-    /// descendant TopLevel (e.g. one obtained via
-    /// <c>TopLevel.GetTopLevel(button)</c>) fails with a
-    /// <c>NullReferenceException</c> from the headless impl
-    /// because the descendant does not carry the
-    /// <c>PlatformHandle</c> the harness expects.
+    /// Click a button by executing its <see cref="Button.Command"/>
+    /// and draining any <see cref="IAsyncRelayCommand"/> so the
+    /// caller can assert on the resulting nav stack immediately.
     /// </summary>
     private static int ClickAndCapture(MainWindow window, Button button)
     {
@@ -165,8 +143,8 @@ public class MainPageButtonsTests
             Title = "An existing post",
             AuthorId = "u-alice"
         };
-        var vm = MakeViewModel(post);
-        var (window, page) = MountMainPage(vm);
+        var vm = BuildViewModel(post);
+        var page = MountAsync(vm);
 
         // Sanity: the button's command is bound and CanExecute
         // is true. If this fails, the bug is upstream (XAML
@@ -176,12 +154,12 @@ public class MainPageButtonsTests
         Assert.True(aclButton.Command.CanExecute(null));
 
         // Act
-        var stackBefore = ClickAndCapture(window, aclButton);
+        var stackBefore = ClickAndCapture(_host.Window, aclButton);
 
         // Assert γ + sniff léger: stack grew, new top is a Page.
-        Assert.True(window.NavRoot.NavigationStack.Count > stackBefore,
-            $"Click on ACL must push a new page onto the nav stack. Stack size before: {stackBefore}, after: {window.NavRoot.NavigationStack.Count}.");
-        var pushed = window.NavRoot.NavigationStack.Last();
+        Assert.True(_host.Window.NavRoot.NavigationStack.Count > stackBefore,
+            $"Click on ACL must push a new page onto the nav stack. Stack size before: {stackBefore}, after: {_host.Window.NavRoot.NavigationStack.Count}.");
+        var pushed = _host.Window.NavRoot.NavigationStack[^1];
         Assert.NotNull(pushed);
         Assert.IsAssignableFrom<Page>(pushed);
     }
@@ -191,19 +169,19 @@ public class MainPageButtonsTests
     {
         // Arrange: OpenCircles has no CanExecute guard today —
         // any click should fire it and push the page.
-        var vm = MakeViewModel();
-        var (window, page) = MountMainPage(vm);
+        var vm = BuildViewModel();
+        var page = MountAsync(vm);
 
         var circlesButton = page.OpenCirclesButton;
         Assert.NotNull(circlesButton.Command);
 
         // Act
-        var stackBefore = ClickAndCapture(window, circlesButton);
+        var stackBefore = ClickAndCapture(_host.Window, circlesButton);
 
         // Assert
-        Assert.True(window.NavRoot.NavigationStack.Count > stackBefore,
+        Assert.True(_host.Window.NavRoot.NavigationStack.Count > stackBefore,
             "Click on 'Mes cercles' must push a new page onto the nav stack.");
-        var pushed = window.NavRoot.NavigationStack.Last();
+        var pushed = _host.Window.NavRoot.NavigationStack[^1];
         Assert.NotNull(pushed);
         Assert.IsAssignableFrom<Page>(pushed);
     }
@@ -214,25 +192,25 @@ public class MainPageButtonsTests
         // Arrange: the "[DEV] Signature" button is bound to the
         // MainPageViewModel.OpenSignatureDevCommand [RelayCommand].
         // The click must push SignaturePage on top of NavRoot.
-        // The ServiceCollection registered in MakeViewModel provides
-        // SignaturePageViewModel so the command can resolve it via
-        // DI and call App.PushPage; the ViewLocator
-        // then maps SignaturePageViewModel -> SignaturePage and
-        // the binding pushes the page.
-        var vm = MakeViewModel();
-        var (window, page) = MountMainPage(vm);
+        // The ServiceCollection registered in BuildViewModel
+        // provides SignaturePageViewModel so the command can
+        // resolve it via DI and call App.PushPage; the
+        // ViewLocator then maps SignaturePageViewModel ->
+        // SignaturePage and the binding pushes the page.
+        var vm = BuildViewModel();
+        var page = MountAsync(vm);
 
         var signatureButton = page.OpenSignatureDevButton;
         Assert.NotNull(signatureButton.Command);
         Assert.True(signatureButton.Command.CanExecute(null));
 
         // Act
-        var stackBefore = ClickAndCapture(window, signatureButton);
+        var stackBefore = ClickAndCapture(_host.Window, signatureButton);
 
         // Assert
-        Assert.True(window.NavRoot.NavigationStack.Count > stackBefore,
+        Assert.True(_host.Window.NavRoot.NavigationStack.Count > stackBefore,
             "Click on '[DEV] Signature' must push a new page onto the nav stack.");
-        var pushed = window.NavRoot.NavigationStack.Last();
+        var pushed = _host.Window.NavRoot.NavigationStack[^1];
         Assert.NotNull(pushed);
         Assert.IsAssignableFrom<Page>(pushed);
     }

@@ -49,7 +49,7 @@ public partial class App : Application
         // build is ever reconfigured to skip the early check.
         if (TryHandOffCustomSchemeUrl()) return;
 
-        this.ServiceProvider = BuildServices();
+        this.ServiceProvider = BuildServices(new ServiceCollection());
         AttachServiceProvider(ServiceProvider);
         var settings = ServiceProvider.GetRequiredService<Settings>();
         var sessionStatus = ServiceProvider.GetRequiredService<SessionStatusViewModel>();
@@ -139,7 +139,7 @@ public partial class App : Application
     /// or service resolves through the same wiring the real app
     /// does, and a green test is a green contract for prod.
     /// </summary>
-    internal static IServiceProvider BuildServices()
+    internal static IServiceProvider BuildServices(ServiceCollection services)
     {
         var settings = new Settings();
         settings.Load();
@@ -156,7 +156,6 @@ public partial class App : Application
         var contactService = new ContactService();
         var userDirectory = new UserDirectory(userSearchClient);
 
-        var services = new ServiceCollection();
 
         // Vues
         services.AddTransient<MainPage>();

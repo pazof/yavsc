@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
@@ -31,8 +29,15 @@ namespace PostIt.Tests;
 /// click via <c>button.Command?.Execute(...)</c> + flush
 /// any async command before asserting.</para>
 /// </summary>
+[Collection("PostIt Headless")]
 public class AddCircleMemberDialogTests
 {
+    private PostItHeadlessCollection fixture;
+
+    public AddCircleMemberDialogTests(PostItHeadlessCollection fixture, ITestOutputHelper output)
+    {
+        this.fixture = fixture;
+    }
     /// <summary>
     /// Stand-in <see cref="IUserDirectory"/> that returns an
     /// empty list. The dialog's "Rechercher" button is never
@@ -73,7 +78,10 @@ public class AddCircleMemberDialogTests
     /// VM resolves its dependency) and <c>AddCircleMemberDialog</c>
     /// (so <c>ViewLocator</c> can resolve it from the VM).
     /// </summary>
-    private static (MainWindow window, CirclesPage page, AddCircleMemberDialog dialog) Mount()
+    private static (MainWindow window,
+    CirclesPage page,
+    AddCircleMemberDialog dialog)
+    Mount()
     {
         var api = new ThrowingApi();
         var circleClient = new CircleApiClient(api, "http://localhost/");
@@ -117,7 +125,7 @@ public class AddCircleMemberDialogTests
     public void Close_button_pops_dialog_off_nav_stack()
     {
         // Arrange: stack starts at 2 (CirclesPage + dialog).
-        var (window, _, _) = Mount();
+        var window = fixture.Window;
         var stackBefore = window.NavRoot.NavigationStack.Count;
         Assert.Equal(2, stackBefore);
 
