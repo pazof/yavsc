@@ -11,7 +11,7 @@ namespace Yavsc.Controllers
     using Yavsc.Services;
 
     [Produces("application/json")]
-    [Route("api/performers")]
+    [Route(Constants.APIPrefix + "/performers")]
     public class PerformersApiController : Controller
     {
         ApplicationDbContext dbContext;

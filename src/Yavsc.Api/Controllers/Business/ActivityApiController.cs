@@ -14,7 +14,7 @@ using Yavsc.Models.Workflow;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/activity")]
+    [Route(Constants.APIPrefix + "/activity")]
     public class ActivityApiController : Controller
     {
         private ApplicationDbContext _context;

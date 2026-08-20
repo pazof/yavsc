@@ -145,7 +145,7 @@ public sealed class BlogsWebServerFixture : WebHostFixture
                     // remaps long Microsoft claim URIs, not sub).
                     // UserHelpers.GetUserId reads sub directly.
                     NameClaimType = "sub",
-                    RoleClaimType = YavscConstants.RoleClaimType,
+                    RoleClaimType = Yavsc.Constants.RoleClaimType,
                 };
             });
 
