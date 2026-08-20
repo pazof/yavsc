@@ -183,7 +183,6 @@ public partial class App : Application
         // here — the parametrised ctors stay for direct test wiring.
         services.AddTransient<PostAclDialog>();
         services.AddTransient<AddCircleMemberDialog>();
-
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);

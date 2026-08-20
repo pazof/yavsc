@@ -25,12 +25,6 @@ public partial class AddCircleMemberDialog : ContentPage
         InitializeComponent();
     }
 
-    public AddCircleMemberDialog(IUserDirectory directory)
-    {
-        InitializeComponent();
-        DataContext = new AddCircleMemberDialogViewModel(directory);
-    }
-
     private void InitializeComponent()
     {
         AvaloniaXamlLoader.Load(this);
