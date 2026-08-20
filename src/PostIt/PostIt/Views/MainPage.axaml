@@ -67,7 +67,7 @@
 
         <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Padding="8">
             <ListBox ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="40">
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="models:BlogPostDto">
                         <StackPanel Spacing="4">

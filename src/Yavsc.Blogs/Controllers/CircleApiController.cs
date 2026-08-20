@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 using Yavsc.Server.Helpers;
+using static Yavsc.Blogs.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
-    [Route("api/circle")]
+    [Route(APIPrefix +"/circle")]
     public class CircleApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -56,12 +57,25 @@ namespace Yavsc.Blogs.Controllers
 
         /// <summary>
         /// Replaces a circle. The caller must own it; the server
-        /// reasserts ownership regardless of any OwnerId the client
-        /// tries to put in the body.
+        /// reasserts ownership regardless of any <c>OwnerId</c>
+        /// the client tries to put in the body.
+        ///
+        /// <para>The body shape is a <see cref="CircleDto"/> — a
+        /// flat, navigation-free projection — not the EF entity.
+        /// The EF entity carries <c>[JsonIgnore]</c>-decorated
+        /// navigation properties (<c>Owner</c>, <c>Members</c>)
+        /// that bind to server-only types (<c>ApplicationUser</c>,
+        /// <c>CircleMember</c>); keeping the wire shape as a
+        /// DTO avoids any future regression where the entity
+        /// grows a navigable property that System.Text.Json
+        /// refuses to materialise. The client-side mirror lives
+        /// in <c>Yavsc.Api.Client.Dtos.CircleDto</c>.</para>
         /// </summary>
         // PUT: api/circle/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCircle([FromRoute] long id, [FromBody] Circle circle)
+        public async Task<IActionResult> PutCircle(
+            [FromRoute] long id,
+            [FromBody] CircleDto circle)
         {
             if (!ModelState.IsValid)
             {
@@ -81,9 +95,14 @@ namespace Yavsc.Blogs.Controllers
                 return new ChallengeResult();
             }
 
-            // Force OwnerId to the caller; the body value is ignored.
-            circle.OwnerId = uid;
-            _context.Entry(circle).State = EntityState.Modified;
+            // Map the wire shape onto the entity. OwnerId is
+            // forced to the caller regardless of what the body
+            // says; Name and Public come from the body.
+            existing.Name = circle.Name;
+            existing.Public = circle.Public;
+            existing.OwnerId = uid;
+
+            _context.Entry(existing).State = EntityState.Modified;
 
             try
             {
@@ -110,7 +129,7 @@ namespace Yavsc.Blogs.Controllers
         /// </summary>
         // POST: api/circle
         [HttpPost]
-        public async Task<IActionResult> PostCircle([FromBody] Circle circle)
+        public async Task<IActionResult> PostCircle([FromBody] CircleDto circle)
         {
             if (!ModelState.IsValid)
             {
@@ -119,8 +138,14 @@ namespace Yavsc.Blogs.Controllers
 
             var uid = User.GetUserId();
             circle.OwnerId = uid;
+            Circle newCircle = new Circle
+            {
+                OwnerId = User.GetUserId(),
+                Name = circle.Name,
+                Public = circle.Public
+            };
 
-            _context.Circle.Add(circle);
+            _context.Circle.Add(newCircle);
             try
             {
                 await _context.SaveChangesAsync(User.GetUserId());
@@ -319,6 +344,26 @@ namespace Yavsc.Blogs.Controllers
         {
             return _context.Circle.Count(e => e.Id == id) > 0;
         }
+    }
+
+    /// <summary>
+    /// Wire shape for <c>PUT /api/circle/{id}</c>. Flat by
+    /// design — navigation properties (<c>Owner</c>,
+    /// <c>Members</c>) live on the EF entity only and never
+    /// cross the wire.
+    ///
+    /// <para>Field names match the JSON the server emits
+    /// (camelCase via ASP.NET Core's Web defaults), so no
+    /// <c>[JsonPropertyName]</c> attributes are required.
+    /// Mirrors the client-side <c>Yavsc.Api.Client.Dtos.CircleDto</c>
+    /// — keep them in sync.</para>
+    /// </summary>
+    public sealed class CircleDto
+    {
+        public long Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string OwnerId { get; set; } = string.Empty;
+        public bool Public { get; set; }
     }
 
     /// <summary>
