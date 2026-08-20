@@ -16,7 +16,7 @@
                      PlaceholderText="Nom ou email d'un utilisateur Yavsc..."
                      HorizontalAlignment="Stretch"/>
             <Button Grid.Column="1" Content="Rechercher"
-                    Command="{Binding SearchCommand}"
+                    Command="{Binding SearchAsync}"
                     Margin="8,0,0,0"/>
         </Grid>
 
@@ -47,7 +47,7 @@
             <TextBlock Grid.Column="0" Text="{Binding StatusMessage}"
                        VerticalAlignment="Center"/>
             <Button Grid.Column="1" Content="Ajouter"
-                    Command="{Binding AddCommand}"
+                    Command="{Binding Add}"
                     IsEnabled="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}"
                     Margin="0,0,8,0"/>
             <Button Grid.Column="2" Content="Fermer"

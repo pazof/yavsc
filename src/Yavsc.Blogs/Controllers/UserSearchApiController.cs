@@ -26,7 +26,7 @@ namespace Yavsc.Blogs.Controllers
     /// exposing it.</para>
     /// </summary>
     [Produces("application/json")]
-    [Route("api/user-search")]
+    [Route( Constants.APIPrefix + "/user-search")]
     [Authorize]
     public class UserSearchApiController : Controller
     {
