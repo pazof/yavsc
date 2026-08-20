@@ -25,7 +25,7 @@ namespace Yavsc.Blogs.Tests;
 /// in-memory <c>ApplicationDbContext</c>, JWT bearer auth
 /// via <see cref="TestTokenIssuer"/>.</para>
 /// </summary>
-[Collection("JwtClaimMapping")]
+[Collection("Yavsc Blogs")]
 public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
 {
     private readonly BlogsWebServerFixture _fixture;

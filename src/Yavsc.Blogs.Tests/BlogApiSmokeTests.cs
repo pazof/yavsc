@@ -12,6 +12,7 @@ namespace Yavsc.Blogs.Tests;
 /// surface. The first behavioural test (GET /api/v1/blog returns
 /// 200) lands in a follow-up commit.
 /// </summary>
+[Collection("Yavsc Blogs")]
 public sealed class BlogApiSmokeTests : IClassFixture<BlogsWebServerFixture>
 {
     private readonly BlogsWebServerFixture _fixture;
