@@ -14,7 +14,7 @@ namespace Yavsc.Blogs.Tests;
 /// <summary>
 /// Behavioural tests for <c>BlogAclApiController.PostCircleAuthorizationToBlogPost</c>:
 /// <c>POST /api/v1/blogacl</c> with a JSON body of
-/// <c>CircleAuthorizationToBlogPost</c> (CircleId + BlogPostId + Comment).
+/// <c>CircleAuthorizationToBlogPost</c> (CircleId + BlogPostId).
 ///
 /// <para>Same fixture as <see cref="CircleMembersApiTests"/>:
 /// <see cref="BlogsWebServerFixture"/> provides a SQLite
@@ -69,11 +69,11 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     /// <summary>Create a circle owned by <paramref name="ownerId"/>
     /// directly in the SQLite store and return its server-assigned
     /// id.</summary>
-    private long SeedCircle(string ownerId, string name)
+    private long SeedCircle(string ownerId, string name, bool isPublic = false)
     {
         using var scope = _fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var circle = new Circle { OwnerId = ownerId, Name = name };
+        var circle = new Circle { OwnerId = ownerId, Name = name, Public = isPublic };
         db.Circle.Add(circle);
         db.SaveChanges();
         return circle.Id;
@@ -149,13 +149,52 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         {
             CircleId = circleId,
             BlogPostId = postId,
-            Comment = true,
         };
 
         var response = await http.PostAsJsonAsync(BlogAclUrl(), payload);
 
         // Expected: 201 Created (per controller line 133: return
         // CreatedAtRoute("GetCircleAuthorizationToBlogPost", ...)).
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
+
+    /// <summary>
+    /// Reproduces the prod 500 logged on 2026-08-21 on mercure:
+    /// <c>InvalidOperationException: The value of
+    /// 'CircleAuthorizationToBlogPost.BlogPostId' is unknown</c>
+    /// when <see cref="PostAclDialogViewModel.AddAsync"/> POSTs the
+    /// shape <c>{ "circleId": &lt;id&gt; }</c> — the exact body the
+    /// PostIt client builds from <see cref="CircleAuthorization"/>
+    /// (which only carries <c>CircleId</c>). The server deserialises
+    /// it into <see cref="CircleAuthorizationToBlogPost"/>, leaves
+    /// <c>BlogPostId</c> at its <c>default(long) = 0</c>, attaches
+    /// no <c>Target</c> navigation, and EF Core refuses to INSERT
+    /// during <c>PrepareToSave()</c>. The fix lives in PostIt
+    /// (enrich the payload with <c>blogPostId</c> + <c>comment</c>)
+    /// and on the wire DTO (<see cref="CircleAuthorization"/> must
+    /// carry those fields); the server validates. Until that ships,
+    /// this test stays red.
+    /// </summary>
+    [Fact]
+    public async Task PostCircleAuthorization_returns_201_when_payload_mirrors_PostIt_shape_against_existing_circle_named_test()
+    {
+        ResetDatabaseWithAlice();
+        // The prod circle already exists with Name="test", Public=true,
+        // owned by the caller. We seed the same shape pre-POST so the
+        // test reproduces the prod scenario end-to-end.
+        var circleId = SeedCircle("alice", "test", isPublic: true);
+        var postId = SeedBlogPost("alice", "Billet ACL test");
+        using var http = NewClient("alice");
+
+        // Exact wire shape PostIt sends today:
+        // { "circleId": <id> } — no blogPostId, no comment.
+        var payload = new Dictionary<string, object>
+        {
+            ["circleId"] = circleId,
+        };
+
+        var response = await http.PostAsJsonAsync(BlogAclUrl(), payload);
+
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 }

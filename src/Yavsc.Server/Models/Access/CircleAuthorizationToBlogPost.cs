@@ -19,8 +19,5 @@ namespace Yavsc.Models.Access
         [ForeignKey("CircleId")]
         public virtual Circle Allowed { get; set; }
 
-        public bool Comment { get; set; }
-        
-
     }
 }
