@@ -13,7 +13,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json"),Authorize("AdministratorOnly")]
-    [Route("api/users")]
+    [Route(Constants.APIPrefix + "/users")]
     public class ApplicationUserApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,7 +28,7 @@ namespace Yavsc.Controllers
         public IEnumerable<UserInfo> GetApplicationUser(int skip=0, int take = 25)
         {
             return _context.Users.Skip(skip).Take(take)
-            .Select(u=> new UserInfo{ 
+            .Select(u=> new UserInfo{
             UserId = u.Id,
             UserName = u.UserName,
             Avatar = u.Avatar});
@@ -39,7 +39,7 @@ namespace Yavsc.Controllers
         {
             return _context.Users.Where(u => u.UserName.Contains(pattern))
             .Skip(skip).Take(take)
-            .Select(u=> new UserInfo { 
+            .Select(u=> new UserInfo {
             UserId = u.Id,
             UserName = u.UserName,
             Avatar = u.Avatar   });

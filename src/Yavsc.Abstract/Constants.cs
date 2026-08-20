@@ -3,8 +3,10 @@ using Yavsc.Models.Auth;
 namespace Yavsc
 {
 
-    public static class YavscConstants
+    public static class Constants
     {
+
+        public const string APIPrefix = "api/v1";
         public static readonly Scope[] SiteScopes = {
             new Scope { Id = "profile", Description = "Your profile informations" },
             new Scope { Id = "book" , Description ="Your booking interface"},

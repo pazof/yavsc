@@ -1,15 +1,16 @@
-using System.Linq;
+
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Access;
 using Yavsc.Server.Helpers;
+using static Yavsc.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
-    [Route("api/blogacl")]
+    [Route(APIPrefix+"/blogacl")]
     public class BlogAclApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,7 +25,7 @@ namespace Yavsc.Blogs.Controllers
         /// Blog posts (and therefore their ACLs) are private to their
         /// author — the API never exposes another user's ACL.
         /// </summary>
-        // GET: api/blogacl
+        // GET: api/v1/blogacl
         [HttpGet]
         public IEnumerable<CircleAuthorizationToBlogPost> GetBlogACL()
         {

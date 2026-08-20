@@ -14,7 +14,7 @@ namespace Yavsc.Org.Tests.NonRegression;
 /// ne voit rien — juste un 500 muet.
 ///
 /// Le fix passe par <see cref="UserDisplayHelpers.AvatarSrc"/> qui
-/// retourne <see cref="YavscConstants.DefaultAvatar"/> pour toute
+/// retourne <see cref="Yavsc.Constants.DefaultAvatar"/> pour toute
 /// donnée partielle. Ces tests couvrent les trois formes de
 /// "donnée absente" : user null, UserName vide, UserName whitespace.
 /// </summary>
@@ -23,21 +23,21 @@ public class UserDisplayHelpersTests
     [Fact]
     public void AvatarSrc_null_user_returns_default_avatar()
     {
-        Assert.Equal(YavscConstants.DefaultAvatar, UserDisplayHelpers.AvatarSrc(null));
+        Assert.Equal(Yavsc.Constants.DefaultAvatar, UserDisplayHelpers.AvatarSrc(null));
     }
 
     [Fact]
     public void AvatarSrc_user_with_empty_UserName_returns_default_avatar()
     {
         var user = new FakeUser { UserName = "" };
-        Assert.Equal(YavscConstants.DefaultAvatar, UserDisplayHelpers.AvatarSrc(user));
+        Assert.Equal(Yavsc.Constants.DefaultAvatar, UserDisplayHelpers.AvatarSrc(user));
     }
 
     [Fact]
     public void AvatarSrc_user_with_whitespace_UserName_returns_default_avatar()
     {
         var user = new FakeUser { UserName = "   " };
-        Assert.Equal(YavscConstants.DefaultAvatar, UserDisplayHelpers.AvatarSrc(user));
+        Assert.Equal(Yavsc.Constants.DefaultAvatar, UserDisplayHelpers.AvatarSrc(user));
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class UserDisplayHelpersTests
         // Le path doit matcher YavscConstants.AvatarsPath (minuscule),
         // pas un /Avatars/ avec S majuscule qui ne résout pas
         // dans le middleware de fichiers statiques.
-        var expected = $"{YavscConstants.AvatarsPath}/alice.s.png";
+        var expected = $"{Yavsc.Constants.AvatarsPath}/alice.s.png";
         Assert.Equal(expected, UserDisplayHelpers.AvatarSrc(user));
     }
 

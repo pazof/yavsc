@@ -119,6 +119,17 @@ public partial class CirclesPageViewModel : ViewModelBase
         var directory = services.GetRequiredService<IUserDirectory>();
         AddCircleMemberDialogViewModel model =
         new AddCircleMemberDialogViewModel(directory);
+        // Wire the dialog's Confirmed event to OnAddMemberConfirmedAsync.
+        // Without this, the dialog's "Ajouter" button fires the event
+        // into the void: no subscriber, the picked user is silently
+        // dropped, and nothing is added to the circle. The dialog
+        // stays open until the user uses the back gesture — which is
+        // how the user noticed the button was a no-op.
+        // Async-void is intentional here: Confirmed is an
+        // EventHandler<T> (returns void), and bridging to the
+        // async Task OnAddMemberConfirmedAsync requires it.
+        model.Confirmed += async (_, picked) =>
+            await OnAddMemberConfirmedAsync(_, picked);
         await app.PushPageAsync(model);
     }
     /// <summary>

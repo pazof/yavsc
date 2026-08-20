@@ -8,7 +8,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/ChatRoomApi")]
+    [Route(Constants.APIPrefix + "/ChatRoomApi")]
     public class ChatRoomApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -128,7 +128,7 @@ namespace Yavsc.Controllers
             }
             ChatRoom chatRoom = await _context.ChatRoom.SingleAsync(m => m.Name == id);
 
-           
+
 
             if (chatRoom == null)
             {
@@ -137,7 +137,7 @@ namespace Yavsc.Controllers
 
             if (User.GetUserId() != chatRoom.OwnerId )
             {
-                if (!User.IsInMsRole(YavscConstants.AdminGroupName))
+                if (!User.IsInMsRole(Constants.AdminGroupName))
                     return BadRequest(new {error = "OwnerId"});
             }
 

@@ -16,7 +16,7 @@
                 <li><a class="dropdown-item @PageHelpers.ActivePage(ViewContext, "Feature")" asp-controller="Feature" asp-action="Index">Features</a></li>
             </ul>
         </li>
-        @if (User.IsInMsRole(YavscConstants.AdminGroupName)) {
+        @if (User.IsInMsRole(Constants.AdminGroupName)) {
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle @PageHelpers.ActivePageAny(ViewContext, administrationControllers)" href="#" id="dropdown05" data-bs-toggle="dropdown" aria-expanded="false">
                 Administration

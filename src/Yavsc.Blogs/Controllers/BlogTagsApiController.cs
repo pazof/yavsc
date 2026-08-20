@@ -1,12 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
-using static Yavsc.Blogs.Constants;
+using static Yavsc.Constants;
 namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]

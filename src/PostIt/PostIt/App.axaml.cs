@@ -350,4 +350,9 @@ public partial class App : Application
 
         return window.NavRoot.PushAsync(page);
     }
+
+    internal async Task GoBackAsync()
+    {
+        await window.NavRoot.PopAsync();
+    }
 }

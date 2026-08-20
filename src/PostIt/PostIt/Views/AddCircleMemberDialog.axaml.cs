@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Interactivity;
+using Avalonia.VisualTree;
 using PostIt.Services;
 using PostIt.ViewModels;
 
@@ -41,8 +42,8 @@ public partial class AddCircleMemberDialog : ContentPage
 
     private void OnCloseClicked(object? sender, RoutedEventArgs e)
     {
-        // Same light-modal pattern as PostAclDialog: rely on
-        // the system back gesture or the navigation host's
-        // "pop" — the ContentPage doesn't own the back stack.
+        var nav = this.FindAncestorOfType<NavigationPage>();
+        if (nav is not null)
+            _ = nav.PopAsync();
     }
 }

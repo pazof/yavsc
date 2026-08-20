@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 using Yavsc.Tests.Shared;
+using static Yavsc.Constants;
 
 namespace Yavsc.Blogs.Tests;
 
@@ -88,7 +89,7 @@ public sealed class CircleMembersApiTests : IClassFixture<BlogsWebServerFixture>
     }
 
     private string MembersUrl(long circleId)
-        => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/{Constants.APIPrefix}/circle/{circleId}/members";
+        => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/{APIPrefix}/circle/{circleId}/members";
 
     private HttpClient NewClient(string subject)
     {

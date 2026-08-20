@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Relationship;
 using Yavsc.Server.Helpers;
-using static Yavsc.Blogs.Constants;
+using static Yavsc.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
