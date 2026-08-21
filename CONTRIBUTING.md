@@ -115,6 +115,13 @@ Quelques règles non capturées par `.editorconfig` :
 - Préférer les types BCL (`int`, `string`) aux types framework
   (`Int32`, `String`).
 - Préférer les expressions de pattern matching aux casts explicites.
+- **Pas de `object` dans le code source applicatif.** Types de retour,
+  paramètres, champs, propriétés, variables locales : tout doit être
+  typé statiquement. `dynamic` est interdit pour les mêmes raisons.
+  Un cast en `object` est presque toujours le symptôme d'un contrat
+  qu'on a laissé s'effriter (DTO, payload, handler) — refactore
+  le contrat (record typé, DTO dédié, méthode dédiée) au lieu de
+  shimer avec un cast.
 
 ## Branches & commits
 

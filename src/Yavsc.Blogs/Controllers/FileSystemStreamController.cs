@@ -8,7 +8,7 @@ using Yavsc.Models.Messaging;
 using Yavsc.Services;
 using Microsoft.AspNetCore.SignalR;
 using Yavsc.Server.Helpers;
-using static Yavsc.Blogs.Constants;
+using static Yavsc.Constants;
 using Yavsc.Server.Hubs;
 
 namespace Yavsc.Blogs.Controllers

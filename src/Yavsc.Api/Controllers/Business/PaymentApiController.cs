@@ -6,7 +6,7 @@ using Yavsc.Models;
 
 namespace Yavsc.ApiControllers
 {
-    [Route("api/payment")]
+    [Route(Constants.APIPrefix + "/payment")]
     public class PaymentApiController : Controller
     {
         private readonly ApplicationDbContext dbContext;

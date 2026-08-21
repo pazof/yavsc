@@ -61,7 +61,7 @@ namespace Yavsc.Services
                     // TODO: Handle the socket here.
                     // Find receivers: others in the chat room
                     // send them the flow
-                    var buffer = new byte[YavscConstants.WebSocketsMaxBufLen];
+                    var buffer = new byte[Constants.WebSocketsMaxBufLen];
                     var sBuffer = new ArraySegment<byte>(buffer);
                     _logger.LogInformation("Receiving bytes...");
 
@@ -69,16 +69,16 @@ namespace Yavsc.Services
 
                     _logger.LogInformation($"Received bytes : {received.Count}");
                     _logger.LogInformation($"Is the end : {received.EndOfMessage}");
-                   
 
-                   
+
+
                     var fsInputQueue = new Queue<ArraySegment<byte>>();
 
                     bool endOfInput = false;
                     sBuffer = new ArraySegment<byte>(buffer,0,received.Count);
                     fsInputQueue.Enqueue(sBuffer);
                     var taskWritingToFs = liveHandler.ReceiveUserFile(user, _logger, destDir, fsInputQueue, fileName, () => endOfInput);
-                    
+
 
                     Stack<string> ToClose = new Stack<string>();
 
@@ -105,19 +105,19 @@ namespace Yavsc.Services
                                 }
                             }
 
-                            if (!received.CloseStatus.HasValue) 
+                            if (!received.CloseStatus.HasValue)
                             {
                              _logger.LogInformation("try and receive new bytes");
 
-                            buffer = new byte[YavscConstants.WebSocketsMaxBufLen];
+                            buffer = new byte[Constants.WebSocketsMaxBufLen];
                             received = await liveHandler.Socket.ReceiveAsync(sBuffer, liveHandler.TokenSource.Token);
-                            
+
                             _logger.LogInformation($"Received bytes : {received.Count}");
 
                             sBuffer = new ArraySegment<byte>(buffer,0,received.Count);
                             _logger.LogInformation($"segment : offset: {sBuffer.Offset} count: {sBuffer.Count}");
                             _logger.LogInformation($"Is the end : {received.EndOfMessage}");
-                            
+
                             if (received.CloseStatus.HasValue)
                             {
                                 endOfInput=true;
@@ -140,7 +140,7 @@ namespace Yavsc.Services
                             }
                         }
                         while (liveHandler.Socket.State == WebSocketState.Open);
-                        
+
                         _logger.LogInformation("Closing connection");
                         taskWritingToFs.Wait();
                         await liveHandler.Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, received.CloseStatusDescription, liveHandler.TokenSource.Token);
