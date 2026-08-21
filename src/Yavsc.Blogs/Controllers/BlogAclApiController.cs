@@ -1,15 +1,17 @@
-using System.Linq;
+
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Yavsc.Abstract.BlogSpot;
 using Yavsc.Models;
 using Yavsc.Models.Access;
 using Yavsc.Server.Helpers;
+using static Yavsc.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
-    [Route("api/blogacl")]
+    [Route(APIPrefix+"/blogacl")]
     public class BlogAclApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,7 +26,7 @@ namespace Yavsc.Blogs.Controllers
         /// Blog posts (and therefore their ACLs) are private to their
         /// author — the API never exposes another user's ACL.
         /// </summary>
-        // GET: api/blogacl
+        // GET: api/v1/blogacl
         [HttpGet]
         public IEnumerable<CircleAuthorizationToBlogPost> GetBlogACL()
         {
@@ -68,7 +70,7 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest();
             }
 
-            if (!CheckOwner(circleAuthorizationToBlogPost.CircleId))
+            if (!await CheckOwnerAsync(circleAuthorizationToBlogPost.CircleId))
             {
                 return new ChallengeResult();
             }
@@ -92,27 +94,42 @@ namespace Yavsc.Blogs.Controllers
 
             return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
-        private bool CheckOwner (long circleId)
+        private async Task<bool> CheckOwnerAsync (long circleId)
         {
-
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var circle = _context.Circle.First(c=>c.Id==circleId);
-            _context.Entry(circle).State = EntityState.Detached;
-            return (circle.OwnerId == uid);
+            if (uid==null) return false;
+            var circle = await _context.Circle.FirstOrDefaultAsync(c=>c.Id==circleId);
+            if (circle == null) return false;
+            return circle.OwnerId == uid;
         }
         // POST: api/BlogAclApi
         [HttpPost]
-        public async Task<IActionResult> PostCircleAuthorizationToBlogPost([FromBody] CircleAuthorizationToBlogPost circleAuthorizationToBlogPost)
+        public async Task<IActionResult> PostCircleAuthorizationToBlogPost(
+            [FromBody] PostAccessControlRulePayload circleAuthorizationToBlogPost)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (!CheckOwner(circleAuthorizationToBlogPost.CircleId))
+            // No 500: a missing or zero BlogPostId is a client
+            // error, not an EF Core FK violation waiting to happen.
+            // The 2026-08-21 prod 500 was this exact path (PostIt
+            // sent only circleId, server saw BlogPostId = 0 and
+            // SaveChangesAsync threw InvalidOperationException).
+            if (circleAuthorizationToBlogPost.BlogPostId <= 0)
+            {
+                return BadRequest("BlogPostId is required and must be > 0.");
+            }
+            if (!await CheckOwnerAsync(circleAuthorizationToBlogPost.CircleId))
             {
                 return new ChallengeResult();
             }
-            _context.CircleAuthorizationToBlogPost.Add(circleAuthorizationToBlogPost);
+            CircleAuthorizationToBlogPost entity = new CircleAuthorizationToBlogPost
+            {
+                BlogPostId = circleAuthorizationToBlogPost.BlogPostId,
+                CircleId = circleAuthorizationToBlogPost.CircleId
+            };
+            _context.CircleAuthorizationToBlogPost.Add(entity);
             try
             {
                 await _context.SaveChangesAsync(User.GetUserId());

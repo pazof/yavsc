@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Yavsc.Blogspot;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
-using static Yavsc.Blogs.Constants;
+using static Yavsc.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {

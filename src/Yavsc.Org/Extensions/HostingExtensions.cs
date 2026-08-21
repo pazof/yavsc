@@ -169,7 +169,7 @@ public static class HostingExtensions
     public static IdentityBuilder AddIdentityDBAndStores(this WebApplicationBuilder builder)
     {
         IServiceCollection services = builder.Services;
-        var connectionString = builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName);
+        var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
 
         services.AddDbContext<ApplicationDbContext>(options =>
         {
@@ -197,7 +197,7 @@ public static class HostingExtensions
                 options.SignIn.RequireConfirmedAccount = builder.Environment.IsEnvironment(
                     builder.Environment.EnvironmentName);
                 options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.PreferredUserName;
-                options.ClaimsIdentity.RoleClaimType = YavscConstants.RoleClaimType;
+                options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
             }
         )
         .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -239,18 +239,18 @@ public static class HostingExtensions
             {
                 policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(YavscConstants.RoleClaimType,
-                    new string[] { YavscConstants.PerformerGroupName, YavscConstants.AdminGroupName })
+                    .RequireClaim(Constants.RoleClaimType,
+                    new string[] { Constants.PerformerGroupName, Constants.AdminGroupName })
                     ;
             });
             options.AddPolicy("AdministratorOnly", policy =>
             {
                 _ = policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(YavscConstants.RoleClaimType, YavscConstants.AdminGroupName);
+                    .RequireClaim(Constants.RoleClaimType, Constants.AdminGroupName);
             });
 
-            options.AddPolicy("FrontOffice", policy => policy.RequireRole(YavscConstants.FrontOfficeGroupName));
+            options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));
 
             // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
             // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
@@ -314,10 +314,10 @@ public static class HostingExtensions
         {
             options.ClaimsIdentity.UserIdClaimType = JwtClaimTypes.Subject;
             options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.Name;
-            options.ClaimsIdentity.RoleClaimType = YavscConstants.RoleClaimType;
+            options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
         });
         var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
-        var connectionString = builder.Configuration.GetConnectionString(YavscConstants.YavscConnectionStringName);
+        var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
 
         string sqliteConnectionString = $"Data Source={Path.Combine(Path.GetTempPath(), "yavsc_test.db")}";
 
@@ -1220,7 +1220,7 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
         Config.UserFilesOptions = new FileServerOptions()
         {
             FileProvider = new PhysicalFileProvider(AbstractFileSystemHelpers.UserFilesDirName),
-            RequestPath = PathString.FromUriComponent(YavscConstants.UserFilesPath),
+            RequestPath = PathString.FromUriComponent(Constants.UserFilesPath),
             EnableDirectoryBrowsing = enableDirectoryBrowsing,
         };
         Config.UserFilesOptions.EnableDefaultFiles = true;
@@ -1233,7 +1233,7 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
         Config.AvatarsOptions = new FileServerOptions()
         {
             FileProvider = new PhysicalFileProvider(Config.AvatarsDirName),
-            RequestPath = PathString.FromUriComponent(YavscConstants.AvatarsPath),
+            RequestPath = PathString.FromUriComponent(Constants.AvatarsPath),
             EnableDirectoryBrowsing = enableDirectoryBrowsing
         };
 
@@ -1244,7 +1244,7 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
         Config.GitOptions = new FileServerOptions()
         {
             FileProvider = new PhysicalFileProvider(Config.GitDirName),
-            RequestPath = PathString.FromUriComponent(YavscConstants.GitPath),
+            RequestPath = PathString.FromUriComponent(Constants.GitPath),
             EnableDirectoryBrowsing = enableDirectoryBrowsing,
         };
         Config.GitOptions.DefaultFilesOptions.DefaultFileNames.Add("index.md");

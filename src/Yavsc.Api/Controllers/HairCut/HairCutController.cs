@@ -24,7 +24,7 @@ namespace Yavsc.ApiControllers
     using Microsoft.AspNetCore.Authorization;
     using Yavsc.Server.Helpers;
 
-    [Route("api/haircut")][Authorize]
+    [Route(Constants.APIPrefix + "/haircut")][Authorize]
     public class HairCutController : Controller
     {
         private readonly ApplicationDbContext _context;

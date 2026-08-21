@@ -19,11 +19,11 @@ namespace Yavsc.Org.Tests
         {
             this.output = output;
             _serverFixture = serverFixture;
-            _logger = serverFixture.Logger;
+            _logger = serverFixture.Logger!;
         }
 
         [Fact]
-        public void SendEMailSynchrone()
+        public async Task SendEMailSynchrone()
         {
 
             using IServiceScope scope = _serverFixture.Services.CreateScope();
@@ -32,12 +32,12 @@ namespace Yavsc.Org.Tests
                 scope.ServiceProvider.GetRequiredService<ISmtpClientFactory>());
 
             output.WriteLine("SendEMailSynchrone ...");
-            mailSender.SendEmailAsync
+            await mailSender.SendEmailAsync
           (
-            _serverFixture.SiteSettings.Owner.Name,
-            _serverFixture.SiteSettings.Owner.EMail,
+            _serverFixture.SiteSettings!.Owner.Name,
+            _serverFixture.SiteSettings!.Owner.EMail,
             $"monthly email",
-            "test boby monthly email").Wait();
+            "test boby monthly email");
 
             // Assert the SMTP roundtrip was short-circuited by the
             // recording fake installed in WebServerFixture: exactly

@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Yavsc.Blogs.Constants;
+using static Yavsc.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
@@ -21,7 +21,7 @@ namespace Yavsc.Blogs.Controllers
         private readonly ILogger _logger;
 
         public FileSystemApiController(ApplicationDbContext context,
-        IAuthorizationService authorizationService, 
+        IAuthorizationService authorizationService,
         ILoggerFactory loggerFactory)
 
         {
@@ -38,7 +38,7 @@ namespace Yavsc.Blogs.Controllers
 
         [HttpGet("{*subdir}")]
         public IActionResult GetDir([ValidRemoteUserFilePath] string subdir="")
-        { 
+        {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             // _logger.LogInformation($"listing files from {User.Identity.Name}{subdir}");
             var files = AbstractFileSystemHelpers.GetUserFiles(User.GetUserId(), subdir);
@@ -57,20 +57,20 @@ namespace Yavsc.Blogs.Controllers
             } catch (InvalidPathException ex) {
                 pathex = ex;
             }
-            if (pathex!=null) 
+            if (pathex!=null)
             {
                 _logger.LogError($"invalid sub path: '{subdir}'.");
                 return BadRequest(pathex);
             }
             _logger.LogInformation($"Receiving files, saved in '{destDir}' (specified as '{subdir}').");
-            
+
             var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
             int i=0;
             _logger.LogInformation($"Receiving {Request.Form.Files.Count} files.");
-            
+
             foreach (var f in Request.Form.Files)
             {
                 var item = user.ReceiveUserFile(destDir, f);
@@ -178,7 +178,7 @@ namespace Yavsc.Blogs.Controllers
             return Ok(new { deleted=id });
         }
 
-        
+
     }
 
 }

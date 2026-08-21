@@ -42,7 +42,7 @@ namespace Yavsc.Controllers
                     Value = pt.FullName,
                     Selected = currentCode == pt.FullName
                 }).ToList();
-            items.Add(new SelectListItem { Text = SR[YavscConstants.NoneCode], Value = YavscConstants.NoneCode, Selected = currentCode == null});
+            items.Add(new SelectListItem { Text = SR[Constants.NoneCode], Value = Constants.NoneCode, Selected = currentCode == null});
             ViewBag.SettingsClassName = items;
         }
 
@@ -58,7 +58,7 @@ namespace Yavsc.Controllers
                 Text = a.Name,
                 Value = a.Code
             }).ToList();
-            var nullItem = new SelectListItem { Text = SR[YavscConstants.NoneCode], Value = YavscConstants.NoneCode };
+            var nullItem = new SelectListItem { Text = SR[Constants.NoneCode], Value = Constants.NoneCode };
             acts.Add(nullItem);
             if (code == null) return acts;
             var existing = _context.Activities.Include(a => a.Children).FirstOrDefault(a => a.Code == code);
@@ -123,9 +123,9 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Activity activity)
         {
-            if (activity.ParentCode==YavscConstants.NoneCode)
+            if (activity.ParentCode==Constants.NoneCode)
                 activity.ParentCode=null;
-            if (activity.SettingsClassName==YavscConstants.NoneCode)
+            if (activity.SettingsClassName==Constants.NoneCode)
                 activity.SettingsClassName=null;
 
             if (ModelState.IsValid)
@@ -161,9 +161,9 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Activity activity)
         {
-            if (activity.ParentCode==YavscConstants.NoneCode)
+            if (activity.ParentCode==Constants.NoneCode)
                 activity.ParentCode=null;
-            if (activity.SettingsClassName==YavscConstants.NoneCode)
+            if (activity.SettingsClassName==Constants.NoneCode)
                 activity.SettingsClassName=null;
             if (ModelState.IsValid)
             {

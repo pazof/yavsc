@@ -105,8 +105,8 @@ public static class ServiceExtensions
             {
                 ValidateAudience = true,
                 ValidAudiences = audiences,
-                RoleClaimType = YavscConstants.RoleClaimType,
-                NameClaimType = YavscConstants.NameClaimType,
+                RoleClaimType = Constants.RoleClaimType,
+                NameClaimType = Constants.NameClaimType,
             };
             options.MapInboundClaims = true;
             options.ClaimsIssuer = authority;

@@ -6,6 +6,7 @@
         xmlns:services="using:PostIt.Services"
         x:DataType="vm:AddCircleMemberDialogViewModel"
       >
+
     <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12">
 
         <!-- Search box + button -->
@@ -29,7 +30,9 @@
         <!-- Search results -->
         <ListBox Grid.Row="2"
                  ItemsSource="{Binding Results}"
-                 SelectedItem="{Binding Selected, Mode=TwoWay}">
+                 SelectedItem="{Binding Selected, Mode=TwoWay}"
+                MinHeight="20"
+                 >
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="services:UserSummary">
                     <StackPanel Spacing="2">
@@ -47,11 +50,13 @@
             <TextBlock Grid.Column="0" Text="{Binding StatusMessage}"
                        VerticalAlignment="Center"/>
             <Button Grid.Column="1" Content="Ajouter"
-                    Command="{Binding Add}"
+                    x:Name="AddButton"
+                    Command="{Binding AddAsync}"
                     IsEnabled="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}"
                     Margin="0,0,8,0"/>
             <Button Grid.Column="2" Content="Fermer"
-                    Click="OnCloseClicked"/>
+                    x:Name="CloseButton"
+                   Command="{Binding CloseAsync}"/>
         </Grid>
     </Grid>
 </ContentPage>

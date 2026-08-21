@@ -8,7 +8,7 @@ using Yavsc.ViewModels.FrontOffice;
 
 namespace Yavsc.ApiControllers
 {
-    [Route("api/front")]
+    [Route(Constants.APIPrefix + "/front")]
     public class FrontOfficeApiController : Controller
     {
         ApplicationDbContext dbContext;

@@ -1,13 +1,13 @@
 using IdentityServer8.EntityFramework.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Server.Helpers;
+using static Yavsc.Constants;
 
 namespace Yavsc.Org.Controllers.Administration
 {
-    [Route("api/[controller]")]
+    [Route(APIPrefix + "/[controller]")]
     [ApiController]
     public class ApiScopesApiController : ControllerBase
     {

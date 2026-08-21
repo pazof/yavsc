@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using Yavsc.Api.Client.Dtos;
-using Yavsc.Abstract.Identity.Security;
+using Yavsc.Abstract.BlogSpot;
 
 namespace PostIt.ViewModels;
 
@@ -38,10 +37,12 @@ public partial class PostAclDialogViewModel : ViewModelBase
     public BlogPostDto Post { get; }
 
     [ObservableProperty]
-    public partial ObservableCollection<CircleDto> MyCircles { get; set; } = new();
+    public partial ObservableCollection<CircleDto>
+    MyCircles { get; set; } = new();
 
     [ObservableProperty]
-    public partial ObservableCollection<CircleAuthorization> AclEntries { get; set; } = new();
+    public partial ObservableCollection<PostAccessControlRulePayload>
+    AclEntries { get; set; } = new();
 
     [ObservableProperty]
     public partial CircleDto? SelectedCircleToAdd { get; set; }
@@ -51,6 +52,22 @@ public partial class PostAclDialogViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Idempotency gate for <see cref="LoadAsync"/>: the dialog
+    /// attaches the load trigger in <c>DataContextChanged</c>,
+    /// which can fire more than once if the page is detached
+    /// and re-attached (dialog re-use, navigation edge cases)
+    /// with a different VM. Without this guard, the second load
+    /// would race against the first and could overwrite
+    /// <see cref="AclEntries"/> mid-edit. Pattern copied from
+    /// <c>Settings.Load</c>.
+    /// </summary>
+    private bool _loaded;
+
+    /// <summary>True once <see cref="LoadAsync"/> has run at least
+    /// once. Exposed for tests; do not bind from XAML.</summary>
+    public bool Loaded => _loaded;
 
     public PostAclDialogViewModel(
         BlogPostDto post,
@@ -68,6 +85,8 @@ public partial class PostAclDialogViewModel : ViewModelBase
     [RelayCommand]
     public async Task LoadAsync()
     {
+        if (_loaded) return;
+
         IsBusy = true;
         try
         {
@@ -83,6 +102,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
 
 
             StatusMessage = $"{AclEntries.Count} autorisation(s)";
+            _loaded = true;
         }
         catch (Exception ex)
         {
@@ -106,9 +126,10 @@ public partial class PostAclDialogViewModel : ViewModelBase
         IsBusy = true;
         try
         {
-            var created = await _aclClient.GrantAsync(new CircleAuthorization
+            var created = await _aclClient.GrantAsync(new Yavsc.Abstract.BlogSpot.PostAccessControlRulePayload
             {
-                CircleId = SelectedCircleToAdd.Id
+                CircleId = SelectedCircleToAdd.Id,
+                BlogPostId = Post.Id
             });
             if (created is not null)
             {
@@ -131,7 +152,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async Task RevokeAsync(CircleAuthorization? acl)
+    public async Task RevokeAsync(PostAccessControlRulePayload? acl)
     {
         if (acl is null) return;
         IsBusy = true;

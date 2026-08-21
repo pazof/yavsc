@@ -8,8 +8,8 @@ namespace Yavsc.ViewModels.Account
     public class RegisterModel
     {
 
-        [StringLength(YavscConstants.MaxUserNameLength)]
-        [RegularExpression(YavscConstants.UserNameRegExp)]
+        [StringLength(Constants.MaxUserNameLength)]
+        [RegularExpression(Constants.UserNameRegExp)]
         [DataType(DataType.Text)]
         [Display(Name = "UserName", Description = "User name")]
         public string UserName { get; set; }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/mailing")]
+    [Route(Constants.APIPrefix + "/mailing")]
     [Authorize("AdministratorOnly")]
     public class MailingTemplateApiController : Controller
     {

@@ -72,7 +72,7 @@ namespace Yavsc.Org.Controllers
             {
                 var blog = await blogSpotService.Details(User, id.Value);
                 ViewBag.apicmtctlr = "/api/v1/blogcomments";
-                ViewBag.moderatoFlag = User.IsInMsRole(YavscConstants.BlogModeratorGroupName);
+                ViewBag.moderatoFlag = User.IsInMsRole(Yavsc.Constants.BlogModeratorGroupName);
 
                 return View(blog);
 
