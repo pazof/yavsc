@@ -64,29 +64,3 @@ internal sealed class RecordingYavscApiClient : YavscApiClient
         return Task.FromResult(default(T)!);
     }
 }
-
-/// <summary>
-/// <see cref="YavscApiClient"/> stand-in whose constructor
-/// points at <c>https://stub.invalid</c> so any HTTP traffic
-/// that escapes a test (misconfigured command, missing fake
-/// handler) raises a clear <see cref="System.Net.Http.HttpRequestException"/>
-/// instead of silently hitting a real endpoint. Used by tests
-/// that don't actually exercise the API client (they click a
-/// button, assert on the nav stack, end of story) but whose
-/// VMs require one in their constructor.
-/// </summary>
-internal sealed class ThrowingApi : YavscApiClient
-{
-    public ThrowingApi() : base(
-        new Settings
-        {
-            Authentication = new AuthenticationSettings
-            {
-                Authority = "https://stub.invalid",
-                ClientId = "stub",
-                Scopes = new[] { "openid" },
-            },
-        },
-        new TokenStore(System.IO.Path.GetTempFileName()))
-    { }
-}

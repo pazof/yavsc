@@ -24,6 +24,7 @@ public partial class AddCircleMemberDialog : ContentPage
     public AddCircleMemberDialog()
     {
         InitializeComponent();
+
     }
 
     private void InitializeComponent()
