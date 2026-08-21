@@ -198,4 +198,83 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
+
+    /// <summary>
+    /// Payload templates for <see cref="PostCircleAuthorization_never_returns_500"/>.
+    /// Each row carries the shape we want to POST; <c>-1L</c> and
+    /// <c>-2L</c> are negative sentinels that the test substitutes
+    /// with the ids of freshly seeded <c>Circle</c> / <c>BlogPost</c>
+    /// rows before sending, so every shape lands against a real
+    /// principal entity and the seeded fixtures are not dead.
+    /// </summary>
+    public static IEnumerable<PostAccessControlRulePayload?[]> BlogAclPayloadsForNever500()
+    {
+
+        var circleId = SeedCircle("alice", "test", isPublic: true);
+        var postId = SeedBlogPost("alice", "Billet ACL test");
+        // circleId only (the historical bug shape, 2026-08-21 mercure):
+        // must be rejected, never 500.
+        yield return new PostAccessControlRulePayload?[]
+        {
+            new PostAccessControlRulePayload
+            {
+                BlogPostId = postId,
+                CircleId = circleId
+            },
+
+            new PostAccessControlRulePayload
+            {
+                BlogPostId = -1,
+                CircleId = circleId
+            }
+        };
+
+        // Empty body: must be rejected at validation/auth, never 500.
+        yield return new PostAccessControlRulePayload?[]
+        {
+            new PostAccessControlRulePayload
+            {
+                BlogPostId = -1,
+                CircleId = -1
+            }
+        };
+
+        // blogPostId only: must be rejected, never 500.
+        yield return new PostAccessControlRulePayload?[]
+        {
+             new PostAccessControlRulePayload
+            {
+                BlogPostId = -2,
+                CircleId = -1
+            }
+        };
+
+        // Explicit BlogPostId = 0 (default(long)): must be rejected,
+        // never 500. This is the precise shape that EF Core's
+        // shaper used to crash on.
+        yield return new PostAccessControlRulePayload?[]
+        {
+             new PostAccessControlRulePayload(),
+             null
+        };
+    }
+
+    /// <summary>
+    /// Hard rule (Paul, 2026-08-21): a 500 is never acceptable
+    /// </summary>
+    [Theory]
+    [MemberData(nameof(BlogAclPayloadsForNever500))]
+    public async Task PostCircleAuthorization_never_returns_500(
+        Dictionary<string, PostAccessControlRulePayload?> payload)
+    {
+        ResetDatabaseWithAlice();
+        using var http = NewClient("alice");
+
+
+        var response = await http.PostAsJsonAsync(
+            BlogAclUrl(), payload,
+            TestContext.Current.CancellationToken);
+
+        Assert.NotEqual(HttpStatusCode.InternalServerError, response.StatusCode);
+    }
 }
