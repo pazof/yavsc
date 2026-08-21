@@ -5,12 +5,10 @@ namespace Yavsc.Models.Access
     using Newtonsoft.Json;
     using Blog;
     using Yavsc.Abstract.Identity.Security;
+    using Yavsc.Abstract.BlogSpot;
 
-    public class CircleAuthorizationToBlogPost : ICircleAuthorization
+    public class CircleAuthorizationToBlogPost : PostAccessControlRulePayload
     {
-        public long CircleId { get; set; }
-        public long BlogPostId { get; set; }
-
         [JsonIgnore]
         [ForeignKey("BlogPostId")]
         public virtual BlogPost Target { get; set; }
