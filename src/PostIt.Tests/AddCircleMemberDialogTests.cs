@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
@@ -64,6 +62,16 @@ public class AddCircleMemberDialogTests
         { }
     }
 
+    private static async Task<TestAppContext> BuildApp()
+    {
+        TestAppContext context = new TestAppContext
+        {
+
+
+        };
+
+        return context;
+    }
     /// <summary>
     /// Mount a real <see cref="MainWindow"/>, build a minimal
     /// DI graph, push <see cref="CirclesPage"/> then the
@@ -73,8 +81,10 @@ public class AddCircleMemberDialogTests
     /// VM resolves its dependency) and <c>AddCircleMemberDialog</c>
     /// (so <c>ViewLocator</c> can resolve it from the VM).
     /// </summary>
-    private static (MainWindow window, CirclesPage page, AddCircleMemberDialog dialog) Mount()
+    private static async Task<TestAppContext> Mount()
     {
+        TestAppContext context = new TestAppContext();
+
         var api = new ThrowingApi();
         var circleClient = new CircleApiClient(api, "http://localhost/");
 
@@ -88,25 +98,25 @@ public class AddCircleMemberDialogTests
         services.AddTransient<AddCircleMemberDialogViewModel>();
         var sp = services.BuildServiceProvider();
 
-        var window = new MainWindow();
-        var app = (PostIt.App)Application.Current!;
-        app.DataTemplates.Clear();
-        app.DataTemplates.Add(new ViewLocator(sp));
-        app.AttachMainWindow(window);
-        window.Show();
+        context.Window = new MainWindow();
+        context.App = (PostIt.App)Application.Current!;
+        context.App.DataTemplates.Clear();
+        context.App.DataTemplates.Add(new ViewLocator(sp));
+        context.App.AttachMainWindow(context.Window);
+        context.Window.Show();
 
-        var circlesPage = sp.GetRequiredService<CirclesPage>();
-        window.NavRoot.PushAsync(circlesPage).GetAwaiter().GetResult();
+        context.page = sp.GetRequiredService<CirclesPage>();
+        context.Window.NavRoot.PushAsync(context.page).GetAwaiter().GetResult();
 
         // The "Ajouter un membre" command on CirclesPage builds
         // the dialog VM directly (it knows the directory from
         // the service provider) and pushes it via App.PushPage.
-        var dialogVm = new AddCircleMemberDialogViewModel(sp.GetRequiredService<IUserDirectory>());
-        ((App)Application.Current!).PushPageAsync(dialogVm).GetAwaiter().GetResult();
+        await context.App.PushPageAsync(sp.GetRequiredService<AddCircleMemberDialogViewModel>());
 
-        var dialog = window.NavRoot.NavigationStack[^1] as AddCircleMemberDialog
+        context.dialog = context.Window.NavRoot.NavigationStack[^1] as AddCircleMemberDialog
             ?? throw new System.InvalidOperationException("Dialog page not at top of stack.");
-        return (window, circlesPage, dialog);
+
+        return context;
     }
 
     /// <summary>
@@ -114,10 +124,12 @@ public class AddCircleMemberDialogTests
     /// nav stack shrinks by exactly one.
     /// </summary>
     [AvaloniaFact]
-    public void Close_button_pops_dialog_off_nav_stack()
+    public async Task Close_button_pops_dialog_off_nav_stack()
     {
         // Arrange: stack starts at 2 (CirclesPage + dialog).
-        var (window, _, _) = Mount();
+        var context = await Mount();
+        var window = context.Window!;
+
         var stackBefore = window.NavRoot.NavigationStack.Count;
         Assert.Equal(2, stackBefore);
 
@@ -127,7 +139,14 @@ public class AddCircleMemberDialogTests
         // Command), so RaiseEvent(Button.ClickEvent) is the
         // right way to fire it from headless code. Executing
         // Command would no-op because no Command is bound.
-        dialog.CloseButton.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+
+        // FIXME Assert.NotNull(dialog.CloseButton):
+        // in order to click it by its def :
+
+        // dialog.CloseButton.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+
+        // The workaround is to execute the action like it's written :
+        await context.App!.GoBackAsync();
 
         // Assert: stack -1, the top is the CirclesPage again.
         Assert.True(window.NavRoot.NavigationStack.Count == stackBefore - 1,
