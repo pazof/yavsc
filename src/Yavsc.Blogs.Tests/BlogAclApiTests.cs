@@ -39,73 +39,12 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
 {
     private readonly BlogsWebServerFixture _fixture;
 
-    public long CircleId { get; private set; }
-    public long PostId { get; private set; }
 
     public BlogAclApiTests(BlogsWebServerFixture fixture)
     {
         _fixture = fixture;
-        ResetDatabaseWithAlice();
     }
 
-
-
-    /// <summary>Reset the in-memory database and seed <c>alice</c>.
-    /// The shared SQLite <c>:memory:</c> store persists across
-    /// requests, so each test starts from a clean slate.</summary>
-    private void ResetDatabaseWithAlice()
-    {
-        using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.EnsureDeleted();
-        db.Database.EnsureCreated();
-
-        db.Users.Add(new ApplicationUser
-        {
-            Id = "alice",
-            UserName = "alice",
-            Email = "alice@example.com",
-            EmailConfirmed = true,
-            FullName = "Alice Dupont",
-            Avatar = "/avatars/alice.png",
-        });
-        db.SaveChanges();
-        CircleId = SeedCircle("alice", "test", isPublic: true);
-        PostId = SeedBlogPost("alice", "Billet ACL test");
-    }
-
-    /// <summary>Create a circle owned by <paramref name="ownerId"/>
-    /// directly in the SQLite store and return its server-assigned
-    /// id.</summary>
-    private long SeedCircle(string ownerId, string name, bool isPublic = false)
-    {
-        using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var circle = new Circle { OwnerId = ownerId, Name = name, Public = isPublic };
-        db.Circle.Add(circle);
-        db.SaveChanges();
-        return circle.Id;
-    }
-
-    /// <summary>Create a blog post owned by <paramref name="authorId"/>
-    /// directly in the SQLite store and return its server-assigned
-    /// id.</summary>
-    private long SeedBlogPost(string authorId, string title)
-    {
-        using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var post = new BlogPost
-        {
-            AuthorId = authorId,
-            Title = title,
-            Article = "Test article body.",
-            DateCreated = DateTime.UtcNow,
-            DateModified = DateTime.UtcNow,
-        };
-        db.BlogSpot.Add(post);
-        db.SaveChanges();
-        return post.Id;
-    }
 
     private string BlogAclUrl()
         => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/{APIPrefix}/blogacl";
@@ -152,8 +91,8 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         // Mirror PostIt's payload: scalar FK ids only, no nav props.
         var payload = new CircleAuthorizationToBlogPost
         {
-            CircleId = CircleId,
-            BlogPostId = PostId,
+            CircleId = _fixture.CircleId,
+            BlogPostId = _fixture.PostId,
         };
 
         var response = await http.PostAsJsonAsync(BlogAclUrl(), payload,
@@ -187,15 +126,13 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         // The prod circle already exists with Name="test", Public=true,
         // owned by the caller. We seed the same shape pre-POST so the
         // test reproduces the prod scenario end-to-end.
-        var circleId = SeedCircle("alice", "test", isPublic: true);
-        var postId = SeedBlogPost("alice", "Billet ACL test");
         using var http = NewClient("alice");
 
 
         var payload = new PostAccessControlRulePayload
         {
-            CircleId = circleId,
-            BlogPostId = postId
+            CircleId = _fixture.CircleId,
+            BlogPostId = _fixture.PostId
         };
 
         var response = await http.PostAsJsonAsync(BlogAclUrl(), payload,
@@ -268,9 +205,7 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     public async Task PostCircleAuthorization_never_returns_500(
         Dictionary<string, PostAccessControlRulePayload?> payload)
     {
-        ResetDatabaseWithAlice();
         using var http = NewClient("alice");
-
 
         var response = await http.PostAsJsonAsync(
             BlogAclUrl(), payload,
