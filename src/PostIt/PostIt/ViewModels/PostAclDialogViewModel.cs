@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.Input;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using Yavsc.Api.Client.Dtos;
-using Yavsc.Abstract.Identity.Security;
 using Yavsc.Abstract.BlogSpot;
 
 namespace PostIt.ViewModels;
@@ -129,7 +128,8 @@ public partial class PostAclDialogViewModel : ViewModelBase
         {
             var created = await _aclClient.GrantAsync(new Yavsc.Abstract.BlogSpot.PostAccessControlRulePayload
             {
-                CircleId = SelectedCircleToAdd.Id
+                CircleId = SelectedCircleToAdd.Id,
+                BlogPostId = Post.Id
             });
             if (created is not null)
             {
