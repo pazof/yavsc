@@ -70,7 +70,7 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest();
             }
 
-            if (!CheckOwner(circleAuthorizationToBlogPost.CircleId))
+            if (!await CheckOwnerAsync(circleAuthorizationToBlogPost.CircleId))
             {
                 return new ChallengeResult();
             }
@@ -94,13 +94,13 @@ namespace Yavsc.Blogs.Controllers
 
             return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
-        private bool CheckOwner (long circleId)
+        private async Task<bool> CheckOwnerAsync (long circleId)
         {
-
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var circle = _context.Circle.First(c=>c.Id==circleId);
-            _context.Entry(circle).State = EntityState.Detached;
-            return (circle.OwnerId == uid);
+            if (uid==null) return false;
+            var circle = await _context.Circle.FirstOrDefaultAsync(c=>c.Id==circleId);
+            if (circle == null) return false;
+            return circle.OwnerId == uid;
         }
         // POST: api/BlogAclApi
         [HttpPost]
@@ -111,7 +111,7 @@ namespace Yavsc.Blogs.Controllers
             {
                 return BadRequest(ModelState);
             }
-            if (!CheckOwner(circleAuthorizationToBlogPost.CircleId))
+            if (!await CheckOwnerAsync(circleAuthorizationToBlogPost.CircleId))
             {
                 return new ChallengeResult();
             }

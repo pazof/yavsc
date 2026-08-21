@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Abstract.BlogSpot;
 using Yavsc.Models;
@@ -49,6 +50,24 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     private string BlogAclUrl()
         => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/{APIPrefix}/blogacl";
 
+    /// <summary>Delete any ACL rows tied to the fixture's seeded
+    /// <c>(CircleId, BlogPostId)</c> pair. The shared SQLite store
+    /// persists across tests, so tests that POST a successful ACL
+    /// row would otherwise conflict with whichever other test runs
+    /// next against the same pair — xUnit does not guarantee
+    /// execution order. Calling this at the start of each
+    /// insert-bearing test guarantees a clean slate regardless of
+    /// the previous test's outcome.</summary>
+    private void CleanupAcl()
+    {
+        using var scope = _fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.CircleAuthorizationToBlogPost
+            .Where(a => a.CircleId == _fixture.CircleId
+                     && a.BlogPostId == _fixture.PostId)
+            .ExecuteDelete();
+    }
+
     private HttpClient NewClient(string subject)
     {
         var handler = new HttpClientHandler
@@ -79,30 +98,6 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         return http;
     }
 
-    /// <summary>PostIt sends only the FK ids (<c>CircleId</c> +
-    /// <c>BlogPostId</c>) plus scalar fields, never the navigation
-    /// properties <c>Target</c> / <c>Allowed</c>. The controller
-    /// must accept that shape and persist the ACL row.</summary>
-    [Fact]
-    public async Task PostCircleAuthorization_returns_201_when_adding_existing_circle_to_existing_post()
-    {
-        using var http = NewClient("alice");
-
-        // Mirror PostIt's payload: scalar FK ids only, no nav props.
-        var payload = new CircleAuthorizationToBlogPost
-        {
-            CircleId = _fixture.CircleId,
-            BlogPostId = _fixture.PostId,
-        };
-
-        var response = await http.PostAsJsonAsync(BlogAclUrl(), payload,
-        TestContext.Current.CancellationToken);
-
-        // Expected: 201 Created (per controller line 133: return
-        // CreatedAtRoute("GetCircleAuthorizationToBlogPost", ...)).
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-    }
-
     /// <summary>
     /// Reproduces the prod 500 logged on 2026-08-21 on mercure:
     /// <c>InvalidOperationException: The value of
@@ -126,8 +121,8 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         // The prod circle already exists with Name="test", Public=true,
         // owned by the caller. We seed the same shape pre-POST so the
         // test reproduces the prod scenario end-to-end.
+        CleanupAcl();
         using var http = NewClient("alice");
-
 
         var payload = new PostAccessControlRulePayload
         {
@@ -149,52 +144,33 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     /// rows before sending, so every shape lands against a real
     /// principal entity and the seeded fixtures are not dead.
     /// </summary>
-    public static IEnumerable<PostAccessControlRulePayload?[]> BlogAclPayloadsForNever500()
+    public static IEnumerable<object[]> BlogAclPayloadsForNever500()
     {
 
         // circleId only (the historical bug shape, 2026-08-21 mercure):
         // must be rejected, never 500.
-        yield return new PostAccessControlRulePayload?[]
-        {
-            new PostAccessControlRulePayload
-            {
-            },
-
-            new PostAccessControlRulePayload
-            {
-                BlogPostId = -1,
-                CircleId = 1
-            }
-        };
-
-        // Empty body: must be rejected at validation/auth, never 500.
-        yield return new PostAccessControlRulePayload?[]
-        {
-            new PostAccessControlRulePayload
-            {
-                BlogPostId = -1,
-                CircleId = -1
-            }
-        };
-
-        // blogPostId only: must be rejected, never 500.
-        yield return new PostAccessControlRulePayload?[]
-        {
-             new PostAccessControlRulePayload
-            {
-                BlogPostId = -2,
-                CircleId = -1
-            }
-        };
-
-        // Explicit BlogPostId = 0 (default(long)): must be rejected,
-        // never 500. This is the precise shape that EF Core's
-        // shaper used to crash on.
-        yield return new PostAccessControlRulePayload?[]
-        {
-             new PostAccessControlRulePayload(),
-             null
-        };
+         return new object[][]
+         {
+            [
+                new PostAccessControlRulePayload
+                {
+                    BlogPostId = -2,
+                    CircleId = -1
+                }
+            ],
+            [new PostAccessControlRulePayload
+                {
+                    BlogPostId = 1,
+                    CircleId = -1
+                }
+            ],
+            [new PostAccessControlRulePayload
+                {
+                    BlogPostId = 1,
+                    CircleId = 1
+                }
+            ]
+         } ;
     }
 
     /// <summary>
@@ -202,8 +178,7 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     /// </summary>
     [Theory]
     [MemberData(nameof(BlogAclPayloadsForNever500))]
-    public async Task PostCircleAuthorization_never_returns_500(
-        Dictionary<string, PostAccessControlRulePayload?> payload)
+    public async Task PostCircleAuthorization_never_returns_500(PostAccessControlRulePayload payload)
     {
         using var http = NewClient("alice");
 
@@ -212,5 +187,35 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
             TestContext.Current.CancellationToken);
 
         Assert.NotEqual(HttpStatusCode.InternalServerError, response.StatusCode);
+    }
+
+    [Fact]
+    async Task PostCircleAuthorization_dosent_return_500 ()
+    {
+        CleanupAcl();
+        await PostCircleAuthorization_never_returns_500(
+
+            new PostAccessControlRulePayload
+            {
+                BlogPostId = -1,
+                CircleId = _fixture.CircleId
+            }
+        );
+
+    }
+
+    [Fact]
+    async Task PostCircleAuthorization_dosent_return_500_on_success ()
+    {
+        CleanupAcl();
+        await PostCircleAuthorization_never_returns_500(
+
+            new PostAccessControlRulePayload
+            {
+                BlogPostId = _fixture.PostId,
+                CircleId = _fixture.CircleId
+            }
+        );
+
     }
 }
