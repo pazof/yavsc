@@ -1,22 +1,22 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
-using Microsoft.Extensions.DependencyInjection;
+using Yavsc.Blogspot;
+using Yavsc.Api.Client;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
-using Yavsc.Api.Client;
-using Yavsc.Blogspot;
-
 namespace PostIt.Tests;
 
 /// <summary>
 /// Headless UI tests for the "Save" flow in <see cref="MainPage"/>.
-/// Uses the shared <see cref="PostItHeadlessFixture"/> (a real
-/// <see cref="MainWindow"/> with the production DI graph attached
-/// to <see cref="App"/>) plus a local
-/// <see cref="ServiceCollection"/> that swaps
-/// <see cref="YavscApiClient"/> for the recording fake.
+/// The pattern is the one <c>SessionStatusBannerTests</c>
+/// established: <c>[AvaloniaFact]</c>, a <see cref="Window"/>
+/// hosting the page (via a <see cref="Frame"/> because
+/// <c>MainPage</c> is a <c>ContentPage</c>), then drive the
+/// controls through their public surface and assert on what
+/// <see cref="RecordingYavscApiClient"/> saw go on the wire.
 ///
 /// <para>The bug we are pinning: the title <c>TextBox</c> is
 /// currently <c>{Binding SelectedPost.Title, Mode=TwoWay}</c>.
@@ -31,38 +31,41 @@ namespace PostIt.Tests;
 /// pass once the VM owns a dedicated <c>Title</c>/<c>Article</c>
 /// buffer that the XAML binds to and the Save command consumes.</para>
 /// </summary>
-[Collection("PostIt Headless")]
-public sealed class MainPageSaveTests
+public class MainPageSaveTests
 {
-    private readonly PostItHeadlessCollection _host;
-
-    public MainPageSaveTests(PostItHeadlessCollection host)
-    {
-        _host = host;
-    }
-
     [AvaloniaFact]
-    public void Typing_a_title_then_clicking_Save_sends_that_title_in_the_post_body()
+    public async Task Typing_a_title_then_clicking_Save_sends_that_title_in_the_post_body()
     {
-        // Arrange: VM with a recording API client, mounted on
-        // the shared MainWindow's nav stack.
+        // Arrange: VM with a recording API client, mounted in a
+        // headless window via a Frame (MainPage is a ContentPage,
+        // not a Control, so it needs a navigation host).
         var recorder = new CallRecorder();
-
-        var blog = _host.Services.GetRequiredService<BlogApiClient>();
+        var api = new RecordingYavscApiClient(recorder);
+        var blog = new BlogApiClient(api, "http://localhost/");
         var viewModel = new MainPageViewModel(blog);
+
         var page = new MainPage { DataContext = viewModel };
-        _host.PushAsync(page);
+        // MainPage is a ContentPage (a Page, not a Control), so it
+        // must be hosted in a navigation surface. The production
+        // MainWindow.axaml uses NavigationPage, and the API is the
+        // same one App.axaml.cs drives at boot (PushAsync, fire-
+        // and-forget in prod because the page is the top of the
+        // stack immediately).
+        var nav = new NavigationPage();
+        _ = nav.PushAsync(page);
+        var window = new Window { Content = nav };
+        window.Show();
 
         // Act: type a title into the editor's TextBox without
-        // first selecting a post in the list — the only state
-        // in which a new post can be created. Then click Save.
-        var titleBox = _host.Window.GetVisualDescendants()
+        // first selecting a post in the list — the only state in
+        // which a new post can be created. Then click Save.
+        var titleBox = window.GetVisualDescendants()
             .OfType<TextBox>()
             .First(t => t.PlaceholderText == "Title");
         const string typed = "Mon premier billet";
         titleBox.Text = typed;
 
-        var saveButton = _host.Window.GetVisualDescendants()
+        var saveButton = window.GetVisualDescendants()
             .OfType<Button>()
             .Single(b => b.Content as string == "Save");
         saveButton.Command!.Execute(null);
@@ -72,11 +75,7 @@ public sealed class MainPageSaveTests
         // task on the dispatcher. Give the dispatcher a chance to
         // run so the awaited CallAsync has actually fired before
         // we inspect the recorder.
-        var deadline = DateTime.UtcNow.AddSeconds(2);
-        while (recorder.Calls.Count == 0 && DateTime.UtcNow < deadline)
-        {
-            Task.Delay(20).GetAwaiter().GetResult();
-        }
+        await Task.Delay(200);
 
         // Assert: the first POST to "blog" carried a BlogPostDto
         // whose Title is exactly what the user typed. The bug
