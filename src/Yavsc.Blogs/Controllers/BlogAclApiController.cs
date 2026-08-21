@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Yavsc.Abstract.BlogSpot;
 using Yavsc.Models;
 using Yavsc.Models.Access;
 using Yavsc.Server.Helpers;
@@ -103,7 +104,8 @@ namespace Yavsc.Blogs.Controllers
         }
         // POST: api/BlogAclApi
         [HttpPost]
-        public async Task<IActionResult> PostCircleAuthorizationToBlogPost([FromBody] CircleAuthorizationToBlogPost circleAuthorizationToBlogPost)
+        public async Task<IActionResult> PostCircleAuthorizationToBlogPost(
+            [FromBody] PostAccessControlRulePayload circleAuthorizationToBlogPost)
         {
             if (!ModelState.IsValid)
             {
@@ -113,7 +115,12 @@ namespace Yavsc.Blogs.Controllers
             {
                 return new ChallengeResult();
             }
-            _context.CircleAuthorizationToBlogPost.Add(circleAuthorizationToBlogPost);
+            CircleAuthorizationToBlogPost entity = new CircleAuthorizationToBlogPost
+            {
+                BlogPostId = circleAuthorizationToBlogPost.BlogPostId,
+                CircleId = circleAuthorizationToBlogPost.CircleId
+            };
+            _context.CircleAuthorizationToBlogPost.Add(entity);
             try
             {
                 await _context.SaveChangesAsync(User.GetUserId());
