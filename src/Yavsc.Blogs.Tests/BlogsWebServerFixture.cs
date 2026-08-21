@@ -200,6 +200,66 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+
+        // EnsureCreated + seed alice, run once at host startup.
+        // EnsureCreated is idempotent (creates only the tables that
+        // don't exist yet) and runs against the shared
+        // SqliteConnection (Cache=Shared), so every DbContext that
+        // resolves through this fixture's host sees the same schema.
+        // We do NOT call EnsureDeleted: the SqliteConnection is held
+        // open at the static level and closing it destroys the
+        // :memory: store for every other DbContext — the org
+        // fixture can afford EnsureDeleted because its store is
+        // built fresh per fixture, but the blogs fixture's static
+        // connection outlives a single fixture instance.
+        using (var seedScope = app.Services.CreateScope())
+        {
+            var db = seedScope.ServiceProvider
+                .GetRequiredService<ApplicationDbContext>();
+            db.Database.EnsureCreated();
+            if (!db.Users.Any(u => u.Id == "alice"))
+            {
+                db.Users.Add(new ApplicationUser
+                {
+                    Id = "alice",
+                    UserName = "alice",
+                    Email = "alice@example.com",
+                    EmailConfirmed = true,
+                    FullName = "Alice Dupont",
+                    Avatar = "/avatars/alice.png",
+                });
+                db.SaveChanges();
+
+                // Inline the seed of the circle + post. We don't
+                // call SeedCircle/SeedBlogPost (the instance helpers)
+                // because those resolve through this.Services, which
+                // is null until WebHostFixture.InitializeAsync has
+                // finished wiring the shared slot — i.e. after this
+                // method returns. Use app.Services directly.
+                var circle = new Circle
+                {
+                    OwnerId = "alice",
+                    Name = "test",
+                    Public = true,
+                };
+                db.Circle.Add(circle);
+                db.SaveChanges();
+                CircleId = circle.Id;
+
+                var post = new BlogPost
+                {
+                    AuthorId = "alice",
+                    Title = "Billet ACL test",
+                    Article = "Test article body.",
+                    DateCreated = DateTime.UtcNow,
+                    DateModified = DateTime.UtcNow,
+                };
+                db.BlogSpot.Add(post);
+                db.SaveChanges();
+                PostId = post.Id;
+            }
+        }
+
         await Task.CompletedTask;
         return app;
     }
@@ -287,30 +347,6 @@ public sealed class BlogsWebServerFixture : WebHostFixture
     }
 
 
-
-    /// <summary>Reset the in-memory database and seed <c>alice</c>.
-    /// The shared SQLite <c>:memory:</c> store persists across
-    /// requests, so each test starts from a clean slate.</summary>
-    private void ResetDatabaseWithAlice()
-    {
-        using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.EnsureDeleted();
-        db.Database.EnsureCreated();
-
-        db.Users.Add(new ApplicationUser
-        {
-            Id = "alice",
-            UserName = "alice",
-            Email = "alice@example.com",
-            EmailConfirmed = true,
-            FullName = "Alice Dupont",
-            Avatar = "/avatars/alice.png",
-        });
-        db.SaveChanges();
-        CircleId = SeedCircle("alice", "test", isPublic: true);
-        PostId = SeedBlogPost("alice", "Billet ACL test");
-    }
 
     /// <summary>Create a circle owned by <paramref name="ownerId"/>
     /// directly in the SQLite store and return its server-assigned
