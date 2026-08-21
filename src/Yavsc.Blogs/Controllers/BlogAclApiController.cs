@@ -111,6 +111,15 @@ namespace Yavsc.Blogs.Controllers
             {
                 return BadRequest(ModelState);
             }
+            // No 500: a missing or zero BlogPostId is a client
+            // error, not an EF Core FK violation waiting to happen.
+            // The 2026-08-21 prod 500 was this exact path (PostIt
+            // sent only circleId, server saw BlogPostId = 0 and
+            // SaveChangesAsync threw InvalidOperationException).
+            if (circleAuthorizationToBlogPost.BlogPostId <= 0)
+            {
+                return BadRequest("BlogPostId is required and must be > 0.");
+            }
             if (!await CheckOwnerAsync(circleAuthorizationToBlogPost.CircleId))
             {
                 return new ChallengeResult();
