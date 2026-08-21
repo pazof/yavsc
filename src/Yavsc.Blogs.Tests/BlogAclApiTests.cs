@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Abstract.BlogSpot;
@@ -40,10 +39,16 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
 {
     private readonly BlogsWebServerFixture _fixture;
 
+    public long CircleId { get; private set; }
+    public long PostId { get; private set; }
+
     public BlogAclApiTests(BlogsWebServerFixture fixture)
     {
         _fixture = fixture;
+        ResetDatabaseWithAlice();
     }
+
+
 
     /// <summary>Reset the in-memory database and seed <c>alice</c>.
     /// The shared SQLite <c>:memory:</c> store persists across
@@ -65,6 +70,8 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
             Avatar = "/avatars/alice.png",
         });
         db.SaveChanges();
+        CircleId = SeedCircle("alice", "test", isPublic: true);
+        PostId = SeedBlogPost("alice", "Billet ACL test");
     }
 
     /// <summary>Create a circle owned by <paramref name="ownerId"/>
@@ -140,19 +147,17 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task PostCircleAuthorization_returns_201_when_adding_existing_circle_to_existing_post()
     {
-        ResetDatabaseWithAlice();
-        var circleId = SeedCircle("alice", "Famille");
-        var postId = SeedBlogPost("alice", "Billet de test");
         using var http = NewClient("alice");
 
         // Mirror PostIt's payload: scalar FK ids only, no nav props.
         var payload = new CircleAuthorizationToBlogPost
         {
-            CircleId = circleId,
-            BlogPostId = postId,
+            CircleId = CircleId,
+            BlogPostId = PostId,
         };
 
-        var response = await http.PostAsJsonAsync(BlogAclUrl(), payload);
+        var response = await http.PostAsJsonAsync(BlogAclUrl(), payload,
+        TestContext.Current.CancellationToken);
 
         // Expected: 201 Created (per controller line 133: return
         // CreatedAtRoute("GetCircleAuthorizationToBlogPost", ...)).
@@ -179,7 +184,6 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task PostCircleAuthorization_returns_201_when_payload_mirrors_PostIt_shape_against_existing_circle_named_test()
     {
-        ResetDatabaseWithAlice();
         // The prod circle already exists with Name="test", Public=true,
         // owned by the caller. We seed the same shape pre-POST so the
         // test reproduces the prod scenario end-to-end.
@@ -194,7 +198,8 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
             BlogPostId = postId
         };
 
-        var response = await http.PostAsJsonAsync(BlogAclUrl(), payload);
+        var response = await http.PostAsJsonAsync(BlogAclUrl(), payload,
+        TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
@@ -210,22 +215,18 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     public static IEnumerable<PostAccessControlRulePayload?[]> BlogAclPayloadsForNever500()
     {
 
-        var circleId = SeedCircle("alice", "test", isPublic: true);
-        var postId = SeedBlogPost("alice", "Billet ACL test");
         // circleId only (the historical bug shape, 2026-08-21 mercure):
         // must be rejected, never 500.
         yield return new PostAccessControlRulePayload?[]
         {
             new PostAccessControlRulePayload
             {
-                BlogPostId = postId,
-                CircleId = circleId
             },
 
             new PostAccessControlRulePayload
             {
                 BlogPostId = -1,
-                CircleId = circleId
+                CircleId = 1
             }
         };
 
