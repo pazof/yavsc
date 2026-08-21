@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Yavsc.Abstract.BlogSpot;
 using Yavsc.Models;
 using Yavsc.Models.Access;
 using Yavsc.Models.Blog;
@@ -186,11 +187,11 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         var postId = SeedBlogPost("alice", "Billet ACL test");
         using var http = NewClient("alice");
 
-        // Exact wire shape PostIt sends today:
-        // { "circleId": <id> } — no blogPostId, no comment.
-        var payload = new Dictionary<string, object>
+
+        var payload = new PostAccessControlRulePayload
         {
-            ["circleId"] = circleId,
+            CircleId = circleId,
+            BlogPostId = postId
         };
 
         var response = await http.PostAsJsonAsync(BlogAclUrl(), payload);
