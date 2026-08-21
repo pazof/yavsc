@@ -8,6 +8,7 @@ using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using Yavsc.Api.Client.Dtos;
 using Yavsc.Abstract.Identity.Security;
+using Yavsc.Abstract.BlogSpot;
 
 namespace PostIt.ViewModels;
 
@@ -37,10 +38,12 @@ public partial class PostAclDialogViewModel : ViewModelBase
     public BlogPostDto Post { get; }
 
     [ObservableProperty]
-    public partial ObservableCollection<CircleDto> MyCircles { get; set; } = new();
+    public partial ObservableCollection<CircleDto>
+    MyCircles { get; set; } = new();
 
     [ObservableProperty]
-    public partial ObservableCollection<CircleAuthorization> AclEntries { get; set; } = new();
+    public partial ObservableCollection<PostAccessControlRulePayload>
+    AclEntries { get; set; } = new();
 
     [ObservableProperty]
     public partial CircleDto? SelectedCircleToAdd { get; set; }
@@ -124,7 +127,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
         IsBusy = true;
         try
         {
-            var created = await _aclClient.GrantAsync(new CircleAuthorization
+            var created = await _aclClient.GrantAsync(new Yavsc.Abstract.BlogSpot.PostAccessControlRulePayload
             {
                 CircleId = SelectedCircleToAdd.Id
             });
@@ -149,7 +152,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async Task RevokeAsync(CircleAuthorization? acl)
+    public async Task RevokeAsync(PostAccessControlRulePayload? acl)
     {
         if (acl is null) return;
         IsBusy = true;
