@@ -16,7 +16,7 @@ Cette convention est partagée avec le dépôt
 [`postit-debian`](https://forgejo.pschneider.fr/notazof/postit-debian)
 pour la production des paquets `.deb`.
 
-## [1.0.8-rc1] - 2026-08-21
+## [1.0.8-rc1] - unstable
 
 ### Added
 - `BlogAclApiTests.PostCircleAuthorization_returns_201_when_payload_mirrors_PostIt_shape_against_existing_circle_named_test`
