@@ -21,7 +21,7 @@
     <PackageReference Include="Avalonia.Headless.XUnit" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\PostIt\PostIt\PostIt.csproj" />
+    <ProjectReference Include="..\PostIt\PostIt.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
