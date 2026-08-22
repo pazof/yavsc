@@ -121,4 +121,83 @@ release:
 	git push -u origin "$$BRANCH"; \
 	echo "==> Terminé. Branche $$BRANCH live sur origin."
 
-.PHONY: test release
+# Cibles pour installer PostIt.Android en Debug sur l'AVD qemu.
+#
+# Usage typique :
+#   make qemu           # lance l'AVD, attend le boot, build l'APK, l'installe
+#   make qemu-install   # (re)build l'APK et l'installe (AVD doit tourner)
+#   make qemu-build     # build l'APK seul (sans install)
+#   make qemu-run       # démarre l'AVD en background
+#   make qemu-stop      # arrête l'émulateur
+#   make qemu-wait-boot # attend que l'AVD ait fini de booter
+#
+# Variables surchargeables (make VAR=valeur) :
+#   AVD_NAME        default: postit_test_avd
+#                    (l'AVD doit être listé par `avdmanager list avd`)
+#   ADB_SERIAL      default: emulator-5554
+#                    (port standard du premier émulateur lancé)
+#   ANDROID_HOME    default: /opt/android-sdk
+#                    (le SDK Android local; doit contenir
+#                    emulator/emulator et platform-tools/adb)
+#   POSTIT_RID      default: android-x64
+#                    (doit matcher l'ABI de l'AVD; `avdmanager list avd`
+#                    affiche la ligne Tag/ABI)
+#   EMU_HEADLESS    default: 0
+#                    (1 = lancer l'émulateur sans fenêtre, pour scripter)
+AVD_NAME ?= postit_test_avd
+ADB_SERIAL ?= emulator-5554
+ANDROID_HOME ?= /opt/android-sdk
+POSTIT_RID ?= android-x64
+EMU_HEADLESS ?= 0
+
+POSTIT_ANDROID_CSPROJ := src/PostIt/PostIt.Android/PostIt.Android.csproj
+POSTIT_APK_DIR := src/PostIt/PostIt.Android/bin/Debug/net10.0-android/$(POSTIT_RID)
+POSTIT_APK := $(POSTIT_APK_DIR)/com.CompanyName.PostIt-Signed.apk
+
+qemu-run:
+	@echo "  Starting AVD $(AVD_NAME) on $(ADB_SERIAL)..."
+	@mkdir -p /tmp/yavsc-emu
+	@EMU_ARGS=""; \
+	if [ "$(EMU_HEADLESS)" = "1" ]; then EMU_ARGS="-no-window -no-audio"; fi; \
+	$(ANDROID_HOME)/emulator/emulator -avd $(AVD_NAME) $$EMU_ARGS \
+	    >/tmp/yavsc-emu/$(AVD_NAME).log 2>&1 & \
+	echo "  emulator PID: $$!"
+
+qemu-stop:
+	adb -s $(ADB_SERIAL) emu kill
+
+qemu-wait-boot:
+	@echo "  Waiting for $(ADB_SERIAL) to finish booting..."
+	adb -s $(ADB_SERIAL) wait-for-device
+	@for i in $$(seq 1 180); do \
+	    BOOTED=$$(adb -s $(ADB_SERIAL) shell getprop sys.boot_completed 2>/dev/null | tr -d '\r\n'); \
+	    if [ "$$BOOTED" = "1" ]; then \
+	        echo "  ✓ booted in $${i}s"; \
+	        exit 0; \
+	    fi; \
+	    sleep 1; \
+	done; \
+	echo "  ERROR: device did not boot within 180s." >&2; \
+	echo "  Logs: /tmp/yavsc-emu/$(AVD_NAME).log" >&2; \
+	exit 1
+
+qemu-build:
+	dotnet build $(POSTIT_ANDROID_CSPROJ) \
+	    -c Debug \
+	    -p:RuntimeIdentifier=$(POSTIT_RID) \
+	    --nologo
+
+qemu-install: qemu-build
+	@if [ ! -f "$(POSTIT_APK)" ]; then \
+	    echo "  APK not found at $(POSTIT_APK)." >&2; \
+	    echo "  Files in $(POSTIT_APK_DIR):" >&2; \
+	    ls -la "$(POSTIT_APK_DIR)" 2>/dev/null || echo "  (directory does not exist)" >&2; \
+	    exit 1; \
+	fi
+	@echo "  Installing $(POSTIT_APK) on $(ADB_SERIAL)..."
+	adb -s $(ADB_SERIAL) install -r "$(POSTIT_APK)"
+
+qemu: qemu-run qemu-wait-boot qemu-install
+	@echo "  ✓ PostIt.Android installed on $(ADB_SERIAL)"
+
+.PHONY: test release qemu qemu-run qemu-stop qemu-wait-boot qemu-build qemu-install
