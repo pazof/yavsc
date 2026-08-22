@@ -4,7 +4,7 @@
     <TargetFramework>net11.0-android</TargetFramework>
     <!-- FORCE LES ARCHITECTURES ANDROID VALIDES -->
     <RuntimeIdentifiers>android-arm64;android-x64</RuntimeIdentifiers>
-    <SupportedOSPlatformVersion>23.0.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>24.0.0</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ApplicationId>fr.pschneider.PostIt</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
