@@ -14,7 +14,7 @@ namespace PostIt.Tests;
 /// </summary>
 public class AndroidAppLaunchTests
 {
-    private const string PackageName = "com.CompanyName.PostIt";
+    private const string PackageName = "fr.pschneider.PostIt";
 
     private readonly ITestOutputHelper _output;
 
