@@ -27,6 +27,7 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" />
+    <PackageReference Include="Avalonia.Headless.XUnit" />
+    <PackageReference Include="Xamarin.UITest" />
   </ItemGroup>
 </Project>
