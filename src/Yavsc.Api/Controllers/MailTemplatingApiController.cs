@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Yavsc.ApiControllers
 {
-    [Route("api/mailtemplate")]
+    [Route(Constants.APIPrefix + "/mailtemplate")]
     public class MailTemplatingApiController: Controller
     {
-        
+
     }
 }

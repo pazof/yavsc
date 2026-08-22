@@ -51,7 +51,7 @@ internal class Program
         // DbContextBuilder
         services.AddDbContext<ApplicationDbContext>(options =>
            options.UseNpgsql(builder.Configuration.GetConnectionString(
-            YavscConstants.YavscConnectionStringName)));
+            Yavsc.Constants.YavscConnectionStringName)));
 
         // other services
         services

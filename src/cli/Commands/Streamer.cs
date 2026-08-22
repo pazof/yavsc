@@ -16,7 +16,7 @@ namespace cli {
         private CommandArgument _destArg;
         private CancellationTokenSource _tokenSource;
 
-        public Streamer(ILoggerFactory loggerFactory, 
+        public Streamer(ILoggerFactory loggerFactory,
             IOptions<ConnectionSettings> cxSettings,
             IOptions<UserConnectionSettings> userCxSettings
         )
@@ -38,7 +38,7 @@ namespace cli {
 
                     _sourceArg = target.Argument("source", "Source file to send, use '-' for standard input", false);
                     _destArg = target.Argument("destination", "destination file name", false);
-                   
+
                     target.HelpOption("-? | -h | --help");
                 });
             streamCmd.OnExecute(async() => await DoExecute());
@@ -47,7 +47,7 @@ namespace cli {
 
         private async Task <int> DoExecute()
         {
-            
+
             if (_sourceArg.Value != "-")
             {
                 var fi = new FileInfo(_sourceArg.Value);
@@ -80,7 +80,7 @@ namespace cli {
             _logger.LogInformation("Connecting to " + url);
             await _client.ConnectAsync(new Uri(url), _tokenSource.Token);
             _logger.LogInformation("Connected");
-            const int bufLen = Yavsc.YavscConstants.WebSocketsMaxBufLen;
+            const int bufLen = Yavsc.Constants.WebSocketsMaxBufLen;
             byte [] buffer = new byte[bufLen];
             const int offset=0;
             int read;
@@ -90,7 +90,7 @@ namespace cli {
             do
             {
                 read = await stream.ReadAsync(buffer, offset, bufLen);
-                lastFrame = read < Yavsc.YavscConstants.WebSocketsMaxBufLen;
+                lastFrame = read < Yavsc.Constants.WebSocketsMaxBufLen;
                 ArraySegment<byte> segment = new ArraySegment<byte>(buffer, offset, read);
                 await _client.SendAsync(segment, pckType, lastFrame, _tokenSource.Token);
                 _logger.LogInformation($"sent {segment.Count} ");

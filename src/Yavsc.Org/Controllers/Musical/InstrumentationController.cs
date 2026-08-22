@@ -17,7 +17,7 @@ namespace Yavsc.Controllers
 
         public InstrumentationController(ApplicationDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Instrumentation
@@ -50,7 +50,7 @@ namespace Yavsc.Controllers
             var owned = _context.Instrumentation.Include(i=>i.Tool).Where(i=>i.UserId==uid).Select(i=>i.InstrumentId);
             var ownedArray = owned.ToArray();
 
-            ViewBag.YetAvailableInstruments = _context.Instrument.Select(k=>new SelectListItem 
+            ViewBag.YetAvailableInstruments = _context.Instrument.Select(k=>new SelectListItem
             { Text = k.Name, Value = k.Id.ToString(), Disabled = ownedArray.Contains(k.Id) });
 
             return View(new Instrumentation { UserId = uid });
@@ -64,7 +64,7 @@ namespace Yavsc.Controllers
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (ModelState.IsValid)
             {
-                if (model.UserId != uid) if (!User.IsInMsRole(YavscConstants.AdminGroupName))
+                if (model.UserId != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
                     return new ChallengeResult();
 
                 _context.Instrumentation.Add(model);
@@ -82,7 +82,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            if (id != uid) if (!User.IsInMsRole(YavscConstants.AdminGroupName))
+            if (id != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
                     return new ChallengeResult();
             Instrumentation musicianSettings = await _context.Instrumentation.SingleAsync(m => m.UserId == id);
             if (musicianSettings == null)
@@ -98,7 +98,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Edit(Instrumentation musicianSettings)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(YavscConstants.AdminGroupName))
+            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
                     return new ChallengeResult();
             if (ModelState.IsValid)
             {
@@ -124,7 +124,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(YavscConstants.AdminGroupName))
+            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
                     return new ChallengeResult();
             return View(musicianSettings);
         }
@@ -135,12 +135,12 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             Instrumentation musicianSettings = await _context.Instrumentation.SingleAsync(m => m.UserId == id);
-            
+
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(YavscConstants.AdminGroupName))
+            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
                     return new ChallengeResult();
 
-            
+
             _context.Instrumentation.Remove(musicianSettings);
             await _context.SaveChangesAsync(User.GetUserId());
             return RedirectToAction("Index");

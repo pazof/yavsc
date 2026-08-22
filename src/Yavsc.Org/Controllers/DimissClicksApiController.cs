@@ -10,7 +10,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/v1/dimiss")]
+    [Route(Constants.APIPrefix + "/v1/dimiss")]
     public class DimissClicksApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -140,7 +140,7 @@ namespace Yavsc.Controllers
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!User.IsInRole("Administrator"))
             if (uid != id) return new ChallengeResult();
-            
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

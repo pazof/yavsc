@@ -22,7 +22,7 @@ namespace Yavsc.Blogs.Tests;
 /// header (or sending a token signed with the wrong key) gets a
 /// 401 back from the framework.
 /// </summary>
-[Collection("JwtClaimMapping")]
+[Collection("Yavsc Blogs")]
 public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
 {
     private readonly BlogsWebServerFixture _fixture;
@@ -43,6 +43,21 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         db.Database.EnsureDeleted();
         db.Database.EnsureCreated();
+    }
+
+    /// <summary>Reset the database and seed the
+    /// <c>tester</c> <see cref="ApplicationUser"/> row. Required
+    /// for any test that POST/PUT/DELETE a <c>BlogPost</c>:
+    /// <c>BlogPost.AuthorId</c> is a FK to
+    /// <c>AspNetUsers.Id</c>, and SQLite (unlike the EF Core
+    /// InMemory provider) enforces it. Without the seed, the
+    /// POST handler hits
+    /// <c>SQLite Error 19: 'FOREIGN KEY constraint failed'</c>
+    /// at <c>SaveChanges</c> and the controller returns 500.</summary>
+    private void ResetAndSeedDefaultUser()
+    {
+        ResetDatabase();
+        _fixture.SeedUser("tester");
     }
 
     /// <summary>The fixture's <c>WebApplication</c> is bound to
@@ -116,7 +131,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task PostBlog_creates_a_post_and_Get_returns_it_in_the_list()
     {
-        ResetDatabase();
+        ResetAndSeedDefaultUser();
         using var http = NewClient();
 
         // Create a minimal BlogPost. The server assigns Id, so we
@@ -154,7 +169,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task PostBlog_sets_AuthorId_on_created_post_and_list_entry()
     {
-        ResetDatabase();
+        ResetAndSeedDefaultUser();
         using var http = NewClient(subject: "tester");
 
         var draft = new BlogPost
@@ -186,7 +201,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task PostBlogComment_returns_201_for_existing_post()
     {
-        ResetDatabase();
+        ResetAndSeedDefaultUser();
         using var http = NewClient(subject: "tester");
 
         var draft = new BlogPost
@@ -249,7 +264,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task PutBlog_with_valid_token_and_owner_returns_204_and_Get_reflects_update()
     {
-        ResetDatabase();
+        ResetAndSeedDefaultUser();
         // The JWT's sub must match the post's AuthorId:
         // PermissionHandler.IsOwner checks blog.AuthorId == user.GetUserId(),
         // and UserHelpers.GetUserId reads "sub" off the principal.
@@ -300,7 +315,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task DeleteBlog_removes_a_post_and_Get_returns_an_empty_list()
     {
-        ResetDatabase();
+        ResetAndSeedDefaultUser();
         using var http = NewClient();
 
         // Seed a post we can delete.
@@ -342,7 +357,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         // ModelState validation starts rejecting the PostIt payload
         // (missing field, wrong casing, etc.), this test fails
         // before the regression reaches a user.
-        ResetDatabase();
+        ResetAndSeedDefaultUser();
         using var http = NewClient(subject: "tester");
 
         // Mirrors what MainPageViewModel.Save builds: a BlogPost with
