@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc
 {
     public interface IActivity

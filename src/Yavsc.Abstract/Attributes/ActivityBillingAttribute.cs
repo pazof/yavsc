@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.Attributes
 {
     public class ActivityBillingAttribute : Attribute

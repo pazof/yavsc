@@ -1,7 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Yavsc.Attributes.Validation;
-using Yavsc.Abstract;
-    using Yavsc;
 
 namespace Yavsc.ViewModels.Account
 {

@@ -49,7 +49,7 @@ public class PostItViewModelTests
         var api = new StubYavscApiClient(expected);
         var blog = new BlogApiClient(api, "http://localhost/");
 
-        var posts = await blog.GetPostsAsync();
+        var posts = await blog.GetPostsAsync(ct: TestContext.Current.CancellationToken);
 
         Assert.Equal(2, posts.Count);
         Assert.Equal("Hello", posts[0].Title);

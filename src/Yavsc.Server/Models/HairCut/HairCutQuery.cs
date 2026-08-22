@@ -1,6 +1,3 @@
-
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Billing;
@@ -8,7 +5,6 @@ using Yavsc.Models.Relationship;
 using Yavsc.Billing;
 using System.Globalization;
 using Yavsc.Helpers;
-using System.Linq;
 using Microsoft.Extensions.Localization;
 using Yavsc.ViewModels.PayPal;
 using Yavsc.Models.HairCut;

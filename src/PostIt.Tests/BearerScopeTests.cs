@@ -1,18 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using PostIt.Services;
-using PostIt.Services;
-using Xunit;
 
 namespace PostIt.Tests;
 

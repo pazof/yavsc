@@ -8,8 +8,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
-using PostIt.Services;
-using PostIt.Views;
 
 namespace PostIt.ViewModels;
 

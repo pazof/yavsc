@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 
 
 namespace Yavsc.ApiControllers
@@ -11,7 +9,6 @@ namespace Yavsc.ApiControllers
     using System.Security.Claims;
     using Microsoft.Extensions.Logging;
     using Models;
-    using Services;
     using Models.Haircut;
     using System.Threading.Tasks;
     using Helpers;

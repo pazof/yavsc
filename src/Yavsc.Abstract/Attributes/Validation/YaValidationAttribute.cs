@@ -1,6 +1,3 @@
-using System;
-using System.Reflection;
-
 namespace Yavsc.Attributes.Validation
 {
     public class YaValidationAttribute : System.ComponentModel.DataAnnotations.ValidationAttribute
@@ -9,7 +6,7 @@ namespace Yavsc.Attributes.Validation
         {
 
         }
-        
+
         public YaValidationAttribute(Func<string> acr): base(acr)
         {
 

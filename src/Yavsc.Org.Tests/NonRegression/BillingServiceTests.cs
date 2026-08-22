@@ -1,10 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Xunit;
-using Yavsc;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Helpers;
 using Yavsc.Models;
-using Yavsc.Models.Billing;
 using Yavsc.Models.Haircut;
 using Yavsc.Services;
 

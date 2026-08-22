@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -29,7 +28,7 @@ namespace Yavsc.Abstract.Models.Messaging
         /// </summary>
         [StringLength(512)]
         [Display(Name = "Icône")]
-        public string? icon { get; set; } 
+        public string? icon { get; set; }
         /// <summary>
         /// The sound.
         /// </summary>

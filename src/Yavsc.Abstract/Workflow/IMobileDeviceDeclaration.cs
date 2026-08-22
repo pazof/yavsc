@@ -16,8 +16,6 @@
 // along with yavsc.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-using System;
-
 namespace Yavsc
 {
     public interface IMobileDeviceDeclaration

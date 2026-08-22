@@ -2,7 +2,6 @@ using System.Security.Claims;
 using IdentityModel;
 using IdentityServer8.Models;
 using IdentityServer8.Services;
-using IdentityServer8.Stores;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Yavsc.Models;

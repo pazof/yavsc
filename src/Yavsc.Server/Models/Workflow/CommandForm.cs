@@ -4,8 +4,7 @@ using Newtonsoft.Json;
 
 namespace Yavsc.Models.Workflow
 {
-        using Yavsc;
-    using Yavsc.Attributes.Validation;
+    using Yavsc;
 
     public class CommandForm : ICommandForm
     {

@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace Yavsc.Blogs.Tests;
 
 [CollectionDefinition("JwtClaimMapping", DisableParallelization = true)]

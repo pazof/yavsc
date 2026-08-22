@@ -1,8 +1,6 @@
 
 namespace Yavsc.Org;
 
-using IdentityServer8.EntityFramework.Entities;
-
 public static class Constants
 {
      // ApiScopes seeded explicitly by EnsureDefaultApplicationScopes.

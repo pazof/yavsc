@@ -1,10 +1,5 @@
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using Xamarin.UITest;
-using Xamarin.UITest.Android;
-using Xunit;
 
 namespace PostIt.Tests;
 

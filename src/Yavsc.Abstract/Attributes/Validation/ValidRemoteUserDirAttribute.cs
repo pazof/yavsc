@@ -1,10 +1,8 @@
-
-using System;
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Server.Helpers;
 
 namespace Yavsc.Attributes.Validation
-{ 
+{
     /// <summary>
     /// Valid Remote User Dir Attribute
     /// </summary>
@@ -18,7 +16,7 @@ namespace Yavsc.Attributes.Validation
         {
             if (ErrorMessageResourceType==null)  {
                 ErrorMessageResourceType = typeof(Yavsc.Attributes.Validation.Resources);
-                ErrorMessageResourceName = "InvalidPath"; 
+                ErrorMessageResourceName = "InvalidPath";
             }
         }
 

@@ -1,6 +1,5 @@
 
 using System.ComponentModel.DataAnnotations;
-using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Account { 
     public class ChangePasswordBindingModel {
