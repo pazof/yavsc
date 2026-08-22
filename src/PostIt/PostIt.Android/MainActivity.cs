@@ -2,6 +2,7 @@ using Android.App;
 using Android.Content.PM;
 using Android.Content;
 using Avalonia.Android;
+using Avalonia;
 using AndroidX.Emoji2.Text;
 
 namespace PostIt.Android;
@@ -14,8 +15,15 @@ namespace PostIt.Android;
     MainLauncher = true,
     LaunchMode = LaunchMode.SingleTask,
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
-public class MainActivity : AvaloniaMainActivity
+public class MainActivity : AvaloniaMainActivity<App>
 {
+    protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
+    {
+        return base.CustomizeAppBuilder(builder)
+            .UseMaui<PostIt.Maui.MauiEmbeddingApp>(this)
+            .WithInterFont();
+    }
+
     /// <summary>
     /// Strongly-typed handle to the current MainActivity instance, set in
     /// <see cref="OnCreate"/> and consumed by platform services such as
