@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Sockets;
-using Yavsc;
 using Yavsc.Extensions;
 using Yavsc.Interfaces;
 using Yavsc.Models;

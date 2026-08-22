@@ -1,4 +1,3 @@
-using IdentityModel.OidcClient.Browser;
 using PostIt.Services;
 
 namespace PostIt.Desktop;

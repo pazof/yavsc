@@ -1,9 +1,7 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Yavsc.Models;
-using Yavsc.Models.Blog;
 
 namespace Yavsc.ViewComponents
 {

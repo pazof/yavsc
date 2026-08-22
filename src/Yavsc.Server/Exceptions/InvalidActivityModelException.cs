@@ -1,4 +1,3 @@
-using System;
 namespace Yavsc.Exceptions
 {
     public class InvalidWorkflowModelException : Exception

@@ -1,6 +1,5 @@
 namespace Yavsc.Models.Auth
 {
-    using Microsoft.AspNetCore.Identity;
     using System.ComponentModel.DataAnnotations.Schema;
 
     public class YaIdentityUserLogin

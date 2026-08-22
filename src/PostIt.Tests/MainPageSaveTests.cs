@@ -1,10 +1,8 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
-using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
 namespace PostIt.Tests;

@@ -3,7 +3,6 @@ namespace Yavsc.Models.Kyc
 {
     using System;
     using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
     /// Token opaque représentant une entité sans l'identifier.

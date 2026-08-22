@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Server.Models.IT
 {

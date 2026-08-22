@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Attributes.Validation;
 using Yavsc.Models.Workflow;
 
 namespace Yavsc.Models.Musical

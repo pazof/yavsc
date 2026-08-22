@@ -1,6 +1,4 @@
-using System;
 using System.Globalization;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Yavsc
@@ -37,7 +35,7 @@ namespace Yavsc
                 bindingContext.Result = ModelBindingResult.Success(actualValue);
             }
             else bindingContext.Result = ModelBindingResult.Failed();
-            
+
         }
     }
 }

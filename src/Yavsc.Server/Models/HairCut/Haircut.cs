@@ -1,4 +1,3 @@
-using System;
 namespace Yavsc.Haircut
 {
     public interface IProviderInfo

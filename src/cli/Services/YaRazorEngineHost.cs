@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Razor;
-
-namespace cli
+﻿namespace cli
 {
     public class YaRazorEngineHost
     {

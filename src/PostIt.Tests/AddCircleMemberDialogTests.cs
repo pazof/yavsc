@@ -1,6 +1,5 @@
 
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;

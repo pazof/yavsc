@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Yavsc.ApiControllers
 {
-    using Models;
-
     /// <summary>
     /// Base class for managing performers profiles
     /// </summary>
