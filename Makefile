@@ -144,14 +144,29 @@ release:
 #                    affiche la ligne Tag/ABI)
 #   EMU_HEADLESS    default: 0
 #                    (1 = lancer l'émulateur sans fenêtre, pour scripter)
+#   CONFIG          surcharge la variable CONFIG globale (Debug par
+#                    défaut dans ce Makefile). Passer à Release pour
+#                    un APK optimisé et signé release.
+#   LOGCAT_LINES    default: 200
+#                    (nombre de lignes dumpées par `make qemu-logcat`)
+#   LOGCAT_FOLLOW   default: 0
+#                    (1 = stream live via `make qemu-logcat`,
+#                    sinon dump one-shot des N dernières lignes)
+#   LOGCAT_BOOT_WAIT default: 5
+#                    (secondes d'attente entre le clear du buffer,
+#                    le `am start`, et le dump final dans
+#                    `make qemu-logcat-boot`)
 AVD_NAME ?= postit_test_avd
 ADB_SERIAL ?= emulator-5554
 ANDROID_HOME ?= /opt/android-sdk
 POSTIT_RID ?= android-x64
 EMU_HEADLESS ?= 0
+LOGCAT_LINES ?= 200
+LOGCAT_FOLLOW ?= 0
+LOGCAT_BOOT_WAIT ?= 5
 
 POSTIT_ANDROID_CSPROJ := src/PostIt/PostIt.Android/PostIt.Android.csproj
-POSTIT_APK_DIR := src/PostIt/PostIt.Android/bin/Debug/net10.0-android/$(POSTIT_RID)
+POSTIT_APK_DIR := src/PostIt/PostIt.Android/bin/$(CONFIG)/net10.0-android/$(POSTIT_RID)
 POSTIT_APK := $(POSTIT_APK_DIR)/com.CompanyName.PostIt-Signed.apk
 
 qemu-run:
@@ -182,9 +197,22 @@ qemu-wait-boot:
 	exit 1
 
 qemu-build:
+	# EmbedAssembliesIntoApk=true: without this, the Debug APK ships
+	# without the managed assemblies in it (they are pushed at runtime
+	# via `adb push`, "Fast Deployment"). On the qemu emulator, the
+	# runtime cannot find them in `files/.__override__/<rid>/` and
+	# aborts at startup with "No assemblies found in '.__override__'"
+	# (monodroid-glue.cc:757, SIGABRT). Forcing this property on
+	# packages the .dlls into the APK as `assemblies/<rid>/` so the
+	# runtime reads them directly.
+	#
+	# The Xamarin.Android SDK property is `EmbedAssembliesIntoApk`,
+	# not `AndroidEnableFastDeployment` (which exists in older
+	# templates but is a no-op in the .NET 10 SDK).
 	dotnet build $(POSTIT_ANDROID_CSPROJ) \
-	    -c Debug \
+	    -c $(CONFIG) \
 	    -p:RuntimeIdentifier=$(POSTIT_RID) \
+	    -p:EmbedAssembliesIntoApk=true \
 	    --nologo
 
 qemu-install: qemu-build
@@ -197,7 +225,57 @@ qemu-install: qemu-build
 	@echo "  Installing $(POSTIT_APK) on $(ADB_SERIAL)..."
 	adb -s $(ADB_SERIAL) install -r "$(POSTIT_APK)"
 
+# Dump recent logcat output for the running PostIt.Android process.
+# By default, prints the last $(LOGCAT_LINES) lines (one-shot, with
+# `-d`). Set LOGCAT_FOLLOW=1 to follow the stream live instead.
+# Filtering is by PID (pidof com.CompanyName.PostIt), not by tag,
+# because Mono/Xamarin can emit logs under several tags
+# (mono, PostIt.Android, Avalonia.Android) and tag-based filtering
+# would miss the ones not matching. PID-based filtering is exact.
+# If the app is not running, pidof returns empty and logcat exits
+# silently with no output; that is the expected behaviour for
+# "no logs yet".
+qemu-logcat:
+	@PID=$$(adb -s $(ADB_SERIAL) shell pidof com.CompanyName.PostIt 2>/dev/null | tr -d '\r\n'); \
+	if [ -z "$$PID" ]; then \
+	    echo "  com.CompanyName.PostIt is not running on $(ADB_SERIAL)."; \
+	    echo "  Start the app first (am start -n com.CompanyName.PostIt/PostIt.Android.PostItMainActivity)"; \
+	    exit 1; \
+	fi; \
+	echo "  Following PID $$PID (LOGCAT_FOLLOW=$(LOGCAT_FOLLOW), LOGCAT_LINES=$(LOGCAT_LINES))"; \
+	if [ "$(LOGCAT_FOLLOW)" = "1" ]; then \
+	    adb -s $(ADB_SERIAL) logcat -v time --pid=$$PID; \
+	else \
+	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES) --pid=$$PID; \
+	fi
+
+# Clear logcat, launch PostIt.Android, then dump everything that was
+# emitted during the startup window. Targets the "démarrage KO" case
+# where the process starts but Avalonia never renders a frame — the
+# logcat trace from process start to first frame is what diagnoses it.
+#
+# Override LOGCAT_BOOT_WAIT to extend the post-launch wait
+# (default 15s; raise to 30+ if the device is slow to boot Avalonia).
+LOGCAT_BOOT_WAIT ?= 15
+qemu-logcat-boot:
+	@echo "  Clearing logcat buffer..."
+	adb -s $(ADB_SERIAL) logcat -c
+	@echo "  Launching com.CompanyName.PostIt..."
+	adb -s $(ADB_SERIAL) shell am start \
+	    -n com.CompanyName.PostIt/PostIt.Android.PostItMainActivity
+	@echo "  Waiting $(LOGCAT_BOOT_WAIT)s for the app to start rendering..."
+	@sleep $(LOGCAT_BOOT_WAIT)
+	@echo "  Dumping logcat (PostIt PID + system buffer):"
+	@PID=$$(adb -s $(ADB_SERIAL) shell pidof com.CompanyName.PostIt 2>/dev/null | tr -d '\r\n'); \
+	if [ -n "$$PID" ]; then \
+	    echo "  (PID $$PID at dump time)"; \
+	    adb -s $(ADB_SERIAL) logcat -d -v time --pid=$$PID; \
+	else \
+	    echo "  (PostIt process not running at dump time — dumping last $(LOGCAT_LINES) lines unfiltered)"; \
+	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES); \
+	fi
+
 qemu: qemu-run qemu-wait-boot qemu-install
 	@echo "  ✓ PostIt.Android installed on $(ADB_SERIAL)"
 
-.PHONY: test release qemu qemu-run qemu-stop qemu-wait-boot qemu-build qemu-install
+.PHONY: test release qemu qemu-run qemu-stop qemu-wait-boot qemu-build qemu-install qemu-logcat qemu-logcat-boot
