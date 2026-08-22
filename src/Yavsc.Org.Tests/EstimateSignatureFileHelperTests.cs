@@ -91,9 +91,13 @@ public class EstimateSignatureFileHelperTests : IDisposable
     public async Task ReceiveEstimateSignatureAsync_rejects_null_payload()
     {
         var user = MakeUser("bob");
+        // Capture TestContext.Current.CancellationToken outside the
+        // lambda so xUnit1051 sees a real CancellationToken argument
+        // (the lambda body runs on a different stack frame).
+        var ct = TestContext.Current.CancellationToken;
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
             EstimateSignatureFileHelper.ReceiveEstimateSignatureAsync(
-                user, 1L, SignatureType.Pro, payload: null!));
+                user, 1L, SignatureType.Pro, payload: null!, token: ct));
     }
 
     [Fact]
@@ -101,9 +105,10 @@ public class EstimateSignatureFileHelperTests : IDisposable
     {
         var user = MakeUser("bob");
         var payload = new SignaturePadPayload { Strokes = new[] { 1, 100, 100 } };
+        var ct = TestContext.Current.CancellationToken;
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
             EstimateSignatureFileHelper.ReceiveEstimateSignatureAsync(
-                user, 0L, SignatureType.Pro, payload));
+                user, 0L, SignatureType.Pro, payload, token: ct));
     }
 
     // --- helpers ----------------------------------------------------
