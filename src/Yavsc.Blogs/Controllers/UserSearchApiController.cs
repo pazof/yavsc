@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
+using static Yavsc.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
@@ -26,7 +27,7 @@ namespace Yavsc.Blogs.Controllers
     /// exposing it.</para>
     /// </summary>
     [Produces("application/json")]
-    [Route("api/user-search")]
+    [Route(APIPrefix + "/user-search")]
     [Authorize]
     public class UserSearchApiController : Controller
     {
@@ -66,8 +67,9 @@ namespace Yavsc.Blogs.Controllers
                 // book callers already know the email they're
                 // searching for and we don't want to surface a
                 // long tail of partial matches.
-                var normalised = e.Trim();
-                query = query.Where(u => u.Email != null && u.Email.ToLower() == normalised.ToLower());
+                var normalized = e.Trim();
+                query = query.Where(u => u.Email != null &&
+                string.Compare(u.Email, normalized, true) ==0);
             }
 
             if (!string.IsNullOrWhiteSpace(q))

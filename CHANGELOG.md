@@ -16,6 +16,57 @@ Cette convention est partagée avec le dépôt
 [`postit-debian`](https://forgejo.pschneider.fr/notazof/postit-debian)
 pour la production des paquets `.deb`.
 
+## [1.0.8-rc1] - unstable
+
+### Added
+- `BlogAclApiTests.PostCircleAuthorization_returns_201_when_payload_mirrors_PostIt_shape_against_existing_circle_named_test`
+  : test de non-régression qui épingle la forme exacte du payload
+  que PostIt envoie à `POST /api/v1/blogacl` (un objet
+  `PostAccessControlRulePayload` avec `CircleId` et `BlogPostId`).
+  C'est le verrou côté test du fix applicatif PostIt + serveur.
+- `BlogAclApiTests.PostCircleAuthorization_never_returns_500` : une
+  `[Theory]` couvrant quatre shapes de payload (`{ circleId }`,
+  corps vide, `{ blogPostId }` seul, `{ circleId, blogPostId: 0 }`)
+  qui doivent tous retourner un statut différent de 500. Toute
+  réintroduction d'un chemin 500 dans le futur fera rougir ce test.
+- `BlogAclApiTests.PostCircleAuthorization_dosent_return_500` et
+  `..._dosent_return_500_on_success` : entry points `[Fact]` qui
+  appellent la `[Theory]` ci-dessus avec un payload spécifique
+  chacun, pour pouvoir filtrer en isolation depuis la ligne de
+  commande ou le CI.
+- Règle « Pas de `object` dans le code source applicatif » ajoutée
+  à `CONTRIBUTING.md` : types de retour, paramètres, champs,
+  propriétés, variables locales doivent être typés statiquement.
+  `dynamic` est interdit pour les mêmes raisons.
+
+### Changed
+- `BlogAclApiController.CheckOwner` devient `CheckOwnerAsync` et
+  utilise `FirstOrDefaultAsync` au lieu de `First`, supprimant
+  l'appel LINQ synchrone sur le fil de la requête et retournant
+  `false` sur cercle manquant (le contrôleur mappe déjà cela vers
+  `ChallengeResult`).
+- `BlogsWebServerFixture` seed `alice`, son `Circle` et son
+  `BlogPost` une seule fois au démarrage du host, sur la
+  `SqliteConnection` partagée (`Cache=Shared`). Le précédent
+  `EnsureDeleted` au début de chaque test fermait la connexion
+  statique et détruisait le store `:memory:` pour tous les autres
+  `DbContext` ; il est retiré au profit d'un `EnsureCreated`
+  idempotent.
+
+### Fixed
+- `POST /api/v1/blogacl` ne retourne plus 500 sur les payloads
+  dont `BlogPostId` est absent ou à zéro. Le contrôleur rejette
+  `BlogPostId <= 0` avec `400 BadRequest` avant que la requête
+  n'atteigne `SaveChangesAsync`. L'incident de prod du 2026-08-21
+  sur mercure (PostIt envoyant seulement `circleId`, le serveur
+  voyant `BlogPostId = default(long) = 0` et EF Core levant
+  `InvalidOperationException` sur l'INSERT) n'est plus atteignable.
+- PostIt `PostAclDialogViewModel.AddAsync` envoie désormais le
+  payload explicite `PostAccessControlRulePayload { CircleId,
+  BlogPostId }` au lieu de l'ancien `CircleAuthorization {
+  CircleId }`. Le DTO serveur `PostAccessControlRulePayload` est
+  introduit dans `Yavsc.Abstract` pour porter le contrat.
+
 ## [1.0.7] - preview
 
 ### Added
@@ -119,6 +170,7 @@ pour la production des paquets `.deb`.
   the same user-visible switch without a schema change.
 
 [Unreleased]: https://github.com/pazof/yavsc/compare/HEAD
+[1.0.8-rc1]: https://github.com/pazof/yavsc/compare/1.0.7...1.0.8-rc1
 [1.0.7]: https://github.com/pazof/yavsc/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/pazof/yavsc/compare/1.0.5...1.0.6
 

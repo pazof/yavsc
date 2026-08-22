@@ -9,7 +9,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/ChatRoomAccessApi")]
+    [Route(Constants.APIPrefix + "/ChatRoomAccessApi")]
     public class ChatRoomAccessApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -37,7 +37,7 @@ namespace Yavsc.Controllers
 
             ChatRoomAccess chatRoomAccess = await _context.ChatRoomAccess.SingleAsync(m => m.ChannelName == id);
 
-            
+
 
             if (chatRoomAccess == null)
             {
@@ -46,13 +46,13 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != chatRoomAccess.UserId && uid != chatRoomAccess.Room.OwnerId
-             && ! User.IsInMsRole(YavscConstants.AdminGroupName))
-           
+             && ! User.IsInMsRole(Constants.AdminGroupName))
+
             {
                 ModelState.AddModelError("UserId","get refused");
                 return BadRequest(ModelState);
             }
-            
+
             return Ok(chatRoomAccess);
         }
 
@@ -72,7 +72,7 @@ namespace Yavsc.Controllers
             }
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
 
-            if (uid != room.OwnerId && ! User.IsInMsRole(YavscConstants.AdminGroupName))
+            if (uid != room.OwnerId && ! User.IsInMsRole(Constants.AdminGroupName))
             {
                 ModelState.AddModelError("ChannelName", "access put refused");
                 return BadRequest(ModelState);
@@ -110,7 +110,7 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
-            if (room == null || (uid != room.OwnerId && ! User.IsInMsRole(YavscConstants.AdminGroupName)))
+            if (room == null || (uid != room.OwnerId && ! User.IsInMsRole(Constants.AdminGroupName)))
             {
                 ModelState.AddModelError("ChannelName", "access post refused");
                 return BadRequest(ModelState);
@@ -154,7 +154,7 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var room = _context.ChatRoom.First(channel => channel.Name == chatRoomAccess.ChannelName );
-            if (room == null || (uid != room.OwnerId  && chatRoomAccess.UserId != uid && ! User.IsInMsRole(YavscConstants.AdminGroupName)))
+            if (room == null || (uid != room.OwnerId  && chatRoomAccess.UserId != uid && ! User.IsInMsRole(Constants.AdminGroupName)))
             {
                 ModelState.AddModelError("UserId", "access drop refused");
                 return BadRequest(ModelState);

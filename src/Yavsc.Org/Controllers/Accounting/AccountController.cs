@@ -90,7 +90,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                 "ConfirmYourAccountTitle"
                 })
                 Debug.Assert(!_localizer[name].ResourceNotFound);
-            
+
         }
 
 
@@ -116,7 +116,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                             {
                                 await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
 
-                                // only set explicit expiration here if user chooses "remember me". 
+                                // only set explicit expiration here if user chooses "remember me".
                                 // otherwise we rely upon expiration configured in cookie middleware.
                                 await HttpContext.SignInAsync(user, _roleManager, model.RememberMe, _dbContext);
                                 var authResult = await HttpContext.AuthenticateAsync();
@@ -198,7 +198,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         /// <summary>
         /// Entry point into the login workflow
         /// </summary>
-        [HttpGet(YavscConstants.SigninPath)]
+        [HttpGet(Constants.SigninPath)]
         public async Task<IActionResult> Signin(SignInModel model)
         {
             // build a model so we know what to show on the login page
@@ -216,11 +216,11 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         /// <summary>
         /// Handle postback from username/password login
         /// </summary>
-        /// 
-        [HttpPost(YavscConstants.SigninPath)]
+        ///
+        [HttpPost(Constants.SigninPath)]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-  
+
         public async Task<IActionResult> Signin([FromForm] SignInModel model, [FromForm] string button)
         {
 
@@ -232,7 +232,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             {
                 if (context != null)
                 {
-                    // if the user cancels, send a result back into IdentityServer as if they 
+                    // if the user cancels, send a result back into IdentityServer as if they
                     // denied the consent (even if this client does not require consent).
                     // this will send back an access denied OIDC error response to the client.
                     await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
@@ -269,7 +269,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                     {
                         await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
 
-                        // only set explicit expiration here if user chooses "remember me". 
+                        // only set explicit expiration here if user chooses "remember me".
                         // otherwise we rely upon expiration configured in cookie middleware.
                         await HttpContext.SignInAsync(user, _roleManager, model.RememberMe, _dbContext);
 
@@ -396,7 +396,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                 var local = context.IdP == IdentityServer8.IdentityServerConstants.LocalIdentityProvider;
 
                 // this is meant to short circuit the UI and only trigger the one external IdP
-                
+
                 model.EnableLocalLogin = local;
                 model.UserName = context?.LoginHint;
                 model.IsExternalLoginOnly = false;
@@ -579,7 +579,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                     // Send an email with this link
 
                     Uri authority = new Uri(Config.Authority);
-                    
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account",
                     new { userId = user.Id, code },
@@ -659,7 +659,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         }
         //
         // POST: /Account/LogOff
-        [HttpPost(YavscConstants.LogoutPath)]
+        [HttpPost(Constants.LogoutPath)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOff(string returnUrl = null)
         {
@@ -829,7 +829,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             bool result = false;
             try
             {
-                result = await _userManager.VerifyTwoFactorTokenAsync(user, YavscConstants.DefaultFactor, code);
+                result = await _userManager.VerifyTwoFactorTokenAsync(user, Constants.DefaultFactor, code);
                 _dbContext.SaveChanges(userId);
             }
             catch (Exception ex)
@@ -1024,12 +1024,12 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             }
 
             // Generate the token and send it
-            if (model.SelectedProvider == YavscConstants.MobileAppFactor)
+            if (model.SelectedProvider == Constants.MobileAppFactor)
             {
                 return View("Error", new Exception("No mobile app service was activated"));
             }
             else
-                if (model.SelectedProvider == YavscConstants.SMSFactor)
+                if (model.SelectedProvider == Constants.SMSFactor)
                 {
                     return View("Error", new Exception("No SMS service was activated"));
                     // await _smsSender.SendSmsAsync(_twilioSettings, await _userManager.GetPhoneNumberAsync(user), message);

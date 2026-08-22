@@ -19,7 +19,7 @@ namespace Yavsc.Abstract.Identity
         /// </summary>
         /// <remarks>
         /// Le path retourné est aligné sur
-        /// <see cref="YavscConstants.AvatarsPath"/> (minuscule).
+        /// <see cref="Constants.AvatarsPath"/> (minuscule).
         /// Les anciens display templates utilisaient "/Avatars/"
         /// avec un S majuscule, en désaccord avec le path statique
         /// servi par le middleware de fichiers — les images ne
@@ -29,8 +29,8 @@ namespace Yavsc.Abstract.Identity
         public static string AvatarSrc(IApplicationUser? user)
         {
             if (user==null || string.IsNullOrWhiteSpace(user?.UserName))
-                return YavscConstants.DefaultAvatar;
-            return $"{YavscConstants.AvatarsPath}/{user!.UserName}.s.png";
+                return Constants.DefaultAvatar;
+            return $"{Constants.AvatarsPath}/{user!.UserName}.s.png";
         }
     }
 }

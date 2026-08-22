@@ -9,7 +9,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/ServiceApi")]
+    [Route(Constants.APIPrefix + "/ServiceApi")]
     public class ServiceApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -46,7 +46,7 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/ServiceApi/5
-        [HttpPut("{id}"),Authorize(YavscConstants.FrontOfficeGroupName)]
+        [HttpPut("{id}"),Authorize(Constants.FrontOfficeGroupName)]
         public IActionResult PutService(long id, [FromBody] Service service)
         {
             if (!ModelState.IsValid)
@@ -81,7 +81,7 @@ namespace Yavsc.Controllers
         }
 
         // POST: api/ServiceApi
-        [HttpPost,Authorize(YavscConstants.FrontOfficeGroupName)]
+        [HttpPost,Authorize(Constants.FrontOfficeGroupName)]
         public IActionResult PostService([FromBody] Service service)
         {
             if (!ModelState.IsValid)
@@ -110,7 +110,7 @@ namespace Yavsc.Controllers
         }
 
         // DELETE: api/ServiceApi/5
-        [HttpDelete("{id}"),Authorize(YavscConstants.FrontOfficeGroupName)]
+        [HttpDelete("{id}"),Authorize(Constants.FrontOfficeGroupName)]
         public IActionResult DeleteService(long id)
         {
             if (!ModelState.IsValid)

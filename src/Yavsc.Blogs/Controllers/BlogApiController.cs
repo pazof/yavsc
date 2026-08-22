@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Yavsc.Blogspot;
-using Yavsc.Models.Blog;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
-using static Yavsc.Blogs.Constants;
+using static Yavsc.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {
@@ -54,7 +53,7 @@ namespace Yavsc.Blogs.Controllers
 
         // PUT: api/BlogApi/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBlog(long id, [FromBody] BlogPost blog)
+        public async Task<IActionResult> PutBlog(long id, [FromBody] Models.Blog.BlogPost blog)
         {
             if (!ModelState.IsValid)
             {

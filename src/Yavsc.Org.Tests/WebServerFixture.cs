@@ -80,8 +80,8 @@ public sealed class WebServerFixture : WebHostFixture
         // can resolve it. The AddConfiguration extension takes care of
         // that plus the in-memory overrides below.
         builder.AddConfiguration(null).AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                [$"ConnectionStrings:{YavscConstants.YavscConnectionStringName}"] = "InMemory",
+        {
+                [$"ConnectionStrings:{Yavsc.Constants.YavscConnectionStringName}"] = "InMemory",
                 // SMTP test config: UserName non-null so MailSender
                 // exercises the Authenticate branch — the
                 // RecordingSmtpClient captures it.

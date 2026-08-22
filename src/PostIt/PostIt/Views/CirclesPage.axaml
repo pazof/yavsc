@@ -70,7 +70,7 @@
                                FontWeight="Bold"
                                VerticalAlignment="Center"/>
                     <Button Content="Ajouter un membre"
-                            Command="{Binding OpenAddMemberCommand}"/>
+                            Command="{Binding OpenAddMemberAsync}"/>
                 </StackPanel>
                 <ListBox Grid.Row="1"
                          ItemsSource="{Binding Members}">
