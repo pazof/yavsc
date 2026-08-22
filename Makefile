@@ -163,7 +163,7 @@ POSTIT_RID ?= android-x64
 EMU_HEADLESS ?= 0
 LOGCAT_LINES ?= 200
 LOGCAT_FOLLOW ?= 0
-LOGCAT_BOOT_WAIT ?= 5
+LOGCAT_BOOT_WAIT ?= 10
 
 POSTIT_ANDROID_CSPROJ := src/PostIt/PostIt.Android/PostIt.Android.csproj
 POSTIT_APK_DIR := src/PostIt/PostIt.Android/bin/$(CONFIG)/net10.0-android/$(POSTIT_RID)
@@ -225,6 +225,9 @@ qemu-install: qemu-build
 	@echo "  Installing $(POSTIT_APK) on $(ADB_SERIAL)..."
 	adb -s $(ADB_SERIAL) install -r "$(POSTIT_APK)"
 
+qemu-uninstall:
+	adb -s $(ADB_SERIAL) uninstall com.CompanyName.PostIt
+
 # Dump recent logcat output for the running PostIt.Android process.
 # By default, prints the last $(LOGCAT_LINES) lines (one-shot, with
 # `-d`). Set LOGCAT_FOLLOW=1 to follow the stream live instead.
@@ -244,9 +247,9 @@ qemu-logcat:
 	fi; \
 	echo "  Following PID $$PID (LOGCAT_FOLLOW=$(LOGCAT_FOLLOW), LOGCAT_LINES=$(LOGCAT_LINES))"; \
 	if [ "$(LOGCAT_FOLLOW)" = "1" ]; then \
-	    adb -s $(ADB_SERIAL) logcat -v time --pid=$$PID; \
+	    adb -s $(ADB_SERIAL) logcat -v time --pid=$$PID com.CompanyName.PostIt:F; \
 	else \
-	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES) --pid=$$PID; \
+	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES) --pid=$$PID com.CompanyName.PostIt:F; \
 	fi
 
 # Clear logcat, launch PostIt.Android, then dump everything that was
