@@ -39,3 +39,6 @@ DataDir/
 
 *.tests.trx
 *.tests.html
+
+*.log
+
