@@ -16,12 +16,6 @@ namespace PostIt;
     Url = "https://docs.avaloniaui.net/docs/concepts/view-locator")]
 public class ViewLocator : IDataTemplate
 {
-    private readonly IServiceProvider _services;
-
-    public ViewLocator(IServiceProvider services)
-    {
-        _services = services;
-    }
 
      public Control Build(object? data)
     {
@@ -38,15 +32,17 @@ public class ViewLocator : IDataTemplate
 
     private Control BuildCore(object? data)
     {
+        var app = App.Current as App;
+        var services = app!.ServiceProvider!;
         return data switch
         {
-            MainViewModel => _services.GetRequiredService<MainPage>(),
-            Settings => _services.GetRequiredService<SettingsPage>(),
-            HomePageViewModel => _services.GetRequiredService<HomePage>(),
-            SignaturePageViewModel => _services.GetRequiredService<SignaturePage>(),
-            AddCircleMemberDialogViewModel => _services.GetRequiredService<AddCircleMemberDialog>(),
-            CirclesPageViewModel => _services.GetRequiredService<CirclesPage>(),
-            PostAclDialogViewModel => _services.GetRequiredService<PostAclDialog>(),
+            MainViewModel => services.GetRequiredService<MainPage>(),
+            Settings => services.GetRequiredService<SettingsPage>(),
+            HomePageViewModel => services.GetRequiredService<HomePage>(),
+            SignaturePageViewModel => services.GetRequiredService<SignaturePage>(),
+            AddCircleMemberDialogViewModel => services.GetRequiredService<AddCircleMemberDialog>(),
+            CirclesPageViewModel => services.GetRequiredService<CirclesPage>(),
+            PostAclDialogViewModel => services.GetRequiredService<PostAclDialog>(),
             null => new TextBlock { Text = "No view for <null>" },
             _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };
