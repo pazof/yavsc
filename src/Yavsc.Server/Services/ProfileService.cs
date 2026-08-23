@@ -13,8 +13,8 @@ namespace Yavsc.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         public ProfileService(
-            UserManager<ApplicationUser> userManager, 
-            ILogger<DefaultProfileService> logger) 
+            UserManager<ApplicationUser> userManager,
+            ILogger<DefaultProfileService> logger)
         {
             _userManager = userManager;
         }
@@ -23,7 +23,7 @@ namespace Yavsc.Services
             ProfileDataRequestContext context,
             ApplicationUser user)
         {
-            
+
             var claims = new List<Claim> {
                 new Claim(JwtClaimTypes.Subject,user.Id.ToString()),
             };
@@ -43,7 +43,7 @@ namespace Yavsc.Services
                 claimAdds.Remove("profile");
                 claimAdds.Add(JwtClaimTypes.Name);
                 claimAdds.Add(JwtClaimTypes.Email);
-                claimAdds.Add(YavscConstants.RoleClaimType);
+                claimAdds.Add(Constants.RoleClaimType);
             }
 
             if (claimAdds.Contains(JwtClaimTypes.Name))
@@ -51,13 +51,13 @@ namespace Yavsc.Services
 
             if (claimAdds.Contains(JwtClaimTypes.Email))
                 claims.Add(new Claim(JwtClaimTypes.Email, user.Email));
-            
-            if (claimAdds.Contains(YavscConstants.RoleClaimType))
+
+            if (claimAdds.Contains(Constants.RoleClaimType))
             {
                 var roles = await this._userManager.GetRolesAsync(user);
                 if (roles.Count()>0)
                 {
-                    claims.AddRange(roles.Select(r => new Claim(YavscConstants.RoleClaimType, r)));
+                    claims.AddRange(roles.Select(r => new Claim(Constants.RoleClaimType, r)));
                 }
             }
             return claims;

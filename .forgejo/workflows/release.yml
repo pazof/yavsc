@@ -42,11 +42,6 @@ on:
         description: 'Tag à publier (requis en dispatch, ex. 1.0.6 ou 1.0.7-rc1).'
         required: true
         type: string
-      force_unstable:
-        description: 'Publier une release avec suffixe (ex. 1.0.0-rc1) malgré le fail-fast par défaut.'
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -62,7 +57,6 @@ jobs:
           # En push tag : github.ref_name est le tag.
           # En workflow_dispatch : on lit l'input 'tag'.
           TAG: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
-          FORCE_UNSTABLE: ${{ inputs.force_unstable || 'false' }}
         run: |
           if [[ -z "$TAG" ]]; then
             echo "::error::No tag provided. In workflow_dispatch, set the 'tag' input."
@@ -115,11 +109,16 @@ jobs:
 
           echo "Tag $TAG classifié comme channel=$CHANNEL"
 
-          # Fail-fast sur instable sauf opt-in explicite.
-          if [[ "$CHANNEL" == "unstable" && "${FORCE_UNSTABLE:-false}" != "true" ]]; then
-            echo "::error::Tag '$TAG' is unstable (suffix '$SUFFIX'). Refusing to publish."
-            echo "Set force_unstable=true via workflow_dispatch to override."
-            exit 1
+          # Seuls les suffixes explicitement autorisés déclenchent un
+          # release : -rcN et -betaN. Les autres suffixes (-alpha*,
+          # -dev*, -preview*, etc.) restent refusés — ils sont
+          # utilisables localement pour itérer, mais ne doivent pas
+          # être publiés comme release publique.
+          if [[ "$CHANNEL" == "unstable" ]]; then
+            if [[ ! "$SUFFIX" =~ ^-(rc|beta)([0-9]+)?$ ]]; then
+              echo "::error::Tag '$TAG' has suffix '$SUFFIX' which is not in the allowed release suffixes (-rcN, -betaN). Refusing to publish."
+              exit 1
+            fi
           fi
 
           # Lecture du CHANGELOG.md (doit exister à la racine du repo).

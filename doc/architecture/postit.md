@@ -129,30 +129,51 @@ le DI est construit. Ordre, dans cet ordre :
 ## Navigation
 
 Le host de navigation est un `NavigationPage x:Name="NavRoot"`
-posé sur `MainWindow.axaml`. La pile est gérée par les
-événements du `SessionStatusViewModel` :
+posé sur `MainWindow.axaml`. La pile est gérée par deux
+mécanismes distincts :
 
-| Événement                       | Effet                                                                  |
-|---------------------------------|------------------------------------------------------------------------|
-| `LoginSucceeded`                | `PushAsync(MainPage)` au-dessus de `HomePage`.                          |
-| `LogoutCompleted`               | `PopToRootAsync()` (revient à `HomePage`).                              |
-| `OpenSettingsRequested`         | `PushAsync(SettingsPage)` au-dessus de la page courante.                |
+1. **Nav utilisateur (VM-first)** : un ViewModel (souvent dans
+   une commande `[RelayCommand]`) appelle
+   `await ((App)App.Current!).PushPageAsync(targetVm).ConfigureAwait(true);`.
+   `App.PushPageAsync` (`src/PostIt/PostIt/App.axaml.cs`)
+   résout la `Control` correspondante via le `ViewLocator`
+   enregistré dans `Application.DataTemplates`, l'identifie
+   comme `Page`, lui assigne le VM comme `DataContext`, et
+   appelle `NavRoot.PushAsync(page)`. C'est le seul chemin
+   pour les boutons de la toolbar, les `OpenSettings` /
+   `OpenCircles` / `ManageAcl` / `OpenSignatureDev`, et
+   toute autre nav déclenchée par un ViewModel.
+
+2. **Signaux de cycle de vie** : le `SessionStatusViewModel`
+   lève des événements consommés dans
+   `App.OnFrameworkInitializationCompleted` pour orchestrer
+   la nav de boot :
+
+   | Événement           | Effet                                                            |
+   |---------------------|------------------------------------------------------------------|
+   | `LoginSucceeded`    | `PushAsync(MainPage)` au-dessus de `HomePage` (post-login).      |
+   | `LogoutCompleted`   | `PopToRootAsync()` (revient à `HomePage`).                        |
+
+   Ces events ne sont **pas** un canal de nav utilisateur ; ils
+   portent une transition d'état applicatif (authentification
+   établie / perdue) et c'est `App` qui choisit d'en faire une
+   transition de pile.
 
 ### Garde anti-empilement
 
 `NavigationPage.PushAsync` n'est pas idempotent : pousser deux
 fois la même instance l'empile deux fois, et l'utilisateur doit
-taper **Retour** N fois pour sortir. Le handler
-`OpenSettingsRequested` est gardé pour bloquer ce cas :
+taper **Retour** N fois pour sortir. La garde est implémentée
+dans `App.PushPageAsync` (et consommée par tous les chemins
+de nav utilisateur) :
 
 ```csharp
-var settingsPage = provider.GetRequiredService<SettingsPage>();
-var stack = w.NavRoot.NavigationStack;
-if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], settingsPage))
+var stack = window.NavRoot.NavigationStack;
+if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], page))
 {
-    return;  // déjà au sommet, no-op silencieux
+    return Task.CompletedTask;  // déjà au sommet, no-op silencieux
 }
-_ = w.NavRoot.PushAsync(settingsPage);
+return window.NavRoot.PushAsync(page);
 ```
 
 La comparaison est par référence, pas par type : on ne veut
@@ -178,9 +199,11 @@ qui ne tiendrait plus).
 - `SessionStatusViewModel` est le seul VM avec une durée de vie
   **process-entière** (singleton). Il survit à toutes les
   navigations, expose `HasValidSession` en continu, et porte
-  les trois événements qui pilotent la navigation
-  (`LoginSucceeded`, `LogoutCompleted`,
-  `OpenSettingsRequested`).
+  les événements de cycle de vie consommés par `App` pour
+  orchestrer la nav de boot (`LoginSucceeded`,
+  `LogoutCompleted`). La nav utilisateur déclenchée par
+  l'utilisateur passe par `App.PushPageAsync(vm)`, pas par
+  un événement du `SessionStatusViewModel`.
 
 - `MainPageViewModel` / `HomePageViewModel` /
   `SignaturePageViewModel` sont `Transient` — une nouvelle
@@ -233,10 +256,14 @@ pour `[RelayCommand]`".
   `ViewLocator.Build`. Oublier le `ViewLocator` est silencieux
   (juste un TextBlock "No view for X"), pas une exception.
 - **Ajouter un événement global de navigation** (par ex.
-  "Push après payment success") : passer par un événement sur
-  un VM singleton (cf. `SessionStatusViewModel.OpenSettingsRequested`),
-  pas par une référence à `MainWindow` depuis le VM. Garder
-  les VMs découplés du `IClassicDesktopStyleApplicationLifetime`.
+  "Push après payment success") : ne pas capturer `MainWindow`
+  ni `NavigationPage` depuis le VM. La nav passe par
+  `App.PushPageAsync(vm)` dans tous les cas : soit le VM
+  appelle la méthode directement depuis une commande
+  (`[RelayCommand]`), soit un handler abonné à un événement
+  d'un singleton (cf. `SessionStatusViewModel`) l'appelle.
+  Garder les VMs découplés du
+  `IClassicDesktopStyleApplicationLifetime`.
 - **Modifier l'OIDC** : la fiche à lire est
   [postit-oidc.md](postit-oidc.md), pas celle-ci. Cette fiche
   ne ré-explique ni le flow, ni le pipe, ni le custom scheme.

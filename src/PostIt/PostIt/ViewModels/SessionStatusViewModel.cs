@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 
 namespace PostIt.ViewModels;
@@ -31,15 +32,6 @@ public partial class SessionStatusViewModel : ViewModelBase
     /// <c>App.axaml.cs</c> listens and pushes <c>MainPage</c> on top of
     /// <c>HomePage</c> so the user lands on the blog editor.</summary>
     public event System.Action? LoginSucceeded;
-
-    /// <summary>Raised when the user clicks the "Paramètres" button on
-    /// the session banner. <c>App.axaml.cs</c> listens and pushes
-    /// <c>SettingsPage</c> (resolved from DI, bound to the canonical
-    /// <c>Settings</c> singleton) on top of the current navigation
-    /// stack. Same event pattern as <see cref="LogoutCompleted"/> and
-    /// <see cref="LoginSucceeded"/> so the VM stays decoupled from
-    /// <c>NavigationPage</c> / window lifetime.</summary>
-    public event System.Action? OpenSettingsRequested;
 
     [ObservableProperty]
     public partial bool IsLoggedIn { get; private set; }
@@ -144,9 +136,10 @@ public partial class SessionStatusViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async System.Threading.Tasks.Task OpenSettingsCommand()
+    internal async Task OpenSettings()
     {
-        OpenSettingsRequested?.Invoke();
-        await System.Threading.Tasks.Task.CompletedTask;
+        var app = (App)App.Current!;
+        await app.PushPageAsync(app.ServiceProvider.GetRequiredService<Settings>()).ConfigureAwait(true);
     }
+
 }

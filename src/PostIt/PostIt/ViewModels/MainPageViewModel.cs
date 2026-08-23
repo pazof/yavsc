@@ -2,11 +2,14 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using PostIt.Services;
+using PostIt.Views;
 
 namespace PostIt.ViewModels;
 
@@ -47,9 +50,6 @@ public partial class MainPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool DraftIsPublished { get; set; }
 
-    [ObservableProperty]
-    public partial ViewModelBase? CurrentViewModel { get; set; }
-
     public Settings SettingsModel { get; }
 
     [ObservableProperty]
@@ -81,8 +81,45 @@ public partial class MainPageViewModel : ViewModelBase
     /// </summary>
     public BlogApiClient? BlogClient { get; }
 
+    /// <summary>
+    /// DI container the VM uses to resolve navigation targets
+    /// (other ViewModels) when the user clicks a toolbar button
+    /// that opens a sub-screen. Owned by <c>App.ServiceProvider</c>
+    /// in production; injected directly in tests. The VM resolves
+    /// <em>ViewModels</em> via this provider, never Views — the
+    /// actual <see cref="Control"/> to push is decided by
+    /// <see cref="ViewLocator"/> at bind time, per CONTRIBUTING.md
+    /// §"Navigation (PostIt)".
+    /// </summary>
+    public IServiceProvider? Services { get; }
+
+    private SignaturePageViewModel? _signatureModel;
+
+    /// <summary>
+    /// Resolved on first access. Lazy so the test path (which
+    /// never pushes <c>SignaturePage</c>) does not require a
+    /// fully-built DI graph just to construct the VM. Mirrors the
+    /// pattern of <see cref="SettingsModel"/> for the Settings case.
+    /// </summary>
+    public SignaturePageViewModel SignatureModel =>
+        _signatureModel ??= ResolveSignatureModel();
+
     public override bool CanNavigateNext { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
     public override bool CanNavigatePrevious { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
+
+    private SignaturePageViewModel ResolveSignatureModel()
+    {
+        var sp = ResolveServices();
+        return sp.GetRequiredService<SignaturePageViewModel>();
+    }
+
+    private IServiceProvider ResolveServices()
+    {
+        return Services ?? (Application.Current as App)?.ServiceProvider ??
+            throw new InvalidOperationException(
+                "No IServiceProvider available for navigation. Inject one in tests " +
+                "or ensure App.ServiceProvider is initialized in production.");
+    }
 
 
     public MainPageViewModel()
@@ -115,21 +152,33 @@ public partial class MainPageViewModel : ViewModelBase
         DraftTitle = string.Empty;
         DraftArticle = string.Empty;
         DraftIsPublished = false;
-        CurrentViewModel = this;
     }
+
+    /// <summary>Save is enabled as soon as the user has typed
+    /// a non-whitespace title in the editor, regardless of
+    /// whether a post is selected. The "no selection" case is
+    /// the create-new-post path; the "with selection" case is
+    /// the update path. Both read from the editor buffer.
+    /// Previously this also required <c>SelectedPost is not null</c>
+    /// — which contradicted the create-new-post intent and
+    /// forced the buggy "draft with empty title" branch.</summary>
+    private bool CanSave() => !IsBusy && !string.IsNullOrWhiteSpace(DraftTitle);
+    private bool CanDelete() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
+    private bool CanManageAcl() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
 
     /// <summary>
     /// Test-friendly constructor: caller supplies a pre-built
     /// <see cref="BlogApiClient"/>. Production code uses the
     /// (Settings, BlogApiClient) overload below.
     /// </summary>
-    public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null)
+    public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null, IServiceProvider? services = null)
     {
-         SettingsModel = new Settings();
-        BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient));;
+        SettingsModel = new Settings();
+        BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient)); ;
+        Services = services;
 
         Init(settings);
-        }
+    }
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
 
@@ -297,10 +346,30 @@ public partial class MainPageViewModel : ViewModelBase
         });
     }
 
+    /// <summary>
+    /// DEV ONLY: open the signature capture page. The production
+    /// entry point is a SignalR push from Yavsc.Org ("devis
+    /// received, sign here"); this command is the dev-time
+    /// shortcut to reach the page without that infrastructure.
+    /// Aligned on the same VM-first navigation pattern as
+    /// <see cref="OpenSettings"/>: the VM resolves the target VM
+    /// through <see cref="Services"/>, the <c>ViewLocator</c> picks
+    /// the matching <c>Control</c> at bind time. No
+    /// <c>Click</code> handler, no <c>App.ServiceProvider</c>
+    /// access from the view layer.
+    /// </summary>
     [RelayCommand]
-    internal void OpenSettings()
+    internal async Task OpenSignatureDev()
     {
-        CurrentViewModel = SettingsModel;
+        await ((App)App.Current!).PushPageAsync(SignatureModel).ConfigureAwait(true);
+    }
+
+    private ViewModelBase GetACLViewModel(BlogPostDto selectedPost)
+    {
+        var sp = ResolveServices();
+        var aclClient = sp.GetRequiredService<BlogAclApiClient>();
+        var circleClient = sp.GetRequiredService<CircleApiClient>();
+        return new PostAclDialogViewModel(selectedPost, aclClient, circleClient);
     }
 
     private async Task RefreshPostsAsync()
@@ -363,42 +432,23 @@ public partial class MainPageViewModel : ViewModelBase
         DeleteCommand.NotifyCanExecuteChanged();
     }
 
-    /// <summary>Save is enabled as soon as the user has typed
-    /// a non-whitespace title in the editor, regardless of
-    /// whether a post is selected. The "no selection" case is
-    /// the create-new-post path; the "with selection" case is
-    /// the update path. Both read from the editor buffer.
-    /// Previously this also required <c>SelectedPost is not null</c>
-    /// — which contradicted the create-new-post intent and
-    /// forced the buggy "draft with empty title" branch.</summary>
-    private bool CanSave() => !IsBusy && !string.IsNullOrWhiteSpace(DraftTitle);
-    private bool CanDelete() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
-    private bool CanManageAcl() => SelectedPost is not null && SelectedPost.Id != 0 && !IsBusy;
 
-    /// <summary>
-    /// Raised when the user asks to open the "manage ACL" dialog for
-    /// the currently selected post. The <c>MainPage</c> code-behind
-    /// listens to this event and pushes a <c>PostAclDialog</c> on the
-    /// navigation stack. The VM itself can't navigate directly
-    /// because the navigation surface (<c>NavigationPage</c>) lives
-    /// in the View layer.
-    /// </summary>
-    public event EventHandler<BlogPostDto>? ManageAclRequested;
 
     [RelayCommand(CanExecute = nameof(CanManageAcl))]
-    public void ManageAcl()
+    public async Task ManageAcl()
     {
-        if (SelectedPost is null) return;
-        ManageAclRequested?.Invoke(this, SelectedPost);
+        if (SelectedPost is null)
+        {
+            StatusMessage = "Select an existing post before managing ACL.";
+            return;
+        }
+        await ((App)App.Current!).PushPageAsync(GetACLViewModel(SelectedPost)).ConfigureAwait(true);
     }
 
-    /// <summary>
-    /// Raised when the user asks to open the circles page (full
-    /// CRUD on their own circles). Same routing as
-    /// <see cref="ManageAclRequested"/>.
-    /// </summary>
-    public event EventHandler? OpenCirclesRequested;
-
     [RelayCommand]
-    public void OpenCircles() => OpenCirclesRequested?.Invoke(this, EventArgs.Empty);
+    public async Task OpenCircles()
+    {
+        var circlesVm = ResolveServices().GetRequiredService<CirclesPageViewModel>();
+        await ((App)App.Current!).PushPageAsync(circlesVm).ConfigureAwait(true);
+    }
 }

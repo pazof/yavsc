@@ -20,10 +20,10 @@ namespace Yavsc.Controllers
         readonly IHtmlLocalizer _localizer;
 
         private SiteSettings siteSettings;
-        public HomeController(ILogger<HomeController> logger, 
-        IHtmlLocalizer<HomeController> localizer, 
+        public HomeController(ILogger<HomeController> logger,
+        IHtmlLocalizer<HomeController> localizer,
         ApplicationDbContext context,
-        IOptions<SiteSettings> settingsOptions, 
+        IOptions<SiteSettings> settingsOptions,
         IWebHostEnvironment env
         )
         {
@@ -37,9 +37,9 @@ namespace Yavsc.Controllers
 
         public async Task<IActionResult> Index(string id)
         {
-            ViewBag.IsFromSecureProx = Request.Headers.ContainsKey(YavscConstants.SshHeaderKey) && Request.Headers[YavscConstants.SshHeaderKey] == "on";
+            ViewBag.IsFromSecureProx = Request.Headers.ContainsKey(Constants.SshHeaderKey) && Request.Headers[Constants.SshHeaderKey] == "on";
             ViewBag.SecureHomeUrl = "https://" + Request.Headers["X-Forwarded-Host"];
-            ViewBag.SshHeaderKey = Request.Headers[YavscConstants.SshHeaderKey];
+            ViewBag.SshHeaderKey = Request.Headers[Constants.SshHeaderKey];
             var uid = User.GetUserId();
             long[] clicked = null;
             if (uid == null)
@@ -140,8 +140,8 @@ namespace Yavsc.Controllers
                 errorViewModel.Description ??= string.Empty;
                 errorViewModel.Description += " Page: Home.";
             }
-    
-          
+
+
             return View("~/Views/Shared/Error.cshtml", errorViewModel);
         }
         public IActionResult Status(int id)

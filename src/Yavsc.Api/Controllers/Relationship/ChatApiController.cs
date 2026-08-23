@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 namespace Yavsc.Controllers
 {
 
-    [Route("api/chat")]
+    [Route(Constants.APIPrefix + "/chat")]
     public class ChatApiController : Controller
     {
         readonly ApplicationDbContext dbContext;
         readonly UserManager<ApplicationUser> userManager;
         private readonly IConnexionManager _cxManager;
         public ChatApiController(ApplicationDbContext dbContext,
-        UserManager<ApplicationUser> userManager, 
+        UserManager<ApplicationUser> userManager,
         IConnexionManager cxManager)
         {
             this.dbContext = dbContext;

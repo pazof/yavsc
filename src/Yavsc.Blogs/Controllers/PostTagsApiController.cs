@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using static Yavsc.Blogs.Constants;
+using static Yavsc.Constants;
 
 namespace Yavsc.Blogs.Controllers
 {

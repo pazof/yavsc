@@ -9,7 +9,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/EstimateTemplatesApi")]
+    [Route(Constants.APIPrefix + "/EstimateTemplatesApi")]
     public class EstimateTemplatesApiController : Controller
     {
         private ApplicationDbContext _context;
@@ -62,7 +62,7 @@ namespace Yavsc.Controllers
             }
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (estimateTemplate.OwnerId!=uid)
-            if (!User.IsInRole(YavscConstants.AdminGroupName))
+            if (!User.IsInRole(Constants.AdminGroupName))
             return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             _context.Entry(estimateTemplate).State = EntityState.Modified;
@@ -132,7 +132,7 @@ namespace Yavsc.Controllers
             }
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (estimateTemplate.OwnerId!=uid)
-            if (!User.IsInRole(YavscConstants.AdminGroupName))
+            if (!User.IsInRole(Constants.AdminGroupName))
             return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             _context.EstimateTemplates.Remove(estimateTemplate);

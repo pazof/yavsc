@@ -10,7 +10,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/blacklist"), Authorize]
+    [Route(Constants.APIPrefix + "/blacklist"), Authorize]
     public class BlackListApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -50,8 +50,8 @@ namespace Yavsc.Controllers
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (uid != blackListed.OwnerId)
-                if (!User.IsInRole(YavscConstants.AdminGroupName))
-                    if (!User.IsInRole(YavscConstants.FrontOfficeGroupName))
+                if (!User.IsInRole(Constants.AdminGroupName))
+                    if (!User.IsInRole(Constants.FrontOfficeGroupName))
                         return false;
             return true;
         }
@@ -140,7 +140,7 @@ namespace Yavsc.Controllers
 
             if (!CheckPermission(blackListed))
                 return BadRequest();
-                
+
             _context.BlackListed.Remove(blackListed);
             _context.SaveChanges(User.GetUserId());
 

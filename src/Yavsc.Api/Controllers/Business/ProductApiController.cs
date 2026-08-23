@@ -9,7 +9,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/ProductApi")]
+    [Route(Constants.APIPrefix + "/ProductApi")]
     public class ProductApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -46,7 +46,7 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/ProductApi/5
-        [HttpPut("{id}"),Authorize(YavscConstants.FrontOfficeGroupName)]
+        [HttpPut("{id}"),Authorize(Constants.FrontOfficeGroupName)]
         public IActionResult PutProduct(long id, [FromBody] Product product)
         {
             if (!ModelState.IsValid)
@@ -81,7 +81,7 @@ namespace Yavsc.Controllers
         }
 
         // POST: api/ProductApi
-        [HttpPost,Authorize(YavscConstants.FrontOfficeGroupName)]
+        [HttpPost,Authorize(Constants.FrontOfficeGroupName)]
         public IActionResult PostProduct([FromBody] Product product)
         {
             if (!ModelState.IsValid)
@@ -110,7 +110,7 @@ namespace Yavsc.Controllers
         }
 
         // DELETE: api/ProductApi/5
-        [HttpDelete("{id}"),Authorize(YavscConstants.FrontOfficeGroupName)]
+        [HttpDelete("{id}"),Authorize(Constants.FrontOfficeGroupName)]
         public IActionResult DeleteProduct(long id)
         {
             if (!ModelState.IsValid)

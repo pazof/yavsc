@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PostIt.Services;
+using PostIt.Views;
 using Yavsc.Api.Client;
 
 namespace PostIt.ViewModels;
@@ -106,7 +107,7 @@ public partial class AddCircleMemberDialogViewModel : ViewModelBase
     /// UI from firing an event with a null payload.
     /// </summary>
     [RelayCommand]
-    public void Add()
+    public async Task AddAsync()
     {
         if (Selected is null)
         {
@@ -114,5 +115,14 @@ public partial class AddCircleMemberDialogViewModel : ViewModelBase
             return;
         }
         Confirmed?.Invoke(this, Selected);
+        var app = App.Current as App;
+        await app.GoBackAsync();
+    }
+
+    [RelayCommand]
+    public async Task CloseAsync()
+    {
+        var app = App.Current as App;
+        await app.GoBackAsync();
     }
 }

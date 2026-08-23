@@ -8,7 +8,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/bursherprofiles")]
+    [Route(Constants.APIPrefix + "/bursherprofiles")]
     public class BursherProfilesApiController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -57,7 +57,7 @@ namespace Yavsc.Controllers
             {
                 return BadRequest();
             }
-            
+
             if (id != User.GetUserId())
             {
                 return BadRequest();
