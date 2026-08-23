@@ -16,7 +16,7 @@ public class PostItViewModelTests
         // throws on any call (we never call the API in this test).
         var fakeApi = new ThrowingYavscApiClient();
         var blog = new BlogApiClient(fakeApi, "http://localhost/");
-        var viewModel = new MainPageViewModel(blog);
+        var viewModel = new MainViewModel(blog);
 
         viewModel.Posts.Add(new BlogPostDto { Id = 1, Title = "First post", Article = "Hello world", AuthorId = "alice" });
         viewModel.Posts.Add(new BlogPostDto { Id = 2, Title = "Second post", Article = "Nothing here", AuthorId = "bob" });

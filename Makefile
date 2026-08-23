@@ -165,9 +165,10 @@ LOGCAT_LINES ?= 200
 LOGCAT_FOLLOW ?= 0
 LOGCAT_BOOT_WAIT ?= 30
 
+ANDROID_PACKAGE_NAME = fr.pschneider.PostIt
 POSTIT_ANDROID_CSPROJ := src/PostIt/PostIt.Android/PostIt.Android.csproj
 POSTIT_APK_DIR := src/PostIt/PostIt.Android/bin/$(CONFIG)/net10.0-android/$(POSTIT_RID)
-POSTIT_APK := $(POSTIT_APK_DIR)/fr.pschneider.PostIt-Signed.apk
+POSTIT_APK := $(POSTIT_APK_DIR)/$(ANDROID_PACKAGE_NAME)-Signed.apk
 
 qemu-run:
 	@echo "  Starting AVD $(AVD_NAME) on $(ADB_SERIAL)..."
@@ -227,12 +228,12 @@ qemu-install: qemu-build
 	adb -s $(ADB_SERIAL) install -r "$(POSTIT_APK)" -r
 
 qemu-uninstall:
-	adb -s $(ADB_SERIAL) uninstall fr.pschneider.PostIt
+	adb -s $(ADB_SERIAL) uninstall $(ANDROID_PACKAGE_NAME)
 
 # Dump recent logcat output for the running PostIt.Android process.
 # By default, prints the last $(LOGCAT_LINES) lines (one-shot, with
 # `-d`). Set LOGCAT_FOLLOW=1 to follow the stream live instead.
-# Filtering is by PID (pidof fr.pschneider.PostIt), not by tag,
+# Filtering is by PID (pidof $(ANDROID_PACKAGE_NAME)), not by tag,
 # because Mono/Xamarin can emit logs under several tags
 # (mono, PostIt.Android, Avalonia.Android) and tag-based filtering
 # would miss the ones not matching. PID-based filtering is exact.
@@ -240,17 +241,17 @@ qemu-uninstall:
 # silently with no output; that is the expected behaviour for
 # "no logs yet".
 qemu-logcat:
-	@PID=$$(adb -s $(ADB_SERIAL) shell pidof fr.pschneider.PostIt 2>/dev/null | tr -d '\r\n'); \
+	@PID=$$(adb -s $(ADB_SERIAL) shell pidof $(ANDROID_PACKAGE_NAME) 2>/dev/null | tr -d '\r\n'); \
 	if [ -z "$$PID" ]; then \
-	    echo "  fr.pschneider.PostIt is not running on $(ADB_SERIAL)."; \
-	    echo "  Start the app first (am start -n fr.pschneider.PostIt/PostIt.Android.PostItMainActivity)"; \
+	    echo "  $(ANDROID_PACKAGE_NAME) is not running on $(ADB_SERIAL)."; \
+	    echo "  Start the app first (am start -n $(ANDROID_PACKAGE_NAME)/PostIt.Android.PostItMainActivity)"; \
 	    exit 1; \
 	fi; \
 	echo "  Following PID $$PID (LOGCAT_FOLLOW=$(LOGCAT_FOLLOW), LOGCAT_LINES=$(LOGCAT_LINES))"; \
 	if [ "$(LOGCAT_FOLLOW)" = "1" ]; then \
-	    adb -s $(ADB_SERIAL) logcat -v time --pid=$$PID fr.pschneider.PostIt:F; \
+	    adb -s $(ADB_SERIAL) logcat -v time --pid=$$PID $(ANDROID_PACKAGE_NAME):F; \
 	else \
-	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES) --pid=$$PID fr.pschneider.PostIt:F; \
+	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES) --pid=$$PID $(ANDROID_PACKAGE_NAME):F; \
 	fi
 
 # Clear logcat, launch PostIt.Android, then dump everything that was
@@ -264,13 +265,13 @@ LOGCAT_BOOT_WAIT ?= 15
 qemu-logcat-boot:
 	@echo "  Clearing logcat buffer..."
 	adb -s $(ADB_SERIAL) logcat -c
-	@echo "  Launching fr.pschneider.PostIt..."
+	@echo "  Launching $(ANDROID_PACKAGE_NAME)..."
 	adb -s $(ADB_SERIAL) shell am start \
-	    -n fr.pschneider.PostIt/PostIt.Android.PostItMainActivity
+	    -n $(ANDROID_PACKAGE_NAME)/PostIt.Android.PostItMainActivity
 	@echo "  Waiting $(LOGCAT_BOOT_WAIT)s for the app to start rendering..."
 	@sleep $(LOGCAT_BOOT_WAIT)
 	@echo "  Dumping logcat (PostIt PID + system buffer):"
-	@PID=$$(adb -s $(ADB_SERIAL) shell pidof fr.pschneider.PostIt 2>/dev/null | tr -d '\r\n'); \
+	@PID=$$(adb -s $(ADB_SERIAL) shell pidof $(ANDROID_PACKAGE_NAME) 2>/dev/null | tr -d '\r\n'); \
 	if [ -n "$$PID" ]; then \
 	    echo "  (PID $$PID at dump time)"; \
 	    adb -s $(ADB_SERIAL) logcat -d -v time --pid=$$PID; \

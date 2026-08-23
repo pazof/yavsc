@@ -10,19 +10,22 @@
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
   </PropertyGroup>
+
   <ItemGroup>
     <AndroidResource Include="Icon.png">
       <Link>Resources\drawable\Icon.png</Link>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PostIt\PostIt.csproj" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia.Android" />
     <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" />
-    <PackageReference Include="Avalonia.Browser" />
     <PackageReference Include="Xamarin.AndroidX.Browser" />
-    <PackageReference Include="IdentityModel.OidcClient" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Common" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PostIt\PostIt.csproj" />
   </ItemGroup>
 </Project>

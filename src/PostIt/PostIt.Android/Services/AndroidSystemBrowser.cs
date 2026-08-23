@@ -40,9 +40,9 @@ public sealed class AndroidSystemBrowser : IBrowser
         var callbackTask = MainActivity.AndroidOidcCallbackSink.AwaitNextCallbackAsync();
 
         var tabsIntent = new CustomTabsIntent.Builder()
-            .SetShowTitle(true)
+            .SetShowTitle(true)!
             .Build();
-        tabsIntent.LaunchUrl(_activity, uri);
+        tabsIntent!.LaunchUrl(_activity, uri);
 
         string responseUri;
         try
