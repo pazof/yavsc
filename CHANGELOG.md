@@ -19,6 +19,21 @@ pour la production des paquets `.deb`.
 ## [1.0.8-rc1] - unstable
 
 ### Added
+
+* a code cleanup
+* a failling a disabled test ala Xamarin.UITest : the Android app stil doesn't starts
+
+### Changed
+
+moslty nothing
+
+### Fixed
+
+nothing
+
+## [1.0.8-rc1] - unstable
+
+### Added
 - `BlogAclApiTests.PostCircleAuthorization_returns_201_when_payload_mirrors_PostIt_shape_against_existing_circle_named_test`
   : test de non-régression qui épingle la forme exacte du payload
   que PostIt envoie à `POST /api/v1/blogacl` (un objet
