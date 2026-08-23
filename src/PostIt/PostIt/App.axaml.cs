@@ -27,7 +27,7 @@ public partial class App : Application
     /// <c>DataValidationErrors.SetErrors</c>.
     /// </summary>
     public IServiceProvider? ServiceProvider { get; private set; }
-    private MainWindow window;
+
     public App()
     {
     }
@@ -35,6 +35,9 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+#if DEBUG
+        this.AttachDeveloperTools();
+#endif
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -52,8 +55,6 @@ public partial class App : Application
         this.ServiceProvider = BuildServices(new ServiceCollection());
         AttachServiceProvider(ServiceProvider);
         var settings = ServiceProvider.GetRequiredService<Settings>();
-        var sessionStatus = ServiceProvider.GetRequiredService<SessionStatusViewModel>();
-        var api = ServiceProvider.GetRequiredService<YavscApiClient>();
 
         DataTemplates.Clear();
         DataTemplates.Add(new ViewLocator(ServiceProvider));
@@ -85,47 +86,44 @@ public partial class App : Application
             }
         };
 
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var homeVm = ServiceProvider.GetRequiredService<HomePageViewModel>();
-
-            window = new MainWindow();
-            window.SessionBanner.DataContext = sessionStatus;
-
-            // Build the navigation stack from scratch: HomePage is the
-            // root in both cases. App.BootAsync will push MainPage on
-            // top if the silent refresh succeeds.
-            desktop.MainWindow = window;
-            _ = PushPageAsync(homeVm);
-
-            // When the user logs out, route back to HomePage. We
-            // ReplaceAsync the current top so we don't grow the stack
-            // on every logout — otherwise repeated login/logout would
-            // eventually balloon the back history.
-            sessionStatus.LogoutCompleted += () =>
-            {
-                var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
-                var nav = w.NavRoot;
-                _ = nav.PopToRootAsync();
-            };
-
-            // When the user signs in interactively (Login button on
-            // the session banner), push MainPage on top of HomePage.
-            sessionStatus.LoginSucceeded += () =>
-            {
-                var w = (MainWindow)((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow!;
-                _ = PushMainPageAsync();
-            };
-
-            window.Opened += async (_, _) => await BootAsync(this.ServiceProvider, api);
+            desktop.MainWindow = CreateMainWindow();
         }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+        else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
         {
-            singleView.MainView = new MainWindow
-            {
-                DataContext = ServiceProvider.GetRequiredService<HomePageViewModel>()
-            };
+            singleViewFactoryApplicationLifetime.MainViewFactory = () => CreateMainWindow();
         }
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+        {
+            singleViewPlatform.MainView = CreateMainWindow();
+        }
+        base.OnFrameworkInitializationCompleted();
+    }
+
+    MainWindow window;
+    private MainWindow CreateMainWindow()
+    {
+        window = new MainWindow();
+        var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
+        window.Opened += async (_, _) => await BootAsync(this.ServiceProvider!, api);
+          var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
+        sessionStatus.LogoutCompleted += () =>
+        {
+            window.NavRoot.PopToRootAsync();
+        };
+
+        sessionStatus.LoginSucceeded += () =>
+        {
+            PushMainPageAsync();
+        };
+
+        var homeVm = ServiceProvider!.GetRequiredService<HomePageViewModel>();
+
+        this.PushPageAsync(homeVm).Wait();
+        window.SessionBanner.DataContext = sessionStatus;
+        return window;
     }
 
     /// <summary>
@@ -155,7 +153,6 @@ public partial class App : Application
         var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
         var contactService = new ContactService();
         var userDirectory = new UserDirectory(userSearchClient);
-
 
         // Vues
         services.AddTransient<MainPage>();
@@ -268,8 +265,8 @@ public partial class App : Application
     /// </summary>
     public static Task PushMainPageAsync()
     {
-        var app = (App)Current;
-        var mainVm = app.ServiceProvider.GetRequiredService<MainPageViewModel>();
+        var app = (App)Current!;
+        var mainVm = app.ServiceProvider!.GetRequiredService<MainPageViewModel>();
         return app.PushPageAsync(mainVm);
     }
 
@@ -310,7 +307,7 @@ public partial class App : Application
         _ = PushPageAsync(vm);
     }
 
-    internal Task PushPageAsync(ViewModelBase vm)
+    internal async Task PushPageAsync(ViewModelBase vm)
     {
         if (window is null)
         {
@@ -344,10 +341,10 @@ public partial class App : Application
         var stack = window.NavRoot.NavigationStack;
         if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], page))
         {
-            return Task.CompletedTask;
+            return;
         }
 
-        return window.NavRoot.PushAsync(page);
+        await window.NavRoot.PushAsync(page);
     }
 
     internal async Task GoBackAsync()

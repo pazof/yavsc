@@ -4,6 +4,21 @@
     // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+       {
+      "name": "Debug - Android",
+      "type": "mono",
+      "preLaunchTask": "run-debug-android",
+      "request": "attach",
+      "address": "localhost",
+      "port": 10000
+    },
+    {
+      "name": "Attach - Android",
+      "type": "mono",
+      "request": "attach",
+      "address": "localhost",
+      "port": 10000
+    },
         {
             "name": "API",
             "type": "dotnet",
@@ -33,12 +48,10 @@
             "name": "Test PostIt.Android launch (Xamarin.UITest)",
             "type": "coreclr",
             "request": "launch",
-            "program": "${workspaceFolder}/src/PostIt.Tests/bin/Debug/net10.0/PostIt.Tests.dll",
+            "program": "${workspaceFolder}/src/PostIt/PostIt.Tests/bin/Debug/net11.0/PostIt.Tests.dll",
             "args": [
-                "--filter-method",
-                "PostIt.Tests.AndroidAppLaunchTests.PostIt_starts_and_draws_a_first_frame_on_the_emulator"
             ],
-            "cwd": "${workspaceFolder}/src/PostIt.Tests",
+            "cwd": "${workspaceFolder}/src/PostIt/PostIt.Tests",
             "console": "integratedTerminal",
             "stopAtEntry": false
         }

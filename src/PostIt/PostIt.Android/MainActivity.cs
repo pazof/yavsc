@@ -3,6 +3,9 @@ using Android.Content.PM;
 using Android.Content;
 using Avalonia.Android;
 using AndroidX.Emoji2.Text;
+using AndroidX.Core.Provider;
+using Android;
+using Android.Graphics;
 
 namespace PostIt.Android;
 
@@ -26,7 +29,6 @@ public class MainActivity : AvaloniaMainActivity
 
     protected override void OnCreate(global::Android.OS.Bundle? savedInstanceState)
     {
-        EmojiCompat.Init(this);
         base.OnCreate(savedInstanceState);
         PlatformBootstrap.EnsureInitialized();
         Current = this;
