@@ -114,11 +114,6 @@ public class MainPageButtonsTests
         var window = new MainWindow();
         var page = new MainPage { DataContext = vm };
         var app = (PostIt.App)Application.Current!;
-        if (vm.Services is not null)
-        {
-            app.DataTemplates.Clear();
-            app.DataTemplates.Add(new ViewLocator(vm.Services));
-        }
         app.AttachMainWindow(window);
         window.Show();
         window.NavRoot.PushAsync(page).GetAwaiter().GetResult();

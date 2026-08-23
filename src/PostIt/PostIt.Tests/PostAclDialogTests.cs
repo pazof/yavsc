@@ -140,8 +140,6 @@ public class PostAclDialogTests
 
         var window = new MainWindow();
         var app = (App)Application.Current!;
-        app.DataTemplates.Clear();
-        app.DataTemplates.Add(new ViewLocator(sp));
         app.AttachMainWindow(window);
         window.Show();
 

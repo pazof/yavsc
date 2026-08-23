@@ -100,8 +100,6 @@ public class AddCircleMemberDialogTests
 
         context.Window = new MainWindow();
         context.App = (PostIt.App)Application.Current!;
-        context.App.DataTemplates.Clear();
-        context.App.DataTemplates.Add(new ViewLocator(sp));
         context.App.AttachMainWindow(context.Window);
         context.Window.Show();
 
