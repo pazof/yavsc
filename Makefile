@@ -163,7 +163,7 @@ POSTIT_RID ?= android-x64
 EMU_HEADLESS ?= 0
 LOGCAT_LINES ?= 200
 LOGCAT_FOLLOW ?= 0
-LOGCAT_BOOT_WAIT ?= 15
+LOGCAT_BOOT_WAIT ?= 30
 
 POSTIT_ANDROID_CSPROJ := src/PostIt/PostIt.Android/PostIt.Android.csproj
 POSTIT_APK_DIR := src/PostIt/PostIt.Android/bin/$(CONFIG)/net10.0-android/$(POSTIT_RID)
