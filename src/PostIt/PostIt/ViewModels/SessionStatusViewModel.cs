@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using PostIt.Helpers;
 using PostIt.Services;
 
 namespace PostIt.ViewModels;
@@ -139,7 +140,7 @@ public partial class SessionStatusViewModel : ViewModelBase
     internal async Task OpenSettings()
     {
         var app = (App)App.Current!;
-        await app.PushPageAsync(app.ServiceProvider.GetRequiredService<Settings>()).ConfigureAwait(true);
+        await app.PushPageAsync(app.ServiceProvider!.GetRequiredService<Settings>()).ConfigureAwait(true);
     }
 
 }

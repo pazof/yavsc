@@ -161,9 +161,9 @@ ADB_SERIAL ?= emulator-5554
 ANDROID_HOME ?= /opt/android-sdk
 POSTIT_RID ?= android-x64
 EMU_HEADLESS ?= 0
-LOGCAT_LINES ?= 200
+LOGCAT_LINES ?= 600
 LOGCAT_FOLLOW ?= 0
-LOGCAT_BOOT_WAIT ?= 30
+LOGCAT_BOOT_WAIT ?= 20
 
 ANDROID_PACKAGE_NAME = fr.pschneider.PostIt
 POSTIT_ANDROID_CSPROJ := src/PostIt/PostIt.Android/PostIt.Android.csproj
@@ -249,9 +249,9 @@ qemu-logcat:
 	fi; \
 	echo "  Following PID $$PID (LOGCAT_FOLLOW=$(LOGCAT_FOLLOW), LOGCAT_LINES=$(LOGCAT_LINES))"; \
 	if [ "$(LOGCAT_FOLLOW)" = "1" ]; then \
-	    adb -s $(ADB_SERIAL) logcat -v time --pid=$$PID $(ANDROID_PACKAGE_NAME):F; \
+	    adb -s $(ADB_SERIAL) logcat -v time --pid=$$PID $(ANDROID_PACKAGE_NAME); \
 	else \
-	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES) --pid=$$PID $(ANDROID_PACKAGE_NAME):F; \
+	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES) --pid=$$PID $(ANDROID_PACKAGE_NAME); \
 	fi
 
 # Clear logcat, launch PostIt.Android, then dump everything that was
@@ -270,14 +270,16 @@ qemu-logcat-boot:
 	    -n $(ANDROID_PACKAGE_NAME)/PostIt.Android.PostItMainActivity
 	@echo "  Waiting $(LOGCAT_BOOT_WAIT)s for the app to start rendering..."
 	@sleep $(LOGCAT_BOOT_WAIT)
+
 	@echo "  Dumping logcat (PostIt PID + system buffer):"
 	@PID=$$(adb -s $(ADB_SERIAL) shell pidof $(ANDROID_PACKAGE_NAME) 2>/dev/null | tr -d '\r\n'); \
 	if [ -n "$$PID" ]; then \
-	    echo "  (PID $$PID at dump time)"; \
+	    echo " ✅ (PID $$PID at dump time)"; \
 	    adb -s $(ADB_SERIAL) logcat -d -v time --pid=$$PID; \
 	else \
-	    echo "  (PostIt process not running at dump time — dumping last $(LOGCAT_LINES) lines unfiltered)"; \
+	    echo " 👿 (PostIt process not running at dump time — dumping last $(LOGCAT_LINES) lines unfiltered)"; \
 	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES); \
+			exit 1; \
 	fi
 
 qemu: qemu-run qemu-wait-boot qemu-install

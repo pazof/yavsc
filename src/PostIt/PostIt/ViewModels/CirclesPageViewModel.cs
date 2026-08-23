@@ -5,6 +5,7 @@ using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using PostIt.Helpers;
 using PostIt.Services;
 using Yavsc.Api.Client;
 using Yavsc.Api.Client.Dtos;
