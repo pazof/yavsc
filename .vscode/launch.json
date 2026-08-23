@@ -48,7 +48,7 @@
             "name": "Test PostIt.Android launch (Xamarin.UITest)",
             "type": "coreclr",
             "request": "launch",
-            "program": "${workspaceFolder}/src/PostIt/PostIt.Tests/bin/Debug/net11.0/PostIt.Tests.dll",
+            "program": "${workspaceFolder}/src/PostIt/PostIt.Tests/bin/Debug/net10.0/PostIt.Tests.dll",
             "args": [
             ],
             "cwd": "${workspaceFolder}/src/PostIt/PostIt.Tests",

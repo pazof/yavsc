@@ -47,22 +47,7 @@ public partial class Settings : ViewModelBase
     /// </summary>
     private static Settings? s_current;
 
-    /// <summary>
-    /// Wire the canonical Settings instance to a DI container. Called
-    /// exactly once from <c>App.axaml.cs</c> after the singleton has
-    /// been registered. Subsequent calls are no-ops: the DI container
-    /// owns the instance lifetime and we don't want a stray
-    /// <c>BindToServiceProvider</c> in a test fixture to silently
-    /// rebind the production instance.
-    /// </summary>
-    public static void BindToServiceProvider(IServiceProvider services)
-    {
-        if (services is null) throw new ArgumentNullException(nameof(services));
-        Interlocked.CompareExchange(ref s_current,
-            services.GetService<Settings>() ?? throw new InvalidOperationException(
-                "Settings is not registered in the DI container."),
-            null);
-    }
+   
 
     [ObservableProperty]
     public partial AuthenticationSettings Authentication { get; set; } = new();
@@ -81,7 +66,7 @@ public partial class Settings : ViewModelBase
     /// setters above all funnel through here, and we flip
     /// <see cref="IsDirty"/> in lock-step. Sub-property mutations
     /// (e.g. <c>Authentication.Authority</c>) are caught by the
-    /// subscription wired up in <see cref="OnAuthenticationChanged"/>
+    /// subscription wired up in 
     /// below. <see cref="ApplyJson"/> disables the flag during bulk
     /// hydration so the disk load itself does not count as a user
     /// edit.
