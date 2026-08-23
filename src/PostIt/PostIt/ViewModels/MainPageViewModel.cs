@@ -122,8 +122,8 @@ public partial class MainPageViewModel : ViewModelBase
 
     public MainPageViewModel()
     {
-        Init(null);
         SettingsModel = new Settings();
+        Init(SettingsModel);
         BlogClient = null;
     }
 
@@ -135,6 +135,11 @@ public partial class MainPageViewModel : ViewModelBase
         SelectedPost = null;
         IsBusy = false;
         StatusMessage = "Ready";
+        Settings = settings ?? new Settings();
+        WindowTitle = "PostIt";
+        DraftTitle = string.Empty;
+        DraftArticle = string.Empty;
+        DraftIsPublished = false;
         // Production path: DI injects the canonical Settings singleton
         // and we use it as-is. Test path: tests call this constructor
         // without a Settings argument; we fall back to a fresh
@@ -145,11 +150,7 @@ public partial class MainPageViewModel : ViewModelBase
         // sink; that crash is fixed in Settings.OnPropertyChanged
         // (thread-safe dispatcher marshalling) so the duplicate
         // instance is now merely wasteful, not dangerous.
-        Settings = settings ?? new Settings();
-        WindowTitle = "PostIt";
-        DraftTitle = string.Empty;
-        DraftArticle = string.Empty;
-        DraftIsPublished = false;
+
     }
 
     /// <summary>Save is enabled as soon as the user has typed
@@ -174,7 +175,6 @@ public partial class MainPageViewModel : ViewModelBase
         SettingsModel = new Settings();
         BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient)); ;
         Services = services;
-
         Init(settings);
     }
 
@@ -210,7 +210,7 @@ public partial class MainPageViewModel : ViewModelBase
     {
         await ExecuteAsync(async () =>
         {
-            var posts = await BlogClient.GetPostsAsync();
+            var posts = await BlogClient!.GetPostsAsync();
             Posts.Clear();
             foreach (var post in posts.OrderByDescending(p => p.DateModified))
             {
@@ -259,7 +259,7 @@ public partial class MainPageViewModel : ViewModelBase
                     DateCreated = DateTime.UtcNow,
                     DateModified = DateTime.UtcNow,
                 };
-                var created = await BlogClient.CreatePostAsync(draft);
+                var created = await BlogClient!.CreatePostAsync(draft);
                 if (created is not null)
                 {
                     SelectedPost = created;
@@ -278,7 +278,7 @@ public partial class MainPageViewModel : ViewModelBase
                     DateCreated = SelectedPost.DateCreated,
                     DateModified = DateTime.UtcNow,
                 };
-                await BlogClient.UpdatePostAsync(SelectedPost.Id, update);
+                await BlogClient!.UpdatePostAsync(SelectedPost.Id, update);
                 StatusMessage = $"Saved post {SelectedPost.Id}.";
             }
 
@@ -297,7 +297,7 @@ public partial class MainPageViewModel : ViewModelBase
 
         await ExecuteAsync(async () =>
         {
-            await BlogClient.DeletePostAsync(SelectedPost.Id);
+            await BlogClient!.DeletePostAsync(SelectedPost.Id);
             StatusMessage = $"Deleted post {SelectedPost.Id}.";
             SelectedPost = null;
             await RefreshPostsAsync();
@@ -331,7 +331,7 @@ public partial class MainPageViewModel : ViewModelBase
         await ExecuteAsync(async () =>
         {
             var desired = !DraftIsPublished;
-            await BlogClient.SetPublishAsync(SelectedPost.Id, desired);
+            await BlogClient!.SetPublishAsync(SelectedPost.Id, desired);
             DraftIsPublished = desired;
             // Mirror into the selected post so a subsequent
             // RefreshPostsAsync() doesn't blow away the
@@ -372,7 +372,7 @@ public partial class MainPageViewModel : ViewModelBase
 
     private async Task RefreshPostsAsync()
     {
-        var posts = await BlogClient.GetPostsAsync();
+        var posts = await BlogClient!.GetPostsAsync();
         Posts.Clear();
         foreach (var post in posts.OrderByDescending(p => p.DateModified))
         {

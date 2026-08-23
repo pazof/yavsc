@@ -350,15 +350,14 @@ public partial class Settings : ViewModelBase
             var settings = JsonSerializer.Deserialize<Settings>(json);
             if (settings is null)
             {
-                Console.Error.WriteLine($"🩎 Settings payload is invalid (source: {source}).");
-                return;
+                UseDefaultSettings();
             }
             // Apply under the gate so concurrent Load() callers cannot
             // see half the new values / half the old ones. The actual
             // PropertyChanged fan-out is handled by [ObservableProperty]'s
             // setters which we route through SetProperty → OnPropertyChanged
             // → our overridden dispatcher-safe marshaller below.
-            lock (_mutationGate)
+            else lock (_mutationGate)
             {
                 this.Authentication = settings.Authentication;
                 this.DarkMode = settings.DarkMode;
@@ -371,6 +370,11 @@ public partial class Settings : ViewModelBase
                      AuthenticationSettings.DefaultClientId : settings.Authentication.ClientId;
                     this.Authentication.RedirectUri = string.IsNullOrWhiteSpace(settings.Authentication.RedirectUri) ?
                      AuthenticationSettings.DefaultDesktopRedirectUri : settings.Authentication.RedirectUri;
+                    if (settings.Authentication.Scopes is null || settings.Authentication.Scopes.Length == 0)
+                    {
+                        settings.Authentication.Scopes = AuthenticationSettings.DefaultScopes;
+                    }
+                    else
                     this.Authentication.Scopes = settings.Authentication.Scopes;
                 }
             }
@@ -398,6 +402,18 @@ public partial class Settings : ViewModelBase
         {
             Console.Error.WriteLine($"🩎 Error applying settings from {source}: {ex.Message}");
         }
+    }
+
+    private void UseDefaultSettings()
+    {
+        this.Authentication = new AuthenticationSettings
+        {
+            Authority = AuthenticationSettings.DefaultAuthority,
+            ClientId = AuthenticationSettings.DefaultClientId,
+            RedirectUri = AuthenticationSettings.DefaultDesktopRedirectUri,
+            Scopes = AuthenticationSettings.DefaultScopes
+        };
+        this.DarkMode = false;
     }
 
     /// <summary>

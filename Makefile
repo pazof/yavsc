@@ -163,7 +163,7 @@ POSTIT_RID ?= android-x64
 EMU_HEADLESS ?= 0
 LOGCAT_LINES ?= 200
 LOGCAT_FOLLOW ?= 0
-LOGCAT_BOOT_WAIT ?= 30
+LOGCAT_BOOT_WAIT ?= 15
 
 POSTIT_ANDROID_CSPROJ := src/PostIt/PostIt.Android/PostIt.Android.csproj
 POSTIT_APK_DIR := src/PostIt/PostIt.Android/bin/$(CONFIG)/net10.0-android/$(POSTIT_RID)
@@ -214,16 +214,17 @@ qemu-build:
 	    -p:RuntimeIdentifier=$(POSTIT_RID) \
 	    -p:EmbedAssembliesIntoApk=true \
 	    --nologo
-
-qemu-install: qemu-build
 	@if [ ! -f "$(POSTIT_APK)" ]; then \
 	    echo "  APK not found at $(POSTIT_APK)." >&2; \
 	    echo "  Files in $(POSTIT_APK_DIR):" >&2; \
 	    ls -la "$(POSTIT_APK_DIR)" 2>/dev/null || echo "  (directory does not exist)" >&2; \
 	    exit 1; \
 	fi
+
+
+qemu-install: qemu-build
 	@echo "  Installing $(POSTIT_APK) on $(ADB_SERIAL)..."
-	adb -s $(ADB_SERIAL) install -r "$(POSTIT_APK)"
+	adb -s $(ADB_SERIAL) install -r "$(POSTIT_APK)" -r
 
 qemu-uninstall:
 	adb -s $(ADB_SERIAL) uninstall fr.pschneider.PostIt
