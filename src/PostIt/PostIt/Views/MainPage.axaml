@@ -8,11 +8,11 @@
              xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
              mc:Ignorable="d"
              x:Class="PostIt.Views.MainPage"
-             x:DataType="vm:MainPageViewModel"
+             x:DataType="vm:MainViewModel"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch">
     <Design.DataContext>
-        <vm:MainPageViewModel />
+        <vm:MainViewModel />
     </Design.DataContext>
 
     <Grid Margin="12" RowSpacing="12"

@@ -1,7 +1,6 @@
 namespace cli
 {
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Runtime.Serialization;
     using Newtonsoft.Json;
     using Yavsc;
 

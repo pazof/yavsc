@@ -3,9 +3,7 @@
 // paul schneider <paul@pschneider.fr> 19/06/2018 15:58 20182018 6 19
 // */
 
-using System.IO;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Yavsc.Helpers
 {

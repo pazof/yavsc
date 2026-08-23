@@ -1,9 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
-using Avalonia.Input;
-using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Api.Client;
@@ -75,7 +72,7 @@ public class MainPageButtonsTests
         { }
     }
 
-    private static MainPageViewModel MakeViewModel(BlogPostDto? selectedPost = null)
+    private static MainViewModel MakeViewModel(BlogPostDto? selectedPost = null)
     {
         var api = new ThrowingApi();
         var blog = new BlogApiClient(api, "http://localhost/");
@@ -96,7 +93,7 @@ public class MainPageButtonsTests
         services.AddTransient<SignaturePage>();
         services.AddTransient<CirclesPage>();
         services.AddTransient<PostAclDialog>();
-        var vm = new MainPageViewModel(blog, services: services.BuildServiceProvider());
+        var vm = new MainViewModel(blog, services: services.BuildServiceProvider());
         if (selectedPost is not null) vm.SelectedPost = selectedPost;
         return vm;
     }
@@ -112,7 +109,7 @@ public class MainPageButtonsTests
     /// realised and <c>KeyPressQwerty</c> has a real
     /// <see cref="TopLevel"/> to dispatch against.
     /// </summary>
-    private static (MainWindow window, MainPage page) MountMainPage(MainPageViewModel vm)
+    private static (MainWindow window, MainPage page) MountMainPage(MainViewModel vm)
     {
         var window = new MainWindow();
         var page = new MainPage { DataContext = vm };

@@ -5,8 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Abstract.BlogSpot;
 using Yavsc.Models;
 using Yavsc.Models.Access;
-using Yavsc.Models.Blog;
-using Yavsc.Models.Relationship;
 using Yavsc.Tests.Shared;
 using static Yavsc.Constants;
 

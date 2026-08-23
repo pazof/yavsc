@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.ViewModels.Test
 {
     public class CalendarViewModel

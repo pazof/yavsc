@@ -47,40 +47,7 @@ public partial class Settings : ViewModelBase
     /// </summary>
     private static Settings? s_current;
 
-    /// <summary>
-    /// Wire the canonical Settings instance to a DI container. Called
-    /// exactly once from <c>App.axaml.cs</c> after the singleton has
-    /// been registered. Subsequent calls are no-ops: the DI container
-    /// owns the instance lifetime and we don't want a stray
-    /// <c>BindToServiceProvider</c> in a test fixture to silently
-    /// rebind the production instance.
-    /// </summary>
-    public static void BindToServiceProvider(IServiceProvider services)
-    {
-        if (services is null) throw new ArgumentNullException(nameof(services));
-        Interlocked.CompareExchange(ref s_current,
-            services.GetService<Settings>() ?? throw new InvalidOperationException(
-                "Settings is not registered in the DI container."),
-            null);
-    }
-
-    /// <summary>
-    /// Returns the canonical Settings instance previously bound through
-    /// <see cref="BindToServiceProvider"/>, or <c>null</c> when called
-    /// outside a running Avalonia application (tests, CLI tools).
-    /// </summary>
-    public static Settings? GetCurrent() => Volatile.Read(ref s_current);
-
-    /// <summary>
-    /// Resolve the canonical Settings instance or throw. Use this in
-    /// production code paths that must not silently fall back to a
-    /// freshly-constructed <see cref="Settings"/> (which used to be
-    /// the root cause of the postit://callback crash: two Settings
-    /// instances racing on PropertyChanged from different threads).
-    /// </summary>
-    public static Settings RequireCurrent() =>
-        GetCurrent() ?? throw new InvalidOperationException(
-            "Settings.Current is not bound. Call App.OnFrameworkInitializationCompleted first.");
+   
 
     [ObservableProperty]
     public partial AuthenticationSettings Authentication { get; set; } = new();
@@ -99,7 +66,7 @@ public partial class Settings : ViewModelBase
     /// setters above all funnel through here, and we flip
     /// <see cref="IsDirty"/> in lock-step. Sub-property mutations
     /// (e.g. <c>Authentication.Authority</c>) are caught by the
-    /// subscription wired up in <see cref="OnAuthenticationChanged"/>
+    /// subscription wired up in 
     /// below. <see cref="ApplyJson"/> disables the flag during bulk
     /// hydration so the disk load itself does not count as a user
     /// edit.
@@ -350,15 +317,14 @@ public partial class Settings : ViewModelBase
             var settings = JsonSerializer.Deserialize<Settings>(json);
             if (settings is null)
             {
-                Console.Error.WriteLine($"🩎 Settings payload is invalid (source: {source}).");
-                return;
+                UseDefaultSettings();
             }
             // Apply under the gate so concurrent Load() callers cannot
             // see half the new values / half the old ones. The actual
             // PropertyChanged fan-out is handled by [ObservableProperty]'s
             // setters which we route through SetProperty → OnPropertyChanged
             // → our overridden dispatcher-safe marshaller below.
-            lock (_mutationGate)
+            else lock (_mutationGate)
             {
                 this.Authentication = settings.Authentication;
                 this.DarkMode = settings.DarkMode;
@@ -371,6 +337,11 @@ public partial class Settings : ViewModelBase
                      AuthenticationSettings.DefaultClientId : settings.Authentication.ClientId;
                     this.Authentication.RedirectUri = string.IsNullOrWhiteSpace(settings.Authentication.RedirectUri) ?
                      AuthenticationSettings.DefaultDesktopRedirectUri : settings.Authentication.RedirectUri;
+                    if (settings.Authentication.Scopes is null || settings.Authentication.Scopes.Length == 0)
+                    {
+                        settings.Authentication.Scopes = AuthenticationSettings.DefaultScopes;
+                    }
+                    else
                     this.Authentication.Scopes = settings.Authentication.Scopes;
                 }
             }
@@ -398,6 +369,18 @@ public partial class Settings : ViewModelBase
         {
             Console.Error.WriteLine($"🩎 Error applying settings from {source}: {ex.Message}");
         }
+    }
+
+    private void UseDefaultSettings()
+    {
+        this.Authentication = new AuthenticationSettings
+        {
+            Authority = AuthenticationSettings.DefaultAuthority,
+            ClientId = AuthenticationSettings.DefaultClientId,
+            RedirectUri = AuthenticationSettings.DefaultDesktopRedirectUri,
+            Scopes = AuthenticationSettings.DefaultScopes
+        };
+        this.DarkMode = false;
     }
 
     /// <summary>

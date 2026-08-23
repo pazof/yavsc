@@ -11,7 +11,6 @@ namespace Yavsc.Controllers
     using Yavsc.ViewModels.Workflow;
     using Yavsc.Services;
     using System.Threading.Tasks;
-    using Yavsc.Helpers;
     using Microsoft.EntityFrameworkCore;
     using Yavsc.Server.Helpers;
 

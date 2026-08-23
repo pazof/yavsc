@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Yavsc.Models.Market;
@@ -6,7 +5,6 @@ using Yavsc.Models.Market;
 namespace Yavsc.Models.Workflow
 {
     using Models.Relationship;
-    using Yavsc.Attributes.Validation;
 
     /// <summary>
     /// A date, between two persons

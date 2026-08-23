@@ -3,8 +3,6 @@ using Yavsc.Abstract.Interfaces;
 using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
 using Anthropic.SDK.Constants;
-using Anthropic.SDK.Models;
-using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 public class ClaudeModerationService : IModerationService

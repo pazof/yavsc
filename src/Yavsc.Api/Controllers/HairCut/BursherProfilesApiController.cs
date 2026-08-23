@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Haircut;
 using Yavsc.Server.Helpers;

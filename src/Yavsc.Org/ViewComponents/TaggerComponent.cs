@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Yavsc.Interfaces;
-using Yavsc.Models;
 
 namespace Yavsc.ViewComponents
 {

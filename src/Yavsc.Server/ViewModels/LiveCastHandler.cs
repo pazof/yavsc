@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Concurrent;
 using System.Net.WebSockets;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Yavsc.Helpers;
 using Yavsc.Models;
-using Yavsc.Models.FileSystem;
 using Yavsc.Server.Helpers;
 using Yavsc.Server.Models.FileSystem;
 
@@ -54,7 +46,7 @@ namespace Yavsc.ViewModels.Streaming
                 item.Overridden = true;
                 usage -= fi.Length;
             }
-            
+
             logger.LogInformation("Opening the file");
             using (var dest = fi.Open(FileMode.Create, FileAccess.Write, FileShare.Read))
             {

@@ -8,8 +8,6 @@ namespace Yavsc.Models
     using Abstract.Identity;
     using Abstract.Models.Messaging;
     using Access;
-    using Attributes;
-    using Auth;
     using Bank;
     using Billing;
     using Blog;
@@ -22,7 +20,6 @@ namespace Yavsc.Models
     using IT.Fixing;
     using Market;
     using Messaging;
-    using Microsoft.AspNetCore.Http;
     using Musical;
     using Musical.Profiles;
     using Payment;

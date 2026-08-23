@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Yavsc.Abstract.IT
 {
@@ -13,10 +11,10 @@ namespace Yavsc.Abstract.IT
 
         }
         public CharArray (IList<char> word): base(word) {
-            
+
         }
         public CharArray (IEnumerable<char> word): base(word) {
-            
+
         }
 
         public IList<char> Aggregate(char other)
@@ -89,7 +87,7 @@ namespace Yavsc.Abstract.IT
                     State = -3;
                     return;
                     }
-                    
+
                 State = states[letter];
 
             }

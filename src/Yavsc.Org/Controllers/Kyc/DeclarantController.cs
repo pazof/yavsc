@@ -1,7 +1,6 @@
 // Yavsc.Controllers.Kyc/DeclarantController.cs
 namespace Yavsc.Controllers.Kyc
 {
-    using System;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;

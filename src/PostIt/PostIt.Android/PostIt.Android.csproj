@@ -2,35 +2,32 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0-android</TargetFramework>
-    <!-- FORCE LES ARCHITECTURES ANDROID VALIDES -->
-    <RuntimeIdentifiers>android-arm64;android-x64</RuntimeIdentifiers>
-    <SupportedOSPlatformVersion>23.0.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>23</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
-    <ApplicationId>com.CompanyName.PostIt</ApplicationId>
+    <ApplicationId>fr.pschneider.PostIt</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
-    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
-    <InformationalVersion>1.1.0-beta.1+49.Branch.release-1.0.8-rc3.Sha.5274d7bdf5d14406748a2063b5ae15191aac4359</InformationalVersion>
-    <Version>1.1.0-beta.1</Version>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot> 
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <TrimMode>partial</TrimMode>
   </PropertyGroup>
+
   <ItemGroup>
     <AndroidResource Include="Icon.png">
       <Link>Resources\drawable\Icon.png</Link>
     </AndroidResource>
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia.Android" />
     <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" />
     <PackageReference Include="Xamarin.AndroidX.Browser" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Common" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\PostIt\PostIt.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Maui.Essentials" />
   </ItemGroup>
 </Project>

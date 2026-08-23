@@ -2,7 +2,6 @@
 
 
 using Yavsc.Abstract.Identity.Security;
-using Yavsc.Interfaces;
 
 namespace Yavsc.Blogspot
 {
