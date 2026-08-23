@@ -16,20 +16,21 @@ Cette convention est partagée avec le dépôt
 [`postit-debian`](https://forgejo.pschneider.fr/notazof/postit-debian)
 pour la production des paquets `.deb`.
 
-## [1.0.8-rc1] - unstable
+## [1.0.8-rc3] - unstable
 
 ### Added
 
 * a code cleanup
 * a failling a disabled test ala Xamarin.UITest : the Android app stil doesn't starts
+- Android app does not crash any more, but still no home page, only the splash screnn
 
 ### Changed
 
-moslty nothing
+mostly nothing
 
 ### Fixed
 
-nothing
+mostly nothing
 
 ## [1.0.8-rc1] - unstable
 
