@@ -58,7 +58,7 @@ namespace Yavsc.Org.Controllers
             return View("Title", blogSpotService.GetTitle(id));
         }
 
-        private async Task<IEnumerable<BlogPost>> UserPosts(string userName, int pageLen = 10, int pageNum = 0)
+        private async Task<IEnumerable<Models.Blog.BlogPost>> UserPosts(string userName, int pageLen = 10, int pageNum = 0)
         {
             return await blogSpotService.UserPosts(userName, User.GetUserId(), pageLen, pageNum);
 
@@ -72,7 +72,7 @@ namespace Yavsc.Org.Controllers
             {
                 var blog = await blogSpotService.Details(User, id.Value);
                 ViewBag.apicmtctlr = "/api/v1/blogcomments";
-                ViewBag.moderatoFlag = User.IsInMsRole(YavscConstants.BlogModeratorGroupName);
+                ViewBag.moderatoFlag = User.IsInMsRole(Yavsc.Constants.BlogModeratorGroupName);
 
                 return View(blog);
 
@@ -95,7 +95,7 @@ namespace Yavsc.Org.Controllers
         public IActionResult Create(string title)
         {
             var result = new BlogPostEditViewModel
-            (new BlogPost
+            (new Models.Blog.BlogPost
             {
                 Title = title
             }, true);
@@ -105,11 +105,11 @@ namespace Yavsc.Org.Controllers
 
         // POST: Blog/Create
         [HttpPost, Authorize, ValidateAntiForgeryToken]
-        public IActionResult Create(BlogPost blogInput)
+        public IActionResult Create(Models.Blog.BlogPost blogInput)
         {
             if (ModelState.IsValid)
             {
-                BlogPost post = blogSpotService.Create(User.GetUserId(),
+                Models.Blog.BlogPost post = blogSpotService.Create(User.GetUserId(),
                  blogInput, Request.Form.Files);
                 return RedirectToAction("Index");
             }

@@ -1,9 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using Yavsc.Api.Client;
 using Yavsc.Api.Client.Dtos;
@@ -63,12 +64,6 @@ public partial class CirclesPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Raised when the user wants to add a member to the
-    /// currently selected circle. The view listens to this
-    /// event and opens <c>AddCircleMemberDialog</c>.
-    /// </summary>
-    public event EventHandler? AddMemberRequested;
 
     public CirclesPageViewModel(CircleApiClient client)
     {
@@ -116,6 +111,27 @@ public partial class CirclesPageViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
+    internal async Task OpenAddMemberAsync()
+    {
+        var app = Application.Current as App;
+        var services = app?.ServiceProvider;
+        var directory = services.GetRequiredService<IUserDirectory>();
+        AddCircleMemberDialogViewModel model =
+        new AddCircleMemberDialogViewModel(directory);
+        // Wire the dialog's Confirmed event to OnAddMemberConfirmedAsync.
+        // Without this, the dialog's "Ajouter" button fires the event
+        // into the void: no subscriber, the picked user is silently
+        // dropped, and nothing is added to the circle. The dialog
+        // stays open until the user uses the back gesture — which is
+        // how the user noticed the button was a no-op.
+        // Async-void is intentional here: Confirmed is an
+        // EventHandler<T> (returns void), and bridging to the
+        // async Task OnAddMemberConfirmedAsync requires it.
+        model.Confirmed += async (_, picked) =>
+            await OnAddMemberConfirmedAsync(_, picked);
+        await app.PushPageAsync(model);
+    }
     /// <summary>
     /// Load the members of one of the caller's circles. The
     /// server scopes the endpoint with a 404 when the circle
@@ -231,22 +247,6 @@ public partial class CirclesPageViewModel : ViewModelBase
         }
     }
 
-    /// <summary>
-    /// Fire the <see cref="AddMemberRequested"/> event so
-    /// the view opens <c>AddCircleMemberDialog</c>. The view
-    /// forwards the dialog's <c>Confirmed</c> event back to
-    /// <see cref="OnAddMemberConfirmedAsync"/>.
-    /// </summary>
-    [RelayCommand]
-    public void OpenAddMember()
-    {
-        if (SelectedCircle is null)
-        {
-            StatusMessage = "Sélectionnez d'abord un cercle";
-            return;
-        }
-        AddMemberRequested?.Invoke(this, EventArgs.Empty);
-    }
 
     /// <summary>
     /// Called by the view when the dialog confirms a

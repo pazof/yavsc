@@ -7,7 +7,7 @@ using Yavsc.Server.Models.IT.SourceCode;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/GitRefsApi")]
+    [Route(Constants.APIPrefix + "/GitRefsApi")]
     [Authorize("AdministratorOnly")]
     public class GitRefsApiController : Controller
     {

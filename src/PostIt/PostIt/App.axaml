@@ -2,10 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:PostIt"
              x:Class="PostIt.App">
-          
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>    
+
+    <!-- ViewLocator is registered in App.axaml.cs with the real DI container. -->
 
     <Application.Styles>
         <FluentTheme />

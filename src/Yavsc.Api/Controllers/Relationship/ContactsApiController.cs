@@ -8,7 +8,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/ContactsApi")]
+    [Route(Constants.APIPrefix + "/ContactsApi")]
     public class ContactsApiController : Controller
     {
         private readonly ApplicationDbContext _context;

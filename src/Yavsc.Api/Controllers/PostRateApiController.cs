@@ -37,7 +37,7 @@ namespace Yavsc.Controllers
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (blogpost.AuthorId!=uid)
-                if (!User.IsInRole(YavscConstants.AdminGroupName))
+                if (!User.IsInRole(Constants.AdminGroupName))
                     return BadRequest();
 
             _context.SaveChanges(User.GetUserId());

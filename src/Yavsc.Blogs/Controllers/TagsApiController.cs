@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Yavsc.Models;
-using static Yavsc.Blogs.Constants;
+using static Yavsc.Constants;
 
 namespace Yavsc.Controllers
 {

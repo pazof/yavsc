@@ -6,7 +6,7 @@ using Yavsc.Models.Relationship;
 namespace Yavsc.Controllers
 {
     [Produces("application/json")]
-    [Route("api/hyperlink")]
+    [Route(Constants.APIPrefix + "/hyperlink")]
     public class HyperLinkApiController : Controller
     {
         private ApplicationDbContext _context;

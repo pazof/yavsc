@@ -65,8 +65,8 @@ public sealed class MappedClaimsBlogsWebServerFixture : IDisposable
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = TestTokenIssuer.SigningKey,
-                    RoleClaimType = YavscConstants.RoleClaimType,
-                    NameClaimType = YavscConstants.NameClaimType,
+                    RoleClaimType = Yavsc.Constants.RoleClaimType,
+                    NameClaimType = Yavsc.Constants.NameClaimType,
                 };
             });
 

@@ -28,7 +28,7 @@ public class OldBlogSpotService
         this.fileSystemAuthManager = fileSystemAuthManager;
     }
 
-    public BlogPost Create(string userId, BlogPost post, IFormFileCollection files)
+    public Yavsc.Models.Blog.BlogPost Create(string userId, Yavsc.Models.Blog.BlogPost post, IFormFileCollection files)
     {
         // Sauvegarder le post d'abord pour obtenir son ID
         _context.BlogSpot.Add(post);
@@ -102,9 +102,9 @@ public class OldBlogSpotService
         return new BlogPostEditViewModel(blog, pub);
     }
 
-    public async Task<BlogPost> Details(ClaimsPrincipal user, long blogPostId)
+    public async Task<Yavsc.Models.Blog.BlogPost> Details(ClaimsPrincipal user, long blogPostId)
     {
-        BlogPost blog = await _context.BlogSpot
+        Yavsc.Models.Blog.BlogPost blog = await _context.BlogSpot
        .Include(p => p.Author)
        .Include(p => p.Tags)
        .Include(p => p.Comments)
@@ -165,7 +165,7 @@ public class OldBlogSpotService
         _context.SaveChanges(user.GetUserId());
     }
 
-    public async Task Modify(ClaimsPrincipal user, BlogPost blog)
+    public async Task Modify(ClaimsPrincipal user, Yavsc.Models.Blog.BlogPost blog)
     {
         var existing = await _context.BlogSpot.Include(b => b.ACL).SingleOrDefaultAsync(b => b.Id == blog.Id);
         if (existing == null)
@@ -233,20 +233,20 @@ public class OldBlogSpotService
     public async Task Delete(ClaimsPrincipal user, long id)
     {
         var uid = user.GetUserId();
-        BlogPost blog = _context.BlogSpot.Single(m => m.Id == id);
+        Yavsc.Models.Blog.BlogPost blog = _context.BlogSpot.Single(m => m.Id == id);
 
         _context.BlogSpot.Remove(blog);
         _context.SaveChanges(user.GetUserId());
     }
 
-    public async Task<IEnumerable<BlogPost>> UserPosts(
+    public async Task<IEnumerable<Yavsc.Models.Blog.BlogPost>> UserPosts(
         string posterName,
         string? readerId,
         int pageLen = 10,
         int pageNum = 0)
     {
         string? posterId = (await _context.Users.SingleOrDefaultAsync(u => u.UserName == posterName))?.Id ?? null;
-        if (posterId == null) return Array.Empty<BlogPost>();
+        if (posterId == null) return Array.Empty<Yavsc.Models.Blog.BlogPost>();
         return _context.UserPosts(posterId, readerId);
     }
 
@@ -259,7 +259,7 @@ public class OldBlogSpotService
              ).ToList();
     }
 
-    public async Task<BlogPost?> GetBlogPostAsync(long value)
+    public async Task<Yavsc.Models.Blog.BlogPost?> GetBlogPostAsync(long value)
     {
         return await _context.BlogSpot
         .Include(b => b.Author)
