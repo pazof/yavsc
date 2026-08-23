@@ -10,7 +10,8 @@ public static class ViewModelBaseHelpers
 {
     public static async Task PushPageAsync(this App app, ViewModelBase vm)
     {
-        if (app.Window is null)
+        var window = app.Window;
+        if (window is null)
         {
             throw new InvalidOperationException("MainWindow is not initialized yet.");
         }
@@ -39,12 +40,12 @@ public static class ViewModelBaseHelpers
         page.DataContext = vm;
 
         // Avoid stacking the same singleton page twice (e.g. SettingsPage).
-        var stack = app.Window.NavRoot.NavigationStack;
+        var stack = window.NavRoot.NavigationStack;
         if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], page))
         {
             return;
         }
 
-        await app.Window.NavRoot.PushAsync(page);
+        await window.NavRoot.PushAsync(page);
     }
 }
