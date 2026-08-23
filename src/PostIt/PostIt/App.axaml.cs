@@ -65,7 +65,10 @@ public partial class App : Application
             singleViewPlatform.MainView = CreateMainWindow();
             ApplyDarkMode(settings);
         }
+        var mainVm = ServiceProvider!.GetRequiredService<HomePageViewModel>();
+
         base.OnFrameworkInitializationCompleted();
+        this.PushPageAsync(mainVm).Wait();
     }
 
 
@@ -86,9 +89,6 @@ public partial class App : Application
             PushMainPageAsync().Wait();
         };
 
-        var homeVm = ServiceProvider!.GetRequiredService<HomePageViewModel>();
-
-        this.PushPageAsync(homeVm).Wait();
         Window.SessionBanner.DataContext = sessionStatus;
         return Window;
     }
