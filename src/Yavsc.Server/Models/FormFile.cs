@@ -1,5 +1,3 @@
-
-using System.IO;
 using System.Net.Mime;
 
 namespace Yavsc.Server.Model

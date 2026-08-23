@@ -1,10 +1,6 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using RazorEngine.Templating;
 using Yavsc.Attributes.Validation;
-using Yavsc.Models;
-using Yavsc.Models.Calendar;
 using Yavsc.Server.Models.Calendar;
 
 namespace Yavsc.Server.Models.EMailing

@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.Attributes.Validation
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
@@ -13,13 +11,13 @@ namespace Yavsc.Attributes.Validation
          public YaRequiredAttribute (string msg) : base(msg)
          {
              ErrorMessage = msg;
-         } 
+         }
         public YaRequiredAttribute () : base("Required Field")
         {
             ErrorMessageResourceType = typeof(Yavsc.Attributes.Validation.Resources);
             ErrorMessageResourceName = "FieldRequired";
         }
-        
+
         public override bool IsValid(object value) {
             if (value == null) {
                 return false;
@@ -34,5 +32,5 @@ namespace Yavsc.Attributes.Validation
             return true;
         }
     }
-    
+
 }

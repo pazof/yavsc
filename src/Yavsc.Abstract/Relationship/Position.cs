@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Yavsc.Attributes.Validation;
 
 namespace Yavsc.Models.Relationship
 {

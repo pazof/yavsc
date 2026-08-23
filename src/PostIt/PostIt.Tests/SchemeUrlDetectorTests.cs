@@ -1,5 +1,4 @@
 using PostIt.Services;
-using Xunit;
 
 namespace PostIt.Tests;
 

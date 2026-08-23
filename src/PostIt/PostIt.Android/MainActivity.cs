@@ -1,6 +1,6 @@
-using Android.App;
-using Android.Content.PM;
+﻿using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Avalonia;
 using Avalonia.Android;
 
@@ -12,11 +12,10 @@ namespace PostIt.Android;
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
-    LaunchMode = LaunchMode.SingleTask,
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
 public class MainActivity : AvaloniaMainActivity
 {
-    /// <summary>
+        /// <summary>
     /// Strongly-typed handle to the current MainActivity instance, set in
     /// <see cref="OnCreate"/> and consumed by platform services such as
     /// <see cref="Services.AndroidSystemBrowser"/> which need to launch
@@ -30,8 +29,7 @@ public class MainActivity : AvaloniaMainActivity
         PlatformBootstrap.EnsureInitialized();
         Current = this;
     }
-
-    /// <summary>
+     /// <summary>
     /// Receives the deep-link Intent fired by the system browser after the
     /// user completes the OIDC login on https://yavsc.pschneider.fr. The
     /// Intent URI has the shape <c>android://postit-signin?code=...&amp;state=...</c>.

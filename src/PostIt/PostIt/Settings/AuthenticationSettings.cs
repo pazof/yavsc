@@ -21,6 +21,9 @@ public partial class AuthenticationSettings : ObservableObject
     public static string DefaultAuthority { get; internal set; } = "https://yavsc.pschneider.fr";
 
     public static string DefaultClientId { get; internal set; } = "postit";
+
+    public static string[] DefaultScopes { get; set; } = { "blogs"} ;
+
     [ObservableProperty]
     public partial string Authority { get; set; }
 

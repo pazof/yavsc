@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Yavsc.Models.Payment {
+namespace Yavsc.Models.Payment
+{
     using Yavsc;
     using Relationship;
-    using Yavsc.Attributes.Validation;
 
     public class PayPalPayment : ITrackedEntity
     {

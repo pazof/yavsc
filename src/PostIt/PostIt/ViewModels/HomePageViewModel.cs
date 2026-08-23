@@ -1,6 +1,4 @@
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
-using PostIt;
 using PostIt.Services;
 namespace PostIt.ViewModels;
 

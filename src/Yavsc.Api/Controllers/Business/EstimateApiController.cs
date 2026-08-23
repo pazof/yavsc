@@ -1,13 +1,8 @@
-using System;
-using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 using Yavsc.Server.Helpers;

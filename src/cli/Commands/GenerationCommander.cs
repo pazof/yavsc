@@ -3,7 +3,6 @@ using cli.Model;
 using cli.Services;
 using cli.Settings;
 using Microsoft.Extensions.CommandLineUtils;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -44,7 +43,7 @@ namespace cli.Commands
                 config.HelpOption("-? | -h | --help");
             });
             cmd.OnExecute(() => {
-             
+
                     var logger = loggerFactory.CreateLogger<GenerationCommander>();
                     var modelFullName = mdClass?.Value ?? options?.Value.ModelFullName;
                     var nameSpace = nameSpaceArg?.Value?? options?.Value.NameSpace;
@@ -56,10 +55,10 @@ namespace cli.Commands
                     logger.LogInformation($"Using parameters : modelFullName:{modelFullName} nameSpace:{nameSpace} dbContext:{dbContext} controllerName:{controllerName} relativePath:{relativePath}");
 
                     mvcGenerator.Generate(modelFullName,
-                     dbContext, 
+                     dbContext,
                      controllerName,
                      relativePath);
-               
+
                     logger.LogInformation("Finished generation");
 
                 return 0;

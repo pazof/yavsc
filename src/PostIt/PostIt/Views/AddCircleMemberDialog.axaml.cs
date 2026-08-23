@@ -1,9 +1,10 @@
-using Avalonia.Controls;
+
 using Avalonia.Markup.Xaml;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using PostIt.Services;
 using PostIt.ViewModels;
+using System.Threading.Tasks;
 
 namespace PostIt.Views;
 
@@ -19,7 +20,7 @@ namespace PostIt.Views;
 /// circle id. The dialog itself does not know the circle id
 /// by design.</para>
 /// </summary>
-public partial class AddCircleMemberDialog : ContentPage
+public partial class AddCircleMemberDialog : Avalonia.Controls.ContentPage
 {
     public AddCircleMemberDialog()
     {
@@ -41,10 +42,9 @@ public partial class AddCircleMemberDialog : ContentPage
     public AddCircleMemberDialogViewModel? ViewModel
         => DataContext as AddCircleMemberDialogViewModel;
 
-    private void OnCloseClicked(object? sender, RoutedEventArgs e)
+    private async Task OnCloseClicked(object? sender, RoutedEventArgs e)
     {
-        var nav = this.FindAncestorOfType<NavigationPage>();
-        if (nav is not null)
-            _ = nav.PopAsync();
+        App app = App.Current! as App;
+        await app!.GoBackAsync();
     }
 }

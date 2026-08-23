@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Yavsc.ViewModels.UserFiles;
 
 namespace Yavsc.Server.Helpers
@@ -42,10 +39,10 @@ namespace Yavsc.Server.Helpers
         {
             if (name.Any(c => !ValidFileNameChars.Contains(c)))
                 return false;
-            
+
             if (!name.Any(c => !AlfaNum.Contains(c)))
                 return false;
-                
+
             return true;
         }
 

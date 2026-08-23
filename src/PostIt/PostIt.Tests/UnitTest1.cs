@@ -1,5 +1,4 @@
 ﻿using Avalonia.Headless.XUnit;
-using Avalonia.Controls;
 using PostIt.Views;
 
 namespace PostIt.Tests;

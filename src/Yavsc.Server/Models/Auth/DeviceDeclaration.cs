@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
@@ -21,13 +20,13 @@ namespace Yavsc.Models.Identity
 
     /// <summary>
     /// Latest Activity Update
-    /// 
-    /// Let's says, 
-    /// the latest time this device downloaded functional info from server 
+    ///
+    /// Let's says,
+    /// the latest time this device downloaded functional info from server
     /// activity list, let's say, promoted ones, those thar are at index, and
-    /// all others, that are not listed as unsupported ones (not any more, after 
+    /// all others, that are not listed as unsupported ones (not any more, after
     /// has been annonced as obsolete a decent laps of time).
-    /// 
+    ///
     /// In order to say, is any activity has changed here.
     /// </summary>
     /// <returns></returns>

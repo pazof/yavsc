@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
@@ -114,10 +113,10 @@ public sealed class CircleMembersApiTests : IClassFixture<BlogsWebServerFixture>
         var circleId = SeedCircle("alice", "Famille");
         using var http = NewClient("alice");
 
-        var response = await http.GetAsync(MembersUrl(circleId));
+        var response = await http.GetAsync(MembersUrl(circleId), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
         Assert.Equal(0, doc.RootElement.GetArrayLength());
     }
@@ -131,14 +130,14 @@ public sealed class CircleMembersApiTests : IClassFixture<BlogsWebServerFixture>
 
         var postResponse = await http.PostAsJsonAsync(
             MembersUrl(circleId),
-            new { userId = "bob" });
+            new { userId = "bob" }, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
 
-        var getResponse = await http.GetAsync(MembersUrl(circleId));
+        var getResponse = await http.GetAsync(MembersUrl(circleId), TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
 
-        using var doc = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync());
+        using var doc = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
         Assert.Equal(1, doc.RootElement.GetArrayLength());
         var member = doc.RootElement[0];
@@ -156,12 +155,12 @@ public sealed class CircleMembersApiTests : IClassFixture<BlogsWebServerFixture>
 
         var first = await http.PostAsJsonAsync(
             MembersUrl(circleId),
-            new { userId = "bob" });
+            new { userId = "bob" }, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);
 
         var second = await http.PostAsJsonAsync(
             MembersUrl(circleId),
-            new { userId = "bob" });
+            new { userId = "bob" }, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
     }
 
@@ -172,14 +171,14 @@ public sealed class CircleMembersApiTests : IClassFixture<BlogsWebServerFixture>
         var circleId = SeedCircle("alice", "Famille");
         using var http = NewClient("alice");
 
-        await http.PostAsJsonAsync(MembersUrl(circleId), new { userId = "bob" });
+        await http.PostAsJsonAsync(MembersUrl(circleId), new { userId = "bob" }, TestContext.Current.CancellationToken);
 
         var deleteResponse = await http.DeleteAsync(
-            $"{MembersUrl(circleId)}/bob");
+            $"{MembersUrl(circleId)}/bob", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
 
-        var getResponse = await http.GetAsync(MembersUrl(circleId));
-        using var doc = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync());
+        var getResponse = await http.GetAsync(MembersUrl(circleId), TestContext.Current.CancellationToken);
+        using var doc = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         Assert.Equal(0, doc.RootElement.GetArrayLength());
     }
 
@@ -191,7 +190,7 @@ public sealed class CircleMembersApiTests : IClassFixture<BlogsWebServerFixture>
         var circleId = SeedCircle("alice", "Famille");
         using var http = NewClient("bob");
 
-        var response = await http.GetAsync(MembersUrl(circleId));
+        var response = await http.GetAsync(MembersUrl(circleId), TestContext.Current.CancellationToken);
 
         // 404, not 403 — the controller deliberately avoids leaking
         // the existence of someone else's circle.

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PostIt.Services;
-using PostIt.Views;
 using Yavsc.Api.Client;
 
 namespace PostIt.ViewModels;
