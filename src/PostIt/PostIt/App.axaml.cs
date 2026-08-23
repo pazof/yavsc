@@ -47,7 +47,7 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = CreateMainWindow();
+            desktop.MainWindow = Window = CreateMainWindow();
             ApplyDarkMode(settings);
         }
         else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
@@ -57,12 +57,13 @@ public partial class App : Application
                 {
                     Window = CreateMainWindow();
                     ApplyDarkMode(settings);
+                    Window.Show();
                     return Window;
                 };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = CreateMainWindow();
+            singleViewPlatform.MainView = Window = CreateMainWindow();
             ApplyDarkMode(settings);
         }
         var mainVm = ServiceProvider!.GetRequiredService<HomePageViewModel>();
