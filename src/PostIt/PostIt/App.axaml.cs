@@ -1,16 +1,16 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
-using Yavsc.Api.Client;
 using PostIt.ViewModels;
 using PostIt.Views;
+using Yavsc.Api.Client;
 
 namespace PostIt;
 
@@ -28,9 +28,7 @@ public partial class App : Application
     /// </summary>
     public IServiceProvider? ServiceProvider { get; private set; }
 
-    public App()
-    {
-    }
+    MainWindow window;
 
     public override void Initialize()
     {
@@ -42,50 +40,13 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // Belt-and-braces 2nd-instance guard. The primary check now
-        // lives in PostIt.Desktop.Program.Main and exits before
-        // Avalonia boots — preventing a flash of the MainWindow on
-        // every postit://callback launch. This block is kept for any
-        // entry point that bypasses Program.Main (PostIt.Browser,
-        // PostIt.Android's process lifecycle, ad-hoc tests that build
-        // App directly) and as defence-in-depth in case the Desktop
-        // build is ever reconfigured to skip the early check.
         if (TryHandOffCustomSchemeUrl()) return;
 
         this.ServiceProvider = BuildServices(new ServiceCollection());
-        AttachServiceProvider(ServiceProvider);
         var settings = ServiceProvider.GetRequiredService<Settings>();
 
         DataTemplates.Clear();
         DataTemplates.Add(new ViewLocator(ServiceProvider));
-
-        // Wire the Settings singleton onto the SettingsPage singleton
-        // once, at composition time. The page is registered as a
-        // singleton (see above) precisely so this binding is stable
-        // for the lifetime of the app: every push to / pop from the
-        // navigation stack finds the same ContentPage with the same
-        // DataContext, and the TwoWay bindings inside the page keep
-        // mutating the same in-memory Settings instance that the rest
-        // of the app reads (OidcClientOptions construction, etc.).
-        ServiceProvider.GetRequiredService<SettingsPage>().DataContext = settings;
-
-        // Settings.DarkMode was previously a dead field: it round-
-        // tripped through the settings file and the SettingsPage
-        // CheckBox, but no consumer ever read it. Wire it here to
-        // Application.RequestedThemeVariant so the toggle takes
-        // effect immediately, and seed the initial theme from the
-        // value Load() just populated (so a dark-mode user lands on
-        // a dark window on first launch, not on a default-light
-        // window that flips after the user touches the toggle).
-        ApplyDarkMode(settings);
-        settings.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(Settings.DarkMode))
-            {
-                ApplyDarkMode(settings);
-            }
-        };
-
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -93,50 +54,17 @@ public partial class App : Application
         }
         else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
         {
-            singleViewFactoryApplicationLifetime.MainViewFactory = () => CreateMainWindow();
+            singleViewFactoryApplicationLifetime.MainViewFactory =
+                () => CreateMainWindow();
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
             singleViewPlatform.MainView = CreateMainWindow();
         }
+        ApplyDarkMode(settings);
         base.OnFrameworkInitializationCompleted();
     }
 
-    MainWindow window;
-    private MainWindow CreateMainWindow()
-    {
-        window = new MainWindow();
-        var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
-        window.Opened += async (_, _) => await BootAsync(this.ServiceProvider!, api);
-          var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
-        sessionStatus.LogoutCompleted += () =>
-        {
-            window.NavRoot.PopToRootAsync();
-        };
-
-        sessionStatus.LoginSucceeded += () =>
-        {
-            PushMainPageAsync();
-        };
-
-        var homeVm = ServiceProvider!.GetRequiredService<HomePageViewModel>();
-
-        this.PushPageAsync(homeVm).Wait();
-        window.SessionBanner.DataContext = sessionStatus;
-        return window;
-    }
-
-    /// <summary>
-    /// Build the DI container the app uses. Pulled out of
-    /// <see cref="OnFrameworkInitializationCompleted"/> so headless
-    /// tests can construct the same container at <c>TestApp</c> boot
-    /// without going through the full Avalonia desktop lifetime
-    /// (which never runs in a unit test). The container returned is
-    /// the exact one production uses — no test-only fakes, no
-    /// trimmed service list — so a test that exercises a VM, page,
-    /// or service resolves through the same wiring the real app
-    /// does, and a green test is a green contract for prod.
-    /// </summary>
     internal static IServiceProvider BuildServices(ServiceCollection services)
     {
         var settings = new Settings();
@@ -182,14 +110,13 @@ public partial class App : Application
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);
-        services.AddSingleton<IYavscApiClient>(api);
         services.AddSingleton(client);
         services.AddSingleton(circleClient);
         services.AddSingleton(blogAclClient);
         services.AddSingleton(userSearchClient);
         services.AddSingleton<IContactService>(contactService);
         services.AddSingleton<IUserDirectory>(userDirectory);
-        services.AddTransient<MainPageViewModel>();
+        services.AddTransient<MainViewModel>();
         services.AddTransient<HomePageViewModel>();
         services.AddTransient<SignaturePageViewModel>();
         services.AddTransient<CirclesPageViewModel>();
@@ -204,21 +131,30 @@ public partial class App : Application
         return services.BuildServiceProvider();
     }
 
-    /// <summary>
-    /// Attach a pre-built DI container to this <see cref="App"/>
-    /// instance. Used by headless tests after
-    /// <see cref="BuildServices"/>; in production this happens
-    /// implicitly via <see cref="OnFrameworkInitializationCompleted"/>.
-    /// Idempotent w.r.t. <see cref="Settings.BindToServiceProvider"/>:
-    /// re-binding from a second App boot is a no-op.
-    /// </summary>
-    internal void AttachServiceProvider(IServiceProvider sp)
+    private MainWindow CreateMainWindow()
     {
-        ServiceProvider = sp;
-        Settings.BindToServiceProvider(sp);
+        window = new MainWindow();
+        var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
+        window.Opened += async (_, _) => await BootAsync(this.ServiceProvider!, api);
+          var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
+        sessionStatus.LogoutCompleted += () =>
+        {
+            window.NavRoot.PopToRootAsync();
+        };
+
+        sessionStatus.LoginSucceeded += () =>
+        {
+            PushMainPageAsync();
+        };
+
+        var homeVm = ServiceProvider!.GetRequiredService<HomePageViewModel>();
+
+        this.PushPageAsync(homeVm).Wait();
+        window.SessionBanner.DataContext = sessionStatus;
+        return window;
     }
 
-    /// <summary>
+/// <summary>
     /// Test-only hook: bind a concrete <see cref="MainWindow"/> so
     /// command-driven navigation paths (<see cref="PushPage"/>) can
     /// push onto a real <see cref="NavigationPage"/> in headless
@@ -266,7 +202,7 @@ public partial class App : Application
     public static Task PushMainPageAsync()
     {
         var app = (App)Current!;
-        var mainVm = app.ServiceProvider!.GetRequiredService<MainPageViewModel>();
+        var mainVm = app.ServiceProvider!.GetRequiredService<MainViewModel>();
         return app.PushPageAsync(mainVm);
     }
 

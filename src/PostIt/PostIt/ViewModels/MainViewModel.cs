@@ -11,7 +11,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.ViewModels;
 
-public partial class MainPageViewModel : ViewModelBase
+public partial class MainViewModel : ViewModelBase
 {
     /// <summary>Window/tab title. Cosmetic — bound by
     /// <c>MainPage.axaml</c> if at all. Not the post title.</summary>
@@ -120,7 +120,7 @@ public partial class MainPageViewModel : ViewModelBase
     }
 
 
-    public MainPageViewModel()
+    public MainViewModel()
     {
         SettingsModel = new Settings();
         Init(SettingsModel);
@@ -170,7 +170,7 @@ public partial class MainPageViewModel : ViewModelBase
     /// <see cref="BlogApiClient"/>. Production code uses the
     /// (Settings, BlogApiClient) overload below.
     /// </summary>
-    public MainPageViewModel(BlogApiClient blogClient, Settings? settings = null, IServiceProvider? services = null)
+    public MainViewModel(BlogApiClient blogClient, Settings? settings = null, IServiceProvider? services = null)
     {
         SettingsModel = new Settings();
         BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient)); ;

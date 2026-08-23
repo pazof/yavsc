@@ -40,7 +40,7 @@ public class MainPageSaveTests
         var recorder = new CallRecorder();
         var api = new RecordingYavscApiClient(recorder);
         var blog = new BlogApiClient(api, "http://localhost/");
-        var viewModel = new MainPageViewModel(blog);
+        var viewModel = new MainViewModel(blog);
 
         var page = new MainPage { DataContext = viewModel };
         // MainPage is a ContentPage (a Page, not a Control), so it

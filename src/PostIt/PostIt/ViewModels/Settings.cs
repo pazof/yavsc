@@ -64,24 +64,6 @@ public partial class Settings : ViewModelBase
             null);
     }
 
-    /// <summary>
-    /// Returns the canonical Settings instance previously bound through
-    /// <see cref="BindToServiceProvider"/>, or <c>null</c> when called
-    /// outside a running Avalonia application (tests, CLI tools).
-    /// </summary>
-    public static Settings? GetCurrent() => Volatile.Read(ref s_current);
-
-    /// <summary>
-    /// Resolve the canonical Settings instance or throw. Use this in
-    /// production code paths that must not silently fall back to a
-    /// freshly-constructed <see cref="Settings"/> (which used to be
-    /// the root cause of the postit://callback crash: two Settings
-    /// instances racing on PropertyChanged from different threads).
-    /// </summary>
-    public static Settings RequireCurrent() =>
-        GetCurrent() ?? throw new InvalidOperationException(
-            "Settings.Current is not bound. Call App.OnFrameworkInitializationCompleted first.");
-
     [ObservableProperty]
     public partial AuthenticationSettings Authentication { get; set; } = new();
 
