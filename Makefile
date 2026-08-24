@@ -163,7 +163,7 @@ POSTIT_RID ?= android-x64
 EMU_HEADLESS ?= 0
 LOGCAT_LINES ?= 600
 LOGCAT_FOLLOW ?= 0
-LOGCAT_BOOT_WAIT ?= 20
+LOGCAT_BOOT_WAIT ?= 30
 
 ANDROID_PACKAGE_NAME = fr.pschneider.PostIt
 POSTIT_ANDROID_CSPROJ := src/PostIt/PostIt.Android/PostIt.Android.csproj
@@ -275,7 +275,8 @@ qemu-logcat-boot:
 	@PID=$$(adb -s $(ADB_SERIAL) shell pidof $(ANDROID_PACKAGE_NAME) 2>/dev/null | tr -d '\r\n'); \
 	if [ -n "$$PID" ]; then \
 	    echo " ✅ (PID $$PID at dump time)"; \
-	    adb -s $(ADB_SERIAL) logcat -d -v time --pid=$$PID; \
+			sleep 10; \
+	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES) --pid=$$PID; \
 	else \
 	    echo " 👿 (PostIt process not running at dump time — dumping last $(LOGCAT_LINES) lines unfiltered)"; \
 	    adb -s $(ADB_SERIAL) logcat -d -v time -t $(LOGCAT_LINES); \
