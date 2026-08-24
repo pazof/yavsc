@@ -124,12 +124,12 @@ release:
 # Cibles pour installer PostIt.Android en Debug sur l'AVD qemu.
 #
 # Usage typique :
-#   make qemu           # lance l'AVD, attend le boot, build l'APK, l'installe
-#   make qemu-install   # (re)build l'APK et l'installe (AVD doit tourner)
-#   make qemu-build     # build l'APK seul (sans install)
-#   make qemu-run       # démarre l'AVD en background
-#   make qemu-stop      # arrête l'émulateur
-#   make qemu-wait-boot # attend que l'AVD ait fini de booter
+#   make qemu            # lance l'AVD, attend le boot, build l'APK, l'installe
+#   make android-install # (re)build l'APK et l'installe (AVD doit tourner)
+#   make android-build   # build l'APK seul (sans install)
+#   make qemu-run        # démarre l'AVD en background
+#   make qemu-stop       # arrête l'émulateur
+#   make qemu-wait-boot  # attend que l'AVD ait fini de booter
 #
 # Variables surchargeables (make VAR=valeur) :
 #   AVD_NAME        default: postit_test_avd
@@ -150,7 +150,7 @@ release:
 #   LOGCAT_LINES    default: 200
 #                    (nombre de lignes dumpées par `make qemu-logcat`)
 #   LOGCAT_FOLLOW   default: 0
-#                    (1 = stream live via `make qemu-logcat`,
+#                    (1 = stream live via `make logcat`,
 #                    sinon dump one-shot des N dernières lignes)
 #   LOGCAT_BOOT_WAIT default: 30
 #                    (secondes d'attente entre le clear du buffer,
@@ -165,7 +165,7 @@ LOGCAT_LINES ?= 600
 LOGCAT_FOLLOW ?= 0
 LOGCAT_BOOT_WAIT ?= 30
 
-ANDROID_PACKAGE_NAME = fr.pschneider.PostIt
+ANDROID_PACKAGE_NAME = fr.pschneider.postit
 POSTIT_ANDROID_CSPROJ := src/PostIt/PostIt.Android/PostIt.Android.csproj
 POSTIT_APK_DIR := src/PostIt/PostIt.Android/bin/$(CONFIG)/net10.0-android/$(POSTIT_RID)
 POSTIT_APK := $(POSTIT_APK_DIR)/$(ANDROID_PACKAGE_NAME)-Signed.apk
@@ -197,7 +197,7 @@ qemu-wait-boot:
 	echo "  Logs: /tmp/yavsc-emu/$(AVD_NAME).log" >&2; \
 	exit 1
 
-qemu-build:
+android-build:
 	# EmbedAssembliesIntoApk=true: without this, the Debug APK ships
 	# without the managed assemblies in it (they are pushed at runtime
 	# via `adb push`, "Fast Deployment"). On the qemu emulator, the
@@ -223,7 +223,7 @@ qemu-build:
 	fi
 
 
-qemu-install: qemu-build
+android-install: android-build
 	@echo "  Installing $(POSTIT_APK) on $(ADB_SERIAL)..."
 	adb -s $(ADB_SERIAL) install -r "$(POSTIT_APK)" -r
 
@@ -240,7 +240,7 @@ qemu-uninstall:
 # If the app is not running, pidof returns empty and logcat exits
 # silently with no output; that is the expected behaviour for
 # "no logs yet".
-qemu-logcat:
+logcat:
 	@PID=$$(adb -s $(ADB_SERIAL) shell pidof $(ANDROID_PACKAGE_NAME) 2>/dev/null | tr -d '\r\n'); \
 	if [ -z "$$PID" ]; then \
 	    echo "  $(ANDROID_PACKAGE_NAME) is not running on $(ADB_SERIAL)."; \
@@ -262,12 +262,16 @@ qemu-logcat:
 # Override LOGCAT_BOOT_WAIT to extend the post-launch wait
 # (default 15s; raise to 30+ if the device is slow to boot Avalonia).
 LOGCAT_BOOT_WAIT ?= 15
-qemu-logcat-boot:
+
+
+android-start:
 	@echo "  Clearing logcat buffer..."
 	adb -s $(ADB_SERIAL) logcat -c
 	@echo "  Launching $(ANDROID_PACKAGE_NAME)..."
 	adb -s $(ADB_SERIAL) shell am start \
 	    -n $(ANDROID_PACKAGE_NAME)/PostIt.Android.PostItMainActivity
+
+qemu-logcat-boot: android-start
 	@echo "  Waiting $(LOGCAT_BOOT_WAIT)s for the app to start rendering..."
 	@sleep $(LOGCAT_BOOT_WAIT)
 
@@ -283,7 +287,7 @@ qemu-logcat-boot:
 			exit 1; \
 	fi
 
-qemu: qemu-run qemu-wait-boot qemu-install
+qemu: qemu-run qemu-wait-boot android-install
 	@echo "  ✓ PostIt.Android installed on $(ADB_SERIAL)"
 
-.PHONY: test release qemu qemu-run qemu-stop qemu-wait-boot qemu-build qemu-install qemu-logcat qemu-logcat-boot
+.PHONY: test release qemu qemu-run qemu-stop qemu-wait-boot android-build android-install logcat qemu-logcat-boot
