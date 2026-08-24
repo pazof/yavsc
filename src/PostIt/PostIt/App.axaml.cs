@@ -87,7 +87,7 @@ public partial class App : Application
 
         sessionStatus.LoginSucceeded += () =>
         {
-            PushMainPageAsync().Wait();
+            PushMainPageAsync();
         };
 
         Window.SessionBanner.DataContext = sessionStatus;
