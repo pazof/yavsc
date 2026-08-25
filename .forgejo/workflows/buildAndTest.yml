@@ -27,6 +27,9 @@ jobs:
   build:
 
     runs-on: docker
+    container:
+      # Options cruciales pour donner accès à KVM et autoriser l'émulation
+      options: --device /dev/kvm --privileged
 
     steps:
     - name: Clone yavsc
@@ -44,5 +47,27 @@ jobs:
       run: cd /src/_src && dotnet restore
     - name: Build
       run: cd /src/_src && dotnet build --no-restore
+    - name: Démarrer l'émulateur QEMU Headless et exécuter les tests
+      run: |
+        echo "Démarrage de l'émulateur en tâche de fond..."
+        # Remplacer 'pixel_5_api_30' par le nom exact de votre AVD créé sur l'hôte
+        emulator -avd emulator-5554 -no-window -no-audio -no-boot-anim -gpu swiftshader &
+        EMU_PID=$!
+        echo "Attente de la détection par ADB..."
+        adb wait-for-device
+        echo "Attente de la fin du boot d'Android..."
+        OUT=""
+        while [[ "$OUT" != "1" ]]; do
+          sleep 5
+          OUT=$(adb shell getprop sys.boot_completed | tr -d '\r')
+          echo "Statut actuel : ${OUT:-0}"
+        done
+        echo "✅ L'émulateur Android est prêt !"
+        echo "Installation de l'APK de Debug..."
+        adb install /src/_src/src/PostIt/PostIt.Android/bin/Debug/net10.0-android/fr.pschneider.postit-Signed.apk
+        dotnet test /src/_src/src/PostIt/PostIt.Tests/PostIt.Tests.csproj -c Release
+
     - name: Test
+      echo "⌛ Lancement des tests ..."
       run: cd /src/_src && dotnet test --no-build --verbosity normal
+

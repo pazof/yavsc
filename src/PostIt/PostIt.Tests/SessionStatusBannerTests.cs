@@ -34,10 +34,10 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_renders_three_buttons_in_the_visual_tree()
     {
-        var window = new MainView();
-        window.SessionBanner.DataContext = new SessionStatusViewModel();
+        MainWindow window = new MainWindow();
+        window.Show();
 
-        var buttons = window.SessionBanner.GetVisualDescendants()
+        var buttons = window.GetVisualDescendants()
             .OfType<Button>()
             .ToList();
 
@@ -45,7 +45,7 @@ public class SessionStatusBannerTests
         // déconnecter, Se connecter, Paramètres. If any one is
         // missing, the user has no way to trigger the
         // corresponding navigation event.
-        Assert.Equal(3, buttons.Count);
+        Assert.Equal(4, buttons.Count);
         Assert.Contains(buttons, b => b.Content as string == "Se déconnecter");
         Assert.Contains(buttons, b => b.Content as string == "Se connecter");
         Assert.Contains(buttons, b => b.Content as string == "Paramètres");
@@ -54,12 +54,10 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_login_button_is_visible_when_logged_out()
     {
-        var window = new MainView();
-        var vm = new SessionStatusViewModel();
-        Assert.True(vm.IsLoggedOut);  // VM default
-        window.SessionBanner.DataContext = vm;
+        MainWindow window = new MainWindow();
+        window.Show();
 
-        var login = window.SessionBanner.GetVisualDescendants()
+        var login = window.GetVisualDescendants()
             .OfType<Button>()
             .Single(b => b.Content as string == "Se connecter");
 
@@ -71,12 +69,13 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_logout_button_is_hidden_when_logged_out()
     {
-        var window = new MainView();
-        var vm = new SessionStatusViewModel();
-        Assert.False(vm.IsLoggedIn);  // VM default
-        window.SessionBanner.DataContext = vm;
+       SessionStatusBanner banner = CreateBanner();
 
-        var logout = window.SessionBanner.GetVisualDescendants()
+        Assert.False((banner.DataContext as SessionStatusViewModel)!
+        .IsLoggedIn);  // VM default
+
+
+        var logout = banner.GetVisualDescendants()
             .OfType<Button>()
             .Single(b => b.Content as string == "Se déconnecter");
 
@@ -86,10 +85,9 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_settings_button_is_visible_regardless_of_session()
     {
-        var window = new MainView();
-        window.SessionBanner.DataContext = new SessionStatusViewModel();
+        SessionStatusBanner banner = CreateBanner();
 
-        var settings = window.SessionBanner.GetVisualDescendants()
+        var settings = banner.GetVisualDescendants()
             .OfType<Button>()
             .Single(b => b.Content as string == "Paramètres");
 
@@ -99,13 +97,21 @@ public class SessionStatusBannerTests
         Assert.True(settings.IsVisible);
     }
 
+    private static SessionStatusBanner CreateBanner()
+    {
+        MainWindow window = new MainWindow();
+        window.Show();
+        var banner = window.MainView.SessionBanner;
+        var status = new SessionStatusViewModel();
+        banner.DataContext = status;
+        return banner;
+    }
+
     [AvaloniaFact]
     public void Banner_session_label_reflects_DataContext()
     {
-        var window = new MainView();
-        window.SessionBanner.DataContext = new SessionStatusViewModel();
-
-        var label = window.SessionBanner.GetVisualDescendants()
+        SessionStatusBanner banner = CreateBanner();
+        var label = banner.GetVisualDescendants()
             .OfType<TextBlock>()
             .First(t => t.Text == "Déconnecté" || t.Text == "Connecté");
 
