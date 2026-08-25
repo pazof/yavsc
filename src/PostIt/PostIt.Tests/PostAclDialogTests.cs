@@ -117,7 +117,7 @@ public class PostAclDialogTests
     /// rebinding the global DI mid-test would trample the
     /// Settings singleton the rest of the harness depends on.
     /// </summary>
-    private static (MainWindow window, BlogAclApiClient aclClient, CircleApiClient circleClient, CountingHttpHandler handler) Mount()
+    private static (MainView window, BlogAclApiClient aclClient, CircleApiClient circleClient, CountingHttpHandler handler) Mount()
     {
         var handler = new CountingHttpHandler();
         var settings = new Settings();
@@ -138,10 +138,9 @@ public class PostAclDialogTests
         // CountingHttpHandler.
         GC.KeepAlive(sp);
 
-        var window = new MainWindow();
+        var window = new MainView();
         var app = (App)Application.Current!;
         app.AttachMainWindow(window);
-        window.Show();
 
         return (window, aclClient, circleClient, handler);
     }

@@ -1,8 +1,13 @@
-﻿using Android.App;
+﻿using Android;
+using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using AndroidX.Core.Provider;
+using AndroidX.Emoji2.Text;
 using Avalonia;
 using Avalonia.Android;
+using AndroidX.Core.Provider;
+using AndroidX.Emoji2.Text;
 
 namespace PostIt.Android;
 
@@ -15,18 +20,22 @@ namespace PostIt.Android;
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
 public class MainActivity : AvaloniaMainActivity
 {
-        /// <summary>
-    /// Strongly-typed handle to the current MainActivity instance, set in
-    /// <see cref="OnCreate"/> and consumed by platform services such as
-    /// <see cref="Services.AndroidSystemBrowser"/> which need to launch
-    /// Chrome Custom Tabs.
+    /// <summary>
+    /// The current MainActivity instance.
     /// </summary>
     public static MainActivity? Current { get; private set; }
 
     protected override void OnCreate(global::Android.OS.Bundle? savedInstanceState)
     {
-        base.OnCreate(savedInstanceState);
+        FontRequest fontRequest = new FontRequest(
+                "com.google.android.gms.fonts",
+                "com.google.android.gms",
+                "Noto Color Emoji Compat",
+                Yavsc.Resource.Array.com_google_android_gms_fonts_certs); //com_google_android_gms_fonts_certs
+        EmojiCompat.Config config = new FontRequestEmojiCompatConfig(this, fontRequest);
+        EmojiCompat.Init(config);
         PlatformBootstrap.EnsureInitialized();
+        base.OnCreate(savedInstanceState);
         Current = this;
     }
      /// <summary>

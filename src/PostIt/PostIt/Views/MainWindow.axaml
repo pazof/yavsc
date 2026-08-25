@@ -7,11 +7,6 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PostIt.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="PostIt" >
-
-        <DockPanel LastChildFill="True">
-        <views:SessionStatusBanner x:Name="SessionBanner"
-                                   DockPanel.Dock="Bottom"/>
-        <NavigationPage x:Name="NavRoot"/>
-    </DockPanel>
+        Title="PostIt">
+        <views:MainView x:Name="MainView" />
 </Window>

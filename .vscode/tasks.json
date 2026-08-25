@@ -15,12 +15,27 @@
       },
       "args": [
         "run",
+        "-p:TargetFramework=net10.0-android",
         "-p:Configuration=Debug",
         "-p:AndroidAttachDebugger=true",
         "-p:AndroidSdbHostPort=10000",
         "-p:AndroidSdbTargetPort=10000"
       ],
-      "problemMatcher": "$msCompile"
+      "problemMatcher": [
+        {
+          "owner": "dotnet",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "source": "dotnet",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(error):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      }
+      ]
     },
     {
       "label": "build",
@@ -60,59 +75,6 @@
         "kind": "build"
       },
       "isBackground": true
-    },
-    {
-      "label": "test blogs",
-      "type": "process",
-      "problemMatcher": ["$msCompile"],
-      "command": "dotnet",
-      "args": ["test"],
-      "runOptions": {
-        "instanceLimit": 1
-      },
-      "options": {
-        "cwd": "src/Yavsc.Blogs",
-        "env": {
-          "DOTNET_CLI_UI_LANGUAGE": "en-US",
-          "ASPNETCORE_ENVIRONMENT": "Development"
-        }
-      },
-      "group": {
-        "kind": "test"
-      },
-      "isBackground": true,
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      }
-    },
-    {
-      "label": "publish",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "publish",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary;ForceNoAlign"
-      ],
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "label": "watch",
-      "command": "dotnet",
-      "type": "process",
-      "args": ["watch", "--project",
-      "src/Yavsc.Org/Yavsc.Org.csproj"
-    ],
-      "problemMatcher": "$msCompile",
-      "runOptions": {
-
-      }
-
     }
   ]
 }

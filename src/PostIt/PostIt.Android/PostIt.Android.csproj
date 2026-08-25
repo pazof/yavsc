@@ -4,13 +4,11 @@
     <TargetFramework>net10.0-android</TargetFramework>
     <SupportedOSPlatformVersion>23</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
-    <ApplicationId>fr.pschneider.PostIt</ApplicationId>
+    <ApplicationId>fr.pschneider.postit</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
-    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot> 
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <TrimMode>partial</TrimMode>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,11 +21,11 @@
     <PackageReference Include="Avalonia.Android" />
     <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" />
     <PackageReference Include="Xamarin.AndroidX.Browser" />
-    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" />
-    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Common" />
-  </ItemGroup>
+
+   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PostIt\PostIt.csproj" />
   </ItemGroup>
+
 </Project>

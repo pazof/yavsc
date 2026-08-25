@@ -9,7 +9,7 @@ namespace PostIt.Tests;
 
 /// <summary>
 /// UI tests for <see cref="SessionStatusBanner"/>. Mounted inside
-/// a real <see cref="MainWindow"/> via the headless Avalonia
+/// a real <see cref="MainView"/> via the headless Avalonia
 /// platform declared in <c>TestApp.cs</c>.
 ///
 /// <para>The pattern is the one that <c>UnitTest1.MainPage_Should_Load</c>
@@ -34,9 +34,8 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_renders_three_buttons_in_the_visual_tree()
     {
-        var window = new MainWindow();
+        var window = new MainView();
         window.SessionBanner.DataContext = new SessionStatusViewModel();
-        window.Show();
 
         var buttons = window.SessionBanner.GetVisualDescendants()
             .OfType<Button>()
@@ -55,11 +54,10 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_login_button_is_visible_when_logged_out()
     {
-        var window = new MainWindow();
+        var window = new MainView();
         var vm = new SessionStatusViewModel();
         Assert.True(vm.IsLoggedOut);  // VM default
         window.SessionBanner.DataContext = vm;
-        window.Show();
 
         var login = window.SessionBanner.GetVisualDescendants()
             .OfType<Button>()
@@ -73,11 +71,10 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_logout_button_is_hidden_when_logged_out()
     {
-        var window = new MainWindow();
+        var window = new MainView();
         var vm = new SessionStatusViewModel();
         Assert.False(vm.IsLoggedIn);  // VM default
         window.SessionBanner.DataContext = vm;
-        window.Show();
 
         var logout = window.SessionBanner.GetVisualDescendants()
             .OfType<Button>()
@@ -89,9 +86,8 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_settings_button_is_visible_regardless_of_session()
     {
-        var window = new MainWindow();
+        var window = new MainView();
         window.SessionBanner.DataContext = new SessionStatusViewModel();
-        window.Show();
 
         var settings = window.SessionBanner.GetVisualDescendants()
             .OfType<Button>()
@@ -106,9 +102,8 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_session_label_reflects_DataContext()
     {
-        var window = new MainWindow();
+        var window = new MainView();
         window.SessionBanner.DataContext = new SessionStatusViewModel();
-        window.Show();
 
         var label = window.SessionBanner.GetVisualDescendants()
             .OfType<TextBlock>()
