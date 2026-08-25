@@ -26,7 +26,8 @@ pour la production des paquets `.deb`.
 
 ### Changed
 
-mostly nothing but refactorings
+L'identifiant de l'application client Android a changé, il passe en minuscules :
+`fr.pschneider.postit`
 
 ### Fixed
 
