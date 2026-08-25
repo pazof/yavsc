@@ -85,7 +85,7 @@ public class SettingsLoadTests
                         bool flip = ((workerId + i) & 1) == 0;
                         settings.DarkMode = flip;
                         settings.Authentication.RedirectUri =
-                            global::AuthenticationSettings.DefaultDesktopRedirectUri;
+                            global::AuthenticationSettings.DesktopRedirectUri;
 
                         settings.BusinessApiUrl = flip
                             ? "https://a.example.test/api/v1/"

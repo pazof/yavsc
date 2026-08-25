@@ -12,14 +12,9 @@ namespace PostIt.Android;
 /// </summary>
 internal static class PlatformBootstrap
 {
-    private static int _initialized;
-
-    internal static void EnsureInitialized()
+    internal static void InitPlatform()
     {
-        if (System.Threading.Interlocked.Exchange(ref _initialized, 1) != 0)
-            return;
 
-        Platform.DefaultRedirectUri = ViewModels.Settings.AndroidRedirectUri;
         Platform.CreateBrowser = () =>
         {
             var activity = MainActivity.Current;

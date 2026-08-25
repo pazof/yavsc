@@ -1,13 +1,11 @@
-﻿using Android;
+﻿
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using AndroidX.Core.Provider;
 using AndroidX.Emoji2.Text;
-using Avalonia;
 using Avalonia.Android;
-using AndroidX.Core.Provider;
-using AndroidX.Emoji2.Text;
+using PostIt.Droid.Services;
 
 namespace PostIt.Android;
 
@@ -34,7 +32,7 @@ public class MainActivity : AvaloniaMainActivity
                 Yavsc.Resource.Array.com_google_android_gms_fonts_certs); //com_google_android_gms_fonts_certs
         EmojiCompat.Config config = new FontRequestEmojiCompatConfig(this, fontRequest);
         EmojiCompat.Init(config);
-        PlatformBootstrap.EnsureInitialized();
+        PlatformBootstrap.InitPlatform();
         base.OnCreate(savedInstanceState);
         Current = this;
     }
@@ -50,7 +48,13 @@ public class MainActivity : AvaloniaMainActivity
     protected override void OnNewIntent(Intent? intent)
     {
         base.OnNewIntent(intent);
-        if (intent is not null) AndroidOidcCallbackSink.Handle(intent);
+
+         var url = intent?.DataString;
+        if (!string.IsNullOrEmpty(url) && url.StartsWith("postit://callback"))
+        {
+            OidcCallbackManager.SetResult(url);
+        }
+
     }
 
     internal static class AndroidOidcCallbackSink

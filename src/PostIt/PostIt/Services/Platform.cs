@@ -21,14 +21,14 @@ public static class Platform
     /// override this property at startup (e.g. PostIt.Android sets
     /// it to <c>android://postit-signin</c>).
     /// </summary>
-    public static string DefaultRedirectUri { get; set; } = "postit://callback";
+    public const string RedirectUri = "postit://callback";
 
     /// <summary>
     /// Scheme prefix the <see cref="CustomSchemeBrowser"/> matches
     /// against <c>BrowserOptions.EndUrl</c>. Overridable for apps
     /// that want to register their own scheme.
     /// </summary>
-    public static string CustomScheme { get; set; } = "postit";
+    public const string CustomScheme = "postit";
 
     /// <summary>
     /// Constructs a fresh <see cref="IBrowser"/> for the running platform.

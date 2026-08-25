@@ -5,19 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Android",
+      "name": "Android Debug",
       "type": "mono",
       "preLaunchTask": "run-debug-android",
       "request": "attach",
       "address": "localhost",
-      "port": 10000
+      "port": 55555
     },
     {
-      "name": "Attach - Android",
+      "name": "Android Attach - Debug",
       "type": "mono",
       "request": "attach",
       "address": "localhost",
-      "port": 10000
+      "port": 55555
     },
     {
       "name": "API",
@@ -26,19 +26,19 @@
       "projectPath": "${workspaceFolder}/src/Api/Api.csproj"
     },
     {
-      "name": "Yavsc.Org",
+      "name": "Yavsc Org",
       "type": "dotnet",
       "request": "launch",
       "projectPath": "${workspaceFolder}/src/Yavsc.Org/Yavsc.Org.csproj",
     },
     {
-      "name": "Yavsc.Blogs",
+      "name": "Yavsc Blogs",
       "type": "dotnet",
       "request": "launch",
       "projectPath": "${workspaceFolder}/src/Yavsc.Blogs/Yavsc.Blogs.csproj"
     },
     {
-      "name": "PostIt",
+      "name": "PostIt Desktop",
       "type": "dotnet",
       "request": "launch",
       "projectPath": "${workspaceFolder}/src/PostIt/PostIt.Desktop/PostIt.Desktop.csproj",

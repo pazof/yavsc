@@ -2,13 +2,11 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IdentityModel.OidcClient;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading;
 
 [assembly: InternalsVisibleTo("PostIt.Tests")]
 
@@ -17,37 +15,6 @@ namespace PostIt.ViewModels;
 public partial class Settings : ViewModelBase
 {
     const string SettingsFileName = "postit-settings.json";
-
-    /// <summary>
-    /// Redirect URI used by the Android app. The corresponding IntentFilter
-    /// in <c>PostIt.Android/Properties/AndroidManifest.xml</c> must match.
-    /// </summary>
-    public const string AndroidRedirectUri = "android://postit-signin";
-
-
-
-    /// <summary>
-    /// Process-wide canonical <see cref="Settings"/> instance, wired up
-    /// at application boot by <see cref="App.OnFrameworkInitializationCompleted"/>
-    /// through <see cref="BindToServiceProvider"/>. The hybrid pattern:
-    /// <list type="bullet">
-    ///   <item><description>The static <c>Current</c> reference gives
-    ///   ViewModels a non-DI way to reach the same instance (and lets
-    ///   the framework bindings push notifications through one stable
-    ///   <see cref="ObservableObject"/>).</description></item>
-    ///   <item><description>Tests that want to exercise a clean
-    ///   instance still call <c>new Settings()</c>; <c>Current</c>
-    ///   stays null in those contexts because <see cref="BindToServiceProvider"/>
-    ///   is never invoked.</description></item>
-    ///   <item><description>Reads (<see cref="GetCurrent"/>) are
-    ///   thread-safe and never allocate; mutations always go through
-    ///   the DI-resolved singleton so two threads cannot each register
-    ///   a different "current" Settings.</description></item>
-    /// </list>
-    /// </summary>
-    private static Settings? s_current;
-
-   
 
     [ObservableProperty]
     public partial AuthenticationSettings Authentication { get; set; } = new();
@@ -66,7 +33,7 @@ public partial class Settings : ViewModelBase
     /// setters above all funnel through here, and we flip
     /// <see cref="IsDirty"/> in lock-step. Sub-property mutations
     /// (e.g. <c>Authentication.Authority</c>) are caught by the
-    /// subscription wired up in 
+    /// subscription wired up in
     /// below. <see cref="ApplyJson"/> disables the flag during bulk
     /// hydration so the disk load itself does not count as a user
     /// edit.
@@ -336,7 +303,7 @@ public partial class Settings : ViewModelBase
                     this.Authentication.ClientId = string.IsNullOrWhiteSpace(settings.Authentication.ClientId) ?
                      AuthenticationSettings.DefaultClientId : settings.Authentication.ClientId;
                     this.Authentication.RedirectUri = string.IsNullOrWhiteSpace(settings.Authentication.RedirectUri) ?
-                     AuthenticationSettings.DefaultDesktopRedirectUri : settings.Authentication.RedirectUri;
+                     AuthenticationSettings.DesktopRedirectUri : settings.Authentication.RedirectUri;
                     if (settings.Authentication.Scopes is null || settings.Authentication.Scopes.Length == 0)
                     {
                         settings.Authentication.Scopes = AuthenticationSettings.DefaultScopes;
@@ -377,7 +344,7 @@ public partial class Settings : ViewModelBase
         {
             Authority = AuthenticationSettings.DefaultAuthority,
             ClientId = AuthenticationSettings.DefaultClientId,
-            RedirectUri = AuthenticationSettings.DefaultDesktopRedirectUri,
+            RedirectUri = AuthenticationSettings.DesktopRedirectUri,
             Scopes = AuthenticationSettings.DefaultScopes
         };
         this.DarkMode = false;

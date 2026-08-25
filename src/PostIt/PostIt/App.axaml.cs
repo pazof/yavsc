@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -73,10 +72,8 @@ public partial class App : Application
             ConfigureRootView(View);
             ApplyDarkMode(settings);
         }
-        var mainVm = ServiceProvider!.GetRequiredService<HomePageViewModel>();
 
         base.OnFrameworkInitializationCompleted();
-        this.PushPageAsync(mainVm);
     }
 
 private void ConfigureRootView(MainView rootView)
@@ -93,9 +90,9 @@ private void ConfigureRootView(MainView rootView)
         rootView.NavRoot.PopToRootAsync();
     };
 
-    sessionStatus.LoginSucceeded += () =>
+    sessionStatus.LoginSucceeded += async () =>
     {
-        PushMainPageAsync();
+        await PushMainPageAsync();
     };
 
     rootView.SessionBanner.DataContext = sessionStatus;
@@ -133,6 +130,9 @@ private void ConfigureRootView(MainView rootView)
         var refreshed = await api.TrySilentLoginAsync().ConfigureAwait(true);
         var sessionStatus = provider.GetRequiredService<SessionStatusViewModel>();
         sessionStatus.Refresh();
+        var homePage = provider.GetRequiredService<HomePageViewModel>();
+        var app = (App)Current!;
+        await app.PushPageAsync(homePage);
         if (!refreshed) return;
 
         await PushMainPageAsync().ConfigureAwait(true);
