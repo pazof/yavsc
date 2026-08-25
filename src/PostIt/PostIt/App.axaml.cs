@@ -32,16 +32,6 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-#if DEBUG
-        try {
-            this.AttachDeveloperTools();
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine(
-                $"Could not attache developer tools : {ex.Message}");
-        }
-#endif
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -111,9 +101,9 @@ private void ConfigureRootView(MainView rootView)
     /// push onto a real <see cref="NavigationPage"/> in headless
     /// fixtures that do not run the full desktop lifetime bootstrap.
     /// </summary>
-    internal void AttachMainWindow(MainView mainWindow)
+    internal void AttachMainWindow(MainView mainView)
     {
-        View = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
+        View = mainView ?? throw new ArgumentNullException(nameof(mainView));
     }
 
     private static void ApplyDarkMode(Settings settings)
