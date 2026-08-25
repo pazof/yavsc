@@ -8,8 +8,7 @@ public class MainPageTests
     [AvaloniaFact]
     public void MainPage_Should_Load()
     {
-        var window = new MainWindow();
-        window.Show();
+        var window = new MainView();
         Assert.NotNull(window);
     }
 }

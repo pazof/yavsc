@@ -23,7 +23,7 @@ public class AndroidAppLaunchTests
         _output = output;
     }
 
-    // FIXME [Fact]
+    [Fact]
     public void PostIt_starts_and_draws_a_first_frame_on_the_emulator()
     {
         if (!IsPackageInstalledOnAnyDevice())

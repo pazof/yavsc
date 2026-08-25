@@ -23,11 +23,13 @@ public static class ServiceCollectionHelpers
         var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
         var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
         var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
-        var contactService = new ContactService();
         var userDirectory = new UserDirectory(userSearchClient);
 
         // Vues
-        services.AddTransient<MainPage>();
+        services.AddSingleton<MainView>();
+        services.AddSingleton<MainPage>();
+        services.AddSingleton<MainWindow>();
+
         // SettingsPage is a singleton: there must be one and only one
         // instance of the settings UI for the lifetime of the app.
         // This guarantees that (a) the bindings always reflect the
@@ -58,7 +60,6 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(circleClient);
         services.AddSingleton(blogAclClient);
         services.AddSingleton(userSearchClient);
-        services.AddSingleton<IContactService>(contactService);
         services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddTransient<MainViewModel>();
         services.AddTransient<HomePageViewModel>();

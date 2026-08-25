@@ -28,7 +28,6 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Avalonia.AvaloniaEdit" />
     <PackageReference Include="IdentityModel.OidcClient" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>

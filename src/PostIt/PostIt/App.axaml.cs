@@ -28,7 +28,7 @@ public partial class App : Application
     /// </summary>
     public IServiceProvider? ServiceProvider { get; private set; }
 
-    public MainWindow? Window { get; private set; }
+    public MainView? View { get; private set; }
 
     public override void Initialize()
     {
@@ -44,10 +44,28 @@ public partial class App : Application
 
         this.ServiceProvider = new ServiceCollection().BuildServices();
         var settings = ServiceProvider.GetRequiredService<Settings>();
+        var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
+            sessionStatus.LogoutCompleted += () =>
+            {
+                View.NavRoot.PopToRootAsync();
+            };
 
+            sessionStatus.LoginSucceeded += () =>
+            {
+                PushMainPageAsync();
+            };
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = Window = CreateMainWindow();
+            var window = ServiceProvider.GetRequiredService<MainWindow>();
+            desktop.MainWindow = window;
+            var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
+            desktop.MainWindow.Opened += async (_, _) => await BootAsync(this.ServiceProvider!, api);
+
+            View = window.MainView;
+
+            View.SessionBanner.DataContext = sessionStatus;
+            // FIXME   Window.Opened += async (_, _) => await BootAsync(this.ServiceProvider!, api);
+
             ApplyDarkMode(settings);
         }
         else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
@@ -55,54 +73,34 @@ public partial class App : Application
             singleViewFactoryApplicationLifetime.MainViewFactory =
                 () =>
                 {
-                    Window = CreateMainWindow();
+                    View = ServiceProvider.GetRequiredService<MainView>();
                     ApplyDarkMode(settings);
-                    Window.Show();
-                    return Window;
+                    View.SessionBanner.DataContext = sessionStatus;
+                    return View;
                 };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = Window = CreateMainWindow();
+            singleViewPlatform.MainView = View = ServiceProvider.GetRequiredService<MainView>();
+            View.SessionBanner.DataContext = sessionStatus;
             ApplyDarkMode(settings);
         }
         var mainVm = ServiceProvider!.GetRequiredService<HomePageViewModel>();
 
         base.OnFrameworkInitializationCompleted();
-        this.PushPageAsync(mainVm).Wait();
+        this.PushPageAsync(mainVm);
     }
 
-
-
-    private MainWindow CreateMainWindow()
-    {
-        Window = new MainWindow();
-        var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
-        Window.Opened += async (_, _) => await BootAsync(this.ServiceProvider!, api);
-        var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
-        sessionStatus.LogoutCompleted += () =>
-        {
-            Window.NavRoot.PopToRootAsync();
-        };
-
-        sessionStatus.LoginSucceeded += () =>
-        {
-            PushMainPageAsync();
-        };
-
-        Window.SessionBanner.DataContext = sessionStatus;
-        return Window;
-    }
 
     /// <summary>
-    /// Test-only hook: bind a concrete <see cref="MainWindow"/> so
+    /// Test-only hook: bind a concrete <see cref="MainView"/> so
     /// command-driven navigation paths (<see cref="PushPage"/>) can
     /// push onto a real <see cref="NavigationPage"/> in headless
     /// fixtures that do not run the full desktop lifetime bootstrap.
     /// </summary>
-    internal void AttachMainWindow(MainWindow mainWindow)
+    internal void AttachMainWindow(MainView mainWindow)
     {
-        Window = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
+        View = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
     }
 
     private static void ApplyDarkMode(Settings settings)
@@ -180,6 +178,6 @@ public partial class App : Application
 
     internal async Task GoBackAsync()
     {
-        await Window!.NavRoot.PopAsync();
+        await View!.NavRoot.PopAsync();
     }
 }

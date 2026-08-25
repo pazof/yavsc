@@ -10,7 +10,7 @@ public static class ViewModelBaseHelpers
 {
     public static async Task PushPageAsync(this App app, ViewModelBase vm)
     {
-        var window = app.Window;
+        var window = app.View;
         if (window is null)
         {
             throw new InvalidOperationException("MainWindow is not initialized yet.");

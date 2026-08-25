@@ -99,7 +99,7 @@ public class MainPageButtonsTests
     }
 
     /// <summary>
-    /// Mount a real <see cref="MainWindow"/> (as
+    /// Mount a real <see cref="MainView"/> (as
     /// <c>SessionStatusBannerTests</c> does), push a
     /// <see cref="MainPage"/> with the given VM onto
     /// <c>NavRoot</c>. <c>PushAsync</c> is awaited (via
@@ -109,13 +109,12 @@ public class MainPageButtonsTests
     /// realised and <c>KeyPressQwerty</c> has a real
     /// <see cref="TopLevel"/> to dispatch against.
     /// </summary>
-    private static (MainWindow window, MainPage page) MountMainPage(MainViewModel vm)
+    private static (MainView window, MainPage page) MountMainPage(MainViewModel vm)
     {
-        var window = new MainWindow();
+        var window = new MainView();
         var page = new MainPage { DataContext = vm };
         var app = (PostIt.App)Application.Current!;
         app.AttachMainWindow(window);
-        window.Show();
         window.NavRoot.PushAsync(page).GetAwaiter().GetResult();
         return (window, page);
     }
@@ -125,7 +124,7 @@ public class MainPageButtonsTests
     /// supported headless pattern (cf. CalculatorTests in the
     /// Avalonia.Samples repo). Returns the nav-stack count
     /// before the click so the caller can assert on the delta.
-    /// KeyPressQwerty is dispatched on the <see cref="MainWindow"/>
+    /// KeyPressQwerty is dispatched on the <see cref="MainView"/>
     /// itself — it is the <see cref="TopLevel"/> that owns the
     /// headless implementation, and routing the key through any
     /// descendant TopLevel (e.g. one obtained via
@@ -134,7 +133,7 @@ public class MainPageButtonsTests
     /// because the descendant does not carry the
     /// <c>PlatformHandle</c> the harness expects.
     /// </summary>
-    private static int ClickAndCapture(MainWindow window, Button button)
+    private static int ClickAndCapture(MainView window, Button button)
     {
         var stackBefore = window.NavRoot.NavigationStack.Count;
         button.Command?.Execute(button.CommandParameter);
