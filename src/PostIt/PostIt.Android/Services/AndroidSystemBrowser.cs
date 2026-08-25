@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Android.App;
 using AndroidX.Browser.CustomTabs;
 using IdentityModel.OidcClient.Browser;
+using PostIt.Droid.Services;
 
 namespace PostIt.Android.Services;
 
@@ -35,9 +36,14 @@ public sealed class AndroidSystemBrowser : IBrowser
             };
         }
 
-        var uri = global::Android.Net.Uri.Parse(options.StartUrl)!;
+        // 1. Enregistrez la tâche avant de lancer le Custom Tab
+        var callbackTask = OidcCallbackManager.RegisterCallback(cancellationToken);
 
-        var callbackTask = MainActivity.AndroidOidcCallbackSink.AwaitNextCallbackAsync();
+        // 2. LANCEZ VOTRE CUSTOM TAB ICI (via AndroidX.Browser.CustomTabs)
+        // ... code pour ouvrir l'URL d'authentification ...
+
+
+        var uri = global::Android.Net.Uri.Parse(options.StartUrl)!;
 
         var tabsIntent = new CustomTabsIntent.Builder()
             .SetShowTitle(true)!

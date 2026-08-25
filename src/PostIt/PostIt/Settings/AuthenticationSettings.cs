@@ -10,7 +10,7 @@ public partial class AuthenticationSettings : ObservableObject
     /// hand-off in <see cref="PostIt.Services.SingleInstance"/>
     /// (RFC 8252 §7.1). Production Desktop builds use this.
     /// </summary>
-    public const string DefaultDesktopRedirectUri = "postit://callback";
+    public const string DesktopRedirectUri = "postit://callback";
 
     /// <summary>
     /// Redirect URI used by the Android app. The corresponding IntentFilter
@@ -34,15 +34,19 @@ public partial class AuthenticationSettings : ObservableObject
     [ObservableProperty]
     public partial string[] Scopes { get; set; }
 
-
     /// <summary>
-    /// OAuth redirect URI. Defaults to <see cref="DefaultDesktopRedirectUri"/>
+    /// OAuth redirect URI. Defaults to <see cref="DesktopRedirectUri"/>
     /// (custom URI scheme) which is the right answer for desktop
     /// production builds. Mobile platforms must set this to
     /// <see cref="AndroidRedirectUri"/> before calling <c>LoginAsync</c>.
     /// </summary>
     [ObservableProperty]
-    public partial string RedirectUri { get; set; } = DefaultDesktopRedirectUri;
+    public partial string RedirectUri { get; set; }
+#if ANDROID
+    = AndroidRedirectUri;
+#else
+    = DesktopRedirectUri;
+#endif
 
     /// <summary>
     /// Space-separated view of <see cref="Scopes"/>. Exists for the
