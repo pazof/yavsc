@@ -33,7 +33,14 @@ public partial class App : Application
     {
         AvaloniaXamlLoader.Load(this);
 #if DEBUG
-        this.AttachDeveloperTools();
+        try {
+            this.AttachDeveloperTools();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(
+                $"Could not attache developer tools : {ex.Message}");
+        }
 #endif
     }
 
