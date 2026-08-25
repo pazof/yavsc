@@ -49,9 +49,10 @@ jobs:
       run: cd /src/_src && dotnet build --no-restore
     - name: Démarrer l'émulateur QEMU Headless
       run: |
+        set -e
         echo "Démarrage de l'émulateur en tâche de fond..."
         # Remplacer 'pixel_5_api_30' par le nom exact de votre AVD créé sur l'hôte
-        emulator -avd emulator-5554 -no-window -no-audio -no-boot-anim -gpu swiftshader &
+        emulator -avd postit_test_avd -no-window -no-audio -no-boot-anim -gpu swiftshader &
         EMU_PID=$!
         echo "Attente de la détection par ADB..."
         adb wait-for-device
@@ -63,6 +64,7 @@ jobs:
           echo "Statut actuel : ${OUT:-0}"
         done
         echo "✅ L'émulateur Android est prêt !"
+
     - name: Test
       run: |
         echo "⌛ Lancement des tests..."
