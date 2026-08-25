@@ -44,27 +44,15 @@ public partial class App : Application
 
         this.ServiceProvider = new ServiceCollection().BuildServices();
         var settings = ServiceProvider.GetRequiredService<Settings>();
-        var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
-            sessionStatus.LogoutCompleted += () =>
-            {
-                View.NavRoot.PopToRootAsync();
-            };
 
-            sessionStatus.LoginSucceeded += () =>
-            {
-                PushMainPageAsync();
-            };
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var window = ServiceProvider.GetRequiredService<MainWindow>();
             desktop.MainWindow = window;
             var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
             desktop.MainWindow.Opened += async (_, _) => await BootAsync(this.ServiceProvider!, api);
-
             View = window.MainView;
-
-            View.SessionBanner.DataContext = sessionStatus;
-            // FIXME   Window.Opened += async (_, _) => await BootAsync(this.ServiceProvider!, api);
+            this.ConfigureRootView(window.MainView);
 
             ApplyDarkMode(settings);
         }
@@ -74,15 +62,15 @@ public partial class App : Application
                 () =>
                 {
                     View = ServiceProvider.GetRequiredService<MainView>();
+                    this.ConfigureRootView(View);
                     ApplyDarkMode(settings);
-                    View.SessionBanner.DataContext = sessionStatus;
                     return View;
                 };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
             singleViewPlatform.MainView = View = ServiceProvider.GetRequiredService<MainView>();
-            View.SessionBanner.DataContext = sessionStatus;
+            ConfigureRootView(View);
             ApplyDarkMode(settings);
         }
         var mainVm = ServiceProvider!.GetRequiredService<HomePageViewModel>();
@@ -91,6 +79,27 @@ public partial class App : Application
         this.PushPageAsync(mainVm);
     }
 
+private void ConfigureRootView(MainView rootView)
+{
+    var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
+
+    // Déclencher le Boot lors du chargement du contrôle à l'écran
+    rootView.AttachedToVisualTree += async (_, _) => await BootAsync(this.ServiceProvider!, api);
+
+    var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
+    sessionStatus.LogoutCompleted += () =>
+    {
+        // Remplacer Window.NavRoot par rootView.NavRoot
+        rootView.NavRoot.PopToRootAsync();
+    };
+
+    sessionStatus.LoginSucceeded += () =>
+    {
+        PushMainPageAsync();
+    };
+
+    rootView.SessionBanner.DataContext = sessionStatus;
+}
 
     /// <summary>
     /// Test-only hook: bind a concrete <see cref="MainView"/> so
