@@ -194,7 +194,7 @@ jobs:
         # la racine du checkout pour que l'étape d'upload le trouve.
         run: |
           cd /src/_src
-          APK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/fr.pschneider.PostIt-Signed.apk
+          APK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/fr.pschneider.postit-Signed.apk
           if [[ ! -f "$APK" ]]; then
             echo "::error::APK not found at $APK"
             ls -la src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64 2>/dev/null || true
