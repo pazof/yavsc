@@ -197,7 +197,7 @@ jobs:
           APK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/fr.pschneider.PostIt-Signed.apk
           if [[ ! -f "$APK" ]]; then
             echo "::error::APK not found at $APK"
-            ls -la src/PostIt/PostIt.Android/bin/Release/net10.0-android/ 2>/dev/null || true
+            ls -la src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64 2>/dev/null || true
             exit 1
           fi
           cp "$APK" /src/_src/PostIt.Android.apk

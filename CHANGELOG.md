@@ -21,16 +21,17 @@ pour la production des paquets `.deb`.
 ### Added
 
 * a code cleanup
-* a failling a disabled test ala Xamarin.UITest : the Android app stil doesn't starts
-- Android app does not crash any more, but still no home page, only the splash screnn
+* a first Xamarin.UITest is successful
+* Android app starts, the login process succeeds
 
 ### Changed
 
-mostly nothing
+mostly nothing but refactorings
 
 ### Fixed
 
-mostly nothing
+nothing, [TODO] a bug persists laoding a blog post from PostIt, ACL sould come along with and should not need any "Refresh" button.
+Today, assigning ACL succeeds the first time, the following times result in a 409
 
 ## [1.0.8-rc1] - unstable
 
