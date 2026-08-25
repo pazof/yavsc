@@ -63,11 +63,11 @@ jobs:
           echo "Statut actuel : ${OUT:-0}"
         done
         echo "✅ L'émulateur Android est prêt !"
-        echo "Installation de l'APK de Debug..."
+        echo "⌛ Installation de l'APK de Debug..."
         adb install /src/_src/src/PostIt/PostIt.Android/bin/Debug/net10.0-android/fr.pschneider.postit-Signed.apk
         dotnet test /src/_src/src/PostIt/PostIt.Tests/PostIt.Tests.csproj -c Release
 
     - name: Test
-      echo "⌛ Lancement des tests ..."
-      run: cd /src/_src && dotnet test --no-build --verbosity normal
-
+      run: |
+        echo "⌛ Lancement des tests..."
+        cd /src/_src && dotnet test --no-build --verbosity normal
