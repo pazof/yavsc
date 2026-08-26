@@ -46,6 +46,7 @@ jobs:
     - name: Démarrer l'émulateur QEMU Headless
       run: |
         set -e
+        export ANDROID_AVD_HOME=${ANDROID_HOME}/.android/avd
         echo "Démarrage de l'émulateur en tâche de fond..."
         emulator -avd pixel_test -no-window -no-audio -no-boot-anim -gpu swiftshader &
         EMU_PID=$!
