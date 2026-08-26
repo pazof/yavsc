@@ -51,6 +51,8 @@ jobs:
   # via l'API REST Forgejo (pas d'actions tierces Node).
   release:
     runs-on: docker
+    container:
+      image: pazof/yavsc-build-env:debian12-dotnet10-android36-v5
     steps:
       - name: Clone du repo au tag demandé
         env:
