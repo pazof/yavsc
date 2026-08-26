@@ -44,7 +44,8 @@ jobs:
     - name: Préparer les permissions KVM dans le conteneur
       run: |
         # Donne l'accès en écriture à tout le monde sur le périphérique KVM mappé
-        sudo chmod 666 /dev/kvm || true
+        chmod 666 /dev/kvm
+
     - name: Démarrer l'émulateur QEMU Headless
       run: |
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
@@ -57,17 +58,20 @@ jobs:
         # 2. Initialisation obligatoire du serveur ADB
         adb start-server
 
-        echo "⌛ Démarrage de l'émulateur en tâche de fond..."
+        echo "🚀 Démarrage de l'émulateur en tâche de fond..."
 
         emulator -avd postit_test_avd \
             -no-window \
             -no-audio \
-            -no-boot-anim &
+            -no-boot-anim \
+            -gpu swiftshader \
+            -no-metrics \
+            -qemu -cpu max,fma=off,avx2=off,bmi1=off,bmi2=off &
 
-        echo "Attente de la détection par ADB..."
+        echo "⌛ Attente de la détection par ADB..."
         adb wait-for-device
 
-        echo "Attente de la fin du boot d'Android..."
+        echo "⌛ Attente de la fin du boot d'Android..."
         OUT=""
         COUNTER=0
         # Sécurité : ajout d'un timeout (max 30 essais) pour éviter que la CI ne tourne à l'infini si le boot gèle
@@ -86,11 +90,11 @@ jobs:
 
     - name: Test
       run: |
-        echo "⌛ Installation de l'APK de Debug..."
+        echo "🚀 Installation de l'APK de Debug..."
         # Ajustez le chemin vers l'APK généré par votre build de debug
         cd /src/_src
         APK=src/PostIt/PostIt.Android/bin/Debug/net10.0-android/android-arm64/fr.pschneider.postit-Signed.apk
         adb install ${APK}
 
-        echo "⌛ Lancement des tests..."
+        echo "🚀 Lancement des tests..."
         cd /src/_src && dotnet test --verbosity normal && echo "✅ Success !"
