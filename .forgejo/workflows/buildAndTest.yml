@@ -40,12 +40,6 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-    - name: Forcer l'appropriation et les droits KVM pour Podman
-      run: |
-        # 1. Supprime les restrictions d'ACL héritées de Podman Rootless
-        setfacl -b /dev/kvm || true
-        # 2. Force les droits en lecture/écriture totale pour tout le monde dans le conteneur
-        chmod 666 /dev/kvm
     - name: Démarrer l'émulateur QEMU Headless
       run: |
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
