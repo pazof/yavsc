@@ -64,7 +64,8 @@ jobs:
         -no-boot-anim \
         -no-metrics \
         -cores 2 \
-        -memory 2048 &
+        -memory 2048 \
+        -qemu -cpu host,vme=off &
 
         echo "⌛ Attente de la détection par ADB..."
         adb wait-for-device
