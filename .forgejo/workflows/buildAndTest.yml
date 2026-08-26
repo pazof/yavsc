@@ -40,9 +40,6 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-    - name: Préparer les permissions KVM dans le conteneur
-      run: |
-        ls -l /dev/kvm
 
     - name: Démarrer l'émulateur QEMU Headless
       run: |
