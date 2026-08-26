@@ -51,6 +51,7 @@ jobs:
         export ANDROID_EMULATOR_DISABLE_VULKAN=1
         export LD_LIBRARY_PATH=/opt/android-sdk/emulator/lib64:/opt/android-sdk/emulator/lib64/qt/lib:$LD_LIBRARY_PATH
 
+        apt-get update && apt-get install -y libxi6 libxext6 libxrender1 libxtst6
 
         # 2. Appel direct du moteur sans passer par le script de vérification de Google
         # Remplacez "postit_test_avd" par le nom exact de votre AVD
