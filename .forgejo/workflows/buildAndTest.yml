@@ -46,15 +46,14 @@ jobs:
         export RE_EMULATOR_DISABLE_CPUID_CHECK=1
         export ANDROID_EMULATOR_DISABLE_VULKAN=1
         export ANDROID_EMULATOR_FORCE_GLES_2=1
-        export ANDROID_HOME=/opt/android-sdk
-        export ANDROID_AVD_HOME=${ANDROID_HOME}/.android/avd
+         # 1. Variables de stabilisation
+        export RE_EMULATOR_DISABLE_CPUID_CHECK=1
+        export ANDROID_EMULATOR_DISABLE_VULKAN=1
 
-        # 2. Initialisation obligatoire du serveur ADB
-        adb start-server
+        # 2. Appel direct du moteur sans passer par le script de vérification de Google
+        # Remplacez "postit_test_avd" par le nom exact de votre AVD
+        /opt/android-sdk/emulator/qemu/linux-x86_64/qemu-system-x86_64 -avd postit_test_avd -no-window -no-audio &
 
-        echo "🚀 Démarrage de l'émulateur en tâche de fond..."
-
-        emulator -avd postit_test_avd -no-window -no-audio -no-accel-check &
         echo "⌛ Attente de la détection par ADB..."
         adb wait-for-device
 
