@@ -87,5 +87,11 @@ jobs:
 
     - name: Test
       run: |
+        echo "⌛ Installation de l'APK de Debug..."
+        # Ajustez le chemin vers l'APK généré par votre build de debug
+        cd /src/_src
+        APK=src/PostIt/PostIt.Android/bin/Debug/net10.0-android/android-arm64/fr.pschneider.postit-Signed.apk
+        adb install ${APK}
+
         echo "⌛ Lancement des tests..."
         cd /src/_src && dotnet test --verbosity normal && echo "✅ Success !"
