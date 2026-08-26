@@ -25,9 +25,10 @@ on:
 
 jobs:
   build:
-
     runs-on: docker
-
+    container:
+      image: pazof/yavsc-build-env:debian12-dotnet10-android36-v5
+      options: --device /dev/kvm --privileged
     steps:
     - name: Clone yavsc
       run: |
@@ -40,30 +41,50 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
+
     - name: Démarrer l'émulateur QEMU Headless
       run: |
-        set -e
+        # 1. Variables d'environnement pour stabiliser le noyau Android 36
+        export RE_EMULATOR_DISABLE_CPUID_CHECK=1
+        export ANDROID_EMULATOR_DISABLE_VULKAN=1
+        export ANDROID_EMULATOR_FORCE_GLES_2=1
+        export ANDROID_HOME=/opt/android-sdk
         export ANDROID_AVD_HOME=${ANDROID_HOME}/.android/avd
 
+        # 2. Initialisation obligatoire du serveur ADB
         adb start-server
+
         echo "⌛ Démarrage de l'émulateur en tâche de fond..."
+
+        # 3. Lancement corrigé : exclusion de -gpu off (qui brise SwiftShader) et forçage d'un profil CPU standard
         emulator -avd pixel_test \
             -no-window \
             -no-audio \
             -no-boot-anim \
-            -gpu off &
-        EMU_PID=$!
+            -gpu swiftshader \
+            -no-metrics \
+            -qemu -cpu max,fma=off,avx2=off,bmi1=off,bmi2=off &
 
         echo "Attente de la détection par ADB..."
         adb wait-for-device
+
         echo "Attente de la fin du boot d'Android..."
         OUT=""
-        while [[ "$OUT" != "1" ]]; do
-          sleep 5
+        COUNTER=0
+        # Sécurité : ajout d'un timeout (max 30 essais) pour éviter que la CI ne tourne à l'infini si le boot gèle
+        while [[ "$OUT" != "1" && $COUNTER -lt 30 ]]; do
+          sleep 10
           OUT=$(adb shell getprop sys.boot_completed | tr -d '\r')
           echo "Statut actuel : ${OUT:-0}"
+          let COUNTER=COUNTER+1
         done
+
+        if [ "$OUT" != "1" ]; then
+          echo "❌ Échec du boot d'Android après délai imparti."
+          exit 1
+        fi
         echo "✅ L'émulateur Android est prêt !"
+
     - name: Test
       run: |
         echo "⌛ Lancement des tests..."
