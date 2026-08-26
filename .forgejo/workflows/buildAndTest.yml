@@ -59,9 +59,7 @@ jobs:
         echo "hw.gpu.mode = host"   >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
         echo "Vulkan = off"          >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
         echo "enableHostVulkan = no" >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
-
-GLDirectMem = off
-" >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "GLDirectMem = off"     >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
 
 
         # 2. Démarrer l'émulateur QEMU Headless
