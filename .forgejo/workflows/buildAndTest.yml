@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: docker
     container:
-      image: pazof/yavsc-build-env:debian12-dotnet10-android36-v5
+      image: pazof/yavsc-build-env:debian13-dotnet10-android36-v6
     steps:
     - name: Clone yavsc
       run: |
@@ -46,16 +46,10 @@ jobs:
         export RE_EMULATOR_DISABLE_CPUID_CHECK=1
         export ANDROID_EMULATOR_DISABLE_VULKAN=1
         export ANDROID_EMULATOR_FORCE_GLES_2=1
-         # 1. Variables de stabilisation
         export RE_EMULATOR_DISABLE_CPUID_CHECK=1
         export ANDROID_EMULATOR_DISABLE_VULKAN=1
-        export LD_LIBRARY_PATH=/opt/android-sdk/emulator/lib64:/opt/android-sdk/emulator/lib64/qt/lib:$LD_LIBRARY_PATH
 
-        apt-get update && apt-get install -y libxi6 libxext6 libxrender1 libxtst6
-
-        # 2. Appel direct du moteur sans passer par le script de vérification de Google
-        # Remplacez "postit_test_avd" par le nom exact de votre AVD
-        /opt/android-sdk/emulator/qemu/linux-x86_64/qemu-system-x86_64 -avd postit_test_avd -no-window -no-audio &
+        emulator -avd postit_test_avd -no-window -no-audio &
 
         echo "⌛ Attente de la détection par ADB..."
         adb wait-for-device
