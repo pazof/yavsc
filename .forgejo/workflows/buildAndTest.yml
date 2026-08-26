@@ -59,14 +59,10 @@ jobs:
 
         echo "⌛ Démarrage de l'émulateur en tâche de fond..."
 
-        # 3. Lancement corrigé : exclusion de -gpu off (qui brise SwiftShader) et forçage d'un profil CPU standard
         emulator -avd postit_test_avd \
             -no-window \
             -no-audio \
-            -no-boot-anim \
-            -gpu swiftshader \
-            -no-metrics \
-            -qemu -cpu max,fma=off,avx2=off,bmi1=off,bmi2=off &
+            -no-boot-anim &
 
         echo "Attente de la détection par ADB..."
         adb wait-for-device
