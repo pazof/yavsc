@@ -40,6 +40,8 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
+    - name: check kvm
+      run: /sbin/kvm-ok
     - name: Démarrer l'émulateur QEMU Headless
       run: |
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
@@ -48,6 +50,19 @@ jobs:
         export LD_LIBRARY_PATH=/opt/android-sdk/emulator/lib64:/opt/android-sdk/emulator/lib64/qt/lib:$LD_LIBRARY_PATH
         export QT_QPA_PLATFORM=offscreen
         export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+        export ANDROID_SDK_ROOT=/opt/android-sdk
+
+        echo "hw.ramSize = 3072"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "hw.ramSize = 2048"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "hw.heapSize = 256"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "hw.gpu.enabled = yes" >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "hw.gpu.mode = host"   >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "Vulkan = off"          >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
+        echo "enableHostVulkan = no" >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
+
+GLDirectMem = off
+" >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+
 
         # 2. Démarrer l'émulateur QEMU Headless
         emulator -avd postit_test_avd \
