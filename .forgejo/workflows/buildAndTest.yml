@@ -40,6 +40,13 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
+    - name: Injecter le groupe KVM pour l'émulateur Android
+      run: |
+        # 1. Vérifie si le groupe kvm existe déjà à l'intérieur, sinon le crée avec le GID 232 détecté par Podman
+        if ! getent group kvm > /dev/null; then
+          echo "kvm:x:232:root" >> /etc/group
+          echo "✅ Groupe KVM injecté artificiellement"
+        fi
     - name: Démarrer l'émulateur QEMU Headless
       run: |
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
