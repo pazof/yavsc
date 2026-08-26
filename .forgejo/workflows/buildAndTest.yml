@@ -40,7 +40,16 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-
+    - name: Diagnostic système absolu du Runner
+      run: |
+        echo "=== Utilisateur actuel ==="
+        id
+        echo "=== Liste des périphériques visibles ==="
+        ls -la /dev/kvm 2>&1 || echo "❌ /dev/kvm INTROUVABLE"
+        echo "=== Groupes disponibles ==="
+        getent group || true
+        echo "=== Variables d'environnement du conteneur ==="
+        env
     - name: Démarrer l'émulateur QEMU Headless
       run: |
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
