@@ -44,12 +44,12 @@ jobs:
       run: |
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
         export RE_EMULATOR_DISABLE_CPUID_CHECK=1
-        export ANDROID_EMULATOR_DISABLE_VULKAN=1
-        export ANDROID_EMULATOR_FORCE_GLES_2=1
-        export RE_EMULATOR_DISABLE_CPUID_CHECK=1
-        export ANDROID_EMULATOR_DISABLE_VULKAN=1
-        export LD_LIBRARY_PATH=/opt/android-sdk/emulator/lib64:/opt/android-sdk/emulator/lib64/qt/lib:$LD_LIBRARY_PATH
 
+        export LD_LIBRARY_PATH=/opt/android-sdk/emulator/lib64:/opt/android-sdk/emulator/lib64/qt/lib:$LD_LIBRARY_PATH
+        export QT_QPA_PLATFORM=offscreen
+        export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+
+        # 2. Démarrer l'émulateur QEMU Headless
         emulator -avd postit_test_avd \
         -no-window \
         -no-audio \
