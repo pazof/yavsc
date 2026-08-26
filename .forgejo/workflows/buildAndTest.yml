@@ -57,7 +57,7 @@ jobs:
         echo "⌛ Démarrage de l'émulateur en tâche de fond..."
 
         # 3. Lancement corrigé : exclusion de -gpu off (qui brise SwiftShader) et forçage d'un profil CPU standard
-        emulator -avd pixel_test \
+        emulator -avd postit_test_avd \
             -no-window \
             -no-audio \
             -no-boot-anim \
