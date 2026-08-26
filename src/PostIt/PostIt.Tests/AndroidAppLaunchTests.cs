@@ -23,7 +23,8 @@ public class AndroidAppLaunchTests
         _output = output;
     }
 
-    [Fact]
+    // https://twosixtech.com/blog/integrating-docker-and-adb/
+    // FIXME ala hosted shared resource adb server - [Fact]
     public void PostIt_starts_and_draws_a_first_frame_on_the_emulator()
     {
         if (!IsPackageInstalledOnAnyDevice())

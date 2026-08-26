@@ -40,52 +40,6 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-    - name: setup avd qemu
-      run: |
-        export QT_QPA_PLATFORM=offscreen
-        export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
-        export ANDROID_SDK_ROOT=/opt/android-sdk
-        export RE_EMULATOR_DISABLE_CPUID_CHECK=1
-
-        echo "hw.ramSize = 3072"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
-        echo "hw.ramSize = 2048"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
-        echo "hw.heapSize = 256"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
-        echo "hw.gpu.enabled = yes" >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
-        echo "hw.gpu.mode = host"   >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
-
-    - name: Start qemu avd
-      run: |
-        # 2. Démarrer l'émulateur QEMU Headless
-        emulator -avd postit_test_avd \
-        -no-window \
-        -no-audio \
-        -no-boot-anim \
-        -no-metrics \
-        -cores 1 \
-        -memory 2048 \
-        -qemu -cpu host,vme=off &
-
-        echo "⌛ Attente de la détection par ADB..."
-        adb wait-for-device
-
-        echo "⌛ Attente de la fin du boot d'Android..."
-        OUT=""
-
-        COUNTER=0
-        # Sécurité : ajout d'un timeout (max 30 essais) pour éviter
-        { que la CI ne tourne à l'infini si le boot gèle
-        while [[ "$OUT" != "1" && $COUNTER -lt 30 ]]; do
-          sleep 10
-          OUT=$(adb shell getprop sys.boot_completed | tr -d '\r')
-          echo "Statut actuel : ${OUT:-0}"
-          let COUNTER=COUNTER+1
-        done
-
-        if [ "$OUT" != "1" ]; then
-          echo "❌ Échec du boot d'Android après délai imparti."
-          exit 1
-        fi
-        echo "✅ L'émulateur Android est prêt !"
 
     - name: Test
       run: |
