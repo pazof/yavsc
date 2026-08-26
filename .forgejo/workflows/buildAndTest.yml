@@ -28,7 +28,6 @@ jobs:
     runs-on: docker
     container:
       image: pazof/yavsc-build-env:debian12-dotnet10-android36-v5
-      options: --device /dev/kvm --privileged
     steps:
     - name: Clone yavsc
       run: |
