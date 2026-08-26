@@ -42,11 +42,15 @@ jobs:
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
     - name: Injecter le groupe KVM pour l'émulateur Android
       run: |
-        # 1. Vérifie si le groupe kvm existe déjà à l'intérieur, sinon le crée avec le GID 232 détecté par Podman
-        if ! getent group kvm > /dev/null; then
-          echo "kvm:x:232:root" >> /etc/group
-          echo "✅ Groupe KVM injecté artificiellement"
-        fi
+        # 1. Nettoie toute ancienne ligne kvm pour éviter les doublons
+        sed -i '/^kvm:/d' /etc/group || true
+
+        # 2. Injecte la ligne parfaite requise par la regex de l'émulateur Android
+        echo "kvm:x:232:root" >> /etc/group
+
+        # 3. Vérification visuelle dans les logs de la CI
+        echo "=== Contenu validé pour l'émulateur ==="
+        grep kvm /etc/group
     - name: Démarrer l'émulateur QEMU Headless
       run: |
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
