@@ -55,6 +55,39 @@ jobs:
         echo "enableHostVulkan = no" >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
         echo "GLDirectMem = off"     >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
 
+    - name: Start qemu avd
+      run: |
+        # 2. Démarrer l'émulateur QEMU Headless
+        emulator -avd postit_test_avd \
+        -no-window \
+        -no-audio \
+        -no-boot-anim \
+        -no-metrics \
+        -cores 2 \
+        -memory 2048 &
+
+        echo "⌛ Attente de la détection par ADB..."
+        adb wait-for-device
+
+        echo "⌛ Attente de la fin du boot d'Android..."
+        OUT=""
+
+        COUNTER=0
+        # Sécurité : ajout d'un timeout (max 30 essais) pour éviter
+        { que la CI ne tourne à l'infini si le boot gèle
+        while [[ "$OUT" != "1" && $COUNTER -lt 30 ]]; do
+          sleep 10
+          OUT=$(adb shell getprop sys.boot_completed | tr -d '\r')
+          echo "Statut actuel : ${OUT:-0}"
+          let COUNTER=COUNTER+1
+        done
+
+        if [ "$OUT" != "1" ]; then
+          echo "❌ Échec du boot d'Android après délai imparti."
+          exit 1
+        fi
+        echo "✅ L'émulateur Android est prêt !"
+
     - name: Test
       run: |
         echo "🚀 Installation de l'APK de Debug..."
