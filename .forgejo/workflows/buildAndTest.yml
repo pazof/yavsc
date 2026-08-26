@@ -62,4 +62,4 @@ jobs:
     - name: Test
       run: |
         echo "⌛ Lancement des tests..."
-        cd /src/_src && dotnet test --verbosity normal
+        cd /src/_src && dotnet test --verbosity normal && echo "✅ Success !"
