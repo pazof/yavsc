@@ -16,7 +16,7 @@ Cette convention est partagée avec le dépôt
 [`postit-debian`](https://forgejo.pschneider.fr/notazof/postit-debian)
 pour la production des paquets `.deb`.
 
-## [1.0.8-rc3] - unstable
+## [1.0.8-rc3] Client Alpha Android - unstable
 
 ### Added
 
