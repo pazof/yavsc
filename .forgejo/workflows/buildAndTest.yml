@@ -42,16 +42,12 @@ jobs:
           git checkout FETCH_HEAD
         fi
         git submodule update --init --recursive
-        echo "Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-    - name: Restore dependencies
-      run: cd /src/_src && dotnet restore
-    - name: Build
-      run: cd /src/_src && dotnet build --no-restore
+        echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
     - name: Démarrer l'émulateur QEMU Headless
       run: |
         set -e
         echo "Démarrage de l'émulateur en tâche de fond..."
-        emulator -avd postit_test_avd -no-window -no-audio -no-boot-anim -gpu swiftshader &
+        emulator -avd pixel_test -no-window -no-audio -no-boot-anim -gpu swiftshader &
         EMU_PID=$!
         echo "Attente de la détection par ADB..."
         adb wait-for-device
@@ -63,8 +59,7 @@ jobs:
           echo "Statut actuel : ${OUT:-0}"
         done
         echo "✅ L'émulateur Android est prêt !"
-
     - name: Test
       run: |
         echo "⌛ Lancement des tests..."
-        cd /src/_src && dotnet test --no-build --verbosity normal
+        cd /src/_src && dotnet test --verbosity normal
