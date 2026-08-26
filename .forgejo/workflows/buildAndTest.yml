@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: docker
     container:
-      image: pazof/yavsc-build-env:debian13-dotnet10-android36-v6
+      image: pazof/yavsc-build-env:debian13-dotnet10-android36-v7
     steps:
     - name: Clone yavsc
       run: |
@@ -40,6 +40,20 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
+    - name: setup avd qemu
+      run: |
+        export QT_QPA_PLATFORM=offscreen
+        export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
+        export ANDROID_SDK_ROOT=/opt/android-sdk
+
+        echo "hw.ramSize = 3072"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "hw.ramSize = 2048"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "hw.heapSize = 256"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "hw.gpu.enabled = yes" >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "hw.gpu.mode = host"   >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
+        echo "Vulkan = off"          >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
+        echo "enableHostVulkan = no" >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
+        echo "GLDirectMem = off"     >> ${ANDROID_SDK_ROOT}/.android/avd/advancedFeatures.ini
 
     - name: Test
       run: |
