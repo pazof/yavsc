@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: docker
     container:
-      image: pazof/yavsc-build-env:debian13-dotnet10-android36-v7
+      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v1
     steps:
     - name: Clone yavsc
       run: |
