@@ -20,8 +20,8 @@ pour la production des paquets `.deb`.
 
 ### Added
 
-* a code cleanup
-* a first Xamarin.UITest is successful
+* a code cleanup,
+* a first Xamarin.UITest is successful, but disabled, because breaking the actual CI process,
 * Android app starts, the login process succeeds
 
 ### Changed
