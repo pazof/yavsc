@@ -42,17 +42,16 @@ jobs:
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
     - name: Injecter le groupe KVM pour l'émulateur Android
       run: |
-        # 1. Nettoie toute ancienne ligne kvm pour éviter les doublons
+        # 1. Nettoie l'ancien résidu
         sed -i '/^kvm:/d' /etc/group || true
 
-        # 2. Injecte la ligne parfaite requise par la regex de l'émulateur Android
+        # 2. Injecte la correspondance exacte requise
         echo "kvm:x:232:root" >> /etc/group
-
-        # 3. Vérification visuelle dans les logs de la CI
-        echo "=== Contenu validé pour l'émulateur ==="
-        grep kvm /etc/group
     - name: Démarrer l'émulateur QEMU Headless
       run: |
+        export USER=root
+        export USERNAME=root
+
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
         export RE_EMULATOR_DISABLE_CPUID_CHECK=1
         export ANDROID_EMULATOR_DISABLE_VULKAN=1
