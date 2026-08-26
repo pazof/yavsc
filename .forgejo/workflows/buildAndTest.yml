@@ -40,18 +40,8 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-    - name: Injecter le groupe KVM pour l'émulateur Android
-      run: |
-        # 1. Nettoie l'ancien résidu
-        sed -i '/^kvm:/d' /etc/group || true
-
-        # 2. Injecte la correspondance exacte requise
-        echo "kvm:x:232:root" >> /etc/group
     - name: Démarrer l'émulateur QEMU Headless
       run: |
-        export USER=root
-        export USERNAME=root
-
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
         export RE_EMULATOR_DISABLE_CPUID_CHECK=1
         export ANDROID_EMULATOR_DISABLE_VULKAN=1
@@ -64,14 +54,7 @@ jobs:
 
         echo "🚀 Démarrage de l'émulateur en tâche de fond..."
 
-        emulator -avd postit_test_avd \
-            -no-window \
-            -no-audio \
-            -no-boot-anim \
-            -gpu swiftshader \
-            -no-metrics \
-            -qemu -cpu max,fma=off,avx2=off,bmi1=off,bmi2=off &
-
+        emulator -avd postit_test_avd -no-window -no-audio -no-accel-check &
         echo "⌛ Attente de la détection par ADB..."
         adb wait-for-device
 
