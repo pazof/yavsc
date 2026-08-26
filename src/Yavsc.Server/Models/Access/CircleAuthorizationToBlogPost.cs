@@ -4,7 +4,6 @@ namespace Yavsc.Models.Access
     using Models.Relationship;
     using Newtonsoft.Json;
     using Blog;
-    using Yavsc.Abstract.Identity.Security;
     using Yavsc.Abstract.BlogSpot;
 
     public class CircleAuthorizationToBlogPost : PostAccessControlRulePayload

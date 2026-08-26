@@ -4,7 +4,6 @@ namespace Yavsc.Controllers
 {
     using Models;
     using Models.Musical;
-    using Yavsc.Helpers;
     using Yavsc.Server.Helpers;
 
     public class MusicalTendenciesController : Controller

@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.Abstract.Identity
 {
     public class TokenInfo

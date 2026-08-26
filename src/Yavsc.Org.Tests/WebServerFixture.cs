@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Sockets;
-using Yavsc;
 using Yavsc.Extensions;
 using Yavsc.Interfaces;
 using Yavsc.Models;
@@ -42,6 +41,17 @@ namespace Yavsc.Org.Tests;
 public sealed class WebServerFixture : WebHostFixture
 {
     private static readonly int _httpsPort = GetAvailableLoopbackPort();
+
+    // One in-memory database name for the whole process: WebHostFixture
+    // is a per-process singleton (see _app, _isInitialized, _sharedServices
+    // in the base class), so every WebServerFixture instance shares the
+    // same backing store. That is intentional — the "Yavsc Server" test
+    // collection groups tests that should see the same seeded state, and
+    // re-initialising the store per fixture would just regress the
+    // order-dependence we are trying to eliminate. The GUID still matters
+    // because TestWebApplicationFactory and WebServerFixture must not
+    // collide in the in-memory store; see InMemoryDatabaseName.
+    private static readonly string _fixtureId = Guid.NewGuid().ToString("N");
 
     protected override int HttpsPort => _httpsPort;
 
@@ -81,7 +91,7 @@ public sealed class WebServerFixture : WebHostFixture
         // that plus the in-memory overrides below.
         builder.AddConfiguration(null).AddInMemoryCollection(new Dictionary<string, string?>
         {
-                [$"ConnectionStrings:{Yavsc.Constants.YavscConnectionStringName}"] = "InMemory",
+                [$"ConnectionStrings:{Yavsc.Constants.YavscConnectionStringName}"] = InMemoryDatabaseName.For(_fixtureId),
                 // SMTP test config: UserName non-null so MailSender
                 // exercises the Authenticate branch — the
                 // RecordingSmtpClient captures it.

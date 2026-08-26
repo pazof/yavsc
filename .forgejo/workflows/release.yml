@@ -51,6 +51,8 @@ jobs:
   # via l'API REST Forgejo (pas d'actions tierces Node).
   release:
     runs-on: docker
+    container:
+      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v1
     steps:
       - name: Clone du repo au tag demandé
         env:
@@ -194,10 +196,10 @@ jobs:
         # la racine du checkout pour que l'étape d'upload le trouve.
         run: |
           cd /src/_src
-          APK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/com.CompanyName.PostIt-Signed.apk
+          APK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/fr.pschneider.postit-Signed.apk
           if [[ ! -f "$APK" ]]; then
             echo "::error::APK not found at $APK"
-            ls -la src/PostIt/PostIt.Android/bin/Release/net10.0-android/ 2>/dev/null || true
+            ls -la src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64 2>/dev/null || true
             exit 1
           fi
           cp "$APK" /src/_src/PostIt.Android.apk

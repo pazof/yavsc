@@ -1,6 +1,3 @@
-
-using System.Threading.Tasks;
-
 namespace Yavsc.Services
 {
     public interface ISmsSender

@@ -25,9 +25,9 @@ on:
 
 jobs:
   build:
-
     runs-on: docker
-
+    container:
+      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v1
     steps:
     - name: Clone yavsc
       run: |
@@ -39,10 +39,9 @@ jobs:
           git checkout FETCH_HEAD
         fi
         git submodule update --init --recursive
-        echo "Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-    - name: Restore dependencies
-      run: cd /src/_src && dotnet restore
-    - name: Build
-      run: cd /src/_src && dotnet build --no-restore
+        echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
+
     - name: Test
-      run: cd /src/_src && dotnet test --no-build --verbosity normal
+      run: |
+        echo "🚀 Lancement des tests..."
+        cd /src/_src && dotnet test --verbosity normal && echo "✅ Success !"

@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Localization;
-using System.Linq;
 
 using Yavsc.Interfaces.Workflow;
 using Yavsc.Models.Haircut;

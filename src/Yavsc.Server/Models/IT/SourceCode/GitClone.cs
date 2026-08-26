@@ -3,8 +3,6 @@
 // paul  21/06/2018 11:27 20182018 6 21
 // */
 using System.Diagnostics;
-using System.IO;
-using System;
 
 namespace Yavsc.Server.Models.IT.SourceCode
 {
@@ -40,7 +38,7 @@ namespace Yavsc.Server.Models.IT.SourceCode
             using (var writer = new StreamWriter(stream))
             {
                 var process = Process.Start(cloneStart);
-                // TODO publish the starting log url ... 
+                // TODO publish the starting log url ...
                 while (!process.HasExited)
                 {
                     if (process.StandardOutput.Peek() > -1)

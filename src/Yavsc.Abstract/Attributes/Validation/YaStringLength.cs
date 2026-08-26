@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.Attributes.Validation
 {
     public partial class YaStringLength: YaValidationAttribute
@@ -21,15 +19,15 @@ namespace Yavsc.Attributes.Validation
         {
             if (ErrorMessageResourceType==null)  {
                 ErrorMessageResourceType = typeof(Yavsc.Attributes.Validation.Resources);
-                ErrorMessageResourceName = "InvalidStringLength"; 
+                ErrorMessageResourceName = "InvalidStringLength";
             }
         }
 
         public override bool IsValid(object value) {
-            
+
             string stringValue = value as string;
             if (stringValue==null) return MinimumLength <= 0;
-            if (MinimumLength>=0) 
+            if (MinimumLength>=0)
                 {
                     if (stringValue.Length< MinimumLength) {
                         return false;

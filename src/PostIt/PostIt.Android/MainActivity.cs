@@ -1,8 +1,11 @@
+﻿
 using Android.App;
-using Android.Content.PM;
 using Android.Content;
-using Avalonia;
+using Android.Content.PM;
+using AndroidX.Core.Provider;
+using AndroidX.Emoji2.Text;
 using Avalonia.Android;
+using PostIt.Droid.Services;
 
 namespace PostIt.Android;
 
@@ -12,26 +15,28 @@ namespace PostIt.Android;
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
-    LaunchMode = LaunchMode.SingleTask,
     ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
 public class MainActivity : AvaloniaMainActivity
 {
     /// <summary>
-    /// Strongly-typed handle to the current MainActivity instance, set in
-    /// <see cref="OnCreate"/> and consumed by platform services such as
-    /// <see cref="Services.AndroidSystemBrowser"/> which need to launch
-    /// Chrome Custom Tabs.
+    /// The current MainActivity instance.
     /// </summary>
     public static MainActivity? Current { get; private set; }
 
     protected override void OnCreate(global::Android.OS.Bundle? savedInstanceState)
     {
+        FontRequest fontRequest = new FontRequest(
+                "com.google.android.gms.fonts",
+                "com.google.android.gms",
+                "Noto Color Emoji Compat",
+                Yavsc.Resource.Array.com_google_android_gms_fonts_certs); //com_google_android_gms_fonts_certs
+        EmojiCompat.Config config = new FontRequestEmojiCompatConfig(this, fontRequest);
+        EmojiCompat.Init(config);
+        PlatformBootstrap.InitPlatform();
         base.OnCreate(savedInstanceState);
-        PlatformBootstrap.EnsureInitialized();
         Current = this;
     }
-
-    /// <summary>
+     /// <summary>
     /// Receives the deep-link Intent fired by the system browser after the
     /// user completes the OIDC login on https://yavsc.pschneider.fr. The
     /// Intent URI has the shape <c>android://postit-signin?code=...&amp;state=...</c>.
@@ -43,7 +48,13 @@ public class MainActivity : AvaloniaMainActivity
     protected override void OnNewIntent(Intent? intent)
     {
         base.OnNewIntent(intent);
-        if (intent is not null) AndroidOidcCallbackSink.Handle(intent);
+
+         var url = intent?.DataString;
+        if (!string.IsNullOrEmpty(url) && url.StartsWith("postit://callback"))
+        {
+            OidcCallbackManager.SetResult(url);
+        }
+
     }
 
     internal static class AndroidOidcCallbackSink

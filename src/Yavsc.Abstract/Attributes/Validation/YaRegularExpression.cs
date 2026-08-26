@@ -1,14 +1,12 @@
-
-using System;
 using System.Reflection;
 
 namespace Yavsc.Attributes.Validation
 {
-    public class YaRegularExpression : System.ComponentModel.DataAnnotations.RegularExpressionAttribute { 
+    public class YaRegularExpression : System.ComponentModel.DataAnnotations.RegularExpressionAttribute {
         public YaRegularExpression(string pattern): base (pattern)
         {
             this.ErrorMessage = "RegularExpression: "+ pattern;
-            
+
         }
 
         public override string FormatErrorMessage(string name)

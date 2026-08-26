@@ -1,6 +1,3 @@
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using IdentityModel.OidcClient.Browser;
 
 namespace PostIt.Tests;

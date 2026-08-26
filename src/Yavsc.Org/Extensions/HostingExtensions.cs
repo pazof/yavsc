@@ -169,10 +169,20 @@ public static class HostingExtensions
     public static IdentityBuilder AddIdentityDBAndStores(this WebApplicationBuilder builder)
     {
         IServiceCollection services = builder.Services;
-        var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
 
-        services.AddDbContext<ApplicationDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
+            // Read the connection string at DbContext construction time
+            // rather than at AddDbContext registration time, so test
+            // fixtures (e.g. WebApplicationFactory<Program>) can
+            // override the value via the host's IConfiguration before
+            // any DbContext is built. Reading it eagerly at the top of
+            // this method would freeze whatever was in configuration
+            // when Program.Main ran — too early for the test host's
+            // ConfigureAppConfiguration / UseSetting hooks to apply.
+            var connectionString = sp.GetRequiredService<IConfiguration>()
+                .GetConnectionString(Constants.YavscConnectionStringName);
+
             if (UsesInMemoryProvider(connectionString))
             {
                 options.UseInMemoryDatabase(connectionString);
@@ -317,9 +327,20 @@ public static class HostingExtensions
             options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
         });
         var migrationsAssembly = typeof(Program).GetTypeInfo().Assembly.GetName().Name;
-        var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
 
-        string sqliteConnectionString = $"Data Source={Path.Combine(Path.GetTempPath(), "yavsc_test.db")}";
+        // The IdentityServer8.EntityFramework ConfigurationStoreOptions
+        // and OperationalStoreOptions expose ConfigureDbContext as an
+        // Action<DbContextOptionsBuilder> with no service-provider
+        // access, so the connection string has to be captured here at
+        // registration time. For the production runtime this is fine:
+        // the connection string does not change after startup. For
+        // tests, this is the one knob we cannot push into the per-fixture
+        // config pipeline; the TestWebApplicationFactory bridge instead
+        // sets ConnectionStrings__YavscConnection as an environment
+        // variable, which AddEnvironmentVariables picks up as the last
+        // configuration provider in AddConfiguration. See
+        // Yavsc.Server/Helpers/ConfigHelpers.cs.
+        var connectionString = builder.Configuration.GetConnectionString(Constants.YavscConnectionStringName);
 
         var identityServerBuilder = builder.Services.AddIdentityServer(options =>
          {
@@ -600,7 +621,13 @@ public static class HostingExtensions
 
     private static bool UsesInMemoryProvider(string connectionString)
     {
-        return string.Equals(connectionString, InMemoryProviderName, StringComparison.OrdinalIgnoreCase);
+        // Test fixtures may suffix the connection string with a
+        // per-fixture GUID (see InMemoryDatabaseName in
+        // Yavsc.Tests.Shared) to keep their in-memory stores
+        // isolated. The base name "InMemory" is still what
+        // identifies an in-memory provider — anything starting
+        // with it is one.
+        return connectionString.StartsWith(InMemoryProviderName, StringComparison.OrdinalIgnoreCase);
     }
 
     private static Action<DbContext, bool> EnsureDefaultApplicationScopes()

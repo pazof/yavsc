@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.Models.Cratie
 {
     public class Option: ITrackedEntity

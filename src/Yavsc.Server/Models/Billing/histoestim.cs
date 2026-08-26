@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.Models.Billing
 {
     public partial class histoestim

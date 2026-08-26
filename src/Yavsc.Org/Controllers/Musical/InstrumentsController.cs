@@ -1,12 +1,9 @@
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Yavsc.Controllers
 {
-    using System.Security.Claims;
     using Models;
     using Models.Musical;
-    using Yavsc.Helpers;
     using Yavsc.Server.Helpers;
 
     public class InstrumentsController : Controller

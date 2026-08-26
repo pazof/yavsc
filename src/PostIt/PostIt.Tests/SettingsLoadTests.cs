@@ -1,9 +1,3 @@
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
-
 namespace PostIt.Tests;
 
 public class SettingsLoadTests
@@ -91,7 +85,7 @@ public class SettingsLoadTests
                         bool flip = ((workerId + i) & 1) == 0;
                         settings.DarkMode = flip;
                         settings.Authentication.RedirectUri =
-                            global::AuthenticationSettings.DefaultDesktopRedirectUri;
+                            global::AuthenticationSettings.DesktopRedirectUri;
 
                         settings.BusinessApiUrl = flip
                             ? "https://a.example.test/api/v1/"
@@ -109,7 +103,7 @@ public class SettingsLoadTests
                 {
                     failures.Add(ex);
                 }
-            });
+            }, TestContext.Current.CancellationToken);
         }
         await Task.WhenAll(tasks);
 
@@ -129,7 +123,7 @@ public class SettingsLoadTests
     /// and checking that Loaded flips exactly once (no torn reads).
     /// </summary>
     [Fact]
-    public void Load_is_idempotent_under_concurrent_calls()
+    public async Task Load_is_idempotent_under_concurrent_calls()
     {
         var settings = new PostIt.ViewModels.Settings
         {
@@ -149,9 +143,9 @@ public class SettingsLoadTests
             {
                 barrier.SignalAndWait();
                 settings.Load();
-            });
+            }, TestContext.Current.CancellationToken);
         }
-        Task.WaitAll(tasks);
+        await Task.WhenAll(tasks);
 
         Assert.True(settings.Loaded);
     }

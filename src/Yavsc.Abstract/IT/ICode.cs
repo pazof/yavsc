@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Yavsc.Abstract.IT
 {
     // un code est, parmis les ensembles de suites de signes,
@@ -14,7 +12,7 @@ namespace Yavsc.Abstract.IT
         bool Validate();
 
         /// <summary>
-        /// Defines a new letter in this code, 
+        /// Defines a new letter in this code,
         /// as an enumerable of <c>TLetter</c>
         /// </summary>
         /// <param name="letter"></param>

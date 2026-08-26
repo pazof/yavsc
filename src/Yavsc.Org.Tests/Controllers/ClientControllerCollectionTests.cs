@@ -1,11 +1,8 @@
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using IdentityServer8.EntityFramework.Entities;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 using Yavsc.Models;
 using Yavsc.Tests.Shared;
 

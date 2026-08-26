@@ -1,27 +1,12 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:PostIt.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="using:PostIt.Views"
-        x:DataType="vm:MainPageViewModel"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PostIt.Views.MainWindow"
-        >
-
-    <!--
-        Root layout: persistent session banner on top, navigation
-        surface below. The banner is the single source of truth for
-        "Connecté / Déconnecté" and the logout button — visible on
-        every page (HomePage, MainPage) so the user never has to dig
-        through a menu to find their session state.
-
-        The navigation stack is built programmatically in
-        App.OnFrameworkInitializationCompleted: HomePage is the
-        root, MainPage is pushed on top when the silent refresh
-        succeeds at boot or after a fresh login from HomePage.
-    -->
-    <DockPanel LastChildFill="True">
-        <views:SessionStatusBanner x:Name="SessionBanner"
-                                   DockPanel.Dock="Bottom"/>
-        <NavigationPage x:Name="NavRoot"/>
-    </DockPanel>
-
+        Icon="/Assets/avalonia-logo.ico"
+        Title="PostIt">
+        <views:MainView x:Name="MainView" />
 </Window>

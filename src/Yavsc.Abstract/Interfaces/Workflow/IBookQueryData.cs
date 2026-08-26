@@ -1,5 +1,4 @@
-﻿using System;
-using Yavsc.Abstract.Identity;
+﻿using Yavsc.Abstract.Identity;
 
 namespace Yavsc.Interfaces
 {

@@ -79,10 +79,10 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
             DateModified = DateTime.UtcNow
         };
 
-        var response = await http.PostAsJsonAsync("/api/v1/blog", draft);
+        var response = await http.PostAsJsonAsync("/api/v1/blog", draft, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-        var created = await response.Content.ReadFromJsonAsync<BlogPost>();
+        var created = await response.Content.ReadFromJsonAsync<BlogPost>(TestContext.Current.CancellationToken);
         Assert.NotNull(created);
         Assert.Equal("mapped-user", created!.AuthorId);
     }
@@ -101,10 +101,10 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
             Article = "Contenu initial.",
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Created, createdResponse.StatusCode);
-        var created = await createdResponse.Content.ReadFromJsonAsync<BlogPost>();
+        var created = await createdResponse.Content.ReadFromJsonAsync<BlogPost>(TestContext.Current.CancellationToken);
         Assert.NotNull(created);
 
         var updateResponse = await http.PutAsJsonAsync($"/api/v1/blog/{created!.Id}", new BlogPost
@@ -115,7 +115,7 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
             Article = "Contenu mis à jour.",
             DateCreated = created.DateCreated,
             DateModified = DateTime.UtcNow
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.NoContent, updateResponse.StatusCode);
     }
@@ -134,10 +134,10 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
             Article = "Contenu initial.",
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Created, createdResponse.StatusCode);
-        var created = await createdResponse.Content.ReadFromJsonAsync<BlogPost>();
+        var created = await createdResponse.Content.ReadFromJsonAsync<BlogPost>(TestContext.Current.CancellationToken);
         Assert.NotNull(created);
 
         using var otherHttp = NewClient(subject: "mapped-other");
@@ -149,7 +149,7 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
             Article = "Contenu non autorisé.",
             DateCreated = created.DateCreated,
             DateModified = DateTime.UtcNow
-        });
+        }, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Unauthorized, updateResponse.StatusCode);
     }

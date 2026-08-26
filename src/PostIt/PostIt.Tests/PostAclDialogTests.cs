@@ -1,21 +1,14 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Microsoft.Extensions.DependencyInjection;
+using PostIt.Helpers;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
-using Yavsc.Abstract.Identity.Security;
 using Yavsc.Api.Client;
-using Yavsc.Api.Client.Dtos;
 using Yavsc.Blogspot;
 
 namespace PostIt.Tests;
@@ -124,7 +117,7 @@ public class PostAclDialogTests
     /// rebinding the global DI mid-test would trample the
     /// Settings singleton the rest of the harness depends on.
     /// </summary>
-    private static (MainWindow window, BlogAclApiClient aclClient, CircleApiClient circleClient, CountingHttpHandler handler) Mount()
+    private static (MainView window, BlogAclApiClient aclClient, CircleApiClient circleClient, CountingHttpHandler handler) Mount()
     {
         var handler = new CountingHttpHandler();
         var settings = new Settings();
@@ -145,12 +138,9 @@ public class PostAclDialogTests
         // CountingHttpHandler.
         GC.KeepAlive(sp);
 
-        var window = new MainWindow();
+        var window = new MainView();
         var app = (App)Application.Current!;
-        app.DataTemplates.Clear();
-        app.DataTemplates.Add(new ViewLocator(sp));
         app.AttachMainWindow(window);
-        window.Show();
 
         return (window, aclClient, circleClient, handler);
     }
