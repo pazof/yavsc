@@ -40,8 +40,7 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-    - name: check kvm
-      run: /sbin/kvm-ok
+
     - name: Démarrer l'émulateur QEMU Headless
       run: |
         # 1. Variables d'environnement pour stabiliser le noyau Android 36
