@@ -50,7 +50,13 @@ jobs:
         export ANDROID_EMULATOR_DISABLE_VULKAN=1
         export LD_LIBRARY_PATH=/opt/android-sdk/emulator/lib64:/opt/android-sdk/emulator/lib64/qt/lib:$LD_LIBRARY_PATH
 
-        /opt/android-sdk/emulator/qemu/linux-x86_64/qemu-system-x86_64 -avd postit_test_avd -no-window -no-audio &
+        emulator -avd postit_test_avd \
+        -no-window \
+        -no-audio \
+        -no-boot-anim \
+        -gpu swiftshader \
+        -no-metrics \
+        -timezone Europe/Paris &
 
         echo "⌛ Attente de la détection par ADB..."
         adb wait-for-device
