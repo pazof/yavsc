@@ -56,7 +56,8 @@ jobs:
         -no-boot-anim \
         -gpu swiftshader \
         -no-metrics \
-        -timezone Europe/Paris &
+        -cores 2 \
+        -qemu -cpu host &
 
         echo "⌛ Attente de la détection par ADB..."
         adb wait-for-device
