@@ -64,7 +64,7 @@ jobs:
         -no-audio \
         -no-boot-anim \
         -no-metrics \
-        -cores 2 \
+        -cores 1 \
         -memory 2048 \
         -qemu -cpu host,vme=off &
 
