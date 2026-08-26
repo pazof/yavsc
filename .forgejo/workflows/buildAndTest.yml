@@ -27,9 +27,6 @@ jobs:
   build:
 
     runs-on: docker
-    container:
-      # Options cruciales pour donner accès à KVM et autoriser l'émulation
-      options: --device /dev/kvm --privileged
 
     steps:
     - name: Clone yavsc
@@ -47,9 +44,16 @@ jobs:
       run: |
         set -e
         export ANDROID_AVD_HOME=${ANDROID_HOME}/.android/avd
-        echo "Démarrage de l'émulateur en tâche de fond..."
-        emulator -avd pixel_test -no-window -no-audio -no-boot-anim -gpu swiftshader &
+
+        adb start-server
+        echo "⌛ Démarrage de l'émulateur en tâche de fond..."
+        emulator -avd pixel_test \
+            -no-window \
+            -no-audio \
+            -no-boot-anim \
+            -gpu off &
         EMU_PID=$!
+
         echo "Attente de la détection par ADB..."
         adb wait-for-device
         echo "Attente de la fin du boot d'Android..."
