@@ -45,6 +45,7 @@ jobs:
         export QT_QPA_PLATFORM=offscreen
         export ANDROID_EMULATOR_USE_SYSTEM_LIBS=1
         export ANDROID_SDK_ROOT=/opt/android-sdk
+        export RE_EMULATOR_DISABLE_CPUID_CHECK=1
 
         echo "hw.ramSize = 3072"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
         echo "hw.ramSize = 2048"    >> ${ANDROID_SDK_ROOT}/.android/avd/postit_test_avd.ini
