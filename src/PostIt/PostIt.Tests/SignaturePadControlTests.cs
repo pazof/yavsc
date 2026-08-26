@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
 using PostIt.Controls;
 using PostIt.Models;
-using Xunit;
 
 namespace PostIt.Tests;
 

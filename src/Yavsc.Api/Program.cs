@@ -15,7 +15,6 @@ using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Yavsc;
 using Yavsc.Abstract.Interfaces;
 using Yavsc.Helpers;
 using Yavsc.Interface;

@@ -1,10 +1,6 @@
-using System;
-using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 using PostIt.Controls;
 using PostIt.ViewModels;
-using Xunit;
 
 namespace PostIt.Tests;
 

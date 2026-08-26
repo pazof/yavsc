@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Yavsc.Models.Process
 {
     public class Disjonction : List<IRequisition>, IRequisition

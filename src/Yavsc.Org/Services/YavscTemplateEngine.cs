@@ -10,15 +10,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 
 using Yavsc.Models;
-using Yavsc.Services;
-using System.Reflection;
 using Yavsc.Abstract.Templates;
 using Microsoft.AspNetCore.Identity;
-using RazorEngine.Configuration;
-using Yavsc.Interface;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 using RazorEngine.Compilation.ImpromptuInterface;
 
 namespace Yavsc.Lib
@@ -30,7 +24,7 @@ namespace Yavsc.Lib
             "Yavsc.Templates" ,
             "Yavsc.Models",
             "Yavsc.Models.Identity"};
-        
+
         readonly IStringLocalizer<YavscTemplateEngine> stringLocalizer;
         readonly ApplicationDbContext dbContext;
 
@@ -144,14 +138,14 @@ namespace Yavsc.Lib
                                 var template = result.CallActLike<UserOrientedTemplate>(user);
                                 return template.GeneratedText;
                             }
-                           
+
 /* result.CallActLike<>
 
  inMemoryAssembly.Seek(0, SeekOrigin.Begin);
                             Assembly assembly = Assembly.Load(inMemoryAssembly.ToArray());
                    //          UserOrientedTemplate userOrientedTemplate = (UserOrientedTemplate)
                    // FIXME               Activator.CreateInstance(Type.GetType(templateInfo.TemplateType));
-                            
+
                             foreach (var user in dbContext.ApplicationUser.Where(
                                 u => u.AllowMonthlyEmail
                             ))
@@ -160,7 +154,7 @@ namespace Yavsc.Lib
                                 userOrientedTemplate.Init();
                                 userOrientedTemplate.User = user; */
                              throw new NotImplementedException();
-                         
+
                         }
                     }
                 }

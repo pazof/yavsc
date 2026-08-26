@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.Models.Market {
     /// <summary>
  /// Not yet used!

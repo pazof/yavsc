@@ -2,7 +2,6 @@ using System.Net.Mime;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Yavsc.Helpers;
 
 namespace Yavsc.Controllers
 {

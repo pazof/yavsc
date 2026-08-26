@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Yavsc.Controllers
 {
@@ -14,7 +10,6 @@ namespace Yavsc.Controllers
     using Yavsc.Models.Billing;
     using Yavsc.Abstract.Identity;
     using Microsoft.EntityFrameworkCore;
-    using Yavsc.Helpers;
     using Yavsc.Server.Helpers;
 
     [Produces("application/json")]

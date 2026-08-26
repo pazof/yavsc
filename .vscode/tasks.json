@@ -2,6 +2,42 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "run-debug-android",
+      "command": "dotnet",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/src/PostIt/PostIt.Android",
+        "env": {
+          "DOTNET_HOST_PATH": "/usr/share/dotnet",
+          "ANDROID_HOME": "/opt/android-sdk",
+          "JAVA_HOME": "/usr/lib/jvm/java-1.25.0-openjdk-amd64"
+        }
+      },
+      "args": [
+        "run",
+        "-p:TargetFramework=net10.0-android",
+        "-p:Configuration=Debug",
+        "-p:AndroidAttachDebugger=true",
+        "-p:AndroidSdbHostPort=55555",
+        "-p:AndroidSdbTargetPort=55555"
+      ],
+      "problemMatcher": [
+        {
+          "owner": "dotnet",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "source": "dotnet",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(error):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      }
+      ]
+    },
+    {
       "label": "build",
       "command": "dotnet",
       "type": "process",
@@ -39,59 +75,6 @@
         "kind": "build"
       },
       "isBackground": true
-    },
-    {
-      "label": "test blogs",
-      "type": "process",
-      "problemMatcher": ["$msCompile"],
-      "command": "dotnet",
-      "args": ["test"],
-      "runOptions": {
-        "instanceLimit": 1
-      },
-      "options": {
-        "cwd": "src/Yavsc.Blogs",
-        "env": {
-          "DOTNET_CLI_UI_LANGUAGE": "en-US",
-          "ASPNETCORE_ENVIRONMENT": "Development"
-        }
-      },
-      "group": {
-        "kind": "test"
-      },
-      "isBackground": true,
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": true,
-        "clear": false
-      }
-    },
-    {
-      "label": "publish",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "publish",
-        "/property:GenerateFullPaths=true",
-        "/consoleloggerparameters:NoSummary;ForceNoAlign"
-      ],
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "label": "watch",
-      "command": "dotnet",
-      "type": "process",
-      "args": ["watch", "--project",
-      "src/Yavsc.Org/Yavsc.Org.csproj"
-    ],
-      "problemMatcher": "$msCompile",
-      "runOptions": {
-
-      }
-
     }
   ]
 }

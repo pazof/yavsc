@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.Abstract.Interfaces
 {
     public interface IBatch<TInput, TOutput>

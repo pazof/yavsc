@@ -16,6 +16,24 @@ Cette convention est partagée avec le dépôt
 [`postit-debian`](https://forgejo.pschneider.fr/notazof/postit-debian)
 pour la production des paquets `.deb`.
 
+## [1.0.8-rc3] - unstable
+
+### Added
+
+* a code cleanup,
+* a first Xamarin.UITest is successful, but disabled, because breaking the actual CI process,
+* Android app starts, the login process succeeds
+
+### Changed
+
+L'identifiant de l'application client Android a changé, il passe en minuscules :
+`fr.pschneider.postit`
+
+### Fixed
+
+nothing, [TODO] a bug persists laoding a blog post from PostIt, ACL sould come along with and should not need any "Refresh" button.
+Today, assigning ACL succeeds the first time, the following times result in a 409
+
 ## [1.0.8-rc1] - unstable
 
 ### Added

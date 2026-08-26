@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Yavsc.Models.Market {
 
     public class Catalog {

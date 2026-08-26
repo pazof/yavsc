@@ -1,8 +1,8 @@
 
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Microsoft.Extensions.DependencyInjection;
+using PostIt.Helpers;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -73,7 +73,7 @@ public class AddCircleMemberDialogTests
         return context;
     }
     /// <summary>
-    /// Mount a real <see cref="MainWindow"/>, build a minimal
+    /// Mount a real <see cref="MainView"/>, build a minimal
     /// DI graph, push <see cref="CirclesPage"/> then the
     /// <see cref="AddCircleMemberDialog"/> on top of it.
     /// Returns the stack size so the test can pin the delta.
@@ -98,12 +98,9 @@ public class AddCircleMemberDialogTests
         services.AddTransient<AddCircleMemberDialogViewModel>();
         var sp = services.BuildServiceProvider();
 
-        context.Window = new MainWindow();
+        context.Window = new MainView();
         context.App = (PostIt.App)Application.Current!;
-        context.App.DataTemplates.Clear();
-        context.App.DataTemplates.Add(new ViewLocator(sp));
         context.App.AttachMainWindow(context.Window);
-        context.Window.Show();
 
         context.page = sp.GetRequiredService<CirclesPage>();
         context.Window.NavRoot.PushAsync(context.page).GetAwaiter().GetResult();

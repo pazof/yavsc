@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Yavsc.Interfaces;
+﻿using Yavsc.Interfaces;
 
 namespace Yavsc.Models.Messaging
 {
@@ -8,5 +6,5 @@ namespace Yavsc.Models.Messaging
          Reason For { get; set; }
          string Message { get; set; }
     }
-    
+
 }

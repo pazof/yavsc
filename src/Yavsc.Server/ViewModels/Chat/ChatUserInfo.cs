@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Yavsc.Models.Chat;
 
 namespace Yavsc.ViewModels.Chat { 

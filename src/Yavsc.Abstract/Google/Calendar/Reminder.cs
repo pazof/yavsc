@@ -1,5 +1,3 @@
-using System;
-
 namespace Yavsc.Models.Google.Calendar
 {
     [Obsolete("use GoogleUse.Apis")]

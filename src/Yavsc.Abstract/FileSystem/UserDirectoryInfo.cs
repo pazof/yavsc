@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using Yavsc.Abstract.FileSystem;
 using Yavsc.Server.Helpers;
 
 namespace Yavsc.ViewModels.UserFiles
@@ -13,7 +9,7 @@ namespace Yavsc.ViewModels.UserFiles
         public RemoteFileInfo [] Files {
             get; set;
         }
-        public DirectoryShortInfo [] SubDirectories { 
+        public DirectoryShortInfo [] SubDirectories {
             get; set;
         }
         private readonly DirectoryInfo dInfo;
@@ -23,7 +19,7 @@ namespace Yavsc.ViewModels.UserFiles
         {
 
         }
-        
+
         public UserDirectoryInfo(string userReposPath, string userId, string path)
         {
             if (string.IsNullOrWhiteSpace(userId))

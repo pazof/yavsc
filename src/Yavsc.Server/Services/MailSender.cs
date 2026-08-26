@@ -1,4 +1,3 @@
-using System.Net;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

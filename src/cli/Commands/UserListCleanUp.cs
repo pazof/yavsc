@@ -1,5 +1,4 @@
 using cli.Model;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -30,7 +29,7 @@ namespace cli.Commands
 
                 if (!showhelp)
                 {
-                   
+
 
                     var mailer = Program.AppHost.Services.GetService<MailSender>();
                     var loggerFactory = Program.AppHost.Services.GetService<ILoggerFactory>();

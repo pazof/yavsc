@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
@@ -101,12 +100,12 @@ public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
         var postId = SeedPost("alice");
 
         using var http = NewClient("alice");
-        var put = await http.PutAsJsonAsync(PublishUrl(postId), new { publish = true });
+        var put = await http.PutAsJsonAsync(PublishUrl(postId), new { publish = true }, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NoContent, put.StatusCode);
 
-        var get = await http.GetAsync($"{BlogsUrl}/{postId}");
+        var get = await http.GetAsync($"{BlogsUrl}/{postId}", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, get.StatusCode);
-        using var doc = JsonDocument.Parse(await get.Content.ReadAsStringAsync());
+        using var doc = JsonDocument.Parse(await get.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         Assert.True(doc.RootElement.GetProperty("isPublished").GetBoolean());
     }
 
@@ -117,12 +116,12 @@ public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
         var postId = SeedPost("alice");
 
         using var http = NewClient("alice");
-        await http.PutAsJsonAsync(PublishUrl(postId), new { publish = true });
-        var put = await http.PutAsJsonAsync(PublishUrl(postId), new { publish = false });
+        await http.PutAsJsonAsync(PublishUrl(postId), new { publish = true }, TestContext.Current.CancellationToken);
+        var put = await http.PutAsJsonAsync(PublishUrl(postId), new { publish = false }, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NoContent, put.StatusCode);
 
-        var get = await http.GetAsync($"{BlogsUrl}/{postId}");
-        using var doc = JsonDocument.Parse(await get.Content.ReadAsStringAsync());
+        var get = await http.GetAsync($"{BlogsUrl}/{postId}", TestContext.Current.CancellationToken);
+        using var doc = JsonDocument.Parse(await get.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         Assert.False(doc.RootElement.GetProperty("isPublished").GetBoolean());
     }
 
@@ -131,7 +130,7 @@ public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
     {
         ResetDatabase();
         using var http = NewClient("alice");
-        var put = await http.PutAsJsonAsync(PublishUrl(99999L), new { publish = true });
+        var put = await http.PutAsJsonAsync(PublishUrl(99999L), new { publish = true }, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NotFound, put.StatusCode);
     }
 
@@ -142,7 +141,7 @@ public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
         var postId = SeedPost("alice");
 
         using var http = NewClient("bob");
-        var put = await http.PutAsJsonAsync(PublishUrl(postId), new { publish = true });
+        var put = await http.PutAsJsonAsync(PublishUrl(postId), new { publish = true }, TestContext.Current.CancellationToken);
         // 401 Challenge (the controller returns Challenge()
         // for AuthorizationFailureException). The exact code
         // is framework-dependent; what matters is "not 204".
