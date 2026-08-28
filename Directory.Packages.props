@@ -4,7 +4,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
-    <PackageVersion Include="GitVersion.MsBuild" Version="6.8.1" />
     <PackageVersion Include="HigginsSoft.IdentityServer8" Version="8.1.0-alpha.171" />
     <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="8.1.0-alpha.171" />
     <PackageVersion Include="IdentityModel.OidcClient" Version="6.0.0" />

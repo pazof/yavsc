@@ -14,7 +14,4 @@
     <InformationalVersion>1.1.0-beta.1+148.Branch.release-1.0.8-rc4.Sha.6b161b0fb509fec0ce467aa94f1a450b202af2f0</InformationalVersion>
     <Version>1.1.0-beta.1</Version>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" />
-  </ItemGroup>
 </Project>

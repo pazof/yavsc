@@ -15,7 +15,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <ProjectReference Include="../Yavsc.Server/Yavsc.Server.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" />
-  </ItemGroup>
 </Project>

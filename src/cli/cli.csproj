@@ -22,7 +22,4 @@
     <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
     <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" />
-  </ItemGroup>
 </Project>
