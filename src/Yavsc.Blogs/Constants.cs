@@ -1,6 +1,6 @@
 namespace Yavsc.Blogs;
 
-public static class Constants
+public static class BlogConstants
 {
     public const string AdminRole = "Admin";
     public const string ModeratorRole = "Moderator";

@@ -10,7 +10,7 @@ using Yavsc.Models.Blog;
 using Yavsc.Models.Relationship;
 using Yavsc.Services;
 using Yavsc.Tests.Shared;
-
+using static Yavsc.Constants;
 namespace Yavsc.Blogs.Tests;
 
 /// <summary>
@@ -415,4 +415,5 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         db.SaveChanges();
         return post.Id;
     }
+
 }

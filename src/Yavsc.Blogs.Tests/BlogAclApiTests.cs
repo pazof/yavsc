@@ -131,7 +131,8 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
             BlogPostId = _fixture.PostId
         };
 
-        var response = await http.PostAsJsonAsync(BlogAclUrl(), payload,
+        var response = await http.PostAsJsonAsync(
+            BlogAclUrl(), payload,
         TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
