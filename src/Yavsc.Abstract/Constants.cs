@@ -7,6 +7,13 @@ namespace Yavsc
     {
 
         public const string APIPrefix = "api/v1";
+
+        public const string BlogSpotPath = "blogspot";
+        public const string BlogAclPath = "blogacl";
+        public const string BlogTagPath = "blogtag";
+        public const string CirclePath = "circle";
+        public const string CommentsPath = "blogcomments";
+
         public static readonly Scope[] SiteScopes = {
             new Scope { Id = "profile", Description = "Your profile informations" },
             new Scope { Id = "book" , Description ="Your booking interface"},

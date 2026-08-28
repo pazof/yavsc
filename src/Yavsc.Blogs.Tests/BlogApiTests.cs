@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;
@@ -31,18 +30,6 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         _fixture = fixture;
     }
 
-    /// <summary>Reset the in-memory database to a known empty state.
-    /// <c>UseInMemoryDatabase</c> shares its store across the
-    /// lifetime of the <see cref="BlogsWebServerFixture"/> instance,
-    /// so without a per-test reset the test order would leak
-    /// state between tests.</summary>
-    private void ResetDatabase()
-    {
-        using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.EnsureDeleted();
-        db.Database.EnsureCreated();
-    }
 
     /// <summary>Reset the database and seed the
     /// <c>tester</c> <see cref="ApplicationUser"/> row. Required
@@ -55,7 +42,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     /// at <c>SaveChanges</c> and the controller returns 500.</summary>
     private void ResetAndSeedDefaultUser()
     {
-        ResetDatabase();
+        _fixture.ResetDatabase();
         _fixture.SeedUser("tester");
     }
 
@@ -111,7 +98,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task GetBlogs_returns_200_with_empty_list_when_no_posts()
     {
-        ResetDatabase();
+        _fixture.ResetDatabase();
         using var http = NewClient();
 
         var response = await http.GetAsync("/api/v1/blog",
@@ -266,7 +253,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task GetBlog_returns_401_when_no_token_is_provided()
     {
-        ResetDatabase();
+        _fixture.ResetDatabase();
         using var http = NewAnonymousClient();
 
         // No Authorization header → the JwtBearer middleware
@@ -443,7 +430,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         // behaviour so a future change that, say, makes Title
         // nullable in the model or drops [Required], triggers a
         // conscious update of the test (and probably of the VM).
-        ResetDatabase();
+        _fixture.ResetDatabase();
         using var http = NewClient(subject: "tester");
 
         var draft = new BlogPost

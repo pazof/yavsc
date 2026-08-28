@@ -16,6 +16,16 @@ Cette convention est partagée avec le dépôt
 [`postit-debian`](https://forgejo.pschneider.fr/notazof/postit-debian)
 pour la production des paquets `.deb`.
 
+## [1.0.8-rc4] - unstable
+
+### Added
+
+### Changed
+
+### Fixed
+
+* [TODO] bug loading a blog post from PostIt, ACL come along with and don't need any "Refresh" button.
+
 ## [1.0.8-rc3] - unstable
 
 ### Added
