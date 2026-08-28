@@ -12,9 +12,15 @@ using Yavsc.Tests.Shared;
 namespace Yavsc.Blogs.Tests;
 
 [Collection("JwtClaimMapping")]
-public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWebServerFixture>
+public sealed class BlogApiMappedClaimsTests : 
+IClassFixture<MappedClaimsBlogsWebServerFixture>,
+IBackendFixture
 {
     private readonly MappedClaimsBlogsWebServerFixture _fixture;
+
+    public IReadOnlyList<string> Addresses => throw new NotImplementedException();
+
+    public IServiceProvider Services => throw new NotImplementedException();
 
     public BlogApiMappedClaimsTests(MappedClaimsBlogsWebServerFixture fixture)
     {
@@ -79,7 +85,7 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
             DateModified = DateTime.UtcNow
         };
 
-        var response = await http.PostAsJsonAsync("/api/v1/blog", draft, TestContext.Current.CancellationToken);
+        var response = await http.PostAsJsonAsync(_fixture.BlogUrl(), draft, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
         var created = await response.Content.ReadFromJsonAsync<BlogPost>(TestContext.Current.CancellationToken);
@@ -93,7 +99,7 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
         ResetDatabase();
         using var http = NewClient(subject: "mapped-owner");
 
-        var createdResponse = await http.PostAsJsonAsync("/api/v1/blog", new BlogPost
+        var createdResponse = await http.PostAsJsonAsync(_fixture.BlogUrl(), new BlogPost
         {
             Id = 0,
             Title = "Billet à modifier",
@@ -126,7 +132,7 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
         ResetDatabase();
         using var ownerHttp = NewClient(subject: "mapped-owner");
 
-        var createdResponse = await ownerHttp.PostAsJsonAsync("/api/v1/blog", new BlogPost
+        var createdResponse = await ownerHttp.PostAsJsonAsync(_fixture.BlogUrl(), new BlogPost
         {
             Id = 0,
             Title = "Billet protégé",
