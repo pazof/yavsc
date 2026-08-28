@@ -1,7 +1,5 @@
 
-using Yavsc.Blogs.Tests;
-
-public interface IBackendFixture 
+public interface IBackendFixture
 {
     /// <summary>
     /// The addresses the fixture bound to.
