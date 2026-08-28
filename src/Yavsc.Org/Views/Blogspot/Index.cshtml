@@ -70,7 +70,7 @@
         <div class="actiongroup">
             @if ((await AuthorizationService.AuthorizeAsync(User, post, new ReadPermission())).Succeeded)
             {
-                <a asp-action="Details" asp-route-id="@((IBlogPost)post).Id"  class="btn btn-light">Details</a>
+                <a asp-action="Details" asp-route-id="@post.Id"  class="btn btn-light">Details</a>
             }
             else
             {
