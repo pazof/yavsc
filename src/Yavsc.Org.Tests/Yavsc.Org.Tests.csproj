@@ -86,7 +86,4 @@
     </ItemGroup>
     <Copy SourceFiles="@(_YavscOrgStaticAssetsFiles)" DestinationFolder="$(OutDir)" />
   </Target>
-  <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" />
-  </ItemGroup>
 </Project>

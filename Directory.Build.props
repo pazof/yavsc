@@ -1,16 +1,6 @@
 <Project>
   <PropertyGroup>
     <RootNamespace>Yavsc</RootNamespace>
-    <!--
-      GitVersion.MsBuild is referenced as a build-time package from
-      every csproj under src/. Setting UseProjectNamespaceForGitVersionInformation
-      here (in Directory.Build.props) means each assembly exposes a
-      GitVersionInformation type under its own namespace, e.g.
-      PostIt.GitVersionInformation, Yavsc.GitVersionInformation, so
-      the assembly metadata reflects the source tree it was built
-      from without conflicting names.
-    -->
-    <UseProjectNamespaceForGitVersionInformation>true</UseProjectNamespaceForGitVersionInformation>
     <NoWarn>NU1701, NU1901, NU1902, NU1507</NoWarn>
   </PropertyGroup>
 </Project>

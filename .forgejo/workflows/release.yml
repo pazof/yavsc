@@ -68,10 +68,8 @@ jobs:
           # WORKDIR de l'image (cf. dotnet-android-build-image/Dockerfile).
           cd /src
 
-          # Clone unshallow pour que GitVersion.MsBuild ait l'historique
-          # et les tags (sinon MSB3073 sur la cible Android cf. PR #21).
           if [[ ! -d _src/.git ]]; then
-            git clone https://forgejo.pschneider.fr/notazof/yavsc.git _src
+            git clone --depth=1 https://forgejo.pschneider.fr/notazof/yavsc.git _src
           fi
 
           cd _src

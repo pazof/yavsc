@@ -32,7 +32,4 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" />
-  </ItemGroup>
 </Project>

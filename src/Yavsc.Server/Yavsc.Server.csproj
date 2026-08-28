@@ -40,7 +40,4 @@
   <ItemGroup>
     <ProjectReference Include="../Yavsc.Abstract/Yavsc.Abstract.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="GitVersion.MsBuild" />
-  </ItemGroup>
 </Project>
