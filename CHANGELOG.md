@@ -197,10 +197,10 @@ Today, assigning ACL succeeds the first time, the following times result in a 40
   migration, reverted in this release. The publish toggle covers
   the same user-visible switch without a schema change.
 
-[Unreleased]: https://github.com/pazof/yavsc/compare/HEAD
-[1.0.8-rc1]: https://github.com/pazof/yavsc/compare/1.0.7...1.0.8-rc1
-[1.0.7]: https://github.com/pazof/yavsc/compare/1.0.6...1.0.7
-[1.0.6]: https://github.com/pazof/yavsc/compare/1.0.5...1.0.6
+[Unreleased]: https://forgejo.pschneider.fr/notazof/yavsc/compare/HEAD
+[1.0.8-rc1]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.7...1.0.8-rc1
+[1.0.7]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.6...1.0.7
+[1.0.6]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.5...1.0.6
 
 ## [1.0.6] - stable
 
@@ -234,4 +234,4 @@ Today, assigning ACL succeeds the first time, the following times result in a 40
   actual release id. Switched to `jq` for both body construction and
   field extraction.
 
-[1.0.6]: https://github.com/pazof/yavsc/compare/1.0.5...1.0.6
+[1.0.6]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.5...1.0.6

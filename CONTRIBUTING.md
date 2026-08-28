@@ -11,7 +11,7 @@
 ## Premier build
 
 ```bash
-git clone https://github.com/pazof/yavsc.git
+git clone https://forgejo.pschneider.fr/notazof/yavsc.git
 cd yavsc
 dotnet restore
 dotnet build

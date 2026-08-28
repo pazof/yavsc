@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>1c73094f-959f-4211-b1a1-6a69b236c283</UserSecretsId>
     <RootNamespace>Yavsc.Blogs</RootNamespace>
-    <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
+    <RepositoryUrl>https://forgejo.pschneider.fr/notazof/yavsc</RepositoryUrl>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>
