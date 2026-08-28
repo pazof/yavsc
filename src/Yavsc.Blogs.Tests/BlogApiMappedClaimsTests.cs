@@ -8,11 +8,12 @@ using Microsoft.IdentityModel.Tokens;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Tests.Shared;
+using Yavsc.Blogs.Tests.Fixtures;
 
 namespace Yavsc.Blogs.Tests;
 
 [Collection("JwtClaimMapping")]
-public sealed class BlogApiMappedClaimsTests : 
+public sealed class BlogApiMappedClaimsTests :
 IClassFixture<MappedClaimsBlogsWebServerFixture>,
 IBackendFixture
 {
@@ -85,7 +86,10 @@ IBackendFixture
             DateModified = DateTime.UtcNow
         };
 
-        var response = await http.PostAsJsonAsync(_fixture.BlogUrl(), draft, TestContext.Current.CancellationToken);
+        var response = await http.PostAsJsonAsync(
+            _fixture.BlogSpotUrl(),
+            draft,
+            TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
         var created = await response.Content.ReadFromJsonAsync<BlogPost>(TestContext.Current.CancellationToken);
@@ -99,7 +103,7 @@ IBackendFixture
         ResetDatabase();
         using var http = NewClient(subject: "mapped-owner");
 
-        var createdResponse = await http.PostAsJsonAsync(_fixture.BlogUrl(), new BlogPost
+        var createdResponse = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), new BlogPost
         {
             Id = 0,
             Title = "Billet à modifier",
@@ -113,7 +117,7 @@ IBackendFixture
         var created = await createdResponse.Content.ReadFromJsonAsync<BlogPost>(TestContext.Current.CancellationToken);
         Assert.NotNull(created);
 
-        var updateResponse = await http.PutAsJsonAsync($"/api/v1/blog/{created!.Id}", new BlogPost
+        var updateResponse = await http.PutAsJsonAsync(_fixture.BlogSpotUrl() + $"/{created!.Id}", new BlogPost
         {
             Id = created.Id,
             Title = "Billet modifié",
@@ -132,7 +136,7 @@ IBackendFixture
         ResetDatabase();
         using var ownerHttp = NewClient(subject: "mapped-owner");
 
-        var createdResponse = await ownerHttp.PostAsJsonAsync(_fixture.BlogUrl(), new BlogPost
+        var createdResponse = await ownerHttp.PostAsJsonAsync(_fixture.BlogSpotUrl(), new BlogPost
         {
             Id = 0,
             Title = "Billet protégé",
@@ -147,7 +151,7 @@ IBackendFixture
         Assert.NotNull(created);
 
         using var otherHttp = NewClient(subject: "mapped-other");
-        var updateResponse = await otherHttp.PutAsJsonAsync($"/api/v1/blog/{created!.Id}", new BlogPost
+        var updateResponse = await otherHttp.PutAsJsonAsync(_fixture.BlogSpotUrl() + $"/{created!.Id}", new BlogPost
         {
             Id = created.Id,
             Title = "Tentative de modification",

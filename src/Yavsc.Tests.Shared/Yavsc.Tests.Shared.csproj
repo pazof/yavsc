@@ -23,4 +23,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Yavsc.Abstract/Yavsc.Abstract.csproj" />
+  </ItemGroup>
 </Project>

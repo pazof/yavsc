@@ -15,7 +15,8 @@ public static class PayloadHelpers
             post.UserModified,
             post.AuthorId,
             ACL = post.GetACL(),
-            Tags = post.GetTags()
+            Tags = post.GetTags(),
+            post.IsPublished
         };
     }
 }
