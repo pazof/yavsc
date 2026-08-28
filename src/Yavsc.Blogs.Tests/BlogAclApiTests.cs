@@ -1,10 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Abstract.BlogSpot;
 using Yavsc.Models;
 using Yavsc.Models.Access;
+using Yavsc.Models.Blog;
 using Yavsc.Tests.Shared;
 using static Yavsc.Constants;
 
@@ -38,15 +40,16 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
 {
     private readonly BlogsWebServerFixture _fixture;
 
-
     public BlogAclApiTests(BlogsWebServerFixture fixture)
     {
         _fixture = fixture;
     }
 
 
+    private string BlogUrl()
+        => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/{APIPrefix}/{BlogSpotPath}";
     private string BlogAclUrl()
-        => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/{APIPrefix}/blogacl";
+        => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/{APIPrefix}/{BlogAclPath}";
 
     /// <summary>Delete any ACL rows tied to the fixture's seeded
     /// <c>(CircleId, BlogPostId)</c> pair. The shared SQLite store
@@ -120,7 +123,7 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         // owned by the caller. We seed the same shape pre-POST so the
         // test reproduces the prod scenario end-to-end.
         CleanupAcl();
-        using var http = NewClient("alice");
+        using var http = NewClient(_fixture.DefaultUserLogin);
 
         var payload = new PostAccessControlRulePayload
         {
@@ -128,7 +131,8 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
             BlogPostId = _fixture.PostId
         };
 
-        var response = await http.PostAsJsonAsync(BlogAclUrl(), payload,
+        var response = await http.PostAsJsonAsync(
+            BlogAclUrl(), payload,
         TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -178,7 +182,7 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     [MemberData(nameof(BlogAclPayloadsForNever500))]
     public async Task PostCircleAuthorization_never_returns_500(PostAccessControlRulePayload payload)
     {
-        using var http = NewClient("alice");
+        using var http = NewClient(_fixture.DefaultUserLogin);
 
         var response = await http.PostAsJsonAsync(
             BlogAclUrl(), payload,
@@ -216,4 +220,83 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         );
 
     }
+
+    [Fact]
+    public async Task PostBlog_with_ACL_creates_a_post_and_Get_returns_it_in_the_list()
+    {
+        CleanupAcl();
+        _fixture.SeedUser(_fixture.DefaultUserLogin);
+        _fixture.SeedUser("tester");
+        _fixture.SeedCircle(_fixture.DefaultUserLogin, "test",
+        false,
+         new String[]
+        {
+            _fixture.DefaultUserLogin,
+            "tester"
+        });
+        using var http = NewClient(_fixture.DefaultUserLogin );
+
+        // Create a minimal BlogPost. The server assigns Id, so we
+        // send 0 + an explicit AuthorId; the production
+        // BlogSpotService.Create() tolerates that.
+        var draft = new BlogPost
+        {
+            Id = 0,
+            Title = "Premier billet",
+            AuthorId = "tester",
+            Article = "Contenu de test.",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow,
+            ACL = new List<CircleAuthorizationToBlogPost>(
+                new CircleAuthorizationToBlogPost[]
+                {
+                    new CircleAuthorizationToBlogPost
+                    {
+                        CircleId = _fixture.CircleId,
+                        BlogPostId = _fixture.PostId
+                    }
+                }
+            )
+        };
+
+        var postResponse = await http.PostAsJsonAsync(
+            BlogUrl(),
+            draft,
+            TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+
+        // The POST returns the server-issued post (with a real Id).
+        var created = await postResponse.Content.ReadFromJsonAsync<BlogPost>(
+            TestContext.Current.CancellationToken
+        );
+        Assert.NotNull(created);
+        Assert.NotEqual(0, created!.Id);
+        Assert.Equal(draft.Title, created.Title);
+
+        // The list should now contain exactly one entry.
+        var listResponse = await http.GetAsync(
+            BlogUrl(),
+            TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
+
+        using var doc = JsonDocument.Parse(await listResponse.Content.ReadAsStringAsync(
+            TestContext.Current.CancellationToken
+        ));
+        Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
+        Assert.Equal(2, doc.RootElement.GetArrayLength());
+        Assert.Equal(created.Id, doc.RootElement[0].GetProperty("id").GetInt64());
+
+        // detail should return the same post, with ACL and tags.
+        var detailResponse = await http.GetAsync(
+            $"{BlogUrl()}/{created.Id}",
+            TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, detailResponse.StatusCode);
+        using var detailDoc = JsonDocument.Parse(await detailResponse.Content.ReadAsStringAsync(
+            TestContext.Current.CancellationToken
+        ));
+        Assert.Equal(JsonValueKind.Object, detailDoc.RootElement.ValueKind);
+        Assert.Equal(created.Id, detailDoc.RootElement.GetProperty("id").GetInt64());
+        Assert.Equal(1, detailDoc.RootElement.GetProperty("acl").GetArrayLength()); 
+    }
+
 }

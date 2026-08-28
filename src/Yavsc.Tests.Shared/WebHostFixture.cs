@@ -30,7 +30,7 @@ namespace Yavsc.Tests.Shared;
 /// mapping are the responsibility of the subclass, through
 /// <see cref="BuildApp"/>.
 /// </summary>
-public abstract class WebHostFixture : IDisposable
+public abstract class WebHostFixture : IDisposable, IBackendFixture
 {
     private static readonly Lazy<X509Certificate2> _selfSignedCertificate =
         new Lazy<X509Certificate2>(CreateSelfSignedCertificate);

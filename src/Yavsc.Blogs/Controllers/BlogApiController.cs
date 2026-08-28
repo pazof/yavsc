@@ -9,7 +9,7 @@ namespace Yavsc.Blogs.Controllers
 {
     [Authorize("BlogScope")]
     [Produces("application/json")]
-    [Route(APIPrefix + "/blog")]
+    [Route(APIPrefix + "/" + BlogSpotPath)]
     public class BlogApiController : Controller
     {
         private readonly BlogSpotService blogSpotService;
@@ -19,14 +19,14 @@ namespace Yavsc.Blogs.Controllers
             this.blogSpotService = blogSpotService;
         }
 
-        // GET: api/BlogApi
+        // GET: api/v1/blogspot
         [HttpGet]
         public async Task<IEnumerable<IBlogPost>> GetBlogspot(int start = 0, int take = 25)
         {
             return await blogSpotService.Index(User, null, start, take);
         }
 
-        // GET: api/BlogApi/5
+        // GET: api/v1/blogspot/5
         [HttpGet("{id}", Name = "GetBlog")]
         public async Task<IActionResult> GetBlog([FromRoute] long id)
         {
@@ -43,7 +43,7 @@ namespace Yavsc.Blogs.Controllers
                     return NotFound();
                 }
 
-                return Ok(blog);
+                return Ok(blog.GetPayload());
             }
             catch (AuthorizationFailureException)
             {
@@ -51,7 +51,7 @@ namespace Yavsc.Blogs.Controllers
             }
         }
 
-        // PUT: api/BlogApi/5
+        // PUT: api/v1/blogspot/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBlog(long id, [FromBody] Models.Blog.BlogPost blog)
         {
@@ -83,7 +83,7 @@ namespace Yavsc.Blogs.Controllers
             return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
 
-        // POST: api/v1/blog
+        // POST: api/v1/blogspot
         [HttpPost]
         public IActionResult PostBlog([FromBody] Models.Blog.BlogPost blog)
         {
@@ -116,7 +116,8 @@ namespace Yavsc.Blogs.Controllers
                 : (IFormFileCollection)new FormFileCollection();
             var uid = User.GetUserId();
             var post = blogSpotService.Create(uid, blog, files);
-            return CreatedAtRoute("GetBlog", new { id = post.Id }, post);
+            return CreatedAtRoute("GetBlog", new { id = post.Id },
+            post.GetPayload());
         }
 
         // DELETE: api/BlogApi/5
@@ -135,7 +136,7 @@ namespace Yavsc.Blogs.Controllers
             }
 
             await blogSpotService.Delete(User, id);
-            return Ok(blog);
+            return Ok(blog.GetPayload());
         }
 
         /// <summary>

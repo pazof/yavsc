@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Tests.Shared;
+using Yavsc.Blogs.Tests.Fixtures;
 
 namespace Yavsc.Blogs.Tests;
 
@@ -71,12 +72,6 @@ public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
         return post.Id;
     }
 
-    private string PublishUrl(long id)
-        => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/api/v1/blog/{id}/publish";
-
-    private string BlogsUrl
-        => _fixture.Addresses.First(a => a.StartsWith("https://")) + "/api/v1/blog";
-
     private HttpClient NewClient(string subject)
     {
         var handler = new HttpClientHandler
@@ -100,12 +95,13 @@ public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
         var postId = SeedPost("alice");
 
         using var http = NewClient("alice");
-        var put = await http.PutAsJsonAsync(PublishUrl(postId), new { publish = true }, TestContext.Current.CancellationToken);
+        var put = await http.PutAsJsonAsync(_fixture.PublishUrl(postId), new { publish = true }, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NoContent, put.StatusCode);
 
-        var get = await http.GetAsync($"{BlogsUrl}/{postId}", TestContext.Current.CancellationToken);
+        var get = await http.GetAsync(_fixture.BlogSpotUrl() + $"/{postId}", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, get.StatusCode);
         using var doc = JsonDocument.Parse(await get.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        Assert.Equal($"post-by-alice", doc.RootElement.GetProperty("title").GetString());
         Assert.True(doc.RootElement.GetProperty("isPublished").GetBoolean());
     }
 
@@ -116,11 +112,12 @@ public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
         var postId = SeedPost("alice");
 
         using var http = NewClient("alice");
-        await http.PutAsJsonAsync(PublishUrl(postId), new { publish = true }, TestContext.Current.CancellationToken);
-        var put = await http.PutAsJsonAsync(PublishUrl(postId), new { publish = false }, TestContext.Current.CancellationToken);
+        await http.PutAsJsonAsync(_fixture.PublishUrl(postId), new { publish = true }, TestContext.Current.CancellationToken);
+        var put = await http.PutAsJsonAsync(_fixture.PublishUrl(postId), new { publish = false }, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NoContent, put.StatusCode);
 
-        var get = await http.GetAsync($"{BlogsUrl}/{postId}", TestContext.Current.CancellationToken);
+        var get = await http.GetAsync(_fixture.BlogSpotUrl() + $"/{postId}", TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, get.StatusCode);
         using var doc = JsonDocument.Parse(await get.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         Assert.False(doc.RootElement.GetProperty("isPublished").GetBoolean());
     }
@@ -130,7 +127,7 @@ public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
     {
         ResetDatabase();
         using var http = NewClient("alice");
-        var put = await http.PutAsJsonAsync(PublishUrl(99999L), new { publish = true }, TestContext.Current.CancellationToken);
+        var put = await http.PutAsJsonAsync(_fixture.PublishUrl(99999L), new { publish = true }, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NotFound, put.StatusCode);
     }
 
@@ -141,7 +138,7 @@ public sealed class PublishEndpointTests : IClassFixture<BlogsWebServerFixture>
         var postId = SeedPost("alice");
 
         using var http = NewClient("bob");
-        var put = await http.PutAsJsonAsync(PublishUrl(postId), new { publish = true }, TestContext.Current.CancellationToken);
+        var put = await http.PutAsJsonAsync(_fixture.PublishUrl(postId), new { publish = true }, TestContext.Current.CancellationToken);
         // 401 Challenge (the controller returns Challenge()
         // for AuthorizationFailureException). The exact code
         // is framework-dependent; what matters is "not 204".

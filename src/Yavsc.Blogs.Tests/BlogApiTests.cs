@@ -2,11 +2,11 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;
 using Yavsc.Tests.Shared;
+using Yavsc.Blogs.Tests.Fixtures;
 
 namespace Yavsc.Blogs.Tests;
 
@@ -31,18 +31,6 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         _fixture = fixture;
     }
 
-    /// <summary>Reset the in-memory database to a known empty state.
-    /// <c>UseInMemoryDatabase</c> shares its store across the
-    /// lifetime of the <see cref="BlogsWebServerFixture"/> instance,
-    /// so without a per-test reset the test order would leak
-    /// state between tests.</summary>
-    private void ResetDatabase()
-    {
-        using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.EnsureDeleted();
-        db.Database.EnsureCreated();
-    }
 
     /// <summary>Reset the database and seed the
     /// <c>tester</c> <see cref="ApplicationUser"/> row. Required
@@ -55,18 +43,10 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     /// at <c>SaveChanges</c> and the controller returns 500.</summary>
     private void ResetAndSeedDefaultUser()
     {
-        ResetDatabase();
+        _fixture.ResetDatabase();
         _fixture.SeedUser("tester");
     }
 
-    /// <summary>The fixture's <c>WebApplication</c> is bound to
-    /// <c>https://localhost:&lt;random&gt;</c> via
-    /// <see cref="WebHostFixture.Addresses"/>. We pick the first
-    /// https URL and append the controller route
-    /// (<c>/api/v1/blog</c>, matching the production
-    /// <c>[Route(APIPrefix + "/blog")]</c>).</summary>
-    private string BlogsUrl =>
-        _fixture.Addresses.First(a => a.StartsWith("https://")) + "/api/v1/blog";
 
     /// <summary>Build an authenticated client: a real
     /// <c>Authorization: Bearer &lt;jwt&gt;</c> header where the JWT
@@ -111,10 +91,11 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task GetBlogs_returns_200_with_empty_list_when_no_posts()
     {
-        ResetDatabase();
+        _fixture.ResetDatabase();
         using var http = NewClient();
 
-        var response = await http.GetAsync("/api/v1/blog",
+        var response = await http.GetAsync(
+            _fixture.BlogSpotUrl(),
         TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -147,7 +128,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             DateModified = DateTime.UtcNow
         };
 
-        var postResponse = await http.PostAsJsonAsync("/api/v1/blog", draft,
+        var postResponse = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), draft,
         TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
 
@@ -160,7 +141,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         Assert.Equal(draft.Title, created.Title);
 
         // The list should now contain exactly one entry.
-        var listResponse = await http.GetAsync("/api/v1/blog",
+        var listResponse = await http.GetAsync(_fixture.BlogSpotUrl(),
         TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
 
@@ -188,7 +169,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             DateModified = DateTime.UtcNow
         };
 
-        var postResponse = await http.PostAsJsonAsync("/api/v1/blog", draft,
+        var postResponse = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), draft,
         TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
 
@@ -198,7 +179,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         Assert.NotNull(created);
         Assert.Equal("tester", created!.AuthorId);
 
-        var listResponse = await http.GetAsync("/api/v1/blog",
+        var listResponse = await http.GetAsync(_fixture.BlogSpotUrl(),
         TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
 
@@ -226,7 +207,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             DateModified = DateTime.UtcNow
         };
 
-        var postResponse = await http.PostAsJsonAsync("/api/v1/blog", draft,
+        var postResponse = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), draft,
          TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
 
@@ -266,7 +247,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task GetBlog_returns_401_when_no_token_is_provided()
     {
-        ResetDatabase();
+        _fixture.ResetDatabase();
         using var http = NewAnonymousClient();
 
         // No Authorization header → the JwtBearer middleware
@@ -275,7 +256,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         // the framework returns 401. This is the proof that the
         // production policy is wired in the test host and not
         // short-circuited by a test-only auth bypass.
-        var response = await http.GetAsync("/api/v1/blog",
+        var response = await http.GetAsync(_fixture.BlogSpotUrl(),
         TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -303,7 +284,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
         };
-        var postResponse = await http.PostAsJsonAsync("/api/v1/blog", draft,
+        var postResponse = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), draft,
         TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
 
@@ -322,13 +303,13 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             DateCreated = created.DateCreated,
             DateModified = DateTime.UtcNow
         };
-        var putResponse = await http.PutAsJsonAsync($"/api/v1/blog/{created.Id}",
+        var putResponse = await http.PutAsJsonAsync(_fixture.BlogSpotUrl()+$"/{created.Id}",
          update,
          TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NoContent, putResponse.StatusCode);
 
         // The list should now reflect the new title.
-        var listResponse = await http.GetAsync("/api/v1/blog",
+        var listResponse = await http.GetAsync(_fixture.BlogSpotUrl(),
         TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
         using var doc = JsonDocument.Parse(
@@ -356,19 +337,19 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
         };
-        var postResponse = await http.PostAsJsonAsync("/api/v1/blog", draft,
+        var postResponse = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), draft,
         TestContext.Current.CancellationToken);
         var created = (await postResponse.Content.ReadFromJsonAsync<BlogPost>(
             TestContext.Current.CancellationToken
         ))!;
 
-        var deleteResponse = await http.DeleteAsync($"/api/v1/blog/{created.Id}",
+        var deleteResponse = await http.DeleteAsync(_fixture.BlogSpotUrl()+$"/{created.Id}",
         TestContext.Current.CancellationToken
         );
         Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
 
         // The list should now be empty.
-        var listResponse = await http.GetAsync("/api/v1/blog",
+        var listResponse = await http.GetAsync(_fixture.BlogSpotUrl(),
         TestContext.Current.CancellationToken);
         String response = await listResponse.Content.ReadAsStringAsync(
             TestContext.Current.CancellationToken
@@ -411,7 +392,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             DateModified = DateTime.UtcNow
         };
 
-        var response = await http.PostAsJsonAsync("/api/v1/blog", draft,
+        var response = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), draft,
         TestContext.Current.CancellationToken);
 
         // Dump the body on failure so the test name + the response
@@ -443,7 +424,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         // behaviour so a future change that, say, makes Title
         // nullable in the model or drops [Required], triggers a
         // conscious update of the test (and probably of the VM).
-        ResetDatabase();
+        _fixture.ResetDatabase();
         using var http = NewClient(subject: "tester");
 
         var draft = new BlogPost
@@ -456,7 +437,7 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             DateModified = DateTime.UtcNow
         };
 
-        var response = await http.PostAsJsonAsync("/api/v1/blog", draft,
+        var response = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), draft,
         TestContext.Current.CancellationToken);
 
         if (response.StatusCode != HttpStatusCode.BadRequest)

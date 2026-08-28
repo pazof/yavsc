@@ -6,7 +6,7 @@ using static Yavsc.Constants;
 namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
-    [Route(APIPrefix + "/blogtags")]
+    [Route(APIPrefix + "/" + BlogTagPath )]
     public class BlogTagsApiController : Controller
     {
         private readonly ApplicationDbContext _context;

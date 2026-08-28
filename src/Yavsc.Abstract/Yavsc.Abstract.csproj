@@ -11,7 +11,7 @@
     <LangVersion>latest</LangVersion>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>
-    <InformationalVersion>1.1.0-beta.1+49.Branch.release-1.0.8-rc3.Sha.5274d7bdf5d14406748a2063b5ae15191aac4359</InformationalVersion>
+    <InformationalVersion>1.1.0-beta.1+148.Branch.release-1.0.8-rc4.Sha.6b161b0fb509fec0ce467aa94f1a450b202af2f0</InformationalVersion>
     <Version>1.1.0-beta.1</Version>
   </PropertyGroup>
   <ItemGroup>
