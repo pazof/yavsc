@@ -85,7 +85,7 @@ namespace Yavsc.Models.Blog
 
         public string[] GetTags()
         {
-            return Tags.Select(t => t.Tag.Name).ToArray();
+            return Tags?.Select(t => t.Tag.Name).ToArray() ?? Array.Empty<string>();
         }
 
         [InverseProperty("Post")]
@@ -106,6 +106,7 @@ namespace Yavsc.Models.Blog
         [NotMapped]
         public bool IsPublished { get; set; }
 
+        [JsonIgnore]
         /// <summary>
         /// Explicit interface implementation of
         /// <see cref="IBlogPost.Author"/>. The underlying

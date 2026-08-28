@@ -1,5 +1,21 @@
 {
   "version": "2.0.0",
+  "isRoot": true,
+  "problemMatcher": [
+        {
+          "owner": "dotnet",
+          "fileLocation": ["relative", "${workspaceFolder}"],
+          "source": "dotnet",
+          "pattern": {
+            "regexp": "^\\s+(.*)\\((\\d+):(\\d+)\\):\\s+(error|warning)\\s+(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "message": 5
+          }
+        }
+      ],
   "tasks": [
     {
       "label": "run-debug-android",
@@ -20,21 +36,6 @@
         "-p:AndroidAttachDebugger=true",
         "-p:AndroidSdbHostPort=55555",
         "-p:AndroidSdbTargetPort=55555"
-      ],
-      "problemMatcher": [
-        {
-          "owner": "dotnet",
-        "fileLocation": ["relative", "${workspaceFolder}"],
-        "source": "dotnet",
-        "pattern": {
-          "regexp": "^(.*):(\\d+):(\\d+):\\s+(error):\\s+(.*)$",
-          "file": 1,
-          "line": 2,
-          "column": 3,
-          "severity": 4,
-          "message": 5
-        }
-      }
       ]
     },
     {
@@ -45,7 +46,6 @@
       "group": "build",
       "isBuildCommand": true,
       "isTestCommand": false,
-      "problemMatcher": ["$msCompile"],
       "isBackground": true
     },
     {

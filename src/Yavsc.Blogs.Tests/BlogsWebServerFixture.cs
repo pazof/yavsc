@@ -61,6 +61,7 @@ public sealed class BlogsWebServerFixture : WebHostFixture
 
     public long CircleId { get; private set; }
     public long PostId { get; private set; }
+    public string DefaultUserLogin { get => "alice"; }
 
     // A single SqliteConnection held open at the static level,
     // mirroring how Yavsc.Org.Tests.WebServerFixture hoists its
@@ -169,7 +170,8 @@ public sealed class BlogsWebServerFixture : WebHostFixture
                 // PermissionHandler ownership check sees a null
                 // user id and rejects every PUT.
                 options.MapInboundClaims = false;
-                options.TokenValidationParameters = new TokenValidationParameters
+                options.TokenValidationParameters
+                = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidIssuer = TestTokenIssuer.Issuer,
@@ -263,6 +265,27 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         await Task.CompletedTask;
         return app;
     }
+/// <summary>Reset the in-memory database to a known empty state.
+    /// <c>UseInMemoryDatabase</c> shares its store across the
+    /// lifetime of the <see cref="BlogsWebServerFixture"/> instance,
+    /// so without a per-test reset the test order would leak
+    /// state between tests.</summary>
+    public void ResetDatabase()
+    {
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.EnsureDeleted();
+        db.Database.EnsureCreated();
+    }
+    public void CleanupAcl()
+    {
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.CircleAuthorizationToBlogPost
+            .Where(a => a.CircleId == CircleId
+                     && a.BlogPostId == PostId)
+            .ExecuteDelete();
+    }
 
     public override void Dispose()
     {
@@ -310,7 +333,8 @@ public sealed class BlogsWebServerFixture : WebHostFixture
     /// <param name="configure">Optional hook to fill in fields
     /// like <c>FullName</c> / <c>Avatar</c> / <c>EmailConfirmed</c>
     /// that downstream tests assert on.</param>
-    public ApplicationUser SeedUser(string userName, Action<ApplicationUser>? configure = null)
+    public ApplicationUser SeedUser(string userName,
+    Action<ApplicationUser>? configure = null)
     {
         using var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -351,20 +375,31 @@ public sealed class BlogsWebServerFixture : WebHostFixture
     /// <summary>Create a circle owned by <paramref name="ownerId"/>
     /// directly in the SQLite store and return its server-assigned
     /// id.</summary>
-    private long SeedCircle(string ownerId, string name, bool isPublic = false)
+    public long SeedCircle(string ownerId, string name, bool isPublic = false,
+        ICollection<String> members = null
+    )
     {
         using var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var circle = new Circle { OwnerId = ownerId, Name = name, Public = isPublic };
         db.Circle.Add(circle);
         db.SaveChanges();
+        if (members != null && members.Count > 0)
+        {
+            foreach (String memberId in members)
+            {
+                var member = new CircleMember { CircleId = circle.Id, MemberId = memberId };
+                db.CircleMembers.Add(member);
+            }
+            db.SaveChanges();
+        }
         return circle.Id;
     }
 
     /// <summary>Create a blog post owned by <paramref name="authorId"/>
     /// directly in the SQLite store and return its server-assigned
     /// id.</summary>
-    private long SeedBlogPost(string authorId, string title)
+    public long SeedBlogPost(string authorId, string title)
     {
         using var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
