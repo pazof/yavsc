@@ -16,11 +16,11 @@ https://forgejo.pschneider.fr/notazof/yavsc/actions?workflow=release.yml
 
 # Statut actuel des actions GitHub
 
-* [![Build and Push Yavsc Apk](https://github.com/pazof/yavsc/actions/workflows/docker-publish-android.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/docker-publish-android.yml)
+* [![Build and Push Yavsc Apk](https://forgejo.pschneider.fr/notazof/yavsc/actions/workflows/docker-publish-android.yml/badge.svg)](https://forgejo.pschneider.fr/notazof/yavsc/actions/workflows/docker-publish-android.yml)
 
-* [![Build and Push Yavsc Production Image](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml)
+* [![Build and Push Yavsc Production Image](https://forgejo.pschneider.fr/notazof/yavsc/actions/workflows/docker-publish-backend.yml/badge.svg)](https://forgejo.pschneider.fr/notazof/yavsc/actions/workflows/docker-publish-backend.yml)
 
-* [![CodeQL Advanced](https://github.com/pazof/yavsc/actions/workflows/codeql.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/codeql.yml)
+* [![CodeQL Advanced](https://forgejo.pschneider.fr/notazof/yavsc/actions/workflows/codeql.yml/badge.svg)](https://forgejo.pschneider.fr/notazof/yavsc/actions/workflows/codeql.yml)
 
 # Documentation
 

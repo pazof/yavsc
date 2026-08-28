@@ -5,7 +5,7 @@
     <UserSecretsId>53bd70e8-ff81-497a-847f-a15fd8ea7a09</UserSecretsId>
     <RootNamespace>Yavsc.Server</RootNamespace>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <RepositoryUrl>https://github.com/pazof/yavsc</RepositoryUrl>
+    <RepositoryUrl>https://forgejo.pschneider.fr/notazof/yavsc</RepositoryUrl>
     <Library>true</Library>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>
