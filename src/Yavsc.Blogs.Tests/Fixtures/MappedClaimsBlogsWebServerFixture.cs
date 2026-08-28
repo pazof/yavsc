@@ -21,7 +21,7 @@ namespace Yavsc.Blogs.Tests;
 /// This is the closest in-process reproduction of the production
 /// authentication surface for the blog API.
 /// </summary>
-public sealed class MappedClaimsBlogsWebServerFixture : IDisposable
+public sealed class MappedClaimsBlogsWebServerFixture : IDisposable, IBackendFixture
 {
     private readonly InMemoryDatabaseRoot _inMemoryRoot = new();
     private readonly Dictionary<string, string> _savedInboundMap;

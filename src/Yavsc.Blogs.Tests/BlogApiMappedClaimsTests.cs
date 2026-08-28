@@ -8,13 +8,20 @@ using Microsoft.IdentityModel.Tokens;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Tests.Shared;
+using Yavsc.Blogs.Tests.Fixtures;
 
 namespace Yavsc.Blogs.Tests;
 
 [Collection("JwtClaimMapping")]
-public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWebServerFixture>
+public sealed class BlogApiMappedClaimsTests :
+IClassFixture<MappedClaimsBlogsWebServerFixture>,
+IBackendFixture
 {
     private readonly MappedClaimsBlogsWebServerFixture _fixture;
+
+    public IReadOnlyList<string> Addresses => throw new NotImplementedException();
+
+    public IServiceProvider Services => throw new NotImplementedException();
 
     public BlogApiMappedClaimsTests(MappedClaimsBlogsWebServerFixture fixture)
     {
@@ -79,7 +86,10 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
             DateModified = DateTime.UtcNow
         };
 
-        var response = await http.PostAsJsonAsync("/api/v1/blog", draft, TestContext.Current.CancellationToken);
+        var response = await http.PostAsJsonAsync(
+            _fixture.BlogSpotUrl(),
+            draft,
+            TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
         var created = await response.Content.ReadFromJsonAsync<BlogPost>(TestContext.Current.CancellationToken);
@@ -93,7 +103,7 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
         ResetDatabase();
         using var http = NewClient(subject: "mapped-owner");
 
-        var createdResponse = await http.PostAsJsonAsync("/api/v1/blog", new BlogPost
+        var createdResponse = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), new BlogPost
         {
             Id = 0,
             Title = "Billet à modifier",
@@ -107,7 +117,7 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
         var created = await createdResponse.Content.ReadFromJsonAsync<BlogPost>(TestContext.Current.CancellationToken);
         Assert.NotNull(created);
 
-        var updateResponse = await http.PutAsJsonAsync($"/api/v1/blog/{created!.Id}", new BlogPost
+        var updateResponse = await http.PutAsJsonAsync(_fixture.BlogSpotUrl() + $"/{created!.Id}", new BlogPost
         {
             Id = created.Id,
             Title = "Billet modifié",
@@ -126,7 +136,7 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
         ResetDatabase();
         using var ownerHttp = NewClient(subject: "mapped-owner");
 
-        var createdResponse = await ownerHttp.PostAsJsonAsync("/api/v1/blog", new BlogPost
+        var createdResponse = await ownerHttp.PostAsJsonAsync(_fixture.BlogSpotUrl(), new BlogPost
         {
             Id = 0,
             Title = "Billet protégé",
@@ -141,7 +151,7 @@ public sealed class BlogApiMappedClaimsTests : IClassFixture<MappedClaimsBlogsWe
         Assert.NotNull(created);
 
         using var otherHttp = NewClient(subject: "mapped-other");
-        var updateResponse = await otherHttp.PutAsJsonAsync($"/api/v1/blog/{created!.Id}", new BlogPost
+        var updateResponse = await otherHttp.PutAsJsonAsync(_fixture.BlogSpotUrl() + $"/{created!.Id}", new BlogPost
         {
             Id = created.Id,
             Title = "Tentative de modification",

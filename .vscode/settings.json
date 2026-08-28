@@ -42,5 +42,6 @@
                 "copilotcli/gpt-5.3-codex"
             ]
         }
-    }
+    },
+    "dotnet.defaultSolution": "yavsc.sln"
 }

@@ -11,7 +11,7 @@ namespace Yavsc.Blogs.Controllers
 {
     [Authorize]
     [Produces("application/json")]
-    [Route(APIPrefix + "/blogcomments")]
+    [Route(APIPrefix + "/" + CommentsPath)]
     public class CommentsApiController : Controller
     {
         private readonly ApplicationDbContext _context;

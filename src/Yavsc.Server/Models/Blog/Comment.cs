@@ -13,15 +13,17 @@ namespace Yavsc.Models.Blog
 
         [YaStringLength(1024)]
         public string Article { get; set; }
-        
-        [ForeignKeyAttribute(nameof(ReceiverId))][JsonIgnore]
+
+        [JsonIgnore]
+        [ForeignKeyAttribute(nameof(ReceiverId))]
         public virtual BlogPost Post { get; set; }
 
         [Required]
         public long ReceiverId { get; set; }
         public bool Visible { get; set; }
 
-        [ForeignKeyAttribute("AuthorId")][JsonIgnore]
+        [ForeignKeyAttribute("AuthorId")]
+        [JsonIgnore]
         public virtual ApplicationUser Author {
             get; set;
         }

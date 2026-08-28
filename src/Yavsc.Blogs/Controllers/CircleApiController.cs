@@ -8,7 +8,7 @@ using static Yavsc.Constants;
 namespace Yavsc.Blogs.Controllers
 {
     [Produces("application/json")]
-    [Route(APIPrefix +"/circle")]
+    [Route(APIPrefix +"/" + CirclePath)]
     public class CircleApiController : Controller
     {
         private readonly ApplicationDbContext _context;
