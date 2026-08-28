@@ -173,37 +173,34 @@ jobs:
           echo "EOF" >> "$GITHUB_ENV"
           echo "IS_PRERELEASE=$([ "$CHANNEL" = "stable" ] && echo false || echo true)" >> "$GITHUB_ENV"
 
-      - name: Build des projets .NET (sans docker)
-        # L'image runner (pazof/yavsc-build-env) a le SDK .NET 10 + le
-        # workload Android, mais PAS le binaire `docker` ni de daemon
-        # Docker. On exécute donc les commandes dotnet directement
-        # au lieu de passer par `docker build`.
-        # Equivalent des stages build-env du Dockerfile (lignes
-        # restore + build Yavsc.Org + build Yavsc.Api + build
-        # Yavsc.Blogs + build PostIt.Android -r android-arm64).
+      - name: Build des projets .NET
+
         run: |
           cd /src/_src
-          dotnet restore
-          dotnet build src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-restore -clp:ErrorsOnly
-          dotnet build src/Yavsc.Api/Yavsc.Api.csproj -c Release --no-restore -clp:ErrorsOnly
-          dotnet build src/Yavsc.Blogs/Yavsc.Blogs.csproj -c Release --no-restore -clp:ErrorsOnly
-          dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
-            -c Release --no-restore -clp:ErrorsOnly -r android-arm64
+          dotnet build yavsc.sln -c Release --no-restore -clp:ErrorsOnly
 
-      - name: Copier l'APK signé vers un emplacement connu
+      - name: Copier les APK signés vers un emplacement connu
         # Le build Android avec -r android-arm64 produit l'APK dans
         # bin/Release/net10.0-android/android-arm64/. On le copie à
         # la racine du checkout pour que l'étape d'upload le trouve.
         run: |
           cd /src/_src
-          APK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/fr.pschneider.postit-Signed.apk
-          if [[ ! -f "$APK" ]]; then
-            echo "::error::APK not found at $APK"
+          ARMAPK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64/fr.pschneider.postit-Signed.apk
+          if [[ ! -f "$ARMAPK" ]]; then
+            echo "::error::ARMAPK not found at $ARMAPK"
             ls -la src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-arm64 2>/dev/null || true
             exit 1
           fi
-          cp "$APK" /src/_src/PostIt.Android.apk
-          ls -la /src/_src/PostIt.Android.apk
+          cp "$ARMAPK" /src/_src/PostIt.Android-arm64.apk
+          XAPK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-x86_64/fr.pschneider.postit-Signed.apk
+          if [[ ! -f "$XAPK" ]]; then
+            echo "::error::XAPK not found at $XAPK"
+            ls -la src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-x86_64 2>/dev/null || true
+            exit 1
+          fi
+          cp "$XAPK" /src/_src/PostIt.Android-x86_64.apk
+          ls -la /src/_src/PostIt.Android-arm64.apk
+          ls -la /src/_src/PostIt.Android-x86_64.apk
 
       - name: Publier la release Forgejo via l'API REST
         # Pas d'action tierce (pas de Node dans l'image runner).
@@ -312,15 +309,24 @@ jobs:
           # sinon curl l'interprète comme un second fichier d'input
           # (un fichier nommé '?name=PostIt.Android.apk') et l'API
           # Forgejo renvoie 400 "Missing 'name' parameter".
-          echo "::group::Upload APK asset"
+          echo "::group::Upload PostIt APK assets"
           HTTP=$(curl -sS -o /tmp/asset.json -w '%{http_code}' \
             -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/octet-stream" \
             -H "Accept: application/json" \
-            --data-binary "@/src/_src/PostIt.Android.apk" \
-            "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=PostIt.Android.apk")
+            --data-binary "@/src/_src/PostIt.Android-arm64.apk" \
+            "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=PostIt.Android-arm64.apk")
           echo "POST asset -> HTTP $HTTP"
+          HTTP=$(curl -sS -o /tmp/asset.json -w '%{http_code}' \
+            -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/octet-stream" \
+            -H "Accept: application/json" \
+            --data-binary "@/src/_src/PostIt.Android-x86_64.apk" \
+            "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=PostIt.Android-x86_64.apk")
+          echo "POST asset -> HTTP $HTTP"
+
           echo "::endgroup::"
 
           if [[ "$HTTP" != "201" ]]; then
