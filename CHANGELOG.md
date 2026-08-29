@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.8-rc8] - unstable
+
+### Added
+
+nothing
+
+### Changed
+
+nothing
+
+### Fixed
+
+The PostIt publish toggle button
+
 ## [1.0.8-rc7] - unstable
 
 ### Added
