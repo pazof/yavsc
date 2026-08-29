@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Yavsc.Interface;
 using Yavsc.Interfaces;
 using Yavsc.Org.Tests.Fakes;
+using Yavsc.ViewModels.Account;
 
 namespace Yavsc.Org.Tests
 {
@@ -54,6 +56,28 @@ namespace Yavsc.Org.Tests
                 },
                 client.Calls.Select(c => c.Kind).ToArray());
             Assert.Equal(_serverFixture.SiteSettings.Owner.EMail, client.LastSentMessage?.To.Mailboxes.First().Address);
+        }
+
+        [Fact]
+        public void RegisterModel_rejects_invalid_email_format()
+        {
+            var model = new RegisterModel
+            {
+                UserName = "alice",
+                Email = "this is not an email",
+                Password = "Password123!",
+                ConfirmPassword = "Password123!"
+            };
+
+            var results = new List<ValidationResult>();
+            var valid = Validator.TryValidateObject(
+                model,
+                new ValidationContext(model),
+                results,
+                validateAllProperties: true);
+
+            Assert.False(valid);
+            Assert.Contains(results, r => r.MemberNames.Contains(nameof(RegisterModel.Email)));
         }
 
     }

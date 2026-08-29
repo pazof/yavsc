@@ -564,6 +564,8 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterModel model)
         {
+            model.Email = model.Email?.Trim();
+
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
