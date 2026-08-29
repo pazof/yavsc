@@ -188,22 +188,6 @@ jobs:
           dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
           -c Release -r android-x64 --no-restore -clp:ErrorsOnly
 
-      - name: Copier les APK signés vers un emplacement connu
-        # Le build Android avec -r android-arm64 produit l'APK dans
-        # bin/Release/net10.0-android/android-arm64/. On le copie à
-        # la racine du checkout pour que l'étape d'upload le trouve.
-        run: |
-          cd /src/_src
-          for MARCH in arm64 x64; do
-            APK=src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-$MARCH/fr.pschneider.postit-Signed.apk
-            if [[ ! -f "$APK" ]]; then
-              echo "::error::APK not found at $APK"
-              ls -la src/PostIt/PostIt.Android/bin/Release/net10.0-android 2>/dev/null || true
-              exit 1
-            fi
-            cp "$APK" /src/_src/PostIt.Android-$MARCH.apk
-          done
-
       - name: Publier la release Forgejo via l'API REST
         # Pas d'action tierce (pas de Node dans l'image runner).
         # On parle à l'API Forgejo directement via curl.
@@ -318,7 +302,7 @@ jobs:
               -H "Authorization: token $GITHUB_TOKEN" \
               -H "Content-Type: application/octet-stream" \
               -H "Accept: application/json" \
-              --data-binary "@/src/_src/PostIt.Android-$MARCH.apk" \
+              --data-binary "@/src/_src/src/PostIt/PostIt.Android/bin/Release/net10.0-android/android-$MARCH/fr.pschneider.postit-Signed.apk" \
               "$API_BASE/api/v1/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=PostIt.Android-$MARCH.apk")
             echo "POST asset -> HTTP $HTTP"
             if [[ "$HTTP" != "201" ]]; then
