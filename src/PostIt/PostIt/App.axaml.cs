@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -15,6 +16,8 @@ namespace PostIt;
 
 public partial class App : Application
 {
+    private int _bootStarted;
+
     /// <summary>
     /// DI container the platform entry points hand to ViewModels so
     /// they can resolve the canonical <see cref="Settings"/> singleton
@@ -45,8 +48,6 @@ public partial class App : Application
         {
             var window = ServiceProvider.GetRequiredService<MainWindow>();
             desktop.MainWindow = window;
-            var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
-            desktop.MainWindow.Opened += async (_, _) => await BootAsync(this.ServiceProvider!, api);
             View = window.MainView;
             this.ConfigureRootView(window.MainView);
 
@@ -75,10 +76,8 @@ public partial class App : Application
 
 private void ConfigureRootView(MainView rootView)
 {
-    var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
-
-    // Déclencher le Boot lors du chargement du contrôle à l'écran
-    rootView.AttachedToVisualTree += async (_, _) => await BootAsync(this.ServiceProvider!, api);
+    // Déclencher le Boot une seule fois lors du chargement du contrôle à l'écran.
+    rootView.AttachedToVisualTree += async (_, _) => await BootOnceAsync();
 
     var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
     sessionStatus.LogoutCompleted += () =>
@@ -94,6 +93,17 @@ private void ConfigureRootView(MainView rootView)
 
     rootView.SessionBanner.DataContext = sessionStatus;
 }
+
+    private async Task BootOnceAsync()
+    {
+        if (Interlocked.Exchange(ref _bootStarted, 1) == 1)
+        {
+            return;
+        }
+
+        var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
+        await BootAsync(this.ServiceProvider!, api);
+    }
 
     /// <summary>
     /// Test-only hook: bind a concrete <see cref="MainView"/> so

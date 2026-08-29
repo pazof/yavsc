@@ -33,7 +33,7 @@ namespace Yavsc.Api.Client;
 /// </summary>
 public sealed class BlogApiClient
 {
-    private const string DefaultPathPrefix = "blog";
+    private const string DefaultPathPrefix = "blogspot";
 
     private readonly IYavscApiClient _api;
     private readonly Uri _baseAddress;
