@@ -42,17 +42,9 @@ public static class ServiceCollectionHelpers
         // the navigation stack, each bound to a fresh
         // SettingsViewModel and missing any in-flight edits.
         services.AddSingleton<SettingsPage>();
-        services.AddTransient<HomePage>();
-        services.AddTransient<SignaturePage>();
-        services.AddTransient<CirclesPage>();
-        // Dialogs (modal-light pages): the ViewLocator resolves
-        // them when a caller pushes a PostAclDialogViewModel or
-        // AddCircleMemberDialogViewModel via App.PushPageAsync.
-        // App.PushPageAsync overwrites the page's DataContext with
-        // the caller-built VM, so the parameterless ctor is enough
-        // here — the parametrised ctors stay for direct test wiring.
-        services.AddTransient<PostAclDialog>();
-        services.AddTransient<AddCircleMemberDialog>();
+        services.AddSingleton<HomePage>();
+        services.AddSingleton<SignaturePage>();
+        services.AddSingleton<CirclesPage>();
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);
@@ -61,18 +53,25 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(blogAclClient);
         services.AddSingleton(userSearchClient);
         services.AddSingleton<IUserDirectory>(userDirectory);
-        services.AddTransient<MainViewModel>();
-        services.AddTransient<HomePageViewModel>();
-        services.AddTransient<SignaturePageViewModel>();
-        services.AddTransient<CirclesPageViewModel>();
+        services.AddSingleton<HomePageViewModel>();
+        services.AddSingleton<SignaturePageViewModel>();
+        services.AddSingleton<CirclesPageViewModel>();
 
+        // Dialogs (modal-light pages): the ViewLocator resolves
+        // them when a caller pushes a PostAclDialogViewModel or
+        // AddCircleMemberDialogViewModel via App.PushPageAsync.
+        // App.PushPageAsync overwrites the page's DataContext with
+        // the caller-built VM, so the parameterless ctor is enough
+        // here — the parametrised ctors stay for direct test wiring.
+        services.AddTransient<PostAclDialog>();
+        services.AddTransient<AddCircleMemberDialog>();
         // Persistent session banner: one instance for the lifetime of
         // the app so the same VM survives page navigation.
         var sessionStatus = new SessionStatusViewModel { Api = api };
         sessionStatus.Refresh();
         services.AddSingleton(sessionStatus);
-        services.AddTransient<SessionStatusBanner>();
-
+        services.AddSingleton<SessionStatusBanner>();
+        services.AddSingleton<MainViewModel>();
         return services.BuildServiceProvider();
     }
 }

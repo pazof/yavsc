@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace PostIt.Tests;
 
 public class SettingsLoadTests
@@ -148,5 +150,27 @@ public class SettingsLoadTests
         await Task.WhenAll(tasks);
 
         Assert.True(settings.Loaded);
+    }
+
+    [Fact]
+    public void SearchText_is_serialized_in_settings_and_round_trips()
+    {
+        var settings = new PostIt.ViewModels.Settings
+        {
+            Authentication = new AuthenticationSettings
+            {
+                Authority = "https://example.test/",
+                ClientId = "postit-tests",
+                Scopes = new[] { "openid" }
+            }
+        };
+
+        settings.SearchText = "bonjour";
+
+        var json = JsonSerializer.Serialize(settings);
+        var roundTrip = JsonSerializer.Deserialize<PostIt.ViewModels.Settings>(json);
+
+        Assert.NotNull(roundTrip);
+        Assert.Equal("bonjour", roundTrip.SearchText);
     }
 }
