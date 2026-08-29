@@ -1,3 +1,4 @@
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -114,7 +115,7 @@ namespace Yavsc.Services
                 msg.MessageId = MimeKit.Utils.MimeUtils.GenerateMessageId(
                     siteSettings.Authority
                 );
-                using ISmtpClient sc = _smtpClientFactory.CreateClient();
+                using Yavsc.Interfaces.ISmtpClient sc = _smtpClientFactory.CreateClient();
                 {
                     sc.Timeout = 30000;
                     sc.Connect(
@@ -137,6 +138,11 @@ namespace Yavsc.Services
             catch (FormatException ex)
             {
                 logger.LogError(ex, "Refusing to send email because the recipient or sender address is malformed. To={To}, From={From}", email, siteSettings.Owner.EMail);
+                return string.Empty;
+            }
+            catch (SmtpCommandException ex)
+            {
+                logger.LogError(ex, "SMTP rejected the recipient or sender address. To={To}, Subject={Subject}, Status={Status}, Error={Error}", email, subject, ex.StatusCode, ex.Message);
                 return string.Empty;
             }
             catch (Exception ex)

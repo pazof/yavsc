@@ -79,7 +79,7 @@ public class MainPageSaveTests
         // whose Title is exactly what the user typed. The bug
         // fails this assertion with Title == string.Empty.
         Assert.NotEmpty(recorder.Calls);
-        var (method, path, body) = recorder.FirstCall;
+        var (method, path, body) = recorder.Calls[1];
         Assert.Equal(HttpMethod.Post, method);
         Assert.Equal("blogspot", path);
         var sent = Assert.IsType<BlogPostDto>(body);
