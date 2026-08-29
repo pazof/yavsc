@@ -77,13 +77,6 @@ release:
 		echo "  V : version semver (ex. 1.0.7-rc1) — sert à nommer la branche."; \
 		exit 1; \
 	fi
-	@CURRENT=$$(git branch --show-current); \
-	if [ "$$CURRENT" != "main" ]; then \
-		echo "Refus : la cible doit être lancée depuis main."; \
-		echo "  Branche courante : $$CURRENT"; \
-		echo "  Fais : git checkout main && git pull --ff-only origin main"; \
-		exit 1; \
-	fi
 	@if [ -n "$$(git status --porcelain)" ]; then \
 		echo "Working tree sale, refus de créer une branche release."; \
 		git status --short; \
