@@ -9,6 +9,7 @@ using Yavsc.Settings;
 using Yavsc.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Localization;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace Yavsc.Services
@@ -56,42 +57,93 @@ namespace Yavsc.Services
             return SendEmailAsync(null, email, subject, htmlMessage);
         }
 
+        internal static MailboxAddress BuildMailboxAddress(string? displayName, string? rawAddress)
+        {
+            if (string.IsNullOrWhiteSpace(rawAddress))
+            {
+                throw new FormatException("Email address is empty.");
+            }
+
+            var candidate = rawAddress.Trim();
+            if (candidate.Contains('<') || candidate.Contains('>'))
+            {
+                var emailMatch = Regex.Match(candidate,
+                    @"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
+                    RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+                if (emailMatch.Success)
+                {
+                    candidate = emailMatch.Value;
+                }
+                else
+                {
+                    candidate = candidate.Trim('<', '>', '"', '\'');
+                }
+            }
+
+            candidate = candidate.Trim('"', '\'', '<', '>', ' ');
+            candidate = candidate.Replace(" ", string.Empty);
+
+            if (!MailboxAddress.TryParse(candidate, out var parsedAddress))
+            {
+                throw new FormatException($"Invalid email address '{rawAddress}'.");
+            }
+
+            var safeName = string.IsNullOrWhiteSpace(displayName)
+                ? parsedAddress.Name
+                : displayName.Trim();
+
+            return new MailboxAddress(safeName ?? string.Empty, parsedAddress.Address);
+        }
+
         public async Task<string> SendEmailAsync(string name, string email, string subject, string htmlMessage)
         {
-            logger.LogInformation($"SendEmail for {email} : {subject}");
-            MimeMessage msg = new();
-            msg.From.Add(new MailboxAddress(siteSettings.Owner.Name,
-            siteSettings.Owner.EMail));
-            msg.To.Add(new MailboxAddress(name, email));
-            TextPart text;
-            msg.Body = text = new TextPart("html")
+            try
             {
-                Text = $"<html><body>{htmlMessage}</body></html>"
-            };
-
-            msg.Subject = subject;
-            msg.MessageId = MimeKit.Utils.MimeUtils.GenerateMessageId(
-                siteSettings.Authority
-            );
-            using ISmtpClient sc = _smtpClientFactory.CreateClient();
-            {
-                sc.Timeout = 30000;
-                sc.Connect(
-                    smtpSettings.Host,
-                    smtpSettings.Port,
-                    SecureSocketOptions.Auto
-                    );
-
-                if (smtpSettings.UserName != null)
+                logger.LogInformation($"SendEmail for {email} : {subject}");
+                MimeMessage msg = new();
+                msg.From.Add(BuildMailboxAddress(siteSettings.Owner.Name, siteSettings.Owner.EMail));
+                msg.To.Add(BuildMailboxAddress(name, email));
+                TextPart text;
+                msg.Body = text = new TextPart("html")
                 {
-                    sc.Authenticate(smtpSettings.UserName, smtpSettings.Password);
-                }
+                    Text = $"<html><body>{htmlMessage}</body></html>"
+                };
 
-                await sc.SendAsync(msg);
-                logger.LogInformation($"Sent : {msg.MessageId}");
-                sc.Disconnect(true);
+                msg.Subject = subject;
+                msg.MessageId = MimeKit.Utils.MimeUtils.GenerateMessageId(
+                    siteSettings.Authority
+                );
+                using ISmtpClient sc = _smtpClientFactory.CreateClient();
+                {
+                    sc.Timeout = 30000;
+                    sc.Connect(
+                        smtpSettings.Host,
+                        smtpSettings.Port,
+                        SecureSocketOptions.Auto
+                        );
+
+                    if (smtpSettings.UserName != null)
+                    {
+                        sc.Authenticate(smtpSettings.UserName, smtpSettings.Password);
+                    }
+
+                    await sc.SendAsync(msg);
+                    logger.LogInformation($"Sent : {msg.MessageId}");
+                    sc.Disconnect(true);
+                }
+                return msg.MessageId;
             }
-            return msg.MessageId;
+            catch (FormatException ex)
+            {
+                logger.LogError(ex, "Refusing to send email because the recipient or sender address is malformed. To={To}, From={From}", email, siteSettings.Owner.EMail);
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to send email. To={To}, Subject={Subject}", email, subject);
+                throw;
+            }
         }
 
         public void SendEmailFromCriteria(string Criteria)

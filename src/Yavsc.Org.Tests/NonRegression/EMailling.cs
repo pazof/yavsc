@@ -55,5 +55,6 @@ namespace Yavsc.Org.Tests
                 client.Calls.Select(c => c.Kind).ToArray());
             Assert.Equal(_serverFixture.SiteSettings.Owner.EMail, client.LastSentMessage?.To.Mailboxes.First().Address);
         }
+
     }
 }
