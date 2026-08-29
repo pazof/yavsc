@@ -177,16 +177,16 @@ jobs:
           dotnet restore
 
       - name: Build de PostIt.Android ARM64
-          run: |
-            cd /src/_src
-            dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
-            -c Release -r android-arm64 --no-restore -clp:ErrorsOnly
+        run: |
+          cd /src/_src
+          dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
+          -c Release -r android-arm64 --no-restore -clp:ErrorsOnly
 
       - name: Build de PostIt.Android x64
-          run: |
-            cd /src/_src
-            dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
-            -c Release -r android-x64 --no-restore -clp:ErrorsOnly
+        run: |
+          cd /src/_src
+          dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
+          -c Release -r android-x64 --no-restore -clp:ErrorsOnly
 
       - name: Copier les APK signés vers un emplacement connu
         # Le build Android avec -r android-arm64 produit l'APK dans
