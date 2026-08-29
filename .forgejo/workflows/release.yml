@@ -171,21 +171,22 @@ jobs:
           echo "EOF" >> "$GITHUB_ENV"
           echo "IS_PRERELEASE=$([ "$CHANNEL" = "stable" ] && echo false || echo true)" >> "$GITHUB_ENV"
 
-      - name: Build des projets .NET
-
+      - name: Restore
         run: |
           cd /src/_src
           dotnet restore
-          dotnet build src/Yavsc.Org/Yavsc.Org.csproj \
-           -c Release --no-restore -clp:ErrorsOnly
-          dotnet build src/Yavsc.Api/Yavsc.Api.csproj \
-           -c Release --no-restore -clp:ErrorsOnly
-          dotnet build src/Yavsc.Blogs/Yavsc.Blogs.csproj \
-           -c Release --no-restore -clp:ErrorsOnly
-          dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
-           -c Release --no-restore -clp:ErrorsOnly -r android-arm64
-          dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
-           -c Release --no-restore -clp:ErrorsOnly -r android-x64
+
+      - name: Build de PostIt.Android ARM64
+          run: |
+            cd /src/_src
+            dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
+            -c Release -r android-arm64 --no-restore -clp:ErrorsOnly
+
+      - name: Build de PostIt.Android x64
+          run: |
+            cd /src/_src
+            dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj \
+            -c Release -r android-x64 --no-restore -clp:ErrorsOnly
 
       - name: Copier les APK signés vers un emplacement connu
         # Le build Android avec -r android-arm64 produit l'APK dans
