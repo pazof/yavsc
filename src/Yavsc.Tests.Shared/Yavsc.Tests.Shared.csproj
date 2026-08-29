@@ -14,7 +14,7 @@
     -->
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>
-    <InformationalVersion>1.1.0-beta.1+148.Branch.release-1.0.8-rc4.Sha.6b161b0fb509fec0ce467aa94f1a450b202af2f0</InformationalVersion>
+    <InformationalVersion>1.1.0-beta.1+172.Branch.release-1.0.8-rc6.Sha.c5941e04ced8547b1a25e8c43eb24ddef608b428</InformationalVersion>
     <Version>1.1.0-beta.1</Version>
   </PropertyGroup>
   <ItemGroup>
