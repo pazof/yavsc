@@ -16,17 +16,8 @@ Cette convention est partagée avec le dépôt
 [`postit-debian`](https://forgejo.pschneider.fr/notazof/postit-debian)
 pour la production des paquets `.deb`.
 
-## [1.0.8-rc4] - unstable
 
-### Added
-
-### Changed
-
-### Fixed
-
-* [TODO] bug loading a blog post from PostIt, ACL come along with and don't need any "Refresh" button.
-
-## [1.0.8-rc3] - unstable
+## [1.0.8-rc5] - unstable
 
 ### Added
 
@@ -41,8 +32,9 @@ L'identifiant de l'application client Android a changé, il passe en minuscules 
 
 ### Fixed
 
-nothing, [TODO] a bug persists laoding a blog post from PostIt, ACL sould come along with and should not need any "Refresh" button.
-Today, assigning ACL succeeds the first time, the following times result in a 409
+a bug posting and retrieving ACL from the backend,
+the ACL now comes along with the article,
+[TODO][PostIt] keep ACL along with the article
 
 ## [1.0.8-rc1] - unstable
 
