@@ -25,7 +25,7 @@ public sealed class MappedClaimsBlogsWebServerFixture : IDisposable, IBackendFix
 {
     private readonly InMemoryDatabaseRoot _inMemoryRoot = new();
     private readonly Dictionary<string, string> _savedInboundMap;
-    private readonly WebApplication _app;
+    private WebApplication? _app = null;
 
     public MappedClaimsBlogsWebServerFixture()
     {
@@ -86,6 +86,7 @@ public sealed class MappedClaimsBlogsWebServerFixture : IDisposable, IBackendFix
 
     public void Dispose()
     {
+        if (_app is null) return;
         _app.StopAsync().GetAwaiter().GetResult();
         _app.DisposeAsync().AsTask().GetAwaiter().GetResult();
 
@@ -95,6 +96,7 @@ public sealed class MappedClaimsBlogsWebServerFixture : IDisposable, IBackendFix
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap[kvp.Key] = kvp.Value;
         }
     }
+
 
     private sealed class NoopFileSystemAuthManager : IFileSystemAuthManager
     {

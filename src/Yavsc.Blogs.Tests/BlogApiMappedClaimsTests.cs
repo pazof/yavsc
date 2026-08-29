@@ -14,14 +14,9 @@ namespace Yavsc.Blogs.Tests;
 
 [Collection("JwtClaimMapping")]
 public sealed class BlogApiMappedClaimsTests :
-IClassFixture<MappedClaimsBlogsWebServerFixture>,
-IBackendFixture
+IClassFixture<MappedClaimsBlogsWebServerFixture>
 {
     private readonly MappedClaimsBlogsWebServerFixture _fixture;
-
-    public IReadOnlyList<string> Addresses => throw new NotImplementedException();
-
-    public IServiceProvider Services => throw new NotImplementedException();
 
     public BlogApiMappedClaimsTests(MappedClaimsBlogsWebServerFixture fixture)
     {

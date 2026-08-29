@@ -1,5 +1,4 @@
-
-public interface IBackendFixture
+public interface IBackendFixture : IDisposable
 {
     /// <summary>
     /// The addresses the fixture bound to.
@@ -10,4 +9,5 @@ public interface IBackendFixture
     /// The service provider for the fixture host.
     /// </summary>
     IServiceProvider Services { get; }
+
 }
