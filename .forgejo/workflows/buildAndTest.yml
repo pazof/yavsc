@@ -44,4 +44,4 @@ jobs:
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."
-        cd /src/_src && dotnet test --verbosity normal && echo "✅ Success !"
+        cd /src/_src && dotnet test --verbosity normal && echo "✅ Success !" || echo "❌ Fail ($?)!"

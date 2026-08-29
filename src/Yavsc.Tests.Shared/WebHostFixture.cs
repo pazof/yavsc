@@ -30,14 +30,13 @@ namespace Yavsc.Tests.Shared;
 /// mapping are the responsibility of the subclass, through
 /// <see cref="BuildApp"/>.
 /// </summary>
-public abstract class WebHostFixture : IDisposable, IBackendFixture
+public abstract class WebHostFixture : IBackendFixture
 {
     private static readonly Lazy<X509Certificate2> _selfSignedCertificate =
         new Lazy<X509Certificate2>(CreateSelfSignedCertificate);
     private static readonly object _sync = new object();
     private static WebApplication? _app;
     private static bool _isInitialized;
-    private static int _instanceCount;
     private static readonly List<string> _sharedAddresses = new();
     private static IServiceProvider? _sharedServices;
 
@@ -57,11 +56,12 @@ public abstract class WebHostFixture : IDisposable, IBackendFixture
     /// successfully and the host is running.</summary>
     public bool IsInitialized { get; private set; }
 
+#pragma warning disable CS8618 // Un champ non-nullable doit contenir une valeur autre que Null lors de la fermeture du constructeur. Envisagez d’ajouter le modificateur « required » ou de déclarer le champ comme pouvant accepter la valeur Null.
     protected WebHostFixture()
+#pragma warning restore CS8618 // Un champ non-nullable doit contenir une valeur autre que Null lors de la fermeture du constructeur. Envisagez d’ajouter le modificateur « required » ou de déclarer le champ comme pouvant accepter la valeur Null.
     {
         lock (_sync)
         {
-            _instanceCount++;
             if (!_isInitialized)
             {
                 InitializeAsync().GetAwaiter().GetResult();
@@ -110,6 +110,8 @@ public abstract class WebHostFixture : IDisposable, IBackendFixture
     /// listen port.</summary>
     protected virtual int HttpsPort => 5101;
 
+    public WebApplication App { get; private set; }
+
     private async Task InitializeAsync()
     {
         var builder = WebApplication.CreateBuilder();
@@ -122,14 +124,14 @@ public abstract class WebHostFixture : IDisposable, IBackendFixture
             });
         });
 
-        var app = BuildApp(builder);
-        app = await ConfigurePipelineAsync(app);
-        await app.StartAsync();
+        this.App = BuildApp(builder);
+        this.App = await ConfigurePipelineAsync(this.App);
+        await this.App.StartAsync();
 
-        _app = app;
-        _sharedServices = app.Services;
+        _app = this.App;
+        _sharedServices = this.App.Services;
 
-        var server = app.Services.GetRequiredService<IServer>();
+        var server = this.App.Services.GetRequiredService<IServer>();
         var addressFeatures = server.Features.Get<IServerAddressesFeature>();
         _sharedAddresses.Clear();
         if (addressFeatures?.Addresses is not null)
@@ -147,15 +149,14 @@ public abstract class WebHostFixture : IDisposable, IBackendFixture
     {
         lock (_sync)
         {
-            _instanceCount--;
-            if (_instanceCount == 0 && _app is not null)
-            {
-                _app.StopAsync().GetAwaiter().GetResult();
-                _app = null;
-                _isInitialized = false;
-                _sharedAddresses.Clear();
-                _sharedServices = null;
-            }
+            if (!IsInitialized)
+                throw new InvalidOperationException("Cannot tear down a fixture that has not been initialized.");
+            this.App.StopAsync().GetAwaiter().GetResult();
+            IsInitialized = false;
+
+            _isInitialized = false;
+            _sharedAddresses.Clear();
+            _sharedServices = null;
         }
     }
 
