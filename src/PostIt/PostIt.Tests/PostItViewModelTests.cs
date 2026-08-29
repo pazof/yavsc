@@ -55,6 +55,21 @@ public class PostItViewModelTests
         Assert.Equal("Hello", posts[0].Title);
     }
 
+    [Fact]
+    public async Task TogglePublishCommand_uses_the_current_checked_state_without_inverting_it()
+    {
+        var api = new RecordingPublishApi();
+        var blog = new BlogApiClient(api, "http://localhost/");
+        var viewModel = new MainViewModel(blog);
+
+        viewModel.SelectedPost = new BlogPostDto { Id = 42, IsPublished = false };
+
+        await viewModel.SetPublishStateAsync(true);
+
+        Assert.True(api.LastPublishValue);
+        Assert.True(viewModel.DraftIsPublished);
+    }
+
     /// <summary>Test fake that always throws if the API is invoked.</summary>
     private sealed class ThrowingYavscApiClient : YavscApiClient
     {
@@ -102,5 +117,35 @@ public class PostItViewModelTests
                 return Task.FromResult((T)(object)_posts);
             return Task.FromResult(default(T)!);
         }
+    }
+
+    private sealed class RecordingPublishApi : IYavscApiClient
+    {
+        public bool LastPublishValue { get; private set; }
+        public HttpClient Http { get; } = new();
+
+        public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        {
+            if (method == HttpMethod.Put && path.Contains("/publish", StringComparison.OrdinalIgnoreCase))
+            {
+                var publish = body?.GetType().GetProperty("publish")?.GetValue(body) is bool value && value;
+                LastPublishValue = publish;
+            }
+
+            return Task.FromResult(default(T)!);
+        }
+
+        public Task CallAsync(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        {
+            if (method == HttpMethod.Put && path.Contains("/publish", StringComparison.OrdinalIgnoreCase))
+            {
+                var publish = body?.GetType().GetProperty("publish")?.GetValue(body) is bool value && value;
+                LastPublishValue = publish;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }
 }
