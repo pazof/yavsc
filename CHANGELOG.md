@@ -12,7 +12,7 @@
 
 ### Fixed
 
-* [Yavsc.Org][TODO] La forme de l'email de l'utilisateur est maintenant validée avant l'envoi du formulaire d'enregistrement
+* [Yavsc.Org] (Ticket #45) La forme de l'email de l'utilisateur est maintenant validée avant l'envoi du formulaire d'enregistrement
 
 ## [1.0.8-rc6] - unstable
 
