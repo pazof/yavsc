@@ -16,9 +16,11 @@ https://forgejo.pschneider.fr/notazof/yavsc/actions?workflow=release.yml
 
 # Statut actuel des actions GitHub
 
--* [![CodeQL Advanced](https://github.com/pazof/yavsc/actions/workflows/codeql.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/codeql.yml)
+* [![CodeQL Advanced](https://github.com/pazof/yavsc/actions/workflows/codeql.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/codeql.yml)
 
-* [![Build and Push Yavsc Production Image](https://forgejo.[![Build and Push Yavsc Production Image](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml)
+* [![Build and Push Yavsc Production Image](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml/badge.svg)](https://github.com/pazof/yavsc/actions/workflows/docker-publish-backend.yml)
+
+
 # Documentation
 
 L'architecture, la roadmap et les détails métier sont documentés
