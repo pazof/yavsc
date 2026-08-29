@@ -12,6 +12,7 @@ namespace PostIt.Tests;
 /// Skip conditions: the package is not installed on the connected device,
 /// or no device is connected via adb.
 /// </summary>
+[Trait("Category", "Platform-Android")]
 public class AndroidAppLaunchTests
 {
     private const string PackageName = "fr.pschneider.postit";
@@ -23,8 +24,8 @@ public class AndroidAppLaunchTests
         _output = output;
     }
 
-    // https://twosixtech.com/blog/integrating-docker-and-adb/
-    // FIXME ala hosted shared resource adb server - [Fact]
+    // TODO https://twosixtech.com/blog/integrating-docker-and-adb/
+    [Fact]
     public void PostIt_starts_and_draws_a_first_frame_on_the_emulator()
     {
         if (!IsPackageInstalledOnAnyDevice())

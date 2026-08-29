@@ -12,8 +12,8 @@ namespace Yavsc.ViewModels.Account
         public string UserName { get; set; }
 
         [Required()]
-        [StringLength( maximumLength:102, MinimumLength = 5)]
-   //    [EmailAddress]
+        [StringLength(maximumLength: 102, MinimumLength = 5)]
+        [EmailAddress(ErrorMessage = "L'adresse e-mail n'est pas valide.")]
         [Display(Name = "Email", Description = "E-Mail")]
         public string Email { get; set; }
 
