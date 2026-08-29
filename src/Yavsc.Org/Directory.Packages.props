@@ -20,6 +20,5 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.2" />
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.9" />
-    <PackageVersion Include="YamlDotNet" Version="18.0.0" />
   </ItemGroup>
 </Project>

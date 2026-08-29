@@ -28,6 +28,9 @@ public partial class Settings : ViewModelBase
     [ObservableProperty]
     public partial string BusinessApiUrl { get; set; } = "https://business.pschneider.fr/api/v1/";
 
+    [ObservableProperty]
+    public partial string SearchText { get; set; } = string.Empty;
+
     /// <summary>
     /// Catch top-level mutations: the four ObservableProperty
     /// setters above all funnel through here, and we flip
@@ -43,6 +46,7 @@ public partial class Settings : ViewModelBase
     partial void OnDarkModeChanged(bool value) => MarkDirty();
     partial void OnBlogsApiUrlChanged(string value) => MarkDirty();
     partial void OnBusinessApiUrlChanged(string value) => MarkDirty();
+    partial void OnSearchTextChanged(string value) => MarkDirty();
 
     /// <summary>
     /// Authentication can be reassigned wholesale by
@@ -295,6 +299,7 @@ public partial class Settings : ViewModelBase
             {
                 this.Authentication = settings.Authentication;
                 this.DarkMode = settings.DarkMode;
+                this.SearchText = settings.SearchText ?? string.Empty;
                 if (!(settings.Authentication is null))
                 {
                     this.Authentication = new AuthenticationSettings();
@@ -348,6 +353,7 @@ public partial class Settings : ViewModelBase
             Scopes = AuthenticationSettings.DefaultScopes
         };
         this.DarkMode = false;
+        this.SearchText = string.Empty;
     }
 
     /// <summary>

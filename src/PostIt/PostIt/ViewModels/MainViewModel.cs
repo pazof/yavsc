@@ -48,7 +48,7 @@ public partial class MainViewModel : ViewModelBase
     /// mutable field. Toggling is its own action.</summary>
     [ObservableProperty]
     public partial bool DraftIsPublished { get; set; }
-
+    public bool IsLoaded { get; private set; }
     public Settings SettingsModel { get; }
 
     [ObservableProperty]
@@ -71,6 +71,194 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial Settings Settings { get; private set; }
+
+    [RelayCommand]
+    internal async Task RefreshAsync()
+    {
+        await ExecuteAsync(async () =>
+        {
+            var posts = await BlogClient!.GetPostsAsync();
+            Posts.Clear();
+            foreach (var post in posts.OrderByDescending(p => p.DateModified))
+            {
+                Posts.Add(post);
+            }
+            ApplyFilter();
+            StatusMessage = $"Loaded {Posts.Count} posts.";
+        });
+    }
+
+    [RelayCommand]
+    internal async Task SearchAsync() {
+        await RefreshAsync();
+        ApplyFilter();
+    }
+
+    [RelayCommand]
+    internal async Task SaveAsync()
+    {
+        // The button is already disabled when the title is empty
+        // (see CanSave), but the test path (and any programmatic
+        // ICommand.Execute) bypasses CanExecute, so we still
+        // guard here. Better to no-op with a status message
+        // than to send a request the server will reject.
+        if (string.IsNullOrWhiteSpace(DraftTitle))
+        {
+            StatusMessage = "Title is required.";
+            return;
+        }
+
+        await ExecuteAsync(async () =>
+        {
+            // Build a fresh BlogPostDto from the editor buffer on
+            // every Save — we no longer mutate SelectedPost in
+            // place. The previous behaviour copied the buffer
+            // (which was a no-op when SelectedPost was null)
+            // back onto the model and relied on a
+            // [Required] violation to surface the missing
+            // input; the new shape keeps the editor buffer as
+            // the single source of truth for outgoing payloads
+            // and the selected post as a read-only hint for
+            // the update path.
+            if (SelectedPost is null || SelectedPost.Id == 0)
+            {
+                var draft = new BlogPostDto
+                {
+                    Title = DraftTitle,
+                    Article = DraftArticle ?? string.Empty,
+                    DateCreated = DateTime.UtcNow,
+                    DateModified = DateTime.UtcNow,
+                    IsPublished = DraftIsPublished
+                };
+                var created = await BlogClient!.CreatePostAsync(draft);
+                if (created is not null)
+                {
+                    SelectedPost = created;
+                    StatusMessage = $"Created post {created.Id}.";
+                }
+            }
+            else
+            {
+                var update = new BlogPostDto
+                {
+                    Id = SelectedPost.Id,
+                    AuthorId = SelectedPost.AuthorId,
+                    Photo = SelectedPost.Photo,
+                    Title = DraftTitle,
+                    Article = DraftArticle ?? string.Empty,
+                    DateCreated = SelectedPost.DateCreated,
+                    DateModified = DateTime.UtcNow,
+                };
+                await BlogClient!.UpdatePostAsync(SelectedPost.Id, update);
+                StatusMessage = $"Saved post {SelectedPost.Id}.";
+            }
+
+            await RefreshPostsAsync();
+        });
+    }
+
+    [RelayCommand]
+    internal async Task DeleteAsync()
+    {
+        if (SelectedPost is null || SelectedPost.Id == 0)
+        {
+            StatusMessage = "Select an existing post before deleting.";
+            return;
+        }
+
+        await ExecuteAsync(async () =>
+        {
+            await BlogClient!.DeletePostAsync(SelectedPost.Id);
+            StatusMessage = $"Deleted post {SelectedPost.Id}.";
+            SelectedPost = null;
+            await RefreshPostsAsync();
+        });
+    }
+
+    /// <summary>
+    /// Toggle the publication state of the currently selected
+    /// post. Pushes the new state to
+    /// <c>PUT /api/BlogApi/{id}/publish</c> and reflects it
+    /// locally in <see cref="DraftIsPublished"/> + the
+    /// selected post so the UI updates without a full
+    /// refresh.
+    ///
+    /// <para>The toggle is its own action — separate from Save
+    /// — because <c>Publish</c> is not part of the
+    /// <c>BlogPostDto</c> payload. Bundling it into Save
+    /// would require a wire-shape change and a second server
+    /// overload; the dedicated endpoint keeps the wire
+    /// contract clean.</para>
+    /// </summary>
+    [RelayCommand]
+    internal async Task TogglePublishAsync()
+    {
+        if (SelectedPost is null || SelectedPost.Id == 0)
+        {
+            StatusMessage = "Sélectionnez un billet existant pour changer sa publication.";
+            return;
+        }
+
+        await ExecuteAsync(async () =>
+        {
+            var desired = !DraftIsPublished;
+            await BlogClient!.SetPublishAsync(SelectedPost.Id, desired);
+            DraftIsPublished = desired;
+            // Mirror into the selected post so a subsequent
+            // RefreshPostsAsync() doesn't blow away the
+            // locally flipped state until the round-trip
+            // re-hydrates it.
+            SelectedPost.IsPublished = desired;
+            StatusMessage = desired
+                ? $"Billet {SelectedPost.Id} publié."
+                : $"Billet {SelectedPost.Id} remis en brouillon.";
+        });
+    }
+
+    /// <summary>
+    /// DEV ONLY: open the signature capture page. The production
+    /// entry point is a SignalR push from Yavsc.Org ("devis
+    /// received, sign here"); this command is the dev-time
+    /// shortcut to reach the page without that infrastructure.
+    /// Aligned on the same VM-first navigation pattern as
+    /// <see cref="OpenSettings"/>: the VM resolves the target VM
+    /// through <see cref="Services"/>, the <c>ViewLocator</c> picks
+    /// the matching <c>Control</c> at bind time. No
+    /// <c>Click</code> handler, no <c>App.ServiceProvider</c>
+    /// access from the view layer.
+    /// </summary>
+    [RelayCommand]
+    internal async Task OpenSignatureDevAsync()
+    {
+        await ((App)App.Current!).PushPageAsync(SignatureModel).ConfigureAwait(true);
+    }
+
+
+    [RelayCommand(CanExecute = nameof(CanManageAcl))]
+    public async Task ManageAclAsync()
+    {
+        if (SelectedPost is null)
+        {
+            StatusMessage = "Select an existing post before managing ACL.";
+            return;
+        }
+        await ((App)App.Current!).PushPageAsync(GetACLViewModel(SelectedPost)).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    public async Task OpenCirclesAsync()
+    {
+        var circlesVm = ResolveServices().GetRequiredService<CirclesPageViewModel>();
+        await ((App)App.Current!).PushPageAsync(circlesVm).ConfigureAwait(true);
+    }
+
+    private ViewModelBase GetACLViewModel(BlogPostDto selectedPost)
+    {
+        var sp = ResolveServices();
+        var aclClient = sp.GetRequiredService<BlogAclApiClient>();
+        var circleClient = sp.GetRequiredService<CircleApiClient>();
+        return new PostAclDialogViewModel(selectedPost, aclClient, circleClient);
+    }
 
     /// <summary>
     /// API surface that hits the Yavsc.Blogs deployment at
@@ -130,17 +318,18 @@ public partial class MainViewModel : ViewModelBase
 
     private void Init(Settings? settings)
     {
-        SearchText = string.Empty;
         Posts = new ObservableCollection<BlogPostDto>();
         FilteredPosts = new ObservableCollection<BlogPostDto>();
         SelectedPost = null;
         IsBusy = false;
         StatusMessage = "Ready";
         Settings = settings ?? new Settings();
+        SearchText = Settings.SearchText;
         WindowTitle = "PostIt";
         DraftTitle = string.Empty;
         DraftArticle = string.Empty;
         DraftIsPublished = false;
+        IsLoaded = false;
         // Production path: DI injects the canonical Settings singleton
         // and we use it as-is. Test path: tests call this constructor
         // without a Settings argument; we fall back to a fresh
@@ -151,6 +340,15 @@ public partial class MainViewModel : ViewModelBase
         // sink; that crash is fixed in Settings.OnPropertyChanged
         // (thread-safe dispatcher marshalling) so the duplicate
         // instance is now merely wasteful, not dangerous.
+
+        Settings.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(Settings.SearchText))
+            {
+                SearchText = Settings.SearchText;
+                ApplyFilter();
+            }
+        };
 
     }
 
@@ -179,7 +377,14 @@ public partial class MainViewModel : ViewModelBase
         Init(settings);
     }
 
-    partial void OnSearchTextChanged(string value) => ApplyFilter();
+    partial void OnSearchTextChanged(string value)
+    {
+        if (Settings is not null && Settings.SearchText != value)
+        {
+            Settings.SearchText = value;
+        }
+        ApplyFilter();
+    }
 
     partial void OnSelectedPostChanged(BlogPostDto? value)
     {
@@ -206,170 +411,6 @@ public partial class MainViewModel : ViewModelBase
     partial void OnDraftTitleChanged(string value) => SaveCommand.NotifyCanExecuteChanged();
     partial void OnDraftArticleChanged(string value) => SaveCommand.NotifyCanExecuteChanged();
 
-    [RelayCommand]
-    internal async Task LoadPosts()
-    {
-        await ExecuteAsync(async () =>
-        {
-            var posts = await BlogClient!.GetPostsAsync();
-            Posts.Clear();
-            foreach (var post in posts.OrderByDescending(p => p.DateModified))
-            {
-                Posts.Add(post);
-            }
-            ApplyFilter();
-            StatusMessage = $"Loaded {Posts.Count} posts.";
-        });
-    }
-
-    [RelayCommand]
-    internal void Search() => ApplyFilter();
-
-    [RelayCommand]
-    internal async Task Save()
-    {
-        // The button is already disabled when the title is empty
-        // (see CanSave), but the test path (and any programmatic
-        // ICommand.Execute) bypasses CanExecute, so we still
-        // guard here. Better to no-op with a status message
-        // than to send a request the server will reject.
-        if (string.IsNullOrWhiteSpace(DraftTitle))
-        {
-            StatusMessage = "Title is required.";
-            return;
-        }
-
-        await ExecuteAsync(async () =>
-        {
-            // Build a fresh BlogPostDto from the editor buffer on
-            // every Save — we no longer mutate SelectedPost in
-            // place. The previous behaviour copied the buffer
-            // (which was a no-op when SelectedPost was null)
-            // back onto the model and relied on a
-            // [Required] violation to surface the missing
-            // input; the new shape keeps the editor buffer as
-            // the single source of truth for outgoing payloads
-            // and the selected post as a read-only hint for
-            // the update path.
-            if (SelectedPost is null || SelectedPost.Id == 0)
-            {
-                var draft = new BlogPostDto
-                {
-                    Title = DraftTitle,
-                    Article = DraftArticle ?? string.Empty,
-                    DateCreated = DateTime.UtcNow,
-                    DateModified = DateTime.UtcNow,
-                };
-                var created = await BlogClient!.CreatePostAsync(draft);
-                if (created is not null)
-                {
-                    SelectedPost = created;
-                    StatusMessage = $"Created post {created.Id}.";
-                }
-            }
-            else
-            {
-                var update = new BlogPostDto
-                {
-                    Id = SelectedPost.Id,
-                    AuthorId = SelectedPost.AuthorId,
-                    Photo = SelectedPost.Photo,
-                    Title = DraftTitle,
-                    Article = DraftArticle ?? string.Empty,
-                    DateCreated = SelectedPost.DateCreated,
-                    DateModified = DateTime.UtcNow,
-                };
-                await BlogClient!.UpdatePostAsync(SelectedPost.Id, update);
-                StatusMessage = $"Saved post {SelectedPost.Id}.";
-            }
-
-            await RefreshPostsAsync();
-        });
-    }
-
-    [RelayCommand]
-    internal async Task Delete()
-    {
-        if (SelectedPost is null || SelectedPost.Id == 0)
-        {
-            StatusMessage = "Select an existing post before deleting.";
-            return;
-        }
-
-        await ExecuteAsync(async () =>
-        {
-            await BlogClient!.DeletePostAsync(SelectedPost.Id);
-            StatusMessage = $"Deleted post {SelectedPost.Id}.";
-            SelectedPost = null;
-            await RefreshPostsAsync();
-        });
-    }
-
-    /// <summary>
-    /// Toggle the publication state of the currently selected
-    /// post. Pushes the new state to
-    /// <c>PUT /api/BlogApi/{id}/publish</c> and reflects it
-    /// locally in <see cref="DraftIsPublished"/> + the
-    /// selected post so the UI updates without a full
-    /// refresh.
-    ///
-    /// <para>The toggle is its own action — separate from Save
-    /// — because <c>Publish</c> is not part of the
-    /// <c>BlogPostDto</c> payload. Bundling it into Save
-    /// would require a wire-shape change and a second server
-    /// overload; the dedicated endpoint keeps the wire
-    /// contract clean.</para>
-    /// </summary>
-    [RelayCommand]
-    internal async Task TogglePublish()
-    {
-        if (SelectedPost is null || SelectedPost.Id == 0)
-        {
-            StatusMessage = "Sélectionnez un billet existant pour changer sa publication.";
-            return;
-        }
-
-        await ExecuteAsync(async () =>
-        {
-            var desired = !DraftIsPublished;
-            await BlogClient!.SetPublishAsync(SelectedPost.Id, desired);
-            DraftIsPublished = desired;
-            // Mirror into the selected post so a subsequent
-            // RefreshPostsAsync() doesn't blow away the
-            // locally flipped state until the round-trip
-            // re-hydrates it.
-            SelectedPost.IsPublished = desired;
-            StatusMessage = desired
-                ? $"Billet {SelectedPost.Id} publié."
-                : $"Billet {SelectedPost.Id} remis en brouillon.";
-        });
-    }
-
-    /// <summary>
-    /// DEV ONLY: open the signature capture page. The production
-    /// entry point is a SignalR push from Yavsc.Org ("devis
-    /// received, sign here"); this command is the dev-time
-    /// shortcut to reach the page without that infrastructure.
-    /// Aligned on the same VM-first navigation pattern as
-    /// <see cref="OpenSettings"/>: the VM resolves the target VM
-    /// through <see cref="Services"/>, the <c>ViewLocator</c> picks
-    /// the matching <c>Control</c> at bind time. No
-    /// <c>Click</code> handler, no <c>App.ServiceProvider</c>
-    /// access from the view layer.
-    /// </summary>
-    [RelayCommand]
-    internal async Task OpenSignatureDev()
-    {
-        await ((App)App.Current!).PushPageAsync(SignatureModel).ConfigureAwait(true);
-    }
-
-    private ViewModelBase GetACLViewModel(BlogPostDto selectedPost)
-    {
-        var sp = ResolveServices();
-        var aclClient = sp.GetRequiredService<BlogAclApiClient>();
-        var circleClient = sp.GetRequiredService<CircleApiClient>();
-        return new PostAclDialogViewModel(selectedPost, aclClient, circleClient);
-    }
 
     private async Task RefreshPostsAsync()
     {
@@ -426,28 +467,18 @@ public partial class MainViewModel : ViewModelBase
 
     private void UpdateCommandStates()
     {
-        LoadPostsCommand.NotifyCanExecuteChanged();
+        RefreshCommand.NotifyCanExecuteChanged();
         SaveCommand.NotifyCanExecuteChanged();
         DeleteCommand.NotifyCanExecuteChanged();
     }
 
 
-
-    [RelayCommand(CanExecute = nameof(CanManageAcl))]
-    public async Task ManageAcl()
+    internal async Task InitializeAsync()
     {
-        if (SelectedPost is null)
+        if (!IsLoaded)
         {
-            StatusMessage = "Select an existing post before managing ACL.";
-            return;
+            await RefreshAsync();
+            IsLoaded = true;
         }
-        await ((App)App.Current!).PushPageAsync(GetACLViewModel(SelectedPost)).ConfigureAwait(true);
-    }
-
-    [RelayCommand]
-    public async Task OpenCircles()
-    {
-        var circlesVm = ResolveServices().GetRequiredService<CirclesPageViewModel>();
-        await ((App)App.Current!).PushPageAsync(circlesVm).ConfigureAwait(true);
     }
 }
