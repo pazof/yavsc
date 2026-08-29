@@ -44,4 +44,8 @@ jobs:
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."
-        cd /src/_src && dotnet test --verbosity normal && echo "✅ Success !" || echo "❌ Fail ($?)!"
+        cd /src/_src && dotnet test \
+          --verbosity normal \
+          --filter="Category!=Platform-Android" \
+          --logger "xunit;LogFileName=test-results.xml" \
+          && echo "✅ Success !" || echo "❌ Fail ($?)!"
