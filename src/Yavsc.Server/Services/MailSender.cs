@@ -53,7 +53,7 @@ namespace Yavsc.Services
         /// </returns>
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            return SendEmailAsync("", email, subject, htmlMessage);
+            return SendEmailAsync(null, email, subject, htmlMessage);
         }
 
         public async Task<string> SendEmailAsync(string name, string email, string subject, string htmlMessage)

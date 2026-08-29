@@ -157,6 +157,7 @@ private void ConfigureRootView(MainView rootView)
     {
         var app = (App)Current!;
         var mainVm = app.ServiceProvider!.GetRequiredService<MainViewModel>();
+        await mainVm.InitializeAsync();
         await app.PushPageAsync(mainVm);
     }
 

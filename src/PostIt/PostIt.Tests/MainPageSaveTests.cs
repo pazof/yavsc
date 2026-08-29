@@ -81,7 +81,7 @@ public class MainPageSaveTests
         Assert.NotEmpty(recorder.Calls);
         var (method, path, body) = recorder.FirstCall;
         Assert.Equal(HttpMethod.Post, method);
-        Assert.Equal("blog", path);
+        Assert.Equal("blogspot", path);
         var sent = Assert.IsType<BlogPostDto>(body);
         Assert.Equal(typed, sent.Title);
     }
