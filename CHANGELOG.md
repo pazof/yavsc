@@ -1,21 +1,18 @@
 # Changelog
 
-Toutes les modifications notables de PostIt et de la plateforme Yavsc
-sont documentées dans ce fichier.
+## [1.0.8-rc7] - unstable
 
-Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
-et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### Added
 
-À noter : la **parité du numéro de patch** porte une signification de canal :
+* [PostIt] The search pattern now persists
 
-- **patch pair** (ex. `1.0.0`, `1.0.2`) → **stable**
-- **patch impair** (ex. `1.0.1`, `1.0.3`) → **preview**
-- **suffixe** (ex. `1.0.0-rc1`, `1.0.0-alpha`) → **instable**
+### Changed
 
-Cette convention est partagée avec le dépôt
-[`postit-debian`](https://forgejo.pschneider.fr/notazof/postit-debian)
-pour la production des paquets `.deb`.
+* The blog spot path is now `/api/v1/blogspot` (yet in last release)
 
+### Fixed
+
+* [Yavsc.Org][TODO] La forme de l'email de l'utilisateur est maintenant validée avant l'envoi du formulaire d'enregistrement
 
 ## [1.0.8-rc6] - unstable
 
