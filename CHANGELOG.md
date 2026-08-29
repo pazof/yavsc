@@ -17,7 +17,7 @@ Cette convention est partagée avec le dépôt
 pour la production des paquets `.deb`.
 
 
-## [1.0.8-rc5] - unstable
+## [1.0.8-rc6] - unstable
 
 ### Added
 
