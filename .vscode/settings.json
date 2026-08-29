@@ -13,6 +13,7 @@
         "DOTNET",
         "ecdsa",
         "envsubst",
+        "Forgejo",
         "Hsts",
         "Newtonsoft",
         "Npgsql",
