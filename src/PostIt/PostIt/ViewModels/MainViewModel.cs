@@ -190,8 +190,7 @@ public partial class MainViewModel : ViewModelBase
     /// overload; the dedicated endpoint keeps the wire
     /// contract clean.</para>
     /// </summary>
-    [RelayCommand]
-    internal async Task TogglePublishAsync()
+    public async Task SetPublishStateAsync(bool publish)
     {
         if (SelectedPost is null || SelectedPost.Id == 0)
         {
@@ -201,18 +200,27 @@ public partial class MainViewModel : ViewModelBase
 
         await ExecuteAsync(async () =>
         {
-            var desired = !DraftIsPublished;
-            await BlogClient!.SetPublishAsync(SelectedPost.Id, desired);
-            DraftIsPublished = desired;
+            // The checkbox updates DraftIsPublished before the command is
+            // executed. Using the current bound value avoids the
+            // double-toggle bug in which the UI has already flipped the
+            // state and the command flips it again.
+            await BlogClient!.SetPublishAsync(SelectedPost.Id, publish);
+            DraftIsPublished = publish;
             // Mirror into the selected post so a subsequent
             // RefreshPostsAsync() doesn't blow away the
             // locally flipped state until the round-trip
             // re-hydrates it.
-            SelectedPost.IsPublished = desired;
-            StatusMessage = desired
+            SelectedPost.IsPublished = publish;
+            StatusMessage = publish
                 ? $"Billet {SelectedPost.Id} publié."
                 : $"Billet {SelectedPost.Id} remis en brouillon.";
         });
+    }
+
+    [RelayCommand]
+    internal async Task TogglePublishAsync()
+    {
+        await SetPublishStateAsync(DraftIsPublished);
     }
 
     /// <summary>
