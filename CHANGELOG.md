@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.8-rc9] - unstable
+
+### Added
+
+nothing
+
+### Changed
+
+masquage non-owner côté backend de l'ACL du billet
+
+### Fixed
+
+On a maintenant le comportement attendu bout en bout:
+
+ACL chargée depuis le BlogPostDto
+noms de cercles affichés dans le dialogue ACL côté PostIt
+
 ## [1.0.8-rc8] - unstable
 
 ### Added
