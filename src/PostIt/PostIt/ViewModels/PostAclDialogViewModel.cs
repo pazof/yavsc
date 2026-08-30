@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,6 +10,8 @@ using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using Yavsc.Api.Client.Dtos;
 using Yavsc.Abstract.BlogSpot;
+using Yavsc.Abstract.Identity.Security;
+using System.Net.Http;
 
 namespace PostIt.ViewModels;
 
@@ -41,7 +45,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
     MyCircles { get; set; } = new();
 
     [ObservableProperty]
-    public partial ObservableCollection<PostAccessControlRulePayload>
+    public partial ObservableCollection<CircleAuthorization>
     AclEntries { get; set; } = new();
 
     [ObservableProperty]
@@ -77,6 +81,12 @@ public partial class PostAclDialogViewModel : ViewModelBase
         Post = post ?? throw new ArgumentNullException(nameof(post));
         _aclClient = aclClient ?? throw new ArgumentNullException(nameof(aclClient));
         _circleClient = circleClient ?? throw new ArgumentNullException(nameof(circleClient));
+
+        AclEntries = new ObservableCollection<CircleAuthorization>(post.GetACL().Select(a => new CircleAuthorization
+        {
+            CircleId = a.CircleId
+        }));
+        SelectedCircleToAdd = null;
     }
 
     public override bool CanNavigateNext { get => throw new NotImplementedException(); protected set => throw new NotImplementedException(); }
@@ -90,12 +100,10 @@ public partial class PostAclDialogViewModel : ViewModelBase
         IsBusy = true;
         try
         {
-            // Load circles and ACL entries in parallel — both are
-            // independent reads on the same host. The caller's uid
-            // is implicit in both endpoints.
+            // Load circles for the picker. ACL entries come from the
+            // BlogPostDto detail payload (source of truth for initial state).
             var circlesTask = _circleClient.GetMyCirclesAsync();
-            var aclTask = _aclClient.GetMyAclAsync();
-            await Task.WhenAll(circlesTask, aclTask);
+            await Task.WhenAll(circlesTask);
 
             var circles = circlesTask.Result ?? new List<CircleDto>();
             MyCircles = new ObservableCollection<CircleDto>(circles);
@@ -126,20 +134,33 @@ public partial class PostAclDialogViewModel : ViewModelBase
         IsBusy = true;
         try
         {
-            var created = await _aclClient.GrantAsync(new Yavsc.Abstract.BlogSpot.PostAccessControlRulePayload
+            if (AclEntries.Any(a => a.CircleId == SelectedCircleToAdd.Id))
+            {
+                StatusMessage = $"Cercle « {SelectedCircleToAdd.Name} » déjà autorisé";
+                return;
+            }
+
+            var created = await _aclClient.GrantAsync(new PostAccessControlRulePayload
             {
                 CircleId = SelectedCircleToAdd.Id,
                 BlogPostId = Post.Id
             });
             if (created is not null)
             {
-                AclEntries.Add(created);
+                AclEntries.Add(new CircleAuthorization { CircleId = created.CircleId });
                 StatusMessage = $"Cercle « {SelectedCircleToAdd.Name} » autorisé";
             }
             else
             {
                 StatusMessage = "Autorisation refusée par le serveur";
             }
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
+        {
+            // Conflict means the link already exists in backend. Resync
+            // from the dedicated ACL API so the UI reflects server truth.
+            await ReloadAclEntriesFromServerAsync();
+            StatusMessage = $"Cercle « {SelectedCircleToAdd.Name} » déjà autorisé";
         }
         catch (Exception ex)
         {
@@ -159,7 +180,9 @@ public partial class PostAclDialogViewModel : ViewModelBase
         try
         {
             await _aclClient.RevokeAsync(acl.CircleId);
-            AclEntries.Remove(acl);
+            var existing = AclEntries.FirstOrDefault(e => e.CircleId == acl.CircleId);
+            if (existing is not null)
+                AclEntries.Remove(existing);
             StatusMessage = "Autorisation révoquée";
         }
         catch (Exception ex)
@@ -170,5 +193,17 @@ public partial class PostAclDialogViewModel : ViewModelBase
         {
             IsBusy = false;
         }
+    }
+
+    private async Task ReloadAclEntriesFromServerAsync()
+    {
+        var allAcl = await _aclClient.GetMyAclAsync();
+        var currentPostAcl = (allAcl ?? new List<PostAccessControlRulePayload>())
+            .Where(a => a.BlogPostId == Post.Id)
+            .Select(a => new CircleAuthorization { CircleId = a.CircleId })
+            .GroupBy(a => a.CircleId)
+            .Select(g => g.First())
+            .ToList();
+        AclEntries = new ObservableCollection<CircleAuthorization>(currentPostAcl);
     }
 }

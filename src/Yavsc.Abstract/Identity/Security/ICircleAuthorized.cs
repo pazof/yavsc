@@ -9,7 +9,7 @@ namespace Yavsc.Abstract.Identity.Security
 
         bool AuthorizeCircle(long circleId);
 
-        ICircleAuthorization [] GetACL();
+        ICollection<CircleAuthorization> ACL { get; } //ICircleAuthorization [] GetACL();
 
     }
 }

@@ -1,15 +1,16 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Yavsc.Blogspot;
 using Yavsc.Models;
+using Yavsc.Models.Access;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
 using Yavsc.ViewModels.Auth;
-using Microsoft.AspNetCore.Http;
-using Yavsc.Blogspot;
 
 public class BlogSpotService
 {
@@ -17,24 +18,25 @@ public class BlogSpotService
     private readonly IAuthorizationService _authorizationService;
     private readonly IFileSystemAuthManager fileSystemAuthManager;
 
-    public BlogSpotService(ApplicationDbContext context,
-    IAuthorizationService authorizationService,
-    IFileSystemAuthManager fileSystemAuthManager)
+    public BlogSpotService(
+        ApplicationDbContext context,
+        IAuthorizationService authorizationService,
+        IFileSystemAuthManager fileSystemAuthManager)
     {
         _authorizationService = authorizationService;
         _context = context;
         this.fileSystemAuthManager = fileSystemAuthManager;
     }
 
-    public Yavsc.Models.Blog.BlogPost Create(string userId, Yavsc.Models.Blog.BlogPost post, IFormFileCollection files)
+    public BlogPost Create(string userId, BlogPost post, IFormFileCollection files)
     {
         // Sauvegarder le post d'abord pour obtenir son ID
-        // Le créateur vient de l'authentification, donc on ne le prend pas du post
+        // Le createur vient de l'authentification, donc on ne le prend pas du post
         post.AuthorId = userId;
         _context.BlogSpot.Add(post);
         _context.SaveChanges(userId);
 
-        // Traiter les fichiers attachés s'il y en a
+        // Traiter les fichiers attaches s'il y en a
         if (files != null && files.Count > 0)
         {
             var user = _context.Users.FirstOrDefault(u => u.Id == userId);
@@ -42,23 +44,19 @@ public class BlogSpotService
             {
                 try
                 {
-                    // Créer un répertoire pour les fichiers du blog
                     string blogFilesSubdir = $"blogs/{post.Id}";
                     string destDir = Path.Combine(
                         AbstractFileSystemHelpers.UserFilesDirName,
                         user.UserName,
-                        blogFilesSubdir
-                    );
+                        blogFilesSubdir);
                     var di = new DirectoryInfo(destDir);
                     if (!di.Exists) di.Create();
 
-                    // Traiter chaque fichier
                     foreach (var formFile in files)
                     {
                         var fileInfo = user.ReceiveUserFile(destDir, formFile);
                         if (fileInfo != null && !fileInfo.QuotaOffense)
                         {
-                            // Créer une entrée UploadedFile si nécessaire
                             var uploadedFile = new UploadedFile
                             {
                                 Path = fileInfo.FileName,
@@ -68,7 +66,6 @@ public class BlogSpotService
                             _context.UploadedFiles.Add(uploadedFile);
                             _context.SaveChanges(userId);
 
-                            // Lier le fichier au post
                             var attachment = new BlogAttachedFile
                             {
                                 PostId = post.Id,
@@ -81,52 +78,56 @@ public class BlogSpotService
                 }
                 catch (Exception ex)
                 {
-                    // Logger l'erreur mais ne pas échouer la création du post
-                    System.Diagnostics.Debug.WriteLine($"Erreur lors du traitement des fichiers : {ex.Message}");
+                    Debug.WriteLine($"Erreur lors du traitement des fichiers : {ex.Message}");
                 }
             }
         }
 
         return post;
     }
+
     public async Task<BlogPostEditViewModel> GetPostForEdition(ClaimsPrincipal user, long blogPostId)
     {
-        var blog = await _context.BlogSpot.Include(x => x.Author).Include(x => x.ACL).SingleAsync(m => m.Id == blogPostId);
-         var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
+        var blog = await _context.BlogSpot
+            .Include(x => x.Author)
+            .Include(x => x.ACL)
+            .SingleAsync(m => m.Id == blogPostId);
+
+        var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
         if (!auth.Succeeded)
-        {
             throw new AuthorizationFailureException(auth);
-        }
+
         var pub = await _context.blogSpotPublications.AnyAsync(x => x.BlogpostId == blog.Id);
+        ScrubAclForViewer(blog, user);
 
         return new BlogPostEditViewModel(blog, pub);
     }
 
-    public async Task<Yavsc.Models.Blog.BlogPost> Details(ClaimsPrincipal user, long blogPostId)
+    public async Task<BlogPost> Details(ClaimsPrincipal user, long blogPostId)
     {
-        Yavsc.Models.Blog.BlogPost blog = await _context.BlogSpot
-       .Include(p => p.Author)
-       .Include(p => p.Tags)
-       .Include(p => p.Comments)
-       .Include(p => p.ACL)
-       .SingleAsync(m => m.Id == blogPostId);
+        BlogPost blog = await _context.BlogSpot
+            .Include(p => p.Author)
+            .Include(p => p.Tags)
+            .Include(p => p.Comments)
+            .Include(p => p.ACL)
+            .SingleAsync(m => m.Id == blogPostId);
+
         if (blog == null)
-        {
             return null;
-        }
-        // Hydrate the [NotMapped] IsPublished flag from the
-        // publication table so the wire JSON carries it.
+
+        // Hydrate le flag [NotMapped] depuis la table de publication.
         blog.IsPublished = await _context.blogSpotPublications
             .AnyAsync(pub => pub.BlogpostId == blogPostId);
+
         var auth = await _authorizationService.AuthorizeAsync(user, blog, new ReadPermission());
         if (!auth.Succeeded)
-        {
             throw new AuthorizationFailureException(auth);
-        }
+
+        ScrubAclForViewer(blog, user);
+
         foreach (var c in blog.Comments)
-        {
             c.Author = _context.Users.First(u => u.Id == c.AuthorId);
-        }
+
         return blog;
     }
 
@@ -134,54 +135,45 @@ public class BlogSpotService
     {
         var blog = _context.BlogSpot.SingleOrDefault(b => b.Id == blogEdit.Id);
         Debug.Assert(blog != null);
+
         var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
         if (!auth.Succeeded)
-        {
             throw new AuthorizationFailureException(auth);
-        }
+
         blog.Article = blogEdit.Article;
         blog.Title = blogEdit.Title;
         blog.Photo = blogEdit.Photo;
         blog.ACL = blogEdit.ACL;
-        // saves the change
         _context.Update(blog);
-        var publication = await _context.blogSpotPublications.SingleOrDefaultAsync
-        (p => p.BlogpostId == blogEdit.Id);
+
+        var publication = await _context.blogSpotPublications
+            .SingleOrDefaultAsync(p => p.BlogpostId == blogEdit.Id);
+
         if (publication != null)
         {
             if (!blogEdit.Publish)
-            {
                 _context.blogSpotPublications.Remove(publication);
-            }
         }
-        else
+        else if (blogEdit.Publish)
         {
-            if (blogEdit.Publish)
-            {
-                _context.blogSpotPublications.Add(
-                    new BlogSpotPublication
-                    {
-                        BlogpostId = blogEdit.Id
-                    }
-                );
-            }
+            _context.blogSpotPublications.Add(new BlogSpotPublication { BlogpostId = blogEdit.Id });
         }
+
         _context.SaveChanges(user.GetUserId());
     }
 
-    public async Task Modify(ClaimsPrincipal user, Yavsc.Models.Blog.BlogPost blog)
+    public async Task Modify(ClaimsPrincipal user, BlogPost blog)
     {
-        var existing = await _context.BlogSpot.Include(b => b.ACL).SingleOrDefaultAsync(b => b.Id == blog.Id);
+        var existing = await _context.BlogSpot
+            .Include(b => b.ACL)
+            .SingleOrDefaultAsync(b => b.Id == blog.Id);
+
         if (existing == null)
-        {
             throw new InvalidOperationException($"Blog post {blog.Id} not found.");
-        }
 
         var auth = await _authorizationService.AuthorizeAsync(user, existing, new EditPermission());
         if (!auth.Succeeded)
-        {
             throw new AuthorizationFailureException(auth);
-        }
 
         existing.Title = blog.Title;
         existing.Article = blog.Article;
@@ -199,9 +191,10 @@ public class BlogSpotService
         if (user.Identity.IsAuthenticated)
         {
             string viewerId = user.GetUserId();
-            long[] userCircles = await _context.Circle.Include(c => c.Members).
-                Where(c => c.Members.Any(m => m.MemberId == viewerId))
-                .Select(c => c.Id).ToArrayAsync();
+            long[] userCircles = await _context.Circle.Include(c => c.Members)
+                .Where(c => c.Members.Any(m => m.MemberId == viewerId))
+                .Select(c => c.Id)
+                .ToArrayAsync();
 
             posts = _context.BlogSpot
                 .Include(b => b.Author)
@@ -209,34 +202,25 @@ public class BlogSpotService
                 .Include(p => p.Tags)
                 .Include(p => p.Comments)
                 .Where(p => p.ACL == null
-                || p.ACL.Count == 0
-                || (p.AuthorId == viewerId)
-                || (userCircles != null &&
-                    p.ACL.Any(a => userCircles.Contains(a.CircleId)))
-                );
+                    || p.ACL.Count == 0
+                    || p.AuthorId == viewerId
+                    || (userCircles != null && p.ACL.Any(a => userCircles.Contains(a.CircleId))));
         }
         else
         {
             posts = _context.blogSpotPublications
-            .Include(p => p.BlogPost)
-           .Include(b => b.BlogPost.Author)
-           .Include(p => p.BlogPost.ACL)
-           .Include(p => p.BlogPost.Tags)
-           .Include(p => p.BlogPost.Comments)
-           .Where(p => p.BlogPost.ACL == null
-           || p.BlogPost.ACL.Count == 0)
-           .Select(p => p.BlogPost).ToArray();
+                .Include(p => p.BlogPost)
+                .Include(b => b.BlogPost.Author)
+                .Include(p => p.BlogPost.ACL)
+                .Include(p => p.BlogPost.Tags)
+                .Include(p => p.BlogPost.Comments)
+                .Where(p => p.BlogPost.ACL == null || p.BlogPost.ACL.Count == 0)
+                .Select(p => p.BlogPost)
+                .ToArray();
         }
 
-        // Materialise before hydrating IsPublished: it's a
-        // computed [NotMapped] property that needs to be set
-        // on each BlogPost instance after the query runs.
         var materialised = posts.ToList();
 
-        // Single bulk lookup for the IsPublished flag — avoid
-        // the N+1 of one AnyAsync per post. The published ids
-        // are loaded once and matched against the post list
-        // in memory.
         var postIds = materialised.Select(p => p.Id).ToList();
         if (postIds.Count > 0)
         {
@@ -244,10 +228,14 @@ public class BlogSpotService
                 .Where(pub => postIds.Contains(pub.BlogpostId))
                 .Select(pub => pub.BlogpostId)
                 .ToListAsync();
+
             var publishedSet = publishedIds.ToHashSet();
-            foreach (var post in materialised.OfType<Yavsc.Models.Blog.BlogPost>())
+            foreach (var post in materialised.OfType<BlogPost>())
                 post.IsPublished = publishedSet.Contains(post.Id);
         }
+
+        foreach (var post in materialised.OfType<BlogPost>())
+            ScrubAclForViewer(post, user);
 
         return materialised
             .OrderByDescending(p => p.DateModified)
@@ -257,61 +245,45 @@ public class BlogSpotService
 
     public async Task Delete(ClaimsPrincipal user, long id)
     {
-        var uid = user.GetUserId();
-        Yavsc.Models.Blog.BlogPost blog = _context.BlogSpot.Single(m => m.Id == id);
-
+        BlogPost blog = _context.BlogSpot.Single(m => m.Id == id);
         _context.BlogSpot.Remove(blog);
         _context.SaveChanges(user.GetUserId());
     }
 
-    public async Task<IEnumerable<Yavsc.Models.Blog.BlogPost>> UserPosts(
-        string posterName,
-        string? readerId,
-        int pageLen = 10,
-        int pageNum = 0)
+    public async Task<IEnumerable<BlogPost>> UserPosts(string posterName, string? readerId, int pageLen = 10, int pageNum = 0)
     {
-        string? posterId = (await _context.Users.SingleOrDefaultAsync(u => u.UserName == posterName))?.Id ?? null;
-        if (posterId == null) return Array.Empty<Yavsc.Models.Blog.BlogPost>();
-        return _context.UserPosts(posterId, readerId);
+        string? posterId = (await _context.Users.SingleOrDefaultAsync(u => u.UserName == posterName))?.Id;
+        if (posterId == null) return Array.Empty<BlogPost>();
+
+        var posts = _context.UserPosts(posterId, readerId).ToList();
+        var isOwnerReader = string.Equals(readerId, posterId, StringComparison.Ordinal);
+
+        foreach (var post in posts)
+        {
+            if (!isOwnerReader)
+                post.ACL = new List<CircleAuthorizationToBlogPost>();
+        }
+
+        return posts;
     }
 
     public object? GetTitle(string title)
     {
-        return _context.BlogSpot.Include(
-                 b => b.Author
-             ).Where(x => x.Title == title).OrderByDescending(
-                 x => x.DateCreated
-             ).ToList();
+        return _context.BlogSpot
+            .Include(b => b.Author)
+            .Where(x => x.Title == title)
+            .OrderByDescending(x => x.DateCreated)
+            .ToList();
     }
 
-    public async Task<Yavsc.Models.Blog.BlogPost?> GetBlogPostAsync(long value)
+    public async Task<BlogPost?> GetBlogPostAsync(long value)
     {
         return await _context.BlogSpot
-        .Include(b => b.Author)
-        .Include(b => b.ACL)
-        .SingleOrDefaultAsync(x => x.Id == value);
+            .Include(b => b.Author)
+            .Include(b => b.ACL)
+            .SingleOrDefaultAsync(x => x.Id == value);
     }
 
-    /// <summary>
-    /// Toggle a post's publication state. <paramref name="publish"/>
-    /// true adds a row to <c>blogSpotPublications</c> (the post
-    /// becomes visible to anonymous callers via
-    /// <see cref="PermissionHandler.IsPublic"/>); false removes
-    /// the row if present.
-    ///
-    /// <para>The post must already exist (caller must be the
-    /// author — this is gated by the controller's EditPermission
-    /// check). Returns false when the post does not exist; true
-    /// on a successful toggle.</para>
-    ///
-    /// <para>This is the same toggle the
-    /// <see cref="BlogPostEditViewModel"/>-flavoured
-    /// <see cref="Modify(ClaimsPrincipal, BlogPostEditViewModel)"/>
-    /// overload performs inline; extracted here so the
-    /// /api/blog/{id}/publish endpoint can hit it without
-    /// forcing the caller to round-trip the full BlogPost in
-    /// the request body.</para>
-    /// </summary>
     public async Task<bool> SetPublishAsync(ClaimsPrincipal user, long postId, bool publish)
     {
         var blog = await _context.BlogSpot.SingleOrDefaultAsync(b => b.Id == postId);
@@ -319,28 +291,33 @@ public class BlogSpotService
 
         var auth = await _authorizationService.AuthorizeAsync(user, blog, new EditPermission());
         if (!auth.Succeeded)
-        {
             throw new AuthorizationFailureException(auth);
-        }
 
-        var existing = await _context.blogSpotPublications.SingleOrDefaultAsync(
-            p => p.BlogpostId == postId);
+        var existing = await _context.blogSpotPublications.SingleOrDefaultAsync(p => p.BlogpostId == postId);
         if (publish)
         {
             if (existing == null)
-            {
                 _context.blogSpotPublications.Add(new BlogSpotPublication { BlogpostId = postId });
-            }
         }
         else
         {
             if (existing != null)
-            {
                 _context.blogSpotPublications.Remove(existing);
-            }
         }
+
         await _context.SaveChangesAsync(user.GetUserId());
         return true;
     }
 
+    private static void ScrubAclForViewer(BlogPost post, ClaimsPrincipal? user)
+    {
+        if (!IsOwner(post, user))
+            post.ACL = new List<CircleAuthorizationToBlogPost>();
+    }
+
+    private static bool IsOwner(BlogPost post, ClaimsPrincipal? user)
+    {
+        if (user?.Identity?.IsAuthenticated != true) return false;
+        return string.Equals(user.GetUserId(), post.AuthorId, StringComparison.Ordinal);
+    }
 }

@@ -9,6 +9,7 @@ using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
 using Yavsc.Api.Client;
+using Yavsc.Api.Client.Dtos;
 using Yavsc.Blogspot;
 
 namespace PostIt.Tests;
@@ -190,9 +191,8 @@ public class PostAclDialogTests
             await Task.Delay(20);
         }
 
-        // Assert: exactly two GETs went out (one to /blogacl,
-        // one to /circle), both from the LoadAsync call.
-        Assert.Equal(2, handler.RequestCount);
+        // Assert: one GET went out (for /circle) from LoadAsync.
+        Assert.Equal(1, handler.RequestCount);
 
         // And the VM's idempotency gate has flipped.
         Assert.True(vm.Loaded);
@@ -218,7 +218,58 @@ public class PostAclDialogTests
         await vm.LoadAsync();
 
         // Assert: the second call short-circuited on _loaded.
-        Assert.Equal(2, handler.RequestCount);
+        Assert.Equal(1, handler.RequestCount);
         Assert.True(vm.Loaded);
+    }
+
+    [Fact]
+    public async Task LoadAsync_keeps_acl_from_blogpostdto_and_only_loads_circles()
+    {
+        var post = new BlogPostDto { Id = 42, Title = "ACL hydration" };
+        post.AuthorizeCircle(12);
+        post.AuthorizeCircle(34);
+
+        var api = new StubAclApiClient();
+        var aclClient = new BlogAclApiClient(api, "http://localhost/");
+        var circleClient = new CircleApiClient(api, "http://localhost/");
+        var vm = new PostAclDialogViewModel(post, aclClient, circleClient);
+
+        await vm.LoadAsync();
+
+        Assert.Equal(1, api.CallCount);
+        Assert.Equal(2, vm.AclEntries.Count);
+        Assert.Contains(vm.AclEntries, a => a.CircleId == 12);
+        Assert.Contains(vm.AclEntries, a => a.CircleId == 34);
+    }
+
+    private sealed class StubAclApiClient : IYavscApiClient
+    {
+        public HttpClient Http { get; } = new();
+        public int CallCount { get; private set; }
+
+        public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        {
+            CallCount++;
+
+            if (typeof(T) == typeof(List<CircleDto>))
+            {
+                var circles = new List<CircleDto>
+                {
+                    new() { Id = 12, Name = "A", OwnerId = "owner", Public = false },
+                    new() { Id = 34, Name = "B", OwnerId = "owner", Public = false },
+                };
+                return Task.FromResult((T)(object)circles);
+            }
+
+            return Task.FromResult(default(T)!);
+        }
+
+        public Task CallAsync(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        {
+            CallCount++;
+            return Task.CompletedTask;
+        }
+
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }
 }

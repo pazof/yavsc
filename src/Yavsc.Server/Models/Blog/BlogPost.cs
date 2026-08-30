@@ -66,9 +66,9 @@ namespace Yavsc.Models.Blog
             return ACL?.Any(i => i.CircleId == circleId) ?? true;
         }
 
-        public ICircleAuthorization[] GetACL()
+        public CircleAuthorization[] GetACL()
         {
-            return ACL?.ToArray() ?? Array.Empty<ICircleAuthorization>();
+            return ACL?.ToArray() ?? Array.Empty<CircleAuthorization>();
         }
 
         public void Tag(Tag tag)
@@ -132,6 +132,17 @@ namespace Yavsc.Models.Blog
                     UserName = a.UserName,
                     Avatar = a.Avatar
                 };
+            }
+        }
+
+        ICollection<CircleAuthorization> ICircleAuthorized.ACL
+        {
+            get
+            {
+                return ACL?.Select(a => new CircleAuthorization
+                {
+                    CircleId = a.CircleId
+                }).ToList() ?? new List<CircleAuthorization>();
             }
         }
     }
