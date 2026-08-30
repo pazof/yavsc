@@ -15,6 +15,12 @@ using System.Net.Http;
 
 namespace PostIt.ViewModels;
 
+public sealed class PostAclEntry
+{
+    public long CircleId { get; init; }
+    public string CircleName { get; init; } = string.Empty;
+}
+
 /// <summary>
 /// View model for the "Gérer l'ACL" modal of a single blog post.
 ///
@@ -45,7 +51,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
     MyCircles { get; set; } = new();
 
     [ObservableProperty]
-    public partial ObservableCollection<CircleAuthorization>
+    public partial ObservableCollection<PostAclEntry>
     AclEntries { get; set; } = new();
 
     [ObservableProperty]
@@ -82,10 +88,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
         _aclClient = aclClient ?? throw new ArgumentNullException(nameof(aclClient));
         _circleClient = circleClient ?? throw new ArgumentNullException(nameof(circleClient));
 
-        AclEntries = new ObservableCollection<CircleAuthorization>(post.GetACL().Select(a => new CircleAuthorization
-        {
-            CircleId = a.CircleId
-        }));
+        AclEntries = new ObservableCollection<PostAclEntry>(post.GetACL().Select(a => ToAclEntry(a.CircleId)));
         SelectedCircleToAdd = null;
     }
 
@@ -107,6 +110,9 @@ public partial class PostAclDialogViewModel : ViewModelBase
 
             var circles = circlesTask.Result ?? new List<CircleDto>();
             MyCircles = new ObservableCollection<CircleDto>(circles);
+
+            // Resolve labels now that circles are available.
+            AclEntries = new ObservableCollection<PostAclEntry>(AclEntries.Select(a => ToAclEntry(a.CircleId)));
 
 
             StatusMessage = $"{AclEntries.Count} autorisation(s)";
@@ -147,7 +153,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
             });
             if (created is not null)
             {
-                AclEntries.Add(new CircleAuthorization { CircleId = created.CircleId });
+                AclEntries.Add(ToAclEntry(created.CircleId));
                 StatusMessage = $"Cercle « {SelectedCircleToAdd.Name} » autorisé";
             }
             else
@@ -173,7 +179,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    public async Task RevokeAsync(PostAccessControlRulePayload? acl)
+    public async Task RevokeAsync(PostAclEntry? acl)
     {
         if (acl is null) return;
         IsBusy = true;
@@ -200,10 +206,20 @@ public partial class PostAclDialogViewModel : ViewModelBase
         var allAcl = await _aclClient.GetMyAclAsync();
         var currentPostAcl = (allAcl ?? new List<PostAccessControlRulePayload>())
             .Where(a => a.BlogPostId == Post.Id)
-            .Select(a => new CircleAuthorization { CircleId = a.CircleId })
+            .Select(a => ToAclEntry(a.CircleId))
             .GroupBy(a => a.CircleId)
             .Select(g => g.First())
             .ToList();
-        AclEntries = new ObservableCollection<CircleAuthorization>(currentPostAcl);
+        AclEntries = new ObservableCollection<PostAclEntry>(currentPostAcl);
+    }
+
+    private PostAclEntry ToAclEntry(long circleId)
+    {
+        var circleName = MyCircles.FirstOrDefault(c => c.Id == circleId)?.Name;
+        return new PostAclEntry
+        {
+            CircleId = circleId,
+            CircleName = string.IsNullOrWhiteSpace(circleName) ? $"Cercle #{circleId}" : circleName
+        };
     }
 }
