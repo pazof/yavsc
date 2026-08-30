@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Blogspot;
 using Yavsc.Models;
+using Yavsc.Models.Access;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
@@ -97,6 +98,7 @@ public class OldBlogSpotService
             throw new AuthorizationFailureException(auth);
         }
         var pub = await _context.blogSpotPublications.AnyAsync(x => x.BlogpostId == blog.Id);
+        ScrubAclForViewer(blog, user);
 
         return new BlogPostEditViewModel(blog, pub);
     }
@@ -118,6 +120,7 @@ public class OldBlogSpotService
         {
             throw new AuthorizationFailureException(auth);
         }
+        ScrubAclForViewer(blog, user);
         foreach (var c in blog.Comments)
         {
             c.Author = _context.Users.First(u => u.Id == c.AuthorId);
@@ -189,13 +192,14 @@ public class OldBlogSpotService
 
     public async Task<IEnumerable<IBlogPost>> Index(ClaimsPrincipal user, string id, int skip = 0, int take = 25)
     {
+        string? viewerId = user.Identity?.IsAuthenticated == true ? user.GetUserId() : null;
         IEnumerable<IBlogPost> posts;
 
         if (user.Identity.IsAuthenticated)
         {
-            string viewerId = user.GetUserId();
+            string viewerIdNonNull = viewerId!;
             long[] userCircles = await _context.Circle.Include(c => c.Members).
-                Where(c => c.Members.Any(m => m.MemberId == viewerId))
+                Where(c => c.Members.Any(m => m.MemberId == viewerIdNonNull))
                 .Select(c => c.Id).ToArrayAsync();
 
             posts = _context.BlogSpot
@@ -205,7 +209,7 @@ public class OldBlogSpotService
                 .Include(p => p.Comments)
                 .Where(p => p.ACL == null
                 || p.ACL.Count == 0
-                || (p.AuthorId == viewerId)
+                || (p.AuthorId == viewerIdNonNull)
                 || (userCircles != null &&
                     p.ACL.Any(a => userCircles.Contains(a.CircleId)))
                 );
@@ -223,7 +227,11 @@ public class OldBlogSpotService
            .Select(p => p.BlogPost).ToArray();
         }
 
-        var data = posts.OrderByDescending(p => p.DateModified)
+        var materialised = posts.ToList();
+        foreach (var post in materialised.OfType<Yavsc.Models.Blog.BlogPost>())
+            ScrubAclForViewer(post, user);
+
+        var data = materialised.OrderByDescending(p => p.DateModified)
             .Skip(skip)
             .Take(take);
         return data;
@@ -246,7 +254,11 @@ public class OldBlogSpotService
     {
         string? posterId = (await _context.Users.SingleOrDefaultAsync(u => u.UserName == posterName))?.Id ?? null;
         if (posterId == null) return Array.Empty<Yavsc.Models.Blog.BlogPost>();
-        return _context.UserPosts(posterId, readerId);
+        var posts = _context.UserPosts(posterId, readerId).ToList();
+        var viewerId = string.Equals(readerId, posterId, StringComparison.Ordinal) ? readerId : null;
+        foreach (var post in posts)
+            ScrubAclForViewer(post, viewerId);
+        return posts;
     }
 
     public object? GetTitle(string title)
@@ -264,6 +276,41 @@ public class OldBlogSpotService
         .Include(b => b.Author)
         .Include(b => b.ACL)
         .SingleOrDefaultAsync(x => x.Id == value);
+    }
+
+    private static void ScrubAclForViewer(Yavsc.Models.Blog.BlogPost post, ClaimsPrincipal? user)
+    {
+        if (!IsOwner(post, user))
+            post.ACL = new List<CircleAuthorizationToBlogPost>();
+    }
+
+    private static void ScrubAclForViewer(Yavsc.Models.Blog.BlogPost post, string? viewerId)
+    {
+        if (!string.Equals(post.AuthorId, viewerId, StringComparison.Ordinal)
+            && !string.Equals(post.Author?.Id, viewerId, StringComparison.Ordinal))
+            post.ACL = new List<CircleAuthorizationToBlogPost>();
+    }
+
+    private static bool IsOwner(Yavsc.Models.Blog.BlogPost post, ClaimsPrincipal? user)
+    {
+        if (user?.Identity?.IsAuthenticated != true) return false;
+
+        var viewerId = user.GetUserId();
+        var viewerName = user.GetUserName() ?? user.Identity?.Name;
+
+        if (!string.IsNullOrWhiteSpace(viewerId))
+        {
+            if (string.Equals(post.AuthorId, viewerId, StringComparison.Ordinal)) return true;
+            if (string.Equals(post.Author?.Id, viewerId, StringComparison.Ordinal)) return true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(viewerName))
+        {
+            if (string.Equals(post.AuthorId, viewerName, StringComparison.OrdinalIgnoreCase)) return true;
+            if (string.Equals(post.Author?.UserName, viewerName, StringComparison.OrdinalIgnoreCase)) return true;
+        }
+
+        return false;
     }
 
 }

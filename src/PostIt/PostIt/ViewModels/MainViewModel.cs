@@ -250,7 +250,23 @@ public partial class MainViewModel : ViewModelBase
             StatusMessage = "Select an existing post before managing ACL.";
             return;
         }
-        await ((App)App.Current!).PushPageAsync(GetACLViewModel(SelectedPost)).ConfigureAwait(true);
+
+        var postForAcl = SelectedPost;
+        try
+        {
+            var detailed = await BlogClient!.GetPostAsync(SelectedPost.Id).ConfigureAwait(true);
+            if (detailed is not null)
+            {
+                postForAcl = detailed;
+                SelectedPost = detailed;
+            }
+        }
+        catch
+        {
+            // Keep the dialog usable even if the detail refresh fails.
+        }
+
+        await ((App)App.Current!).PushPageAsync(GetACLViewModel(postForAcl)).ConfigureAwait(true);
     }
 
     [RelayCommand]

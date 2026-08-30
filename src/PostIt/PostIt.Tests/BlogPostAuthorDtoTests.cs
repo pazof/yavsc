@@ -166,4 +166,51 @@ public class BlogPostAuthorDtoTests
         Assert.True(root.TryGetProperty("userName", out _));
         Assert.True(root.TryGetProperty("avatar", out _));
     }
+
+    [Fact]
+    public void BlogPostDto_deserialises_acl_from_detail_payload()
+    {
+        // Detail payload shape emitted by BlogApiController.GetBlog:
+        // ACL entries are included under "acl"/"ACL".
+        var json = """
+        {
+          "id": 99,
+          "title": "ACL test",
+          "authorId": "u-alice",
+          "acl": [
+            { "circleId": 12, "blogPostId": 99 },
+            { "circleId": 34, "blogPostId": 99 }
+          ]
+        }
+        """;
+
+        var post = JsonSerializer.Deserialize<BlogPostDto>(json, CaseInsensitiveJson);
+
+        Assert.NotNull(post);
+        var acl = post!.GetACL();
+        Assert.Equal(2, acl.Length);
+        Assert.Contains(acl, a => a.CircleId == 12);
+        Assert.Contains(acl, a => a.CircleId == 34);
+    }
+
+    [Fact]
+    public void BlogPostDto_does_not_emit_acl_when_serialized_for_write()
+    {
+        var post = new BlogPostDto
+        {
+            Id = 77,
+            Title = "Write payload"
+        };
+        post.AuthorizeCircle(11);
+
+        // The client should not send ACL through POST/PUT blog payloads.
+        // ACL mutations have their own dedicated /blogacl endpoint.
+        var json = JsonSerializer.Serialize(post,
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+        using var doc = JsonDocument.Parse(json);
+        var root = doc.RootElement;
+        Assert.False(root.TryGetProperty("acl", out _));
+        Assert.False(root.TryGetProperty("wireAcl", out _));
+    }
 }
