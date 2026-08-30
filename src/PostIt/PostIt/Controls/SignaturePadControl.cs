@@ -68,21 +68,38 @@ public class SignaturePadControl : TemplatedControl
     public event EventHandler? RedrawRequested;
 
     private readonly List<int> _strokes = new(capacity: 256);
+    private InputElement? _wiredCaptureArea;
     private int _pendingPoints; // number of (x, y) pairs awaiting a length prefix
     private bool _capturing;
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
+        RewireCaptureArea();
+    }
 
-        if (CaptureArea is { } previous)
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == CaptureAreaProperty)
+        {
+            RewireCaptureArea();
+        }
+    }
+
+    private void RewireCaptureArea()
+    {
+        if (_wiredCaptureArea is { } previous)
         {
             previous.PointerPressed -= OnCapturePressed;
             previous.PointerMoved -= OnCaptureMoved;
             previous.PointerReleased -= OnCaptureReleased;
         }
 
-        if (CaptureArea is { } area)
+        _wiredCaptureArea = CaptureArea;
+
+        if (_wiredCaptureArea is { } area)
         {
             area.PointerPressed += OnCapturePressed;
             area.PointerMoved += OnCaptureMoved;
@@ -97,12 +114,14 @@ public class SignaturePadControl : TemplatedControl
         _capturing = true;
         _pendingPoints = 0;
         AppendPoint(e.GetPosition(CaptureArea));
+        RedrawRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnCaptureMoved(object? sender, PointerEventArgs e)
     {
         if (!_capturing) return;
         AppendPoint(e.GetPosition(CaptureArea));
+        RedrawRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnCaptureReleased(object? sender, PointerReleasedEventArgs e)
@@ -168,6 +187,16 @@ public class SignaturePadControl : TemplatedControl
     /// view needs to ship the data off (e.g. to a backend).
     /// </summary>
     public SignaturePadData Snapshot() => new(_strokes.ToArray());
+
+    /// <summary>
+    /// Copy of the current in-progress stroke, without the length
+    /// prefix used for sealed strokes. The view can render this as a
+    /// live preview while the user is still drawing.
+    /// </summary>
+    internal IReadOnlyList<int> PendingStroke
+        => _capturing && _pendingPoints > 0
+            ? _strokes.GetRange(_strokes.Count - 2 * _pendingPoints, 2 * _pendingPoints)
+            : Array.Empty<int>();
 
     // --- Test-only surface (visible to PostIt.Tests) -------------------
 
