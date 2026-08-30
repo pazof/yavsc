@@ -18,11 +18,11 @@ public partial class AuthenticationSettings : ObservableObject
     /// </summary>
     public const string AndroidRedirectUri = "android://postit-signin";
 
-    public static string DefaultAuthority { get; internal set; } = "https://yavsc.pschneider.fr";
+    public const string DefaultAuthority  = "https://yavsc.pschneider.fr";
 
-    public static string DefaultClientId { get; internal set; } = "postit";
+    public const string DefaultClientId  = "postit";
 
-    public static string[] DefaultScopes { get; set; } = { "blogs"} ;
+    public static readonly string[] DefaultScopes  = { "blogs" };
 
     [ObservableProperty]
     public partial string Authority { get; set; }

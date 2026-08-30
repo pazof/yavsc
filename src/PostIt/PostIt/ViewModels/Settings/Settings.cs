@@ -314,7 +314,7 @@ public partial class Settings : ViewModelBase
                         settings.Authentication.Scopes = AuthenticationSettings.DefaultScopes;
                     }
                     else
-                    this.Authentication.Scopes = settings.Authentication.Scopes;
+                        this.Authentication.Scopes = settings.Authentication.Scopes;
                 }
             }
             // A disk load (or an embedded-resource fallback) is the
