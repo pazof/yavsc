@@ -95,6 +95,26 @@ public class SignaturePadControlTests
     }
 
     [Fact]
+    public void PendingStroke_is_exposed_only_while_capturing()
+    {
+        var pad = new SignaturePadControl();
+
+        Assert.Empty(pad.PendingStroke);
+
+        pad.BeginCaptureForTest();
+        pad.AppendPointForTest(1_000, 2_000);
+        pad.AppendPointForTest(3_000, 4_000);
+
+        Assert.Equal(new[] { 1_000, 2_000, 3_000, 4_000 }, pad.PendingStroke);
+        Assert.Equal(new[] { 1_000, 2_000, 3_000, 4_000 }, pad.Strokes);
+
+        pad.SealStrokeForTest();
+
+        Assert.Empty(pad.PendingStroke);
+        Assert.Equal(new[] { 2, 1_000, 2_000, 3_000, 4_000 }, pad.Strokes);
+    }
+
+    [Fact]
     public void Clear_empties_buffer_and_raises_redraw()
     {
         var pad = new SignaturePadControl();

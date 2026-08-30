@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
@@ -7,6 +8,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route(Constants.APIPrefix + "/EstimateTemplatesApi")]
     public class EstimateTemplatesApiController : Controller

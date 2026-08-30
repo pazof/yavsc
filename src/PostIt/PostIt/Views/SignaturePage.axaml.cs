@@ -62,9 +62,16 @@ public partial class SignaturePage : ContentPage
         var h = PadFrame.Bounds.Height;
         if (w <= 0 || h <= 0) return;
 
+        var pending = _control.PendingStroke;
         var strokes = _control.Strokes;
+        int sealedCount = strokes.Count - pending.Count;
+        if (sealedCount < 0)
+        {
+            sealedCount = 0;
+        }
+
         int i = 0;
-        while (i < strokes.Count)
+        while (i < sealedCount)
         {
             int k = strokes[i];
             if (k <= 0) break;
@@ -88,7 +95,6 @@ public partial class SignaturePage : ContentPage
             InkLayer.Children.Add(poly);
         }
 
-        var pending = _control.PendingStroke;
         if (pending.Count > 0)
         {
             var poly = new Polyline

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -6,6 +7,7 @@ using Yavsc.Models;
 
 namespace Yavsc.ApiControllers
 {
+    [Authorize]
     [Route(Constants.APIPrefix + "/payment")]
     public class PaymentApiController : Controller
     {

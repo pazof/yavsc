@@ -14,7 +14,7 @@ public static class Constants
     // 'offline_access' is handled by IdentityServer8 itself and never
     // needs an explicit ApiScope row.
     public static readonly string[] BuildInApiScopes = {
-        "admin", "moderation", "performer", "client" };
+        "admin", "moderation", "performer", "client", "api" };
 
     // One ApiResource per application scope. Each scope is exposed by
     // exactly one resource, named after the scope ("admin" -> "admin"
@@ -29,6 +29,7 @@ public static class Constants
        new ApiResourceScopeSpecification { ScopeName = "moderation", Description = "Moderation access", ResourceName = "moderation", ResourceDisplayName = "Moderation API" },
        new ApiResourceScopeSpecification { ScopeName = "performer", Description = "Performer access", ResourceName = "performer", ResourceDisplayName = "Performer API" },
        new ApiResourceScopeSpecification { ScopeName = "client", Description = "Client access", ResourceName = "client", ResourceDisplayName = "Client API" },
+       new ApiResourceScopeSpecification { ScopeName = "api", Description = "Core API access", ResourceName = "api", ResourceDisplayName = "Yavsc Core API" },
        new ApiResourceScopeSpecification { ScopeName = "blogs", Description = "Blogs access", ResourceName = "blogs", ResourceDisplayName = "Yavsc Blogs API" }
     };
 }

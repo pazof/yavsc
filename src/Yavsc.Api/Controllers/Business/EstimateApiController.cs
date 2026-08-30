@@ -9,6 +9,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route(Constants.APIPrefix + "/estimate"), Authorize]
     public class EstimateApiController : Controller

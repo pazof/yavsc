@@ -803,6 +803,7 @@ public static class HostingExtensions
         //   silent refresh path to work; without it IdentityServer
         //   refuses to issue a refresh_token.
         "blogs",
+        "api",
         IdentityServer8.IdentityServerConstants.StandardScopes.OpenId,
         IdentityServer8.IdentityServerConstants.StandardScopes.Profile,
         IdentityServer8.IdentityServerConstants.StandardScopes.OfflineAccess,

@@ -1,4 +1,9 @@
+using System;
+using System.Threading.Tasks;
+using Avalonia;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
+using PostIt.Helpers;
 using PostIt.Services;
 namespace PostIt.ViewModels;
 
@@ -24,8 +29,25 @@ public class HomePageViewModel : ViewModelBase
         Settings = settings;
         SessionStatus = sessionStatus;
 
+        OpenActivities = new AsyncRelayCommand(OpenActivitiesAsync);
+
     }
-    public RelayCommand OpenBlogs { get; set; } = new RelayCommand(() => App.PushMainPageAsync());
+    public IAsyncRelayCommand OpenBlogs { get; } = new AsyncRelayCommand(App.PushMainPageAsync);
+    public IAsyncRelayCommand OpenActivities { get; }
+
+    private async Task OpenActivitiesAsync()
+    {
+        var app = (App?)Application.Current;
+        var vm = app?.ServiceProvider?.GetRequiredService<ActivitiesPageViewModel>();
+        if (app is null || vm is null)
+        {
+            throw new InvalidOperationException("Activities page is not available.");
+        }
+
+        await vm.RefreshAsync();
+        await app.PushPageAsync(vm);
+    }
+
     /// <summary>
     /// Avalonia designer constructor. Builds a self-contained VM
     /// with a freshly-constructed Settings so the XAML preview can

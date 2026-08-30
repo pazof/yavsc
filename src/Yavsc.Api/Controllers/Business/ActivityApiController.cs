@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Yavsc.Abstract.Workflow;
 using Yavsc.Server.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
@@ -8,6 +9,7 @@ using Yavsc.Models.Workflow;
 
 namespace Yavsc.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route(Constants.APIPrefix + "/activity")]
     public class ActivityApiController : Controller
@@ -24,6 +26,86 @@ namespace Yavsc.Controllers
         public IEnumerable<Activity> GetActivities()
         {
             return _context.Activities.Include(a=>a.Forms).Where( a => !a.Hidden );
+        }
+
+        [HttpGet("catalog")]
+        public async Task<ActionResult<IEnumerable<ActivityBrowseItemDto>>> GetCatalog(
+            CancellationToken cancellationToken,
+            [FromQuery] string parentCode = null)
+        {
+            var activities = await _context.Activities
+                .AsNoTracking()
+                .Include(a => a.Forms)
+                .Include(a => a.Children)
+                .ThenInclude(c => c.Forms)
+                .Where(a => !a.Hidden && a.ParentCode == parentCode)
+                .OrderByDescending(a => a.Rate)
+                .ToListAsync(cancellationToken);
+
+            var codes = activities
+                .Select(a => a.Code)
+                .Concat(activities.SelectMany(a => a.Children.Where(c => !c.Hidden).Select(c => c.Code)))
+                .Distinct()
+                .ToArray();
+
+            var performerCounts = await _context.Performers
+                .AsNoTracking()
+                .Where(p => p.Active)
+                .SelectMany(
+                    p => p.Activity
+                        .Where(a => codes.Contains(a.DoesCode))
+                        .Select(a => new { a.DoesCode, p.PerformerId }))
+                .GroupBy(x => x.DoesCode)
+                .Select(g => new { Code = g.Key, Count = g.Select(x => x.PerformerId).Distinct().Count() })
+                .ToDictionaryAsync(x => x.Code, x => x.Count, cancellationToken);
+
+            return Ok(activities.Select(a => ToBrowseItem(a, performerCounts)).ToList());
+        }
+
+        [HttpGet("{id}/performers")]
+        public async Task<ActionResult<IEnumerable<ActivityPerformerDto>>> GetPerformers(
+            [FromRoute] string id,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("Activity code is required.");
+            }
+
+            var activity = await _context.Activities
+                .AsNoTracking()
+                .SingleOrDefaultAsync(a => a.Code == id, cancellationToken);
+            if (activity is null)
+            {
+                return NotFound();
+            }
+
+            var performers = await _context.Performers
+                .AsNoTracking()
+                .Include(p => p.Performer)
+                .Include(p => p.Activity)
+                .ThenInclude(a => a.Does)
+                .Where(p => p.Active && p.Activity.Any(a => a.DoesCode == id))
+                .OrderBy(p => p.Rate)
+                .Select(p => new ActivityPerformerDto
+                {
+                    PerformerId = p.PerformerId,
+                    UserName = p.Performer.UserName,
+                    Active = p.Active,
+                    AcceptNotifications = p.AcceptNotifications,
+                    AcceptPublicContact = p.AcceptPublicContact,
+                    WebSite = p.WebSite,
+                    ActivityCode = id,
+                    ActivityName = activity.Name,
+                    SettingsClassName = p.Activity
+                        .Where(a => a.DoesCode == id)
+                        .Select(a => a.Does.SettingsClassName)
+                        .FirstOrDefault(),
+                    ExtraActivityCount = p.Activity.Count(a => a.DoesCode != id)
+                })
+                .ToListAsync(cancellationToken);
+
+            return Ok(performers);
         }
 
         // GET: api/ActivityApi/5
@@ -143,6 +225,52 @@ namespace Yavsc.Controllers
         private bool ActivityExists(string id)
         {
             return _context.Activities.Count(e => e.Code == id) > 0;
+        }
+
+        private static ActivityBrowseItemDto ToBrowseItem(
+            Activity activity,
+            IReadOnlyDictionary<string, int> performerCounts)
+        {
+            return new ActivityBrowseItemDto
+            {
+                Code = activity.Code,
+                Name = activity.Name,
+                ParentCode = activity.ParentCode,
+                Description = activity.Description,
+                Photo = activity.Photo,
+                Rate = activity.Rate,
+                PerformerCount = performerCounts.TryGetValue(activity.Code, out var count) ? count : 0,
+                Forms = activity.Forms
+                    .Select(f => new CommandFormSummaryDto
+                    {
+                        Id = f.Id,
+                        ActionName = f.ActionName,
+                        Title = f.Title,
+                    })
+                    .ToList(),
+                Children = activity.Children
+                    .Where(c => !c.Hidden)
+                    .OrderByDescending(c => c.Rate)
+                    .Select(c => new ActivityBrowseItemDto
+                    {
+                        Code = c.Code,
+                        Name = c.Name,
+                        ParentCode = c.ParentCode,
+                        Description = c.Description,
+                        Photo = c.Photo,
+                        Rate = c.Rate,
+                        PerformerCount = performerCounts.TryGetValue(c.Code, out var childCount) ? childCount : 0,
+                        Forms = c.Forms
+                            .Select(f => new CommandFormSummaryDto
+                            {
+                                Id = f.Id,
+                                ActionName = f.ActionName,
+                                Title = f.Title,
+                            })
+                            .ToList(),
+                    })
+                    .ToList(),
+            };
         }
     }
 }

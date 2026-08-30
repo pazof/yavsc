@@ -10,6 +10,7 @@ namespace Yavsc.Controllers
     using Yavsc.Helpers;
     using Yavsc.Services;
 
+    [Authorize]
     [Produces("application/json")]
     [Route(Constants.APIPrefix + "/performers")]
     public class PerformersApiController : Controller

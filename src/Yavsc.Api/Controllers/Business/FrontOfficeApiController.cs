@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Yavsc.Helpers;
 using Yavsc.Models;
@@ -6,6 +7,7 @@ using Yavsc.ViewModels.FrontOffice;
 
 namespace Yavsc.ApiControllers
 {
+    [Authorize]
     [Route(Constants.APIPrefix + "/front")]
     public class FrontOfficeApiController : Controller
     {

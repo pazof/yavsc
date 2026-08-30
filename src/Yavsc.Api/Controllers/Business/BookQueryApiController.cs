@@ -12,6 +12,7 @@ namespace Yavsc.Controllers
     using Microsoft.EntityFrameworkCore;
     using Yavsc.Server.Helpers;
 
+    [Authorize]
     [Produces("application/json")]
     [Route(Constants.APIPrefix + "/bookquery"), Authorize("Performer")]
     public class BookQueryApiController : Controller

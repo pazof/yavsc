@@ -213,6 +213,17 @@ public class SignaturePadControl : TemplatedControl
     }
 
     /// <summary>
+    /// Test hook: mark the control as actively capturing so tests
+    /// can exercise the live-preview path without synthetic pointer
+    /// events.
+    /// </summary>
+    internal void BeginCaptureForTest()
+    {
+        _capturing = true;
+        _pendingPoints = 0;
+    }
+
+    /// <summary>
     /// Test hook: seal the currently-pending stroke with a length
     /// prefix. Mirrors what <see cref="OnCaptureReleased"/> does at
     /// pointer release time, including the

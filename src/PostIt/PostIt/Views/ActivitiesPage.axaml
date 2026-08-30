@@ -1,0 +1,79 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             xmlns:wf="using:Yavsc.Abstract.Workflow"
+             x:Class="PostIt.Views.ActivitiesPage"
+             x:DataType="vm:ActivitiesPageViewModel"
+             Header="Activités">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="12">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
+            <Button Content="Rafraîchir" Command="{Binding RefreshCommand}" />
+            <TextBlock Text="Catalogue des activités" FontWeight="Bold" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,12,0,12" ColumnDefinitions="*,16,*,16,*">
+            <Grid Grid.Column="0" RowDefinitions="Auto,*">
+                <TextBlock Grid.Row="0" Text="Activités" FontWeight="Bold" Margin="0,0,0,8" />
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Activities}"
+                         SelectedItem="{Binding SelectedActivity, Mode=TwoWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="wf:ActivityBrowseItemDto">
+                            <StackPanel Spacing="2" Margin="0,0,0,8">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" FontSize="11" Opacity="0.7" />
+                                <TextBlock Text="{Binding PerformerCount, StringFormat='Prestataires: {0}'}"
+                                           FontSize="11" Opacity="0.6" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+
+            <Grid Grid.Column="2" RowDefinitions="Auto,Auto,*">
+                <TextBlock Grid.Row="0" Text="Spécialisations" FontWeight="Bold" Margin="0,0,0,8" />
+                <TextBlock Grid.Row="1"
+                           Text="{Binding SelectedActivityLabel, StringFormat='Pour : {0}'}"
+                           FontSize="11" Opacity="0.7" Margin="0,0,0,8" />
+                <ListBox Grid.Row="2"
+                         ItemsSource="{Binding Specializations}"
+                         SelectedItem="{Binding SelectedSpecialization, Mode=TwoWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="wf:ActivityBrowseItemDto">
+                            <StackPanel Spacing="2" Margin="0,0,0,8">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" FontSize="11" Opacity="0.7" />
+                                <TextBlock Text="{Binding PerformerCount, StringFormat='Prestataires: {0}'}"
+                                           FontSize="11" Opacity="0.6" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+
+            <Grid Grid.Column="4" RowDefinitions="Auto,Auto,*">
+                <TextBlock Grid.Row="0" Text="Prestataires" FontWeight="Bold" Margin="0,0,0,8" />
+                <TextBlock Grid.Row="1"
+                           Text="{Binding CurrentActivityLabel, StringFormat='Activité affichée : {0}'}"
+                           FontSize="11" Opacity="0.7" Margin="0,0,0,8" />
+                <ListBox Grid.Row="2" ItemsSource="{Binding Performers}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="wf:ActivityPerformerDto">
+                            <StackPanel Spacing="2" Margin="0,0,0,8">
+                                <TextBlock Text="{Binding UserName}" FontWeight="Bold" />
+                                <TextBlock Text="{Binding WebSite}" FontSize="11" Opacity="0.7" />
+                                <TextBlock Text="{Binding ExtraActivityCount, StringFormat='Autres spécialisations: {0}'}"
+                                           FontSize="11" Opacity="0.6" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
+            <TextBlock Grid.Column="0" Text="{Binding StatusMessage}" VerticalAlignment="Center" />
+            <ProgressBar Grid.Column="1" Width="120" IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
+        </Grid>
+    </Grid>
+</ContentPage>
