@@ -87,5 +87,28 @@ public partial class SignaturePage : ContentPage
             poly.Points = pts;
             InkLayer.Children.Add(poly);
         }
+
+        var pending = _control.PendingStroke;
+        if (pending.Count > 0)
+        {
+            var poly = new Polyline
+            {
+                Stroke = StrokeBrush,
+                StrokeThickness = StrokeThickness,
+                StrokeLineCap = PenLineCap.Round,
+                StrokeJoin = PenLineJoin.Round,
+            };
+
+            var pts = new List<Point>(pending.Count / 2);
+            for (int p = 0; p < pending.Count; p += 2)
+            {
+                int nx = pending[p];
+                int ny = pending[p + 1];
+                pts.Add(new Point(nx / CoordinateMax * w, ny / CoordinateMax * h));
+            }
+
+            poly.Points = pts;
+            InkLayer.Children.Add(poly);
+        }
     }
 }
