@@ -72,9 +72,10 @@ internal class Program
         services.AddAuthentication("Bearer")
                  .AddYavscJwtBearer(builder.Configuration);
 
+        // DbContextBuilder
         services.AddDbContext<ApplicationDbContext>(options =>
-
-           options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+           options.UseNpgsql(builder.Configuration.GetConnectionString(
+            Yavsc.Constants.YavscConnectionStringName)));
 
         services.AddLocalization(options =>
         {

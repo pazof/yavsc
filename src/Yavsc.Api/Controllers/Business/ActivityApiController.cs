@@ -44,19 +44,23 @@ namespace Yavsc.Controllers
 
             var codes = activities
                 .Select(a => a.Code)
-                .Concat(activities.SelectMany(a => a.Children.Where(c => !c.Hidden).Select(c => c.Code)))
+                .Concat(activities.SelectMany(a => (a.Children ?? new List<Activity>())
+                    .Where(c => !c.Hidden)
+                    .Select(c => c.Code)))
+                .Where(c => !string.IsNullOrWhiteSpace(c))
                 .Distinct()
                 .ToArray();
 
-            var performerCounts = await _context.Performers
-                .AsNoTracking()
-                .Where(p => p.Active)
-                .SelectMany(
-                    p => p.Activity
-                        .Where(a => codes.Contains(a.DoesCode))
-                        .Select(a => new { a.DoesCode, p.PerformerId }))
-                .GroupBy(x => x.DoesCode)
-                .Select(g => new { Code = g.Key, Count = g.Select(x => x.PerformerId).Distinct().Count() })
+            var performerCounts = await (
+                from ua in _context.UserActivities.AsNoTracking()
+                join p in _context.Performers.AsNoTracking() on ua.UserId equals p.PerformerId
+                where p.Active && !string.IsNullOrWhiteSpace(ua.DoesCode) && codes.Contains(ua.DoesCode)
+                group ua by ua.DoesCode into g
+                select new
+                {
+                    Code = g.Key,
+                    Count = g.Select(x => x.UserId).Distinct().Count()
+                })
                 .ToDictionaryAsync(x => x.Code, x => x.Count, cancellationToken);
 
             return Ok(activities.Select(a => ToBrowseItem(a, performerCounts)).ToList());
@@ -80,29 +84,32 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            var performers = await _context.Performers
-                .AsNoTracking()
-                .Include(p => p.Performer)
-                .Include(p => p.Activity)
-                .ThenInclude(a => a.Does)
-                .Where(p => p.Active && p.Activity.Any(a => a.DoesCode == id))
-                .OrderBy(p => p.Rate)
-                .Select(p => new ActivityPerformerDto
+            var performers = await (
+                from p in _context.Performers.AsNoTracking()
+                join ua in _context.UserActivities.AsNoTracking() on p.PerformerId equals ua.UserId
+                join u in _context.ApplicationUser.AsNoTracking() on p.PerformerId equals u.Id into users
+                from user in users.DefaultIfEmpty()
+                where p.Active && ua.DoesCode == id
+                orderby p.Rate
+                select new ActivityPerformerDto
                 {
                     PerformerId = p.PerformerId,
-                    UserName = p.Performer.UserName,
+                    UserName = user != null ? (user.UserName ?? string.Empty) : string.Empty,
                     Active = p.Active,
                     AcceptNotifications = p.AcceptNotifications,
                     AcceptPublicContact = p.AcceptPublicContact,
-                    WebSite = p.WebSite,
+                    WebSite = p.WebSite ?? string.Empty,
                     ActivityCode = id,
                     ActivityName = activity.Name,
-                    SettingsClassName = p.Activity
-                        .Where(a => a.DoesCode == id)
-                        .Select(a => a.Does.SettingsClassName)
-                        .FirstOrDefault(),
-                    ExtraActivityCount = p.Activity.Count(a => a.DoesCode != id)
+                    SettingsClassName = _context.Activities
+                        .Where(a => a.Code == id)
+                        .Select(a => a.SettingsClassName)
+                        .FirstOrDefault() ?? string.Empty,
+                    ExtraActivityCount = _context.UserActivities
+                        .Where(x => x.UserId == p.PerformerId && x.DoesCode != id)
+                        .Count()
                 })
+                .Distinct()
                 .ToListAsync(cancellationToken);
 
             return Ok(performers);
@@ -240,7 +247,7 @@ namespace Yavsc.Controllers
                 Photo = activity.Photo,
                 Rate = activity.Rate,
                 PerformerCount = performerCounts.TryGetValue(activity.Code, out var count) ? count : 0,
-                Forms = activity.Forms
+                Forms = (activity.Forms ?? Enumerable.Empty<CommandForm>())
                     .Select(f => new CommandFormSummaryDto
                     {
                         Id = f.Id,
@@ -248,7 +255,7 @@ namespace Yavsc.Controllers
                         Title = f.Title,
                     })
                     .ToList(),
-                Children = activity.Children
+                Children = (activity.Children ?? Enumerable.Empty<Activity>())
                     .Where(c => !c.Hidden)
                     .OrderByDescending(c => c.Rate)
                     .Select(c => new ActivityBrowseItemDto
@@ -260,7 +267,7 @@ namespace Yavsc.Controllers
                         Photo = c.Photo,
                         Rate = c.Rate,
                         PerformerCount = performerCounts.TryGetValue(c.Code, out var childCount) ? childCount : 0,
-                        Forms = c.Forms
+                        Forms = (c.Forms ?? Enumerable.Empty<CommandForm>())
                             .Select(f => new CommandFormSummaryDto
                             {
                                 Id = f.Id,
