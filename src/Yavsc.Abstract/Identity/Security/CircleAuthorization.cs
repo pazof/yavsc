@@ -11,7 +11,7 @@ namespace Yavsc.Abstract.Identity.Security;
 /// UI already has the post, and the circles are looked up by id
 /// against the list returned by <c>GET /api/circle</c>.</para>
 /// </summary>
-public sealed class CircleAuthorization : ICircleAuthorization
+public class CircleAuthorization
 {
     public long CircleId { get; set; }
 }

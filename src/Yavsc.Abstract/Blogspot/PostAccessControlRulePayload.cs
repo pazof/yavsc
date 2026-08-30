@@ -3,8 +3,7 @@ using Yavsc.Abstract.Identity.Security;
 
 namespace Yavsc.Abstract.BlogSpot;
 
-public class PostAccessControlRulePayload : ICircleAuthorization
+public class PostAccessControlRulePayload : CircleAuthorization
 {
-      public long CircleId { get; set; }
       public long BlogPostId { get; set; }
 }

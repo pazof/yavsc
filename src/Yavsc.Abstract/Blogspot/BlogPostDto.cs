@@ -1,4 +1,5 @@
 using Yavsc.Abstract.Identity.Security;
+using System.Text.Json.Serialization;
 
 namespace Yavsc.Blogspot;
 
@@ -35,11 +36,26 @@ public class BlogPostDto : IBlogPost
         return true;
     }
 
-    private List<CircleAuthorization> ACL { get; set; } = new List<CircleAuthorization>();
+    public ICollection<CircleAuthorization> ACL = new List<CircleAuthorization>();
+
+    /// <summary>
+    /// Wire-only ACL bridge for System.Text.Json: accepts the
+    /// <c>acl</c>/<c>ACL</c> payload from GET detail responses,
+    /// but is never emitted on POST/PUT from the client.
+    /// </summary>
+    [JsonPropertyName("acl")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public List<CircleAuthorization>? WireAcl
+    {
+        get => null;
+        set => ACL = value ?? new List<CircleAuthorization>();
+    }
 
     public string[] Tags { get; set; }
 
+    ICollection<CircleAuthorization> ICircleAuthorized.ACL => this.ACL;
+
     public string[] GetTags() => Tags;
 
-    public ICircleAuthorization[] GetACL() => ACL.ToArray();
+    public CircleAuthorization[] GetACL() => ACL.ToArray();
 }
