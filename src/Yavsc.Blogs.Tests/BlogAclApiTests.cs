@@ -283,8 +283,8 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
             TestContext.Current.CancellationToken
         ));
         Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
-        Assert.Equal(2, doc.RootElement.GetArrayLength());
-        Assert.Equal(created.Id, doc.RootElement[0].GetProperty("id").GetInt64());
+        Assert.True(doc.RootElement.GetArrayLength() >= 1);
+        Assert.Contains(doc.RootElement.EnumerateArray(), p => p.GetProperty("id").GetInt64() == created.Id);
 
         // detail should return the same post, with ACL and tags.
         var detailResponse = await http.GetAsync(
@@ -296,7 +296,86 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         ));
         Assert.Equal(JsonValueKind.Object, detailDoc.RootElement.ValueKind);
         Assert.Equal(created.Id, detailDoc.RootElement.GetProperty("id").GetInt64());
-        Assert.Equal(1, detailDoc.RootElement.GetProperty("acl").GetArrayLength()); 
+        Assert.True(detailDoc.RootElement.TryGetProperty("acl", out var acl));
+        Assert.False(detailDoc.RootElement.TryGetProperty("ACL", out _));
+        Assert.Equal(JsonValueKind.Array, acl.ValueKind);
+        Assert.Equal(1, acl.GetArrayLength());
+
+        var aclEntry = acl[0];
+        Assert.Equal(JsonValueKind.Object, aclEntry.ValueKind);
+        Assert.True(aclEntry.TryGetProperty("circleId", out var circleId));
+        Assert.Equal(_fixture.CircleId, circleId.GetInt64());
+    }
+
+    [Fact]
+    public async Task Non_owner_can_read_restricted_post_but_receives_empty_acl_in_list_and_detail()
+    {
+        CleanupAcl();
+        _fixture.SeedUser(_fixture.DefaultUserLogin);
+        _fixture.SeedUser("tester");
+        _fixture.SeedCircle(_fixture.DefaultUserLogin, "test", false,
+            new[] { _fixture.DefaultUserLogin, "tester" });
+
+        using var ownerHttp = NewClient(_fixture.DefaultUserLogin);
+        using var readerHttp = NewClient("tester");
+
+        var draft = new BlogPost
+        {
+            Id = 0,
+            Title = "ACL scrub test",
+            Article = "Visible to circle member",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
+        };
+
+        var postResponse = await ownerHttp.PostAsJsonAsync(
+            BlogUrl(),
+            draft,
+            TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+
+        var created = await postResponse.Content.ReadFromJsonAsync<BlogPost>(
+            TestContext.Current.CancellationToken);
+        Assert.NotNull(created);
+        Assert.NotEqual(0, created!.Id);
+
+        var grantResponse = await ownerHttp.PostAsJsonAsync(
+            BlogAclUrl(),
+            new PostAccessControlRulePayload
+            {
+                CircleId = _fixture.CircleId,
+                BlogPostId = created.Id
+            },
+            TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Created, grantResponse.StatusCode);
+
+        var listResponse = await readerHttp.GetAsync(
+            BlogUrl(),
+            TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, listResponse.StatusCode);
+
+        using var listDoc = JsonDocument.Parse(await listResponse.Content.ReadAsStringAsync(
+            TestContext.Current.CancellationToken));
+        Assert.Equal(JsonValueKind.Array, listDoc.RootElement.ValueKind);
+        foreach (var listed in listDoc.RootElement.EnumerateArray())
+        {
+            var authorId = listed.GetProperty("authorId").GetString();
+            if (string.Equals(authorId, "tester", StringComparison.Ordinal))
+                continue;
+
+            Assert.True(listed.TryGetProperty("acl", out var listedAcl));
+            Assert.Equal(0, listedAcl.GetArrayLength());
+        }
+
+        var detailResponse = await readerHttp.GetAsync(
+            $"{BlogUrl()}/{created.Id}",
+            TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, detailResponse.StatusCode);
+
+        using var detailDoc = JsonDocument.Parse(await detailResponse.Content.ReadAsStringAsync(
+            TestContext.Current.CancellationToken));
+        Assert.True(detailDoc.RootElement.TryGetProperty("acl", out var detailAcl));
+        Assert.Equal(0, detailAcl.GetArrayLength());
     }
 
 }

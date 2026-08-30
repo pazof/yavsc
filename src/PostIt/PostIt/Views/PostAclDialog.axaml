@@ -3,8 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="PostIt.Views.PostAclDialog"
         xmlns:vm="using:PostIt.ViewModels"
-        xmlns:dtos="using:Yavsc.Api.Client.Dtos"
-        xmlns:yabst="using:Yavsc.Abstract.Identity.Security"
+                xmlns:dtos="using:Yavsc.Api.Client.Dtos"
         x:DataType="vm:PostAclDialogViewModel"
       >
     <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="12">
@@ -32,10 +31,10 @@
         <ListBox Grid.Row="1"
                  ItemsSource="{Binding AclEntries}">
             <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="yabst:CircleAuthorization">
+                <DataTemplate x:DataType="vm:PostAclEntry">
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0" Spacing="2">
-                            <TextBlock Text="{Binding CircleId, StringFormat='Cercle #{0}'}"
+                            <TextBlock Text="{Binding CircleName}"
                                        FontWeight="Bold"/>
                         </StackPanel>
                         <Button Grid.Column="1" Content="Révoquer"
