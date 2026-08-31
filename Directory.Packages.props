@@ -3,13 +3,28 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8" Version="8.1.0-alpha.171" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="8.1.0-alpha.171" />
-    <PackageVersion Include="IdentityModel.OidcClient" Version="6.0.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.2.1" />
-    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.9" />
+
+    <PackageVersion Include="HigginsSoft.IdentityServer8" Version="8.1.0-pazofrc004" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="8.1.0-pazofrc004" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="8.1.0-pazofrc004" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework.Storage" Version="8.1.0-pazofrc004" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.Security" Version="8.1.0-pazofrc004" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.Storage" Version="8.1.0-pazofrc004" />
+
+    <PackageVersion Include="AsciiDocSharp" Version="0.1.0" />
+    <PackageVersion Include="AsciiDocSharp.Converters.Html" Version="0.1.0" />
+
+    <PackageVersion Include="BouncyCastle.Cryptography" Version="2.6.2" />
+
+    <PackageVersion Include="Google.Apis.Compute.v1" Version="1.74.0.4138" />
+
+    <PackageVersion Include="Microsoft.AspNetCore.Antiforgery" Version="2.3.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR" Version="1.2.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9" />
     <PackageVersion Include="Microsoft.AspNetCore.Hosting" Version="2.3.11" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.9" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.9" />
@@ -17,10 +32,20 @@
     <PackageVersion Include="Microsoft.AspNetCore.Razor" Version="2.3.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.9" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.2.2" />
+
+    <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+
+    <PackageVersion Include="IdentityModel.OidcClient" Version="6.0.0" />
+
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.2.1" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3" Version="3.2.2" />
     <PackageVersion Include="xunit.v3.common" Version="3.2.2" />
