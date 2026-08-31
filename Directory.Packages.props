@@ -1,16 +1,17 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <IdentityServer8Version>8.1.0-pazofrc007</IdentityServer8Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.9" />
 
-    <PackageVersion Include="HigginsSoft.IdentityServer8" Version="8.1.0-pazofrc004" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="8.1.0-pazofrc004" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="8.1.0-pazofrc004" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework.Storage" Version="8.1.0-pazofrc004" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.Security" Version="8.1.0-pazofrc004" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.Storage" Version="8.1.0-pazofrc004" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8" Version="$(IdentityServer8Version)" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="$(IdentityServer8Version)" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="$(IdentityServer8Version)" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework.Storage" Version="$(IdentityServer8Version)" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.Security" Version="$(IdentityServer8Version)" />
+    <PackageVersion Include="HigginsSoft.IdentityServer8.Storage" Version="$(IdentityServer8Version)" />
 
     <PackageVersion Include="AsciiDocSharp" Version="0.1.0" />
     <PackageVersion Include="AsciiDocSharp.Converters.Html" Version="0.1.0" />
