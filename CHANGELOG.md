@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.8-rc11] - unstable
+
+### Added
+
+nothing
+
+### Changed
+
+* [Yavsc.Api.Test] Mise a jour de `Microsoft.EntityFrameworkCore.Sqlite` vers `10.0.11` afin de supprimer l'alerte NU1903 liee a `SQLitePCLRaw.lib.e_sqlite3` 2.1.11.
+* [Yavsc.Org] Nettoyage de la configuration NuGet pour le restore: suppression du fichier local `Directory.Packages.props` au profit du fichier racine centralise.
+* [Yavsc.Org] Suppression de references de packages redondantes dans le projet, sans impact fonctionnel attendu.
+
+### Fixed
+
+* [Yavsc.Api.Test] Le restore n'emet plus le warning de vulnerabilite `NU1903` sur `SQLitePCLRaw.lib.e_sqlite3`.
+* [Yavsc.Org] Suppression d'une vulnerabilite de severite elevee sur AutoMapper apres publication et consommation de la nouvelle version candidate de `HigginsSoft.IdentityServer8`.
+
 ## [1.0.8-rc10] - unstable
 
 ### Added
