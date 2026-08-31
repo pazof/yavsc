@@ -568,7 +568,17 @@ namespace Yavsc.Controllers
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
+            var postedCountryCode = model.ExerciseCountryCode;
             model.ExerciseCountryCode = NormalizeCountryCodeOrDefault(model.ExerciseCountryCode);
+
+            // Model binding validated the raw posted payload before entering
+            // the action. If country was empty, we fallback to "fr" above,
+            // so remove the stale min-length error attached to the empty value.
+            if (string.IsNullOrWhiteSpace(postedCountryCode))
+            {
+                ModelState.Remove(nameof(PerformerProfile.ExerciseCountryCode));
+            }
+
             try
             {
                 if (ModelState.IsValid)
@@ -636,7 +646,7 @@ namespace Yavsc.Controllers
             return View(model);
         }
 
-        private static string NormalizeCountryCodeOrDefault(string? code)
+        private static string NormalizeCountryCodeOrDefault(string code)
         {
             var normalized = PerformerCodeInputValidationCatalog.NormalizeCountryCode(code);
             if (string.IsNullOrWhiteSpace(normalized))
@@ -647,14 +657,17 @@ namespace Yavsc.Controllers
             return normalized;
         }
 
-        private void SetExerciseCountries(string? selectedCountryCode)
+        private void SetExerciseCountries(string selectedCountryCode)
         {
             var selected = NormalizeCountryCodeOrDefault(selectedCountryCode);
-            ViewBag.ExerciseCountries = new SelectList(
+            var countries = new SelectList(
                 PerformerCodeInputValidationCatalog.Countries,
                 nameof(Country.Code),
                 nameof(Country.DisplayName),
                 selected);
+            ViewBag.ExerciseCountries = countries;
+            ViewBag.Countries = countries;
+            ViewBag.CountryCodeValidationRules = PerformerCodeInputValidationCatalog.Rules;
         }
 
         [HttpPost]

@@ -1,4 +1,5 @@
 @model PerformerProfile
+@using System.Text.Json
 @{ ViewBag.Title = "Your performer profile"; }
 @section header {
 <style>
@@ -71,7 +72,7 @@
 
         <label asp-for="ExerciseCountryCode" class="col-md-2 control-label">Pays d'exercice</label>
         <div class="col-md-10">
-            <select asp-for="ExerciseCountryCode" asp-items="ViewBag.ExerciseCountries" class="form-control"></select>
+            <select asp-for="ExerciseCountryCode" asp-items="ViewBag.Countries" class="form-control"></select>
 
             <span asp-validation-for="ExerciseCountryCode" class="text-danger"></span>
         </div>
@@ -125,6 +126,59 @@
         addrValidationId: 'AddressError',
         formValidId: 'ValidationSummary',
         locComboId: 'LocationCombo'})
+
+    const rawCountryRules = @Html.Raw(JsonSerializer.Serialize(ViewBag.CountryCodeValidationRules));
+    const countryRules = {};
+    (rawCountryRules || []).forEach(function (rule) {
+        if (!rule || !rule.CountryCode || !rule.RegularExpression) {
+            return;
+        }
+
+        countryRules[String(rule.CountryCode).toLowerCase()] = {
+            regex: String(rule.RegularExpression),
+            message: rule.ErrorMessage
+                ? String(rule.ErrorMessage)
+                : "Code entreprise invalide pour le pays selectionne."
+        };
+    });
+
+    const countryInput = $("#ExerciseCountryCode");
+    const sirenInput = $("#SIREN");
+    let sirenValidationMessage = "Code entreprise invalide pour le pays selectionne.";
+
+    $.validator.addMethod("sirenByCountry", function (value, element) {
+        if (!value) {
+            return true;
+        }
+
+        const selectedCountry = (countryInput.val() || "").toString().toLowerCase();
+        const selectedRule = countryRules[selectedCountry];
+        if (!selectedRule) {
+            return true;
+        }
+
+        const regex = new RegExp(selectedRule.regex);
+        const isValid = regex.test(value.trim());
+        if (!isValid) {
+            sirenValidationMessage = selectedRule.message;
+        }
+
+        return isValid;
+    }, function () {
+        return sirenValidationMessage;
+    });
+
+    if (sirenInput.length > 0) {
+        sirenInput.rules("add", {
+            sirenByCountry: true
+        });
+    }
+
+    countryInput.on("change", function () {
+        if (sirenInput.val()) {
+            sirenInput.valid();
+        }
+    });
     })
 </script>
 }

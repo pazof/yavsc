@@ -23,7 +23,7 @@ namespace Yavsc.Models.Workflow
         public virtual List<UserActivity> Activity { get; set; }
 
         [Required, Display(Name = "Country of exercise")]
-        [MinLength(2), MaxLength(2)]
+        [RegularExpression("^[A-Za-z]{2}$", ErrorMessage = "Country code must be a 2-letter code.")]
         public string ExerciseCountryCode { get; set; } = "fr";
 
         [Required,YaStringLength(14),Display(Name="SIREN")]
