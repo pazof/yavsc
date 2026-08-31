@@ -30,7 +30,6 @@ namespace Yavsc.ViewModels.FrontOffice
             Settings = settings;
             WebSite = profile.WebSite;
             Extra = profile.Activity.Where(a => a.DoesCode != activityCode).ToArray();
-             
 
         }
     }

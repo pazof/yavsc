@@ -13,7 +13,6 @@ namespace Yavsc.Models
     using Blog;
     using Chat;
     using Drawing;
-    using Forms;
     using Haircut;
     using Identity;
     using IT.Evolution;
@@ -351,8 +350,6 @@ namespace Yavsc.Models
         public DbSet<CircleAuthorizationToBlogPost> CircleAuthorizationToBlogPost { get; set; }
 
         public DbSet<CommandForm> CommandForm { get; set; }
-
-        public DbSet<Form> Form { get; set; }
 
         public DbSet<Ban> Ban { get; set; }
 
