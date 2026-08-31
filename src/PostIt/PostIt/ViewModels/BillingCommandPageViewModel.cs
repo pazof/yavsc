@@ -61,6 +61,12 @@ public partial class BillingCommandPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string AdditionalInfo { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial long? ExistingQueryId { get; set; }
+
+    [ObservableProperty]
+    public partial QueryStatus CommandStatus { get; set; } = QueryStatus.Inserted;
+
     public string Title => Form.Title;
     public string PerformerLabel => Performer.UserName;
     public string ActivityLabel => Activity.Name;
@@ -73,6 +79,8 @@ public partial class BillingCommandPageViewModel : ViewModelBase
     public bool ShowsSinglePrestation => IsBrush;
     public bool ShowsMultiplePrestations => IsMultiBrush;
     public string BillingRoute => $"/billing/{Form.ActionName}";
+    public bool IsEditingExisting => ExistingQueryId.HasValue;
+    public string SubmitLabel => IsEditingExisting ? "Mettre à jour la commande" : "Poster la commande";
     public string SupportMessage => IsSupported
         ? IsRdv
             ? "Complétez les informations du rendez-vous puis postez la commande."
@@ -108,10 +116,21 @@ public partial class BillingCommandPageViewModel : ViewModelBase
         StatusMessage = SupportMessage;
     }
 
-    public async Task InitializeAsync()
+    partial void OnExistingQueryIdChanged(long? value)
+    {
+        OnPropertyChanged(nameof(IsEditingExisting));
+        OnPropertyChanged(nameof(SubmitLabel));
+    }
+
+    public async Task InitializeAsync(BillingQueryDetailsDto? existingQuery = null)
     {
         if (!IsBrush && !IsMultiBrush)
         {
+            if (existingQuery is not null)
+            {
+                ApplyExistingQuery(existingQuery);
+            }
+
             return;
         }
 
@@ -138,6 +157,11 @@ public partial class BillingCommandPageViewModel : ViewModelBase
         finally
         {
             IsBusy = false;
+        }
+
+        if (existingQuery is not null)
+        {
+            ApplyExistingQuery(existingQuery);
         }
     }
 
@@ -196,18 +220,44 @@ public partial class BillingCommandPageViewModel : ViewModelBase
                 Longitude = longitude,
             };
 
+            var payload = new BillingQueryDetailsDto
+            {
+                Id = ExistingQueryId ?? 0,
+                BillingCode = Form.ActionName,
+                ActivityCode = Activity.Code,
+                PerformerId = Performer.PerformerId,
+                Consent = Consent,
+                EventDate = eventDate,
+                Status = CommandStatus,
+                Reason = Reason.Trim(),
+                AdditionalInfo = string.IsNullOrWhiteSpace(AdditionalInfo) ? string.Empty : AdditionalInfo.Trim(),
+                Location = new BillingLocationDto
+                {
+                    Address = location.Address,
+                    Latitude = location.Latitude,
+                    Longitude = location.Longitude,
+                }
+            };
+
             if (IsRdv)
             {
-                await _billingClient.CreateAsync(Form.ActionName, new
+                if (IsEditingExisting)
                 {
-                    ActivityCode = Activity.Code,
-                    PerformerId = Performer.PerformerId,
-                    Consent,
-                    EventDate = eventDate,
-                    Location = location,
-                    Reason = Reason.Trim(),
-                    Status = QueryStatus.Inserted,
-                }).ConfigureAwait(true);
+                    await _billingClient.UpdateAsync(Form.ActionName, ExistingQueryId!.Value, payload).ConfigureAwait(true);
+                }
+                else
+                {
+                    await _billingClient.CreateAsync(Form.ActionName, new
+                    {
+                        ActivityCode = Activity.Code,
+                        PerformerId = Performer.PerformerId,
+                        Consent,
+                        EventDate = eventDate,
+                        Location = location,
+                        Reason = payload.Reason,
+                        Status = payload.Status,
+                    }).ConfigureAwait(true);
+                }
             }
             else if (IsBrush)
             {
@@ -217,17 +267,26 @@ public partial class BillingCommandPageViewModel : ViewModelBase
                     return;
                 }
 
-                await _billingClient.CreateAsync(Form.ActionName, new
+                payload.PrestationId = SelectedPrestation.Id;
+
+                if (IsEditingExisting)
                 {
-                    ActivityCode = Activity.Code,
-                    PerformerId = Performer.PerformerId,
-                    Consent,
-                    EventDate = (DateTime?)eventDate,
-                    Location = location,
-                    PrestationId = SelectedPrestation.Id,
-                    AdditionalInfo = string.IsNullOrWhiteSpace(AdditionalInfo) ? null : AdditionalInfo.Trim(),
-                    Status = QueryStatus.Inserted,
-                }).ConfigureAwait(true);
+                    await _billingClient.UpdateAsync(Form.ActionName, ExistingQueryId!.Value, payload).ConfigureAwait(true);
+                }
+                else
+                {
+                    await _billingClient.CreateAsync(Form.ActionName, new
+                    {
+                        ActivityCode = Activity.Code,
+                        PerformerId = Performer.PerformerId,
+                        Consent,
+                        EventDate = (DateTime?)eventDate,
+                        Location = location,
+                        PrestationId = SelectedPrestation.Id,
+                        AdditionalInfo = string.IsNullOrWhiteSpace(AdditionalInfo) ? null : AdditionalInfo.Trim(),
+                        Status = payload.Status,
+                    }).ConfigureAwait(true);
+                }
             }
             else if (IsMultiBrush)
             {
@@ -238,19 +297,30 @@ public partial class BillingCommandPageViewModel : ViewModelBase
                     return;
                 }
 
-                await _billingClient.CreateAsync(Form.ActionName, new
+                payload.PrestationIds = selectedPrestations.Select(x => x.Id).ToList();
+
+                if (IsEditingExisting)
                 {
-                    ActivityCode = Activity.Code,
-                    PerformerId = Performer.PerformerId,
-                    Consent,
-                    EventDate = eventDate,
-                    Location = location,
-                    Prestations = selectedPrestations.Select(x => new { PrestationId = x.Id }).ToList(),
-                    Status = QueryStatus.Inserted,
-                }).ConfigureAwait(true);
+                    await _billingClient.UpdateAsync(Form.ActionName, ExistingQueryId!.Value, payload).ConfigureAwait(true);
+                }
+                else
+                {
+                    await _billingClient.CreateAsync(Form.ActionName, new
+                    {
+                        ActivityCode = Activity.Code,
+                        PerformerId = Performer.PerformerId,
+                        Consent,
+                        EventDate = eventDate,
+                        Location = location,
+                        Prestations = selectedPrestations.Select(x => new { PrestationId = x.Id }).ToList(),
+                        Status = payload.Status,
+                    }).ConfigureAwait(true);
+                }
             }
 
-            StatusMessage = $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.";
+            StatusMessage = IsEditingExisting
+                ? $"Commande #{ExistingQueryId} mise à jour sur {BillingRoute} pour {Performer.UserName}."
+                : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.";
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
@@ -264,6 +334,47 @@ public partial class BillingCommandPageViewModel : ViewModelBase
         {
             IsBusy = false;
         }
+    }
+
+    private void ApplyExistingQuery(BillingQueryDetailsDto existingQuery)
+    {
+        ExistingQueryId = existingQuery.Id;
+        CommandStatus = existingQuery.Status;
+        Consent = existingQuery.Consent;
+        Reason = existingQuery.Reason ?? string.Empty;
+        AdditionalInfo = existingQuery.AdditionalInfo ?? string.Empty;
+
+        if (existingQuery.EventDate is not null)
+        {
+            EventDateText = existingQuery.EventDate.Value
+                .ToLocalTime()
+                .ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+        }
+
+        if (existingQuery.Location is not null)
+        {
+            Address = existingQuery.Location.Address ?? string.Empty;
+            LatitudeText = existingQuery.Location.Latitude.ToString(CultureInfo.InvariantCulture);
+            LongitudeText = existingQuery.Location.Longitude.ToString(CultureInfo.InvariantCulture);
+        }
+
+        if (IsBrush && existingQuery.PrestationId is not null)
+        {
+            SelectedPrestation = AvailablePrestations.FirstOrDefault(x => x.Id == existingQuery.PrestationId.Value);
+        }
+
+        if (IsMultiBrush)
+        {
+            var selectedIds = existingQuery.PrestationIds is null
+                ? new HashSet<long>()
+                : new HashSet<long>(existingQuery.PrestationIds);
+            foreach (var item in MultiPrestations)
+            {
+                item.IsSelected = selectedIds.Contains(item.Id);
+            }
+        }
+
+        StatusMessage = $"Commande #{existingQuery.Id} chargée.";
     }
 
     private bool TryParseEventDate(out DateTime eventDate)

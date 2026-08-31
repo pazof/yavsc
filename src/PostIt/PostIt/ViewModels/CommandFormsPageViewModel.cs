@@ -21,7 +21,7 @@ public partial class CommandFormsPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial ObservableCollection<CommandFormSummaryDto> Forms { get; set; }
 
-    [ObservableProperty, NotifyCanExecuteChangedFor(nameof(OpenSelectedFormCommand)), NotifyCanExecuteChangedFor(nameof(OpenQueriesCommand))]
+    [ObservableProperty, NotifyCanExecuteChangedFor(nameof(OpenSelectedFormCommand)), NotifyCanExecuteChangedFor(nameof(OpenQueriesCommand)), NotifyCanExecuteChangedFor(nameof(OpenOngoingQueriesCommand))]
     public partial CommandFormSummaryDto? SelectedForm { get; set; }
 
     [ObservableProperty]
@@ -64,6 +64,8 @@ public partial class CommandFormsPageViewModel : ViewModelBase
 
     private bool CanOpenQueries() => SelectedForm is not null;
 
+    private bool CanOpenOngoingQueries() => SelectedForm is not null;
+
     [RelayCommand(CanExecute = nameof(CanOpenSelectedForm))]
     private async Task OpenSelectedFormAsync()
     {
@@ -100,6 +102,32 @@ public partial class CommandFormsPageViewModel : ViewModelBase
         }
 
         var vm = new BillingQueriesPageViewModel(Activity, Performer, SelectedForm, _billingClient);
+        await vm.InitializeAsync();
+        await app.PushPageAsync(vm);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanOpenOngoingQueries))]
+    private async Task OpenOngoingQueriesAsync()
+    {
+        if (SelectedForm is null)
+        {
+            StatusMessage = "Sélectionnez un formulaire.";
+            return;
+        }
+
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var vm = new BillingQueriesPageViewModel(
+            Activity,
+            Performer,
+            SelectedForm,
+            _billingClient,
+            isReadOnly: true,
+            ongoingOnly: true);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

@@ -22,9 +22,33 @@ public class BillingQueriesPageViewModelTests
         await vm.InitializeAsync();
 
         Assert.Equal("https://business.example/api/v1/billing/Rdv", api.Paths.Single());
-        Assert.Equal(1, vm.Queries.Count);
-        Assert.Equal("Rendez-vous #1", vm.Queries[0].Description);
-        Assert.Contains("1 commande", vm.StatusMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(3, vm.Queries.Count);
+        Assert.Contains(vm.Queries, q => q.Description == "Rendez-vous #1");
+        Assert.Contains("3 commande", vm.StatusMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task RefreshAsync_in_readonly_ongoing_mode_keeps_only_ongoing_statuses_and_disables_open()
+    {
+        var api = new StubBillingApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm = new BillingQueriesPageViewModel(
+            new ActivityBrowseItemDto { Code = "dev", Name = "Développement" },
+            new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+            new CommandFormSummaryDto { Id = 1, ActionName = "Rdv", Title = "Rendez-vous" },
+            client,
+            isReadOnly: true,
+            ongoingOnly: true);
+
+        await vm.InitializeAsync();
+
+        Assert.Equal(2, vm.Queries.Count);
+        Assert.All(vm.Queries, q => Assert.DoesNotContain("Rejected", q.StatusLabel, StringComparison.OrdinalIgnoreCase));
+        Assert.Contains("lecture seule", vm.StatusMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.False(vm.CanOpenDetails);
+
+        vm.SelectedQuery = vm.Queries[0];
+        Assert.False(vm.OpenSelectedQueryCommand.CanExecute(null));
     }
 
     private sealed class StubBillingApi : IYavscApiClient
@@ -70,6 +94,26 @@ public class BillingQueriesPageViewModelTests
                         Status = QueryStatus.Accepted,
                         Description = "Autre performer",
                         EventDate = new DateTime(2026, 9, 3, 10, 0, 0, DateTimeKind.Utc),
+                    },
+                    new()
+                    {
+                        Id = 14,
+                        ActivityCode = "dev",
+                        PerformerId = "perf-1",
+                        ClientId = "cli-1",
+                        Status = QueryStatus.InProgress,
+                        Description = "En cours",
+                        EventDate = new DateTime(2026, 9, 4, 10, 0, 0, DateTimeKind.Utc),
+                    },
+                    new()
+                    {
+                        Id = 15,
+                        ActivityCode = "dev",
+                        PerformerId = "perf-1",
+                        ClientId = "cli-1",
+                        Status = QueryStatus.Rejected,
+                        Description = "Rejetée",
+                        EventDate = new DateTime(2026, 9, 5, 10, 0, 0, DateTimeKind.Utc),
                     }
                 };
 

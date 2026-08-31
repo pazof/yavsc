@@ -4,9 +4,16 @@
 
 ### Added
 
+* [PostIt] Une page d'historique des commandes billing permet maintenant d'ouvrir une commande existante.
+* [PostIt] Une vue "Demandes en cours" en lecture seule est disponible pour le performer, filtrée sur les statuts actifs (Inserted, Accepted, InProgress).
+
 ### Changed
 
+* [PostIt] La page détail billing se préremplit depuis une commande existante (Rdv, Brush, MBrush) et passe en mode mise à jour.
+
 ### Fixed
+
+* [PostIt] Le flux historique n'est plus limité à une simple liste: l'action d'ouverture charge la commande cible puis navigue vers la page détail.
 
 ## [1.0.8-rc9] - unstable
 

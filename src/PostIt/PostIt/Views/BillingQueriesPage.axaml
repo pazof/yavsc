@@ -12,9 +12,12 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,12,0,12">
             <Button Content="Rafraîchir" Command="{Binding RefreshCommand}" />
+            <Button Content="Ouvrir la commande"
+                    Command="{Binding OpenSelectedQueryCommand}"
+                    IsVisible="{Binding CanOpenDetails}" />
         </StackPanel>
 
-        <ListBox Grid.Row="2" ItemsSource="{Binding Queries}">
+        <ListBox Grid.Row="2" ItemsSource="{Binding Queries}" SelectedItem="{Binding SelectedQuery, Mode=TwoWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="vm:BillingQueryDisplayItem">
                     <Border BorderThickness="0,0,0,1" BorderBrush="#22000000" Padding="0,0,0,10" Margin="0,0,0,10">

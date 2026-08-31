@@ -31,14 +31,17 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Grid Grid.Row="3" Margin="0,12,0,0" ColumnDefinitions="Auto,8,Auto,12,*,Auto">
+        <Grid Grid.Row="3" Margin="0,12,0,0" ColumnDefinitions="Auto,8,Auto,8,Auto,12,*">
             <Button Grid.Column="0"
                     Content="Ouvrir le formulaire"
                     Command="{Binding OpenSelectedFormCommand}" />
             <Button Grid.Column="2"
                 Content="Voir les commandes"
                 Command="{Binding OpenQueriesCommand}" />
-            <TextBox Grid.Column="4"
+            <Button Grid.Column="4"
+                    Content="Demandes en cours (lecture seule)"
+                    Command="{Binding OpenOngoingQueriesCommand}" />
+            <TextBox Grid.Column="6"
                      Text="{Binding StatusMessage}"
                      IsReadOnly="True"
                      AcceptsReturn="True"

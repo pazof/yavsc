@@ -132,15 +132,71 @@ public class BillingCommandPageViewModelTests
         Assert.Equal(22, prestations[1].GetProperty("PrestationId").GetInt32());
     }
 
+    [Fact]
+    public async Task InitializeAsync_with_existing_brush_query_prefills_and_submit_updates_query()
+    {
+        var api = new RecordingApi
+        {
+            HairPrestations = new List<HairPrestationDto>
+            {
+                new() { Id = 30, Title = "Femme · Cheveux longs", Details = "Coupe · Brushing" },
+                new() { Id = 31, Title = "Homme · Cheveux courts", Details = "Coupe" },
+            }
+        };
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm = new BillingCommandPageViewModel(
+            new ActivityBrowseItemDto { Code = "brush", Name = "Brush" },
+            new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
+            new CommandFormSummaryDto { Id = 13, ActionName = "Brush", Title = "Coupe" },
+            client);
+
+        await vm.InitializeAsync(new BillingQueryDetailsDto
+        {
+            Id = 77,
+            BillingCode = "Brush",
+            ActivityCode = "brush",
+            PerformerId = "perf-2",
+            ClientId = "cli-1",
+            EventDate = new DateTime(2026, 9, 2, 14, 30, 0, DateTimeKind.Utc),
+            Consent = true,
+            Status = QueryStatus.Accepted,
+            PrestationId = 30,
+            AdditionalInfo = "Ancienne note",
+            Location = new BillingLocationDto
+            {
+                Address = "1 rue du Test",
+                Latitude = 48.8566,
+                Longitude = 2.3522,
+            }
+        });
+
+        vm.SelectedPrestation = vm.AvailablePrestations[1];
+        vm.AdditionalInfo = "Note mise à jour";
+        await vm.SubmitCommand.ExecuteAsync(null);
+
+        Assert.Equal(HttpMethod.Put, api.LastMethod);
+        Assert.Equal("https://business.example/api/v1/billing/Brush/77", api.LastPath);
+        Assert.True(vm.IsEditingExisting);
+        Assert.Equal("Mettre à jour la commande", vm.SubmitLabel);
+
+        using var json = JsonDocument.Parse(JsonSerializer.Serialize(api.LastBody));
+        Assert.Equal(77, json.RootElement.GetProperty("Id").GetInt32());
+        Assert.Equal(31, json.RootElement.GetProperty("PrestationId").GetInt32());
+        Assert.Equal("Note mise à jour", json.RootElement.GetProperty("AdditionalInfo").GetString());
+        Assert.Equal((int)QueryStatus.Accepted, json.RootElement.GetProperty("Status").GetInt32());
+    }
+
     private sealed class RecordingApi : IYavscApiClient
     {
         public HttpClient Http { get; } = new();
+        public HttpMethod? LastMethod { get; private set; }
         public string? LastPath { get; private set; }
         public object? LastBody { get; private set; }
         public List<HairPrestationDto>? HairPrestations { get; init; }
 
         public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
         {
+            LastMethod = method;
             LastPath = path;
             LastBody = body;
             if (typeof(T) == typeof(List<HairPrestationDto>))
@@ -152,6 +208,7 @@ public class BillingCommandPageViewModelTests
 
         public Task CallAsync(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
         {
+            LastMethod = method;
             LastPath = path;
             LastBody = body;
             return Task.CompletedTask;

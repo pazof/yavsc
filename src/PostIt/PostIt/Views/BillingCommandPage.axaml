@@ -108,7 +108,7 @@
 
             <Grid Grid.Row="13" Grid.ColumnSpan="2" ColumnDefinitions="Auto,12,*,Auto">
                 <Button Grid.Column="0"
-                        Content="Poster la commande"
+                    Content="{Binding SubmitLabel}"
                         Command="{Binding SubmitCommand}"
                         IsEnabled="{Binding IsSupported}" />
                 <TextBox Grid.Column="2"
