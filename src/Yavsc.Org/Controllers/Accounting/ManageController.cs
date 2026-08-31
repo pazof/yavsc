@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models.Workflow;
 using Yavsc.Helpers;
 using Yavsc.Models.Relationship;
@@ -544,15 +545,19 @@ namespace Yavsc.Controllers
             {
                 var currentProfile = _dbContext.Performers.Include(x => x.OrganizationAddress)
                 .First(x => x.PerformerId == uid);
+                currentProfile.ExerciseCountryCode = NormalizeCountryCodeOrDefault(currentProfile.ExerciseCountryCode);
                 ViewBag.Activities = _dbContext.ActivityItems(existing.Activity);
+                SetExerciseCountries(currentProfile.ExerciseCountryCode);
                 return View(currentProfile);
             }
 
             ViewBag.Activities = _dbContext.ActivityItems(new List<UserActivity>());
+            SetExerciseCountries("fr");
             return View(new PerformerProfile
             {
                 PerformerId = user.Id,
                 Performer = user,
+                ExerciseCountryCode = "fr",
                 OrganizationAddress = new Location()
             });
         }
@@ -563,28 +568,32 @@ namespace Yavsc.Controllers
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
+            model.ExerciseCountryCode = NormalizeCountryCodeOrDefault(model.ExerciseCountryCode);
             try
             {
                 if (ModelState.IsValid)
                 {
-
-                    var exSiren = await _dbContext.ExceptionsSIREN.FirstOrDefaultAsync(
-                        ex => ex.SIREN == model.SIREN
-                    );
-                    if (exSiren != null)
+                    var isFrenchPerformerCode = string.Equals(model.ExerciseCountryCode, "fr", StringComparison.Ordinal);
+                    if (isFrenchPerformerCode)
                     {
-                        _logger.LogInformation("Exception SIREN:" + exSiren);
-                    }
-                    else
-                    {
-                        var taskCheck = await _cchecker.CheckAsync(model.SIREN);
-                        if (!taskCheck.success)
+                        var exSiren = await _dbContext.ExceptionsSIREN.FirstOrDefaultAsync(
+                            ex => ex.SIREN == model.SIREN
+                        );
+                        if (exSiren != null)
                         {
-                            ModelState.AddModelError(
-                                "SIREN",
-                                _SR["Invalid company number"] + " (" + taskCheck.errorCode + ")"
-                            );
-                            _logger.LogInformation($"Invalid company number: {model.SIREN}/{taskCheck.errorType}/{taskCheck.errorCode}/{taskCheck.errorMessage}" );
+                            _logger.LogInformation("Exception SIREN:" + exSiren);
+                        }
+                        else
+                        {
+                            var taskCheck = await _cchecker.CheckAsync(model.SIREN);
+                            if (!taskCheck.success)
+                            {
+                                ModelState.AddModelError(
+                                    "SIREN",
+                                    _SR["Invalid company number"] + " (" + taskCheck.errorCode + ")"
+                                );
+                                _logger.LogInformation($"Invalid company number: {model.SIREN}/{taskCheck.errorType}/{taskCheck.errorCode}/{taskCheck.errorMessage}" );
+                            }
                         }
                     }
                 }
@@ -622,8 +631,30 @@ namespace Yavsc.Controllers
             }
             ViewBag.Activities = _dbContext.ActivityItems(new List<UserActivity>());
             ViewBag.GoogleSettings = _googleSettings;
+            SetExerciseCountries(model.ExerciseCountryCode);
             model.Performer = _dbContext.Users.Single(u=>u.Id == model.PerformerId);
             return View(model);
+        }
+
+        private static string NormalizeCountryCodeOrDefault(string? code)
+        {
+            var normalized = PerformerCodeInputValidationCatalog.NormalizeCountryCode(code);
+            if (string.IsNullOrWhiteSpace(normalized))
+            {
+                return "fr";
+            }
+
+            return normalized;
+        }
+
+        private void SetExerciseCountries(string? selectedCountryCode)
+        {
+            var selected = NormalizeCountryCodeOrDefault(selectedCountryCode);
+            ViewBag.ExerciseCountries = new SelectList(
+                PerformerCodeInputValidationCatalog.Countries,
+                nameof(Country.Code),
+                nameof(Country.DisplayName),
+                selected);
         }
 
         [HttpPost]

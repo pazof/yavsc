@@ -6,14 +6,18 @@
 
 * [PostIt] Une page d'historique des commandes billing permet maintenant d'ouvrir une commande existante.
 * [PostIt] Une vue "Demandes en cours" en lecture seule est disponible pour le performer, filtrée sur les statuts actifs (Inserted, Accepted, InProgress).
+* [Yavsc.Org] Nouvelles entités `Country` et `PerformerCodeInputValidation` pour piloter la validation du code entreprise performer par pays.
 
 ### Changed
 
 * [PostIt] La page détail billing se préremplit depuis une commande existante (Rdv, Brush, MBrush) et passe en mode mise à jour.
+* [Yavsc.Org] Le formulaire `Manage/SetActivity` inclut désormais le pays d'exercice (`fr`, `en`, `pt`) et applique la regex associée au champ `SIREN`.
+* [Yavsc.Org] La vérification externe du numéro d'entreprise est conservée uniquement pour le pays `fr`.
 
 ### Fixed
 
 * [PostIt] Le flux historique n'est plus limité à une simple liste: l'action d'ouverture charge la commande cible puis navigue vers la page détail.
+* [Yavsc.Org] Le champ `SIREN` n'est plus validé avec une règle unique indépendante du pays d'exercice.
 
 ## [1.0.8-rc9] - unstable
 

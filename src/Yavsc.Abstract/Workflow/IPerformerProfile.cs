@@ -3,6 +3,7 @@ namespace Yavsc.Workflow
     public interface IPerformerProfile
     {
         string PerformerId { get; set; }
+        string ExerciseCountryCode { get; set; }
         string SIREN { get; set; }
         bool AcceptNotifications { get; set; }
         long OrganizationAddressId { get; set; }

@@ -69,6 +69,15 @@
     </div>
     <div class="form-group">
 
+        <label asp-for="ExerciseCountryCode" class="col-md-2 control-label">Pays d'exercice</label>
+        <div class="col-md-10">
+            <select asp-for="ExerciseCountryCode" asp-items="ViewBag.ExerciseCountries" class="form-control"></select>
+
+            <span asp-validation-for="ExerciseCountryCode" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+
         <label asp-for="SIREN" class="col-md-2 control-label">SIREN</label>
         <div class="col-md-10">
             <input asp-for="SIREN" class="form-control" />

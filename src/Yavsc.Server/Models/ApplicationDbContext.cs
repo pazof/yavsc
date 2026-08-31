@@ -109,6 +109,21 @@ namespace Yavsc.Models
 
             builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
 
+            builder.Entity<Country>().HasKey(c => c.Code);
+            builder.Entity<PerformerCodeInputValidation>()
+                .HasOne(v => v.Country)
+                .WithMany()
+                .HasForeignKey(v => v.CountryCode)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Country>().HasData(
+                PerformerCodeInputValidationCatalog.Countries
+            );
+
+            builder.Entity<PerformerCodeInputValidation>().HasData(
+                PerformerCodeInputValidationCatalog.Rules
+            );
+
             builder.Entity<Client>().Property("Id").UseIdentityAlwaysColumn();
             builder.Entity<ClientSecret>().Property("Id").UseIdentityAlwaysColumn();
             builder.Entity<ClientScope>().Property("Id").UseIdentityAlwaysColumn();
@@ -262,6 +277,8 @@ namespace Yavsc.Models
 
         public DbSet<HairMultiCutQuery> HairMultiCutQueries { get; set; }
         public DbSet<PerformerProfile> Performers { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<PerformerCodeInputValidation> PerformerCodeInputValidations { get; set; }
 
         public DbSet<Estimate> Estimates { get; set; }
         public DbSet<Signature> Signatures { get; set; }
