@@ -53,8 +53,7 @@ namespace Yavsc.Controllers
 
             var performerCounts = await (
                 from ua in _context.UserActivities.AsNoTracking()
-                join p in _context.Performers.AsNoTracking() on ua.UserId equals p.PerformerId
-                where p.Active && !string.IsNullOrWhiteSpace(ua.DoesCode) && codes.Contains(ua.DoesCode)
+                where !string.IsNullOrWhiteSpace(ua.DoesCode) && codes.Contains(ua.DoesCode)
                 group ua by ua.DoesCode into g
                 select new
                 {
@@ -63,11 +62,19 @@ namespace Yavsc.Controllers
                 })
                 .ToDictionaryAsync(x => x.Code, x => x.Count, cancellationToken);
 
-            return Ok(activities.Select(a => ToBrowseItem(a, performerCounts)).ToList());
+            var filteredActivities = activities
+                .Where(a =>
+                    (performerCounts.TryGetValue(a.Code, out var ownCount) && ownCount > 0)
+                    || (a.Children ?? new List<Activity>())
+                        .Where(c => !c.Hidden)
+                        .Any(c => performerCounts.TryGetValue(c.Code, out var childCount) && childCount > 0))
+                .ToList();
+
+            return Ok(filteredActivities.Select(a => ToBrowseItem(a, performerCounts)).ToList());
         }
 
-        [HttpGet("{id}/performers")]
-        public async Task<ActionResult<IEnumerable<ActivityPerformerDto>>> GetPerformers(
+        [HttpGet("{id}/users")]
+        public async Task<ActionResult<IEnumerable<ActivityPerformerDto>>> GetUsers(
             [FromRoute] string id,
             CancellationToken cancellationToken)
         {
@@ -84,35 +91,54 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
 
-            var performers = await (
-                from p in _context.Performers.AsNoTracking()
-                join ua in _context.UserActivities.AsNoTracking() on p.PerformerId equals ua.UserId
-                join u in _context.ApplicationUser.AsNoTracking() on p.PerformerId equals u.Id into users
+            var users = await QueryDeclaredUsersAsync(id, activity.Name, cancellationToken);
+
+            return Ok(users);
+        }
+
+        [HttpGet("{id}/performers")]
+        public Task<ActionResult<IEnumerable<ActivityPerformerDto>>> GetPerformers(
+            [FromRoute] string id,
+            CancellationToken cancellationToken)
+        {
+            // Backward-compatible alias kept for existing clients.
+            return GetUsers(id, cancellationToken);
+        }
+
+        private Task<List<ActivityPerformerDto>> QueryDeclaredUsersAsync(
+            string activityCode,
+            string activityName,
+            CancellationToken cancellationToken)
+        {
+            return (
+                from ua in _context.UserActivities.AsNoTracking()
+                join u in _context.ApplicationUser.AsNoTracking() on ua.UserId equals u.Id into users
                 from user in users.DefaultIfEmpty()
-                where p.Active && ua.DoesCode == id
-                orderby p.Rate
+                join p in _context.Performers.AsNoTracking() on ua.UserId equals p.PerformerId into performerProfiles
+                from performer in performerProfiles.DefaultIfEmpty()
+                where ua.DoesCode == activityCode
+                orderby user != null ? user.UserName : ua.UserId
                 select new ActivityPerformerDto
                 {
-                    PerformerId = p.PerformerId,
+                    PerformerId = ua.UserId,
+                    HasPerformerProfile = performer != null,
                     UserName = user != null ? (user.UserName ?? string.Empty) : string.Empty,
-                    Active = p.Active,
-                    AcceptNotifications = p.AcceptNotifications,
-                    AcceptPublicContact = p.AcceptPublicContact,
-                    WebSite = p.WebSite ?? string.Empty,
-                    ActivityCode = id,
-                    ActivityName = activity.Name,
+                    Active = performer != null && performer.Active,
+                    AcceptNotifications = performer != null && performer.AcceptNotifications,
+                    AcceptPublicContact = performer != null && performer.AcceptPublicContact,
+                    WebSite = performer != null ? (performer.WebSite ?? string.Empty) : string.Empty,
+                    ActivityCode = activityCode,
+                    ActivityName = activityName,
                     SettingsClassName = _context.Activities
-                        .Where(a => a.Code == id)
+                        .Where(a => a.Code == activityCode)
                         .Select(a => a.SettingsClassName)
                         .FirstOrDefault() ?? string.Empty,
                     ExtraActivityCount = _context.UserActivities
-                        .Where(x => x.UserId == p.PerformerId && x.DoesCode != id)
+                        .Where(x => x.UserId == ua.UserId && x.DoesCode != activityCode)
                         .Count()
                 })
                 .Distinct()
                 .ToListAsync(cancellationToken);
-
-            return Ok(performers);
         }
 
         // GET: api/ActivityApi/5
@@ -257,6 +283,7 @@ namespace Yavsc.Controllers
                     .ToList(),
                 Children = (activity.Children ?? Enumerable.Empty<Activity>())
                     .Where(c => !c.Hidden)
+                    .Where(c => performerCounts.TryGetValue(c.Code, out var childCount) && childCount > 0)
                     .OrderByDescending(c => c.Rate)
                     .Select(c => new ActivityBrowseItemDto
                     {

@@ -14,10 +14,10 @@ public class ActivitiesPageViewModelTests
         var client = new ActivityApiClient(api, "https://business.example/api/v1/");
 
         await client.GetCatalogAsync("brush", TestContext.Current.CancellationToken);
-        await client.GetPerformersAsync("brush-pro", TestContext.Current.CancellationToken);
+        await client.GetUsersAsync("brush-pro", TestContext.Current.CancellationToken);
 
         Assert.Equal("https://business.example/api/v1/activity/catalog?parentCode=brush", api.Paths[0]);
-        Assert.Equal("https://business.example/api/v1/activity/brush-pro/performers", api.Paths[1]);
+        Assert.Equal("https://business.example/api/v1/activity/brush-pro/users", api.Paths[1]);
     }
 
     [Fact]
@@ -34,12 +34,20 @@ public class ActivitiesPageViewModelTests
         Assert.Equal("brush", vm.CurrentActivity?.Code);
         Assert.Single(vm.Performers);
         Assert.Equal("Alice", vm.Performers[0].UserName);
+        Assert.True(vm.Performers[0].HasPerformerProfile);
+        Assert.True(vm.Performers[0].IsPerformerActive);
+        Assert.Equal("Actif", vm.Performers[0].PerformerStatusBadgeLabel);
+        Assert.Equal("Pas d'autre activité", vm.Performers[0].ExtraActivityLabel);
 
         await vm.ShowSpecializationAsync(vm.Specializations[0]);
 
         Assert.Equal("brush-pro", vm.CurrentActivity?.Code);
         Assert.Single(vm.Performers);
         Assert.Equal("Bob", vm.Performers[0].UserName);
+        Assert.True(vm.Performers[0].HasPerformerProfile);
+        Assert.False(vm.Performers[0].IsPerformerActive);
+        Assert.Equal("Inactif", vm.Performers[0].PerformerStatusBadgeLabel);
+        Assert.Equal("Autres spécialisations: 2", vm.Performers[0].ExtraActivityLabel);
         Assert.Contains("brush pro", vm.StatusMessage, StringComparison.OrdinalIgnoreCase);
 
         await vm.ShowSpecializationAsync(null);
@@ -86,14 +94,14 @@ public class ActivitiesPageViewModelTests
 
             if (typeof(T) == typeof(List<ActivityPerformerDto>))
             {
-                var performers = path.EndsWith("brush-pro/performers", StringComparison.Ordinal)
+                var performers = path.EndsWith("brush-pro/users", StringComparison.Ordinal)
                     ? new List<ActivityPerformerDto>
                     {
-                        new() { PerformerId = "pro-2", UserName = "Bob", ActivityCode = "brush-pro", ActivityName = "Brush Pro" }
+                        new() { PerformerId = "pro-2", HasPerformerProfile = true, Active = false, UserName = "Bob", ActivityCode = "brush-pro", ActivityName = "Brush Pro", ExtraActivityCount = 2 }
                     }
                     : new List<ActivityPerformerDto>
                     {
-                        new() { PerformerId = "pro-1", UserName = "Alice", ActivityCode = "brush", ActivityName = "Brush" }
+                        new() { PerformerId = "pro-1", HasPerformerProfile = true, Active = true, UserName = "Alice", ActivityCode = "brush", ActivityName = "Brush", ExtraActivityCount = 0 }
                     };
 
                 return Task.FromResult((T)(object)performers);

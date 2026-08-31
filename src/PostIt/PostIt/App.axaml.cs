@@ -86,11 +86,6 @@ private void ConfigureRootView(MainView rootView)
         rootView.NavRoot.PopToRootAsync();
     };
 
-    sessionStatus.LoginSucceeded += async () =>
-    {
-        await PushMainPageAsync();
-    };
-
     rootView.SessionBanner.DataContext = sessionStatus;
 }
 

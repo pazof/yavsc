@@ -63,9 +63,35 @@ namespace Yavsc.Controllers
                .Where(a => a.ParentCode == id)
                .OrderByDescending(a => a.Rate).ToList();
 
+            var candidateCodes = toShow
+                .Select(a => a.Code)
+                .Concat(toShow.SelectMany(a => (a.Children ?? new List<Yavsc.Models.Workflow.Activity>())
+                    .Where(c => !c.Hidden)
+                    .Select(c => c.Code)))
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Distinct()
+                .ToArray();
+
+            var performerCounts = _dbContext.UserActivities
+                .Where(ua => candidateCodes.Contains(ua.DoesCode))
+                .GroupBy(ua => ua.DoesCode)
+                .Select(g => new { Code = g.Key, Count = g.Select(x => x.UserId).Distinct().Count() })
+                .ToDictionary(x => x.Code, x => x.Count);
+
+            toShow = toShow
+                .Where(a =>
+                    (performerCounts.TryGetValue(a.Code, out var ownCount) && ownCount > 0)
+                    || (a.Children ?? new List<Yavsc.Models.Workflow.Activity>())
+                        .Where(c => !c.Hidden)
+                        .Any(c => performerCounts.TryGetValue(c.Code, out var childCount) && childCount > 0))
+                .ToList();
+
             foreach (var a in toShow)
             {
-                a.Children = a.Children.Where(c => !c.Hidden).ToList();
+                a.Children = (a.Children ?? new List<Yavsc.Models.Workflow.Activity>())
+                    .Where(c => !c.Hidden)
+                    .Where(c => performerCounts.TryGetValue(c.Code, out var childCount) && childCount > 0)
+                    .ToList();
             }
             return View(toShow);
         }

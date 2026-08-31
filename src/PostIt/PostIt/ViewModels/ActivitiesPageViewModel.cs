@@ -29,7 +29,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
     public partial ActivityBrowseItemDto? SelectedSpecialization { get; set; }
 
     [ObservableProperty]
-    public partial ObservableCollection<ActivityPerformerDto> Performers { get; set; } = new();
+    public partial ObservableCollection<ActivityUserDisplayItem> Performers { get; set; } = new();
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
@@ -122,14 +122,14 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         {
             Activities = new ObservableCollection<ActivityBrowseItemDto>();
             Specializations = new ObservableCollection<ActivityBrowseItemDto>();
-            Performers = new ObservableCollection<ActivityPerformerDto>();
+            Performers = new ObservableCollection<ActivityUserDisplayItem>();
             StatusMessage = "Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.";
         }
         catch (Exception ex)
         {
             Activities = new ObservableCollection<ActivityBrowseItemDto>();
             Specializations = new ObservableCollection<ActivityBrowseItemDto>();
-            Performers = new ObservableCollection<ActivityPerformerDto>();
+            Performers = new ObservableCollection<ActivityUserDisplayItem>();
             StatusMessage = $"Erreur: {ex.Message}";
         }
         finally
@@ -158,7 +158,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
 
         if (activity is null)
         {
-            Performers = new ObservableCollection<ActivityPerformerDto>();
+            Performers = new ObservableCollection<ActivityUserDisplayItem>();
             return;
         }
 
@@ -197,18 +197,19 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         IsBusy = true;
         try
         {
-            var list = await _client.GetPerformersAsync(activity.Code);
-            Performers = new ObservableCollection<ActivityPerformerDto>(list ?? new());
-            StatusMessage = $"{activity.Name} · {Performers.Count} prestataire(s)";
+            var list = await _client.GetUsersAsync(activity.Code);
+            Performers = new ObservableCollection<ActivityUserDisplayItem>((list ?? new())
+                .Select(ActivityUserDisplayItem.FromDto));
+            StatusMessage = $"{activity.Name} · {Performers.Count} utilisateur(s)";
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            Performers = new ObservableCollection<ActivityPerformerDto>();
+            Performers = new ObservableCollection<ActivityUserDisplayItem>();
             StatusMessage = "Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.";
         }
         catch (Exception ex)
         {
-            Performers = new ObservableCollection<ActivityPerformerDto>();
+            Performers = new ObservableCollection<ActivityUserDisplayItem>();
             StatusMessage = $"Erreur: {ex.Message}";
         }
         finally

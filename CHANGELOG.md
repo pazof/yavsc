@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.8-rc10] - unstable
+
+### Added
+
+### Changed
+
+### Fixed
+
 ## [1.0.8-rc9] - unstable
 
 ### Added

@@ -39,7 +39,7 @@ public sealed class ActivityApiClient
         return _api.CallAsync<List<ActivityBrowseItemDto>>(HttpMethod.Get, Absolute(path), ct: ct);
     }
 
-    public Task<List<ActivityPerformerDto>> GetPerformersAsync(
+    public Task<List<ActivityPerformerDto>> GetUsersAsync(
         string activityCode,
         CancellationToken ct = default)
     {
@@ -48,9 +48,14 @@ public sealed class ActivityApiClient
 
         return _api.CallAsync<List<ActivityPerformerDto>>(
             HttpMethod.Get,
-            Absolute($"{PathPrefix}/{Uri.EscapeDataString(activityCode)}/performers"),
+            Absolute($"{PathPrefix}/{Uri.EscapeDataString(activityCode)}/users"),
             ct: ct);
     }
+
+    public Task<List<ActivityPerformerDto>> GetPerformersAsync(
+        string activityCode,
+        CancellationToken ct = default)
+        => GetUsersAsync(activityCode, ct);
 
     private string Absolute(string relativePath) => new Uri(_baseAddress, relativePath).ToString();
 }

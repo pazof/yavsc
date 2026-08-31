@@ -6,6 +6,7 @@ namespace Yavsc.Abstract.Workflow;
 public sealed class ActivityPerformerDto
 {
     public string PerformerId { get; set; } = string.Empty;
+    public bool HasPerformerProfile { get; set; }
     public string UserName { get; set; } = string.Empty;
     public bool Active { get; set; }
     public bool AcceptNotifications { get; set; }
