@@ -188,6 +188,30 @@ public sealed class ApiWebServerFixture : WebHostFixture
         db.SaveChanges();
     }
 
+    public void ResetAndSeedRdvQueryGraph()
+    {
+        ResetAndSeedActivityGraph();
+
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var location = db.Locations.Single(l => l.Address == "1 rue du Test");
+
+        db.RdvQueries.Add(new RdvQuery
+        {
+            ActivityCode = "dev",
+            ClientId = "alice",
+            PerformerId = "alice",
+            Consent = true,
+            EventDate = DateTime.UtcNow.AddDays(1),
+            Location = location,
+            Reason = "Initial rendez-vous",
+            Status = Yavsc.QueryStatus.Inserted,
+        });
+
+        db.SaveChanges();
+    }
+
     public override void Dispose()
     {
         try

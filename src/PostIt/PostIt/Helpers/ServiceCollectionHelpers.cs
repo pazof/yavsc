@@ -24,6 +24,7 @@ public static class ServiceCollectionHelpers
         var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
         var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
         var activityClient = new ActivityApiClient(api, settings.BusinessApiUrl);
+        var billingClient = new BillingApiClient(api, settings.BusinessApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
 
         // Vues
@@ -47,6 +48,8 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<SignaturePage>();
         services.AddSingleton<CirclesPage>();
         services.AddSingleton<ActivitiesPage>();
+        services.AddTransient<CommandFormsPage>();
+        services.AddTransient<BillingCommandPage>();
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);
@@ -55,6 +58,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(blogAclClient);
         services.AddSingleton(userSearchClient);
         services.AddSingleton(activityClient);
+        services.AddSingleton(billingClient);
         services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddSingleton<HomePageViewModel>();
         services.AddSingleton<SignaturePageViewModel>();

@@ -12,12 +12,15 @@ public class ActivitiesPageViewModelTests
     {
         var api = new StubActivityApi();
         var client = new ActivityApiClient(api, "https://business.example/api/v1/");
+        var billingClient = new BillingApiClient(api, "https://business.example/api/v1/");
 
         await client.GetCatalogAsync("brush", TestContext.Current.CancellationToken);
         await client.GetUsersAsync("brush-pro", TestContext.Current.CancellationToken);
+        await billingClient.CreateAsync("Rdv", new { Foo = "Bar" }, TestContext.Current.CancellationToken);
 
         Assert.Equal("https://business.example/api/v1/activity/catalog?parentCode=brush", api.Paths[0]);
         Assert.Equal("https://business.example/api/v1/activity/brush-pro/users", api.Paths[1]);
+        Assert.Equal("https://business.example/api/v1/billing/Rdv", api.Paths[2]);
     }
 
     [Fact]
@@ -25,7 +28,8 @@ public class ActivitiesPageViewModelTests
     {
         var api = new StubActivityApi();
         var client = new ActivityApiClient(api, "https://business.example/api/v1/");
-        var vm = new ActivitiesPageViewModel(client);
+        var billingClient = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm = new ActivitiesPageViewModel(client, billingClient);
 
         await vm.RefreshAsync();
 
@@ -76,6 +80,10 @@ public class ActivitiesPageViewModelTests
                         Name = "Brush",
                         Description = "Coiffure à domicile",
                         PerformerCount = 1,
+                        Forms = new List<CommandFormSummaryDto>
+                        {
+                            new() { Id = 1, ActionName = "Rdv", Title = "Rendez-vous" }
+                        },
                         Children = new List<ActivityBrowseItemDto>
                         {
                             new()
@@ -85,6 +93,10 @@ public class ActivitiesPageViewModelTests
                                 Description = "Spécialisation premium",
                                 ParentCode = "brush",
                                 PerformerCount = 1,
+                                Forms = new List<CommandFormSummaryDto>
+                                {
+                                    new() { Id = 2, ActionName = "Rdv", Title = "Rendez-vous premium" }
+                                }
                             }
                         }
                     }

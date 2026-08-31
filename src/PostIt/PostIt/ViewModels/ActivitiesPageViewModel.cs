@@ -4,8 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PostIt.Helpers;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;
 
@@ -14,6 +16,7 @@ namespace PostIt.ViewModels;
 public partial class ActivitiesPageViewModel : ViewModelBase
 {
     private readonly ActivityApiClient _client;
+    private readonly BillingApiClient _billingClient;
     private bool _syncingSelection;
 
     [ObservableProperty]
@@ -31,6 +34,9 @@ public partial class ActivitiesPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial ObservableCollection<ActivityUserDisplayItem> Performers { get; set; } = new();
 
+    [ObservableProperty, NotifyCanExecuteChangedFor(nameof(OpenCommandFormsCommand))]
+    public partial ActivityUserDisplayItem? SelectedPerformer { get; set; }
+
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
 
@@ -40,6 +46,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
     public ActivityBrowseItemDto? CurrentActivity => SelectedSpecialization ?? SelectedActivity;
     public string SelectedActivityLabel => SelectedActivity?.Name ?? "(aucune activité)";
     public string CurrentActivityLabel => CurrentActivity?.Name ?? "(aucune)";
+    public int CurrentFormCount => CurrentActivity?.Forms?.Count ?? 0;
 
     public override bool CanNavigateNext
     {
@@ -53,9 +60,10 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         protected set { _ = value; }
     }
 
-    public ActivitiesPageViewModel(ActivityApiClient client)
+    public ActivitiesPageViewModel(ActivityApiClient client, BillingApiClient billingClient)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
+        _billingClient = billingClient ?? throw new ArgumentNullException(nameof(billingClient));
     }
 
     partial void OnSelectedActivityChanged(ActivityBrowseItemDto? value)
@@ -154,11 +162,13 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         OnPropertyChanged(nameof(CurrentActivity));
         OnPropertyChanged(nameof(SelectedActivityLabel));
         OnPropertyChanged(nameof(CurrentActivityLabel));
+        OnPropertyChanged(nameof(CurrentFormCount));
         Specializations = new ObservableCollection<ActivityBrowseItemDto>(activity?.Children ?? new());
 
         if (activity is null)
         {
             Performers = new ObservableCollection<ActivityUserDisplayItem>();
+            SelectedPerformer = null;
             return;
         }
 
@@ -179,6 +189,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
 
         OnPropertyChanged(nameof(CurrentActivity));
         OnPropertyChanged(nameof(CurrentActivityLabel));
+        OnPropertyChanged(nameof(CurrentFormCount));
 
         if (specialization is null)
         {
@@ -200,21 +211,47 @@ public partial class ActivitiesPageViewModel : ViewModelBase
             var list = await _client.GetUsersAsync(activity.Code);
             Performers = new ObservableCollection<ActivityUserDisplayItem>((list ?? new())
                 .Select(ActivityUserDisplayItem.FromDto));
+            SelectedPerformer = null;
             StatusMessage = $"{activity.Name} · {Performers.Count} utilisateur(s)";
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
             Performers = new ObservableCollection<ActivityUserDisplayItem>();
+            SelectedPerformer = null;
             StatusMessage = "Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.";
         }
         catch (Exception ex)
         {
             Performers = new ObservableCollection<ActivityUserDisplayItem>();
+            SelectedPerformer = null;
             StatusMessage = $"Erreur: {ex.Message}";
         }
         finally
         {
             IsBusy = false;
+            OpenCommandFormsCommand.NotifyCanExecuteChanged();
         }
+    }
+
+    private bool CanOpenCommandForms()
+        => SelectedPerformer is not null && CurrentActivity?.Forms?.Count > 0;
+
+    [RelayCommand(CanExecute = nameof(CanOpenCommandForms))]
+    private async Task OpenCommandFormsAsync()
+    {
+        if (SelectedPerformer is null || CurrentActivity is null)
+        {
+            StatusMessage = "Sélectionnez un utilisateur et une activité avec formulaire.";
+            return;
+        }
+
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var vm = new CommandFormsPageViewModel(CurrentActivity, SelectedPerformer, _billingClient);
+        await app.PushPageAsync(vm);
     }
 }

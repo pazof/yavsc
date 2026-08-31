@@ -10,7 +10,9 @@ namespace Yavsc.Api.Client;
 /// <summary>
 /// HTTP client for browsing business activities and their performers.
 /// Uses absolute URLs so it can coexist with other Yavsc clients that
-/// target a different API host on the same shared transport.
+/// target a different API host on the same shared transport. The same
+/// activity payload also carries the eligible billing forms for a
+/// selected performer/activity pair.
 /// </summary>
 public sealed class ActivityApiClient
 {

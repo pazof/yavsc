@@ -40,6 +40,8 @@ public class ViewLocator : IDataTemplate
             Settings => services.GetRequiredService<SettingsPage>(),
             HomePageViewModel => services.GetRequiredService<HomePage>(),
             ActivitiesPageViewModel => services.GetRequiredService<ActivitiesPage>(),
+            CommandFormsPageViewModel => services.GetRequiredService<CommandFormsPage>(),
+            BillingCommandPageViewModel => services.GetRequiredService<BillingCommandPage>(),
             SignaturePageViewModel => services.GetRequiredService<SignaturePage>(),
             AddCircleMemberDialogViewModel => services.GetRequiredService<AddCircleMemberDialog>(),
             CirclesPageViewModel => services.GetRequiredService<CirclesPage>(),

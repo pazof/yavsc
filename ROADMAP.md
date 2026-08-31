@@ -68,7 +68,7 @@ Trois principes non négociables traversent tous les jalons :
 >
 > Chaque jalon a un **critère de sortie** vérifiable.
 
-### Jalon 0 — Fondations techniques *(en cours)*
+### Jalon 0 — Fondations techniques
 
 > Cible : pouvoir parler du domaine sans se battre avec le runtime.
 
@@ -81,7 +81,7 @@ Trois principes non négociables traversent tous les jalons :
 
 ---
 
-### Jalon 1 — Prestation signée de bout en bout
+### Jalon 1 — Prestation signée de bout en bout *(en cours)*
 
 > Cible : un projet client/fournisseur aboutit à un **devis signé par les deux parties**, traçable, avec notifications.
 

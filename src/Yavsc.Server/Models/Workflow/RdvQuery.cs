@@ -46,7 +46,8 @@ namespace Yavsc.Models.Workflow
         {
             get
             {
-                string type = ResourcesHelpers.GlobalLocalizer[this.GetType().Name];
+                var localizer = ResourcesHelpers.GlobalLocalizer;
+                string type = localizer is null ? this.GetType().Name : localizer[this.GetType().Name];
                 return $"{_description} {type}";
             }
             set
