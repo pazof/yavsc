@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Yavsc.Controllers;
 using Yavsc.Models;
+using Yavsc.Models.Haircut;
 using Yavsc.Models.Relationship;
 using Yavsc.Models.Workflow;
 using Yavsc.Tests.Shared;
@@ -206,6 +207,114 @@ public sealed class ApiWebServerFixture : WebHostFixture
             EventDate = DateTime.UtcNow.AddDays(1),
             Location = location,
             Reason = "Initial rendez-vous",
+            Status = Yavsc.QueryStatus.Inserted,
+        });
+
+        db.SaveChanges();
+    }
+
+    public void ResetAndSeedHaircutGraph()
+    {
+        ResetAndSeedActivityGraph();
+
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var location = db.Locations.Single(l => l.Address == "1 rue du Test");
+
+        if (!db.Activities.Any(a => a.Code == "brush"))
+        {
+            db.Activities.Add(new Activity
+            {
+                Code = "brush",
+                Name = "Brush",
+                Hidden = false,
+                DateCreated = DateTime.UtcNow,
+                DateModified = DateTime.UtcNow,
+            });
+        }
+
+        if (!db.Activities.Any(a => a.Code == "mbrush"))
+        {
+            db.Activities.Add(new Activity
+            {
+                Code = "mbrush",
+                Name = "MBrush",
+                Hidden = false,
+                DateCreated = DateTime.UtcNow,
+                DateModified = DateTime.UtcNow,
+            });
+        }
+
+        if (!db.BrusherProfile.Any(p => p.UserId == "alice"))
+        {
+            db.BrusherProfile.Add(new BrusherProfile
+            {
+                UserId = "alice",
+                ActionDistance = 25,
+                WomenLongCutPrice = 50m,
+                WomenHalfCutPrice = 40m,
+                WomenShortCutPrice = 30m,
+                ManCutPrice = 20m,
+                KidCutPrice = 15m,
+                ShampooPrice = 5m,
+            });
+        }
+
+        var prestation1 = new HairPrestation
+        {
+            Gender = HairCutGenders.Women,
+            Length = HairLength.HalfLong,
+            Cut = true,
+            Shampoo = true,
+            Dressing = HairDressings.Brushing,
+            Tech = HairTechnos.NoTech,
+            Cares = false,
+            Taints = new List<HairTaintInstance>(),
+        };
+        var prestation2 = new HairPrestation
+        {
+            Gender = HairCutGenders.Man,
+            Length = HairLength.Short,
+            Cut = true,
+            Shampoo = false,
+            Dressing = HairDressings.Brushing,
+            Tech = HairTechnos.NoTech,
+            Cares = false,
+            Taints = new List<HairTaintInstance>(),
+        };
+
+        db.HairPrestation.AddRange(prestation1, prestation2);
+        db.SaveChanges();
+
+        db.HairCutQueries.Add(new HairCutQuery
+        {
+            ActivityCode = "brush",
+            ClientId = "alice",
+            PerformerId = "alice",
+            Consent = true,
+            EventDate = DateTime.UtcNow.AddDays(3),
+            Location = location,
+            PrestationId = prestation1.Id,
+            Prestation = prestation1,
+            AdditionalInfo = "Coupe test",
+            Status = Yavsc.QueryStatus.Inserted,
+            Description = "Haircut seed",
+        });
+
+        db.HairMultiCutQueries.Add(new HairMultiCutQuery
+        {
+            ActivityCode = "mbrush",
+            ClientId = "alice",
+            PerformerId = "alice",
+            Consent = true,
+            EventDate = DateTime.UtcNow.AddDays(4),
+            Location = location,
+            Prestations = new List<HairPrestationCollectionItem>
+            {
+                new() { PrestationId = prestation1.Id, Prestation = prestation1 },
+                new() { PrestationId = prestation2.Id, Prestation = prestation2 },
+            },
             Status = Yavsc.QueryStatus.Inserted,
         });
 

@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +23,7 @@ public class RdvQueryApiController : Controller
     [HttpGet]
     public async Task<IActionResult> GetQueries(CancellationToken cancellationToken)
     {
-        var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var uid = User.GetUserId();
 
         var queries = await _context.RdvQueries
             .AsNoTracking()
@@ -41,7 +40,7 @@ public class RdvQueryApiController : Controller
     [HttpGet("{id}", Name = "GetRdvQuery")]
     public async Task<IActionResult> GetQuery([FromRoute] long id, CancellationToken cancellationToken)
     {
-        var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var uid = User.GetUserId();
 
         var query = await _context.RdvQueries
             .Include(q => q.Location)
@@ -65,13 +64,13 @@ public class RdvQueryApiController : Controller
     [HttpPost]
     public async Task<IActionResult> PostQuery([FromBody] RdvQuery query, CancellationToken cancellationToken)
     {
-        var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var uid = User.GetUserId();
         if (string.IsNullOrWhiteSpace(query.ClientId))
         {
             query.ClientId = uid;
         }
 
-        ModelState.MarkFieldSkipped("ClientId");
+        ModelState.Remove("ClientId");
 
         if (query.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
         {
@@ -134,7 +133,7 @@ public class RdvQueryApiController : Controller
             return BadRequest();
         }
 
-        var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var uid = User.GetUserId();
         if (query.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
         {
             return Forbid();
@@ -162,7 +161,7 @@ public class RdvQueryApiController : Controller
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteQuery([FromRoute] long id, CancellationToken cancellationToken)
     {
-        var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var uid = User.GetUserId();
 
         var query = await _context.RdvQueries
             .SingleOrDefaultAsync(q => q.Id == id, cancellationToken);

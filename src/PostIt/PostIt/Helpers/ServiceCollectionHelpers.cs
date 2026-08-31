@@ -50,6 +50,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<ActivitiesPage>();
         services.AddTransient<CommandFormsPage>();
         services.AddTransient<BillingCommandPage>();
+        services.AddTransient<BillingQueriesPage>();
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);
@@ -64,6 +65,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<SignaturePageViewModel>();
         services.AddSingleton<CirclesPageViewModel>();
         services.AddSingleton<ActivitiesPageViewModel>();
+        services.AddTransient<SelectableHairPrestationItem>();
 
         // Dialogs (modal-light pages): the ViewLocator resolves
         // them when a caller pushes a PostAclDialogViewModel or

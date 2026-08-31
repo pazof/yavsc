@@ -17,10 +17,12 @@ public class ActivitiesPageViewModelTests
         await client.GetCatalogAsync("brush", TestContext.Current.CancellationToken);
         await client.GetUsersAsync("brush-pro", TestContext.Current.CancellationToken);
         await billingClient.CreateAsync("Rdv", new { Foo = "Bar" }, TestContext.Current.CancellationToken);
+        await billingClient.GetQuerySummariesAsync("Rdv", TestContext.Current.CancellationToken);
 
         Assert.Equal("https://business.example/api/v1/activity/catalog?parentCode=brush", api.Paths[0]);
         Assert.Equal("https://business.example/api/v1/activity/brush-pro/users", api.Paths[1]);
         Assert.Equal("https://business.example/api/v1/billing/Rdv", api.Paths[2]);
+        Assert.Equal("https://business.example/api/v1/billing/Rdv", api.Paths[3]);
     }
 
     [Fact]

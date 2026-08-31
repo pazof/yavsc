@@ -11,12 +11,14 @@ namespace Yavsc.Models.Haircut
         [Display(Name="Couleur")]
         Color,
 
-        [Display(Name="Permantante")]
+        [Display(Name="Permanente")]
         Permanent,
         [Display(Name="Défrisage")]
         Defris,
         [Display(Name="Mêches")]
         Mech,
+
+        [Display(Name="Balayage")]
         Balayage
     }
 }

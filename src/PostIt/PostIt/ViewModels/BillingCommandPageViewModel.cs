@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Net;
 using System.Net.Http;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,6 +12,7 @@ using Yavsc;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;
 using Yavsc.Models.Billing;
+using Yavsc.Models.Haircut;
 using Yavsc.Models.Relationship;
 
 namespace PostIt.ViewModels;
@@ -45,13 +49,36 @@ public partial class BillingCommandPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool Consent { get; set; } = true;
 
+    [ObservableProperty]
+    public partial ObservableCollection<HairPrestationDto> AvailablePrestations { get; set; } = new();
+
+    [ObservableProperty]
+    public partial HairPrestationDto? SelectedPrestation { get; set; }
+
+    [ObservableProperty]
+    public partial ObservableCollection<SelectableHairPrestationItem> MultiPrestations { get; set; } = new();
+
+    [ObservableProperty]
+    public partial string AdditionalInfo { get; set; } = string.Empty;
+
     public string Title => Form.Title;
     public string PerformerLabel => Performer.UserName;
     public string ActivityLabel => Activity.Name;
-    public bool IsSupported => string.Equals(Form.ActionName, BillingCodes.Rdv, StringComparison.Ordinal);
+    public bool IsSupported => IsRdv || IsBrush || IsMultiBrush;
+    public bool IsRdv => string.Equals(Form.ActionName, BillingCodes.Rdv, StringComparison.Ordinal);
+    public bool IsBrush => string.Equals(Form.ActionName, BillingCodes.Brush, StringComparison.Ordinal);
+    public bool IsMultiBrush => string.Equals(Form.ActionName, BillingCodes.MBrush, StringComparison.Ordinal);
+    public bool ShowsReason => IsRdv;
+    public bool ShowsAdditionalInfo => IsBrush;
+    public bool ShowsSinglePrestation => IsBrush;
+    public bool ShowsMultiplePrestations => IsMultiBrush;
     public string BillingRoute => $"/billing/{Form.ActionName}";
     public string SupportMessage => IsSupported
-        ? "Complétez les informations du rendez-vous puis postez la commande."
+        ? IsRdv
+            ? "Complétez les informations du rendez-vous puis postez la commande."
+            : IsBrush
+                ? "Choisissez une prestation coiffure puis postez la commande."
+                : "Choisissez une ou plusieurs prestations coiffure puis postez la commande."
         : $"Le formulaire {Form.ActionName} n'est pas encore pris en charge dans PostIt.";
 
     public override bool CanNavigateNext
@@ -81,6 +108,39 @@ public partial class BillingCommandPageViewModel : ViewModelBase
         StatusMessage = SupportMessage;
     }
 
+    public async Task InitializeAsync()
+    {
+        if (!IsBrush && !IsMultiBrush)
+        {
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var prestations = await _billingClient.GetHairPrestationsAsync(Form.ActionName).ConfigureAwait(true);
+            AvailablePrestations = new ObservableCollection<HairPrestationDto>(prestations ?? new List<HairPrestationDto>());
+            SelectedPrestation = AvailablePrestations.FirstOrDefault();
+            MultiPrestations = new ObservableCollection<SelectableHairPrestationItem>(AvailablePrestations.Select(SelectableHairPrestationItem.FromDto));
+
+            StatusMessage = AvailablePrestations.Count == 0
+                ? "Aucune prestation coiffure disponible."
+                : SupportMessage;
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
+        {
+            StatusMessage = "Accès refusé au catalogue de prestations (scope 'api'). Déconnectez puis reconnectez-vous.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Erreur lors du chargement des prestations: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     [RelayCommand]
     private async Task SubmitAsync()
     {
@@ -102,7 +162,7 @@ public partial class BillingCommandPageViewModel : ViewModelBase
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(Reason))
+        if (IsRdv && string.IsNullOrWhiteSpace(Reason))
         {
             StatusMessage = "Le motif du rendez-vous est requis.";
             return;
@@ -129,21 +189,66 @@ public partial class BillingCommandPageViewModel : ViewModelBase
         IsBusy = true;
         try
         {
-            await _billingClient.CreateAsync(Form.ActionName, new
+            var location = new Location
             {
-                ActivityCode = Activity.Code,
-                PerformerId = Performer.PerformerId,
-                Consent,
-                EventDate = eventDate,
-                Location = new Location
+                Address = Address.Trim(),
+                Latitude = latitude,
+                Longitude = longitude,
+            };
+
+            if (IsRdv)
+            {
+                await _billingClient.CreateAsync(Form.ActionName, new
                 {
-                    Address = Address.Trim(),
-                    Latitude = latitude,
-                    Longitude = longitude,
-                },
-                Reason = Reason.Trim(),
-                Status = QueryStatus.Inserted,
-            }).ConfigureAwait(true);
+                    ActivityCode = Activity.Code,
+                    PerformerId = Performer.PerformerId,
+                    Consent,
+                    EventDate = eventDate,
+                    Location = location,
+                    Reason = Reason.Trim(),
+                    Status = QueryStatus.Inserted,
+                }).ConfigureAwait(true);
+            }
+            else if (IsBrush)
+            {
+                if (SelectedPrestation is null)
+                {
+                    StatusMessage = "Sélectionnez une prestation coiffure.";
+                    return;
+                }
+
+                await _billingClient.CreateAsync(Form.ActionName, new
+                {
+                    ActivityCode = Activity.Code,
+                    PerformerId = Performer.PerformerId,
+                    Consent,
+                    EventDate = (DateTime?)eventDate,
+                    Location = location,
+                    PrestationId = SelectedPrestation.Id,
+                    AdditionalInfo = string.IsNullOrWhiteSpace(AdditionalInfo) ? null : AdditionalInfo.Trim(),
+                    Status = QueryStatus.Inserted,
+                }).ConfigureAwait(true);
+            }
+            else if (IsMultiBrush)
+            {
+                var selectedPrestations = MultiPrestations.Where(x => x.IsSelected).ToList();
+                if (selectedPrestations.Count == 0)
+                {
+                    StatusMessage = "Sélectionnez au moins une prestation coiffure.";
+                    return;
+                }
+
+                await _billingClient.CreateAsync(Form.ActionName, new
+                {
+                    ActivityCode = Activity.Code,
+                    PerformerId = Performer.PerformerId,
+                    Consent,
+                    EventDate = eventDate,
+                    Location = location,
+                    Prestations = selectedPrestations.Select(x => new { PrestationId = x.Id }).ToList(),
+                    Status = QueryStatus.Inserted,
+                }).ConfigureAwait(true);
+            }
 
             StatusMessage = $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.";
         }

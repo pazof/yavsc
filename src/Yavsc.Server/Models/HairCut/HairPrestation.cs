@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 using Newtonsoft.Json;
 
 namespace Yavsc.Models.Haircut
@@ -39,6 +40,41 @@ namespace Yavsc.Models.Haircut
 
         [Display(Name="Soins")]
         public  bool Cares { get; set; }
+
+        public string GetDisplayTitle()
+        {
+            return $"{GetEnumDisplayName(Gender)} · {GetEnumDisplayName(Length)}";
+        }
+
+        public string GetDisplayDetails()
+        {
+            return string.Join(" · ", new[]
+            {
+                FormatFlag(nameof(Cut), Cut),
+                GetEnumDisplayName(Dressing),
+                GetEnumDisplayName(Tech),
+                FormatFlag(nameof(Shampoo), Shampoo),
+                FormatFlag(nameof(Cares), Cares),
+            });
+        }
+
+        private static string FormatFlag(string propertyName, bool enabled)
+        {
+            var label = GetPropertyDisplayName(propertyName);
+            return enabled ? label : $"Sans {label.ToLowerInvariant()}";
+        }
+
+        private static string GetPropertyDisplayName(string propertyName)
+        {
+            var property = typeof(HairPrestation).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+            return property?.GetCustomAttribute<DisplayAttribute>()?.GetName() ?? propertyName;
+        }
+
+        private static string GetEnumDisplayName<TEnum>(TEnum value) where TEnum : struct, Enum
+        {
+            var member = typeof(TEnum).GetMember(value.ToString()).FirstOrDefault();
+            return member?.GetCustomAttribute<DisplayAttribute>()?.GetName() ?? value.ToString();
+        }
 
 
     }

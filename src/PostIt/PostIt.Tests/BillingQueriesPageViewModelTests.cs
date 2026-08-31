@@ -1,0 +1,90 @@
+using System.Net.Http;
+using PostIt.ViewModels;
+using Yavsc;
+using Yavsc.Abstract.Workflow;
+using Yavsc.Api.Client;
+
+namespace PostIt.Tests;
+
+public class BillingQueriesPageViewModelTests
+{
+    [Fact]
+    public async Task RefreshAsync_filters_queries_by_selected_activity_and_performer()
+    {
+        var api = new StubBillingApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm = new BillingQueriesPageViewModel(
+            new ActivityBrowseItemDto { Code = "dev", Name = "Développement" },
+            new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+            new CommandFormSummaryDto { Id = 1, ActionName = "Rdv", Title = "Rendez-vous" },
+            client);
+
+        await vm.InitializeAsync();
+
+        Assert.Equal("https://business.example/api/v1/billing/Rdv", api.Paths.Single());
+        Assert.Equal(1, vm.Queries.Count);
+        Assert.Equal("Rendez-vous #1", vm.Queries[0].Description);
+        Assert.Contains("1 commande", vm.StatusMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private sealed class StubBillingApi : IYavscApiClient
+    {
+        public HttpClient Http { get; } = new();
+        public List<string> Paths { get; } = new();
+
+        public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        {
+            Paths.Add(path);
+
+            if (typeof(T) == typeof(List<BillingQuerySummaryDto>))
+            {
+                var data = new List<BillingQuerySummaryDto>
+                {
+                    new()
+                    {
+                        Id = 11,
+                        ActivityCode = "dev",
+                        PerformerId = "perf-1",
+                        ClientId = "cli-1",
+                        Status = QueryStatus.Inserted,
+                        Description = "Rendez-vous #1",
+                        Reason = "Point de cadrage",
+                        EventDate = new DateTime(2026, 9, 1, 10, 0, 0, DateTimeKind.Utc),
+                    },
+                    new()
+                    {
+                        Id = 12,
+                        ActivityCode = "other",
+                        PerformerId = "perf-1",
+                        ClientId = "cli-1",
+                        Status = QueryStatus.Accepted,
+                        Description = "Autre activité",
+                        EventDate = new DateTime(2026, 9, 2, 10, 0, 0, DateTimeKind.Utc),
+                    },
+                    new()
+                    {
+                        Id = 13,
+                        ActivityCode = "dev",
+                        PerformerId = "perf-2",
+                        ClientId = "cli-1",
+                        Status = QueryStatus.Accepted,
+                        Description = "Autre performer",
+                        EventDate = new DateTime(2026, 9, 3, 10, 0, 0, DateTimeKind.Utc),
+                    }
+                };
+
+                return Task.FromResult((T)(object)data);
+            }
+
+            return Task.FromResult(default(T)!);
+        }
+
+        public Task CallAsync(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        {
+            Paths.Add(path);
+            return Task.CompletedTask;
+        }
+
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+    }
+}
