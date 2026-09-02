@@ -20,16 +20,16 @@ public partial class ActivitiesPageViewModel : ViewModelBase
     private bool _syncingSelection;
 
     [ObservableProperty]
-    public partial ObservableCollection<ActivityBrowseItemDto> Activities { get; set; } = new();
+    public partial ObservableCollection<ActivityInfo> Activities { get; set; } = new();
 
     [ObservableProperty]
-    public partial ActivityBrowseItemDto? SelectedActivity { get; set; }
+    public partial ActivityInfo? SelectedActivity { get; set; }
 
     [ObservableProperty]
-    public partial ObservableCollection<ActivityBrowseItemDto> Specializations { get; set; } = new();
+    public partial ObservableCollection<ActivityInfo> Specializations { get; set; } = new();
 
     [ObservableProperty]
-    public partial ActivityBrowseItemDto? SelectedSpecialization { get; set; }
+    public partial ActivityInfo? SelectedSpecialization { get; set; }
 
     [ObservableProperty]
     public partial ObservableCollection<ActivityUserDisplayItem> Performers { get; set; } = new();
@@ -43,7 +43,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Choisissez une activité.";
 
-    public ActivityBrowseItemDto? CurrentActivity => SelectedSpecialization ?? SelectedActivity;
+    public ActivityInfo? CurrentActivity => SelectedSpecialization ?? SelectedActivity;
     public string SelectedActivityLabel => SelectedActivity?.Name ?? "(aucune activité)";
     public string CurrentActivityLabel => CurrentActivity?.Name ?? "(aucune)";
     public int CurrentFormCount => CurrentActivity?.Forms?.Count ?? 0;
@@ -66,19 +66,19 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         _billingClient = billingClient ?? throw new ArgumentNullException(nameof(billingClient));
     }
 
-    partial void OnSelectedActivityChanged(ActivityBrowseItemDto? value)
+    partial void OnSelectedActivityChanged(ActivityInfo? value)
     {
         if (_syncingSelection) return;
         _ = ShowActivitySafeAsync(value);
     }
 
-    partial void OnSelectedSpecializationChanged(ActivityBrowseItemDto? value)
+    partial void OnSelectedSpecializationChanged(ActivityInfo? value)
     {
         if (_syncingSelection) return;
         _ = ShowSpecializationSafeAsync(value);
     }
 
-    private async Task ShowActivitySafeAsync(ActivityBrowseItemDto? value)
+    private async Task ShowActivitySafeAsync(ActivityInfo? value)
     {
         try
         {
@@ -94,7 +94,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         }
     }
 
-    private async Task ShowSpecializationSafeAsync(ActivityBrowseItemDto? value)
+    private async Task ShowSpecializationSafeAsync(ActivityInfo? value)
     {
         try
         {
@@ -117,7 +117,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         try
         {
             var list = await _client.GetCatalogAsync();
-            Activities = new ObservableCollection<ActivityBrowseItemDto>(list ?? new());
+            Activities = new ObservableCollection<ActivityInfo>(list ?? new());
 
             var first = Activities.FirstOrDefault();
             await ShowActivityAsync(first);
@@ -128,15 +128,15 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            Activities = new ObservableCollection<ActivityBrowseItemDto>();
-            Specializations = new ObservableCollection<ActivityBrowseItemDto>();
+            Activities = new ObservableCollection<ActivityInfo>();
+            Specializations = new ObservableCollection<ActivityInfo>();
             Performers = new ObservableCollection<ActivityUserDisplayItem>();
             StatusMessage = "Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.";
         }
         catch (Exception ex)
         {
-            Activities = new ObservableCollection<ActivityBrowseItemDto>();
-            Specializations = new ObservableCollection<ActivityBrowseItemDto>();
+            Activities = new ObservableCollection<ActivityInfo>();
+            Specializations = new ObservableCollection<ActivityInfo>();
             Performers = new ObservableCollection<ActivityUserDisplayItem>();
             StatusMessage = $"Erreur: {ex.Message}";
         }
@@ -146,7 +146,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         }
     }
 
-    public async Task ShowActivityAsync(ActivityBrowseItemDto? activity)
+    public async Task ShowActivityAsync(ActivityInfo? activity)
     {
         _syncingSelection = true;
         try
@@ -163,7 +163,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         OnPropertyChanged(nameof(SelectedActivityLabel));
         OnPropertyChanged(nameof(CurrentActivityLabel));
         OnPropertyChanged(nameof(CurrentFormCount));
-        Specializations = new ObservableCollection<ActivityBrowseItemDto>(activity?.Children ?? new());
+        Specializations = new ObservableCollection<ActivityInfo>(activity?.Children ?? new());
 
         if (activity is null)
         {
@@ -175,7 +175,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         await LoadPerformersAsync(activity);
     }
 
-    public async Task ShowSpecializationAsync(ActivityBrowseItemDto? specialization)
+    public async Task ShowSpecializationAsync(ActivityInfo? specialization)
     {
         _syncingSelection = true;
         try
@@ -203,7 +203,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         await LoadPerformersAsync(specialization);
     }
 
-    private async Task LoadPerformersAsync(ActivityBrowseItemDto activity)
+    private async Task LoadPerformersAsync(ActivityInfo activity)
     {
         IsBusy = true;
         try

@@ -29,7 +29,7 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet("catalog")]
-        public async Task<ActionResult<IEnumerable<ActivityBrowseItemDto>>> GetCatalog(
+        public async Task<ActionResult<IEnumerable<ActivityInfo>>> GetCatalog(
             CancellationToken cancellationToken,
             [FromQuery] string parentCode = null)
         {
@@ -74,7 +74,7 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet("{id}/users")]
-        public async Task<ActionResult<IEnumerable<ActivityPerformerDto>>> GetUsers(
+        public async Task<ActionResult<IEnumerable<PerformerActivity>>> GetUsers(
             [FromRoute] string id,
             CancellationToken cancellationToken)
         {
@@ -97,7 +97,7 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet("{id}/performers")]
-        public Task<ActionResult<IEnumerable<ActivityPerformerDto>>> GetPerformers(
+        public Task<ActionResult<IEnumerable<PerformerActivity>>> GetPerformers(
             [FromRoute] string id,
             CancellationToken cancellationToken)
         {
@@ -105,7 +105,7 @@ namespace Yavsc.Controllers
             return GetUsers(id, cancellationToken);
         }
 
-        private Task<List<ActivityPerformerDto>> QueryDeclaredUsersAsync(
+        private Task<List<PerformerActivity>> QueryDeclaredUsersAsync(
             string activityCode,
             string activityName,
             CancellationToken cancellationToken)
@@ -118,7 +118,7 @@ namespace Yavsc.Controllers
                 from performer in performerProfiles.DefaultIfEmpty()
                 where ua.DoesCode == activityCode
                 orderby user != null ? user.UserName : ua.UserId
-                select new ActivityPerformerDto
+                select new PerformerActivity
                 {
                     PerformerId = ua.UserId,
                     HasPerformerProfile = performer != null,
@@ -260,11 +260,11 @@ namespace Yavsc.Controllers
             return _context.Activities.Count(e => e.Code == id) > 0;
         }
 
-        private static ActivityBrowseItemDto ToBrowseItem(
+        private static ActivityInfo ToBrowseItem(
             Activity activity,
             IReadOnlyDictionary<string, int> performerCounts)
         {
-            return new ActivityBrowseItemDto
+            return new ActivityInfo
             {
                 Code = activity.Code,
                 Name = activity.Name,
@@ -274,7 +274,7 @@ namespace Yavsc.Controllers
                 Rate = activity.Rate,
                 PerformerCount = performerCounts.TryGetValue(activity.Code, out var count) ? count : 0,
                 Forms = (activity.Forms ?? Enumerable.Empty<CommandForm>())
-                    .Select(f => new CommandFormSummaryDto
+                    .Select(f => new CommandFormSummary
                     {
                         Id = f.Id,
                         ActionName = f.ActionName,
@@ -285,7 +285,7 @@ namespace Yavsc.Controllers
                     .Where(c => !c.Hidden)
                     .Where(c => performerCounts.TryGetValue(c.Code, out var childCount) && childCount > 0)
                     .OrderByDescending(c => c.Rate)
-                    .Select(c => new ActivityBrowseItemDto
+                    .Select(c => new ActivityInfo
                     {
                         Code = c.Code,
                         Name = c.Name,
@@ -295,7 +295,7 @@ namespace Yavsc.Controllers
                         Rate = c.Rate,
                         PerformerCount = performerCounts.TryGetValue(c.Code, out var childCount) ? childCount : 0,
                         Forms = (c.Forms ?? Enumerable.Empty<CommandForm>())
-                            .Select(f => new CommandFormSummaryDto
+                            .Select(f => new CommandFormSummary
                             {
                                 Id = f.Id,
                                 ActionName = f.ActionName,

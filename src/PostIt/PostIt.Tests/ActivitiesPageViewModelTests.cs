@@ -72,9 +72,9 @@ public class ActivitiesPageViewModelTests
         {
             Paths.Add(path);
 
-            if (typeof(T) == typeof(List<ActivityBrowseItemDto>))
+            if (typeof(T) == typeof(List<ActivityInfo>))
             {
-                var activities = new List<ActivityBrowseItemDto>
+                var activities = new List<ActivityInfo>
                 {
                     new()
                     {
@@ -82,11 +82,11 @@ public class ActivitiesPageViewModelTests
                         Name = "Brush",
                         Description = "Coiffure à domicile",
                         PerformerCount = 1,
-                        Forms = new List<CommandFormSummaryDto>
+                        Forms = new List<CommandFormSummary>
                         {
                             new() { Id = 1, ActionName = "Rdv", Title = "Rendez-vous" }
                         },
-                        Children = new List<ActivityBrowseItemDto>
+                        Children = new List<ActivityInfo>
                         {
                             new()
                             {
@@ -95,7 +95,7 @@ public class ActivitiesPageViewModelTests
                                 Description = "Spécialisation premium",
                                 ParentCode = "brush",
                                 PerformerCount = 1,
-                                Forms = new List<CommandFormSummaryDto>
+                                Forms = new List<CommandFormSummary>
                                 {
                                     new() { Id = 2, ActionName = "Rdv", Title = "Rendez-vous premium" }
                                 }
@@ -106,14 +106,14 @@ public class ActivitiesPageViewModelTests
                 return Task.FromResult((T)(object)activities);
             }
 
-            if (typeof(T) == typeof(List<ActivityPerformerDto>))
+            if (typeof(T) == typeof(List<PerformerActivity>))
             {
                 var performers = path.EndsWith("brush-pro/users", StringComparison.Ordinal)
-                    ? new List<ActivityPerformerDto>
+                    ? new List<PerformerActivity>
                     {
                         new() { PerformerId = "pro-2", HasPerformerProfile = true, Active = false, UserName = "Bob", ActivityCode = "brush-pro", ActivityName = "Brush Pro", ExtraActivityCount = 2 }
                     }
-                    : new List<ActivityPerformerDto>
+                    : new List<PerformerActivity>
                     {
                         new() { PerformerId = "pro-1", HasPerformerProfile = true, Active = true, UserName = "Alice", ActivityCode = "brush", ActivityName = "Brush", ExtraActivityCount = 0 }
                     };

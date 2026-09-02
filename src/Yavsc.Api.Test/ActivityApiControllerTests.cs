@@ -42,7 +42,7 @@ public sealed class ActivityApiControllerTests : IClassFixture<ApiWebServerFixtu
         var response = await http.GetAsync("/api/v1/activity/dev/users", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var payload = await response.Content.ReadFromJsonAsync<List<ActivityPerformerDto>>(TestContext.Current.CancellationToken);
+        var payload = await response.Content.ReadFromJsonAsync<List<PerformerActivity>>(TestContext.Current.CancellationToken);
         Assert.NotNull(payload);
         Assert.Single(payload!);
         Assert.Equal("alice", payload[0].PerformerId);
@@ -68,7 +68,7 @@ public sealed class ActivityApiControllerTests : IClassFixture<ApiWebServerFixtu
         var response = await http.GetAsync("/api/v1/activity/dev/users", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var payload = await response.Content.ReadFromJsonAsync<List<ActivityPerformerDto>>(TestContext.Current.CancellationToken);
+        var payload = await response.Content.ReadFromJsonAsync<List<PerformerActivity>>(TestContext.Current.CancellationToken);
         Assert.NotNull(payload);
         Assert.Single(payload!);
         Assert.Equal("alice", payload[0].PerformerId);
@@ -84,7 +84,7 @@ public sealed class ActivityApiControllerTests : IClassFixture<ApiWebServerFixtu
         var catalogResponse = await http.GetAsync("/api/v1/activity/catalog", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, catalogResponse.StatusCode);
 
-        var catalog = await catalogResponse.Content.ReadFromJsonAsync<List<ActivityBrowseItemDto>>(TestContext.Current.CancellationToken);
+        var catalog = await catalogResponse.Content.ReadFromJsonAsync<List<ActivityInfo>>(TestContext.Current.CancellationToken);
         Assert.NotNull(catalog);
 
         var dev = catalog!.Single(a => a.Code == "dev");
@@ -93,7 +93,7 @@ public sealed class ActivityApiControllerTests : IClassFixture<ApiWebServerFixtu
         var performersResponse = await http.GetAsync("/api/v1/activity/dev/users", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, performersResponse.StatusCode);
 
-        var performers = await performersResponse.Content.ReadFromJsonAsync<List<ActivityPerformerDto>>(TestContext.Current.CancellationToken);
+        var performers = await performersResponse.Content.ReadFromJsonAsync<List<PerformerActivity>>(TestContext.Current.CancellationToken);
         Assert.NotNull(performers);
         Assert.Equal(dev.PerformerCount, performers!.Count);
         Assert.Contains(performers, p => p.PerformerId == "alice");
@@ -108,7 +108,7 @@ public sealed class ActivityApiControllerTests : IClassFixture<ApiWebServerFixtu
         var catalogResponse = await http.GetAsync("/api/v1/activity/catalog", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, catalogResponse.StatusCode);
 
-        var catalog = await catalogResponse.Content.ReadFromJsonAsync<List<ActivityBrowseItemDto>>(TestContext.Current.CancellationToken);
+        var catalog = await catalogResponse.Content.ReadFromJsonAsync<List<ActivityInfo>>(TestContext.Current.CancellationToken);
         Assert.NotNull(catalog);
         Assert.DoesNotContain(catalog!, a => a.Code == "ghost");
         Assert.Contains(catalog!, a => a.Code == "dev");
@@ -123,13 +123,13 @@ public sealed class ActivityApiControllerTests : IClassFixture<ApiWebServerFixtu
         var catalogResponse = await http.GetAsync("/api/v1/activity/catalog", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, catalogResponse.StatusCode);
 
-        var catalog = await catalogResponse.Content.ReadFromJsonAsync<List<ActivityBrowseItemDto>>(TestContext.Current.CancellationToken);
+        var catalog = await catalogResponse.Content.ReadFromJsonAsync<List<ActivityInfo>>(TestContext.Current.CancellationToken);
         Assert.NotNull(catalog);
         Assert.Contains(catalog!, a => a.Code == "declared-only");
 
         var response = await http.GetAsync("/api/v1/activity/declared-only/users", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var payload = await response.Content.ReadFromJsonAsync<List<ActivityPerformerDto>>(TestContext.Current.CancellationToken);
+        var payload = await response.Content.ReadFromJsonAsync<List<PerformerActivity>>(TestContext.Current.CancellationToken);
         Assert.NotNull(payload);
         Assert.Single(payload!);
         Assert.Equal("bob", payload[0].PerformerId);
@@ -149,8 +149,8 @@ public sealed class ActivityApiControllerTests : IClassFixture<ApiWebServerFixtu
         Assert.Equal(HttpStatusCode.OK, usersResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, performersResponse.StatusCode);
 
-        var usersPayload = await usersResponse.Content.ReadFromJsonAsync<List<ActivityPerformerDto>>(TestContext.Current.CancellationToken);
-        var performersPayload = await performersResponse.Content.ReadFromJsonAsync<List<ActivityPerformerDto>>(TestContext.Current.CancellationToken);
+        var usersPayload = await usersResponse.Content.ReadFromJsonAsync<List<PerformerActivity>>(TestContext.Current.CancellationToken);
+        var performersPayload = await performersResponse.Content.ReadFromJsonAsync<List<PerformerActivity>>(TestContext.Current.CancellationToken);
 
         Assert.NotNull(usersPayload);
         Assert.NotNull(performersPayload);

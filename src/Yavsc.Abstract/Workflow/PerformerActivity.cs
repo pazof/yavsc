@@ -3,7 +3,7 @@ namespace Yavsc.Abstract.Workflow;
 /// <summary>
 /// Lightweight performer description returned for one activity.
 /// </summary>
-public sealed class ActivityPerformerDto
+public sealed class PerformerActivity
 {
     public string PerformerId { get; set; } = string.Empty;
     public bool HasPerformerProfile { get; set; }

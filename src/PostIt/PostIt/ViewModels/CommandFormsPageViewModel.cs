@@ -15,14 +15,14 @@ public partial class CommandFormsPageViewModel : ViewModelBase
 {
     private readonly BillingApiClient _billingClient;
 
-    public ActivityBrowseItemDto Activity { get; }
+    public ActivityInfo Activity { get; }
     public ActivityUserDisplayItem Performer { get; }
 
     [ObservableProperty]
-    public partial ObservableCollection<CommandFormSummaryDto> Forms { get; set; }
+    public partial ObservableCollection<CommandFormSummary> Forms { get; set; }
 
     [ObservableProperty, NotifyCanExecuteChangedFor(nameof(OpenSelectedFormCommand)), NotifyCanExecuteChangedFor(nameof(OpenQueriesCommand)), NotifyCanExecuteChangedFor(nameof(OpenOngoingQueriesCommand))]
-    public partial CommandFormSummaryDto? SelectedForm { get; set; }
+    public partial CommandFormSummary? SelectedForm { get; set; }
 
     [ObservableProperty]
     public partial string StatusMessage { get; set; }
@@ -43,7 +43,7 @@ public partial class CommandFormsPageViewModel : ViewModelBase
     }
 
     public CommandFormsPageViewModel(
-        ActivityBrowseItemDto activity,
+        ActivityInfo activity,
         ActivityUserDisplayItem performer,
         BillingApiClient billingClient)
     {
@@ -51,7 +51,7 @@ public partial class CommandFormsPageViewModel : ViewModelBase
         Performer = performer ?? throw new ArgumentNullException(nameof(performer));
         _billingClient = billingClient ?? throw new ArgumentNullException(nameof(billingClient));
 
-        Forms = new ObservableCollection<CommandFormSummaryDto>((activity.Forms ?? new())
+        Forms = new ObservableCollection<CommandFormSummary>((activity.Forms ?? new())
             .OrderBy(f => f.Title)
             .ThenBy(f => f.ActionName));
         SelectedForm = Forms.FirstOrDefault();
@@ -81,7 +81,7 @@ public partial class CommandFormsPageViewModel : ViewModelBase
             throw new InvalidOperationException("Application PostIt indisponible.");
         }
 
-        var vm = new BillingCommandPageViewModel(Activity, Performer, SelectedForm, _billingClient);
+        var vm = SelectedForm.CreateCommandPageViewModel(Activity, Performer,  _billingClient);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

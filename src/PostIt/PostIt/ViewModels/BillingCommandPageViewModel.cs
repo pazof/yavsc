@@ -21,9 +21,9 @@ public partial class BillingCommandPageViewModel : ViewModelBase
 {
     private readonly BillingApiClient _billingClient;
 
-    public ActivityBrowseItemDto Activity { get; }
+    public ActivityInfo Activity { get; }
     public ActivityUserDisplayItem Performer { get; }
-    public CommandFormSummaryDto Form { get; }
+    public CommandFormSummary Form { get; }
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
@@ -104,9 +104,9 @@ public partial class BillingCommandPageViewModel : ViewModelBase
     }
 
     public BillingCommandPageViewModel(
-        ActivityBrowseItemDto activity,
+        ActivityInfo activity,
         ActivityUserDisplayItem performer,
-        CommandFormSummaryDto form,
+        CommandFormSummary form,
         BillingApiClient billingClient)
     {
         Activity = activity ?? throw new ArgumentNullException(nameof(activity));

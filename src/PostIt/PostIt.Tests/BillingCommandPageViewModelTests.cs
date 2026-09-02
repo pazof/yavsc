@@ -17,9 +17,9 @@ public class BillingCommandPageViewModelTests
         var api = new RecordingApi();
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
         var vm = new BillingCommandPageViewModel(
-            new ActivityBrowseItemDto { Code = "dev", Name = "Développement" },
+            new ActivityInfo { Code = "dev", Name = "Développement" },
             new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
-            new CommandFormSummaryDto { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
+            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
             client)
         {
             EventDateText = "2026-09-02 14:30",
@@ -48,9 +48,9 @@ public class BillingCommandPageViewModelTests
         var api = new RecordingApi();
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
         var vm = new BillingCommandPageViewModel(
-            new ActivityBrowseItemDto { Code = "book", Name = "Book" },
+            new ActivityInfo { Code = "book", Name = "Book" },
             new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
-            new CommandFormSummaryDto { Id = 13, ActionName = "Book", Title = "Réservation" },
+            new CommandFormSummary { Id = 13, ActionName = "Book", Title = "Réservation" },
             client);
 
         await vm.SubmitCommand.ExecuteAsync(null);
@@ -65,9 +65,9 @@ public class BillingCommandPageViewModelTests
         var api = new RecordingApi();
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
         var vm = new BillingCommandPageViewModel(
-            new ActivityBrowseItemDto { Code = "dev", Name = "Développement" },
+            new ActivityInfo { Code = "dev", Name = "Développement" },
             new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
-            new CommandFormSummaryDto { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
+            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
             client)
         {
             EventDateText = "2026-09-02 14:30",
@@ -98,9 +98,9 @@ public class BillingCommandPageViewModelTests
             var api = new RecordingApi();
             var client = new BillingApiClient(api, "https://business.example/api/v1/");
             var vm = new BillingCommandPageViewModel(
-                new ActivityBrowseItemDto { Code = "dev", Name = "Développement" },
+                new ActivityInfo { Code = "dev", Name = "Développement" },
                 new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
-                new CommandFormSummaryDto { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
+                new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
                 client);
 
             await vm.UseCurrentLocationCommand.ExecuteAsync(null);
@@ -127,9 +127,9 @@ public class BillingCommandPageViewModelTests
         };
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
         var vm = new BillingCommandPageViewModel(
-            new ActivityBrowseItemDto { Code = "brush", Name = "Brush" },
+            new ActivityInfo { Code = "brush", Name = "Brush" },
             new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
-            new CommandFormSummaryDto { Id = 13, ActionName = "Brush", Title = "Coupe" },
+            new CommandFormSummary { Id = 13, ActionName = "Brush", Title = "Coupe" },
             client)
         {
             EventDateText = "2026-09-02 14:30",
@@ -163,9 +163,9 @@ public class BillingCommandPageViewModelTests
         };
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
         var vm = new BillingCommandPageViewModel(
-            new ActivityBrowseItemDto { Code = "mbrush", Name = "MBrush" },
+            new ActivityInfo { Code = "mbrush", Name = "MBrush" },
             new ActivityUserDisplayItem { PerformerId = "perf-3", UserName = "Cara" },
-            new CommandFormSummaryDto { Id = 14, ActionName = "MBrush", Title = "Coupe groupée" },
+            new CommandFormSummary { Id = 14, ActionName = "MBrush", Title = "Coupe groupée" },
             client)
         {
             EventDateText = "2026-09-03 10:00",
@@ -201,9 +201,9 @@ public class BillingCommandPageViewModelTests
         };
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
         var vm = new BillingCommandPageViewModel(
-            new ActivityBrowseItemDto { Code = "brush", Name = "Brush" },
+            new ActivityInfo { Code = "brush", Name = "Brush" },
             new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
-            new CommandFormSummaryDto { Id = 13, ActionName = "Brush", Title = "Coupe" },
+            new CommandFormSummary { Id = 13, ActionName = "Brush", Title = "Coupe" },
             client);
 
         await vm.InitializeAsync(new BillingQueryDetailsDto

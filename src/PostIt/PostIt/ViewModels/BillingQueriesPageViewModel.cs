@@ -18,9 +18,9 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
 {
     private readonly BillingApiClient _billingClient;
 
-    public ActivityBrowseItemDto Activity { get; }
+    public ActivityInfo Activity { get; }
     public ActivityUserDisplayItem Performer { get; }
-    public CommandFormSummaryDto Form { get; }
+    public CommandFormSummary Form { get; }
     public bool IsReadOnly { get; }
     public bool OngoingOnly { get; }
 
@@ -55,9 +55,9 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
     }
 
     public BillingQueriesPageViewModel(
-        ActivityBrowseItemDto activity,
+        ActivityInfo activity,
         ActivityUserDisplayItem performer,
-        CommandFormSummaryDto form,
+        CommandFormSummary form,
         BillingApiClient billingClient,
         bool isReadOnly = false,
         bool ongoingOnly = false)

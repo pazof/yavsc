@@ -14,9 +14,9 @@ public class BillingQueriesPageViewModelTests
         var api = new StubBillingApi();
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
         var vm = new BillingQueriesPageViewModel(
-            new ActivityBrowseItemDto { Code = "dev", Name = "Développement" },
+            new ActivityInfo { Code = "dev", Name = "Développement" },
             new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
-            new CommandFormSummaryDto { Id = 1, ActionName = "Rdv", Title = "Rendez-vous" },
+            new CommandFormSummary { Id = 1, ActionName = "Rdv", Title = "Rendez-vous" },
             client);
 
         await vm.InitializeAsync();
@@ -33,9 +33,9 @@ public class BillingQueriesPageViewModelTests
         var api = new StubBillingApi();
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
         var vm = new BillingQueriesPageViewModel(
-            new ActivityBrowseItemDto { Code = "dev", Name = "Développement" },
+            new ActivityInfo { Code = "dev", Name = "Développement" },
             new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
-            new CommandFormSummaryDto { Id = 1, ActionName = "Rdv", Title = "Rendez-vous" },
+            new CommandFormSummary { Id = 1, ActionName = "Rdv", Title = "Rendez-vous" },
             client,
             isReadOnly: true,
             ongoingOnly: true);

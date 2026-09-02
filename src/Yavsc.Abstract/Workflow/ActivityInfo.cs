@@ -3,7 +3,7 @@ namespace Yavsc.Abstract.Workflow;
 /// <summary>
 /// Activity node returned by the browsing API.
 /// </summary>
-public sealed class ActivityBrowseItemDto
+public sealed class ActivityInfo
 {
     public string Code { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
@@ -12,6 +12,6 @@ public sealed class ActivityBrowseItemDto
     public string Photo { get; set; } = string.Empty;
     public int Rate { get; set; }
     public int PerformerCount { get; set; }
-    public List<CommandFormSummaryDto> Forms { get; set; } = new();
-    public List<ActivityBrowseItemDto> Children { get; set; } = new();
+    public List<CommandFormSummary> Forms { get; set; } = new();
+    public List<ActivityInfo> Children { get; set; } = new();
 }

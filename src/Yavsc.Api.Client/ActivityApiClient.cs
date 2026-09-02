@@ -30,7 +30,7 @@ public sealed class ActivityApiClient
         _baseAddress = new Uri(businessBaseAddress, UriKind.Absolute);
     }
 
-    public Task<List<ActivityBrowseItemDto>> GetCatalogAsync(
+    public Task<List<ActivityInfo>> GetCatalogAsync(
         string? parentCode = null,
         CancellationToken ct = default)
     {
@@ -38,23 +38,23 @@ public sealed class ActivityApiClient
             ? $"{PathPrefix}/catalog"
             : $"{PathPrefix}/catalog?parentCode={Uri.EscapeDataString(parentCode)}";
 
-        return _api.CallAsync<List<ActivityBrowseItemDto>>(HttpMethod.Get, Absolute(path), ct: ct);
+        return _api.CallAsync<List<ActivityInfo>>(HttpMethod.Get, Absolute(path), ct: ct);
     }
 
-    public Task<List<ActivityPerformerDto>> GetUsersAsync(
+    public Task<List<PerformerActivity>> GetUsersAsync(
         string activityCode,
         CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(activityCode))
             throw new ArgumentException("Activity code is required.", nameof(activityCode));
 
-        return _api.CallAsync<List<ActivityPerformerDto>>(
+        return _api.CallAsync<List<PerformerActivity>>(
             HttpMethod.Get,
             Absolute($"{PathPrefix}/{Uri.EscapeDataString(activityCode)}/users"),
             ct: ct);
     }
 
-    public Task<List<ActivityPerformerDto>> GetPerformersAsync(
+    public Task<List<PerformerActivity>> GetPerformersAsync(
         string activityCode,
         CancellationToken ct = default)
         => GetUsersAsync(activityCode, ct);

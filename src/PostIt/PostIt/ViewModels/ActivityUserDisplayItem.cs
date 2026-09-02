@@ -17,7 +17,7 @@ public sealed class ActivityUserDisplayItem
     public int ExtraActivityCount { get; init; }
     public string ExtraActivityLabel { get; init; } = "Pas d'autre activité";
 
-    public static ActivityUserDisplayItem FromDto(ActivityPerformerDto dto)
+    public static ActivityUserDisplayItem FromDto(PerformerActivity dto)
     {
         return new ActivityUserDisplayItem
         {
