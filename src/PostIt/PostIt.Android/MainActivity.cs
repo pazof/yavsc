@@ -57,6 +57,17 @@ public class MainActivity : AvaloniaMainActivity
 
     }
 
+    public override void OnRequestPermissionsResult(int requestCode, string[]? permissions, Permission[]? grantResults)
+    {
+        if (PostIt.Android.Services.AndroidCurrentLocationProvider
+            .HandlePermissionResult(requestCode, grantResults))
+        {
+            return;
+        }
+
+        base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     internal static class AndroidOidcCallbackSink
     {
         private static System.Threading.Tasks.TaskCompletionSource<string>? _pending;

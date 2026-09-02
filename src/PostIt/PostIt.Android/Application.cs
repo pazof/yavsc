@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android;
 using Android.Runtime;
 using Avalonia;
 using Avalonia.Android;
@@ -8,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Avalonia.Controls;
 using Avalonia.Styling;
 using Yavsc.Api.Client;
+
+[assembly: UsesPermission(Manifest.Permission.AccessFineLocation)]
+[assembly: UsesPermission(Manifest.Permission.AccessCoarseLocation)]
 
 namespace PostIt.Android
 {

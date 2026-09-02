@@ -14,11 +14,12 @@ internal static class PlatformBootstrap
 {
     internal static void InitPlatform()
     {
-
         Platform.CreateBrowser = () =>
         {
             var activity = MainActivity.Current;
             return activity is null ? null : new AndroidSystemBrowser(activity);
         };
+
+        Platform.TryGetCurrentLocationAsync = AndroidCurrentLocationProvider.TryGetCurrentLocationAsync;
     }
 }

@@ -1,4 +1,7 @@
+using System;
 using IdentityModel.OidcClient.Browser;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PostIt.Services;
 
@@ -37,4 +40,12 @@ public static class Platform
     /// </summary>
     public static System.Func<IBrowser?>? CreateBrowser { get; set; } =
         () => new CustomSchemeBrowser(CustomScheme);
+
+    /// <summary>
+    /// Optional platform hook used by the shared billing form to request a
+    /// current device position. Platforms that do not expose a native
+    /// location provider can leave the default delegate in place.
+    /// </summary>
+    public static Func<CancellationToken, Task<CurrentLocationResult>> TryGetCurrentLocationAsync { get; set; } =
+        _ => Task.FromResult(CurrentLocationResult.Unavailable());
 }

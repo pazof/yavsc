@@ -5,7 +5,7 @@
              x:DataType="vm:BillingCommandPageViewModel"
              Header="Commande billing">
     <ScrollViewer>
-        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
             <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
                        Text="{Binding Title}"
                        FontSize="18"
@@ -40,18 +40,25 @@
             <TextBlock Grid.Row="6" Text="Adresse" VerticalAlignment="Center" Margin="0,0,12,8" />
             <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Address, Mode=TwoWay}" Margin="0,0,0,8" />
 
-            <TextBlock Grid.Row="7" Text="Latitude" VerticalAlignment="Center" Margin="0,0,12,8" />
-            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding LatitudeText, Mode=TwoWay}" Margin="0,0,0,8" />
+                <Button Grid.Row="7"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Left"
+                    Margin="0,0,0,8"
+                    Content="Utiliser ma position"
+                    Command="{Binding UseCurrentLocationCommand}" />
 
-            <TextBlock Grid.Row="8" Text="Longitude" VerticalAlignment="Center" Margin="0,0,12,8" />
-            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding LongitudeText, Mode=TwoWay}" Margin="0,0,0,8" />
+                <TextBlock Grid.Row="8" Text="Latitude" VerticalAlignment="Center" Margin="0,0,12,8" />
+                <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding LatitudeText, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
 
-            <TextBlock Grid.Row="9"
+                <TextBlock Grid.Row="9" Text="Longitude" VerticalAlignment="Center" Margin="0,0,12,8" />
+                <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding LongitudeText, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
+
+                <TextBlock Grid.Row="10"
                        Text="Prestation"
                        VerticalAlignment="Center"
                        Margin="0,0,12,8"
                        IsVisible="{Binding ShowsSinglePrestation}" />
-            <ComboBox Grid.Row="9"
+                <ComboBox Grid.Row="10"
                       Grid.Column="1"
                       ItemsSource="{Binding AvailablePrestations}"
                       SelectedItem="{Binding SelectedPrestation, Mode=TwoWay}"
@@ -67,12 +74,12 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <TextBlock Grid.Row="10"
+            <TextBlock Grid.Row="11"
                        Text="Prestations"
                        VerticalAlignment="Top"
                        Margin="0,0,12,8"
                        IsVisible="{Binding ShowsMultiplePrestations}" />
-            <ListBox Grid.Row="10"
+            <ListBox Grid.Row="11"
                      Grid.Column="1"
                      ItemsSource="{Binding MultiPrestations}"
                      IsVisible="{Binding ShowsMultiplePrestations}"
@@ -90,23 +97,23 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <TextBlock Grid.Row="11"
+            <TextBlock Grid.Row="12"
                        Text="Informations"
                        VerticalAlignment="Center"
                        Margin="0,0,12,8"
                        IsVisible="{Binding ShowsAdditionalInfo}" />
-            <TextBox Grid.Row="11"
+            <TextBox Grid.Row="12"
                      Grid.Column="1"
                      Text="{Binding AdditionalInfo, Mode=TwoWay}"
                      Margin="0,0,0,8"
                      IsVisible="{Binding ShowsAdditionalInfo}" />
 
-            <CheckBox Grid.Row="12" Grid.ColumnSpan="2"
+            <CheckBox Grid.Row="13" Grid.ColumnSpan="2"
                       Content="Je consens à la création de cette commande"
                       IsChecked="{Binding Consent, Mode=TwoWay}"
                       Margin="0,4,0,12" />
 
-            <Grid Grid.Row="13" Grid.ColumnSpan="2" ColumnDefinitions="Auto,12,*,Auto">
+            <Grid Grid.Row="14" Grid.ColumnSpan="2" ColumnDefinitions="Auto,12,*,Auto">
                 <Button Grid.Column="0"
                     Content="{Binding SubmitLabel}"
                         Command="{Binding SubmitCommand}"

@@ -8,12 +8,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PostIt.Services;
 using Yavsc;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Haircut;
-using Yavsc.Models.Relationship;
 
 namespace PostIt.ViewModels;
 
@@ -66,6 +66,8 @@ public partial class BillingCommandPageViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial QueryStatus CommandStatus { get; set; } = QueryStatus.Inserted;
+
+    public bool CanUseCurrentLocation => IsSupported && !IsBusy;
 
     public string Title => Form.Title;
     public string PerformerLabel => Performer.UserName;
@@ -120,6 +122,12 @@ public partial class BillingCommandPageViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(IsEditingExisting));
         OnPropertyChanged(nameof(SubmitLabel));
+    }
+
+    partial void OnIsBusyChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanUseCurrentLocation));
+        UseCurrentLocationCommand.NotifyCanExecuteChanged();
     }
 
     public async Task InitializeAsync(BillingQueryDetailsDto? existingQuery = null)
@@ -198,27 +206,17 @@ public partial class BillingCommandPageViewModel : ViewModelBase
             return;
         }
 
-        if (!TryParseCoordinate(LatitudeText, out var latitude))
+        if (!TryParseCoordinates(out var latitude, out var longitude, out var coordinateError))
         {
-            StatusMessage = "Latitude invalide.";
-            return;
-        }
-
-        if (!TryParseCoordinate(LongitudeText, out var longitude))
-        {
-            StatusMessage = "Longitude invalide.";
+            StatusMessage = coordinateError;
             return;
         }
 
         IsBusy = true;
         try
         {
-            var location = new Location
-            {
-                Address = Address.Trim(),
-                Latitude = latitude,
-                Longitude = longitude,
-            };
+            var address = Address.Trim();
+            var locationPayload = BuildLocationPayload(address, latitude, longitude);
 
             var payload = new BillingQueryDetailsDto
             {
@@ -233,9 +231,9 @@ public partial class BillingCommandPageViewModel : ViewModelBase
                 AdditionalInfo = string.IsNullOrWhiteSpace(AdditionalInfo) ? string.Empty : AdditionalInfo.Trim(),
                 Location = new BillingLocationDto
                 {
-                    Address = location.Address,
-                    Latitude = location.Latitude,
-                    Longitude = location.Longitude,
+                    Address = address,
+                    Latitude = latitude,
+                    Longitude = longitude,
                 }
             };
 
@@ -253,7 +251,7 @@ public partial class BillingCommandPageViewModel : ViewModelBase
                         PerformerId = Performer.PerformerId,
                         Consent,
                         EventDate = eventDate,
-                        Location = location,
+                        Location = locationPayload,
                         Reason = payload.Reason,
                         Status = payload.Status,
                     }).ConfigureAwait(true);
@@ -281,7 +279,7 @@ public partial class BillingCommandPageViewModel : ViewModelBase
                         PerformerId = Performer.PerformerId,
                         Consent,
                         EventDate = (DateTime?)eventDate,
-                        Location = location,
+                        Location = locationPayload,
                         PrestationId = SelectedPrestation.Id,
                         AdditionalInfo = string.IsNullOrWhiteSpace(AdditionalInfo) ? null : AdditionalInfo.Trim(),
                         Status = payload.Status,
@@ -311,7 +309,7 @@ public partial class BillingCommandPageViewModel : ViewModelBase
                         PerformerId = Performer.PerformerId,
                         Consent,
                         EventDate = eventDate,
-                        Location = location,
+                        Location = locationPayload,
                         Prestations = selectedPrestations.Select(x => new { PrestationId = x.Id }).ToList(),
                         Status = payload.Status,
                     }).ConfigureAwait(true);
@@ -329,6 +327,44 @@ public partial class BillingCommandPageViewModel : ViewModelBase
         catch (Exception ex)
         {
             StatusMessage = $"Erreur lors de l'envoi: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanUseCurrentLocation))]
+    private async Task UseCurrentLocationAsync()
+    {
+        if (!CanUseCurrentLocation)
+        {
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            var result = await Platform.TryGetCurrentLocationAsync(default).ConfigureAwait(true);
+            if (!result.IsSuccess || !result.Latitude.HasValue || !result.Longitude.HasValue)
+            {
+                StatusMessage = result.Message;
+                return;
+            }
+
+            LatitudeText = result.Latitude.Value.ToString(CultureInfo.InvariantCulture);
+            LongitudeText = result.Longitude.Value.ToString(CultureInfo.InvariantCulture);
+            StatusMessage = string.IsNullOrWhiteSpace(Address)
+                ? "Position récupérée. Complétez l'adresse puis envoyez la commande."
+                : result.Message;
+        }
+        catch (OperationCanceledException)
+        {
+            StatusMessage = "La récupération de la position a été annulée.";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Impossible de récupérer la position: {ex.Message}";
         }
         finally
         {
@@ -354,8 +390,8 @@ public partial class BillingCommandPageViewModel : ViewModelBase
         if (existingQuery.Location is not null)
         {
             Address = existingQuery.Location.Address ?? string.Empty;
-            LatitudeText = existingQuery.Location.Latitude.ToString(CultureInfo.InvariantCulture);
-            LongitudeText = existingQuery.Location.Longitude.ToString(CultureInfo.InvariantCulture);
+            LatitudeText = existingQuery.Location.Latitude?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+            LongitudeText = existingQuery.Location.Longitude?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
         }
 
         if (IsBrush && existingQuery.PrestationId is not null)
@@ -395,5 +431,60 @@ public partial class BillingCommandPageViewModel : ViewModelBase
     {
         return double.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out value)
             || double.TryParse(text, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
+    }
+
+    private static object BuildLocationPayload(string address, double? latitude, double? longitude)
+    {
+        if (latitude.HasValue && longitude.HasValue)
+        {
+            return new
+            {
+                Address = address,
+                Latitude = latitude.Value,
+                Longitude = longitude.Value,
+            };
+        }
+
+        return new
+        {
+            Address = address,
+        };
+    }
+
+    private bool TryParseCoordinates(out double? latitude, out double? longitude, out string error)
+    {
+        latitude = null;
+        longitude = null;
+        error = string.Empty;
+
+        var latitudeMissing = string.IsNullOrWhiteSpace(LatitudeText);
+        var longitudeMissing = string.IsNullOrWhiteSpace(LongitudeText);
+
+        if (latitudeMissing && longitudeMissing)
+        {
+            return true;
+        }
+
+        if (latitudeMissing != longitudeMissing)
+        {
+            error = "Latitude et longitude doivent être renseignées ensemble, ou laissées vides toutes les deux.";
+            return false;
+        }
+
+        if (!TryParseCoordinate(LatitudeText, out var parsedLatitude))
+        {
+            error = "Latitude invalide.";
+            return false;
+        }
+
+        if (!TryParseCoordinate(LongitudeText, out var parsedLongitude))
+        {
+            error = "Longitude invalide.";
+            return false;
+        }
+
+        latitude = parsedLatitude;
+        longitude = parsedLongitude;
+        return true;
     }
 }

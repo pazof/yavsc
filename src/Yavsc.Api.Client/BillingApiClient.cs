@@ -286,12 +286,22 @@ public sealed class BillingApiClient
             return null;
         }
 
-        return new
+        var payload = new Dictionary<string, object?>
         {
-            Address = location.Address,
-            Latitude = location.Latitude,
-            Longitude = location.Longitude,
+            ["Address"] = location.Address,
         };
+
+        if (location.Latitude.HasValue)
+        {
+            payload["Latitude"] = location.Latitude.Value;
+        }
+
+        if (location.Longitude.HasValue)
+        {
+            payload["Longitude"] = location.Longitude.Value;
+        }
+
+        return payload;
     }
 
     private sealed class BillingLocationResponse

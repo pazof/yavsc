@@ -1,5 +1,6 @@
 using System.Net.Http;
 using System.Text.Json;
+using PostIt.Services;
 using PostIt.ViewModels;
 using Yavsc;
 using Yavsc.Abstract.Workflow;
@@ -56,6 +57,61 @@ public class BillingCommandPageViewModelTests
 
         Assert.Null(api.LastPath);
         Assert.Contains("n'est pas encore pris en charge", vm.StatusMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task SubmitAsync_allows_missing_coordinates_and_omits_them_from_payload()
+    {
+        var api = new RecordingApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm = new BillingCommandPageViewModel(
+            new ActivityBrowseItemDto { Code = "dev", Name = "Développement" },
+            new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+            new CommandFormSummaryDto { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
+            client)
+        {
+            EventDateText = "2026-09-02 14:30",
+            Reason = "Point de cadrage",
+            Address = "1 rue du Test",
+            LatitudeText = string.Empty,
+            LongitudeText = string.Empty,
+            Consent = true,
+        };
+
+        await vm.SubmitCommand.ExecuteAsync(null);
+
+        using var json = JsonDocument.Parse(JsonSerializer.Serialize(api.LastBody));
+        var location = json.RootElement.GetProperty("Location");
+        Assert.Equal("1 rue du Test", location.GetProperty("Address").GetString());
+        Assert.False(location.TryGetProperty("Latitude", out _));
+        Assert.False(location.TryGetProperty("Longitude", out _));
+    }
+
+    [Fact]
+    public async Task UseCurrentLocationAsync_prefills_coordinates_from_platform_provider()
+    {
+        var original = Platform.TryGetCurrentLocationAsync;
+        try
+        {
+            Platform.TryGetCurrentLocationAsync = _ => Task.FromResult(CurrentLocationResult.Success(48.8566, 2.3522));
+
+            var api = new RecordingApi();
+            var client = new BillingApiClient(api, "https://business.example/api/v1/");
+            var vm = new BillingCommandPageViewModel(
+                new ActivityBrowseItemDto { Code = "dev", Name = "Développement" },
+                new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+                new CommandFormSummaryDto { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
+                client);
+
+            await vm.UseCurrentLocationCommand.ExecuteAsync(null);
+
+            Assert.Equal("48.8566", vm.LatitudeText);
+            Assert.Equal("2.3522", vm.LongitudeText);
+        }
+        finally
+        {
+            Platform.TryGetCurrentLocationAsync = original;
+        }
     }
 
     [Fact]
