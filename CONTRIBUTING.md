@@ -74,8 +74,8 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 À noter : la **parité du numéro de patch** porte une signification de canal :
 
-- **patch pair** (ex. `1.0.0`, `1.0.2`) → **stable**
-- **patch impair** (ex. `1.0.1`, `1.0.3`) → **preview**
+- **patch pair** (ex. `1.0.0`, `1.0.2`) → **preview**
+- **patch impair** (ex. `1.0.1`, `1.0.3`) → **stable**
 - **suffixe** (ex. `1.0.0-rc1`, `1.0.0-alpha`) → **instable**
 
 Cette convention est partagée avec le dépôt
