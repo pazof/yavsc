@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -1282,9 +1283,51 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
 
         app.UseFileServer(Config.AvatarsOptions);
 
+        app.Use(async (context, next) =>
+        {
+            await next();
+
+            if (context.Response.StatusCode != StatusCodes.Status404NotFound
+                || context.Response.HasStarted
+                || !HttpMethods.IsGet(context.Request.Method)
+                || !context.Request.Path.StartsWithSegments(Constants.AvatarsPath, out var avatarFile))
+            {
+                return;
+            }
+
+            var webHostEnvironment = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
+            var fallbackAsset = ResolveAvatarFallbackAsset(avatarFile);
+            var fallbackFile = webHostEnvironment.WebRootFileProvider.GetFileInfo(fallbackAsset.TrimStart('/'));
+            if (!fallbackFile.Exists)
+            {
+                return;
+            }
+
+            context.Response.StatusCode = StatusCodes.Status200OK;
+            context.Response.ContentType = "image/png";
+            await context.Response.SendFileAsync(fallbackFile);
+        });
+
         app.UseFileServer(Config.GitOptions);
         app.UseStaticFiles();
         return app;
+    }
+
+    private static string ResolveAvatarFallbackAsset(PathString avatarFile)
+    {
+        var fileName = avatarFile.Value ?? string.Empty;
+
+        if (fileName.EndsWith(".xs.png", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/images/Users/icon_user.xs.png";
+        }
+
+        if (fileName.EndsWith(".s.png", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/images/Users/icon_user.s.png";
+        }
+
+        return Constants.DefaultAvatar;
     }
 
 

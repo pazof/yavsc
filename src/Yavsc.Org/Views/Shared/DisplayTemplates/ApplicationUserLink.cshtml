@@ -1,5 +1,13 @@
+@using Yavsc.Abstract.Identity
 @model ApplicationUser
 
-@if (Model!=null) {
-                   <img src="/Avatars/@(Model.UserName+".xs").png" asp-append-version="true" class="smalltofhol" />
+@if (Model != null)
+{
+    var avatarSrc = UserDisplayHelpers.AvatarSrc(Model);
+    if (avatarSrc.EndsWith(".s.png", StringComparison.Ordinal))
+    {
+        avatarSrc = avatarSrc.Replace(".s.png", ".xs.png", StringComparison.Ordinal);
+    }
+
+    <img src="@avatarSrc" asp-append-version="true" class="smalltofhol" />
 }
