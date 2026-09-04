@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.8-rc12] - unstable
+
+### Added
+
+* [PostIt] Nouveau helper d'image `ImageHelper` pour charger des bitmaps depuis les ressources et depuis le web.
+* [PostIt] Affichage de l'avatar XS dans la liste des performers d'activites, avec fallback visuel (initiale utilisateur).
+* [PostIt.Tests] Nouveaux tests autour des URLs avatar et de la source d'autorite.
+* [contrib] Ajout d'un `README.md` utilitaire pour les symboles/icones.
+
+### Changed
+
+* [PostIt] Les avatars ne sont plus relies en string sur `Image.Source`: ils sont telecharges et lies en `Bitmap`.
+* [Yavsc.Api.Client] `ActivityApiClient` accepte une base d'avatar dediee et construit les URLs avatar depuis l'autorite d'identification.
+* [PostIt] Le header de `MainPage` n'utilise plus `ScrollViewer`; remplacement par une barre de commandes basee sur `WrapPanel`.
+* [PostIt] Alignement de la navigation blogs: renommage `PushMainPageAsync` -> `PushBlogsPageAsync` et ajustement de `HomePageViewModel`.
+
+### Fixed
+
+néant
+
 ## [1.0.8-rc11] - unstable
 
 ### Added

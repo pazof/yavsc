@@ -20,14 +20,18 @@ public sealed class ActivityApiClient
 
     private readonly IYavscApiClient _api;
     private readonly Uri _baseAddress;
+    private readonly Uri _avatarBaseAddress;
 
-    public ActivityApiClient(IYavscApiClient api, string businessBaseAddress)
+    public ActivityApiClient(IYavscApiClient api, string businessBaseAddress, string? avatarBaseAddress = null)
     {
         _api = api ?? throw new ArgumentNullException(nameof(api));
         if (string.IsNullOrEmpty(businessBaseAddress))
             throw new ArgumentException("Base address is required.", nameof(businessBaseAddress));
 
         _baseAddress = new Uri(businessBaseAddress, UriKind.Absolute);
+        _avatarBaseAddress = string.IsNullOrWhiteSpace(avatarBaseAddress)
+            ? _baseAddress
+            : new Uri(avatarBaseAddress, UriKind.Absolute);
     }
 
     public Task<List<ActivityInfo>> GetCatalogAsync(
@@ -58,6 +62,18 @@ public sealed class ActivityApiClient
         string activityCode,
         CancellationToken ct = default)
         => GetUsersAsync(activityCode, ct);
+
+    public string BuildAvatarXsUrl(string? userName)
+    {
+        var siteRoot = new Uri(_avatarBaseAddress, "/");
+
+        if (string.IsNullOrWhiteSpace(userName))
+        {
+            return new Uri(siteRoot, "images/Users/icon_user.xs.png").ToString();
+        }
+
+        return new Uri(siteRoot, $"avatars/{Uri.EscapeDataString(userName)}.xs.png").ToString();
+    }
 
     private string Absolute(string relativePath) => new Uri(_baseAddress, relativePath).ToString();
 }

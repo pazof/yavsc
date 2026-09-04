@@ -1,10 +1,13 @@
+using Avalonia.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Yavsc.Abstract.Workflow;
 
 namespace PostIt.ViewModels;
 
-public sealed class ActivityUserDisplayItem
+public sealed partial class ActivityUserDisplayItem : ObservableObject
 {
     public string PerformerId { get; init; } = string.Empty;
+    public string AvatarXsUrl { get; init; } = string.Empty;
     public bool HasPerformerProfile { get; init; }
     public string PerformerBadgeLabel { get; init; } = "Profil pro";
     public bool IsPerformerActive { get; init; }
@@ -13,17 +16,25 @@ public sealed class ActivityUserDisplayItem
     public string PerformerStatusBadgeBorder { get; init; } = "#C62828";
     public string PerformerStatusBadgeForeground { get; init; } = "#8E0000";
     public string UserName { get; init; } = string.Empty;
+    public string AvatarFallbackLabel { get; init; } = "?";
     public string WebSite { get; init; } = string.Empty;
     public int ExtraActivityCount { get; init; }
     public string ExtraActivityLabel { get; init; } = "Pas d'autre activité";
 
-    public static ActivityUserDisplayItem FromDto(PerformerActivity dto)
+    [ObservableProperty]
+    public partial Bitmap? AvatarImage { get; set; }
+
+    public static ActivityUserDisplayItem FromDto(PerformerActivity dto, string avatarXsUrl)
     {
         return new ActivityUserDisplayItem
         {
             PerformerId = dto.PerformerId,
+            AvatarXsUrl = avatarXsUrl,
             HasPerformerProfile = dto.HasPerformerProfile,
             UserName = dto.UserName,
+            AvatarFallbackLabel = string.IsNullOrWhiteSpace(dto.UserName)
+                ? "?"
+                : dto.UserName.Trim()[0].ToString().ToUpperInvariant(),
             WebSite = dto.WebSite,
             IsPerformerActive = dto.Active,
             PerformerStatusBadgeLabel = dto.Active ? "Actif" : "Inactif",

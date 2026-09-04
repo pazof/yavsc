@@ -135,9 +135,6 @@ private void ConfigureRootView(MainView rootView)
         var homePage = provider.GetRequiredService<HomePageViewModel>();
         var app = (App)Current!;
         await app.PushPageAsync(homePage);
-        if (!refreshed) return;
-
-        await PushMainPageAsync().ConfigureAwait(true);
     }
 
     /// <summary>
@@ -148,7 +145,7 @@ private void ConfigureRootView(MainView rootView)
     /// (interactive login from the banner). Pulled out as a helper so
     /// the two callers can't drift apart.
     /// </summary>
-    public static async Task PushMainPageAsync()
+    public static async Task PushBlogsPageAsync()
     {
         var app = (App)Current!;
         var mainVm = app.ServiceProvider!.GetRequiredService<MainViewModel>();

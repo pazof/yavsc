@@ -21,8 +21,8 @@
         </Grid.Styles>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
-            <Button Content="Rafraîchir" Command="{Binding RefreshCommand}" />
-            <TextBlock Text="Catalogue des activités" FontWeight="Bold" VerticalAlignment="Center" />
+            <Button Content="🗘 Rafraîchir" Command="{Binding RefreshCommand}" />
+            <TextBlock Text="📑 Catalogue des activités" FontWeight="Bold" VerticalAlignment="Center" />
         </StackPanel>
 
         <Grid Grid.Row="1" Margin="0,12,0,12" ColumnDefinitions="*,16,*,16,*">
@@ -76,7 +76,24 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:ActivityUserDisplayItem">
                             <StackPanel Spacing="2" Margin="0,0,0,8">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <Border Width="24"
+                                            Height="24"
+                                            CornerRadius="12"
+                                            ClipToBounds="True"
+                                            Background="#E9ECEF">
+                                        <Grid>
+                                            <TextBlock Text="{Binding AvatarFallbackLabel}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#495057" />
+                                            <Image Source="{Binding AvatarImage}"
+                                                   Width="24"
+                                                   Height="24"
+                                                   Stretch="UniformToFill" />
+                                        </Grid>
+                                    </Border>
                                     <TextBlock Text="{Binding UserName}" FontWeight="Bold" />
                                     <Border IsVisible="{Binding HasPerformerProfile}"
                                             Classes="user-badge"

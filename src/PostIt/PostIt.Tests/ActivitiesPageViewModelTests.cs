@@ -8,6 +8,20 @@ namespace PostIt.Tests;
 public class ActivitiesPageViewModelTests
 {
     [Fact]
+    public void ActivityApiClient_uses_avatar_authority_when_provided()
+    {
+        var api = new StubActivityApi();
+        var client = new ActivityApiClient(
+            api,
+            "https://api.pschneider.fr/api/v1/",
+            "https://yavsc.pschneider.fr/");
+
+        var url = client.BuildAvatarXsUrl("paul");
+
+        Assert.Equal("https://yavsc.pschneider.fr/avatars/paul.xs.png", url);
+    }
+
+    [Fact]
     public async Task ActivityApiClient_uses_business_absolute_paths()
     {
         var api = new StubActivityApi();
@@ -40,6 +54,7 @@ public class ActivitiesPageViewModelTests
         Assert.Equal("brush", vm.CurrentActivity?.Code);
         Assert.Single(vm.Performers);
         Assert.Equal("Alice", vm.Performers[0].UserName);
+        Assert.Equal("https://business.example/avatars/Alice.xs.png", vm.Performers[0].AvatarXsUrl);
         Assert.True(vm.Performers[0].HasPerformerProfile);
         Assert.True(vm.Performers[0].IsPerformerActive);
         Assert.Equal("Actif", vm.Performers[0].PerformerStatusBadgeLabel);
@@ -50,6 +65,7 @@ public class ActivitiesPageViewModelTests
         Assert.Equal("brush-pro", vm.CurrentActivity?.Code);
         Assert.Single(vm.Performers);
         Assert.Equal("Bob", vm.Performers[0].UserName);
+        Assert.Equal("https://business.example/avatars/Bob.xs.png", vm.Performers[0].AvatarXsUrl);
         Assert.True(vm.Performers[0].HasPerformerProfile);
         Assert.False(vm.Performers[0].IsPerformerActive);
         Assert.Equal("Inactif", vm.Performers[0].PerformerStatusBadgeLabel);

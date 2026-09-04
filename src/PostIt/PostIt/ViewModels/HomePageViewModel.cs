@@ -32,7 +32,7 @@ public class HomePageViewModel : ViewModelBase
         OpenActivities = new AsyncRelayCommand(OpenActivitiesAsync);
 
     }
-    public IAsyncRelayCommand OpenBlogs { get; } = new AsyncRelayCommand(App.PushMainPageAsync);
+    public IAsyncRelayCommand OpenBlogs { get; } = new AsyncRelayCommand(App.PushBlogsPageAsync);
     public IAsyncRelayCommand OpenActivities { get; }
 
     private async Task OpenActivitiesAsync()

@@ -209,8 +209,26 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         try
         {
             var list = await _client.GetUsersAsync(activity.Code);
-            Performers = new ObservableCollection<ActivityUserDisplayItem>((list ?? new())
-                .Select(ActivityUserDisplayItem.FromDto));
+            var items = (list ?? new())
+                .Select(dto => ActivityUserDisplayItem.FromDto(dto, _client.BuildAvatarXsUrl(dto.UserName)))
+                .ToList();
+
+            await Task.WhenAll(items.Select(async item =>
+            {
+                if (string.IsNullOrWhiteSpace(item.AvatarXsUrl))
+                {
+                    return;
+                }
+
+                if (!Uri.TryCreate(item.AvatarXsUrl, UriKind.Absolute, out var avatarUri))
+                {
+                    return;
+                }
+
+                item.AvatarImage = await ImageHelper.LoadFromWeb(avatarUri);
+            }));
+
+            Performers = new ObservableCollection<ActivityUserDisplayItem>(items);
             SelectedPerformer = null;
             StatusMessage = $"{activity.Name} · {Performers.Count} utilisateur(s)";
         }
