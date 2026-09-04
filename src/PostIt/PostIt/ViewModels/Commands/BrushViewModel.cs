@@ -10,6 +10,7 @@ using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;
 using Yavsc.Models.Haircut;
 namespace PostIt.ViewModels.Commands;
+
 public partial class BrushViewModel : RdvViewModel
 {
     public override string SupportMessage => "Choisissez une prestation coiffure puis postez la commande.";
