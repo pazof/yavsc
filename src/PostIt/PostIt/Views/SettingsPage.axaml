@@ -46,8 +46,18 @@
         <TextBlock Grid.Row="10" Text="Dark mode"/>
         <CheckBox Grid.Row="11" x:Name="DarkModeCheckBox" IsChecked="{Binding DarkMode, Mode=TwoWay}"/>
 
-        <StackPanel Grid.Row="12" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Choisir l'avatar"
+        <StackPanel Grid.Row="12" Spacing="8">
+            <TextBlock Text="Avatar: PNG, JPG/JPEG, WEBP, GIF. Taille max 2 MB."
+                   Opacity="0.8"
+                   TextWrapping="Wrap" />
+
+            <TextBlock x:Name="AvatarUploadStatusText"
+                       Text=""
+                       TextWrapping="Wrap" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="ChooseAvatarButton"
+                Content="Choisir l'avatar"
                     Click="ChooseAvatar_Click"
                     Margin="0,0,8,0"/>
 
@@ -62,6 +72,7 @@
             <Button Content="Sauver"
                     Command="{Binding Save}"
                     IsEnabled="{Binding IsDirty}"/>
+                </StackPanel>
         </StackPanel>
 
     </Grid>

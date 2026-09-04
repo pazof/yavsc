@@ -357,7 +357,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
     /// single multipart file named <c>file</c> and validates the image
     /// content type before persisting it.
     /// </summary>
-    public async Task SetAvatarAsync(
+    public async Task<string> SetAvatarAsync(
         Stream imageStream,
         string fileName,
         string? contentType = null,
@@ -400,6 +400,27 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         }
 
         await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
+
+        var payload = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(payload))
+            return "Avatar mis à jour.";
+
+        try
+        {
+            using var json = JsonDocument.Parse(payload);
+            if (json.RootElement.TryGetProperty("message", out var msgEl))
+            {
+                var message = msgEl.GetString();
+                if (!string.IsNullOrWhiteSpace(message))
+                    return message;
+            }
+        }
+        catch (JsonException)
+        {
+            // Keep a user-friendly fallback when the API payload is not JSON.
+        }
+
+        return "Avatar mis à jour.";
     }
 
     public async Task LogoutAsync()
