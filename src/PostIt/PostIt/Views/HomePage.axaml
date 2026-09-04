@@ -18,5 +18,9 @@
                   Command="{Binding OpenBlogs}"
                   HorizontalAlignment="Center"
                   IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
+          <Button Content="Parcourir les activités"
+              Command="{Binding OpenActivities}"
+              HorizontalAlignment="Center"
+              IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
         </StackPanel>
 </ContentPage>

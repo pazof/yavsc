@@ -1,5 +1,61 @@
 # Changelog
 
+## [1.0.8-rc12] - unstable
+
+### Added
+
+* [PostIt] Nouveau helper d'image `ImageHelper` pour charger des bitmaps depuis les ressources et depuis le web.
+* [PostIt] Affichage de l'avatar XS dans la liste des performers d'activites, avec fallback visuel (initiale utilisateur).
+* [PostIt.Tests] Nouveaux tests autour des URLs avatar et de la source d'autorite.
+* [contrib] Ajout d'un `README.md` utilitaire pour les symboles/icones.
+
+### Changed
+
+* [PostIt] Les avatars ne sont plus relies en string sur `Image.Source`: ils sont telecharges et lies en `Bitmap`.
+* [Yavsc.Api.Client] `ActivityApiClient` accepte une base d'avatar dediee et construit les URLs avatar depuis l'autorite d'identification.
+* [PostIt] Le header de `MainPage` n'utilise plus `ScrollViewer`; remplacement par une barre de commandes basee sur `WrapPanel`.
+* [PostIt] Alignement de la navigation blogs: renommage `PushMainPageAsync` -> `PushBlogsPageAsync` et ajustement de `HomePageViewModel`.
+
+### Fixed
+
+néant
+
+## [1.0.8-rc11] - unstable
+
+### Added
+
+nothing
+
+### Changed
+
+* [Yavsc.Api.Test] Mise a jour de `Microsoft.EntityFrameworkCore.Sqlite` vers `10.0.11` afin de supprimer l'alerte NU1903 liee a `SQLitePCLRaw.lib.e_sqlite3` 2.1.11.
+* [Yavsc.Org] Nettoyage de la configuration NuGet pour le restore: suppression du fichier local `Directory.Packages.props` au profit du fichier racine centralise.
+* [Yavsc.Org] Suppression de references de packages redondantes dans le projet, sans impact fonctionnel attendu.
+
+### Fixed
+
+* [Yavsc.Api.Test] Le restore n'emet plus le warning de vulnerabilite `NU1903` sur `SQLitePCLRaw.lib.e_sqlite3`.
+* [Yavsc.Org] Suppression d'une vulnerabilite de severite elevee sur AutoMapper apres publication et consommation de la nouvelle version candidate de `HigginsSoft.IdentityServer8`.
+
+## [1.0.8-rc10] - unstable
+
+### Added
+
+* [PostIt] Une page d'historique des commandes billing permet maintenant d'ouvrir une commande existante.
+* [PostIt] Une vue "Demandes en cours" en lecture seule est disponible pour le performer, filtrée sur les statuts actifs (Inserted, Accepted, InProgress).
+* [Yavsc.Org] Nouvelles entités `Country` et `PerformerCodeInputValidation` pour piloter la validation du code entreprise performer par pays.
+
+### Changed
+
+* [PostIt] La page détail billing se préremplit depuis une commande existante (Rdv, Brush, MBrush) et passe en mode mise à jour.
+* [Yavsc.Org] Le formulaire `Manage/SetActivity` inclut désormais le pays d'exercice (`fr`, `en`, `pt`) et applique la regex associée au champ `SIREN`.
+* [Yavsc.Org] La vérification externe du numéro d'entreprise est conservée uniquement pour le pays `fr`.
+
+### Fixed
+
+* [PostIt] Le flux historique n'est plus limité à une simple liste: l'action d'ouverture charge la commande cible puis navigue vers la page détail.
+* [Yavsc.Org] Le champ `SIREN` n'est plus validé avec une règle unique indépendante du pays d'exercice.
+
 ## [1.0.8-rc9] - unstable
 
 ### Added

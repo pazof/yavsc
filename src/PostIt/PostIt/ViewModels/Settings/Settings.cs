@@ -26,7 +26,7 @@ public partial class Settings : ViewModelBase
     public partial string BlogsApiUrl { get; set; } = "https://blogs.pschneider.fr/api/v1/";
 
     [ObservableProperty]
-    public partial string BusinessApiUrl { get; set; } = "https://business.pschneider.fr/api/v1/";
+    public partial string ApiUrl { get; set; } = "https://api.pschneider.fr/api/v1/";
 
     [ObservableProperty]
     public partial string SearchText { get; set; } = string.Empty;
@@ -45,7 +45,7 @@ public partial class Settings : ViewModelBase
 
     partial void OnDarkModeChanged(bool value) => MarkDirty();
     partial void OnBlogsApiUrlChanged(string value) => MarkDirty();
-    partial void OnBusinessApiUrlChanged(string value) => MarkDirty();
+    partial void OnApiUrlChanged(string value) => MarkDirty();
     partial void OnSearchTextChanged(string value) => MarkDirty();
 
     /// <summary>
@@ -154,7 +154,10 @@ public partial class Settings : ViewModelBase
     {
         "openid",        // OIDC: required for the id_token
         "profile",       // OIDC: standard profile claims
-        "offline_access" // OIDC: required to receive a refresh_token
+        "offline_access", // OIDC: required to receive a refresh_token
+        "blogs",
+        "api"
+
     };
 
     /// <summary>
@@ -297,8 +300,15 @@ public partial class Settings : ViewModelBase
             // → our overridden dispatcher-safe marshaller below.
             else lock (_mutationGate)
             {
+                var legacyApiUrl = TryReadLegacyApiUrl(json);
                 this.Authentication = settings.Authentication;
                 this.DarkMode = settings.DarkMode;
+                this.BlogsApiUrl = !string.IsNullOrWhiteSpace(settings.BlogsApiUrl)
+                    ? settings.BlogsApiUrl
+                    : legacyApiUrl ?? this.BlogsApiUrl;
+                this.ApiUrl = !string.IsNullOrWhiteSpace(settings.ApiUrl)
+                    ? settings.ApiUrl
+                    : this.ApiUrl;
                 this.SearchText = settings.SearchText ?? string.Empty;
                 if (!(settings.Authentication is null))
                 {
@@ -343,6 +353,26 @@ public partial class Settings : ViewModelBase
         }
     }
 
+    private static string? TryReadLegacyApiUrl(string json)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            if (doc.RootElement.TryGetProperty("ApiUrl", out var apiUrl)
+                && apiUrl.ValueKind == JsonValueKind.String)
+            {
+                return apiUrl.GetString();
+            }
+        }
+        catch
+        {
+            // Ignore legacy payload parse errors: normal deserialization
+            // already reports actionable diagnostics to the caller.
+        }
+
+        return null;
+    }
+
     private void UseDefaultSettings()
     {
         this.Authentication = new AuthenticationSettings
@@ -353,6 +383,8 @@ public partial class Settings : ViewModelBase
             Scopes = AuthenticationSettings.DefaultScopes
         };
         this.DarkMode = false;
+        this.BlogsApiUrl = "https://blogs.pschneider.fr/api/v1/";
+        this.ApiUrl = "https://api.pschneider.fr/api/v1/";
         this.SearchText = string.Empty;
     }
 

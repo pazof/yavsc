@@ -1762,19 +1762,6 @@ namespace Yavsc.Migrations
                     b.ToTable("Color");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Forms.Form", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Summary")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Form");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Haircut.BrusherProfile", b =>
                 {
                     b.Property<string>("UserId")
@@ -2997,6 +2984,92 @@ namespace Yavsc.Migrations
                     b.ToTable("CommandForm");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Workflow.Country", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("Countries");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "fr",
+                            DisplayName = "France"
+                        },
+                        new
+                        {
+                            Code = "en",
+                            DisplayName = "England"
+                        },
+                        new
+                        {
+                            Code = "pt",
+                            DisplayName = "Portugal"
+                        });
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Workflow.PerformerCodeInputValidation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CountryCode")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("RegularExpression")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryCode");
+
+                    b.ToTable("PerformerCodeInputValidations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CountryCode = "fr",
+                            ErrorMessage = "Le code FR doit contenir entre 9 et 14 chiffres.",
+                            RegularExpression = "^[0-9]{9,14}$"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            CountryCode = "en",
+                            ErrorMessage = "Le code EN doit contenir entre 8 et 14 caracteres alphanumeriques.",
+                            RegularExpression = "^[A-Za-z0-9]{8,14}$"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            CountryCode = "pt",
+                            ErrorMessage = "Le code PT doit contenir exactement 9 chiffres.",
+                            RegularExpression = "^[0-9]{9}$"
+                        });
+                });
+
             modelBuilder.Entity("Yavsc.Models.Workflow.PerformerProfile", b =>
                 {
                     b.Property<string>("PerformerId")
@@ -3010,6 +3083,11 @@ namespace Yavsc.Migrations
 
                     b.Property<bool>("Active")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("ExerciseCountryCode")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
 
                     b.Property<int?>("MaxDailyCost")
                         .HasColumnType("integer");
@@ -4319,6 +4397,17 @@ namespace Yavsc.Migrations
                         .IsRequired();
 
                     b.Navigation("Context");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Workflow.PerformerCodeInputValidation", b =>
+                {
+                    b.HasOne("Yavsc.Models.Workflow.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryCode")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Workflow.PerformerProfile", b =>

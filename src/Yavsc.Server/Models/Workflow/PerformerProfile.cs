@@ -4,12 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Yavsc.Models.Workflow
 {
     using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
     using Models.Relationship;
     using Newtonsoft.Json;
     using Yavsc.Attributes.Validation;
     using Yavsc.Workflow;
 
-    public class PerformerProfile : IPerformerProfile {
+    public class PerformerProfile : IPerformerProfile, IValidatableObject {
 
         [Key]
         public string PerformerId { get; set; }
@@ -20,8 +22,11 @@ namespace Yavsc.Models.Workflow
         [Display(Name="Activity"), JsonIgnore]
         public virtual List<UserActivity> Activity { get; set; }
 
-        [Required,YaStringLength(14),Display(Name="SIREN"),
-        RegularExpression(@"^[0-9]{9,14}$", ErrorMessage = "Only numbers are allowed here")]
+        [Required, Display(Name = "Country of exercise")]
+        [RegularExpression("^[A-Za-z]{2}$", ErrorMessage = "Country code must be a 2-letter code.")]
+        public string ExerciseCountryCode { get; set; } = "fr";
+
+        [Required,YaStringLength(14),Display(Name="SIREN")]
         public string SIREN { get; set; }
 
         public long OrganizationAddressId { get; set; }
@@ -59,6 +64,41 @@ namespace Yavsc.Models.Workflow
         public bool DoesBlog { get {
             return Performer?.Posts?.Count > 0 ;
         } }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var countryCode = PerformerCodeInputValidationCatalog.NormalizeCountryCode(ExerciseCountryCode);
+
+            if (string.IsNullOrWhiteSpace(countryCode))
+            {
+                yield return new ValidationResult(
+                    "Le pays d'exercice est requis.",
+                    new[] { nameof(ExerciseCountryCode) });
+                yield break;
+            }
+
+            var rule = PerformerCodeInputValidationCatalog.GetRule(countryCode);
+            if (rule is null)
+            {
+                yield return new ValidationResult(
+                    "Le pays d'exercice doit etre l'un des suivants: fr, en, pt.",
+                    new[] { nameof(ExerciseCountryCode) });
+                yield break;
+            }
+
+            if (string.IsNullOrWhiteSpace(SIREN))
+            {
+                yield break;
+            }
+
+            var normalizedCode = SIREN.Trim();
+            if (!Regex.IsMatch(normalizedCode, rule.RegularExpression, RegexOptions.CultureInvariant))
+            {
+                yield return new ValidationResult(
+                    rule.ErrorMessage,
+                    new[] { nameof(SIREN) });
+            }
+        }
 
     }
 }

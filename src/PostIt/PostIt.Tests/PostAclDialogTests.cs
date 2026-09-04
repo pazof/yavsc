@@ -95,7 +95,7 @@ public class PostAclDialogTests
             HttpMethod method, string path, object? body = null,
             CancellationToken ct = default)
         {
-            var absolute = new Uri(new Uri(Settings.BusinessApiUrl), path);
+            var absolute = new Uri(new Uri(Settings.ApiUrl), path);
             using var req = new HttpRequestMessage(method, absolute);
             using var resp = _http.SendAsync(req, ct).GetAwaiter().GetResult();
             resp.EnsureSuccessStatusCode();
@@ -123,8 +123,8 @@ public class PostAclDialogTests
         var handler = new CountingHttpHandler();
         var settings = new Settings();
         var api = new TestableYavscApiClient(settings, new TokenStore(System.IO.Path.GetTempFileName()), handler);
-        var aclClient = new BlogAclApiClient(api, settings.BusinessApiUrl);
-        var circleClient = new CircleApiClient(api, settings.BusinessApiUrl);
+        var aclClient = new BlogAclApiClient(api, settings.ApiUrl);
+        var circleClient = new CircleApiClient(api, settings.ApiUrl);
 
         var services = new ServiceCollection();
         services.AddSingleton(settings);

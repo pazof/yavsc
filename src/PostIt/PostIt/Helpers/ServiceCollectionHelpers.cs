@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
+using PostIt.Views.Commands;
 using Yavsc.Api.Client;
 
 namespace PostIt.Helpers;
@@ -23,6 +24,11 @@ public static class ServiceCollectionHelpers
         var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
         var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
         var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
+        var activityClient = new ActivityApiClient(
+            api,
+            settings.ApiUrl,
+            settings.Authentication?.Authority);
+        var billingClient = new BillingApiClient(api, settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
 
         // Vues
@@ -45,6 +51,11 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<HomePage>();
         services.AddSingleton<SignaturePage>();
         services.AddSingleton<CirclesPage>();
+        services.AddSingleton<ActivitiesPage>();
+        services.AddTransient<CommandFormsPage>();
+        services.AddTransient<RdvPage>();
+        services.AddTransient<BrushPage>();
+        services.AddTransient<BillingQueriesPage>();
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);
@@ -52,10 +63,14 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(circleClient);
         services.AddSingleton(blogAclClient);
         services.AddSingleton(userSearchClient);
+        services.AddSingleton(activityClient);
+        services.AddSingleton(billingClient);
         services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddSingleton<HomePageViewModel>();
         services.AddSingleton<SignaturePageViewModel>();
         services.AddSingleton<CirclesPageViewModel>();
+        services.AddSingleton<ActivitiesPageViewModel>();
+        services.AddTransient<SelectableHairPrestationItem>();
 
         // Dialogs (modal-light pages): the ViewLocator resolves
         // them when a caller pushes a PostAclDialogViewModel or

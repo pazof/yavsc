@@ -19,6 +19,7 @@ namespace Yavsc.ApiControllers
     using Yavsc.ViewModels.Auth;
     using Yavsc.Server.Helpers;
 
+    [Authorize]
     [Route(Constants.APIPrefix + "/bill"), Authorize]
     public class BillingController : Controller
     {

@@ -62,9 +62,16 @@ public partial class SignaturePage : ContentPage
         var h = PadFrame.Bounds.Height;
         if (w <= 0 || h <= 0) return;
 
+        var pending = _control.PendingStroke;
         var strokes = _control.Strokes;
+        int sealedCount = strokes.Count - pending.Count;
+        if (sealedCount < 0)
+        {
+            sealedCount = 0;
+        }
+
         int i = 0;
-        while (i < strokes.Count)
+        while (i < sealedCount)
         {
             int k = strokes[i];
             if (k <= 0) break;
@@ -84,6 +91,28 @@ public partial class SignaturePage : ContentPage
                 int ny = strokes[i++];
                 pts.Add(new Point(nx / CoordinateMax * w, ny / CoordinateMax * h));
             }
+            poly.Points = pts;
+            InkLayer.Children.Add(poly);
+        }
+
+        if (pending.Count > 0)
+        {
+            var poly = new Polyline
+            {
+                Stroke = StrokeBrush,
+                StrokeThickness = StrokeThickness,
+                StrokeLineCap = PenLineCap.Round,
+                StrokeJoin = PenLineJoin.Round,
+            };
+
+            var pts = new List<Point>(pending.Count / 2);
+            for (int p = 0; p < pending.Count; p += 2)
+            {
+                int nx = pending[p];
+                int ny = pending[p + 1];
+                pts.Add(new Point(nx / CoordinateMax * w, ny / CoordinateMax * h));
+            }
+
             poly.Points = pts;
             InkLayer.Children.Add(poly);
         }

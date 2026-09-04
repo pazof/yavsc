@@ -49,6 +49,19 @@ Les tests sont répartis en :
   item « Tests d'intégration smoke par BC ».
 - `src/PostIt.Tests/` — tests unitaires du client desktop PostIt.
 
+## Onboarding assiste par agents IA
+
+Pour accelerer la prise en main du depot avec Copilot/Plan/Explore :
+
+- Parcours pas-a-pas : [doc/onboarding-agents.md](./doc/onboarding-agents.md)
+- Playbook d'usage des agents : [doc/agent-playbook.md](./doc/agent-playbook.md)
+- Matrice intentions -> agent -> preuves : [doc/agent-intent-matrix.md](./doc/agent-intent-matrix.md)
+
+Regle minimale en contribution assistee par agent :
+- expliciter l'impact architecture,
+- justifier le niveau de tests execute,
+- documenter les risques residuels.
+
 ## Le CHANGELOG.md
 
 Le `CHANGELOG.md` est un document de changement de version
@@ -61,8 +74,8 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 À noter : la **parité du numéro de patch** porte une signification de canal :
 
-- **patch pair** (ex. `1.0.0`, `1.0.2`) → **stable**
-- **patch impair** (ex. `1.0.1`, `1.0.3`) → **preview**
+- **patch pair** (ex. `1.0.0`, `1.0.2`) → **preview**
+- **patch impair** (ex. `1.0.1`, `1.0.3`) → **stable**
 - **suffixe** (ex. `1.0.0-rc1`, `1.0.0-alpha`) → **instable**
 
 Cette convention est partagée avec le dépôt

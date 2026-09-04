@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 using Yavsc.Server.Helpers;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Yavsc.Controllers
 {
@@ -13,7 +15,7 @@ namespace Yavsc.Controllers
 
         public SIRENExceptionsController(ApplicationDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: SIRENExceptions
@@ -50,13 +52,39 @@ namespace Yavsc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ExceptionSIREN exceptionSIREN)
         {
+            exceptionSIREN ??= new ExceptionSIREN();
+            exceptionSIREN.SIREN = NormalizeSiren(exceptionSIREN.SIREN);
+
+            if (string.IsNullOrWhiteSpace(exceptionSIREN.SIREN) || exceptionSIREN.SIREN.Length != 9 || !exceptionSIREN.SIREN.All(char.IsDigit))
+            {
+                ModelState.AddModelError(nameof(ExceptionSIREN.SIREN), "Le SIREN doit contenir exactement 9 chiffres.");
+            }
+
+            if (_context.ExceptionsSIREN.Any(e => e.SIREN == exceptionSIREN.SIREN))
+            {
+                ModelState.AddModelError(nameof(ExceptionSIREN.SIREN), "Ce SIREN est deja dans la liste des exceptions.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.ExceptionsSIREN.Add(exceptionSIREN);
-                _context.SaveChanges(User.GetUserId());
-                return RedirectToAction("Index");
+                try
+                {
+                    _context.SaveChanges(User.GetUserId());
+                    return RedirectToAction("Index");
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError(string.Empty, "Impossible d'enregistrer cette exception SIREN.");
+                }
             }
             return View(exceptionSIREN);
+        }
+
+        private static string NormalizeSiren(string? siren)
+        {
+            if (string.IsNullOrWhiteSpace(siren)) return string.Empty;
+            return new string(siren.Where(char.IsDigit).ToArray());
         }
 
         // GET: SIRENExceptions/Edit/5

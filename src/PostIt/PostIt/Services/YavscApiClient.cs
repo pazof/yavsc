@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -349,6 +350,77 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             IdToken: result.IdentityToken ?? _tokens.IdToken);
 
         _store.Save(_tokens);
+    }
+
+    /// <summary>
+    /// Upload a user avatar to the Yavsc API. The server expects a
+    /// single multipart file named <c>file</c> and validates the image
+    /// content type before persisting it.
+    /// </summary>
+    public async Task<string> SetAvatarAsync(
+        Stream imageStream,
+        string fileName,
+        string? contentType = null,
+        CancellationToken ct = default)
+    {
+        if (imageStream is null)
+            throw new ArgumentNullException(nameof(imageStream));
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw new ArgumentException("A file name is required.", nameof(fileName));
+
+        var endpoint = new Uri(new Uri(Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "account/set-avatar");
+
+        await EnsureFreshTokenAsync(ct).ConfigureAwait(false);
+
+        var attemptUpload = async () =>
+        {
+            if (imageStream.CanSeek)
+                imageStream.Position = 0;
+
+            using var content = new MultipartFormDataContent();
+            using var fileContent = new StreamContent(imageStream);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(
+                string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType);
+            content.Add(fileContent, "file", fileName);
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
+            {
+                Content = content,
+            };
+
+            return await Http.SendAsync(request, ct).ConfigureAwait(false);
+        };
+
+        var response = await attemptUpload().ConfigureAwait(false);
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            response.Dispose();
+            await ForceRefreshAsync(ct).ConfigureAwait(false);
+            response = await attemptUpload().ConfigureAwait(false);
+        }
+
+        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
+
+        var payload = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(payload))
+            return "Avatar mis à jour.";
+
+        try
+        {
+            using var json = JsonDocument.Parse(payload);
+            if (json.RootElement.TryGetProperty("message", out var msgEl))
+            {
+                var message = msgEl.GetString();
+                if (!string.IsNullOrWhiteSpace(message))
+                    return message;
+            }
+        }
+        catch (JsonException)
+        {
+            // Keep a user-friendly fallback when the API payload is not JSON.
+        }
+
+        return "Avatar mis à jour.";
     }
 
     public async Task LogoutAsync()

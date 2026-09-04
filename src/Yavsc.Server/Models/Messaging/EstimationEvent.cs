@@ -13,15 +13,15 @@ namespace Yavsc.Models.Messaging
         {
             Topic = "Estimation";
             Estimation = estimate;
-            perfer = estimate.Owner;
+            performer = estimate.Owner;
 
             ProviderInfo = new ProviderClientInfo {
-                Rate = perfer.Rate,
-                UserName = perfer.Performer.UserName,
-                Avatar = perfer.Performer.Avatar,
-                UserId = perfer.PerformerId
+                Rate = performer.Rate,
+                UserName = performer.Performer.UserName,
+                Avatar = performer.Performer.Avatar,
+                UserId = performer.PerformerId
             };
-           Sender = perfer.Performer.UserName;
+           Sender = performer.Performer.UserName;
             _localizer = SR;
         }
 
@@ -31,7 +31,7 @@ namespace Yavsc.Models.Messaging
         ProviderClientInfo ProviderInfo { get; set; }
         Estimate Estimation { get; set; }
 
-        private readonly PerformerProfile perfer;
+        private readonly PerformerProfile performer;
 
         public string Topic
         {
@@ -47,7 +47,7 @@ namespace Yavsc.Models.Messaging
 
         public string CreateBody()
         {
-            return string.Format(_localizer["EstimationMessageToClient"], perfer.Performer.UserName, this.Estimation.Bill.Addition());
+            return string.Format(_localizer["EstimationMessageToClient"], performer.Performer.UserName, this.Estimation.Bill.Addition());
         }
     }
 }

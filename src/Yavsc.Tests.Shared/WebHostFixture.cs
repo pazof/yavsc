@@ -37,6 +37,7 @@ public abstract class WebHostFixture : IBackendFixture
     private static readonly object _sync = new object();
     private static WebApplication? _app;
     private static bool _isInitialized;
+    private static int _instanceCount;
     private static readonly List<string> _sharedAddresses = new();
     private static IServiceProvider? _sharedServices;
 
@@ -67,6 +68,7 @@ public abstract class WebHostFixture : IBackendFixture
                 InitializeAsync().GetAwaiter().GetResult();
                 _isInitialized = true;
             }
+            _instanceCount++;
             CopySharedState();
             CopySpecialisedSharedState();
         }
@@ -75,6 +77,8 @@ public abstract class WebHostFixture : IBackendFixture
     private void CopySharedState()
     {
         Addresses = _sharedAddresses.ToArray();
+        IsInitialized = _isInitialized;
+        App = _app ?? App;
     }
 
     /// <summary>Hook for specialisations to copy any other shared
@@ -149,11 +153,25 @@ public abstract class WebHostFixture : IBackendFixture
     {
         lock (_sync)
         {
-            if (!IsInitialized)
-                throw new InvalidOperationException("Cannot tear down a fixture that has not been initialized.");
-            this.App.StopAsync().GetAwaiter().GetResult();
+            if (_instanceCount > 0)
+            {
+                _instanceCount--;
+            }
+
             IsInitialized = false;
 
+            if (_instanceCount > 0)
+            {
+                return;
+            }
+
+            if (!_isInitialized)
+            {
+                return;
+            }
+
+            _app?.StopAsync().GetAwaiter().GetResult();
+            _app = null;
             _isInitialized = false;
             _sharedAddresses.Clear();
             _sharedServices = null;

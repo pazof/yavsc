@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Yavsc.Abstract.Workflow;
 using Yavsc.Server.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
@@ -8,6 +9,7 @@ using Yavsc.Models.Workflow;
 
 namespace Yavsc.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route(Constants.APIPrefix + "/activity")]
     public class ActivityApiController : Controller
@@ -24,6 +26,119 @@ namespace Yavsc.Controllers
         public IEnumerable<Activity> GetActivities()
         {
             return _context.Activities.Include(a=>a.Forms).Where( a => !a.Hidden );
+        }
+
+        [HttpGet("catalog")]
+        public async Task<ActionResult<IEnumerable<ActivityInfo>>> GetCatalog(
+            CancellationToken cancellationToken,
+            [FromQuery] string parentCode = null)
+        {
+            var activities = await _context.Activities
+                .AsNoTracking()
+                .Include(a => a.Forms)
+                .Include(a => a.Children)
+                .ThenInclude(c => c.Forms)
+                .Where(a => !a.Hidden && a.ParentCode == parentCode)
+                .OrderByDescending(a => a.Rate)
+                .ToListAsync(cancellationToken);
+
+            var codes = activities
+                .Select(a => a.Code)
+                .Concat(activities.SelectMany(a => (a.Children ?? new List<Activity>())
+                    .Where(c => !c.Hidden)
+                    .Select(c => c.Code)))
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Distinct()
+                .ToArray();
+
+            var performerCounts = await (
+                from ua in _context.UserActivities.AsNoTracking()
+                where !string.IsNullOrWhiteSpace(ua.DoesCode) && codes.Contains(ua.DoesCode)
+                group ua by ua.DoesCode into g
+                select new
+                {
+                    Code = g.Key,
+                    Count = g.Select(x => x.UserId).Distinct().Count()
+                })
+                .ToDictionaryAsync(x => x.Code, x => x.Count, cancellationToken);
+
+            var filteredActivities = activities
+                .Where(a =>
+                    (performerCounts.TryGetValue(a.Code, out var ownCount) && ownCount > 0)
+                    || (a.Children ?? new List<Activity>())
+                        .Where(c => !c.Hidden)
+                        .Any(c => performerCounts.TryGetValue(c.Code, out var childCount) && childCount > 0))
+                .ToList();
+
+            return Ok(filteredActivities.Select(a => ToBrowseItem(a, performerCounts)).ToList());
+        }
+
+        [HttpGet("{id}/users")]
+        public async Task<ActionResult<IEnumerable<PerformerActivity>>> GetUsers(
+            [FromRoute] string id,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest("Activity code is required.");
+            }
+
+            var activity = await _context.Activities
+                .AsNoTracking()
+                .SingleOrDefaultAsync(a => a.Code == id, cancellationToken);
+            if (activity is null)
+            {
+                return NotFound();
+            }
+
+            var users = await QueryDeclaredUsersAsync(id, activity.Name, cancellationToken);
+
+            return Ok(users);
+        }
+
+        [HttpGet("{id}/performers")]
+        public Task<ActionResult<IEnumerable<PerformerActivity>>> GetPerformers(
+            [FromRoute] string id,
+            CancellationToken cancellationToken)
+        {
+            // Backward-compatible alias kept for existing clients.
+            return GetUsers(id, cancellationToken);
+        }
+
+        private Task<List<PerformerActivity>> QueryDeclaredUsersAsync(
+            string activityCode,
+            string activityName,
+            CancellationToken cancellationToken)
+        {
+            return (
+                from ua in _context.UserActivities.AsNoTracking()
+                join u in _context.ApplicationUser.AsNoTracking() on ua.UserId equals u.Id into users
+                from user in users.DefaultIfEmpty()
+                join p in _context.Performers.AsNoTracking() on ua.UserId equals p.PerformerId into performerProfiles
+                from performer in performerProfiles.DefaultIfEmpty()
+                where ua.DoesCode == activityCode
+                orderby user != null ? user.UserName : ua.UserId
+                select new PerformerActivity
+                {
+                    PerformerId = ua.UserId,
+                    HasPerformerProfile = performer != null,
+                    UserName = user != null ? (user.UserName ?? string.Empty) : string.Empty,
+                    Active = performer != null && performer.Active,
+                    AcceptNotifications = performer != null && performer.AcceptNotifications,
+                    AcceptPublicContact = performer != null && performer.AcceptPublicContact,
+                    WebSite = performer != null ? (performer.WebSite ?? string.Empty) : string.Empty,
+                    ActivityCode = activityCode,
+                    ActivityName = activityName,
+                    SettingsClassName = _context.Activities
+                        .Where(a => a.Code == activityCode)
+                        .Select(a => a.SettingsClassName)
+                        .FirstOrDefault() ?? string.Empty,
+                    ExtraActivityCount = _context.UserActivities
+                        .Where(x => x.UserId == ua.UserId && x.DoesCode != activityCode)
+                        .Count()
+                })
+                .Distinct()
+                .ToListAsync(cancellationToken);
         }
 
         // GET: api/ActivityApi/5
@@ -143,6 +258,53 @@ namespace Yavsc.Controllers
         private bool ActivityExists(string id)
         {
             return _context.Activities.Count(e => e.Code == id) > 0;
+        }
+
+        private static ActivityInfo ToBrowseItem(
+            Activity activity,
+            IReadOnlyDictionary<string, int> performerCounts)
+        {
+            return new ActivityInfo
+            {
+                Code = activity.Code,
+                Name = activity.Name,
+                ParentCode = activity.ParentCode,
+                Description = activity.Description,
+                Photo = activity.Photo,
+                Rate = activity.Rate,
+                PerformerCount = performerCounts.TryGetValue(activity.Code, out var count) ? count : 0,
+                Forms = (activity.Forms ?? Enumerable.Empty<CommandForm>())
+                    .Select(f => new CommandFormSummary
+                    {
+                        Id = f.Id,
+                        ActionName = f.ActionName,
+                        Title = f.Title,
+                    })
+                    .ToList(),
+                Children = (activity.Children ?? Enumerable.Empty<Activity>())
+                    .Where(c => !c.Hidden)
+                    .Where(c => performerCounts.TryGetValue(c.Code, out var childCount) && childCount > 0)
+                    .OrderByDescending(c => c.Rate)
+                    .Select(c => new ActivityInfo
+                    {
+                        Code = c.Code,
+                        Name = c.Name,
+                        ParentCode = c.ParentCode,
+                        Description = c.Description,
+                        Photo = c.Photo,
+                        Rate = c.Rate,
+                        PerformerCount = performerCounts.TryGetValue(c.Code, out var childCount) ? childCount : 0,
+                        Forms = (c.Forms ?? Enumerable.Empty<CommandForm>())
+                            .Select(f => new CommandFormSummary
+                            {
+                                Id = f.Id,
+                                ActionName = f.ActionName,
+                                Title = f.Title,
+                            })
+                            .ToList(),
+                    })
+                    .ToList(),
+            };
         }
     }
 }

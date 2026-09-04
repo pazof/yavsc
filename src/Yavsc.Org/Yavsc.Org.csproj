@@ -34,17 +34,13 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Google.Apis.Compute.v1" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" />
-    <PackageReference Include="Microsoft.AspNetCore.Antiforgery" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="AsciiDocSharp" />
     <PackageReference Include="AsciiDocSharp.Converters.Html" />
     <PackageReference Include="BouncyCastle.Cryptography" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="YamlDotNet" />
   </ItemGroup>
   <ItemGroup>

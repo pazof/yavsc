@@ -67,7 +67,7 @@ public class BearerScopeTests
                 Scopes = userScopes,
                 RedirectUri = "postit://callback",
             },
-            BusinessApiUrl = "https://example.invalid/api/v1/",
+            ApiUrl = "https://example.invalid/api/v1/",
         };
 
         var tokensPath = Path.Combine(
@@ -266,7 +266,7 @@ public class BearerScopeTests
             // private HttpClient is independent, so we resolve the
             // absolute URI ourselves from Settings.BusinessApiUrl —
             // the same URL BlogApiClient would have set as BaseAddress.
-            var absolute = new Uri(new Uri(Settings.BusinessApiUrl), path);
+            var absolute = new Uri(new Uri(Settings.ApiUrl), path);
             using var req = new HttpRequestMessage(method, absolute);
             req.Headers.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _accessToken);

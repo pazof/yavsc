@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using ImageMagick;
 
 using Yavsc.Models;
 using Yavsc.Api.Helpers;
@@ -10,10 +12,21 @@ using System.Diagnostics;
 
 namespace Yavsc.WebApi.Controllers
 {
-    [Route("~/api/account")]
+    [Route( Constants.APIPrefix + "/account")]
     [Authorize("ApiScope")]
     public class ApiAccountController : Controller
     {
+        private const long MaxAvatarSizeBytes = 2 * 1024 * 1024;
+        private static readonly string[] AcceptedAvatarMimeTypes =
+        [
+            "image/png",
+            "image/jpeg",
+            "image/webp",
+            "image/gif",
+            "image/bmp",
+            "image/tiff",
+        ];
+
         readonly ApplicationDbContext _dbContext;
         private readonly ILogger _logger;
 
@@ -61,23 +74,102 @@ namespace Yavsc.WebApi.Controllers
             return Ok(new { host = Request.ForwardedFor() });
         }
 
-      
+
         /// <summary>
         /// Updates the avatar
         /// </summary>
         /// <returns></returns>
-        [HttpPost("~/api/set-avatar")]
+        [HttpPost("set-avatar")]
         public async Task<IActionResult> SetAvatar()
         {
             var user =  await GetUserData(User.GetUserId());
-            if (Request.Form.Files.Count!=1)
-                return new BadRequestResult();
-            if (!Request.Form.Files[0].ContentType.StartsWith("image/png"))
-                return new BadRequestResult();
+            if (!Request.HasFormContentType)
+            {
+                return BadRequest(new
+                {
+                    status = "invalid_request",
+                    message = "A multipart/form-data request is required.",
+                    acceptedMimeTypes = AcceptedAvatarMimeTypes,
+                    maxFileSizeBytes = MaxAvatarSizeBytes,
+                    outputFormat = "image/png",
+                });
+            }
 
-            var info = user.ReceiveAvatar(Request.Form.Files[0]);
-            await _dbContext.SaveChangesAsync();
-            return Ok(info);
+            if (Request.Form.Files.Count != 1)
+            {
+                return BadRequest(new
+                {
+                    status = "invalid_file_count",
+                    message = "Exactly one file is required.",
+                    acceptedMimeTypes = AcceptedAvatarMimeTypes,
+                    maxFileSizeBytes = MaxAvatarSizeBytes,
+                    outputFormat = "image/png",
+                });
+            }
+
+            var avatarFile = Request.Form.Files[0];
+            if (avatarFile.Length <= 0)
+            {
+                return BadRequest(new
+                {
+                    status = "empty_file",
+                    message = "The uploaded file is empty.",
+                    acceptedMimeTypes = AcceptedAvatarMimeTypes,
+                    maxFileSizeBytes = MaxAvatarSizeBytes,
+                    outputFormat = "image/png",
+                });
+            }
+
+            if (avatarFile.Length > MaxAvatarSizeBytes)
+            {
+                return BadRequest(new
+                {
+                    status = "file_too_large",
+                    message = "Avatar is too large.",
+                    acceptedMimeTypes = AcceptedAvatarMimeTypes,
+                    maxFileSizeBytes = MaxAvatarSizeBytes,
+                    outputFormat = "image/png",
+                });
+            }
+
+            if (!AcceptedAvatarMimeTypes.Any(m => string.Equals(m, avatarFile.ContentType, StringComparison.OrdinalIgnoreCase)))
+            {
+                return StatusCode(StatusCodes.Status415UnsupportedMediaType, new
+                {
+                    status = "unsupported_media_type",
+                    message = "Unsupported image format.",
+                    acceptedMimeTypes = AcceptedAvatarMimeTypes,
+                    maxFileSizeBytes = MaxAvatarSizeBytes,
+                    outputFormat = "image/png",
+                });
+            }
+
+            try
+            {
+                var info = user.ReceiveAvatar(avatarFile);
+                await _dbContext.SaveChangesAsync();
+                return Ok(new
+                {
+                    status = "uploaded",
+                    message = "Avatar uploaded successfully.",
+                    acceptedMimeTypes = AcceptedAvatarMimeTypes,
+                    maxFileSizeBytes = MaxAvatarSizeBytes,
+                    outputFormat = "image/png",
+                    avatar = info,
+                });
+            }
+            catch (MagickException ex)
+            {
+                _logger.LogWarning(ex, "Avatar upload failed: invalid image data for user {UserId}", user.Id);
+                return BadRequest(new
+                {
+                    status = "invalid_image_data",
+                    message = "Image content could not be decoded.",
+                    acceptedMimeTypes = AcceptedAvatarMimeTypes,
+                    maxFileSizeBytes = MaxAvatarSizeBytes,
+                    outputFormat = "image/png",
+                });
+            }
         }
 
         [HttpGet("identity")]

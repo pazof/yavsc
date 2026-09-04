@@ -10,7 +10,7 @@ if (Model ==null || Model.UserName==null)
   }
 }
 else {
-     string avuri = "/Avatars/" + Model.UserName + ".s.png";
+     string avuri = UserDisplayHelpers.AvatarSrc(Model);
 
 <div class="userinfo">
     <a title="Posts" asp-controller="Blogspot" asp-action="Index" asp-route-id="@Model.UserName" class="btn btn-primary">

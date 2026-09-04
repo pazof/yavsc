@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Yavsc.Models.Workflow;
 using Yavsc.Helpers;
 using Yavsc.Models.Relationship;
@@ -15,6 +16,7 @@ using Yavsc.Services;
 using Yavsc.ViewModels.Manage;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authorization;
+using IdentityServer8;
 using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
@@ -523,8 +525,45 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet]
-        public IActionResult SetAvatar()
+        public async Task<IActionResult> SetAvatar(
+            [FromServices] IdentityServerTools identityServerTools)
         {
+            var currentUser = await GetCurrentUserAsync();
+            if (currentUser == null)
+            {
+                return Challenge();
+            }
+
+            var claims = new List<Claim>
+            {
+                new("sub", currentUser.Id),
+                new("name", currentUser.UserName ?? currentUser.Email ?? currentUser.Id),
+                new("scope", "api"),
+                new("aud", "api")
+            };
+
+            // Short-lived token limited to avatar upload from this page.
+            string avatarAccessToken = string.Empty;
+            try
+            {
+                avatarAccessToken = await identityServerTools.IssueClientJwtAsync(
+                    "postit",
+                    300,
+                    new[] { "api" },
+                    new[] { "api" },
+                    claims);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "IssueClientJwtAsync failed for SetAvatar, trying direct IssueJwtAsync fallback.");
+            }
+
+            if (string.IsNullOrWhiteSpace(avatarAccessToken))
+            {
+                avatarAccessToken = await identityServerTools.IssueJwtAsync(300, claims);
+            }
+
+            ViewData["AvatarAccessToken"] = avatarAccessToken;
             return View();
         }
 
@@ -544,15 +583,19 @@ namespace Yavsc.Controllers
             {
                 var currentProfile = _dbContext.Performers.Include(x => x.OrganizationAddress)
                 .First(x => x.PerformerId == uid);
+                currentProfile.ExerciseCountryCode = NormalizeCountryCodeOrDefault(currentProfile.ExerciseCountryCode);
                 ViewBag.Activities = _dbContext.ActivityItems(existing.Activity);
+                SetExerciseCountries(currentProfile.ExerciseCountryCode);
                 return View(currentProfile);
             }
 
             ViewBag.Activities = _dbContext.ActivityItems(new List<UserActivity>());
+            SetExerciseCountries("fr");
             return View(new PerformerProfile
             {
                 PerformerId = user.Id,
                 Performer = user,
+                ExerciseCountryCode = "fr",
                 OrganizationAddress = new Location()
             });
         }
@@ -563,28 +606,42 @@ namespace Yavsc.Controllers
         {
             var user = GetCurrentUserAsync().Result;
             var uid = user.Id;
+            var postedCountryCode = model.ExerciseCountryCode;
+            model.ExerciseCountryCode = NormalizeCountryCodeOrDefault(model.ExerciseCountryCode);
+
+            // Model binding validated the raw posted payload before entering
+            // the action. If country was empty, we fallback to "fr" above,
+            // so remove the stale min-length error attached to the empty value.
+            if (string.IsNullOrWhiteSpace(postedCountryCode))
+            {
+                ModelState.Remove(nameof(PerformerProfile.ExerciseCountryCode));
+            }
+
             try
             {
                 if (ModelState.IsValid)
                 {
-
-                    var exSiren = await _dbContext.ExceptionsSIREN.FirstOrDefaultAsync(
-                        ex => ex.SIREN == model.SIREN
-                    );
-                    if (exSiren != null)
+                    var isFrenchPerformerCode = string.Equals(model.ExerciseCountryCode, "fr", StringComparison.Ordinal);
+                    if (isFrenchPerformerCode)
                     {
-                        _logger.LogInformation("Exception SIREN:" + exSiren);
-                    }
-                    else
-                    {
-                        var taskCheck = await _cchecker.CheckAsync(model.SIREN);
-                        if (!taskCheck.success)
+                        var exSiren = await _dbContext.ExceptionsSIREN.FirstOrDefaultAsync(
+                            ex => ex.SIREN == model.SIREN
+                        );
+                        if (exSiren != null)
                         {
-                            ModelState.AddModelError(
-                                "SIREN",
-                                _SR["Invalid company number"] + " (" + taskCheck.errorCode + ")"
-                            );
-                            _logger.LogInformation($"Invalid company number: {model.SIREN}/{taskCheck.errorType}/{taskCheck.errorCode}/{taskCheck.errorMessage}" );
+                            _logger.LogInformation("Exception SIREN:" + exSiren);
+                        }
+                        else
+                        {
+                            var taskCheck = await _cchecker.CheckAsync(model.SIREN);
+                            if (!taskCheck.success)
+                            {
+                                ModelState.AddModelError(
+                                    "SIREN",
+                                    _SR["Invalid company number"] + " (" + taskCheck.errorCode + ")"
+                                );
+                                _logger.LogInformation($"Invalid company number: {model.SIREN}/{taskCheck.errorType}/{taskCheck.errorCode}/{taskCheck.errorMessage}" );
+                            }
                         }
                     }
                 }
@@ -622,8 +679,33 @@ namespace Yavsc.Controllers
             }
             ViewBag.Activities = _dbContext.ActivityItems(new List<UserActivity>());
             ViewBag.GoogleSettings = _googleSettings;
+            SetExerciseCountries(model.ExerciseCountryCode);
             model.Performer = _dbContext.Users.Single(u=>u.Id == model.PerformerId);
             return View(model);
+        }
+
+        private static string NormalizeCountryCodeOrDefault(string code)
+        {
+            var normalized = PerformerCodeInputValidationCatalog.NormalizeCountryCode(code);
+            if (string.IsNullOrWhiteSpace(normalized))
+            {
+                return "fr";
+            }
+
+            return normalized;
+        }
+
+        private void SetExerciseCountries(string selectedCountryCode)
+        {
+            var selected = NormalizeCountryCodeOrDefault(selectedCountryCode);
+            var countries = new SelectList(
+                PerformerCodeInputValidationCatalog.Countries,
+                nameof(Country.Code),
+                nameof(Country.DisplayName),
+                selected);
+            ViewBag.ExerciseCountries = countries;
+            ViewBag.Countries = countries;
+            ViewBag.CountryCodeValidationRules = PerformerCodeInputValidationCatalog.Rules;
         }
 
         [HttpPost]

@@ -2,6 +2,9 @@
 @using System.Security.Claims
 @{
     ViewBag.Title = "Manage your account";
+    var avatarSrc = string.IsNullOrWhiteSpace(Model.UserName)
+        ? Yavsc.Constants.DefaultAvatar
+        : $"{Yavsc.Constants.AvatarsPath}/{Model.UserName}.s.png";
 }
 
 <h2>@ViewBag.Title</h2>
@@ -11,15 +14,15 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>UserName:</dt>
-      
-        <dd> 
+
+        <dd>
             @Model.UserName
             <a asp-action="SetUserName">[modifier]</a>
         </dd>
 
         <dt>E-mail</dt>
-      
-        <dd> 
+
+        <dd>
             @Model.EMail
 
             @if (Model.EmailConfirmed) {
@@ -46,22 +49,22 @@
 
 
         <dt>FullName:</dt>
-        <dd> 
-            @Html.DisplayFor(m=>m.FullName) 
+        <dd>
+            @Html.DisplayFor(m=>m.FullName)
              <a asp-action="SetFullName">[modifier]</a>
         </dd>
 
         @if (Model.Roles.Count()>0) {
         <dt>Roles:</dt>
-        <dd> 
+        <dd>
             @string.Join(", ",Model.Roles)
         </dd>}
         <dt>Password:</dt>
         <dd>[@{if (Model.HasPassword)
-            {<a asp-controller="Manage" 
+            {<a asp-controller="Manage"
             asp-action="ChangePassword">Change</a>}
             else
-            {<a asp-controller="Manage" 
+            {<a asp-controller="Manage"
             asp-action="SetPassword">Create</a>}}]</dd>
 
         <dt>External Logins:</dt>
@@ -76,19 +79,19 @@
             {
                 Html.DisplayText("Set");
             }
-            else 
+            else
             {
 Html.DisplayText("Modify");
             }
             }
             </a>]
         </dd>
-        
+
         <dt>Avatar:</dt>
         <dd>
-                   <img src="/Avatars/@(User.GetUserName()+".s").png" asp-append-version="true" class="smalltofhol" />
+                   <img src="@avatarSrc" asp-append-version="true" class="smalltofhol" />
             [<a asp-controller="Manage" asp-action="SetAvatar">Modify</a>]
-        </dd> 
+        </dd>
 
         <dt>Vos cercles</dt>
         <dd> (WIP) <a asp-action="Index" asp-controller="Circle">Ajouter suprimer des cercles</a>
@@ -115,8 +118,8 @@ Html.DisplayText("Modify");
 
         <dt><a href="/Blog/@Model.UserName">Your posts:</a></dt>
         <dd>@Model.PostsCounter</dd>
-       
-      <dt>TwoFactorAuthentication:</dt> 
+
+      <dt>TwoFactorAuthentication:</dt>
       <dd>
          @if (Model.TwoFactor)
          {
@@ -139,19 +142,19 @@ Html.DisplayText("Modify");
             }
          }
       </dd>
-       <dt>Calendar</dt> 
-      <dd> 
+       <dt>Calendar</dt>
+      <dd>
           @Html.DisplayText(Model.HasDedicatedCalendar?"Yes":"No" )
           @{
-            if (Model.HasDedicatedCalendar) { 
+            if (Model.HasDedicatedCalendar) {
              <text> : @Model.DedicatedCalendarId </text>
           }
           }
         [<a asp-action="SetGoogleCalendar">Select a Google calendar</a>]
       </dd>
       <environment names="Development">
-       <dt>Credits:</dt> 
-      <dd> 
+       <dt>Credits:</dt>
+      <dd>
           @(Model.Balance?.Credits ?? 0) &euro;
               [<a asp-action="Credits">Manage</a>]
       </dd>
@@ -162,9 +165,9 @@ Html.DisplayText("Modify");
           @if (Model.DiskQuota>0)
           {
             <text>
-                @(((double)Model.DiskUsage/Model.DiskQuota).ToString("%#0")) : 
+                @(((double)Model.DiskUsage/Model.DiskQuota).ToString("%#0")) :
             </text>
-          } 
+          }
           <code>
           @(Model.DiskUsage.ToString("0,#")) / @(Model.DiskQuota.ToString("0,#"))
           </code>

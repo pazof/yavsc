@@ -1,4 +1,4 @@
-APP_PROJECT_NAMES=Org Blogs
+APP_PROJECT_NAMES=Org Blogs Api
 SLNDIR=..
 
 include $(SLNDIR)/.env
@@ -9,9 +9,11 @@ generated/:
 
 generated/yavscOrg.service:
 generated/yavscBlogs.service:
+generated/yavscApi.service:
 
 generated/yavsc%.service: generated/ template.service $(SLNDIR)/.env
 	@cat template.service | APP_NAME="$*" \
+	DESTDIR="$(DESTDIR)" \
 	HTTP_HOST="$(HTTP_HOST)" \
 	HTTP_PORT="$*_$(HTTP_PORT)" \
 	BASEAPPDIR="$(BASEAPPDIR)" \
@@ -33,11 +35,12 @@ generated/yavsc%.service: generated/ template.service $(SLNDIR)/.env
 	@echo Created service file: $@
 
 
-copy-services: copy-service-Org copy-service-Blogs
+copy-services: copy-service-Org copy-service-Blogs copy-service-Api
 copy-service-Org: /etc/systemd/system/yavscOrg.service
 copy-service-Blogs: /etc/systemd/system/yavscBlogs.service
+copy-service-Api: /etc/systemd/system/yavscApi.service
 
-copy-binaries: build_publish_Org build_publish_Blogs stop-services
+copy-binaries: build_publish_Org build_publish_Blogs build_publish_Api stop-services
 	@for project in $(APP_PROJECT_NAMES); \
 		do LCAPI=$$(echo $${project}|tr [:upper:] [:lower:]) ; \
 		echo "$${project} -> $${LCAPI}" ; \
@@ -59,6 +62,8 @@ copy-binaries: build_publish_Org build_publish_Blogs stop-services
 
 build_publish_%: clean_publish_dir_%
 	@ASPNETCORE_ENV=$(CONFIGURATION) dotnet publish $(SLNDIR)/src/Yavsc.$*/Yavsc.$*.csproj
+
+build_publish: build_publish_Org build_publish_Blogs build_publish_Api
 
 clean_publish_dir_%:
 	@rm -rf $(SLNDIR)/src/Yavsc.$*/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish
@@ -84,6 +89,7 @@ stop-services:
 
 $(SLNDIR)/src/Yavsc.Org/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish: build_publish
 $(SLNDIR)/src/Yavsc.Blogs/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish: build_publish
+$(SLNDIR)/src/Yavsc.Api/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish: build_publish
 
 showConfig:
 	@echo CONFIGURATION: $(CONFIGURATION)
@@ -92,4 +98,3 @@ showConfig:
 clean:
 	@rm -rf generated
 
-.PHONY: build_publish mep showConfig copy-service-Org copy-service-Blogs reinstall clean
