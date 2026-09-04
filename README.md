@@ -28,6 +28,10 @@ sous [`doc/`](./doc/). Voir l'[index de la documentation](./doc/README.md)
 pour le sommaire complet. La racine de l'architecture est
 [Architecture.md](./doc/Architecture.md).
 
+Pour une prise en main guidee avec agents IA:
+- parcours onboarding: [doc/onboarding-agents.md](./doc/onboarding-agents.md)
+- playbook d'usage: [doc/agent-playbook.md](./doc/agent-playbook.md)
+
 
 # Construction et déploiement
 

@@ -18,6 +18,9 @@ La racine de l'architecture est [Architecture.md](Architecture.md).
 | [architecture/postit.md](architecture/postit.md) | PostIt — topologie des projets, ViewLocator custo, navigation, DI, conventions de binding |
 | [architecture/decoupage-organisation.md](architecture/decoupage-organisation.md) | Découpage des projets .NET (Abstract, Server, Org, Api, Blogs, Web, Org.Tests) |
 | [testing.md](testing.md) | Stratégie de test : conventions des dossiers, EF Core in-memory, auth stubs, scaffold partagé |
+| [onboarding-agents.md](onboarding-agents.md) | Parcours pas-à-pas pour prise en main agents IA + architecture + tests |
+| [agent-playbook.md](agent-playbook.md) | Playbook d'usage de Copilot, Plan, Explore avec scénarios et anti-patterns |
+| [agent-intent-matrix.md](agent-intent-matrix.md) | Matrice intentions développeur -> agent -> preuves attendues |
 
 ## Roadmap & design exploration
 

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
+using PostIt.Views.Commands;
 using Yavsc.Api.Client;
 
 namespace PostIt.Helpers;
@@ -49,7 +50,8 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<CirclesPage>();
         services.AddSingleton<ActivitiesPage>();
         services.AddTransient<CommandFormsPage>();
-        services.AddTransient<BillingCommandPage>();
+        services.AddTransient<RdvPage>();
+        services.AddTransient<BrushPage>();
         services.AddTransient<BillingQueriesPage>();
         // ViewModels
         services.AddSingleton(settings);

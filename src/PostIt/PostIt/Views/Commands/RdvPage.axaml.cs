@@ -1,11 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace PostIt.Views;
+namespace PostIt.Views.Commands;
 
-public partial class BillingCommandPage : ContentPage
+public partial class RdvPage : ContentPage
 {
-    public BillingCommandPage()
+    public RdvPage()
     {
         InitializeComponent();
     }

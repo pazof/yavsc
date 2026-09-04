@@ -2,7 +2,7 @@
 
 namespace PostIt.ViewModels;
 
-public abstract partial class ViewModelBase : ObservableObject
+public abstract class ViewModelBase : ObservableObject
 {
      /// <summary>
     /// Gets if the user can navigate to the next page

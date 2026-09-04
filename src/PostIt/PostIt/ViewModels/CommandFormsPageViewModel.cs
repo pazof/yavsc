@@ -81,7 +81,8 @@ public partial class CommandFormsPageViewModel : ViewModelBase
             throw new InvalidOperationException("Application PostIt indisponible.");
         }
 
-        var vm = SelectedForm.CreateCommandPageViewModel(Activity, Performer,  _billingClient);
+        var vm =  SelectedForm.CreateCommandPageViewModel(
+            Activity, Performer, _billingClient);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

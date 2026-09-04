@@ -4,7 +4,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.ViewModels;
+using PostIt.ViewModels.Commands;
 using PostIt.Views;
+using PostIt.Views.Commands;
 
 namespace PostIt;
 
@@ -41,8 +43,7 @@ public class ViewLocator : IDataTemplate
             HomePageViewModel => services.GetRequiredService<HomePage>(),
             ActivitiesPageViewModel => services.GetRequiredService<ActivitiesPage>(),
             CommandFormsPageViewModel => services.GetRequiredService<CommandFormsPage>(),
-            BillingCommandPageViewModel => services.GetRequiredService<BillingCommandPage>(),
-            BillingQueriesPageViewModel => services.GetRequiredService<BillingQueriesPage>(),
+            RdvViewModel => services.GetRequiredService<RdvPage>(),
             SignaturePageViewModel => services.GetRequiredService<SignaturePage>(),
             AddCircleMemberDialogViewModel => services.GetRequiredService<AddCircleMemberDialog>(),
             CirclesPageViewModel => services.GetRequiredService<CirclesPage>(),

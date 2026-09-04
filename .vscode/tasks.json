@@ -7,7 +7,7 @@
           "fileLocation": ["relative", "${workspaceFolder}"],
           "source": "dotnet",
           "pattern": {
-            "regexp": "^\\s+(.*)\\((\\d+),(\\d+)\\):\\s+(error|warning) (.+): (.*)$",
+            "regexp": "^\\s*(.*)\\((\\d+),(\\d+)\\):\\s+(error|warning) (.*)$",
             "file": 1,
             "line": 2,
             "column": 3,

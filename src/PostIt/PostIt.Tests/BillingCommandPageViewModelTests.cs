@@ -1,7 +1,8 @@
-using System.Net.Http;
 using System.Text.Json;
+using PostIt.Helpers;
 using PostIt.Services;
 using PostIt.ViewModels;
+using PostIt.ViewModels.Commands;
 using Yavsc;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;
@@ -16,19 +17,19 @@ public class BillingCommandPageViewModelTests
     {
         var api = new RecordingApi();
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
-        var vm = new BillingCommandPageViewModel(
+        var vm =
+          new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" }
+          .CreateCommandPageViewModel(
             new ActivityInfo { Code = "dev", Name = "Développement" },
             new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
-            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
-            client)
-        {
-            EventDateText = "2026-09-02 14:30",
-            Reason = "Point de cadrage",
-            Address = "1 rue du Test",
-            LatitudeText = "48.8566",
-            LongitudeText = "2.3522",
-            Consent = true,
-        };
+            client) as RdvViewModel;
+
+            vm.EventDate = DateTime.Parse("2026-09-02 14:30");
+        vm.Reason = "Point de cadrage";
+        vm.Address = "1 rue du Test";
+        vm.Latitude = 48.8566;
+        vm.Longitude = 2.3522;
+        vm.Consent = true;
 
         await vm.SubmitCommand.ExecuteAsync(null);
 
@@ -47,10 +48,12 @@ public class BillingCommandPageViewModelTests
     {
         var api = new RecordingApi();
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
-        var vm = new BillingCommandPageViewModel(
+
+        var vm =
+         new CommandFormSummary { Id = 13, ActionName = "Book", Title = "Réservation" }
+         .CreateCommandPageViewModel(
             new ActivityInfo { Code = "book", Name = "Book" },
             new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
-            new CommandFormSummary { Id = 13, ActionName = "Book", Title = "Réservation" },
             client);
 
         await vm.SubmitCommand.ExecuteAsync(null);
@@ -64,19 +67,19 @@ public class BillingCommandPageViewModelTests
     {
         var api = new RecordingApi();
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
-        var vm = new BillingCommandPageViewModel(
+        var vm =
+
+        new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" }
+        .CreateCommandPageViewModel(
             new ActivityInfo { Code = "dev", Name = "Développement" },
             new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
-            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
-            client)
-        {
-            EventDateText = "2026-09-02 14:30",
-            Reason = "Point de cadrage",
-            Address = "1 rue du Test",
-            LatitudeText = string.Empty,
-            LongitudeText = string.Empty,
-            Consent = true,
-        };
+            client) as RdvViewModel;
+        vm.EventDate = DateTime.Parse("2026-09-02 14:30");
+        vm.Reason = "Point de cadrage";
+        vm.Address = "1 rue du Test";
+        vm.Latitude = 0;
+        vm.Longitude = 0;
+        vm.Consent = true;
 
         await vm.SubmitCommand.ExecuteAsync(null);
 
@@ -97,16 +100,17 @@ public class BillingCommandPageViewModelTests
 
             var api = new RecordingApi();
             var client = new BillingApiClient(api, "https://business.example/api/v1/");
-            var vm = new BillingCommandPageViewModel(
+            var vm =
+             new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" }
+             .CreateCommandPageViewModel(
                 new ActivityInfo { Code = "dev", Name = "Développement" },
                 new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
-                new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
-                client);
+                client) as RdvViewModel;
 
             await vm.UseCurrentLocationCommand.ExecuteAsync(null);
 
-            Assert.Equal("48.8566", vm.LatitudeText);
-            Assert.Equal("2.3522", vm.LongitudeText);
+            Assert.Equal(48.8566, vm.Latitude);
+            Assert.Equal(2.3522, vm.Longitude);
         }
         finally
         {
@@ -126,19 +130,18 @@ public class BillingCommandPageViewModelTests
             }
         };
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
-        var vm = new BillingCommandPageViewModel(
+        var vm =
+        new CommandFormSummary { Id = 13, ActionName = "Brush", Title = "Coupe" }
+        .CreateCommandPageViewModel(
             new ActivityInfo { Code = "brush", Name = "Brush" },
             new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
-            new CommandFormSummary { Id = 13, ActionName = "Brush", Title = "Coupe" },
-            client)
-        {
-            EventDateText = "2026-09-02 14:30",
-            Address = "1 rue du Test",
-            LatitudeText = "48.8566",
-            LongitudeText = "2.3522",
-            Consent = true,
-            AdditionalInfo = "Prévoir shampoing",
-        };
+            client) as BrushViewModel;
+        vm.EventDate = DateTime.Parse("2026-09-02 14:30");
+        vm.Address = "1 rue du Test";
+        vm.Latitude = 48.8566;
+        vm.Longitude = 2.3522;
+        vm.Consent = true;
+        vm.AdditionalInfo = "Prévoir shampoing";
 
         await vm.InitializeAsync();
         vm.SelectedPrestation = vm.AvailablePrestations[1];
@@ -162,18 +165,17 @@ public class BillingCommandPageViewModelTests
             }
         };
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
-        var vm = new BillingCommandPageViewModel(
+        var vm =
+        new CommandFormSummary { Id = 14, ActionName = "MBrush", Title = "Coupe groupée" }
+        .CreateCommandPageViewModel(
             new ActivityInfo { Code = "mbrush", Name = "MBrush" },
             new ActivityUserDisplayItem { PerformerId = "perf-3", UserName = "Cara" },
-            new CommandFormSummary { Id = 14, ActionName = "MBrush", Title = "Coupe groupée" },
-            client)
-        {
-            EventDateText = "2026-09-03 10:00",
-            Address = "2 rue du Test",
-            LatitudeText = "48.8567",
-            LongitudeText = "2.3523",
-            Consent = true,
-        };
+            client) as PostIt.ViewModels.Commands.BrushViewModel;
+        vm.EventDate = DateTime.Parse("2026-09-03 10:00");
+        vm.Address = "2 rue du Test";
+        vm.Latitude = 48.8567;
+        vm.Longitude = 2.3523;
+        vm.Consent = true;
 
         await vm.InitializeAsync();
         vm.MultiPrestations[0].IsSelected = true;
@@ -200,12 +202,12 @@ public class BillingCommandPageViewModelTests
             }
         };
         var client = new BillingApiClient(api, "https://business.example/api/v1/");
-        var vm = new BillingCommandPageViewModel(
+        var vm =
+           new CommandFormSummary { Id = 13, ActionName = "Brush", Title = "Coupe" }
+         .CreateCommandPageViewModel(
             new ActivityInfo { Code = "brush", Name = "Brush" },
             new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
-            new CommandFormSummary { Id = 13, ActionName = "Brush", Title = "Coupe" },
-            client);
-
+            client) as BrushViewModel;
         await vm.InitializeAsync(new BillingQueryDetailsDto
         {
             Id = 77,

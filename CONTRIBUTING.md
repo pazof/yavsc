@@ -49,6 +49,19 @@ Les tests sont répartis en :
   item « Tests d'intégration smoke par BC ».
 - `src/PostIt.Tests/` — tests unitaires du client desktop PostIt.
 
+## Onboarding assiste par agents IA
+
+Pour accelerer la prise en main du depot avec Copilot/Plan/Explore :
+
+- Parcours pas-a-pas : [doc/onboarding-agents.md](./doc/onboarding-agents.md)
+- Playbook d'usage des agents : [doc/agent-playbook.md](./doc/agent-playbook.md)
+- Matrice intentions -> agent -> preuves : [doc/agent-intent-matrix.md](./doc/agent-intent-matrix.md)
+
+Regle minimale en contribution assistee par agent :
+- expliciter l'impact architecture,
+- justifier le niveau de tests execute,
+- documenter les risques residuels.
+
 ## Le CHANGELOG.md
 
 Le `CHANGELOG.md` est un document de changement de version

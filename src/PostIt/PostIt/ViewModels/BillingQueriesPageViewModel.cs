@@ -133,7 +133,7 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
         try
         {
             var details = await _billingClient.GetQueryAsync(Form.ActionName, SelectedQuery.Id).ConfigureAwait(true);
-            var vm = new BillingCommandPageViewModel(Activity, Performer, Form, _billingClient);
+            var vm = Form.CreateCommandPageViewModel(Activity, Performer, _billingClient);
             await vm.InitializeAsync(details).ConfigureAwait(true);
             await app.PushPageAsync(vm).ConfigureAwait(true);
         }
