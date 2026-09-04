@@ -5,7 +5,7 @@ namespace Yavsc
     public class SiteSettings
     {
         public string Title { get; set; } = "Yavsc";
-        
+
         public string Slogan { get; set; } = "";
         public string Banner { get; set; } = "";
 
@@ -26,6 +26,10 @@ namespace Yavsc
         /// </summary>
         /// <value></value>
         public string ExternalUrl { get; set; } = "http://lua.pschneider.fr";
+        /// <summary>
+        /// Base URL of the API fronting this site.
+        /// </summary>
+        public string ApiUrl { get; set; } = "";
         /// <summary>
         /// Must be a fqdn.
         /// </summary>

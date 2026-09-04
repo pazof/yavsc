@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -133,6 +134,23 @@ public static class ServiceExtensions
                         (_, _, _, _) => true
                 };
             }
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    // Fallback for clients that cannot reliably attach Authorization header
+                    // on multipart uploads. Restrict query-token support to this endpoint only.
+                    if (string.IsNullOrEmpty(context.Token)
+                        && context.Request.Path.Value?.Contains("/api/v1/account/set-avatar", StringComparison.OrdinalIgnoreCase) == true
+                        && context.Request.Query.TryGetValue("access_token", out var tokenValues))
+                    {
+                        context.Token = tokenValues.ToString();
+                    }
+
+                    return Task.CompletedTask;
+                }
+            };
         });
 
         return result;

@@ -179,7 +179,7 @@ namespace Yavsc.Server.Helpers
         /// <param name="contentType"></param>
         /// <param name="token"></param>
         /// <returns></returns> <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="user"></param>
         /// <param name="root"></param>
@@ -244,8 +244,24 @@ namespace Yavsc.Server.Helpers
 
         public static FileReceivedInfo ReceiveAvatar(this ApplicationUser user, IFormFile formFile)
         {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            if (formFile == null) throw new ArgumentNullException(nameof(formFile));
+
+            var avatarsRequestPath = Config.AvatarsOptions?.RequestPath.ToUriComponent();
+            if (string.IsNullOrWhiteSpace(avatarsRequestPath))
+            {
+                avatarsRequestPath = Constants.AvatarsPath;
+            }
+
+            var avatarsDirectory = Config.SiteSetup?.Avatars;
+            if (string.IsNullOrWhiteSpace(avatarsDirectory))
+            {
+                avatarsDirectory = "avatars";
+            }
+            Directory.CreateDirectory(avatarsDirectory);
+
             var item = new FileReceivedInfo
-            (Config.AvatarsOptions.RequestPath.ToUriComponent(),
+            (avatarsRequestPath,
                user.UserName + ".png");
 
             using (var org = formFile.OpenReadStream())
@@ -256,15 +272,15 @@ namespace Yavsc.Server.Helpers
                 using var image = new MagickImage(org);
 
                 image.Resize(size);
-                image.Write(Path.Combine(Config.SiteSetup.Avatars, item.FileName));
+                image.Write(Path.Combine(avatarsDirectory, item.FileName));
                 size.X = 64;
                 size.Y = 64;
                 image.Resize(size);
-                image.Write(Path.Combine(Config.SiteSetup.Avatars, user.UserName + ".s.png"));
+                image.Write(Path.Combine(avatarsDirectory, user.UserName + ".s.png"));
                 size.X = 32;
                 size.Y = 32;
                 image.Resize(size);
-                image.Write(Path.Combine(Config.SiteSetup.Avatars, user.UserName + ".xs.png"));
+                image.Write(Path.Combine(avatarsDirectory, user.UserName + ".xs.png"));
 
             }
 

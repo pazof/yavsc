@@ -20,6 +20,7 @@ using Yavsc.Helpers;
 using Yavsc.Interface;
 using Yavsc.Interfaces;
 using Yavsc.Models;
+using Yavsc;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
 
@@ -32,6 +33,7 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.AddConfiguration("api");
+        Config.SiteSetup = builder.Configuration.GetSection("Site").Get<SiteSettings>() ?? new SiteSettings();
 
         var services = builder.Services;
 

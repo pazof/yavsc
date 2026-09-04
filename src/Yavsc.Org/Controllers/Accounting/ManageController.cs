@@ -16,6 +16,7 @@ using Yavsc.Services;
 using Yavsc.ViewModels.Manage;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authorization;
+using IdentityServer8;
 using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
@@ -524,8 +525,45 @@ namespace Yavsc.Controllers
         }
 
         [HttpGet]
-        public IActionResult SetAvatar()
+        public async Task<IActionResult> SetAvatar(
+            [FromServices] IdentityServerTools identityServerTools)
         {
+            var currentUser = await GetCurrentUserAsync();
+            if (currentUser == null)
+            {
+                return Challenge();
+            }
+
+            var claims = new List<Claim>
+            {
+                new("sub", currentUser.Id),
+                new("name", currentUser.UserName ?? currentUser.Email ?? currentUser.Id),
+                new("scope", "api"),
+                new("aud", "api")
+            };
+
+            // Short-lived token limited to avatar upload from this page.
+            string avatarAccessToken = string.Empty;
+            try
+            {
+                avatarAccessToken = await identityServerTools.IssueClientJwtAsync(
+                    "postit",
+                    300,
+                    new[] { "api" },
+                    new[] { "api" },
+                    claims);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "IssueClientJwtAsync failed for SetAvatar, trying direct IssueJwtAsync fallback.");
+            }
+
+            if (string.IsNullOrWhiteSpace(avatarAccessToken))
+            {
+                avatarAccessToken = await identityServerTools.IssueJwtAsync(300, claims);
+            }
+
+            ViewData["AvatarAccessToken"] = avatarAccessToken;
             return View();
         }
 

@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Yavsc.WebApi.Controllers
 {
-    [Route("~/api/account")]
+    [Route( Constants.APIPrefix + "/account")]
     [Authorize("ApiScope")]
     public class ApiAccountController : Controller
     {
@@ -61,12 +61,12 @@ namespace Yavsc.WebApi.Controllers
             return Ok(new { host = Request.ForwardedFor() });
         }
 
-      
+
         /// <summary>
         /// Updates the avatar
         /// </summary>
         /// <returns></returns>
-        [HttpPost("~/api/set-avatar")]
+        [HttpPost("set-avatar")]
         public async Task<IActionResult> SetAvatar()
         {
             var user =  await GetUserData(User.GetUserId());
