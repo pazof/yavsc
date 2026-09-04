@@ -4,6 +4,9 @@
     var apiBaseUrl = string.IsNullOrWhiteSpace(SiteSettings.Value.ApiUrl)
         ? string.Empty
         : SiteSettings.Value.ApiUrl.TrimEnd('/');
+    const int maxAvatarSizeMb = 2;
+    var acceptedAvatarFormats = new[] { "png", "jpg", "jpeg", "webp", "gif", "bmp", "tiff" };
+    var acceptedAvatarMimeTypes = "image/png,image/jpeg,image/webp,image/gif,image/bmp,image/tiff";
     var setAvatarUrl = string.IsNullOrEmpty(apiBaseUrl)
         ? "/api/v1/account/set-avatar"
         : $"{apiBaseUrl}/api/v1/account/set-avatar";
@@ -21,24 +24,54 @@
 (() => {
     const bearer = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(accessToken));
     const uploadUrlBase = "@setAvatarUrl";
+    const statusNode = document.getElementById('avatar-upload-status');
     const uploadUrl = bearer
         ? uploadUrlBase + (uploadUrlBase.indexOf('?') >= 0 ? '&' : '?') + 'access_token=' + encodeURIComponent(bearer)
         : uploadUrlBase;
+
+    function setStatus(message, isError) {
+        if (!statusNode) return;
+        statusNode.textContent = message || '';
+        statusNode.style.color = isError ? '#a40000' : '#0a5f1f';
+    }
+
     Dropzone.options.postavatar = {
-        maxFilesize: 2, // MB (an avatar)
+        maxFilesize: @maxAvatarSizeMb, // MB
+        acceptedFiles: "@acceptedAvatarMimeTypes",
+        maxFiles: 1,
+        addRemoveLinks: true,
         autoProcessQueue: true,
-        accept: function(file, done) {
-            if (file.name == "justinbieber.jpg") {
-                done("Naha, you don't.");
-            }
-            else { done(); }
-        },
         url: uploadUrl,
         init: function() {
             this.on('sending', function(file, xhr) {
+                setStatus('Upload en cours...', false);
                 if (bearer) {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + bearer);
                 }
+            });
+
+            this.on('success', function(file, response) {
+                const msg = response && response.message
+                    ? response.message
+                    : 'Avatar mis a jour.';
+                setStatus(msg + ' Format de sortie: PNG.', false);
+            });
+
+            this.on('error', function(file, errorMessage, xhr) {
+                let message = 'Echec de l\'upload avatar.';
+                if (xhr && xhr.responseText) {
+                    try {
+                        const payload = JSON.parse(xhr.responseText);
+                        if (payload && payload.message) {
+                            message = payload.message;
+                        }
+                    } catch (_) {
+                    }
+                } else if (typeof errorMessage === 'string' && errorMessage.length > 0) {
+                    message = errorMessage;
+                }
+
+                setStatus(message + ' Formats supportes: @string.Join(", ", acceptedAvatarFormats). Taille max: @maxAvatarSizeMb MB.', true);
             });
         }
     };
@@ -46,6 +79,8 @@
 </script>
 }
 <img src="@previewAvatarSrc">
+<p>Formats supportes: @string.Join(", ", acceptedAvatarFormats). Taille maximale: @maxAvatarSizeMb MB. L'image finale est en PNG.</p>
+<p id="avatar-upload-status" aria-live="polite"></p>
 
 <form id="postavatar" action="@setAvatarUrl" class="dropzone" method="post" enctype="multipart/form-data">
     <div class="fallback">

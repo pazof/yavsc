@@ -29,13 +29,11 @@
       <TextBlock Grid.Row="5"
                  Text="Motif"
                  VerticalAlignment="Center"
-                 Margin="0,0,12,8"
-                 IsVisible="{Binding ShowsReason}" />
+                 Margin="0,0,12,8" />
       <TextBox Grid.Row="5"
                Grid.Column="1"
                Text="{Binding Reason, Mode=TwoWay}"
-               Margin="0,0,0,8"
-               IsVisible="{Binding ShowsReason}" />
+               Margin="0,0,0,8" />
 
       <TextBlock Grid.Row="6" Text="Adresse" VerticalAlignment="Center" Margin="0,0,12,8" />
       <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Address, Mode=TwoWay}" Margin="0,0,0,8" />
@@ -57,13 +55,11 @@
       <TextBlock Grid.Row="12"
                  Text="Informations"
                  VerticalAlignment="Center"
-                 Margin="0,0,12,8"
-                 IsVisible="{Binding ShowsAdditionalInfo}" />
+                 Margin="0,0,12,8" />
       <TextBox Grid.Row="12"
                Grid.Column="1"
                Text="{Binding AdditionalInfo, Mode=TwoWay}"
-               Margin="0,0,0,8"
-               IsVisible="{Binding ShowsAdditionalInfo}" />
+               Margin="0,0,0,8" />
 
       <CheckBox Grid.Row="13" Grid.ColumnSpan="2"
                 Content="Je consens à la création de cette commande"

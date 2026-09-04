@@ -24,8 +24,8 @@ public static class ServiceCollectionHelpers
         var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
         var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
         var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
-        var activityClient = new ActivityApiClient(api, settings.BusinessApiUrl);
-        var billingClient = new BillingApiClient(api, settings.BusinessApiUrl);
+        var activityClient = new ActivityApiClient(api, settings.ApiUrl);
+        var billingClient = new BillingApiClient(api, settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
 
         // Vues

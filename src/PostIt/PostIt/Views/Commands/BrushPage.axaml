@@ -33,13 +33,11 @@
       <TextBlock Grid.Row="5"
                  Text="Motif"
                  VerticalAlignment="Center"
-                 Margin="0,0,12,8"
-                 IsVisible="{Binding ShowsReason}" />
+                 Margin="0,0,12,8" />
       <TextBox Grid.Row="5"
                Grid.Column="1"
                Text="{Binding Reason, Mode=TwoWay}"
-               Margin="0,0,0,8"
-               IsVisible="{Binding ShowsReason}" />
+               Margin="0,0,0,8" />
 
       <TextBlock Grid.Row="6" Text="Adresse" VerticalAlignment="Center" Margin="0,0,12,8" />
       <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Address, Mode=TwoWay}" Margin="0,0,0,8" />
@@ -60,14 +58,12 @@
       <TextBlock Grid.Row="10"
                  Text="Prestation"
                  VerticalAlignment="Center"
-                 Margin="0,0,12,8"
-                 IsVisible="{Binding ShowsSinglePrestation}" />
+                 Margin="0,0,12,8" />
       <ComboBox Grid.Row="10"
                 Grid.Column="1"
                 ItemsSource="{Binding AvailablePrestations}"
                 SelectedItem="{Binding SelectedPrestation, Mode=TwoWay}"
-                Margin="0,0,0,8"
-                IsVisible="{Binding ShowsSinglePrestation}">
+                Margin="0,0,0,8">
         <ComboBox.ItemTemplate>
           <DataTemplate>
             <StackPanel Spacing="2">
@@ -78,39 +74,14 @@
         </ComboBox.ItemTemplate>
       </ComboBox>
 
-      <TextBlock Grid.Row="11"
-                 Text="Prestations"
-                 VerticalAlignment="Top"
-                 Margin="0,0,12,8"
-                 IsVisible="{Binding ShowsMultiplePrestations}" />
-      <ListBox Grid.Row="11"
-               Grid.Column="1"
-               ItemsSource="{Binding MultiPrestations}"
-               IsVisible="{Binding ShowsMultiplePrestations}"
-               MaxHeight="180"
-               Margin="0,0,0,8">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Margin="0,0,0,8">
-              <StackPanel Spacing="2">
-                <TextBlock Text="{Binding Title}" FontWeight="Bold" />
-                <TextBlock Text="{Binding Details}" FontSize="11" Opacity="0.7" TextWrapping="Wrap" />
-              </StackPanel>
-            </CheckBox>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
-
       <TextBlock Grid.Row="12"
                  Text="Informations"
                  VerticalAlignment="Center"
-                 Margin="0,0,12,8"
-                 IsVisible="{Binding ShowsAdditionalInfo}" />
+                 Margin="0,0,12,8" />
       <TextBox Grid.Row="12"
                Grid.Column="1"
                Text="{Binding AdditionalInfo, Mode=TwoWay}"
-               Margin="0,0,0,8"
-               IsVisible="{Binding ShowsAdditionalInfo}" />
+               Margin="0,0,0,8" />
 
       <CheckBox Grid.Row="13" Grid.ColumnSpan="2"
                 Content="Je consens à la création de cette commande"

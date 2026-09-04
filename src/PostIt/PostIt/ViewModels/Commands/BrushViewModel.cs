@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;
+using Yavsc.Models.Billing;
 using Yavsc.Models.Haircut;
 namespace PostIt.ViewModels.Commands;
 
@@ -20,7 +21,6 @@ public partial class BrushViewModel : RdvViewModel
 
     [ObservableProperty]
     public partial HairPrestationDto? SelectedPrestation { get; set; }
-
 
     public BrushViewModel(ActivityInfo activity, ActivityUserDisplayItem performer, CommandFormSummary form, BillingApiClient billingClient)
         : base(activity, performer, form, billingClient)

@@ -26,7 +26,7 @@ public partial class Settings : ViewModelBase
     public partial string BlogsApiUrl { get; set; } = "https://blogs.pschneider.fr/api/v1/";
 
     [ObservableProperty]
-    public partial string BusinessApiUrl { get; set; } = "https://api.pschneider.fr/api/v1/";
+    public partial string ApiUrl { get; set; } = "https://api.pschneider.fr/api/v1/";
 
     [ObservableProperty]
     public partial string SearchText { get; set; } = string.Empty;
@@ -45,7 +45,7 @@ public partial class Settings : ViewModelBase
 
     partial void OnDarkModeChanged(bool value) => MarkDirty();
     partial void OnBlogsApiUrlChanged(string value) => MarkDirty();
-    partial void OnBusinessApiUrlChanged(string value) => MarkDirty();
+    partial void OnApiUrlChanged(string value) => MarkDirty();
     partial void OnSearchTextChanged(string value) => MarkDirty();
 
     /// <summary>
@@ -306,9 +306,9 @@ public partial class Settings : ViewModelBase
                 this.BlogsApiUrl = !string.IsNullOrWhiteSpace(settings.BlogsApiUrl)
                     ? settings.BlogsApiUrl
                     : legacyApiUrl ?? this.BlogsApiUrl;
-                this.BusinessApiUrl = !string.IsNullOrWhiteSpace(settings.BusinessApiUrl)
-                    ? settings.BusinessApiUrl
-                    : this.BusinessApiUrl;
+                this.ApiUrl = !string.IsNullOrWhiteSpace(settings.ApiUrl)
+                    ? settings.ApiUrl
+                    : this.ApiUrl;
                 this.SearchText = settings.SearchText ?? string.Empty;
                 if (!(settings.Authentication is null))
                 {
@@ -384,7 +384,7 @@ public partial class Settings : ViewModelBase
         };
         this.DarkMode = false;
         this.BlogsApiUrl = "https://blogs.pschneider.fr/api/v1/";
-        this.BusinessApiUrl = "https://api.pschneider.fr/api/v1/";
+        this.ApiUrl = "https://api.pschneider.fr/api/v1/";
         this.SearchText = string.Empty;
     }
 

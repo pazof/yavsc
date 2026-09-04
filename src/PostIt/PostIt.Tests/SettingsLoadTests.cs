@@ -89,7 +89,7 @@ public class SettingsLoadTests
                         settings.Authentication.RedirectUri =
                             global::AuthenticationSettings.DesktopRedirectUri;
 
-                        settings.BusinessApiUrl = flip
+                        settings.ApiUrl = flip
                             ? "https://a.example.test/api/v1/"
                             : "https://b.example.test/api/v1/";
 

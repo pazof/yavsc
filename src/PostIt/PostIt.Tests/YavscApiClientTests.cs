@@ -58,7 +58,7 @@ public class YavscApiClientTests
             // calls CallAsync("posts", ...) directly (bypassing
             // BlogApiClient, which is the only thing that would set
             // it in production). Mirror prod here.
-            reloaded.Http.BaseAddress = new Uri(settings.BusinessApiUrl);
+            reloaded.Http.BaseAddress = new Uri(settings.ApiUrl);
 
             var posts = await reloaded.CallAsync<List<StubApiServer.Post>>(
                 HttpMethod.Get, "posts", TestContext.Current.CancellationToken);
@@ -118,7 +118,7 @@ public class YavscApiClientTests
                 RedirectUri = "postit://callback",
                 Scopes = new[] { "openid" },
             },
-            BusinessApiUrl = "https://127.0.0.1:5003/api/v1",
+            ApiUrl = "https://127.0.0.1:5003/api/v1",
         };
         var client = new YavscApiClient(settings, new TokenStore(Path.Combine(
             Path.GetTempPath(), $"postit-tests-noop-{Guid.NewGuid():N}.json")));
@@ -162,7 +162,7 @@ public class YavscApiClientTests
             RedirectUri = authority.LoopbackRedirectUri,
             Scopes = new[] { "openid", "profile", "blog" }
         },
-        BusinessApiUrl = apiBaseUrl
+        ApiUrl = apiBaseUrl
     };
 
     private static async Task<YavscApiClient> LoginAndPersistAsync(
@@ -175,7 +175,7 @@ public class YavscApiClientTests
         // directly (bypassing BlogApiClient) rely on the same
         // BaseAddress the production chain sets in BlogApiClient's
         // ctor. Mirror that here so "posts" resolves to the stub.
-        client.Http.BaseAddress = new Uri(settings.BusinessApiUrl);
+        client.Http.BaseAddress = new Uri(settings.ApiUrl);
 
         // Force the API client to use the test browser by routing the
         // LoginInteractiveAsync call through a small wrapper.
