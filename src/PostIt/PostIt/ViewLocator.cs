@@ -43,6 +43,7 @@ public class ViewLocator : IDataTemplate
             HomePageViewModel => services.GetRequiredService<HomePage>(),
             ActivitiesPageViewModel => services.GetRequiredService<ActivitiesPage>(),
             CommandFormsPageViewModel => services.GetRequiredService<CommandFormsPage>(),
+            BrushViewModel => services.GetRequiredService<BrushPage>(),
             RdvViewModel => services.GetRequiredService<RdvPage>(),
             SignaturePageViewModel => services.GetRequiredService<SignaturePage>(),
             AddCircleMemberDialogViewModel => services.GetRequiredService<AddCircleMemberDialog>(),

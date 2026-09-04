@@ -7,7 +7,7 @@ namespace PostIt.Helpers;
 
 public static class FormHelpers
 {
-    public static BillingCommandPageViewModel
+    public static BillingCommandPageViewModel?
     CreateCommandPageViewModel(
         this CommandFormSummary form,
         ActivityInfo activity,
@@ -15,25 +15,30 @@ public static class FormHelpers
         BillingApiClient billingClient)
     {
 
-        string formVMName = form.ActionName + "ViewModel";
+        string namespacePrefix = typeof(PostIt.ViewModels.Commands.RdvViewModel).Namespace + ".";
 
-        string formOnActivityVMName = activity.Code + formVMName;
+        string formVMName =   form.ActionName + "ViewModel";
 
-        var vmType = Type.GetType(formOnActivityVMName);
+        string formOnActivityVMName =  activity.Code + formVMName + "ViewModel";
+
+        var vmType = Type.GetType(namespacePrefix +formOnActivityVMName);
         if (vmType == null)
         {
-            vmType = Type.GetType(formVMName);
+            vmType = Type.GetType(namespacePrefix + formVMName);
         }
         if (vmType == null)
         {
-            throw new InvalidOperationException($"Cannot find type '{formOnActivityVMName}' or '{formVMName}'");
+            Console.Error.WriteLine(
+                $"! Cannot find type '{formOnActivityVMName}' or '{formVMName}'");
+            return null;
         }
         if (!typeof(BillingCommandPageViewModel).IsAssignableFrom(vmType))
         {
-            throw new InvalidOperationException($"The type '{formOnActivityVMName}' or '{formVMName}' is not a BillingCommandPageViewModel");
+            Console.Error.WriteLine($"! The type '{formOnActivityVMName}' or '{formVMName}' is not a BillingCommandPageViewModel");
+            return null;
         }
 
-        var vm = Activator.CreateInstance(vmType);
+        var vm = Activator.CreateInstance(vmType, activity, performer, form, billingClient);
 
         if (vm == null)
         {

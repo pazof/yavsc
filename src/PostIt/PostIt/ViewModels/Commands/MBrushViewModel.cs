@@ -8,71 +8,40 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;
-using Yavsc.Models.Haircut;
+using Yavsc.Models.Billing;
+
 namespace PostIt.ViewModels.Commands;
-public partial class BrushViewModel : RdvViewModel
+
+public partial class MBrushViewModel : BrushViewModel
 {
-    public override string SupportMessage => "Choisissez une prestation coiffure puis postez la commande.";
+    public override string SupportMessage => "Choisissez une ou plusieurs prestations coiffure puis postez la commande.";
 
     [ObservableProperty]
-    public partial ObservableCollection<HairPrestationDto> AvailablePrestations { get; set; } = new();
+    public partial ObservableCollection<SelectableHairPrestationItem> MultiPrestations { get; set; } = new();
 
-    [ObservableProperty]
-    public partial HairPrestationDto? SelectedPrestation { get; set; }
-
-
-    public BrushViewModel(ActivityInfo activity, ActivityUserDisplayItem performer, CommandFormSummary form, BillingApiClient billingClient)
+    public MBrushViewModel(ActivityInfo activity, ActivityUserDisplayItem performer, CommandFormSummary form, BillingApiClient billingClient)
         : base(activity, performer, form, billingClient)
     {
     }
 
     public override async Task LoadAsync()
     {
-        var prestations = await _billingClient.GetHairPrestationsAsync(Form.ActionName);
-
-        AvailablePrestations = new ObservableCollection<HairPrestationDto>
-            (prestations ?? new List<HairPrestationDto>());
-
-        if (SelectedPrestation is null)
-        {
-            SelectedPrestation = AvailablePrestations.FirstOrDefault();
-        }
-
+        await base.LoadAsync().ConfigureAwait(true);
+        MultiPrestations = new ObservableCollection<SelectableHairPrestationItem>(
+            AvailablePrestations.Select(SelectableHairPrestationItem.FromDto));
     }
 
     protected override void ApplyExistingQuery(BillingQueryDetailsDto existingQuery)
     {
         base.ApplyExistingQuery(existingQuery);
 
-        if (existingQuery.PrestationId is not null)
-        {
-            SelectedPrestation = AvailablePrestations.FirstOrDefault(x => x.Id == existingQuery.PrestationId.Value);
-        }
+        var selectedIds = existingQuery.PrestationIds is null
+            ? new HashSet<long>()
+            : new HashSet<long>(existingQuery.PrestationIds);
 
-        IsBusy = true;
-        try
+        foreach (var item in MultiPrestations)
         {
-            if (SelectedPrestation is null)
-            {
-                SelectedPrestation = AvailablePrestations.FirstOrDefault();
-            }
-
-            StatusMessage = AvailablePrestations.Count == 0
-                ? "Aucune prestation coiffure disponible."
-                : SupportMessage;
-        }
-        catch (HttpRequestException ex)
-        when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
-        {
-            StatusMessage = "Accès refusé au catalogue de prestations (scope 'api'). Déconnectez puis reconnectez-vous.";
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = $"Erreur lors du chargement des prestations: {ex.Message}";
-        }
-        finally
-        {
-            IsBusy = false;
+            item.IsSelected = selectedIds.Contains(item.Id);
         }
     }
 
@@ -90,9 +59,10 @@ public partial class BrushViewModel : RdvViewModel
             return;
         }
 
-        if (SelectedPrestation is null)
+        var selectedPrestations = MultiPrestations.Where(x => x.IsSelected).ToList();
+        if (selectedPrestations.Count == 0)
         {
-            StatusMessage = "Sélectionnez une prestation coiffure.";
+            StatusMessage = "Sélectionnez au moins une prestation coiffure.";
             return;
         }
 
@@ -112,16 +82,14 @@ public partial class BrushViewModel : RdvViewModel
                 EventDate = EventDate,
                 Status = CommandStatus,
                 Reason = Reason.Trim(),
-                AdditionalInfo = string.IsNullOrWhiteSpace(AdditionalInfo) ? string.Empty : AdditionalInfo.Trim(),
                 Location = new BillingLocationDto
                 {
                     Address = address,
                     Latitude = Latitude,
                     Longitude = Longitude,
-                }
+                },
+                PrestationIds = selectedPrestations.Select(x => x.Id).ToList(),
             };
-
-            payload.PrestationId = SelectedPrestation.Id;
 
             if (IsEditingExisting)
             {
@@ -134,10 +102,9 @@ public partial class BrushViewModel : RdvViewModel
                     ActivityCode = Activity.Code,
                     PerformerId = Performer.PerformerId,
                     Consent,
-                    EventDate = (DateTime?)EventDate,
+                    EventDate = EventDate,
                     Location = locationPayload,
-                    PrestationId = SelectedPrestation.Id,
-                    AdditionalInfo = string.IsNullOrWhiteSpace(AdditionalInfo) ? null : AdditionalInfo.Trim(),
+                    Prestations = selectedPrestations.Select(x => new { PrestationId = x.Id }).ToList(),
                     Status = payload.Status,
                 }).ConfigureAwait(true);
             }
@@ -147,7 +114,7 @@ public partial class BrushViewModel : RdvViewModel
                 : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.";
         }
         catch (HttpRequestException ex)
-        when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
+            when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
             StatusMessage = "Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.";
         }
@@ -159,6 +126,5 @@ public partial class BrushViewModel : RdvViewModel
         {
             IsBusy = false;
         }
-
     }
 }

@@ -12,14 +12,16 @@ namespace PostIt.ViewModels.Commands;
 
 public partial class RdvViewModel : BillingCommandPageViewModel
 {
+    public override string SupportMessage => "Complétez les informations du rendez-vous puis postez la commande.";
+
     [ObservableProperty]
     public partial string Address { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial double Latitude { get; set; }
+    public partial double? Latitude { get; set; }
 
     [ObservableProperty]
-    public partial double Longitude { get; set; }
+    public partial double? Longitude { get; set; }
 
 
     [ObservableProperty]
@@ -48,11 +50,9 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         if (existingQuery.Location is not null)
         {
             Address = existingQuery.Location.Address ?? string.Empty;
-            Latitude = existingQuery.Location.Latitude ?? 0;
-            Longitude = existingQuery.Location.Longitude ?? 0;
+            Latitude = existingQuery.Location.Latitude;
+            Longitude = existingQuery.Location.Longitude;
         }
-
-
 
         StatusMessage = $"Commande #{existingQuery.Id} chargée.";
     }
@@ -135,7 +135,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         }
 
 
-        if (IsRdv && string.IsNullOrWhiteSpace(Reason))
+        if (string.IsNullOrWhiteSpace(Reason))
         {
             StatusMessage = "Le motif du rendez-vous est requis.";
             return;
@@ -168,27 +168,23 @@ public partial class RdvViewModel : BillingCommandPageViewModel
                 }
             };
 
-            if (IsRdv)
+            if (IsEditingExisting)
             {
-                if (IsEditingExisting)
-                {
-                    await _billingClient.UpdateAsync(Form.ActionName, ExistingQueryId!.Value, payload).ConfigureAwait(true);
-                }
-                else
-                {
-                    await _billingClient.CreateAsync(Form.ActionName, new
-                    {
-                        ActivityCode = Activity.Code,
-                        PerformerId = Performer.PerformerId,
-                        Consent,
-                        EventDate = EventDate,
-                        Location = locationPayload,
-                        Reason = payload.Reason,
-                        Status = payload.Status,
-                    }).ConfigureAwait(true);
-                }
+                await _billingClient.UpdateAsync(Form.ActionName, ExistingQueryId!.Value, payload).ConfigureAwait(true);
             }
             else
+            {
+                await _billingClient.CreateAsync(Form.ActionName, new
+                {
+                    ActivityCode = Activity.Code,
+                    PerformerId = Performer.PerformerId,
+                    Consent,
+                    EventDate = EventDate,
+                    Location = locationPayload,
+                    Reason = payload.Reason,
+                    Status = payload.Status,
+                }).ConfigureAwait(true);
+            }
 
             StatusMessage = IsEditingExisting
                 ? $"Commande #{ExistingQueryId} mise à jour sur {BillingRoute} pour {Performer.UserName}."
@@ -206,5 +202,10 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         {
             IsBusy = false;
         }
+    }
+
+    public override Task LoadAsync()
+    {
+        return Task.CompletedTask;
     }
 }

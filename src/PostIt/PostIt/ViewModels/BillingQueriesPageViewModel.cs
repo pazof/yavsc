@@ -134,7 +134,7 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
         {
             var details = await _billingClient.GetQueryAsync(Form.ActionName, SelectedQuery.Id).ConfigureAwait(true);
             var vm = Form.CreateCommandPageViewModel(Activity, Performer, _billingClient);
-            await vm.InitializeAsync(details).ConfigureAwait(true);
+            await vm!.InitializeAsync(details).ConfigureAwait(true);
             await app.PushPageAsync(vm).ConfigureAwait(true);
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)

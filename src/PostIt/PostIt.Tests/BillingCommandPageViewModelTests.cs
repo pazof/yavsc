@@ -24,12 +24,12 @@ public class BillingCommandPageViewModelTests
             new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
             client) as RdvViewModel;
 
-            vm.EventDate = DateTime.Parse("2026-09-02 14:30");
-        vm.Reason = "Point de cadrage";
-        vm.Address = "1 rue du Test";
-        vm.Latitude = 48.8566;
-        vm.Longitude = 2.3522;
-        vm.Consent = true;
+            vm!.EventDate = DateTime.Parse("2026-09-02 14:30");
+        vm!.Reason = "Point de cadrage";
+        vm!.Address = "1 rue du Test";
+        vm!.Latitude = 48.8566;
+        vm!.Longitude = 2.3522;
+        vm!.Consent = true;
 
         await vm.SubmitCommand.ExecuteAsync(null);
 
@@ -56,10 +56,7 @@ public class BillingCommandPageViewModelTests
             new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
             client);
 
-        await vm.SubmitCommand.ExecuteAsync(null);
-
-        Assert.Null(api.LastPath);
-        Assert.Contains("n'est pas encore pris en charge", vm.StatusMessage, StringComparison.OrdinalIgnoreCase);
+        Assert.Null(vm);
     }
 
     [Fact]
@@ -74,12 +71,12 @@ public class BillingCommandPageViewModelTests
             new ActivityInfo { Code = "dev", Name = "Développement" },
             new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
             client) as RdvViewModel;
-        vm.EventDate = DateTime.Parse("2026-09-02 14:30");
-        vm.Reason = "Point de cadrage";
-        vm.Address = "1 rue du Test";
-        vm.Latitude = 0;
-        vm.Longitude = 0;
-        vm.Consent = true;
+        vm!.EventDate = DateTime.Parse("2026-09-02 14:30");
+        vm!.Reason = "Point de cadrage";
+        vm!.Address = "1 rue du Test";
+        vm!.Latitude = null;
+        vm!.Longitude = null;
+        vm!.Consent = true;
 
         await vm.SubmitCommand.ExecuteAsync(null);
 
@@ -107,10 +104,10 @@ public class BillingCommandPageViewModelTests
                 new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
                 client) as RdvViewModel;
 
-            await vm.UseCurrentLocationCommand.ExecuteAsync(null);
+            await vm!.UseCurrentLocationCommand.ExecuteAsync(null);
 
-            Assert.Equal(48.8566, vm.Latitude);
-            Assert.Equal(2.3522, vm.Longitude);
+            Assert.Equal(48.8566, vm!.Latitude);
+            Assert.Equal(2.3522, vm!.Longitude);
         }
         finally
         {
@@ -136,12 +133,12 @@ public class BillingCommandPageViewModelTests
             new ActivityInfo { Code = "brush", Name = "Brush" },
             new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
             client) as BrushViewModel;
-        vm.EventDate = DateTime.Parse("2026-09-02 14:30");
-        vm.Address = "1 rue du Test";
-        vm.Latitude = 48.8566;
-        vm.Longitude = 2.3522;
-        vm.Consent = true;
-        vm.AdditionalInfo = "Prévoir shampoing";
+        vm!.EventDate = DateTime.Parse("2026-09-02 14:30");
+        vm!.Address = "1 rue du Test";
+        vm!.Latitude = 48.8566;
+        vm!.Longitude = 2.3522;
+        vm!.Consent = true;
+        vm!.AdditionalInfo = "Prévoir shampoing";
 
         await vm.InitializeAsync();
         vm.SelectedPrestation = vm.AvailablePrestations[1];
@@ -170,17 +167,17 @@ public class BillingCommandPageViewModelTests
         .CreateCommandPageViewModel(
             new ActivityInfo { Code = "mbrush", Name = "MBrush" },
             new ActivityUserDisplayItem { PerformerId = "perf-3", UserName = "Cara" },
-            client) as PostIt.ViewModels.Commands.BrushViewModel;
-        vm.EventDate = DateTime.Parse("2026-09-03 10:00");
-        vm.Address = "2 rue du Test";
-        vm.Latitude = 48.8567;
-        vm.Longitude = 2.3523;
-        vm.Consent = true;
+            client) as MBrushViewModel;
+        vm!.EventDate = DateTime.Parse("2026-09-03 10:00");
+        vm!.Address = "2 rue du Test";
+        vm!.Latitude = 48.8567;
+        vm!.Longitude = 2.3523;
+        vm!.Consent = true;
 
         await vm.InitializeAsync();
-        vm.MultiPrestations[0].IsSelected = true;
-        vm.MultiPrestations[1].IsSelected = true;
-        await vm.SubmitCommand.ExecuteAsync(null);
+        vm!.MultiPrestations[0].IsSelected = true;
+        vm!.MultiPrestations[1].IsSelected = true;
+        await vm!.SubmitCommand.ExecuteAsync(null);
 
         Assert.Equal("https://business.example/api/v1/billing/MBrush", api.LastPath);
         using var json = JsonDocument.Parse(JsonSerializer.Serialize(api.LastBody));
@@ -208,7 +205,7 @@ public class BillingCommandPageViewModelTests
             new ActivityInfo { Code = "brush", Name = "Brush" },
             new ActivityUserDisplayItem { PerformerId = "perf-2", UserName = "Bob" },
             client) as BrushViewModel;
-        await vm.InitializeAsync(new BillingQueryDetailsDto
+        await vm!.InitializeAsync(new BillingQueryDetailsDto
         {
             Id = 77,
             BillingCode = "Brush",
@@ -228,9 +225,9 @@ public class BillingCommandPageViewModelTests
             }
         });
 
-        vm.SelectedPrestation = vm.AvailablePrestations[1];
-        vm.AdditionalInfo = "Note mise à jour";
-        await vm.SubmitCommand.ExecuteAsync(null);
+        vm!.SelectedPrestation = vm!.AvailablePrestations[1];
+        vm!.AdditionalInfo = "Note mise à jour";
+        await vm!.SubmitCommand.ExecuteAsync(null);
 
         Assert.Equal(HttpMethod.Put, api.LastMethod);
         Assert.Equal("https://business.example/api/v1/billing/Brush/77", api.LastPath);

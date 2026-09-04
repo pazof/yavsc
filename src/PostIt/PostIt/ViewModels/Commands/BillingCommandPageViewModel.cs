@@ -9,7 +9,7 @@ using Yavsc.Models.Billing;
 
 namespace PostIt.ViewModels;
 
-public abstract partial class BillingCommandPageViewModel : ViewModelBase
+public abstract partial class BillingCommandPageViewModel : RemoteViewModelBase
 {
     protected readonly BillingApiClient _billingClient;
 
@@ -46,24 +46,11 @@ public abstract partial class BillingCommandPageViewModel : ViewModelBase
     public string Title => Form.Title;
     public string PerformerLabel => Performer.UserName;
     public string ActivityLabel => Activity.Name;
-    public bool IsSupported => IsRdv || IsBrush || IsMultiBrush;
-    public bool IsRdv => string.Equals(Form.ActionName, BillingCodes.Rdv, StringComparison.Ordinal);
-    public bool IsBrush => string.Equals(Form.ActionName, BillingCodes.Brush, StringComparison.Ordinal);
-    public bool IsMultiBrush => string.Equals(Form.ActionName, BillingCodes.MBrush, StringComparison.Ordinal);
-    public bool ShowsReason => IsRdv;
-    public bool ShowsAdditionalInfo => IsBrush;
-    public bool ShowsSinglePrestation => IsBrush;
-    public bool ShowsMultiplePrestations => IsMultiBrush;
+    public virtual bool IsSupported => true;
     public string BillingRoute => $"/billing/{Form.ActionName}";
     public bool IsEditingExisting => ExistingQueryId.HasValue;
     public string SubmitLabel => IsEditingExisting ? "Mettre à jour la commande" : "Poster la commande";
-    public string SupportMessage => IsSupported
-        ? IsRdv
-            ? "Complétez les informations du rendez-vous puis postez la commande."
-            : IsBrush
-                ? "Choisissez une prestation coiffure puis postez la commande."
-                : "Choisissez une ou plusieurs prestations coiffure puis postez la commande."
-        : $"Le formulaire {Form.ActionName} n'est pas encore pris en charge dans PostIt.";
+    public virtual string SupportMessage => $"Le formulaire {Form.ActionName} n'est pas encore pris en charge dans PostIt.";
 
     public override bool CanNavigateNext
     {
@@ -104,7 +91,7 @@ public abstract partial class BillingCommandPageViewModel : ViewModelBase
 
     public async Task InitializeAsync(BillingQueryDetailsDto? existingQuery = null)
     {
-
+        await LoadAsync();
         if (existingQuery is not null)
         {
             ApplyExistingQuery(existingQuery);

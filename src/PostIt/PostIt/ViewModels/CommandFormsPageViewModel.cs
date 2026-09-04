@@ -83,7 +83,7 @@ public partial class CommandFormsPageViewModel : ViewModelBase
 
         var vm =  SelectedForm.CreateCommandPageViewModel(
             Activity, Performer, _billingClient);
-        await vm.InitializeAsync();
+        await vm!.InitializeAsync();
         await app.PushPageAsync(vm);
     }
 
