@@ -26,9 +26,9 @@ public static class ServiceCollectionHelpers
         var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
         var activityClient = new ActivityApiClient(
             api,
-            settings.ApiUrl,
-            settings.Authentication?.Authority);
-        var billingClient = new BillingApiClient(api, settings.ApiUrl);
+            () => settings.ApiUrl,
+            () => settings.Authentication?.Authority);
+        var billingClient = new BillingApiClient(api, () => settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
 
         // Vues

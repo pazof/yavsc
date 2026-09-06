@@ -5,7 +5,7 @@
     },
     "RedirectUri": "postit://callback",
     "DarkMode": true,
-    "ApiUrl": "https://blogs.pschneider.fr/api/v1/",
+    "ApiUrl": "https://api.pschneider.fr/api/v1/",
     "Scopes": [
         "openid",
         "profile",

@@ -13,12 +13,14 @@
 
 * [PostIt] Les avatars ne sont plus relies en string sur `Image.Source`: ils sont telecharges et lies en `Bitmap`.
 * [Yavsc.Api.Client] `ActivityApiClient` accepte une base d'avatar dediee et construit les URLs avatar depuis l'autorite d'identification.
+* [PostIt] Les clients Activites/Billing utilisent maintenant `ApiUrl` en lecture dynamique: un changement via Parametres prend effet sans redemarrer l'application (apres sauvegarde et rafraichissement de la page).
 * [PostIt] Le header de `MainPage` n'utilise plus `ScrollViewer`; remplacement par une barre de commandes basee sur `WrapPanel`.
 * [PostIt] Alignement de la navigation blogs: renommage `PushMainPageAsync` -> `PushBlogsPageAsync` et ajustement de `HomePageViewModel`.
 
 ### Fixed
 
-néant
+* [PostIt.Android] Correction d'un 404 sur la page Activites au premier lancement: la configuration embarquee pointait `ApiUrl` vers le host Blogs au lieu de l'API metier.
+* [PostIt] Correction du bouton Sauver de la page Parametres: binding vers `SaveCommand` pour persister correctement `ApiUrl`/`BlogsApiUrl`.
 
 ## [1.0.8-rc11] - unstable
 

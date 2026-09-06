@@ -19,19 +19,29 @@ public sealed class ActivityApiClient
     private const string PathPrefix = "activity";
 
     private readonly IYavscApiClient _api;
-    private readonly Uri _baseAddress;
-    private readonly Uri _avatarBaseAddress;
+    private readonly Func<string> _businessBaseAddress;
+    private readonly Func<string?> _avatarBaseAddress;
 
     public ActivityApiClient(IYavscApiClient api, string businessBaseAddress, string? avatarBaseAddress = null)
+        : this(
+            api,
+            () => businessBaseAddress,
+            () => avatarBaseAddress)
+    {
+    }
+
+    public ActivityApiClient(
+        IYavscApiClient api,
+        Func<string> businessBaseAddress,
+        Func<string?>? avatarBaseAddress = null)
     {
         _api = api ?? throw new ArgumentNullException(nameof(api));
-        if (string.IsNullOrEmpty(businessBaseAddress))
-            throw new ArgumentException("Base address is required.", nameof(businessBaseAddress));
+        _businessBaseAddress = businessBaseAddress ?? throw new ArgumentNullException(nameof(businessBaseAddress));
+        _avatarBaseAddress = avatarBaseAddress ?? (() => null);
 
-        _baseAddress = new Uri(businessBaseAddress, UriKind.Absolute);
-        _avatarBaseAddress = string.IsNullOrWhiteSpace(avatarBaseAddress)
-            ? _baseAddress
-            : new Uri(avatarBaseAddress, UriKind.Absolute);
+        // Validate initial values early to fail fast on invalid setup.
+        _ = ResolveBusinessBaseAddress();
+        _ = ResolveAvatarBaseAddress();
     }
 
     public Task<List<ActivityInfo>> GetCatalogAsync(
@@ -65,7 +75,7 @@ public sealed class ActivityApiClient
 
     public string BuildAvatarXsUrl(string? userName)
     {
-        var siteRoot = new Uri(_avatarBaseAddress, "/");
+        var siteRoot = new Uri(ResolveAvatarBaseAddress(), "/");
 
         if (string.IsNullOrWhiteSpace(userName))
         {
@@ -75,5 +85,22 @@ public sealed class ActivityApiClient
         return new Uri(siteRoot, $"avatars/{Uri.EscapeDataString(userName)}.xs.png").ToString();
     }
 
-    private string Absolute(string relativePath) => new Uri(_baseAddress, relativePath).ToString();
+    private string Absolute(string relativePath) => new Uri(ResolveBusinessBaseAddress(), relativePath).ToString();
+
+    private Uri ResolveBusinessBaseAddress()
+    {
+        var raw = _businessBaseAddress();
+        if (string.IsNullOrWhiteSpace(raw))
+            throw new InvalidOperationException("Business base address is required.");
+
+        return new Uri(raw, UriKind.Absolute);
+    }
+
+    private Uri ResolveAvatarBaseAddress()
+    {
+        var raw = _avatarBaseAddress();
+        return string.IsNullOrWhiteSpace(raw)
+            ? ResolveBusinessBaseAddress()
+            : new Uri(raw, UriKind.Absolute);
+    }
 }

@@ -61,16 +61,11 @@
                     Click="ChooseAvatar_Click"
                     Margin="0,0,8,0"/>
 
-            <!-- Sauver: bound to the Save RelayCommand on the Settings
-                 VM. The source generator emits an ICommand property whose
-                 name matches the source method exactly (no "Command"
-                 suffix is added), so we bind {Binding Save} here. See
-                 AGENTS.md "Avalonia + CommunityToolkit.Mvvm : conventions
-                 de binding pour [RelayCommand]" for the full rationale.
-                 IsEnabled tracks IsDirty so the button auto-disables
-                 when there's nothing to persist. -->
+                <!-- Sauver: bind to the RelayCommand-generated property
+                 (SaveCommand). IsEnabled tracks IsDirty so the button
+                 auto-disables when there's nothing to persist. -->
             <Button Content="Sauver"
-                    Command="{Binding Save}"
+                    Command="{Binding SaveCommand}"
                     IsEnabled="{Binding IsDirty}"/>
                 </StackPanel>
         </StackPanel>
