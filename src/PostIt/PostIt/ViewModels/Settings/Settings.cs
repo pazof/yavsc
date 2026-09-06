@@ -123,6 +123,8 @@ public partial class Settings : ViewModelBase
         // build options from a torn read.
         lock (_mutationGate)
         {
+            EnsureAuthenticationDefaultsLocked();
+
             var options = new OidcClientOptions
             {
                 Authority = Authentication.Authority,
@@ -149,6 +151,25 @@ public partial class Settings : ViewModelBase
 
             return options;
         }
+    }
+
+    private void EnsureAuthenticationDefaultsLocked()
+    {
+        Authentication ??= new AuthenticationSettings();
+
+        if (string.IsNullOrWhiteSpace(Authentication.Authority))
+            Authentication.Authority = AuthenticationSettings.DefaultAuthority;
+
+        if (string.IsNullOrWhiteSpace(Authentication.ClientId))
+            Authentication.ClientId = AuthenticationSettings.DefaultClientId;
+
+        if (string.IsNullOrWhiteSpace(Authentication.RedirectUri))
+            Authentication.RedirectUri = AuthenticationSettings.DesktopRedirectUri;
+
+        if (Authentication.Scopes is null || Authentication.Scopes.Length == 0)
+            Authentication.Scopes = AuthenticationSettings.DefaultScopes;
+
+        Authentication.RefreshScopeListText();
     }
 
     /// <summary>
@@ -334,11 +355,13 @@ public partial class Settings : ViewModelBase
                      AuthenticationSettings.DesktopRedirectUri : settings.Authentication.RedirectUri;
                     if (settings.Authentication.Scopes is null || settings.Authentication.Scopes.Length == 0)
                     {
-                        settings.Authentication.Scopes = AuthenticationSettings.DefaultScopes;
+                        this.Authentication.Scopes = AuthenticationSettings.DefaultScopes;
                     }
                     else
                         this.Authentication.Scopes = settings.Authentication.Scopes;
                 }
+
+                EnsureAuthenticationDefaultsLocked();
             }
             // A disk load (or an embedded-resource fallback) is the
             // baseline, not a user edit. Clear the dirty flag last
