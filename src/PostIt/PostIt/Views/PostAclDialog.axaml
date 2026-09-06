@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="PostIt.Views.PostAclDialog"
         xmlns:vm="using:PostIt.ViewModels"
+    xmlns:postitControls="using:PostIt.Controls"
                 xmlns:dtos="using:Yavsc.Api.Client.Dtos"
         x:DataType="vm:PostAclDialogViewModel"
       >
@@ -53,8 +54,8 @@
 
         <!-- Status bar -->
         <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
-            <TextBlock Grid.Column="0" Text="{Binding StatusMessage}"
-                       VerticalAlignment="Center"/>
+            <postitControls:StatusBar Grid.Column="0"
+                                      DataContext="{Binding ActionStatus}" />
             <ProgressBar Grid.Column="1" IsIndeterminate="True"
                          IsVisible="{Binding IsBusy}"
                          Width="120"/>

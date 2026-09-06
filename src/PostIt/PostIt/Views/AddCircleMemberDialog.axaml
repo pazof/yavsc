@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="PostIt.Views.AddCircleMemberDialog"
         xmlns:vm="using:PostIt.ViewModels"
+    xmlns:postitControls="using:PostIt.Controls"
         xmlns:services="using:PostIt.Services"
         x:DataType="vm:AddCircleMemberDialogViewModel"
       >
@@ -47,8 +48,8 @@
 
         <!-- Action buttons -->
         <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto" Margin="0,8,0,0">
-            <TextBlock Grid.Column="0" Text="{Binding StatusMessage}"
-                       VerticalAlignment="Center"/>
+            <postitControls:StatusBar Grid.Column="0"
+                                      DataContext="{Binding ActionStatus}" />
             <Button Grid.Column="1" Content="Ajouter"
                     x:Name="AddButton"
                     Command="{Binding AddAsync}"

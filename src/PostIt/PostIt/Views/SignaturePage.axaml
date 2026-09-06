@@ -3,6 +3,7 @@
              xmlns:d="http://github.com/avaloniaui/avalonia"
              xmlns:vm="using:PostIt.ViewModels"
              xmlns:controls="using:PostIt.Controls"
+             xmlns:postitControls="using:PostIt.Controls"
              x:Class="PostIt.Views.SignaturePage"
              x:DataType="vm:SignaturePageViewModel"
              HorizontalAlignment="Stretch"
@@ -59,10 +60,8 @@
             <Button Content="Capturer" Command="{Binding CaptureAsync}" />
         </StackPanel>
 
-        <TextBlock Grid.Row="3"
-                   Text="{Binding StatusMessage}"
-                   Foreground="Gray"
-                   TextWrapping="Wrap" />
+        <postitControls:StatusBar Grid.Row="3"
+                      DataContext="{Binding ActionStatus}" />
 
         <TextBlock Grid.Row="4"
                    FontSize="11"

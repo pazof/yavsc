@@ -1,6 +1,7 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PostIt.ViewModels"
+             xmlns:postitControls="using:PostIt.Controls"
              x:Class="PostIt.Views.BillingQueriesPage"
              x:DataType="vm:BillingQueriesPageViewModel"
              Header="Commandes billing">
@@ -36,16 +37,8 @@
         </ListBox>
 
         <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="0,12,0,0">
-            <TextBox Grid.Column="0"
-                     Text="{Binding StatusMessage}"
-                     IsReadOnly="True"
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"
-                     BorderThickness="0"
-                     BorderBrush="Transparent"
-                     Padding="0"
-                     Background="Transparent"
-                     VerticalAlignment="Center" />
+            <postitControls:StatusBar Grid.Column="0"
+                                      DataContext="{Binding ActionStatus}" />
             <ProgressBar Grid.Column="1" Width="120" IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
         </Grid>
     </Grid>

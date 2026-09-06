@@ -36,6 +36,14 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Chargement des commandes...";
 
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.FromMessage("Chargement des commandes...");
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        ActionStatus = StatusNotice.FromMessage(value);
+    }
+
     public string Title => IsReadOnly
         ? $"Demandes en cours ({Form.Title})"
         : $"Commandes {Form.Title}";

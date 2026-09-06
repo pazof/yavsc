@@ -55,7 +55,15 @@ public partial class MainViewModel : ViewModelBase
     public partial string StatusMessage { get; set; }
 
     [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.FromMessage(string.Empty);
+
+    [ObservableProperty]
     public partial string SearchText { get; set; }
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        ActionStatus = StatusNotice.FromMessage(value);
+    }
 
     [ObservableProperty]
     public partial ObservableCollection<BlogPostDto> Posts { get; set; }

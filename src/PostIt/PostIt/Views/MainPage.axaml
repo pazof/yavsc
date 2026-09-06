@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:PostIt.ViewModels"
+             xmlns:postitControls="using:PostIt.Controls"
              xmlns:models="using:Yavsc.Blogspot"
              xmlns:views="using:PostIt.Views"
              xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
@@ -104,7 +105,8 @@
                   VerticalAlignment="Stretch">
                 </TextBox>
 
-                <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="Gray" />
+                <postitControls:StatusBar Grid.Row="3"
+                                          DataContext="{Binding ActionStatus}" />
 
             </Grid>
         </Border>

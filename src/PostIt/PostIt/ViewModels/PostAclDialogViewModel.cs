@@ -63,6 +63,14 @@ public partial class PostAclDialogViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.FromMessage(string.Empty);
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        ActionStatus = StatusNotice.FromMessage(value);
+    }
+
     /// <summary>
     /// Idempotency gate for <see cref="LoadAsync"/>: the dialog
     /// attaches the load trigger in <c>DataContextChanged</c>,

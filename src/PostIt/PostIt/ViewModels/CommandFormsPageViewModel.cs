@@ -27,6 +27,14 @@ public partial class CommandFormsPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; }
 
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.FromMessage(string.Empty);
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        ActionStatus = StatusNotice.FromMessage(value);
+    }
+
     public string Title => $"Formulaires pour {Performer.UserName}";
     public string ContextLabel => $"{Activity.Name} · {Forms.Count} formulaire(s)";
 

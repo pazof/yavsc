@@ -43,6 +43,14 @@ public partial class SignaturePageViewModel : ViewModelBase
     public partial string StatusMessage { get; set; } = "Prêt.";
 
     [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.FromMessage("Prêt.");
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        ActionStatus = StatusNotice.FromMessage(value);
+    }
+
+    [ObservableProperty]
     public partial int StrokeCount { get; set; }
 
     [ObservableProperty]

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:cvm="using:PostIt.ViewModels.Commands"
+             xmlns:postitControls="using:PostIt.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PostIt.Views.Commands.BrushPage"
 
@@ -93,16 +94,8 @@
                 Content="{Binding SubmitLabel}"
                 Command="{Binding SubmitCommand}"
                 IsEnabled="{Binding IsSupported}" />
-        <TextBox Grid.Column="2"
-                 Text="{Binding StatusMessage}"
-                 IsReadOnly="True"
-                 AcceptsReturn="True"
-                 TextWrapping="Wrap"
-                 BorderThickness="0"
-                 BorderBrush="Transparent"
-                 Padding="0"
-                 Background="Transparent"
-                 VerticalAlignment="Center" />
+        <postitControls:StatusBar Grid.Column="2"
+                DataContext="{Binding ActionStatus}" />
         <ProgressBar Grid.Column="3"
                      Width="120"
                      IsIndeterminate="True"

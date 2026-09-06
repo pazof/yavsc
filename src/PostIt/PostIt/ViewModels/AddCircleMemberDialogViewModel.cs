@@ -48,6 +48,14 @@ public partial class AddCircleMemberDialogViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.FromMessage(string.Empty);
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        ActionStatus = StatusNotice.FromMessage(value);
+    }
+
     /// <summary>
     /// Raised when the user confirms a selection. The hosting
     /// <c>CirclesPage</c> subscribes to this event and calls
