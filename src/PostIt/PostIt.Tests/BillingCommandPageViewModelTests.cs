@@ -136,6 +136,25 @@ public class BillingCommandPageViewModelTests
     }
 
     [Fact]
+    public void EventDateSelection_round_trips_with_EventDate_for_DatePicker_binding()
+    {
+        var api = new RecordingApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm =
+            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" }
+            .CreateCommandPageViewModel(
+                new ActivityInfo { Code = "dev", Name = "Développement" },
+                new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+                client) as RdvViewModel;
+
+        var selected = new DateTimeOffset(2026, 9, 7, 14, 30, 0, TimeSpan.FromHours(2));
+        vm!.EventDateSelection = selected;
+
+        Assert.Equal(selected.LocalDateTime, vm.EventDate);
+        Assert.Equal(vm.EventDate, vm.EventDateSelection!.Value.LocalDateTime);
+    }
+
+    [Fact]
     public void ApplyResolvedAddress_populates_empty_address_directly()
     {
         var api = new RecordingApi();

@@ -26,7 +26,7 @@
       <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ActivityLabel}" IsReadOnly="True" Margin="0,0,0,8" />
 
       <TextBlock Grid.Row="4" Text="Date" VerticalAlignment="Center" Margin="0,0,12,8" />
-      <DatePicker Grid.Row="4" Grid.Column="1" DayFormat="ddd dd" SelectedDate="{Binding EventDate, Mode=TwoWay}" Margin="0,0,0,8" />
+      <DatePicker Grid.Row="4" Grid.Column="1" DayFormat="ddd dd" SelectedDate="{Binding EventDateSelection, Mode=TwoWay}" Margin="0,0,0,8" />
 
       <TextBlock Grid.Row="5"
                  Text="Motif"

@@ -33,6 +33,18 @@ public partial class RdvViewModel : BillingCommandPageViewModel
     [ObservableProperty]
     public partial DateTime EventDate { get; set; }
 
+    public DateTimeOffset? EventDateSelection
+    {
+        get => new(EventDate);
+        set
+        {
+            if (!value.HasValue)
+                return;
+
+            EventDate = value.Value.LocalDateTime;
+        }
+    }
+
     public RdvViewModel(ActivityInfo activity, ActivityUserDisplayItem performer, CommandFormSummary form, BillingApiClient billingClient)
         : base(activity, performer, form, billingClient)
     {
@@ -204,6 +216,11 @@ public partial class RdvViewModel : BillingCommandPageViewModel
     partial void OnIsResolvingAddressChanged(bool value)
     {
         OnPropertyChanged(nameof(HasSuggestedAddressPanel));
+    }
+
+    partial void OnEventDateChanged(DateTime value)
+    {
+        OnPropertyChanged(nameof(EventDateSelection));
     }
 
 
