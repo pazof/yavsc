@@ -22,6 +22,7 @@ public partial class RdvPage : ContentPage
     private const double DefaultLongitude = 2.3522;
     private const int DefaultZoomLevel = 4;
     private const int SelectedZoomLevel = 13;
+    internal const double ReverseGeocodingCacheToleranceDegrees = 0.0001;
     private static readonly TimeSpan ReverseGeocodingDebounce = TimeSpan.FromMilliseconds(350);
 
     private MapControl? _locationMap;
@@ -183,8 +184,9 @@ public partial class RdvPage : ContentPage
 
     private async Task TryResolveAddressAsync(RdvViewModel vm, double latitude, double longitude)
     {
-        if (_lastResolvedLatitude == latitude
-            && _lastResolvedLongitude == longitude
+        if (_lastResolvedLatitude.HasValue
+            && _lastResolvedLongitude.HasValue
+            && AreCoordinatesClose(_lastResolvedLatitude.Value, _lastResolvedLongitude.Value, latitude, longitude)
             && !string.IsNullOrWhiteSpace(_lastResolvedAddress))
         {
             vm.ApplyResolvedAddress(_lastResolvedAddress);
@@ -220,5 +222,15 @@ public partial class RdvPage : ContentPage
         {
             vm.IsResolvingAddress = false;
         }
+    }
+
+    internal static bool AreCoordinatesClose(
+        double latitudeA,
+        double longitudeA,
+        double latitudeB,
+        double longitudeB)
+    {
+        return Math.Abs(latitudeA - latitudeB) <= ReverseGeocodingCacheToleranceDegrees
+            && Math.Abs(longitudeA - longitudeB) <= ReverseGeocodingCacheToleranceDegrees;
     }
 }
