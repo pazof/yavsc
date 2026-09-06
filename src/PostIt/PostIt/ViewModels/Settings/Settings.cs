@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 [assembly: InternalsVisibleTo("PostIt.Tests")]
 
@@ -32,6 +33,7 @@ public partial class Settings : ViewModelBase
     public partial string SearchText { get; set; } = string.Empty;
 
     [ObservableProperty]
+    [JsonIgnore]
     public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
 
     public void SetActionStatus(string message, StatusSeverity severity = StatusSeverity.Info)
