@@ -116,6 +116,26 @@ public class BillingCommandPageViewModelTests
     }
 
     [Fact]
+    public void ApplyLocationFromMap_sets_coordinates_and_updates_status()
+    {
+        var api = new RecordingApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm =
+            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" }
+            .CreateCommandPageViewModel(
+                new ActivityInfo { Code = "dev", Name = "Développement" },
+                new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+                client) as RdvViewModel;
+
+        vm!.Address = string.Empty;
+        vm.ApplyLocationFromMap(48.85661234, 2.35224567);
+
+        Assert.Equal(48.856612, vm.Latitude);
+        Assert.Equal(2.352246, vm.Longitude);
+        Assert.Contains("Position sélectionnée", vm.StatusMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task InitializeAsync_loads_prestations_for_brush_and_submit_posts_selected_prestation()
     {
         var api = new RecordingApi

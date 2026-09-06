@@ -113,6 +113,20 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         };
     }
 
+    public void ApplyLocationFromMap(double latitude, double longitude)
+    {
+        Latitude = Math.Round(latitude, 6);
+        Longitude = Math.Round(longitude, 6);
+
+        if (string.IsNullOrWhiteSpace(Address))
+        {
+            this.SetInfoStatus("Position sélectionnée sur la carte. Complétez l'adresse puis envoyez la commande.");
+            return;
+        }
+
+        this.SetInfoStatus("Position sélectionnée sur la carte.");
+    }
+
 
     protected override async Task SubmitAsync()
     {

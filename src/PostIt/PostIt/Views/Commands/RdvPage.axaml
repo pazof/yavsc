@@ -1,12 +1,13 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cvm="using:PostIt.ViewModels.Commands"
+             xmlns:mapsui="using:Mapsui.UI.Avalonia"
              xmlns:postitControls="using:PostIt.Controls"
              x:Class="PostIt.Views.Commands.RdvPage"
              x:DataType="cvm:RdvViewModel"
              Header="Commande billing">
   <ScrollViewer>
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
       <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
                  Text="{Binding Title}"
                  FontSize="18"
@@ -52,6 +53,15 @@
       <TextBlock Grid.Row="9" Text="Longitude" VerticalAlignment="Center" Margin="0,0,12,8" />
       <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Longitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
 
+      <TextBlock Grid.Row="10" Grid.ColumnSpan="2"
+             Text="Carte: cliquez pour positionner le rendez-vous"
+             Margin="0,0,0,8"
+             Opacity="0.85" />
+      <mapsui:MapControl Grid.Row="11"
+             Grid.ColumnSpan="2"
+             x:Name="LocationMap"
+             Height="260"
+             Margin="0,0,0,8" />
 
       <TextBlock Grid.Row="12"
                  Text="Informations"
