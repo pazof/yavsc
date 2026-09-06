@@ -42,9 +42,9 @@
 
       <Grid Grid.Row="7"
         Grid.ColumnSpan="2"
-        ColumnDefinitions="*,12,Auto"
+          ColumnDefinitions="*,12,Auto,12,Auto"
         Margin="0,0,0,8"
-        IsVisible="{Binding HasSuggestedAddress}">
+        IsVisible="{Binding HasSuggestedAddressPanel}">
         <TextBlock Grid.Column="0"
            VerticalAlignment="Center"
            Text="{Binding SuggestedAddress, StringFormat='Adresse suggérée: {0}'}"
@@ -53,6 +53,10 @@
         <Button Grid.Column="2"
             Content="Utiliser"
             Command="{Binding ApplySuggestedAddressCommand}" />
+        <ProgressBar Grid.Column="4"
+               Width="80"
+               IsIndeterminate="True"
+               IsVisible="{Binding IsResolvingAddress}" />
       </Grid>
 
         <Grid Grid.Row="8"

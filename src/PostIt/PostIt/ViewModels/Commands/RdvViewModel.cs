@@ -21,6 +21,9 @@ public partial class RdvViewModel : BillingCommandPageViewModel
     public partial string SuggestedAddress { get; set; } = string.Empty;
 
     [ObservableProperty]
+    public partial bool IsResolvingAddress { get; set; }
+
+    [ObservableProperty]
     public partial double? Latitude { get; set; }
 
     [ObservableProperty]
@@ -37,6 +40,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
     }
 
     public bool HasSuggestedAddress => !string.IsNullOrWhiteSpace(SuggestedAddress);
+    public bool HasSuggestedAddressPanel => HasSuggestedAddress || IsResolvingAddress;
 
     protected override void ApplyExistingQuery(BillingQueryDetailsDto existingQuery)
     {
@@ -135,6 +139,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
     public void NotifyReverseGeocodingStarted()
     {
+        IsResolvingAddress = true;
         this.SetInfoStatus(string.IsNullOrWhiteSpace(Address)
             ? "Recherche de l'adresse depuis la carte..."
             : "Recherche d'une adresse suggérée..."
@@ -143,6 +148,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
     public void NotifyReverseGeocodingUnavailable()
     {
+        IsResolvingAddress = false;
         if (HasSuggestedAddress || !string.IsNullOrWhiteSpace(Address))
             return;
 
@@ -159,6 +165,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         {
             Address = trimmedAddress;
             SuggestedAddress = string.Empty;
+            IsResolvingAddress = false;
             this.SetInfoStatus("Adresse mise à jour depuis la carte.");
             return;
         }
@@ -166,10 +173,12 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         if (string.Equals(Address.Trim(), trimmedAddress, StringComparison.Ordinal))
         {
             SuggestedAddress = string.Empty;
+            IsResolvingAddress = false;
             return;
         }
 
         SuggestedAddress = trimmedAddress;
+        IsResolvingAddress = false;
         this.SetInfoStatus("Adresse suggérée depuis la carte. Appliquez-la si besoin.");
     }
 
@@ -181,13 +190,20 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
         Address = SuggestedAddress.Trim();
         SuggestedAddress = string.Empty;
+        IsResolvingAddress = false;
         this.SetInfoStatus("Adresse suggérée appliquée.");
     }
 
     partial void OnSuggestedAddressChanged(string value)
     {
         OnPropertyChanged(nameof(HasSuggestedAddress));
+        OnPropertyChanged(nameof(HasSuggestedAddressPanel));
         ApplySuggestedAddressCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIsResolvingAddressChanged(bool value)
+    {
+        OnPropertyChanged(nameof(HasSuggestedAddressPanel));
     }
 
 

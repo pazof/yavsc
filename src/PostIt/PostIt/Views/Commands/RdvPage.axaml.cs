@@ -29,6 +29,9 @@ public partial class RdvPage : ContentPage
     private RdvViewModel? _currentViewModel;
     private readonly IReverseGeocodingService _reverseGeocodingService;
     private CancellationTokenSource? _reverseGeocodeCts;
+    private double? _lastResolvedLatitude;
+    private double? _lastResolvedLongitude;
+    private string? _lastResolvedAddress;
 
     public RdvPage()
         : this(null)
@@ -180,6 +183,14 @@ public partial class RdvPage : ContentPage
 
     private async Task TryResolveAddressAsync(RdvViewModel vm, double latitude, double longitude)
     {
+        if (_lastResolvedLatitude == latitude
+            && _lastResolvedLongitude == longitude
+            && !string.IsNullOrWhiteSpace(_lastResolvedAddress))
+        {
+            vm.ApplyResolvedAddress(_lastResolvedAddress);
+            return;
+        }
+
         _reverseGeocodeCts?.Cancel();
         _reverseGeocodeCts?.Dispose();
         _reverseGeocodeCts = new CancellationTokenSource();
@@ -196,6 +207,9 @@ public partial class RdvPage : ContentPage
 
             if (!string.IsNullOrWhiteSpace(resolved))
             {
+                _lastResolvedLatitude = latitude;
+                _lastResolvedLongitude = longitude;
+                _lastResolvedAddress = resolved;
                 vm.ApplyResolvedAddress(resolved);
                 return;
             }
@@ -204,6 +218,7 @@ public partial class RdvPage : ContentPage
         }
         catch (OperationCanceledException)
         {
+            vm.IsResolvingAddress = false;
         }
     }
 }
