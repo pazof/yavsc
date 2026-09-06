@@ -122,14 +122,16 @@ public partial class AddCircleMemberDialogViewModel : ViewModelBase
             return;
         }
         Confirmed?.Invoke(this, Selected);
-        var app = App.Current as App;
+        var app = App.Current as App
+            ?? throw new InvalidOperationException("Application PostIt indisponible.");
         await app.GoBackAsync();
     }
 
     [RelayCommand]
     public async Task CloseAsync()
     {
-        var app = App.Current as App;
+        var app = App.Current as App
+            ?? throw new InvalidOperationException("Application PostIt indisponible.");
         await app.GoBackAsync();
     }
 }

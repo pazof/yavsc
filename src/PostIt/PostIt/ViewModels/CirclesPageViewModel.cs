@@ -123,8 +123,10 @@ public partial class CirclesPageViewModel : ViewModelBase
     [RelayCommand]
     internal async Task OpenAddMemberAsync()
     {
-        var app = Application.Current as App;
-        var services = app?.ServiceProvider;
+        var app = Application.Current as App
+            ?? throw new InvalidOperationException("Application PostIt indisponible.");
+        var services = app.ServiceProvider
+            ?? throw new InvalidOperationException("ServiceProvider PostIt indisponible.");
         var directory = services.GetRequiredService<IUserDirectory>();
         AddCircleMemberDialogViewModel model =
         new AddCircleMemberDialogViewModel(directory);
