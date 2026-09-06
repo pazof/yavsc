@@ -49,8 +49,9 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
 
         using var http = NewClient();
         var response = await http.PostAsync($"/api/v1/front/query/accept?billingCode=Rdv&queryId={queryId}", content: null, TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"Unexpected status {(int)response.StatusCode} ({response.StatusCode}): {body}");
 
         using var assertScope = _fixture.Services.CreateScope();
         var assertDb = assertScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

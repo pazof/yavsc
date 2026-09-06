@@ -55,6 +55,14 @@ namespace Yavsc.Blogs.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBlog(long id, [FromBody] Models.Blog.BlogPost blog)
         {
+            // These properties are server-managed or optional graph members and
+            // should not block JSON payloads coming from API clients.
+            ModelState.Remove(nameof(Models.Blog.BlogPost.Author));
+            ModelState.Remove(nameof(Models.Blog.BlogPost.Tags));
+            ModelState.Remove(nameof(Models.Blog.BlogPost.Comments));
+            ModelState.Remove(nameof(Models.Blog.BlogPost.UserCreated));
+            ModelState.Remove(nameof(Models.Blog.BlogPost.UserModified));
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -87,6 +95,14 @@ namespace Yavsc.Blogs.Controllers
         [HttpPost]
         public IActionResult PostBlog([FromBody] Models.Blog.BlogPost blog)
         {
+            // These properties are server-managed or optional graph members and
+            // should not block JSON payloads coming from API clients.
+            ModelState.Remove(nameof(Models.Blog.BlogPost.Author));
+            ModelState.Remove(nameof(Models.Blog.BlogPost.Tags));
+            ModelState.Remove(nameof(Models.Blog.BlogPost.Comments));
+            ModelState.Remove(nameof(Models.Blog.BlogPost.UserCreated));
+            ModelState.Remove(nameof(Models.Blog.BlogPost.UserModified));
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

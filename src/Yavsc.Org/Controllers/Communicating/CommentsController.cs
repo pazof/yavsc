@@ -121,6 +121,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Create(Comment comment)
         {
             comment.UserCreated = User.GetUserId();
+            comment.UserModified = comment.UserCreated;
             // AuthorId/UserCreated is set server-side after model binding;
             // remove the stale binding error so a valid authenticated POST
             // does not fall into the invalid branch.
@@ -129,7 +130,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 _context.Comment.Add(comment);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(comment.UserCreated);
                 return RedirectToAction("Index");
             }
             ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Title", comment.ReceiverId);

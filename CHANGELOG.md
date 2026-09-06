@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.8-rc14] - unstable
+
+### Added
+
+### Changed
+
+### Fixed
+
+* [Yavsc.Api] Correction d'un 500 sur le refresh du catalogue d'activites lorsque `Activity.Description` est `NULL` en base (nullabilite explicite + projection null-safe + gardes sur codes vides).
+* [Yavsc.Api] Correction des erreurs 400/500 sur les routes billing (`Rdv`, `Brush`, `MBrush`) en imposant `ClientId` depuis l'utilisateur authentifie et en ignorant les champs server-owned lors de la validation modele.
+* [Yavsc.Api] Correction du `PUT /api/v1/billing/Rdv/{id}`: mise a jour controlee de l'entite existante (et non remplacement brut du graphe JSON), ce qui supprime les `BadRequest` parasites.
+* [Yavsc.Api] Correction du flux FrontOffice accept/reject de query: sauvegarde avec contexte utilisateur et fallback d'injection pour `IBillingService` afin d'eviter les erreurs serveur en environnement de test.
+* [Yavsc.Blogs] Correction des `BadRequest` sur `POST/PUT /api/v1/blogspot` avec payload JSON (PostIt): les proprietes de navigation/serveur (`Author`, `Tags`, `Comments`, audit) ne bloquent plus la validation.
+* [Yavsc.Org] Correction du flux MVC de creation de commentaire: `SaveChangesAsync(userId)` est utilise pour renseigner les champs d'audit requis (`UserCreated`/`UserModified`).
+* [Yavsc.Api.Test] Stabilisation des fixtures de seed billing: remplissage des metadonnees d'audit (`UserCreated`, `UserModified`, dates) pour eviter les echecs SQLite `NOT NULL`.
 
 ## [1.0.8-rc13] - unstable
 

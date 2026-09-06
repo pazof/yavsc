@@ -89,18 +89,16 @@ public class HairMultiCutQueryApiController : Controller
     public async Task<IActionResult> PostQuery([FromBody] HairMultiCutQuery query, CancellationToken cancellationToken)
     {
         var uid = User.GetUserId();
-        if (string.IsNullOrWhiteSpace(query.ClientId))
-        {
-            query.ClientId = uid;
-        }
+        query.ClientId = uid;
 
+        ModelState.Remove("Client");
         ModelState.Remove("ClientId");
-
-        if (query.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
-        {
-            ModelState.AddModelError("ClientId", "You can only create your own HairMultiCutQuery");
-            return BadRequest(ModelState);
-        }
+        ModelState.Remove("UserCreated");
+        ModelState.Remove("UserModified");
+        ModelState.Remove("SelectedProfile");
+        ModelState.Remove("PerformerProfile");
+        ModelState.Remove("Context");
+        ModelState.Remove("Regularization");
 
         if (query.Prestations is null || query.Prestations.Count == 0)
         {

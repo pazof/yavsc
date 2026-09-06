@@ -108,6 +108,7 @@ namespace Yavsc.Models
             ;
 
             builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
+            builder.Entity<Activity>().Property(a => a.Description).IsRequired(false);
 
             builder.Entity<Country>().HasKey(c => c.Code);
             builder.Entity<PerformerCodeInputValidation>()
