@@ -1,5 +1,33 @@
 # Changelog
 
+
+## [1.0.8-rc13] - unstable
+
+### Added
+
+* [PostIt] Integration d'un selecteur de lieu RDV base sur Mapsui (carte interactive dans le formulaire `Rdv`).
+* [PostIt] Ajout d'un marqueur de position et d'une action de recentrage sur la carte RDV.
+* [PostIt] Ajout d'un service de reverse geocoding pour suggerer une adresse a partir des coordonnees carte.
+* [PostIt] Cache et debounce des resolutions d'adresse RDV pour limiter les appels reseau et lisser l'UX.
+* [PostIt.Tests] Nouvelles non-regressions sur le panneau d'adresse suggeree RDV et le comportement de la carte.
+* [Yavsc.Abstract] Activation de `#nullable enable annotations` sur les fichiers legacy avec annotations nullable.
+* [Yavsc.Server] Activation de `#nullable enable annotations` sur les fichiers legacy avec annotations nullable.
+
+### Changed
+
+* [PostIt] Generalisation de la barre de statut d'action (severite explicite) sur pages principales, dialogues et formulaires billing.
+* [PostIt] Harmonisation des messages de statut utilisateur en francais.
+* [PostIt] Renforcement des gardes de navigation dans les flux de gestion des membres de cercle.
+* [PostIt] Le flux RDV conserve l'adresse saisie manuellement et propose l'adresse resolue comme suggestion explicite.
+* [PostIt] Le flux de geolocalisation RDV tolere les positions proches dans le cache de suggestion d'adresse.
+
+### Fixed
+
+* [PostIt.Desktop] Correction d'un crash au demarrage OIDC (`No authority specified`) via durcissement des valeurs par defaut de configuration d'authentification.
+* [PostIt] Correction de la persistance des settings: l'etat runtime de statut n'est plus serialize dans le JSON utilisateur.
+* [PostIt.Tests] Ajout d'un verrou de non-regression sur le premier chargement des settings.
+* [PostIt] Correction du binding de la date RDV: `DatePicker.SelectedDate` est aligne sur un proxy `DateTimeOffset?` (`EventDateSelection`).
+
 ## [1.0.8-rc12] - unstable
 
 ### Added
