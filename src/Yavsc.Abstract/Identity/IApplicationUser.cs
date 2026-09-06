@@ -1,4 +1,6 @@
-﻿namespace Yavsc.Abstract.Identity
+﻿#nullable enable annotations
+
+namespace Yavsc.Abstract.Identity
 {
     public interface IApplicationUser
     {

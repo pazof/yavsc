@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using Yavsc.Abstract.Identity.Security;
 using System.Text.Json.Serialization;
 

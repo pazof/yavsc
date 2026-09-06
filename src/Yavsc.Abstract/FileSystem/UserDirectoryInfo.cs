@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using Yavsc.Server.Helpers;
 
 namespace Yavsc.ViewModels.UserFiles
