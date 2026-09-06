@@ -35,6 +35,7 @@ appsettings-*.*.json
 
 generated/
 *.tmp
+tmp/
 DataDir/
 
 *.tests.trx
