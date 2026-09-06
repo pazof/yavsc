@@ -57,6 +57,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<RdvPage>();
         services.AddTransient<BrushPage>();
         services.AddTransient<BillingQueriesPage>();
+        services.AddTransient<BillingQueryDetailsPage>();
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);

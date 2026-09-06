@@ -43,7 +43,7 @@ public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusV
         ? $"Demandes en cours ({Form.Title})"
         : $"Commandes {Form.Title}";
     public string ContextLabel => $"{Performer.UserName} · {Activity.Name}";
-    public bool CanOpenDetails => !IsReadOnly;
+    public bool CanOpenDetails => true;
 
     public override bool CanNavigateNext
     {
@@ -75,7 +75,7 @@ public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusV
 
     public Task InitializeAsync() => RefreshAsync();
 
-    private bool CanOpenSelectedQuery() => !IsReadOnly && SelectedQuery is not null;
+    private bool CanOpenSelectedQuery() => SelectedQuery is not null;
 
     [RelayCommand]
     public async Task RefreshAsync()
@@ -114,12 +114,6 @@ public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusV
     [RelayCommand(CanExecute = nameof(CanOpenSelectedQuery))]
     public async Task OpenSelectedQueryAsync()
     {
-        if (IsReadOnly)
-        {
-            this.SetWarningStatus("Mode lecture seule: l'ouverture en modification est désactivée.");
-            return;
-        }
-
         if (SelectedQuery is null)
         {
             this.SetWarningStatus("Sélectionnez une commande.");
@@ -136,8 +130,13 @@ public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusV
         try
         {
             var details = await _billingClient.GetQueryAsync(Form.ActionName, SelectedQuery.Id).ConfigureAwait(true);
-            var vm = Form.CreateCommandPageViewModel(Activity, Performer, _billingClient);
-            await vm!.InitializeAsync(details).ConfigureAwait(true);
+            var vm = new BillingQueryDetailsPageViewModel(
+                Activity,
+                Performer,
+                Form,
+                _billingClient,
+                details,
+                IsReadOnly);
             await app.PushPageAsync(vm).ConfigureAwait(true);
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)

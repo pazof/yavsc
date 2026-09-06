@@ -4,13 +4,23 @@
 
 ### Added
 
+* [PostIt] Ajout d'un `BillingQueryDetailsPageViewModel` et de sa page associee pour afficher le detail d'une commande billing depuis l'historique.
+* [PostIt] Ajout d'un mode detail avec section metier (statut, date, description, motif, infos) et section technique repliable (code, client, provision, lieu, prestations).
+* [PostIt] Ajout d'un badge de statut enrichi (couleur + pictogramme) sur le detail d'une commande pour visualiser l'etat en un coup d'oeil.
+* [PostIt] Ajout d'un bloc d'actions rapide en tete du detail (`Retour`, `Ouvrir en edition`) pour eviter le scroll jusqu'au bas de page.
+* [PostIt] Ajout d'un style monospace sur les metadonnees techniques (code billing, client, provision, lieu, prestations) pour faciliter la lecture des identifiants et valeurs brutes.
+
 ### Changed
+
+* [PostIt] Le bouton d'ouverture depuis la liste billing ouvre maintenant une page de detail dediee avant l'eventuelle edition.
+* [PostIt] Amelioration UX des pages billing: badges de statut colores, actions remontees en haut de page, et typographie monospace sur les metadonnees techniques.
 
 ### Fixed
 
 * [Yavsc.Api] Correction d'un 500 sur le refresh du catalogue d'activites lorsque `Activity.Description` est `NULL` en base (nullabilite explicite + projection null-safe + gardes sur codes vides).
 * [Yavsc.Api] Correction des erreurs 400/500 sur les routes billing (`Rdv`, `Brush`, `MBrush`) en imposant `ClientId` depuis l'utilisateur authentifie et en ignorant les champs server-owned lors de la validation modele.
 * [Yavsc.Api] Correction du `PUT /api/v1/billing/Rdv/{id}`: mise a jour controlee de l'entite existante (et non remplacement brut du graphe JSON), ce qui supprime les `BadRequest` parasites.
+* [Yavsc.Api] Correction PostgreSQL `timestamptz` sur RDV: normalisation UTC de `EventDate` sur `POST/PUT /api/v1/billing/Rdv` pour eviter l'erreur `Cannot write DateTime with Kind=Local`.
 * [Yavsc.Api] Correction du flux FrontOffice accept/reject de query: sauvegarde avec contexte utilisateur et fallback d'injection pour `IBillingService` afin d'eviter les erreurs serveur en environnement de test.
 * [Yavsc.Blogs] Correction des `BadRequest` sur `POST/PUT /api/v1/blogspot` avec payload JSON (PostIt): les proprietes de navigation/serveur (`Author`, `Tags`, `Comments`, audit) ne bloquent plus la validation.
 * [Yavsc.Org] Correction du flux MVC de creation de commentaire: `SaveChangesAsync(userId)` est utilise pour renseigner les champs d'audit requis (`UserCreated`/`UserModified`).
