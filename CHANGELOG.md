@@ -1,5 +1,58 @@
 # Changelog
 
+## [1.0.8-rc14] - unstable
+
+### Added
+
+* [PostIt] Ajout d'un `BillingQueryDetailsPageViewModel` et de sa page associee pour afficher le detail d'une commande billing depuis l'historique.
+* [PostIt] Ajout d'un mode detail avec section metier (statut, date, description, motif, infos) et section technique repliable (code, client, provision, lieu, prestations).
+* [PostIt] Ajout d'un badge de statut enrichi (couleur + pictogramme) sur le detail d'une commande pour visualiser l'etat en un coup d'oeil.
+* [PostIt] Ajout d'un bloc d'actions rapide en tete du detail (`Retour`, `Ouvrir en edition`) pour eviter le scroll jusqu'au bas de page.
+* [PostIt] Ajout d'un style monospace sur les metadonnees techniques (code billing, client, provision, lieu, prestations) pour faciliter la lecture des identifiants et valeurs brutes.
+
+### Changed
+
+* [PostIt] Le bouton d'ouverture depuis la liste billing ouvre maintenant une page de detail dediee avant l'eventuelle edition.
+* [PostIt] Amelioration UX des pages billing: badges de statut colores, actions remontees en haut de page, et typographie monospace sur les metadonnees techniques.
+
+### Fixed
+
+* [Yavsc.Api] Correction d'un 500 sur le refresh du catalogue d'activites lorsque `Activity.Description` est `NULL` en base (nullabilite explicite + projection null-safe + gardes sur codes vides).
+* [Yavsc.Api] Correction des erreurs 400/500 sur les routes billing (`Rdv`, `Brush`, `MBrush`) en imposant `ClientId` depuis l'utilisateur authentifie et en ignorant les champs server-owned lors de la validation modele.
+* [Yavsc.Api] Correction du `PUT /api/v1/billing/Rdv/{id}`: mise a jour controlee de l'entite existante (et non remplacement brut du graphe JSON), ce qui supprime les `BadRequest` parasites.
+* [Yavsc.Api] Correction PostgreSQL `timestamptz` sur RDV: normalisation UTC de `EventDate` sur `POST/PUT /api/v1/billing/Rdv` pour eviter l'erreur `Cannot write DateTime with Kind=Local`.
+* [Yavsc.Api] Correction du flux FrontOffice accept/reject de query: sauvegarde avec contexte utilisateur et fallback d'injection pour `IBillingService` afin d'eviter les erreurs serveur en environnement de test.
+* [Yavsc.Blogs] Correction des `BadRequest` sur `POST/PUT /api/v1/blogspot` avec payload JSON (PostIt): les proprietes de navigation/serveur (`Author`, `Tags`, `Comments`, audit) ne bloquent plus la validation.
+* [Yavsc.Org] Correction du flux MVC de creation de commentaire: `SaveChangesAsync(userId)` est utilise pour renseigner les champs d'audit requis (`UserCreated`/`UserModified`).
+* [Yavsc.Api.Test] Stabilisation des fixtures de seed billing: remplissage des metadonnees d'audit (`UserCreated`, `UserModified`, dates) pour eviter les echecs SQLite `NOT NULL`.
+
+## [1.0.8-rc13] - unstable
+
+### Added
+
+* [PostIt] Integration d'un selecteur de lieu RDV base sur Mapsui (carte interactive dans le formulaire `Rdv`).
+* [PostIt] Ajout d'un marqueur de position et d'une action de recentrage sur la carte RDV.
+* [PostIt] Ajout d'un service de reverse geocoding pour suggerer une adresse a partir des coordonnees carte.
+* [PostIt] Cache et debounce des resolutions d'adresse RDV pour limiter les appels reseau et lisser l'UX.
+* [PostIt.Tests] Nouvelles non-regressions sur le panneau d'adresse suggeree RDV et le comportement de la carte.
+* [Yavsc.Abstract] Activation de `#nullable enable annotations` sur les fichiers legacy avec annotations nullable.
+* [Yavsc.Server] Activation de `#nullable enable annotations` sur les fichiers legacy avec annotations nullable.
+
+### Changed
+
+* [PostIt] Generalisation de la barre de statut d'action (severite explicite) sur pages principales, dialogues et formulaires billing.
+* [PostIt] Harmonisation des messages de statut utilisateur en francais.
+* [PostIt] Renforcement des gardes de navigation dans les flux de gestion des membres de cercle.
+* [PostIt] Le flux RDV conserve l'adresse saisie manuellement et propose l'adresse resolue comme suggestion explicite.
+* [PostIt] Le flux de geolocalisation RDV tolere les positions proches dans le cache de suggestion d'adresse.
+
+### Fixed
+
+* [PostIt.Desktop] Correction d'un crash au demarrage OIDC (`No authority specified`) via durcissement des valeurs par defaut de configuration d'authentification.
+* [PostIt] Correction de la persistance des settings: l'etat runtime de statut n'est plus serialize dans le JSON utilisateur.
+* [PostIt.Tests] Ajout d'un verrou de non-regression sur le premier chargement des settings.
+* [PostIt] Correction du binding de la date RDV: `DatePicker.SelectedDate` est aligne sur un proxy `DateTimeOffset?` (`EventDateSelection`).
+
 ## [1.0.8-rc12] - unstable
 
 ### Added
@@ -13,12 +66,14 @@
 
 * [PostIt] Les avatars ne sont plus relies en string sur `Image.Source`: ils sont telecharges et lies en `Bitmap`.
 * [Yavsc.Api.Client] `ActivityApiClient` accepte une base d'avatar dediee et construit les URLs avatar depuis l'autorite d'identification.
+* [PostIt] Les clients Activites/Billing utilisent maintenant `ApiUrl` en lecture dynamique: un changement via Parametres prend effet sans redemarrer l'application (apres sauvegarde et rafraichissement de la page).
 * [PostIt] Le header de `MainPage` n'utilise plus `ScrollViewer`; remplacement par une barre de commandes basee sur `WrapPanel`.
 * [PostIt] Alignement de la navigation blogs: renommage `PushMainPageAsync` -> `PushBlogsPageAsync` et ajustement de `HomePageViewModel`.
 
 ### Fixed
 
-néant
+* [PostIt.Android] Correction d'un 404 sur la page Activites au premier lancement: la configuration embarquee pointait `ApiUrl` vers le host Blogs au lieu de l'API metier.
+* [PostIt] Correction du bouton Sauver de la page Parametres: binding vers `SaveCommand` pour persister correctement `ApiUrl`/`BlogsApiUrl`.
 
 ## [1.0.8-rc11] - unstable
 

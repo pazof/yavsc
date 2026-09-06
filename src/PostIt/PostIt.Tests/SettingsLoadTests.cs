@@ -173,4 +173,51 @@ public class SettingsLoadTests
         Assert.NotNull(roundTrip);
         Assert.Equal("bonjour", roundTrip.SearchText);
     }
+
+        /// <summary>
+        /// First-start regression guard: older settings payloads can
+        /// still contain <c>ActionStatus</c> from a previous write. This
+        /// runtime-only UI state must not be persisted anymore and must
+        /// not break deserialization when present.
+        /// </summary>
+        [Fact]
+        public void ActionStatus_is_not_persisted_and_legacy_payload_with_it_still_deserializes()
+        {
+                var settings = new PostIt.ViewModels.Settings
+                {
+                        Authentication = new AuthenticationSettings
+                        {
+                                Authority = "https://example.test/",
+                                ClientId = "postit-tests",
+                                Scopes = new[] { "openid" }
+                        }
+                };
+
+                var serialized = JsonSerializer.Serialize(settings);
+                Assert.DoesNotContain("\"ActionStatus\"", serialized, StringComparison.Ordinal);
+
+                const string legacyPayload = """
+                        {
+                            "Authentication": {
+                                "Authority": "https://example.test/",
+                                "ClientId": "postit-tests",
+                                "Scopes": ["openid"],
+                                "RedirectUri": "postit://callback"
+                            },
+                            "DarkMode": false,
+                            "BlogsApiUrl": "https://blogs.example.test/api/v1/",
+                            "ApiUrl": "https://api.example.test/api/v1/",
+                            "SearchText": "hello",
+                            "ActionStatus": {
+                                "Message": "runtime only",
+                                "Severity": "Error"
+                            }
+                        }
+                        """;
+
+                var roundTrip = JsonSerializer.Deserialize<PostIt.ViewModels.Settings>(legacyPayload);
+
+                Assert.NotNull(roundTrip);
+                Assert.Equal("hello", roundTrip.SearchText);
+        }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 [assembly: InternalsVisibleTo("PostIt.Tests")]
 
@@ -30,6 +31,20 @@ public partial class Settings : ViewModelBase
 
     [ObservableProperty]
     public partial string SearchText { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    [JsonIgnore]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
+
+    public void SetActionStatus(string message, StatusSeverity severity = StatusSeverity.Info)
+    {
+        ActionStatus = severity switch
+        {
+            StatusSeverity.Error => StatusNotice.Error(message),
+            StatusSeverity.Warning => StatusNotice.Warning(message),
+            _ => StatusNotice.Info(message),
+        };
+    }
 
     /// <summary>
     /// Catch top-level mutations: the four ObservableProperty
@@ -110,6 +125,8 @@ public partial class Settings : ViewModelBase
         // build options from a torn read.
         lock (_mutationGate)
         {
+            EnsureAuthenticationDefaultsLocked();
+
             var options = new OidcClientOptions
             {
                 Authority = Authentication.Authority,
@@ -136,6 +153,25 @@ public partial class Settings : ViewModelBase
 
             return options;
         }
+    }
+
+    private void EnsureAuthenticationDefaultsLocked()
+    {
+        Authentication ??= new AuthenticationSettings();
+
+        if (string.IsNullOrWhiteSpace(Authentication.Authority))
+            Authentication.Authority = AuthenticationSettings.DefaultAuthority;
+
+        if (string.IsNullOrWhiteSpace(Authentication.ClientId))
+            Authentication.ClientId = AuthenticationSettings.DefaultClientId;
+
+        if (string.IsNullOrWhiteSpace(Authentication.RedirectUri))
+            Authentication.RedirectUri = AuthenticationSettings.DesktopRedirectUri;
+
+        if (Authentication.Scopes is null || Authentication.Scopes.Length == 0)
+            Authentication.Scopes = AuthenticationSettings.DefaultScopes;
+
+        Authentication.RefreshScopeListText();
     }
 
     /// <summary>
@@ -321,11 +357,13 @@ public partial class Settings : ViewModelBase
                      AuthenticationSettings.DesktopRedirectUri : settings.Authentication.RedirectUri;
                     if (settings.Authentication.Scopes is null || settings.Authentication.Scopes.Length == 0)
                     {
-                        settings.Authentication.Scopes = AuthenticationSettings.DefaultScopes;
+                        this.Authentication.Scopes = AuthenticationSettings.DefaultScopes;
                     }
                     else
                         this.Authentication.Scopes = settings.Authentication.Scopes;
                 }
+
+                EnsureAuthenticationDefaultsLocked();
             }
             // A disk load (or an embedded-resource fallback) is the
             // baseline, not a user edit. Clear the dirty flag last
@@ -406,6 +444,8 @@ public partial class Settings : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanSave))]
     public void Save()
     {
+        SetActionStatus("Enregistrement des parametres...", StatusSeverity.Info);
+
         var configDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "PostIt");
@@ -425,10 +465,13 @@ public partial class Settings : ViewModelBase
                     File.SetUnixFileMode(configPath,
                         UnixFileMode.UserRead | UnixFileMode.UserWrite);
                 IsDirty = false;
+                SetActionStatus("Parametres sauvegardes.", StatusSeverity.Info);
+                
                 Console.WriteLine($"💾 Settings saved to {configPath}");
             }
             catch (Exception ex)
             {
+                SetActionStatus($"Echec sauvegarde parametres: {ex.Message}", StatusSeverity.Error);
                 Console.Error.WriteLine($"🩎 Error saving settings to {configPath}: {ex.Message}");
                 throw;
             }

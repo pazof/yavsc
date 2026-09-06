@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using Microsoft.Extensions.Localization;
 
 using Yavsc.Interfaces.Workflow;

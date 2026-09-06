@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using Microsoft.Extensions.Logging;
 using Yavsc.Models.Billing;
 using Microsoft.AspNetCore.Http;

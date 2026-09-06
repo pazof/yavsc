@@ -37,7 +37,7 @@ public sealed class PostAclEntry
 /// any 403 / 404 will surface as an exception caught by the
 /// command and routed to <see cref="StatusMessage"/>.</para>
 /// </summary>
-public partial class PostAclDialogViewModel : ViewModelBase
+public partial class PostAclDialogViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly BlogAclApiClient _aclClient;
     private readonly CircleApiClient _circleClient;
@@ -61,7 +61,10 @@ public partial class PostAclDialogViewModel : ViewModelBase
     public partial bool IsBusy { get; set; }
 
     [ObservableProperty]
-    public partial string StatusMessage { get; set; } = string.Empty;
+    public partial string StatusMessage { get; set; } = "Pret.";
+
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
 
     /// <summary>
     /// Idempotency gate for <see cref="LoadAsync"/>: the dialog
@@ -115,12 +118,12 @@ public partial class PostAclDialogViewModel : ViewModelBase
             AclEntries = new ObservableCollection<PostAclEntry>(AclEntries.Select(a => ToAclEntry(a.CircleId)));
 
 
-            StatusMessage = $"{AclEntries.Count} autorisation(s)";
+            this.SetInfoStatus($"{AclEntries.Count} autorisation(s)");
             _loaded = true;
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -133,7 +136,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
     {
         if (SelectedCircleToAdd is null)
         {
-            StatusMessage = "Sélectionnez un cercle à ajouter";
+            this.SetWarningStatus("Sélectionnez un cercle à ajouter");
             return;
         }
 
@@ -142,7 +145,7 @@ public partial class PostAclDialogViewModel : ViewModelBase
         {
             if (AclEntries.Any(a => a.CircleId == SelectedCircleToAdd.Id))
             {
-                StatusMessage = $"Cercle « {SelectedCircleToAdd.Name} » déjà autorisé";
+                this.SetWarningStatus($"Cercle « {SelectedCircleToAdd.Name} » déjà autorisé");
                 return;
             }
 
@@ -154,11 +157,11 @@ public partial class PostAclDialogViewModel : ViewModelBase
             if (created is not null)
             {
                 AclEntries.Add(ToAclEntry(created.CircleId));
-                StatusMessage = $"Cercle « {SelectedCircleToAdd.Name} » autorisé";
+                this.SetInfoStatus($"Cercle « {SelectedCircleToAdd.Name} » autorisé");
             }
             else
             {
-                StatusMessage = "Autorisation refusée par le serveur";
+                this.SetWarningStatus("Autorisation refusée par le serveur");
             }
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
@@ -166,11 +169,11 @@ public partial class PostAclDialogViewModel : ViewModelBase
             // Conflict means the link already exists in backend. Resync
             // from the dedicated ACL API so the UI reflects server truth.
             await ReloadAclEntriesFromServerAsync();
-            StatusMessage = $"Cercle « {SelectedCircleToAdd.Name} » déjà autorisé";
+            this.SetWarningStatus($"Cercle « {SelectedCircleToAdd.Name} » déjà autorisé");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -189,11 +192,11 @@ public partial class PostAclDialogViewModel : ViewModelBase
             var existing = AclEntries.FirstOrDefault(e => e.CircleId == acl.CircleId);
             if (existing is not null)
                 AclEntries.Remove(existing);
-            StatusMessage = "Autorisation révoquée";
+            this.SetInfoStatus("Autorisation révoquée");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {

@@ -1,4 +1,6 @@
-﻿using Yavsc.Abstract.Identity;
+﻿#nullable enable annotations
+
+using Yavsc.Abstract.Identity;
 
 namespace Yavsc.Interfaces
 {

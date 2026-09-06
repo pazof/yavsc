@@ -19,7 +19,7 @@ namespace PostIt;
 public class ViewLocator : IDataTemplate
 {
 
-     public Control Build(object? data)
+    public Control Build(object? data)
     {
         try
         {
@@ -49,10 +49,12 @@ public class ViewLocator : IDataTemplate
             AddCircleMemberDialogViewModel => services.GetRequiredService<AddCircleMemberDialog>(),
             CirclesPageViewModel => services.GetRequiredService<CirclesPage>(),
             PostAclDialogViewModel => services.GetRequiredService<PostAclDialog>(),
+            BillingQueriesPageViewModel => services.GetRequiredService<BillingQueriesPage>(),
+            BillingQueryDetailsPageViewModel => services.GetRequiredService<BillingQueryDetailsPage>(),
             null => new TextBlock { Text = "No view for <null>" },
             _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };
     }
 
-     public bool Match(object? data) => data is ViewModelBase;
+    public bool Match(object? data) => data is ViewModelBase;
 }

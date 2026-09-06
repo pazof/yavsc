@@ -20,15 +20,20 @@ public sealed class BillingApiClient
     private const string PathPrefix = "billing";
 
     private readonly IYavscApiClient _api;
-    private readonly Uri _baseAddress;
+    private readonly Func<string> _businessBaseAddress;
 
     public BillingApiClient(IYavscApiClient api, string businessBaseAddress)
+        : this(api, () => businessBaseAddress)
+    {
+    }
+
+    public BillingApiClient(IYavscApiClient api, Func<string> businessBaseAddress)
     {
         _api = api ?? throw new ArgumentNullException(nameof(api));
-        if (string.IsNullOrWhiteSpace(businessBaseAddress))
-            throw new ArgumentException("Base address is required.", nameof(businessBaseAddress));
+        _businessBaseAddress = businessBaseAddress ?? throw new ArgumentNullException(nameof(businessBaseAddress));
 
-        _baseAddress = new Uri(businessBaseAddress, UriKind.Absolute);
+        // Validate initial value early to fail fast on invalid setup.
+        _ = ResolveBusinessBaseAddress();
     }
 
     public Task CreateAsync(string billingCode, object payload, CancellationToken ct = default)
@@ -121,7 +126,16 @@ public sealed class BillingApiClient
             ct: ct);
     }
 
-    private string Absolute(string relativePath) => new Uri(_baseAddress, relativePath).ToString();
+    private string Absolute(string relativePath) => new Uri(ResolveBusinessBaseAddress(), relativePath).ToString();
+
+    private Uri ResolveBusinessBaseAddress()
+    {
+        var raw = _businessBaseAddress();
+        if (string.IsNullOrWhiteSpace(raw))
+            throw new InvalidOperationException("Business base address is required.");
+
+        return new Uri(raw, UriKind.Absolute);
+    }
 
     private static BillingQueryDetailsDto MapRdv(RdvQueryResponse dto, string billingCode)
     {

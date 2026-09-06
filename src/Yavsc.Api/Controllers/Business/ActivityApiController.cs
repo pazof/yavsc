@@ -51,6 +51,14 @@ namespace Yavsc.Controllers
                 .Distinct()
                 .ToArray();
 
+            // Some providers are brittle when translating Contains over an
+            // empty in-memory array. If there is no candidate activity code,
+            // the catalog is empty by definition.
+            if (codes.Length == 0)
+            {
+                return Ok(new List<ActivityInfo>());
+            }
+
             var performerCounts = await (
                 from ua in _context.UserActivities.AsNoTracking()
                 where !string.IsNullOrWhiteSpace(ua.DoesCode) && codes.Contains(ua.DoesCode)
@@ -64,10 +72,10 @@ namespace Yavsc.Controllers
 
             var filteredActivities = activities
                 .Where(a =>
-                    (performerCounts.TryGetValue(a.Code, out var ownCount) && ownCount > 0)
+                    (TryGetPerformerCount(performerCounts, a.Code, out var ownCount) && ownCount > 0)
                     || (a.Children ?? new List<Activity>())
                         .Where(c => !c.Hidden)
-                        .Any(c => performerCounts.TryGetValue(c.Code, out var childCount) && childCount > 0))
+                        .Any(c => TryGetPerformerCount(performerCounts, c.Code, out var childCount) && childCount > 0))
                 .ToList();
 
             return Ok(filteredActivities.Select(a => ToBrowseItem(a, performerCounts)).ToList());
@@ -269,10 +277,10 @@ namespace Yavsc.Controllers
                 Code = activity.Code,
                 Name = activity.Name,
                 ParentCode = activity.ParentCode,
-                Description = activity.Description,
+                Description = activity.Description ?? string.Empty,
                 Photo = activity.Photo,
                 Rate = activity.Rate,
-                PerformerCount = performerCounts.TryGetValue(activity.Code, out var count) ? count : 0,
+                PerformerCount = TryGetPerformerCount(performerCounts, activity.Code, out var count) ? count : 0,
                 Forms = (activity.Forms ?? Enumerable.Empty<CommandForm>())
                     .Select(f => new CommandFormSummary
                     {
@@ -283,17 +291,17 @@ namespace Yavsc.Controllers
                     .ToList(),
                 Children = (activity.Children ?? Enumerable.Empty<Activity>())
                     .Where(c => !c.Hidden)
-                    .Where(c => performerCounts.TryGetValue(c.Code, out var childCount) && childCount > 0)
+                    .Where(c => TryGetPerformerCount(performerCounts, c.Code, out var childCount) && childCount > 0)
                     .OrderByDescending(c => c.Rate)
                     .Select(c => new ActivityInfo
                     {
                         Code = c.Code,
                         Name = c.Name,
                         ParentCode = c.ParentCode,
-                        Description = c.Description,
+                        Description = c.Description ?? string.Empty,
                         Photo = c.Photo,
                         Rate = c.Rate,
-                        PerformerCount = performerCounts.TryGetValue(c.Code, out var childCount) ? childCount : 0,
+                        PerformerCount = TryGetPerformerCount(performerCounts, c.Code, out var childCount) ? childCount : 0,
                         Forms = (c.Forms ?? Enumerable.Empty<CommandForm>())
                             .Select(f => new CommandFormSummary
                             {
@@ -305,6 +313,20 @@ namespace Yavsc.Controllers
                     })
                     .ToList(),
             };
+        }
+
+        private static bool TryGetPerformerCount(
+            IReadOnlyDictionary<string, int> performerCounts,
+            string code,
+            out int count)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                count = 0;
+                return false;
+            }
+
+            return performerCounts.TryGetValue(code, out count);
         }
     }
 }

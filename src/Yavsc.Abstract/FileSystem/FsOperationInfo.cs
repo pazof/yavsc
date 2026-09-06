@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 namespace Yavsc.Abstract.Helpers
 {
     public enum ErrorCode {

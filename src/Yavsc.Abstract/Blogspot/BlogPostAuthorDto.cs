@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 namespace Yavsc.Blogspot;
 
 /// <summary>

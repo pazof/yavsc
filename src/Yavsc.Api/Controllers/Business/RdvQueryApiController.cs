@@ -65,18 +65,18 @@ public class RdvQueryApiController : Controller
     public async Task<IActionResult> PostQuery([FromBody] RdvQuery query, CancellationToken cancellationToken)
     {
         var uid = User.GetUserId();
-        if (string.IsNullOrWhiteSpace(query.ClientId))
-        {
-            query.ClientId = uid;
-        }
+        // Security: the caller always posts for themselves.
+        query.ClientId = uid;
+        query.EventDate = EnsureUtc(query.EventDate);
 
+        ModelState.Remove("Client");
         ModelState.Remove("ClientId");
-
-        if (query.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
-        {
-            ModelState.AddModelError("ClientId", "You can only create your own RdvQuery");
-            return BadRequest(ModelState);
-        }
+        ModelState.Remove("UserCreated");
+        ModelState.Remove("UserModified");
+        ModelState.Remove("SelectedProfile");
+        ModelState.Remove("PerformerProfile");
+        ModelState.Remove("Context");
+        ModelState.Remove("Regularization");
 
         if (!ModelState.IsValid)
         {
@@ -123,23 +123,44 @@ public class RdvQueryApiController : Controller
     [HttpPut("{id}")]
     public async Task<IActionResult> PutQuery([FromRoute] long id, [FromBody] RdvQuery query, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        if (id != query.Id)
-        {
-            return BadRequest();
-        }
-
         var uid = User.GetUserId();
-        if (query.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
+        var existing = await _context.RdvQueries
+            .Include(q => q.Location)
+            .SingleOrDefaultAsync(q => q.Id == id, cancellationToken);
+
+        if (existing is null)
+        {
+            return NotFound();
+        }
+
+        if (existing.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
         {
             return Forbid();
         }
 
-        _context.Entry(query).State = EntityState.Modified;
+        existing.ActivityCode = query.ActivityCode;
+        existing.PerformerId = query.PerformerId;
+        existing.Consent = query.Consent;
+        existing.EventDate = EnsureUtc(query.EventDate);
+        existing.LocationType = query.LocationType;
+        existing.Reason = query.Reason;
+        existing.Status = query.Status;
+        existing.Provisional = query.Provisional;
+
+        if (query.Location is not null)
+        {
+            var resolvedLocation = await _context.Locations.FirstOrDefaultAsync(
+                x => x.Address == query.Location.Address
+                  && x.Longitude == query.Location.Longitude
+                  && x.Latitude == query.Location.Latitude,
+                cancellationToken);
+
+            existing.Location = resolvedLocation ?? query.Location;
+            if (resolvedLocation is null)
+            {
+                _context.Attach(query.Location);
+            }
+        }
 
         try
         {
@@ -185,5 +206,15 @@ public class RdvQueryApiController : Controller
     private bool QueryExists(long id)
     {
         return _context.RdvQueries.Any(e => e.Id == id);
+    }
+
+    private static DateTime EnsureUtc(DateTime value)
+    {
+        return value.Kind switch
+        {
+            DateTimeKind.Utc => value,
+            DateTimeKind.Local => value.ToUniversalTime(),
+            _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+        };
     }
 }

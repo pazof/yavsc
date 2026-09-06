@@ -1,11 +1,13 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cvm="using:PostIt.ViewModels.Commands"
+             xmlns:mapsui="using:Mapsui.UI.Avalonia"
+             xmlns:postitControls="using:PostIt.Controls"
              x:Class="PostIt.Views.Commands.RdvPage"
              x:DataType="cvm:RdvViewModel"
              Header="Commande billing">
   <ScrollViewer>
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
       <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
                  Text="{Binding Title}"
                  FontSize="18"
@@ -24,7 +26,7 @@
       <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ActivityLabel}" IsReadOnly="True" Margin="0,0,0,8" />
 
       <TextBlock Grid.Row="4" Text="Date" VerticalAlignment="Center" Margin="0,0,12,8" />
-      <DatePicker Grid.Row="4" Grid.Column="1" DayFormat="ddd dd" SelectedDate="{Binding EventDate, Mode=TwoWay}" Margin="0,0,0,8" />
+      <DatePicker Grid.Row="4" Grid.Column="1" DayFormat="ddd dd" SelectedDate="{Binding EventDateSelection, Mode=TwoWay}" Margin="0,0,0,8" />
 
       <TextBlock Grid.Row="5"
                  Text="Motif"
@@ -38,49 +40,81 @@
       <TextBlock Grid.Row="6" Text="Adresse" VerticalAlignment="Center" Margin="0,0,12,8" />
       <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Address, Mode=TwoWay}" Margin="0,0,0,8" />
 
-      <Button Grid.Row="7"
-              Grid.ColumnSpan="2"
-              HorizontalAlignment="Left"
-              Margin="0,0,0,8"
-              Content="Utiliser ma position"
-              Command="{Binding UseCurrentLocationCommand}" />
+      <Grid Grid.Row="7"
+        x:Name="SuggestedAddressPanel"
+        Grid.ColumnSpan="2"
+          ColumnDefinitions="*,12,Auto,12,Auto"
+        Margin="0,0,0,8"
+        IsVisible="{Binding HasSuggestedAddressPanel}">
+        <TextBlock Grid.Column="0"
+           VerticalAlignment="Center"
+           Text="{Binding SuggestedAddress, StringFormat='Adresse suggérée: {0}'}"
+           TextWrapping="Wrap"
+           Opacity="0.8" />
+        <Button Grid.Column="2"
+          x:Name="ApplySuggestedAddressButton"
+            Content="Utiliser"
+          IsVisible="{Binding HasSuggestedAddress}"
+            Command="{Binding ApplySuggestedAddressCommand}" />
+        <ProgressBar Grid.Column="4"
+               x:Name="SuggestedAddressProgress"
+               Width="80"
+               IsIndeterminate="True"
+               IsVisible="{Binding IsResolvingAddress}" />
+      </Grid>
 
-      <TextBlock Grid.Row="8" Text="Latitude" VerticalAlignment="Center" Margin="0,0,12,8" />
-      <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Latitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
+        <Grid Grid.Row="8"
+            Grid.ColumnSpan="2"
+            ColumnDefinitions="Auto,12,Auto"
+            Margin="0,0,0,8">
+        <Button Grid.Column="0"
+          HorizontalAlignment="Left"
+          Content="Utiliser ma position"
+          Command="{Binding UseCurrentLocationCommand}" />
+        <Button Grid.Column="2"
+          HorizontalAlignment="Left"
+          Content="Me localiser sur la carte"
+          Click="OnCenterCurrentLocationClicked"
+          IsEnabled="{Binding CanUseCurrentLocation}" />
+            </Grid>
 
-      <TextBlock Grid.Row="9" Text="Longitude" VerticalAlignment="Center" Margin="0,0,12,8" />
-      <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Longitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
+            <TextBlock Grid.Row="9" Text="Latitude" VerticalAlignment="Center" Margin="0,0,12,8" />
+            <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Latitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
 
+            <TextBlock Grid.Row="10" Text="Longitude" VerticalAlignment="Center" Margin="0,0,12,8" />
+            <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding Longitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
 
-      <TextBlock Grid.Row="12"
+            <TextBlock Grid.Row="11" Grid.ColumnSpan="2"
+             Text="Carte: cliquez pour positionner le rendez-vous"
+             Margin="0,0,0,8"
+             Opacity="0.85" />
+            <mapsui:MapControl Grid.Row="12"
+             Grid.ColumnSpan="2"
+             x:Name="LocationMap"
+             Height="260"
+             Margin="0,0,0,8" />
+
+            <TextBlock Grid.Row="13"
                  Text="Informations"
                  VerticalAlignment="Center"
                  Margin="0,0,12,8" />
-      <TextBox Grid.Row="12"
+            <TextBox Grid.Row="13"
                Grid.Column="1"
                Text="{Binding AdditionalInfo, Mode=TwoWay}"
                Margin="0,0,0,8" />
 
-      <CheckBox Grid.Row="13" Grid.ColumnSpan="2"
+            <CheckBox Grid.Row="14" Grid.ColumnSpan="2"
                 Content="Je consens à la création de cette commande"
                 IsChecked="{Binding Consent, Mode=TwoWay}"
                 Margin="0,4,0,12" />
 
-      <Grid Grid.Row="14" Grid.ColumnSpan="2" ColumnDefinitions="Auto,12,*,Auto">
+            <Grid Grid.Row="15" Grid.ColumnSpan="2" ColumnDefinitions="Auto,12,*,Auto">
         <Button Grid.Column="0"
                 Content="{Binding SubmitLabel}"
                 Command="{Binding SubmitCommand}"
                 IsEnabled="{Binding IsSupported}" />
-        <TextBox Grid.Column="2"
-                 Text="{Binding StatusMessage}"
-                 IsReadOnly="True"
-                 AcceptsReturn="True"
-                 TextWrapping="Wrap"
-                 BorderThickness="0"
-                 BorderBrush="Transparent"
-                 Padding="0"
-                 Background="Transparent"
-                 VerticalAlignment="Center" />
+        <postitControls:StatusBar Grid.Column="2"
+                DataContext="{Binding ActionStatus}" />
         <ProgressBar Grid.Column="3"
                      Width="120"
                      IsIndeterminate="True"

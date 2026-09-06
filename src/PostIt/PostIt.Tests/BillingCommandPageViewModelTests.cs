@@ -116,6 +116,89 @@ public class BillingCommandPageViewModelTests
     }
 
     [Fact]
+    public void ApplyLocationFromMap_sets_coordinates_and_updates_status()
+    {
+        var api = new RecordingApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm =
+            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" }
+            .CreateCommandPageViewModel(
+                new ActivityInfo { Code = "dev", Name = "Développement" },
+                new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+                client) as RdvViewModel;
+
+        vm!.Address = string.Empty;
+        vm.ApplyLocationFromMap(48.85661234, 2.35224567);
+
+        Assert.Equal(48.856612, vm.Latitude);
+        Assert.Equal(2.352246, vm.Longitude);
+        Assert.Contains("Position sélectionnée", vm.StatusMessage, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void EventDateSelection_round_trips_with_EventDate_for_DatePicker_binding()
+    {
+        var api = new RecordingApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm =
+            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" }
+            .CreateCommandPageViewModel(
+                new ActivityInfo { Code = "dev", Name = "Développement" },
+                new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+                client) as RdvViewModel;
+
+        var selected = new DateTimeOffset(2026, 9, 7, 14, 30, 0, TimeSpan.FromHours(2));
+        vm!.EventDateSelection = selected;
+
+        Assert.Equal(selected.LocalDateTime, vm.EventDate);
+        Assert.Equal(vm.EventDate, vm.EventDateSelection!.Value.LocalDateTime);
+    }
+
+    [Fact]
+    public void ApplyResolvedAddress_populates_empty_address_directly()
+    {
+        var api = new RecordingApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm =
+            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" }
+            .CreateCommandPageViewModel(
+                new ActivityInfo { Code = "dev", Name = "Développement" },
+                new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+                client) as RdvViewModel;
+
+        vm!.Address = string.Empty;
+        vm.ApplyResolvedAddress("10 rue de Rivoli, 75001 Paris");
+
+        Assert.Equal("10 rue de Rivoli, 75001 Paris", vm.Address);
+        Assert.False(vm.HasSuggestedAddress);
+    }
+
+    [Fact]
+    public void ApplyResolvedAddress_preserves_manual_address_and_exposes_suggestion()
+    {
+        var api = new RecordingApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm =
+            new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" }
+            .CreateCommandPageViewModel(
+                new ActivityInfo { Code = "dev", Name = "Développement" },
+                new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
+                client) as RdvViewModel;
+
+        vm!.Address = "Saisie manuelle";
+        vm.ApplyResolvedAddress("10 rue de Rivoli, 75001 Paris");
+
+        Assert.Equal("Saisie manuelle", vm.Address);
+        Assert.True(vm.HasSuggestedAddress);
+        Assert.Equal("10 rue de Rivoli, 75001 Paris", vm.SuggestedAddress);
+
+        vm.ApplySuggestedAddressCommand.Execute(null);
+
+        Assert.Equal("10 rue de Rivoli, 75001 Paris", vm.Address);
+        Assert.False(vm.HasSuggestedAddress);
+    }
+
+    [Fact]
     public async Task InitializeAsync_loads_prestations_for_brush_and_submit_posts_selected_prestation()
     {
         var api = new RecordingApi

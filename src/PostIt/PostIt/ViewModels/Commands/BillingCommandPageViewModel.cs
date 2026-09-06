@@ -9,7 +9,7 @@ using Yavsc.Models.Billing;
 
 namespace PostIt.ViewModels;
 
-public abstract partial class BillingCommandPageViewModel : RemoteViewModelBase
+public abstract partial class BillingCommandPageViewModel : RemoteViewModelBase, IActionStatusViewModel
 {
     protected readonly BillingApiClient _billingClient;
 
@@ -21,7 +21,10 @@ public abstract partial class BillingCommandPageViewModel : RemoteViewModelBase
     public partial bool IsBusy { get; set; }
 
     [ObservableProperty]
-    public partial string StatusMessage { get; set; }
+    public partial string StatusMessage { get; set; } = "Pret.";
+
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
 
     [ObservableProperty]
     public partial string Reason { get; set; } = string.Empty;
@@ -75,7 +78,7 @@ public abstract partial class BillingCommandPageViewModel : RemoteViewModelBase
         Form = form ?? throw new ArgumentNullException(nameof(form));
         _billingClient = billingClient ?? throw new ArgumentNullException(nameof(billingClient));
 
-        StatusMessage = SupportMessage;
+        this.SetInfoStatus(SupportMessage);
     }
 
     partial void OnExistingQueryIdChanged(long? value)

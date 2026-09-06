@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.ComponentModel.DataAnnotations;
 
 namespace Yavsc.ViewModels.Account

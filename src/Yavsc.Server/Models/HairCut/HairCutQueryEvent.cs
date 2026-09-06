@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using Yavsc.Interfaces.Workflow;
 
 namespace Yavsc.Models.Haircut

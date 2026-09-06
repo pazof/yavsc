@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Yavsc.Models;

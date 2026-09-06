@@ -82,19 +82,17 @@ public class HairCutQueryApiController : Controller
     public async Task<IActionResult> PostQuery([FromBody] HairCutQuery query, CancellationToken cancellationToken)
     {
         var uid = User.GetUserId();
-        if (string.IsNullOrWhiteSpace(query.ClientId))
-        {
-            query.ClientId = uid;
-        }
+        query.ClientId = uid;
 
+        ModelState.Remove("Client");
         ModelState.Remove("ClientId");
+        ModelState.Remove("UserCreated");
+        ModelState.Remove("UserModified");
+        ModelState.Remove("SelectedProfile");
         ModelState.Remove("Prestation");
-
-        if (query.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
-        {
-            ModelState.AddModelError("ClientId", "You can only create your own HairCutQuery");
-            return BadRequest(ModelState);
-        }
+        ModelState.Remove("PerformerProfile");
+        ModelState.Remove("Context");
+        ModelState.Remove("Regularization");
 
         query.Prestation = await _context.HairPrestation
             .SingleOrDefaultAsync(p => p.Id == query.PrestationId, cancellationToken);

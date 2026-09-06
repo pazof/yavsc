@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Services;
+using Yavsc.Server.Helpers;
 using Yavsc.ViewModels.FrontOffice;
 
 namespace Yavsc.ApiControllers
@@ -15,10 +16,10 @@ namespace Yavsc.ApiControllers
 
         private IBillingService billing;
 
-        public FrontOfficeApiController(ApplicationDbContext context, IBillingService billing)
+        public FrontOfficeApiController(ApplicationDbContext context, IBillingService billing = null)
         {
             dbContext = context;
-            this.billing = billing;
+            this.billing = billing ?? new BillingService(context);
         }
 
         [HttpGet("profiles/{actCode}")]
@@ -36,7 +37,7 @@ namespace Yavsc.ApiControllers
             if (billing == null) return BadRequest();
 
             billing.Status = QueryStatus.Rejected;
-            dbContext.SaveChanges();
+            dbContext.SaveChanges(User.GetUserId());
             return Ok();
         }
 
@@ -48,7 +49,7 @@ namespace Yavsc.ApiControllers
             var billing = BillingService.GetBillable(dbContext, billingCode, queryId);
             if (billing == null) return BadRequest();
             billing.Status = QueryStatus.Accepted;
-            dbContext.SaveChanges();
+            dbContext.SaveChanges(User.GetUserId());
             return Ok();
         }
     }

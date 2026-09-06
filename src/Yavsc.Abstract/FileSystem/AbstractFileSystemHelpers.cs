@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿#nullable enable annotations
+
+using System.Text;
 using Yavsc.ViewModels.UserFiles;
 
 namespace Yavsc.Server.Helpers

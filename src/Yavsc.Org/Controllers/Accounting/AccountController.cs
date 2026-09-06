@@ -467,8 +467,25 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
 
             if (ModelState.IsValid)
             {
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser is not null)
+                {
+                    ModelState.AddModelError(nameof(model.Email), _localizer["DuplicateEmail"]);
+                    return View(model);
+                }
+
                 var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                IdentityResult result;
+                try
+                {
+                    result = await _userManager.CreateAsync(user, model.Password);
+                }
+                catch (DbUpdateException ex) when (IsDuplicateEmailViolation(ex))
+                {
+                    _logger.LogWarning(ex, "Registration rejected: duplicate email '{Email}'.", model.Email);
+                    ModelState.AddModelError(nameof(model.Email), _localizer["DuplicateEmail"]);
+                    return View(model);
+                }
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(3, "User created a new account with password.");
@@ -515,6 +532,21 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        private static bool IsDuplicateEmailViolation(Exception exception)
+        {
+            for (var current = exception; current is not null; current = current.InnerException)
+            {
+                if (current is PostgresException pg
+                    && pg.SqlState == PostgresErrorCodes.UniqueViolation
+                    && string.Equals(pg.ConstraintName, "AK_AspNetUsers_Email", StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [Authorize, HttpPost, ValidateAntiForgeryToken]

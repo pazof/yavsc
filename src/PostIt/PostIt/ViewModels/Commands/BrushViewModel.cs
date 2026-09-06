@@ -58,18 +58,20 @@ public partial class BrushViewModel : RdvViewModel
                 SelectedPrestation = AvailablePrestations.FirstOrDefault();
             }
 
-            StatusMessage = AvailablePrestations.Count == 0
-                ? "Aucune prestation coiffure disponible."
-                : SupportMessage;
+            this.SetStatus(
+                AvailablePrestations.Count == 0
+                    ? "Aucune prestation coiffure disponible."
+                    : SupportMessage,
+                AvailablePrestations.Count == 0 ? StatusSeverity.Warning : StatusSeverity.Info);
         }
         catch (HttpRequestException ex)
         when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            StatusMessage = "Accès refusé au catalogue de prestations (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé au catalogue de prestations (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur lors du chargement des prestations: {ex.Message}";
+            this.SetErrorStatus($"Erreur lors du chargement des prestations: {ex.Message}");
         }
         finally
         {
@@ -81,19 +83,19 @@ public partial class BrushViewModel : RdvViewModel
     {
         if (!Consent)
         {
-            StatusMessage = "Le consentement est requis pour poster la commande.";
+            this.SetWarningStatus("Le consentement est requis pour poster la commande.");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(Address))
         {
-            StatusMessage = "L'adresse du rendez-vous est requise.";
+            this.SetWarningStatus("L'adresse du rendez-vous est requise.");
             return;
         }
 
         if (SelectedPrestation is null)
         {
-            StatusMessage = "Sélectionnez une prestation coiffure.";
+            this.SetWarningStatus("Sélectionnez une prestation coiffure.");
             return;
         }
 
@@ -143,18 +145,18 @@ public partial class BrushViewModel : RdvViewModel
                 }).ConfigureAwait(true);
             }
 
-            StatusMessage = IsEditingExisting
+            this.SetInfoStatus(IsEditingExisting
                 ? $"Commande #{ExistingQueryId} mise à jour sur {BillingRoute} pour {Performer.UserName}."
-                : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.";
+                : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.");
         }
         catch (HttpRequestException ex)
         when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            StatusMessage = "Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur lors de l'envoi de la commande: {ex.Message}";
+            this.SetErrorStatus($"Erreur lors de l'envoi de la commande: {ex.Message}");
         }
         finally
         {

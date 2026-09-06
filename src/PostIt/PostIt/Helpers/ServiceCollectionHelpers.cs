@@ -26,10 +26,11 @@ public static class ServiceCollectionHelpers
         var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
         var activityClient = new ActivityApiClient(
             api,
-            settings.ApiUrl,
-            settings.Authentication?.Authority);
-        var billingClient = new BillingApiClient(api, settings.ApiUrl);
+            () => settings.ApiUrl,
+            () => settings.Authentication?.Authority);
+        var billingClient = new BillingApiClient(api, () => settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
+        var reverseGeocoding = new NominatimReverseGeocodingService();
 
         // Vues
         services.AddSingleton<MainView>();
@@ -56,6 +57,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<RdvPage>();
         services.AddTransient<BrushPage>();
         services.AddTransient<BillingQueriesPage>();
+        services.AddTransient<BillingQueryDetailsPage>();
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);
@@ -65,6 +67,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(userSearchClient);
         services.AddSingleton(activityClient);
         services.AddSingleton(billingClient);
+        services.AddSingleton<IReverseGeocodingService>(reverseGeocoding);
         services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddSingleton<HomePageViewModel>();
         services.AddSingleton<SignaturePageViewModel>();

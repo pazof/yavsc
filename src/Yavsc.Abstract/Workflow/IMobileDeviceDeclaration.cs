@@ -1,4 +1,6 @@
-﻿// Copyright (C) 2016  Paul Schneider
+﻿#nullable enable annotations
+
+// Copyright (C) 2016  Paul Schneider
 //
 // This file is part of yavsc.
 //

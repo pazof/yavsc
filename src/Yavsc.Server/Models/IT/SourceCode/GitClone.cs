@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 ﻿// // GitClone.cs
 // /*
 // paul  21/06/2018 11:27 20182018 6 21

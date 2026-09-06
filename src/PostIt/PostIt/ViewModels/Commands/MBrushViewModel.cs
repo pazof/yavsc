@@ -49,20 +49,20 @@ public partial class MBrushViewModel : BrushViewModel
     {
         if (!Consent)
         {
-            StatusMessage = "Le consentement est requis pour poster la commande.";
+            this.SetWarningStatus("Le consentement est requis pour poster la commande.");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(Address))
         {
-            StatusMessage = "L'adresse du rendez-vous est requise.";
+            this.SetWarningStatus("L'adresse du rendez-vous est requise.");
             return;
         }
 
         var selectedPrestations = MultiPrestations.Where(x => x.IsSelected).ToList();
         if (selectedPrestations.Count == 0)
         {
-            StatusMessage = "Sélectionnez au moins une prestation coiffure.";
+            this.SetWarningStatus("Sélectionnez au moins une prestation coiffure.");
             return;
         }
 
@@ -109,18 +109,18 @@ public partial class MBrushViewModel : BrushViewModel
                 }).ConfigureAwait(true);
             }
 
-            StatusMessage = IsEditingExisting
+            this.SetInfoStatus(IsEditingExisting
                 ? $"Commande #{ExistingQueryId} mise à jour sur {BillingRoute} pour {Performer.UserName}."
-                : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.";
+                : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.");
         }
         catch (HttpRequestException ex)
             when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            StatusMessage = "Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur lors de l'envoi de la commande: {ex.Message}";
+            this.SetErrorStatus($"Erreur lors de l'envoi de la commande: {ex.Message}");
         }
         finally
         {

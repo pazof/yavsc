@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -35,7 +37,7 @@ namespace Yavsc.Models.Workflow
         public virtual List<Activity> Children { get; set; }
 
         [Display(Name = "Description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Display(Name = "Photo")]
         public string? Photo { get; set; }

@@ -82,4 +82,65 @@ public sealed class RdvQueryApiControllerTests : IClassFixture<ApiWebServerFixtu
         var missingResponse = await http.GetAsync($"/api/v1/billing/Rdv/{fetched.Id}", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NotFound, missingResponse.StatusCode);
     }
+
+    [Fact]
+    public async Task PostQuery_ignores_client_field_and_uses_authenticated_user()
+    {
+        _fixture.ResetAndSeedRdvQueryGraph();
+        using var http = NewClient(subject: "alice");
+
+        var createPayload = new
+        {
+            ActivityCode = "dev",
+            PerformerId = "alice",
+            Consent = true,
+            EventDate = DateTime.UtcNow.AddDays(2),
+            Location = new
+            {
+                Address = "2 rue du Test",
+                Latitude = 48.8567,
+                Longitude = 2.3523,
+            },
+            Reason = "Rendez-vous sans champ client",
+            Status = QueryStatus.Inserted,
+        };
+
+        var createResponse = await http.PostAsJsonAsync("/api/v1/billing/Rdv", createPayload, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+        var created = await createResponse.Content.ReadFromJsonAsync<RdvQuery>(TestContext.Current.CancellationToken);
+        Assert.NotNull(created);
+        Assert.Equal("alice", created!.ClientId);
+    }
+
+    [Fact]
+    public async Task PostQuery_accepts_local_datetime_and_persists_as_utc()
+    {
+        _fixture.ResetAndSeedRdvQueryGraph();
+        using var http = NewClient(subject: "alice");
+
+        var localEventDate = DateTime.Now.AddDays(2);
+        var createPayload = new
+        {
+            ActivityCode = "dev",
+            PerformerId = "alice",
+            Consent = true,
+            EventDate = localEventDate,
+            Location = new
+            {
+                Address = "3 rue du Test",
+                Latitude = 48.8568,
+                Longitude = 2.3524,
+            },
+            Reason = "Rendez-vous date locale",
+            Status = QueryStatus.Inserted,
+        };
+
+        var createResponse = await http.PostAsJsonAsync("/api/v1/billing/Rdv", createPayload, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+        var created = await createResponse.Content.ReadFromJsonAsync<RdvQuery>(TestContext.Current.CancellationToken);
+        Assert.NotNull(created);
+        Assert.Equal(DateTimeKind.Utc, created!.EventDate.Kind);
+    }
 }

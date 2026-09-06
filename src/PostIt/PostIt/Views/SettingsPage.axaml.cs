@@ -6,10 +6,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
+using PostIt.ViewModels;
 
 namespace PostIt.Views;
 public partial class SettingsPage: ContentPage
@@ -28,12 +28,12 @@ public partial class SettingsPage: ContentPage
     {
         var statusVersion = Interlocked.Increment(ref _avatarStatusVersion);
         ChooseAvatarButton.IsEnabled = false;
-        SetAvatarStatus("Sélection d'un fichier avatar...", Brushes.Gray);
+        SetAvatarStatus("Selection d'un fichier avatar...", StatusSeverity.Info);
 
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null)
         {
-            SetAvatarStatus("Impossible d'accéder à la fenêtre active.", Brushes.IndianRed);
+            SetAvatarStatus("Impossible d'acceder a la fenetre active.", StatusSeverity.Error);
             ChooseAvatarButton.IsEnabled = true;
             return;
         }
@@ -54,27 +54,28 @@ public partial class SettingsPage: ContentPage
         var file = files.FirstOrDefault();
         if (file is null)
         {
-            SetAvatarStatus("Upload annulé.", Brushes.Gray);
+            SetAvatarStatus("Upload annule.", StatusSeverity.Warning);
             ChooseAvatarButton.IsEnabled = true;
             return;
         }
 
         try
         {
-            SetAvatarStatus("Upload avatar en cours...", Brushes.Gray);
+            SetAvatarStatus("Upload avatar en cours...", StatusSeverity.Info);
 
             await using var stream = await file.OpenReadAsync();
             var api = ((App)App.Current!).ServiceProvider!.GetRequiredService<YavscApiClient>();
             var message = await api.SetAvatarAsync(stream, file.Name, GetMimeType(file.Name));
             SetAvatarStatus(string.IsNullOrWhiteSpace(message)
-                ? "Avatar mis à jour."
-                : message, Brushes.ForestGreen);
+                ? "Avatar mis a jour."
+                : message,
+                StatusSeverity.Info);
 
             _ = ClearSuccessStatusLaterAsync(statusVersion);
         }
         catch (Exception ex)
         {
-            SetAvatarStatus($"Échec upload avatar: {ex.Message}", Brushes.IndianRed);
+            SetAvatarStatus($"Echec upload avatar: {ex.Message}", StatusSeverity.Error);
             Console.Error.WriteLine($"🩎 Avatar upload failed: {ex.Message}");
         }
         finally
@@ -89,16 +90,15 @@ public partial class SettingsPage: ContentPage
         if (statusVersion != _avatarStatusVersion)
             return;
 
-        if (AvatarUploadStatusText.Foreground == Brushes.ForestGreen)
-        {
-            SetAvatarStatus($"Avatar prêt. Formats supportés: {AcceptedAvatarFormats}. Taille max: {MaxAvatarSizeMegabytes} MB.", Brushes.Gray);
-        }
+        SetAvatarStatus($"Avatar pret. Formats supportes: {AcceptedAvatarFormats}. Taille max: {MaxAvatarSizeMegabytes} MB.", StatusSeverity.Info);
     }
 
-    private void SetAvatarStatus(string message, IBrush color)
+    private void SetAvatarStatus(string message, StatusSeverity severity)
     {
-        AvatarUploadStatusText.Foreground = color;
-        AvatarUploadStatusText.Text = message;
+        if (DataContext is Settings settings)
+        {
+            settings.SetActionStatus(message, severity);
+        }
     }
 
     private static string GetMimeType(string fileName)

@@ -30,7 +30,7 @@ namespace PostIt.ViewModels;
 /// until the Yavsc.Org endpoint exists; the contract there will
 /// be <c>POST /api/signature/{devisId}</c> with this same payload.
 /// </summary>
-public partial class SignaturePageViewModel : ViewModelBase
+public partial class SignaturePageViewModel : ViewModelBase, IActionStatusViewModel
 {
     /// <summary>
     /// Default capture surface, in DIPs. 3:1 ratio matches a
@@ -41,6 +41,9 @@ public partial class SignaturePageViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Prêt.";
+
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Prêt.");
 
     [ObservableProperty]
     public partial int StrokeCount { get; set; }
@@ -107,7 +110,7 @@ public partial class SignaturePageViewModel : ViewModelBase
 
     private void OnStrokeCompleted(object? sender, SignaturePadData data)
     {
-        StatusMessage = $"Trait terminé. {data.StrokeCount} trait(s).";
+        this.SetInfoStatus($"Trait terminé. {data.StrokeCount} trait(s).");
         RefreshCounts();
     }
 
@@ -125,7 +128,7 @@ public partial class SignaturePageViewModel : ViewModelBase
     public void Clear()
     {
         _control?.Clear();
-        StatusMessage = "Effacé.";
+        this.SetInfoStatus("Effacé.");
         RefreshCounts();
     }
 
@@ -134,14 +137,14 @@ public partial class SignaturePageViewModel : ViewModelBase
     {
         if (_control is null)
         {
-            StatusMessage = "Contrôle non attaché.";
+            this.SetWarningStatus("Contrôle non attaché.");
             return;
         }
 
         var data = _control.Snapshot();
         if (data.IsEmpty)
         {
-            StatusMessage = "Rien à capturer.";
+            this.SetWarningStatus("Rien à capturer.");
             return;
         }
 
@@ -149,11 +152,11 @@ public partial class SignaturePageViewModel : ViewModelBase
         {
             var path = WriteCapture(data);
             LastCapturedPath = path;
-            StatusMessage = $"Capture enregistrée: {path}";
+            this.SetInfoStatus($"Capture enregistrée: {path}");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         await Task.CompletedTask;
     }

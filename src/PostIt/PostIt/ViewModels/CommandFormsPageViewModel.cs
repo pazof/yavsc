@@ -11,7 +11,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.ViewModels;
 
-public partial class CommandFormsPageViewModel : ViewModelBase
+public partial class CommandFormsPageViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly BillingApiClient _billingClient;
 
@@ -25,7 +25,10 @@ public partial class CommandFormsPageViewModel : ViewModelBase
     public partial CommandFormSummary? SelectedForm { get; set; }
 
     [ObservableProperty]
-    public partial string StatusMessage { get; set; }
+    public partial string StatusMessage { get; set; } = "Pret.";
+
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
 
     public string Title => $"Formulaires pour {Performer.UserName}";
     public string ContextLabel => $"{Activity.Name} · {Forms.Count} formulaire(s)";
@@ -55,9 +58,11 @@ public partial class CommandFormsPageViewModel : ViewModelBase
             .OrderBy(f => f.Title)
             .ThenBy(f => f.ActionName));
         SelectedForm = Forms.FirstOrDefault();
-        StatusMessage = Forms.Count == 0
-            ? "Aucun formulaire n'est disponible pour cette activité."
-            : "Choisissez le formulaire à utiliser.";
+        this.SetStatus(
+            Forms.Count == 0
+                ? "Aucun formulaire n'est disponible pour cette activité."
+                : "Choisissez le formulaire à utiliser.",
+            Forms.Count == 0 ? StatusSeverity.Warning : StatusSeverity.Info);
     }
 
     private bool CanOpenSelectedForm() => SelectedForm is not null;
@@ -71,7 +76,7 @@ public partial class CommandFormsPageViewModel : ViewModelBase
     {
         if (SelectedForm is null)
         {
-            StatusMessage = "Sélectionnez un formulaire.";
+            this.SetWarningStatus("Sélectionnez un formulaire.");
             return;
         }
 
@@ -92,7 +97,7 @@ public partial class CommandFormsPageViewModel : ViewModelBase
     {
         if (SelectedForm is null)
         {
-            StatusMessage = "Sélectionnez un formulaire.";
+            this.SetWarningStatus("Sélectionnez un formulaire.");
             return;
         }
 
@@ -112,7 +117,7 @@ public partial class CommandFormsPageViewModel : ViewModelBase
     {
         if (SelectedForm is null)
         {
-            StatusMessage = "Sélectionnez un formulaire.";
+            this.SetWarningStatus("Sélectionnez un formulaire.");
             return;
         }
 

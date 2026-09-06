@@ -1,10 +1,8 @@
 
 using Avalonia.Markup.Xaml;
-using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using PostIt.Services;
 using PostIt.ViewModels;
-using System.Threading.Tasks;
 
 namespace PostIt.Views;
 
@@ -41,10 +39,4 @@ public partial class AddCircleMemberDialog : Avalonia.Controls.ContentPage
     /// </summary>
     public AddCircleMemberDialogViewModel? ViewModel
         => DataContext as AddCircleMemberDialogViewModel;
-
-    private async Task OnCloseClicked(object? sender, RoutedEventArgs e)
-    {
-        App app = App.Current! as App;
-        await app!.GoBackAsync();
-    }
 }

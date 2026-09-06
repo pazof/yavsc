@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 namespace Yavsc.Workflow
 {
     public interface IPerformerProfile

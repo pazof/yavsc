@@ -14,7 +14,7 @@ using Yavsc.Abstract.Workflow;
 
 namespace PostIt.ViewModels;
 
-public partial class BillingQueriesPageViewModel : ViewModelBase
+public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly BillingApiClient _billingClient;
 
@@ -36,11 +36,14 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Chargement des commandes...";
 
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Chargement des commandes...");
+
     public string Title => IsReadOnly
         ? $"Demandes en cours ({Form.Title})"
         : $"Commandes {Form.Title}";
     public string ContextLabel => $"{Performer.UserName} · {Activity.Name}";
-    public bool CanOpenDetails => !IsReadOnly;
+    public bool CanOpenDetails => true;
 
     public override bool CanNavigateNext
     {
@@ -72,7 +75,7 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
 
     public Task InitializeAsync() => RefreshAsync();
 
-    private bool CanOpenSelectedQuery() => !IsReadOnly && SelectedQuery is not null;
+    private bool CanOpenSelectedQuery() => SelectedQuery is not null;
 
     [RelayCommand]
     public async Task RefreshAsync()
@@ -90,17 +93,17 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
                 .ToList();
 
             Queries = new ObservableCollection<BillingQueryDisplayItem>(filtered);
-            StatusMessage = BuildLoadedStatusMessage(filtered.Count);
+            this.SetInfoStatus(BuildLoadedStatusMessage(filtered.Count));
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
             Queries = new ObservableCollection<BillingQueryDisplayItem>();
-            StatusMessage = "Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
             Queries = new ObservableCollection<BillingQueryDisplayItem>();
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -111,15 +114,9 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanOpenSelectedQuery))]
     public async Task OpenSelectedQueryAsync()
     {
-        if (IsReadOnly)
-        {
-            StatusMessage = "Mode lecture seule: l'ouverture en modification est désactivée.";
-            return;
-        }
-
         if (SelectedQuery is null)
         {
-            StatusMessage = "Sélectionnez une commande.";
+            this.SetWarningStatus("Sélectionnez une commande.");
             return;
         }
 
@@ -133,17 +130,22 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
         try
         {
             var details = await _billingClient.GetQueryAsync(Form.ActionName, SelectedQuery.Id).ConfigureAwait(true);
-            var vm = Form.CreateCommandPageViewModel(Activity, Performer, _billingClient);
-            await vm!.InitializeAsync(details).ConfigureAwait(true);
+            var vm = new BillingQueryDetailsPageViewModel(
+                Activity,
+                Performer,
+                Form,
+                _billingClient,
+                details,
+                IsReadOnly);
             await app.PushPageAsync(vm).ConfigureAwait(true);
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            StatusMessage = "Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur lors de l'ouverture: {ex.Message}";
+            this.SetErrorStatus($"Erreur lors de l'ouverture: {ex.Message}");
         }
         finally
         {

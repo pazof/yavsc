@@ -18,6 +18,12 @@ public partial class RdvViewModel : BillingCommandPageViewModel
     public partial string Address { get; set; } = string.Empty;
 
     [ObservableProperty]
+    public partial string SuggestedAddress { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial bool IsResolvingAddress { get; set; }
+
+    [ObservableProperty]
     public partial double? Latitude { get; set; }
 
     [ObservableProperty]
@@ -27,11 +33,26 @@ public partial class RdvViewModel : BillingCommandPageViewModel
     [ObservableProperty]
     public partial DateTime EventDate { get; set; }
 
+    public DateTimeOffset? EventDateSelection
+    {
+        get => new(EventDate);
+        set
+        {
+            if (!value.HasValue)
+                return;
+
+            EventDate = value.Value.LocalDateTime;
+        }
+    }
+
     public RdvViewModel(ActivityInfo activity, ActivityUserDisplayItem performer, CommandFormSummary form, BillingApiClient billingClient)
         : base(activity, performer, form, billingClient)
     {
         EventDate = DateTime.Now.AddDays(1);
     }
+
+    public bool HasSuggestedAddress => !string.IsNullOrWhiteSpace(SuggestedAddress);
+    public bool HasSuggestedAddressPanel => HasSuggestedAddress || IsResolvingAddress;
 
     protected override void ApplyExistingQuery(BillingQueryDetailsDto existingQuery)
     {
@@ -50,11 +71,12 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         if (existingQuery.Location is not null)
         {
             Address = existingQuery.Location.Address ?? string.Empty;
+            SuggestedAddress = string.Empty;
             Latitude = existingQuery.Location.Latitude;
             Longitude = existingQuery.Location.Longitude;
         }
 
-        StatusMessage = $"Commande #{existingQuery.Id} chargée.";
+        this.SetInfoStatus($"Commande #{existingQuery.Id} chargée.");
     }
 
     [RelayCommand(CanExecute = nameof(CanUseCurrentLocation))]
@@ -71,23 +93,23 @@ public partial class RdvViewModel : BillingCommandPageViewModel
             var result = await Platform.TryGetCurrentLocationAsync(default).ConfigureAwait(true);
             if (!result.IsSuccess || !result.Latitude.HasValue || !result.Longitude.HasValue)
             {
-                StatusMessage = result.Message;
+                this.SetWarningStatus(result.Message);
                 return;
             }
 
             Latitude = result.Latitude.Value;
             Longitude = result.Longitude.Value;
-            StatusMessage = string.IsNullOrWhiteSpace(Address)
+            this.SetInfoStatus(string.IsNullOrWhiteSpace(Address)
                 ? "Position récupérée. Complétez l'adresse puis envoyez la commande."
-                : result.Message;
+                : result.Message);
         }
         catch (OperationCanceledException)
         {
-            StatusMessage = "La récupération de la position a été annulée.";
+            this.SetWarningStatus("La récupération de la position a été annulée.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Impossible de récupérer la position: {ex.Message}";
+            this.SetErrorStatus($"Impossible de récupérer la position: {ex.Message}");
         }
         finally
         {
@@ -113,31 +135,119 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         };
     }
 
+    public void ApplyLocationFromMap(double latitude, double longitude)
+    {
+        Latitude = Math.Round(latitude, 6);
+        Longitude = Math.Round(longitude, 6);
+
+        if (string.IsNullOrWhiteSpace(Address))
+        {
+            this.SetInfoStatus("Position sélectionnée sur la carte. Complétez l'adresse puis envoyez la commande.");
+            return;
+        }
+
+        this.SetInfoStatus("Position sélectionnée sur la carte.");
+    }
+
+    public void NotifyReverseGeocodingStarted()
+    {
+        IsResolvingAddress = true;
+        this.SetInfoStatus(string.IsNullOrWhiteSpace(Address)
+            ? "Recherche de l'adresse depuis la carte..."
+            : "Recherche d'une adresse suggérée..."
+        );
+    }
+
+    public void NotifyReverseGeocodingUnavailable()
+    {
+        IsResolvingAddress = false;
+        if (HasSuggestedAddress || !string.IsNullOrWhiteSpace(Address))
+            return;
+
+        this.SetInfoStatus("Position sélectionnée sur la carte. Complétez l'adresse puis envoyez la commande.");
+    }
+
+    public void ApplyResolvedAddress(string address)
+    {
+        if (string.IsNullOrWhiteSpace(address))
+            return;
+
+        var trimmedAddress = address.Trim();
+        if (string.IsNullOrWhiteSpace(Address))
+        {
+            Address = trimmedAddress;
+            SuggestedAddress = string.Empty;
+            IsResolvingAddress = false;
+            this.SetInfoStatus("Adresse mise à jour depuis la carte.");
+            return;
+        }
+
+        if (string.Equals(Address.Trim(), trimmedAddress, StringComparison.Ordinal))
+        {
+            SuggestedAddress = string.Empty;
+            IsResolvingAddress = false;
+            return;
+        }
+
+        SuggestedAddress = trimmedAddress;
+        IsResolvingAddress = false;
+        this.SetInfoStatus("Adresse suggérée depuis la carte. Appliquez-la si besoin.");
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSuggestedAddress))]
+    private void ApplySuggestedAddress()
+    {
+        if (string.IsNullOrWhiteSpace(SuggestedAddress))
+            return;
+
+        Address = SuggestedAddress.Trim();
+        SuggestedAddress = string.Empty;
+        IsResolvingAddress = false;
+        this.SetInfoStatus("Adresse suggérée appliquée.");
+    }
+
+    partial void OnSuggestedAddressChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasSuggestedAddress));
+        OnPropertyChanged(nameof(HasSuggestedAddressPanel));
+        ApplySuggestedAddressCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIsResolvingAddressChanged(bool value)
+    {
+        OnPropertyChanged(nameof(HasSuggestedAddressPanel));
+    }
+
+    partial void OnEventDateChanged(DateTime value)
+    {
+        OnPropertyChanged(nameof(EventDateSelection));
+    }
+
 
     protected override async Task SubmitAsync()
     {
         if (!IsSupported)
         {
-            StatusMessage = SupportMessage;
+            this.SetWarningStatus(SupportMessage);
             return;
         }
 
         if (!Consent)
         {
-            StatusMessage = "Le consentement est requis pour poster la commande.";
+            this.SetWarningStatus("Le consentement est requis pour poster la commande.");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(Address))
         {
-            StatusMessage = "L'adresse du rendez-vous est requise.";
+            this.SetWarningStatus("L'adresse du rendez-vous est requise.");
             return;
         }
 
 
         if (string.IsNullOrWhiteSpace(Reason))
         {
-            StatusMessage = "Le motif du rendez-vous est requis.";
+            this.SetWarningStatus("Le motif du rendez-vous est requis.");
             return;
         }
 
@@ -186,17 +296,17 @@ public partial class RdvViewModel : BillingCommandPageViewModel
                 }).ConfigureAwait(true);
             }
 
-            StatusMessage = IsEditingExisting
+            this.SetInfoStatus(IsEditingExisting
                 ? $"Commande #{ExistingQueryId} mise à jour sur {BillingRoute} pour {Performer.UserName}."
-                : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.";
+                : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.");
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            StatusMessage = "Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur lors de l'envoi: {ex.Message}";
+            this.SetErrorStatus($"Erreur lors de l'envoi: {ex.Message}");
         }
         finally
         {

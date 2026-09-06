@@ -40,6 +40,22 @@ public class ActivitiesPageViewModelTests
     }
 
     [Fact]
+    public async Task ActivityApiClient_uses_updated_business_base_without_restart()
+    {
+        var api = new StubActivityApi();
+        var baseUrl = "https://business-a.example/api/v1/";
+        var client = new ActivityApiClient(api, () => baseUrl);
+
+        await client.GetCatalogAsync(ct: TestContext.Current.CancellationToken);
+
+        baseUrl = "https://business-b.example/api/v1/";
+        await client.GetUsersAsync("brush", TestContext.Current.CancellationToken);
+
+        Assert.Equal("https://business-a.example/api/v1/activity/catalog", api.Paths[0]);
+        Assert.Equal("https://business-b.example/api/v1/activity/brush/users", api.Paths[1]);
+    }
+
+    [Fact]
     public async Task RefreshAsync_loads_first_activity_then_specialization_performers()
     {
         var api = new StubActivityApi();

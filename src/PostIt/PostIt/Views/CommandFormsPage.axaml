@@ -1,6 +1,7 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PostIt.ViewModels"
+             xmlns:postitControls="using:PostIt.Controls"
              xmlns:wf="using:Yavsc.Abstract.Workflow"
              x:Class="PostIt.Views.CommandFormsPage"
              x:DataType="vm:CommandFormsPageViewModel"
@@ -41,16 +42,8 @@
             <Button Grid.Column="4"
                     Content="Demandes en cours (lecture seule)"
                     Command="{Binding OpenOngoingQueriesCommand}" />
-            <TextBox Grid.Column="6"
-                     Text="{Binding StatusMessage}"
-                     IsReadOnly="True"
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"
-                     BorderThickness="0"
-                     BorderBrush="Transparent"
-                     Padding="0"
-                     Background="Transparent"
-                     VerticalAlignment="Center" />
+            <postitControls:StatusBar Grid.Column="6"
+                                      DataContext="{Binding ActionStatus}" />
         </Grid>
     </Grid>
 </ContentPage>

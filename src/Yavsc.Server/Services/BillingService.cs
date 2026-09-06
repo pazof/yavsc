@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Abstract.Workflow;
+using Yavsc.Helpers;
 using Yavsc.Models;
 
 namespace Yavsc.Services
@@ -35,7 +36,34 @@ namespace Yavsc.Services
 
         public static IQuery GetBillable(ApplicationDbContext context, string billingCode, long queryId)
         {
-            throw new NotImplementedException();
+            if (context is null) throw new ArgumentNullException(nameof(context));
+            if (string.IsNullOrWhiteSpace(billingCode) || queryId <= 0)
+            {
+                return null;
+            }
+
+            if (Billing.Count == 0)
+            {
+                WorkflowHelpers.ConfigureBillingService();
+            }
+
+            var getter = Billing
+                .FirstOrDefault(kvp => string.Equals(kvp.Key, billingCode.Trim(), StringComparison.OrdinalIgnoreCase))
+                .Value;
+
+            if (getter is null)
+            {
+                return null;
+            }
+
+            try
+            {
+                return getter(context, queryId);
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
         }
 
 

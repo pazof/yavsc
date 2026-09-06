@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using Yavsc.Abstract.Identity;
 using Yavsc.Models.Relationship;
 
