@@ -1,6 +1,7 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cvm="using:PostIt.ViewModels.Commands"
+             xmlns:postitControls="using:PostIt.Controls"
              x:Class="PostIt.Views.Commands.RdvPage"
              x:DataType="cvm:RdvViewModel"
              Header="Commande billing">
@@ -71,16 +72,8 @@
                 Content="{Binding SubmitLabel}"
                 Command="{Binding SubmitCommand}"
                 IsEnabled="{Binding IsSupported}" />
-        <TextBox Grid.Column="2"
-                 Text="{Binding StatusMessage}"
-                 IsReadOnly="True"
-                 AcceptsReturn="True"
-                 TextWrapping="Wrap"
-                 BorderThickness="0"
-                 BorderBrush="Transparent"
-                 Padding="0"
-                 Background="Transparent"
-                 VerticalAlignment="Center" />
+        <postitControls:StatusBar Grid.Column="2"
+                DataContext="{Binding ActionStatus}" />
         <ProgressBar Grid.Column="3"
                      Width="120"
                      IsIndeterminate="True"

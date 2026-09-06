@@ -1,6 +1,7 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PostIt.ViewModels"
+             xmlns:postitControls="using:PostIt.Controls"
              xmlns:wf="using:Yavsc.Abstract.Workflow"
              x:Class="PostIt.Views.ActivitiesPage"
              x:DataType="vm:ActivitiesPageViewModel"
@@ -131,16 +132,8 @@
         </Grid>
 
         <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
-            <TextBox Grid.Column="0"
-                     Text="{Binding StatusMessage}"
-                     IsReadOnly="True"
-                     AcceptsReturn="True"
-                     TextWrapping="Wrap"
-                     BorderThickness="0"
-                     BorderBrush="Transparent"
-                     Padding="0"
-                     Background="Transparent"
-                     VerticalAlignment="Center" />
+            <postitControls:StatusBar Grid.Column="0"
+                                      DataContext="{Binding ActionStatus}" />
             <ProgressBar Grid.Column="1" Width="120" IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
         </Grid>
     </Grid>

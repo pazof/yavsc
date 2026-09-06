@@ -1,6 +1,7 @@
 <ContentPage
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:postitControls="using:PostIt.Controls"
         x:Class="PostIt.Views.CirclesPage"
         xmlns:vm="using:PostIt.ViewModels"
         xmlns:dtos="using:Yavsc.Api.Client.Dtos"
@@ -101,8 +102,8 @@
 
         <!-- Status bar -->
         <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="12,0,12,12">
-            <TextBlock Grid.Column="0" Text="{Binding StatusMessage}"
-                       VerticalAlignment="Center"/>
+            <postitControls:StatusBar Grid.Column="0"
+                                      DataContext="{Binding ActionStatus}" />
             <ProgressBar Grid.Column="1" IsIndeterminate="True"
                          IsVisible="{Binding IsBusy}"
                          Width="120"/>

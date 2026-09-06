@@ -24,6 +24,9 @@ public abstract partial class BillingCommandPageViewModel : RemoteViewModelBase
     public partial string StatusMessage { get; set; }
 
     [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
+
+    [ObservableProperty]
     public partial string Reason { get; set; } = string.Empty;
 
 
@@ -87,6 +90,11 @@ public abstract partial class BillingCommandPageViewModel : RemoteViewModelBase
     partial void OnIsBusyChanged(bool value)
     {
         OnPropertyChanged(nameof(CanUseCurrentLocation));
+    }
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        ActionStatus = StatusNotice.FromMessage(value);
     }
 
     public async Task InitializeAsync(BillingQueryDetailsDto? existingQuery = null)

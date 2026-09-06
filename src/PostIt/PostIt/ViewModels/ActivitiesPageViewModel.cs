@@ -43,6 +43,14 @@ public partial class ActivitiesPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Choisissez une activité.";
 
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Choisissez une activité.");
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        ActionStatus = StatusNotice.FromMessage(value);
+    }
+
     public ActivityInfo? CurrentActivity => SelectedSpecialization ?? SelectedActivity;
     public string SelectedActivityLabel => SelectedActivity?.Name ?? "(aucune activité)";
     public string CurrentActivityLabel => CurrentActivity?.Name ?? "(aucune)";

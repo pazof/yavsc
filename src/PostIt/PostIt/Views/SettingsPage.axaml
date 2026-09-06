@@ -2,6 +2,7 @@
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="cl:avalonia.Controls"
+    xmlns:postitControls="using:PostIt.Controls"
         x:Class="PostIt.Views.SettingsPage"
         xmlns:vm="using:PostIt.ViewModels"
         x:DataType="vm:Settings"
@@ -51,9 +52,7 @@
                    Opacity="0.8"
                    TextWrapping="Wrap" />
 
-            <TextBlock x:Name="AvatarUploadStatusText"
-                       Text=""
-                       TextWrapping="Wrap" />
+            <postitControls:StatusBar DataContext="{Binding ActionStatus}"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="ChooseAvatarButton"

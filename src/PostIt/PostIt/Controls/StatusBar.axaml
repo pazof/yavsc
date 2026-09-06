@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             x:Class="PostIt.Controls.StatusBar"
+             x:DataType="vm:StatusNotice">
+    <Border Background="{Binding Background}"
+            BorderBrush="{Binding BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="8">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{Binding Glyph}"
+                       FontWeight="Bold"
+                       Foreground="{Binding Foreground}"
+                       VerticalAlignment="Top"/>
+            <TextBlock Text="{Binding Message}"
+                       Foreground="{Binding Foreground}"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+    </Border>
+</UserControl>

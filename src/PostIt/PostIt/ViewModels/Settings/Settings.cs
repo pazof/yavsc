@@ -31,6 +31,19 @@ public partial class Settings : ViewModelBase
     [ObservableProperty]
     public partial string SearchText { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
+
+    public void SetActionStatus(string message, StatusSeverity severity = StatusSeverity.Info)
+    {
+        ActionStatus = severity switch
+        {
+            StatusSeverity.Error => StatusNotice.Error(message),
+            StatusSeverity.Warning => StatusNotice.Warning(message),
+            _ => StatusNotice.Info(message),
+        };
+    }
+
     /// <summary>
     /// Catch top-level mutations: the four ObservableProperty
     /// setters above all funnel through here, and we flip
@@ -406,6 +419,8 @@ public partial class Settings : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanSave))]
     public void Save()
     {
+        SetActionStatus("Enregistrement des parametres...", StatusSeverity.Info);
+
         var configDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "PostIt");
@@ -425,10 +440,13 @@ public partial class Settings : ViewModelBase
                     File.SetUnixFileMode(configPath,
                         UnixFileMode.UserRead | UnixFileMode.UserWrite);
                 IsDirty = false;
+                SetActionStatus("Parametres sauvegardes.", StatusSeverity.Info);
+                
                 Console.WriteLine($"💾 Settings saved to {configPath}");
             }
             catch (Exception ex)
             {
+                SetActionStatus($"Echec sauvegarde parametres: {ex.Message}", StatusSeverity.Error);
                 Console.Error.WriteLine($"🩎 Error saving settings to {configPath}: {ex.Message}");
                 throw;
             }

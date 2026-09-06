@@ -65,6 +65,14 @@ public partial class CirclesPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        ActionStatus = StatusNotice.FromMessage(value);
+    }
+
 
     public CirclesPageViewModel(CircleApiClient client)
     {
