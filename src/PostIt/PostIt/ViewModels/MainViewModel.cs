@@ -87,7 +87,7 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
                 Posts.Add(post);
             }
             ApplyFilter();
-            this.SetInfoStatus($"Loaded {Posts.Count} posts.");
+            this.SetInfoStatus($"{Posts.Count} billet(s) chargé(s).");
         });
     }
 
@@ -107,7 +107,7 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
         // than to send a request the server will reject.
         if (string.IsNullOrWhiteSpace(DraftTitle))
         {
-            this.SetWarningStatus("Title is required.");
+            this.SetWarningStatus("Le titre est obligatoire.");
             return;
         }
 
@@ -137,7 +137,7 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
                 if (created is not null)
                 {
                     SelectedPost = created;
-                    this.SetInfoStatus($"Created post {created.Id}.");
+                    this.SetInfoStatus($"Billet {created.Id} créé.");
                 }
             }
             else
@@ -153,7 +153,7 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
                     DateModified = DateTime.UtcNow,
                 };
                 await BlogClient!.UpdatePostAsync(SelectedPost.Id, update);
-                this.SetInfoStatus($"Saved post {SelectedPost.Id}.");
+                this.SetInfoStatus($"Billet {SelectedPost.Id} enregistré.");
             }
 
             await RefreshPostsAsync();
@@ -165,14 +165,14 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
     {
         if (SelectedPost is null || SelectedPost.Id == 0)
         {
-            this.SetWarningStatus("Select an existing post before deleting.");
+            this.SetWarningStatus("Sélectionnez un billet existant avant suppression.");
             return;
         }
 
         await ExecuteAsync(async () =>
         {
             await BlogClient!.DeletePostAsync(SelectedPost.Id);
-            this.SetInfoStatus($"Deleted post {SelectedPost.Id}.");
+            this.SetInfoStatus($"Billet {SelectedPost.Id} supprimé.");
             SelectedPost = null;
             await RefreshPostsAsync();
         });
@@ -250,7 +250,7 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
     {
         if (SelectedPost is null)
         {
-            this.SetWarningStatus("Select an existing post before managing ACL.");
+            this.SetWarningStatus("Sélectionnez un billet existant avant de gérer l'ACL.");
             return;
         }
 
@@ -349,7 +349,7 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
         FilteredPosts = new ObservableCollection<BlogPostDto>();
         SelectedPost = null;
         IsBusy = false;
-        this.SetInfoStatus("Ready");
+        this.SetInfoStatus("Prêt.");
         Settings = settings ?? new Settings();
         SearchText = Settings.SearchText;
         WindowTitle = "PostIt";
@@ -479,12 +479,12 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
         try
         {
             IsBusy = true;
-            this.SetInfoStatus("Working...");
+            this.SetInfoStatus("Traitement en cours...");
             await action();
         }
         catch (Exception ex)
         {
-            this.SetErrorStatus($"Error: {ex.Message}");
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
