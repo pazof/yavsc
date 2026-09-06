@@ -1,5 +1,7 @@
+using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -9,6 +11,7 @@ using Mapsui.Projections;
 using Mapsui.Styles;
 using Mapsui.Tiling;
 using Mapsui.UI.Avalonia;
+using PostIt.Services;
 using PostIt.ViewModels.Commands;
 
 namespace PostIt.Views.Commands;
@@ -23,9 +26,17 @@ public partial class RdvPage : ContentPage
     private MapControl? _locationMap;
     private MemoryLayer? _selectionLayer;
     private RdvViewModel? _currentViewModel;
+    private readonly IReverseGeocodingService _reverseGeocodingService;
+    private CancellationTokenSource? _reverseGeocodeCts;
 
     public RdvPage()
+        : this(null)
     {
+    }
+
+    public RdvPage(IReverseGeocodingService? reverseGeocodingService)
+    {
+        _reverseGeocodingService = reverseGeocodingService ?? new NominatimReverseGeocodingService();
         InitializeComponent();
         InitializeMap();
     }
@@ -58,7 +69,7 @@ public partial class RdvPage : ContentPage
         CenterFromViewModel();
     }
 
-    private void OnMapTapped(object? sender, MapEventArgs e)
+    private async void OnMapTapped(object? sender, MapEventArgs e)
     {
         if (DataContext is not RdvViewModel vm)
             return;
@@ -67,6 +78,7 @@ public partial class RdvPage : ContentPage
         vm.ApplyLocationFromMap(latitude, longitude);
         UpdateMarkerFromViewModel();
         CenterMap(latitude, longitude, zoomLevel: SelectedZoomLevel);
+        await TryResolveAddressAsync(vm, latitude, longitude);
     }
 
     private async void OnCenterCurrentLocationClicked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -77,6 +89,9 @@ public partial class RdvPage : ContentPage
         await vm.UseCurrentLocationCommand.ExecuteAsync(null);
         UpdateMarkerFromViewModel();
         CenterFromViewModel();
+
+        if (vm.Latitude.HasValue && vm.Longitude.HasValue)
+            await TryResolveAddressAsync(vm, vm.Latitude.Value, vm.Longitude.Value);
     }
 
     private void AttachViewModel(RdvViewModel? vm)
@@ -160,5 +175,25 @@ public partial class RdvPage : ContentPage
             },
             Features = Enumerable.Empty<IFeature>(),
         };
+    }
+
+    private async Task TryResolveAddressAsync(RdvViewModel vm, double latitude, double longitude)
+    {
+        _reverseGeocodeCts?.Cancel();
+        _reverseGeocodeCts?.Dispose();
+        _reverseGeocodeCts = new CancellationTokenSource();
+
+        try
+        {
+            var resolved = await _reverseGeocodingService
+                .TryResolveAddressAsync(latitude, longitude, _reverseGeocodeCts.Token)
+                .ConfigureAwait(true);
+
+            if (!string.IsNullOrWhiteSpace(resolved))
+                vm.ApplyResolvedAddress(resolved);
+        }
+        catch (OperationCanceledException)
+        {
+        }
     }
 }

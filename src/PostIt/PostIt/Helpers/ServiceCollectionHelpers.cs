@@ -30,6 +30,7 @@ public static class ServiceCollectionHelpers
             () => settings.Authentication?.Authority);
         var billingClient = new BillingApiClient(api, () => settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
+        var reverseGeocoding = new NominatimReverseGeocodingService();
 
         // Vues
         services.AddSingleton<MainView>();
@@ -65,6 +66,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(userSearchClient);
         services.AddSingleton(activityClient);
         services.AddSingleton(billingClient);
+        services.AddSingleton<IReverseGeocodingService>(reverseGeocoding);
         services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddSingleton<HomePageViewModel>();
         services.AddSingleton<SignaturePageViewModel>();

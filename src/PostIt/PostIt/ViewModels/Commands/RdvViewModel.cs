@@ -127,6 +127,15 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         this.SetInfoStatus("Position sélectionnée sur la carte.");
     }
 
+    public void ApplyResolvedAddress(string address)
+    {
+        if (string.IsNullOrWhiteSpace(address))
+            return;
+
+        Address = address.Trim();
+        this.SetInfoStatus("Adresse mise à jour depuis la carte.");
+    }
+
 
     protected override async Task SubmitAsync()
     {
