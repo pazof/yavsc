@@ -22,6 +22,7 @@ public partial class RdvPage : ContentPage
     private const double DefaultLongitude = 2.3522;
     private const int DefaultZoomLevel = 4;
     private const int SelectedZoomLevel = 13;
+    private static readonly TimeSpan ReverseGeocodingDebounce = TimeSpan.FromMilliseconds(350);
 
     private MapControl? _locationMap;
     private MemoryLayer? _selectionLayer;
@@ -182,15 +183,24 @@ public partial class RdvPage : ContentPage
         _reverseGeocodeCts?.Cancel();
         _reverseGeocodeCts?.Dispose();
         _reverseGeocodeCts = new CancellationTokenSource();
+        var cancellationToken = _reverseGeocodeCts.Token;
 
         try
         {
+            vm.NotifyReverseGeocodingStarted();
+            await Task.Delay(ReverseGeocodingDebounce, cancellationToken).ConfigureAwait(true);
+
             var resolved = await _reverseGeocodingService
-                .TryResolveAddressAsync(latitude, longitude, _reverseGeocodeCts.Token)
+                .TryResolveAddressAsync(latitude, longitude, cancellationToken)
                 .ConfigureAwait(true);
 
             if (!string.IsNullOrWhiteSpace(resolved))
+            {
                 vm.ApplyResolvedAddress(resolved);
+                return;
+            }
+
+            vm.NotifyReverseGeocodingUnavailable();
         }
         catch (OperationCanceledException)
         {

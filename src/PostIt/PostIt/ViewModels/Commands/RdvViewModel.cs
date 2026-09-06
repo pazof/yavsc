@@ -133,6 +133,22 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         this.SetInfoStatus("Position sélectionnée sur la carte.");
     }
 
+    public void NotifyReverseGeocodingStarted()
+    {
+        this.SetInfoStatus(string.IsNullOrWhiteSpace(Address)
+            ? "Recherche de l'adresse depuis la carte..."
+            : "Recherche d'une adresse suggérée..."
+        );
+    }
+
+    public void NotifyReverseGeocodingUnavailable()
+    {
+        if (HasSuggestedAddress || !string.IsNullOrWhiteSpace(Address))
+            return;
+
+        this.SetInfoStatus("Position sélectionnée sur la carte. Complétez l'adresse puis envoyez la commande.");
+    }
+
     public void ApplyResolvedAddress(string address)
     {
         if (string.IsNullOrWhiteSpace(address))
