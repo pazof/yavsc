@@ -13,7 +13,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.ViewModels;
 
-public partial class ActivitiesPageViewModel : ViewModelBase
+public partial class ActivitiesPageViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly ActivityApiClient _client;
     private readonly BillingApiClient _billingClient;
@@ -45,11 +45,6 @@ public partial class ActivitiesPageViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Choisissez une activité.");
-
-    partial void OnStatusMessageChanged(string value)
-    {
-        ActionStatus = StatusNotice.FromMessage(value);
-    }
 
     public ActivityInfo? CurrentActivity => SelectedSpecialization ?? SelectedActivity;
     public string SelectedActivityLabel => SelectedActivity?.Name ?? "(aucune activité)";
@@ -94,11 +89,11 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            StatusMessage = "Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
     }
 
@@ -110,11 +105,11 @@ public partial class ActivitiesPageViewModel : ViewModelBase
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            StatusMessage = "Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
     }
 
@@ -131,7 +126,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
             await ShowActivityAsync(first);
             if (first is null)
             {
-                StatusMessage = "Aucune activité disponible.";
+                this.SetInfoStatus("Aucune activité disponible.");
             }
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
@@ -139,14 +134,14 @@ public partial class ActivitiesPageViewModel : ViewModelBase
             Activities = new ObservableCollection<ActivityInfo>();
             Specializations = new ObservableCollection<ActivityInfo>();
             Performers = new ObservableCollection<ActivityUserDisplayItem>();
-            StatusMessage = "Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
             Activities = new ObservableCollection<ActivityInfo>();
             Specializations = new ObservableCollection<ActivityInfo>();
             Performers = new ObservableCollection<ActivityUserDisplayItem>();
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -238,19 +233,19 @@ public partial class ActivitiesPageViewModel : ViewModelBase
 
             Performers = new ObservableCollection<ActivityUserDisplayItem>(items);
             SelectedPerformer = null;
-            StatusMessage = $"{activity.Name} · {Performers.Count} utilisateur(s)";
+            this.SetInfoStatus($"{activity.Name} · {Performers.Count} utilisateur(s)");
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
             Performers = new ObservableCollection<ActivityUserDisplayItem>();
             SelectedPerformer = null;
-            StatusMessage = "Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé pour les activités (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
             Performers = new ObservableCollection<ActivityUserDisplayItem>();
             SelectedPerformer = null;
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -267,7 +262,7 @@ public partial class ActivitiesPageViewModel : ViewModelBase
     {
         if (SelectedPerformer is null || CurrentActivity is null)
         {
-            StatusMessage = "Sélectionnez un utilisateur et une activité avec formulaire.";
+            this.SetWarningStatus("Sélectionnez un utilisateur et une activité avec formulaire.");
             return;
         }
 

@@ -12,7 +12,7 @@ using PostIt.Helpers;
 
 namespace PostIt.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
 {
     /// <summary>Window/tab title. Cosmetic — bound by
     /// <c>MainPage.axaml</c> if at all. Not the post title.</summary>
@@ -55,15 +55,10 @@ public partial class MainViewModel : ViewModelBase
     public partial string StatusMessage { get; set; }
 
     [ObservableProperty]
-    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.FromMessage(string.Empty);
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
 
     [ObservableProperty]
     public partial string SearchText { get; set; }
-
-    partial void OnStatusMessageChanged(string value)
-    {
-        ActionStatus = StatusNotice.FromMessage(value);
-    }
 
     [ObservableProperty]
     public partial ObservableCollection<BlogPostDto> Posts { get; set; }
@@ -92,7 +87,7 @@ public partial class MainViewModel : ViewModelBase
                 Posts.Add(post);
             }
             ApplyFilter();
-            StatusMessage = $"Loaded {Posts.Count} posts.";
+            this.SetInfoStatus($"Loaded {Posts.Count} posts.");
         });
     }
 
@@ -112,7 +107,7 @@ public partial class MainViewModel : ViewModelBase
         // than to send a request the server will reject.
         if (string.IsNullOrWhiteSpace(DraftTitle))
         {
-            StatusMessage = "Title is required.";
+            this.SetWarningStatus("Title is required.");
             return;
         }
 
@@ -142,7 +137,7 @@ public partial class MainViewModel : ViewModelBase
                 if (created is not null)
                 {
                     SelectedPost = created;
-                    StatusMessage = $"Created post {created.Id}.";
+                    this.SetInfoStatus($"Created post {created.Id}.");
                 }
             }
             else
@@ -158,7 +153,7 @@ public partial class MainViewModel : ViewModelBase
                     DateModified = DateTime.UtcNow,
                 };
                 await BlogClient!.UpdatePostAsync(SelectedPost.Id, update);
-                StatusMessage = $"Saved post {SelectedPost.Id}.";
+                this.SetInfoStatus($"Saved post {SelectedPost.Id}.");
             }
 
             await RefreshPostsAsync();
@@ -170,14 +165,14 @@ public partial class MainViewModel : ViewModelBase
     {
         if (SelectedPost is null || SelectedPost.Id == 0)
         {
-            StatusMessage = "Select an existing post before deleting.";
+            this.SetWarningStatus("Select an existing post before deleting.");
             return;
         }
 
         await ExecuteAsync(async () =>
         {
             await BlogClient!.DeletePostAsync(SelectedPost.Id);
-            StatusMessage = $"Deleted post {SelectedPost.Id}.";
+            this.SetInfoStatus($"Deleted post {SelectedPost.Id}.");
             SelectedPost = null;
             await RefreshPostsAsync();
         });
@@ -202,7 +197,7 @@ public partial class MainViewModel : ViewModelBase
     {
         if (SelectedPost is null || SelectedPost.Id == 0)
         {
-            StatusMessage = "Sélectionnez un billet existant pour changer sa publication.";
+            this.SetWarningStatus("Sélectionnez un billet existant pour changer sa publication.");
             return;
         }
 
@@ -219,9 +214,9 @@ public partial class MainViewModel : ViewModelBase
             // locally flipped state until the round-trip
             // re-hydrates it.
             SelectedPost.IsPublished = publish;
-            StatusMessage = publish
+            this.SetInfoStatus(publish
                 ? $"Billet {SelectedPost.Id} publié."
-                : $"Billet {SelectedPost.Id} remis en brouillon.";
+                : $"Billet {SelectedPost.Id} remis en brouillon.");
         });
     }
 
@@ -255,7 +250,7 @@ public partial class MainViewModel : ViewModelBase
     {
         if (SelectedPost is null)
         {
-            StatusMessage = "Select an existing post before managing ACL.";
+            this.SetWarningStatus("Select an existing post before managing ACL.");
             return;
         }
 
@@ -354,7 +349,7 @@ public partial class MainViewModel : ViewModelBase
         FilteredPosts = new ObservableCollection<BlogPostDto>();
         SelectedPost = null;
         IsBusy = false;
-        StatusMessage = "Ready";
+        this.SetInfoStatus("Ready");
         Settings = settings ?? new Settings();
         SearchText = Settings.SearchText;
         WindowTitle = "PostIt";
@@ -484,12 +479,12 @@ public partial class MainViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            StatusMessage = "Working...";
+            this.SetInfoStatus("Working...");
             await action();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            this.SetErrorStatus($"Error: {ex.Message}");
         }
         finally
         {

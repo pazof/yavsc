@@ -32,27 +32,4 @@ public sealed class StatusNotice
     public static StatusNotice Info(string message) => new(message, StatusSeverity.Info);
     public static StatusNotice Warning(string message) => new(message, StatusSeverity.Warning);
     public static StatusNotice Error(string message) => new(message, StatusSeverity.Error);
-
-    public static StatusNotice FromMessage(string? message)
-    {
-        if (string.IsNullOrWhiteSpace(message))
-        {
-            return Info("Pret.");
-        }
-
-        var text = message.Trim();
-        var lower = text.ToLowerInvariant();
-
-        if (lower.StartsWith("erreur") || lower.StartsWith("echec") || lower.StartsWith("impossible"))
-        {
-            return Error(text);
-        }
-
-        if (lower.Contains("refuse") || lower.Contains("annule") || lower.Contains("obligatoire") || lower.Contains("deja"))
-        {
-            return Warning(text);
-        }
-
-        return Info(text);
-    }
 }

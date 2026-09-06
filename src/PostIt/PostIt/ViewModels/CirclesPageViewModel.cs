@@ -34,7 +34,7 @@ namespace PostIt.ViewModels;
 /// <see cref="OnAddMemberConfirmedAsync"/>. The "remove"
 /// command is per-row and runs inline.</para>
 /// </summary>
-public partial class CirclesPageViewModel : ViewModelBase
+public partial class CirclesPageViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly CircleApiClient _client;
 
@@ -63,16 +63,10 @@ public partial class CirclesPageViewModel : ViewModelBase
     public partial bool IsBusy { get; set; }
 
     [ObservableProperty]
-    public partial string StatusMessage { get; set; } = string.Empty;
+    public partial string StatusMessage { get; set; } = "Pret.";
 
     [ObservableProperty]
     public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
-
-    partial void OnStatusMessageChanged(string value)
-    {
-        ActionStatus = StatusNotice.FromMessage(value);
-    }
-
 
     public CirclesPageViewModel(CircleApiClient client)
     {
@@ -108,11 +102,11 @@ public partial class CirclesPageViewModel : ViewModelBase
         {
             var list = await _client.GetMyCirclesAsync();
             Circles = new ObservableCollection<CircleDto>(list ?? new());
-            StatusMessage = $"{Circles.Count} cercle(s)";
+            this.SetInfoStatus($"{Circles.Count} cercle(s)");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -157,11 +151,11 @@ public partial class CirclesPageViewModel : ViewModelBase
         {
             var list = await _client.GetMembersAsync(circleId);
             Members = new ObservableCollection<CircleMemberDto>(list ?? new());
-            StatusMessage = $"{Members.Count} membre(s)";
+            this.SetInfoStatus($"{Members.Count} membre(s)");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
             Members = new ObservableCollection<CircleMemberDto>();
         }
         finally
@@ -176,7 +170,7 @@ public partial class CirclesPageViewModel : ViewModelBase
         SelectedCircle = null;
         DraftName = string.Empty;
         DraftPublic = false;
-        StatusMessage = "Nouveau cercle";
+        this.SetInfoStatus("Nouveau cercle");
     }
 
     [RelayCommand]
@@ -186,7 +180,7 @@ public partial class CirclesPageViewModel : ViewModelBase
         SelectedCircle = circle;
         DraftName = circle.Name;
         DraftPublic = circle.Public;
-        StatusMessage = $"Édition de « {circle.Name} »";
+        this.SetInfoStatus($"Édition de « {circle.Name} »");
     }
 
     [RelayCommand]
@@ -194,7 +188,7 @@ public partial class CirclesPageViewModel : ViewModelBase
     {
         if (string.IsNullOrWhiteSpace(DraftName))
         {
-            StatusMessage = "Le nom est obligatoire";
+            this.SetWarningStatus("Le nom est obligatoire");
             return;
         }
 
@@ -208,22 +202,22 @@ public partial class CirclesPageViewModel : ViewModelBase
                     Name = DraftName.Trim(),
                     Public = DraftPublic,
                 });
-                StatusMessage = created is null
-                    ? "Création échouée"
-                    : $"Cercle « {created.Name} » créé";
+                this.SetStatus(
+                    created is null ? "Création échouée" : $"Cercle « {created.Name} » créé",
+                    created is null ? StatusSeverity.Warning : StatusSeverity.Info);
             }
             else
             {
                 SelectedCircle.Name = DraftName.Trim();
                 SelectedCircle.Public = DraftPublic;
                 await _client.UpdateCircleAsync(SelectedCircle.Id, SelectedCircle);
-                StatusMessage = $"Cercle « {SelectedCircle.Name} » mis à jour";
+                this.SetInfoStatus($"Cercle « {SelectedCircle.Name} » mis à jour");
             }
             await RefreshAsync();
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -239,7 +233,7 @@ public partial class CirclesPageViewModel : ViewModelBase
         try
         {
             await _client.DeleteCircleAsync(circle.Id);
-            StatusMessage = $"Cercle « {circle.Name} » supprimé";
+            this.SetInfoStatus($"Cercle « {circle.Name} » supprimé");
             // If the deleted circle was the selected one,
             // clear the selection so the Members view goes
             // empty too (the partial setter on
@@ -250,7 +244,7 @@ public partial class CirclesPageViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -271,7 +265,7 @@ public partial class CirclesPageViewModel : ViewModelBase
         try
         {
             await _client.AddMemberAsync(SelectedCircle.Id, picked.Id);
-            StatusMessage = $"« {picked.DisplayName} » ajouté au cercle";
+            this.SetInfoStatus($"« {picked.DisplayName} » ajouté au cercle");
             await LoadMembersAsync(SelectedCircle.Id);
         }
         catch (Exception ex)
@@ -286,7 +280,7 @@ public partial class CirclesPageViewModel : ViewModelBase
             var msg = ex.Message.Contains("409") || ex.Message.Contains("Conflict")
                 ? "Déjà membre du cercle"
                 : $"Erreur: {ex.Message}";
-            StatusMessage = msg;
+            this.SetStatus(msg, msg == "Déjà membre du cercle" ? StatusSeverity.Warning : StatusSeverity.Error);
         }
         finally
         {
@@ -307,11 +301,11 @@ public partial class CirclesPageViewModel : ViewModelBase
         {
             await _client.RemoveMemberAsync(SelectedCircle.Id, member.Id);
             Members.Remove(member);
-            StatusMessage = $"« {member.UserName} » retiré du cercle";
+            this.SetInfoStatus($"« {member.UserName} » retiré du cercle");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {

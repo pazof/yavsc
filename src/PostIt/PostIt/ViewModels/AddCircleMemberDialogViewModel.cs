@@ -29,7 +29,7 @@ namespace PostIt.ViewModels;
 /// <c>CirclesPage</c> then calls
 /// <see cref="CircleApiClient.AddMemberAsync"/>.</para>
 /// </summary>
-public partial class AddCircleMemberDialogViewModel : ViewModelBase
+public partial class AddCircleMemberDialogViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly IUserDirectory _directory;
 
@@ -46,15 +46,10 @@ public partial class AddCircleMemberDialogViewModel : ViewModelBase
     public partial bool IsBusy { get; set; }
 
     [ObservableProperty]
-    public partial string StatusMessage { get; set; } = string.Empty;
+    public partial string StatusMessage { get; set; } = "Pret.";
 
     [ObservableProperty]
-    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.FromMessage(string.Empty);
-
-    partial void OnStatusMessageChanged(string value)
-    {
-        ActionStatus = StatusNotice.FromMessage(value);
-    }
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
 
     /// <summary>
     /// Raised when the user confirms a selection. The hosting
@@ -87,7 +82,7 @@ public partial class AddCircleMemberDialogViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(SearchQuery))
         {
             Results.Clear();
-            StatusMessage = "Tapez un nom ou un email";
+            this.SetWarningStatus("Tapez un nom ou un email");
             return;
         }
 
@@ -96,11 +91,11 @@ public partial class AddCircleMemberDialogViewModel : ViewModelBase
         {
             var hits = await _directory.SearchAsync(SearchQuery, CancellationToken.None).ConfigureAwait(true);
             Results = new ObservableCollection<UserSummary>(hits ?? Array.Empty<UserSummary>());
-            StatusMessage = $"{Results.Count} résultat(s)";
+            this.SetInfoStatus($"{Results.Count} résultat(s)");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -118,7 +113,7 @@ public partial class AddCircleMemberDialogViewModel : ViewModelBase
     {
         if (Selected is null)
         {
-            StatusMessage = "Sélectionnez un utilisateur";
+            this.SetWarningStatus("Sélectionnez un utilisateur");
             return;
         }
         Confirmed?.Invoke(this, Selected);

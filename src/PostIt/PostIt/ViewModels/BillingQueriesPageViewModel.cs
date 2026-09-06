@@ -14,7 +14,7 @@ using Yavsc.Abstract.Workflow;
 
 namespace PostIt.ViewModels;
 
-public partial class BillingQueriesPageViewModel : ViewModelBase
+public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly BillingApiClient _billingClient;
 
@@ -37,12 +37,7 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
     public partial string StatusMessage { get; set; } = "Chargement des commandes...";
 
     [ObservableProperty]
-    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.FromMessage("Chargement des commandes...");
-
-    partial void OnStatusMessageChanged(string value)
-    {
-        ActionStatus = StatusNotice.FromMessage(value);
-    }
+    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Chargement des commandes...");
 
     public string Title => IsReadOnly
         ? $"Demandes en cours ({Form.Title})"
@@ -98,17 +93,17 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
                 .ToList();
 
             Queries = new ObservableCollection<BillingQueryDisplayItem>(filtered);
-            StatusMessage = BuildLoadedStatusMessage(filtered.Count);
+            this.SetInfoStatus(BuildLoadedStatusMessage(filtered.Count));
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
             Queries = new ObservableCollection<BillingQueryDisplayItem>();
-            StatusMessage = "Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
             Queries = new ObservableCollection<BillingQueryDisplayItem>();
-            StatusMessage = $"Erreur: {ex.Message}";
+            this.SetErrorStatus($"Erreur: {ex.Message}");
         }
         finally
         {
@@ -121,13 +116,13 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
     {
         if (IsReadOnly)
         {
-            StatusMessage = "Mode lecture seule: l'ouverture en modification est désactivée.";
+            this.SetWarningStatus("Mode lecture seule: l'ouverture en modification est désactivée.");
             return;
         }
 
         if (SelectedQuery is null)
         {
-            StatusMessage = "Sélectionnez une commande.";
+            this.SetWarningStatus("Sélectionnez une commande.");
             return;
         }
 
@@ -147,11 +142,11 @@ public partial class BillingQueriesPageViewModel : ViewModelBase
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            StatusMessage = "Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur lors de l'ouverture: {ex.Message}";
+            this.SetErrorStatus($"Erreur lors de l'ouverture: {ex.Message}");
         }
         finally
         {

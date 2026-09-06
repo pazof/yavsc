@@ -54,7 +54,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
             Longitude = existingQuery.Location.Longitude;
         }
 
-        StatusMessage = $"Commande #{existingQuery.Id} chargée.";
+        this.SetInfoStatus($"Commande #{existingQuery.Id} chargée.");
     }
 
     [RelayCommand(CanExecute = nameof(CanUseCurrentLocation))]
@@ -71,23 +71,23 @@ public partial class RdvViewModel : BillingCommandPageViewModel
             var result = await Platform.TryGetCurrentLocationAsync(default).ConfigureAwait(true);
             if (!result.IsSuccess || !result.Latitude.HasValue || !result.Longitude.HasValue)
             {
-                StatusMessage = result.Message;
+                this.SetWarningStatus(result.Message);
                 return;
             }
 
             Latitude = result.Latitude.Value;
             Longitude = result.Longitude.Value;
-            StatusMessage = string.IsNullOrWhiteSpace(Address)
+            this.SetInfoStatus(string.IsNullOrWhiteSpace(Address)
                 ? "Position récupérée. Complétez l'adresse puis envoyez la commande."
-                : result.Message;
+                : result.Message);
         }
         catch (OperationCanceledException)
         {
-            StatusMessage = "La récupération de la position a été annulée.";
+            this.SetWarningStatus("La récupération de la position a été annulée.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Impossible de récupérer la position: {ex.Message}";
+            this.SetErrorStatus($"Impossible de récupérer la position: {ex.Message}");
         }
         finally
         {
@@ -118,26 +118,26 @@ public partial class RdvViewModel : BillingCommandPageViewModel
     {
         if (!IsSupported)
         {
-            StatusMessage = SupportMessage;
+            this.SetWarningStatus(SupportMessage);
             return;
         }
 
         if (!Consent)
         {
-            StatusMessage = "Le consentement est requis pour poster la commande.";
+            this.SetWarningStatus("Le consentement est requis pour poster la commande.");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(Address))
         {
-            StatusMessage = "L'adresse du rendez-vous est requise.";
+            this.SetWarningStatus("L'adresse du rendez-vous est requise.");
             return;
         }
 
 
         if (string.IsNullOrWhiteSpace(Reason))
         {
-            StatusMessage = "Le motif du rendez-vous est requis.";
+            this.SetWarningStatus("Le motif du rendez-vous est requis.");
             return;
         }
 
@@ -186,17 +186,17 @@ public partial class RdvViewModel : BillingCommandPageViewModel
                 }).ConfigureAwait(true);
             }
 
-            StatusMessage = IsEditingExisting
+            this.SetInfoStatus(IsEditingExisting
                 ? $"Commande #{ExistingQueryId} mise à jour sur {BillingRoute} pour {Performer.UserName}."
-                : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.";
+                : $"Commande transmise sur {BillingRoute} pour {Performer.UserName}.");
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
-            StatusMessage = "Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.";
+            this.SetWarningStatus("Accès refusé au billing (scope 'api'). Déconnectez puis reconnectez-vous.");
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Erreur lors de l'envoi: {ex.Message}";
+            this.SetErrorStatus($"Erreur lors de l'envoi: {ex.Message}");
         }
         finally
         {
