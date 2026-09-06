@@ -7,7 +7,7 @@
              x:DataType="cvm:RdvViewModel"
              Header="Commande billing">
   <ScrollViewer>
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,*" Margin="12">
       <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
                  Text="{Binding Title}"
                  FontSize="18"
@@ -40,7 +40,22 @@
       <TextBlock Grid.Row="6" Text="Adresse" VerticalAlignment="Center" Margin="0,0,12,8" />
       <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Address, Mode=TwoWay}" Margin="0,0,0,8" />
 
-            <Grid Grid.Row="7"
+      <Grid Grid.Row="7"
+        Grid.ColumnSpan="2"
+        ColumnDefinitions="*,12,Auto"
+        Margin="0,0,0,8"
+        IsVisible="{Binding HasSuggestedAddress}">
+        <TextBlock Grid.Column="0"
+           VerticalAlignment="Center"
+           Text="{Binding SuggestedAddress, StringFormat='Adresse suggérée: {0}'}"
+           TextWrapping="Wrap"
+           Opacity="0.8" />
+        <Button Grid.Column="2"
+            Content="Utiliser"
+            Command="{Binding ApplySuggestedAddressCommand}" />
+      </Grid>
+
+        <Grid Grid.Row="8"
             Grid.ColumnSpan="2"
             ColumnDefinitions="Auto,12,Auto"
             Margin="0,0,0,8">
@@ -55,37 +70,37 @@
           IsEnabled="{Binding CanUseCurrentLocation}" />
             </Grid>
 
-      <TextBlock Grid.Row="8" Text="Latitude" VerticalAlignment="Center" Margin="0,0,12,8" />
-      <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Latitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
+            <TextBlock Grid.Row="9" Text="Latitude" VerticalAlignment="Center" Margin="0,0,12,8" />
+            <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Latitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
 
-      <TextBlock Grid.Row="9" Text="Longitude" VerticalAlignment="Center" Margin="0,0,12,8" />
-      <TextBox Grid.Row="9" Grid.Column="1" Text="{Binding Longitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
+            <TextBlock Grid.Row="10" Text="Longitude" VerticalAlignment="Center" Margin="0,0,12,8" />
+            <TextBox Grid.Row="10" Grid.Column="1" Text="{Binding Longitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
 
-      <TextBlock Grid.Row="10" Grid.ColumnSpan="2"
+            <TextBlock Grid.Row="11" Grid.ColumnSpan="2"
              Text="Carte: cliquez pour positionner le rendez-vous"
              Margin="0,0,0,8"
              Opacity="0.85" />
-      <mapsui:MapControl Grid.Row="11"
+            <mapsui:MapControl Grid.Row="12"
              Grid.ColumnSpan="2"
              x:Name="LocationMap"
              Height="260"
              Margin="0,0,0,8" />
 
-      <TextBlock Grid.Row="12"
+            <TextBlock Grid.Row="13"
                  Text="Informations"
                  VerticalAlignment="Center"
                  Margin="0,0,12,8" />
-      <TextBox Grid.Row="12"
+            <TextBox Grid.Row="13"
                Grid.Column="1"
                Text="{Binding AdditionalInfo, Mode=TwoWay}"
                Margin="0,0,0,8" />
 
-      <CheckBox Grid.Row="13" Grid.ColumnSpan="2"
+            <CheckBox Grid.Row="14" Grid.ColumnSpan="2"
                 Content="Je consens à la création de cette commande"
                 IsChecked="{Binding Consent, Mode=TwoWay}"
                 Margin="0,4,0,12" />
 
-      <Grid Grid.Row="14" Grid.ColumnSpan="2" ColumnDefinitions="Auto,12,*,Auto">
+            <Grid Grid.Row="15" Grid.ColumnSpan="2" ColumnDefinitions="Auto,12,*,Auto">
         <Button Grid.Column="0"
                 Content="{Binding SubmitLabel}"
                 Command="{Binding SubmitCommand}"

@@ -18,6 +18,9 @@ public partial class RdvViewModel : BillingCommandPageViewModel
     public partial string Address { get; set; } = string.Empty;
 
     [ObservableProperty]
+    public partial string SuggestedAddress { get; set; } = string.Empty;
+
+    [ObservableProperty]
     public partial double? Latitude { get; set; }
 
     [ObservableProperty]
@@ -32,6 +35,8 @@ public partial class RdvViewModel : BillingCommandPageViewModel
     {
         EventDate = DateTime.Now.AddDays(1);
     }
+
+    public bool HasSuggestedAddress => !string.IsNullOrWhiteSpace(SuggestedAddress);
 
     protected override void ApplyExistingQuery(BillingQueryDetailsDto existingQuery)
     {
@@ -50,6 +55,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         if (existingQuery.Location is not null)
         {
             Address = existingQuery.Location.Address ?? string.Empty;
+            SuggestedAddress = string.Empty;
             Latitude = existingQuery.Location.Latitude;
             Longitude = existingQuery.Location.Longitude;
         }
@@ -132,8 +138,40 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         if (string.IsNullOrWhiteSpace(address))
             return;
 
-        Address = address.Trim();
-        this.SetInfoStatus("Adresse mise à jour depuis la carte.");
+        var trimmedAddress = address.Trim();
+        if (string.IsNullOrWhiteSpace(Address))
+        {
+            Address = trimmedAddress;
+            SuggestedAddress = string.Empty;
+            this.SetInfoStatus("Adresse mise à jour depuis la carte.");
+            return;
+        }
+
+        if (string.Equals(Address.Trim(), trimmedAddress, StringComparison.Ordinal))
+        {
+            SuggestedAddress = string.Empty;
+            return;
+        }
+
+        SuggestedAddress = trimmedAddress;
+        this.SetInfoStatus("Adresse suggérée depuis la carte. Appliquez-la si besoin.");
+    }
+
+    [RelayCommand(CanExecute = nameof(HasSuggestedAddress))]
+    private void ApplySuggestedAddress()
+    {
+        if (string.IsNullOrWhiteSpace(SuggestedAddress))
+            return;
+
+        Address = SuggestedAddress.Trim();
+        SuggestedAddress = string.Empty;
+        this.SetInfoStatus("Adresse suggérée appliquée.");
+    }
+
+    partial void OnSuggestedAddressChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasSuggestedAddress));
+        ApplySuggestedAddressCommand.NotifyCanExecuteChanged();
     }
 
 
