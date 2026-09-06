@@ -41,6 +41,7 @@
       <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Address, Mode=TwoWay}" Margin="0,0,0,8" />
 
       <Grid Grid.Row="7"
+        x:Name="SuggestedAddressPanel"
         Grid.ColumnSpan="2"
           ColumnDefinitions="*,12,Auto,12,Auto"
         Margin="0,0,0,8"
@@ -51,9 +52,12 @@
            TextWrapping="Wrap"
            Opacity="0.8" />
         <Button Grid.Column="2"
+          x:Name="ApplySuggestedAddressButton"
             Content="Utiliser"
+          IsVisible="{Binding HasSuggestedAddress}"
             Command="{Binding ApplySuggestedAddressCommand}" />
         <ProgressBar Grid.Column="4"
+               x:Name="SuggestedAddressProgress"
                Width="80"
                IsIndeterminate="True"
                IsVisible="{Binding IsResolvingAddress}" />
