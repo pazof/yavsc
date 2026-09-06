@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 // Yavsc.Models.Kyc/TrustDeclaration.cs
 namespace Yavsc.Models.Kyc
 {

@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;

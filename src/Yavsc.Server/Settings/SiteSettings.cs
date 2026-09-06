@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using Yavsc.Models.Relationship;
 
 namespace Yavsc

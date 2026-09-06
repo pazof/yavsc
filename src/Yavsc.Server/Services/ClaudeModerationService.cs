@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using Yavsc.Moderation;
 using Yavsc.Abstract.Interfaces;
 using Anthropic.SDK;

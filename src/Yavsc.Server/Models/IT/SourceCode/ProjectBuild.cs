@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.Diagnostics;
 
 namespace Yavsc.Server.Models.IT.SourceCode

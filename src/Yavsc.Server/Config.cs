@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 ﻿
 using IdentityServer8;
 using IdentityServer8.Models;

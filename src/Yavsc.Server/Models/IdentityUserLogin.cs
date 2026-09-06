@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 namespace Yavsc.Models.Auth
 {
     using System.ComponentModel.DataAnnotations.Schema;

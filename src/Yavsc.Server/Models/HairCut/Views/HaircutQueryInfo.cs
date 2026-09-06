@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 
 //
 //  HaircutQueryInfo.cs

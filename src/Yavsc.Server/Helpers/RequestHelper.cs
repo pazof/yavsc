@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.Net;
 using System.Net.Http.Headers;
 using Yavsc.Server.Model;

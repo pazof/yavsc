@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.Globalization;
 using Yavsc.Billing;
 using Yavsc.Models.Billing;
