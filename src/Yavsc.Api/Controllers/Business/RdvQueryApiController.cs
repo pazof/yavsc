@@ -67,6 +67,7 @@ public class RdvQueryApiController : Controller
         var uid = User.GetUserId();
         // Security: the caller always posts for themselves.
         query.ClientId = uid;
+        query.EventDate = EnsureUtc(query.EventDate);
 
         ModelState.Remove("Client");
         ModelState.Remove("ClientId");
@@ -140,7 +141,7 @@ public class RdvQueryApiController : Controller
         existing.ActivityCode = query.ActivityCode;
         existing.PerformerId = query.PerformerId;
         existing.Consent = query.Consent;
-        existing.EventDate = query.EventDate;
+        existing.EventDate = EnsureUtc(query.EventDate);
         existing.LocationType = query.LocationType;
         existing.Reason = query.Reason;
         existing.Status = query.Status;
@@ -205,5 +206,15 @@ public class RdvQueryApiController : Controller
     private bool QueryExists(long id)
     {
         return _context.RdvQueries.Any(e => e.Id == id);
+    }
+
+    private static DateTime EnsureUtc(DateTime value)
+    {
+        return value.Kind switch
+        {
+            DateTimeKind.Utc => value,
+            DateTimeKind.Local => value.ToUniversalTime(),
+            _ => DateTime.SpecifyKind(value, DateTimeKind.Utc)
+        };
     }
 }
