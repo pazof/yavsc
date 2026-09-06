@@ -1,7 +1,12 @@
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Mapsui;
+using Mapsui.Layers;
 using Mapsui.Projections;
+using Mapsui.Styles;
 using Mapsui.Tiling;
 using Mapsui.UI.Avalonia;
 using PostIt.ViewModels.Commands;
@@ -10,7 +15,14 @@ namespace PostIt.Views.Commands;
 
 public partial class RdvPage : ContentPage
 {
+    private const double DefaultLatitude = 48.8566;
+    private const double DefaultLongitude = 2.3522;
+    private const int DefaultZoomLevel = 4;
+    private const int SelectedZoomLevel = 13;
+
     private MapControl? _locationMap;
+    private MemoryLayer? _selectionLayer;
+    private RdvViewModel? _currentViewModel;
 
     public RdvPage()
     {
@@ -31,15 +43,18 @@ public partial class RdvPage : ContentPage
 
         var map = new Map();
         map.Layers.Add(OpenStreetMap.CreateTileLayer());
+        _selectionLayer = CreateSelectionLayer();
+        map.Layers.Add(_selectionLayer);
         _locationMap.Map = map;
         _locationMap.MapTapped += OnMapTapped;
 
         DataContextChanged += OnDataContextChanged;
-        CenterFromViewModel();
+        AttachViewModel(DataContext as RdvViewModel);
     }
 
     private void OnDataContextChanged(object? sender, System.EventArgs e)
     {
+        AttachViewModel(DataContext as RdvViewModel);
         CenterFromViewModel();
     }
 
@@ -50,24 +65,57 @@ public partial class RdvPage : ContentPage
 
         var (longitude, latitude) = SphericalMercator.ToLonLat(e.WorldPosition.X, e.WorldPosition.Y);
         vm.ApplyLocationFromMap(latitude, longitude);
-        CenterMap(latitude, longitude, zoomLevel: 13);
+        UpdateMarkerFromViewModel();
+        CenterMap(latitude, longitude, zoomLevel: SelectedZoomLevel);
+    }
+
+    private async void OnCenterCurrentLocationClicked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is not RdvViewModel vm || !vm.CanUseCurrentLocation)
+            return;
+
+        await vm.UseCurrentLocationCommand.ExecuteAsync(null);
+        UpdateMarkerFromViewModel();
+        CenterFromViewModel();
+    }
+
+    private void AttachViewModel(RdvViewModel? vm)
+    {
+        if (_currentViewModel is not null)
+            _currentViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+
+        _currentViewModel = vm;
+
+        if (_currentViewModel is not null)
+            _currentViewModel.PropertyChanged += OnViewModelPropertyChanged;
+
+        UpdateMarkerFromViewModel();
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(RdvViewModel.Latitude)
+            || e.PropertyName == nameof(RdvViewModel.Longitude))
+        {
+            UpdateMarkerFromViewModel();
+        }
     }
 
     private void CenterFromViewModel()
     {
         if (DataContext is not RdvViewModel vm)
         {
-            CenterMap(48.8566, 2.3522, zoomLevel: 4);
+            CenterMap(DefaultLatitude, DefaultLongitude, zoomLevel: DefaultZoomLevel);
             return;
         }
 
         if (vm.Latitude.HasValue && vm.Longitude.HasValue)
         {
-            CenterMap(vm.Latitude.Value, vm.Longitude.Value, zoomLevel: 13);
+            CenterMap(vm.Latitude.Value, vm.Longitude.Value, zoomLevel: SelectedZoomLevel);
             return;
         }
 
-        CenterMap(48.8566, 2.3522, zoomLevel: 4);
+        CenterMap(DefaultLatitude, DefaultLongitude, zoomLevel: DefaultZoomLevel);
     }
 
     private void CenterMap(double latitude, double longitude, int zoomLevel)
@@ -78,5 +126,39 @@ public partial class RdvPage : ContentPage
         var (x, y) = SphericalMercator.FromLonLat(longitude, latitude);
         _locationMap.Map.Navigator.CenterOn(x, y);
         _locationMap.Map.Navigator.ZoomToLevel(zoomLevel);
+    }
+
+    private void UpdateMarkerFromViewModel()
+    {
+        if (_selectionLayer is null)
+            return;
+
+        if (DataContext is not RdvViewModel vm
+            || !vm.Latitude.HasValue
+            || !vm.Longitude.HasValue)
+        {
+            _selectionLayer.Features = Enumerable.Empty<IFeature>();
+            _locationMap?.RefreshData(ChangeType.Discrete);
+            return;
+        }
+
+        var (x, y) = SphericalMercator.FromLonLat(vm.Longitude.Value, vm.Latitude.Value);
+        _selectionLayer.Features = new IFeature[] { new PointFeature(x, y) };
+        _locationMap?.RefreshData(ChangeType.Discrete);
+    }
+
+    private static MemoryLayer CreateSelectionLayer()
+    {
+        return new MemoryLayer("selected-location")
+        {
+            Style = new SymbolStyle
+            {
+                SymbolType = SymbolType.Ellipse,
+                Fill = new Brush(Color.Crimson),
+                Outline = new Pen(Color.White, 2),
+                SymbolScale = 0.9,
+            },
+            Features = Enumerable.Empty<IFeature>(),
+        };
     }
 }

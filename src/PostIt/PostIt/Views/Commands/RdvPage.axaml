@@ -40,12 +40,20 @@
       <TextBlock Grid.Row="6" Text="Adresse" VerticalAlignment="Center" Margin="0,0,12,8" />
       <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Address, Mode=TwoWay}" Margin="0,0,0,8" />
 
-      <Button Grid.Row="7"
-              Grid.ColumnSpan="2"
-              HorizontalAlignment="Left"
-              Margin="0,0,0,8"
-              Content="Utiliser ma position"
-              Command="{Binding UseCurrentLocationCommand}" />
+            <Grid Grid.Row="7"
+            Grid.ColumnSpan="2"
+            ColumnDefinitions="Auto,12,Auto"
+            Margin="0,0,0,8">
+        <Button Grid.Column="0"
+          HorizontalAlignment="Left"
+          Content="Utiliser ma position"
+          Command="{Binding UseCurrentLocationCommand}" />
+        <Button Grid.Column="2"
+          HorizontalAlignment="Left"
+          Content="Me localiser sur la carte"
+          Click="OnCenterCurrentLocationClicked"
+          IsEnabled="{Binding CanUseCurrentLocation}" />
+            </Grid>
 
       <TextBlock Grid.Row="8" Text="Latitude" VerticalAlignment="Center" Margin="0,0,12,8" />
       <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding Latitude, Mode=TwoWay}" PlaceholderText="Optionnel" Margin="0,0,0,8" />
