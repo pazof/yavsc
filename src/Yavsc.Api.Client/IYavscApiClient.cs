@@ -53,10 +53,24 @@ public interface IYavscApiClient : IAsyncDisposable
         object? body = null,
         CancellationToken ct = default);
 
+    /// <summary>Call a multipart endpoint with a typed return value.</summary>
+    Task<T> CallAsync<T>(
+        HttpMethod method,
+        string path,
+        Func<HttpContent> contentFactory,
+        CancellationToken ct = default);
+
     /// <summary>Call a JSON endpoint that returns no useful body (DELETE, 204, etc.).</summary>
     Task CallAsync(
         HttpMethod method,
         string path,
         object? body = null,
+        CancellationToken ct = default);
+
+    /// <summary>Call a multipart endpoint that returns no useful body.</summary>
+    Task CallAsync(
+        HttpMethod method,
+        string path,
+        Func<HttpContent> contentFactory,
         CancellationToken ct = default);
 }

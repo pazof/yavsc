@@ -34,6 +34,9 @@
                 <Button Command="{Binding SearchAsync}" Content="🔍 Filter" />
                 <Button Command="{Binding SaveAsync}" Content="Save" />
                 <Button Command="{Binding DeleteAsync}" Content="Delete" />
+                <Button x:Name="AddAttachmentButton"
+                    Content="Ajouter fichiers"
+                    Click="AddAttachment_Click" />
                 <Button x:Name="ManageAclButton"
                         Command="{Binding ManageAclAsync}"
                         Content="ACL" />
@@ -102,10 +105,22 @@
                   Text="{Binding DraftArticle, Mode=TwoWay}"
                   MinHeight="320"
                   HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch">
-                </TextBox>
+                  VerticalAlignment="Stretch" />
 
-                <postitControls:StatusBar Grid.Row="3"
+                <Border Grid.Row="3" BorderBrush="LightGray" BorderThickness="1" Padding="8">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Pièces jointes" FontWeight="SemiBold" />
+                        <ItemsControl ItemsSource="{Binding DraftAttachments}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding FileName}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <postitControls:StatusBar Grid.Row="4"
                                           DataContext="{Binding ActionStatus}" />
 
             </Grid>

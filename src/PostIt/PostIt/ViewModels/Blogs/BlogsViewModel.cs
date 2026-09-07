@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -8,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
+using Yavsc.Abstract.Files;
 using PostIt.Helpers;
 
 namespace PostIt.ViewModels;
@@ -67,6 +69,9 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     public partial ObservableCollection<BlogPostDto> FilteredPosts { get; set; }
 
     [ObservableProperty]
+    public partial ObservableCollection<BlogUploadFile> DraftAttachments { get; set; }
+
+    [ObservableProperty]
     public partial BlogPostDto? SelectedPost { get; set; }
 
     [ObservableProperty]
@@ -113,6 +118,8 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
         await ExecuteAsync(async () =>
         {
+            var attachments = DraftAttachments.ToArray();
+
             // Build a fresh BlogPostDto from the editor buffer on
             // every Save — we no longer mutate SelectedPost in
             // place. The previous behaviour copied the buffer
@@ -133,11 +140,28 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
                     DateModified = DateTime.UtcNow,
                     IsPublished = DraftIsPublished
                 };
-                var created = await BlogClient!.CreatePostAsync(draft);
+                var created = await BlogClient!.CreatePostAsync(draft, attachments);
                 if (created is not null)
                 {
                     SelectedPost = created;
+
+                    if (TryAppendAttachmentLinks(created, attachments))
+                    {
+                        var linkUpdate = new BlogPostDto
+                        {
+                            Id = created.Id,
+                            AuthorId = created.AuthorId,
+                            Photo = created.Photo,
+                            Title = DraftTitle,
+                            Article = DraftArticle ?? string.Empty,
+                            DateCreated = created.DateCreated,
+                            DateModified = DateTime.UtcNow,
+                        };
+                        await BlogClient.UpdatePostAsync(created.Id, linkUpdate);
+                    }
+
                     this.SetInfoStatus($"Billet {created.Id} créé.");
+                    DraftAttachments.Clear();
                 }
             }
             else
@@ -152,8 +176,26 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
                     DateCreated = SelectedPost.DateCreated,
                     DateModified = DateTime.UtcNow,
                 };
-                await BlogClient!.UpdatePostAsync(SelectedPost.Id, update);
+
+                await BlogClient!.UpdatePostAsync(SelectedPost.Id, update, attachments);
+
+                if (TryAppendAttachmentLinks(SelectedPost, attachments))
+                {
+                    var linkUpdate = new BlogPostDto
+                    {
+                        Id = SelectedPost.Id,
+                        AuthorId = SelectedPost.AuthorId,
+                        Photo = SelectedPost.Photo,
+                        Title = DraftTitle,
+                        Article = DraftArticle ?? string.Empty,
+                        DateCreated = SelectedPost.DateCreated,
+                        DateModified = DateTime.UtcNow,
+                    };
+                    await BlogClient.UpdatePostAsync(SelectedPost.Id, linkUpdate);
+                }
+
                 this.SetInfoStatus($"Billet {SelectedPost.Id} enregistré.");
+                DraftAttachments.Clear();
             }
 
             await RefreshPostsAsync();
@@ -347,6 +389,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     {
         Posts = new ObservableCollection<BlogPostDto>();
         FilteredPosts = new ObservableCollection<BlogPostDto>();
+        DraftAttachments = new ObservableCollection<BlogUploadFile>();
         SelectedPost = null;
         IsBusy = false;
         this.SetInfoStatus("Prêt.");
@@ -427,6 +470,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         // Mirror publication state too. Defaults to false on
         // null selection so a fresh draft starts unpublished.
         DraftIsPublished = value?.IsPublished ?? false;
+        DraftAttachments.Clear();
         UpdateCommandStates();
     }
 
@@ -508,4 +552,55 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
             IsLoaded = true;
         }
     }
+
+    private bool TryAppendAttachmentLinks(BlogPostDto post, IReadOnlyCollection<BlogUploadFile> attachments)
+    {
+        if (attachments.Count == 0)
+            return false;
+
+        var ownerSegment = post.Author?.UserName;
+        if (string.IsNullOrWhiteSpace(ownerSegment))
+            ownerSegment = post.AuthorId;
+
+        if (string.IsNullOrWhiteSpace(ownerSegment))
+            return false;
+
+        var article = DraftArticle ?? string.Empty;
+        var links = new List<string>();
+
+        foreach (var attachment in attachments)
+        {
+            var relativePath = $"{EscapePathSegment(ownerSegment)}/blogs/{post.Id}/{EscapePathSegment(attachment.FileName)}";
+            var fileUrl = ResolveUserFileUrl(relativePath);
+            var markdownLine = $"- [{attachment.FileName}]({fileUrl})";
+
+            if (!article.Contains(markdownLine, StringComparison.Ordinal))
+                links.Add(markdownLine);
+        }
+
+        if (links.Count == 0)
+            return false;
+
+        var prefix = article.Length == 0
+            ? ""
+            : (article.EndsWith("\n", StringComparison.Ordinal) ? "\n" : "\n\n");
+
+        DraftArticle = article + prefix + string.Join("\n", links);
+        return true;
+    }
+
+    private string ResolveUserFileUrl(string relativePath)
+    {
+        var authority = Settings?.Authentication?.Authority;
+        if (!string.IsNullOrWhiteSpace(authority)
+            && Uri.TryCreate(authority, UriKind.Absolute, out var baseUri))
+        {
+            return FileServerUrlHelpers.GetUserFilesUri(baseUri, relativePath).ToString();
+        }
+
+        return $"{Yavsc.Constants.UserFilesPath}/{relativePath}";
+    }
+
+    private static string EscapePathSegment(string segment)
+        => Uri.EscapeDataString(segment);
 }

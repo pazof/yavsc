@@ -186,6 +186,59 @@ public class BlogSpotService
         _context.SaveChanges(user.GetUserId());
     }
 
+    public async Task Modify(ClaimsPrincipal user, BlogPost blog, IFormFileCollection files)
+    {
+        await Modify(user, blog);
+
+        if (files == null || files.Count == 0)
+            return;
+
+        var userId = user.GetUserId();
+        var userEntity = _context.Users.FirstOrDefault(u => u.Id == userId);
+        if (userEntity == null)
+            return;
+
+        try
+        {
+            string blogFilesSubdir = $"blogs/{blog.Id}";
+            string destDir = Path.Combine(
+                AbstractFileSystemHelpers.UserFilesDirName,
+                userEntity.UserName,
+                blogFilesSubdir);
+            var di = new DirectoryInfo(destDir);
+            if (!di.Exists) di.Create();
+
+            foreach (var formFile in files)
+            {
+                var fileInfo = userEntity.ReceiveUserFile(destDir, formFile);
+                if (fileInfo != null && !fileInfo.QuotaOffense)
+                {
+                    var uploadedFile = new UploadedFile
+                    {
+                        Path = fileInfo.FileName,
+                        ContentType = formFile.ContentType,
+                        Length = formFile.Length
+                    };
+                    _context.UploadedFiles.Add(uploadedFile);
+                    _context.SaveChanges(userId);
+
+                    var attachment = new BlogAttachedFile
+                    {
+                        PostId = blog.Id,
+                        FileId = uploadedFile.Id
+                    };
+                    _context.BlogAttachedFiles.Add(attachment);
+                }
+            }
+
+            _context.SaveChanges(userId);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Erreur lors du traitement des fichiers : {ex.Message}");
+        }
+    }
+
     public async Task<IEnumerable<IBlogPost>> Index(ClaimsPrincipal user, string id, int skip = 0, int take = 25)
     {
         IEnumerable<IBlogPost> posts;

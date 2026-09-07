@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using Yavsc.Blogspot;
 using Yavsc.Server.Exceptions;
 using Yavsc.Server.Helpers;
@@ -53,8 +55,14 @@ namespace Yavsc.Blogs.Controllers
 
         // PUT: api/v1/blogspot/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBlog(long id, [FromBody] Models.Blog.BlogPost blog)
+        public async Task<IActionResult> PutBlog(long id)
         {
+            var blog = await ReadPutBlogRequestAsync();
+            if (blog is null)
+            {
+                return BadRequest(ModelState);
+            }
+
             // These properties are server-managed or optional graph members and
             // should not block JSON payloads coming from API clients.
             ModelState.Remove(nameof(Models.Blog.BlogPost.Author));
@@ -73,6 +81,10 @@ namespace Yavsc.Blogs.Controllers
                 return BadRequest();
             }
 
+            var files = Request.HasFormContentType
+                ? Request.Form.Files
+                : (IFormFileCollection)new FormFileCollection();
+
             var existing = await blogSpotService.GetBlogPostAsync(id);
             if (existing == null)
             {
@@ -81,7 +93,7 @@ namespace Yavsc.Blogs.Controllers
 
             try
             {
-                await blogSpotService.Modify(User, blog);
+                await blogSpotService.Modify(User, blog, files);
             }
             catch (AuthorizationFailureException)
             {
@@ -196,6 +208,34 @@ namespace Yavsc.Blogs.Controllers
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+        }
+
+        private async Task<Models.Blog.BlogPost?> ReadPutBlogRequestAsync()
+        {
+            if (!Request.HasFormContentType)
+            {
+                return await Request.ReadFromJsonAsync<Models.Blog.BlogPost>();
+            }
+
+            var raw = Request.Form["blog"].ToString();
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                ModelState.AddModelError("blog", "A blog payload is required in the multipart form field 'blog'.");
+                return null;
+            }
+
+            try
+            {
+                return JsonSerializer.Deserialize<Models.Blog.BlogPost>(raw, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                });
+            }
+            catch (JsonException ex)
+            {
+                ModelState.AddModelError("blog", $"Invalid blog JSON payload: {ex.Message}");
+                return null;
+            }
         }
     }
 

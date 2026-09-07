@@ -1,7 +1,9 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;
@@ -86,6 +88,13 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         {
             BaseAddress = new Uri(_fixture.Addresses.First(a => a.StartsWith("https://")))
         };
+    }
+
+    private int CountAttachmentsForPost(long postId)
+    {
+        using var scope = _fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        return db.BlogAttachedFiles.Count(a => a.PostId == postId);
     }
 
     [Fact]
@@ -319,6 +328,126 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
         Assert.Equal(1, doc.RootElement.GetArrayLength());
         Assert.Equal("Après", doc.RootElement[0].GetProperty("title").GetString());
+    }
+
+    [Fact]
+    public async Task PutBlog_multipart_with_blog_and_file_returns_204_and_persists_attachment()
+    {
+        ResetAndSeedDefaultUser();
+        using var http = NewClient(subject: "tester");
+
+        var previousRoot = AbstractFileSystemHelpers.UserFilesDirName;
+        var tempRoot = Path.Combine(Path.GetTempPath(), "yavsc-blogs-tests-files-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+        AbstractFileSystemHelpers.UserFilesDirName = tempRoot;
+
+        try
+        {
+            var draft = new BlogPost
+            {
+                Id = 0,
+                Title = "Initial",
+                AuthorId = "tester",
+                Article = "Contenu initial.",
+                DateCreated = DateTime.UtcNow,
+                DateModified = DateTime.UtcNow
+            };
+
+            var postResponse = await http.PostAsJsonAsync(
+                _fixture.BlogSpotUrl(),
+                draft,
+                TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+
+            var created = (await postResponse.Content.ReadFromJsonAsync<BlogPost>(
+                TestContext.Current.CancellationToken))!;
+
+            var update = new BlogPost
+            {
+                Id = created.Id,
+                Title = "Mis a jour via multipart",
+                AuthorId = created.AuthorId,
+                Article = "Contenu mis a jour.",
+                DateCreated = created.DateCreated,
+                DateModified = DateTime.UtcNow
+            };
+
+            var form = new MultipartFormDataContent();
+            form.Add(new StringContent(JsonSerializer.Serialize(update)), "blog");
+
+            var fileBytes = System.Text.Encoding.UTF8.GetBytes("payload test");
+            var fileContent = new ByteArrayContent(fileBytes);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
+            form.Add(fileContent, "file", "note.txt");
+
+            using var request = new HttpRequestMessage(
+                HttpMethod.Put,
+                _fixture.BlogSpotUrl() + $"/{created.Id}")
+            {
+                Content = form
+            };
+
+            var putResponse = await http.SendAsync(request, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.NoContent, putResponse.StatusCode);
+
+            var detailsResponse = await http.GetAsync(
+                _fixture.BlogSpotUrl() + $"/{created.Id}",
+                TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.OK, detailsResponse.StatusCode);
+
+            using var detailsDoc = JsonDocument.Parse(
+                await detailsResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+            Assert.Equal("Mis a jour via multipart", detailsDoc.RootElement.GetProperty("title").GetString());
+
+            Assert.True(CountAttachmentsForPost(created.Id) >= 1);
+        }
+        finally
+        {
+            AbstractFileSystemHelpers.UserFilesDirName = previousRoot;
+            try { Directory.Delete(tempRoot, recursive: true); } catch { }
+        }
+    }
+
+    [Fact]
+    public async Task PutBlog_multipart_without_blog_field_returns_400()
+    {
+        ResetAndSeedDefaultUser();
+        using var http = NewClient(subject: "tester");
+
+        var draft = new BlogPost
+        {
+            Id = 0,
+            Title = "Initial",
+            AuthorId = "tester",
+            Article = "Contenu initial.",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
+        };
+
+        var postResponse = await http.PostAsJsonAsync(
+            _fixture.BlogSpotUrl(),
+            draft,
+            TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+
+        var created = (await postResponse.Content.ReadFromJsonAsync<BlogPost>(
+            TestContext.Current.CancellationToken))!;
+
+        var form = new MultipartFormDataContent();
+        var fileBytes = System.Text.Encoding.UTF8.GetBytes("payload test");
+        var fileContent = new ByteArrayContent(fileBytes);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
+        form.Add(fileContent, "file", "note.txt");
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Put,
+            _fixture.BlogSpotUrl() + $"/{created.Id}")
+        {
+            Content = form
+        };
+
+        var putResponse = await http.SendAsync(request, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.BadRequest, putResponse.StatusCode);
     }
 
     [Fact]
