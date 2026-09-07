@@ -25,6 +25,7 @@ using IdentityModel;
 using Yavsc.Server.Helpers;
 using Microsoft.AspNetCore.Mvc.Localization;
 using System.Diagnostics;
+using System.Data.Common;
 
 namespace Yavsc.Controllers
 {
@@ -538,9 +539,9 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
         {
             for (var current = exception; current is not null; current = current.InnerException)
             {
-                if (current is PostgresException pg
-                    && pg.SqlState == PostgresErrorCodes.UniqueViolation
-                    && string.Equals(pg.ConstraintName, "AK_AspNetUsers_Email", StringComparison.Ordinal))
+                if (current is DbException pg
+                    && pg.ErrorCode == 23505)
+                    // UNIQUE VIOLATION https://www.postgresql.org/docs/8.4/errcodes-appendix.html
                 {
                     return true;
                 }
