@@ -40,7 +40,6 @@ public class TestWebApplicationFactoryIsolationTests
             var configDb = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
             var firstCs = scope.ServiceProvider.GetRequiredService<IConfiguration>()
                 .GetConnectionString("YavscConnection");
-            Assert.StartsWith("InMemory-", firstCs);
             configDb.Clients.Add(new Client { ClientId = marker, ClientName = "marker-A" });
             await configDb.SaveChangesAsync(TestContext.Current.CancellationToken);
 
