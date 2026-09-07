@@ -43,7 +43,7 @@ jobs:
     - name: Secret scan
       run: |
         echo "🔍 Scanning for secrets..."
-        cd /src/_src && dotnet tool restore && dotnet picket protect --verbose --redact --exit-code 1 \
+        cd /src/_src && dotnet tool restore && dotnet picket git --verbose --redact --exit-code 1 --log-opts -n1 \
           && echo "✅ Success !" || echo "❌ Fail ($?)!"
     - name: Test
       run: |
