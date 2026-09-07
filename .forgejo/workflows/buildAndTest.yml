@@ -41,9 +41,10 @@ jobs:
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
     - name: Secret scan
-      uses: actions/secret-scan-action@v1
-      with:
-        install_scanners: true
+      run: |
+        echo "🔍 Scanning for secrets..."
+        cd /src/_src && dotnet tool restore && dotnet picket protect --verbose --redact --exit-code 1 \
+          && echo "✅ Success !" || echo "❌ Fail ($?)!"
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."
