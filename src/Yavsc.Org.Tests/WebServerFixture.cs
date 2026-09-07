@@ -189,6 +189,20 @@ public sealed class WebServerFixture : WebHostFixture
         return app;
     }
 
+    public void ResetAndMigrateDatabase()
+    {
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.EnsureDeleted();
+        if (db.Database.IsRelational())
+        {
+            db.Database.Migrate();
+            return;
+        }
+
+        db.Database.EnsureCreated();
+    }
+
     protected override async Task<WebApplication> ConfigurePipelineAsync(WebApplication app)
     {
         // The MSBuild target CopyYavscOrgStaticAssets in
