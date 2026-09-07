@@ -13,7 +13,7 @@ public partial class MainView : UserControl
     protected override void OnDataContextChanged(EventArgs e)
     {
         base.OnDataContextChanged(e);
-        if (DataContext is ViewModels.MainViewModel vm)
+        if (DataContext is ViewModels.BlogsViewModel vm)
         {
             if (!vm.IsLoaded)
             {

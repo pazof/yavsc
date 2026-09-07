@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
+using PostIt.Views.Blogs;
 using PostIt.Views.Commands;
 using Yavsc.Api.Client;
 
@@ -34,7 +35,7 @@ public static class ServiceCollectionHelpers
 
         // Vues
         services.AddSingleton<MainView>();
-        services.AddSingleton<MainPage>();
+        services.AddSingleton<BlogsPage>();
         services.AddSingleton<MainWindow>();
 
         // SettingsPage is a singleton: there must be one and only one
@@ -89,7 +90,7 @@ public static class ServiceCollectionHelpers
         sessionStatus.Refresh();
         services.AddSingleton(sessionStatus);
         services.AddSingleton<SessionStatusBanner>();
-        services.AddSingleton<MainViewModel>();
+        services.AddSingleton<BlogsViewModel>();
         return services.BuildServiceProvider();
     }
 }

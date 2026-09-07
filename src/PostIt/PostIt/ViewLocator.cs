@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PostIt.ViewModels;
 using PostIt.ViewModels.Commands;
 using PostIt.Views;
+using PostIt.Views.Blogs;
 using PostIt.Views.Commands;
 
 namespace PostIt;
@@ -38,7 +39,7 @@ public class ViewLocator : IDataTemplate
         var services = app!.ServiceProvider!;
         return data switch
         {
-            MainViewModel => services.GetRequiredService<MainPage>(),
+            BlogsViewModel => services.GetRequiredService<BlogsPage>(),
             Settings => services.GetRequiredService<SettingsPage>(),
             HomePageViewModel => services.GetRequiredService<HomePage>(),
             ActivitiesPageViewModel => services.GetRequiredService<ActivitiesPage>(),

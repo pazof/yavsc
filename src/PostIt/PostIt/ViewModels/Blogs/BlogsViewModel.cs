@@ -12,7 +12,7 @@ using PostIt.Helpers;
 
 namespace PostIt.ViewModels;
 
-public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
+public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 {
     /// <summary>Window/tab title. Cosmetic — bound by
     /// <c>MainPage.axaml</c> if at all. Not the post title.</summary>
@@ -336,7 +336,7 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
     }
 
 
-    public MainViewModel()
+    public BlogsViewModel()
     {
         SettingsModel = new Settings();
         Init(SettingsModel);
@@ -396,7 +396,7 @@ public partial class MainViewModel : ViewModelBase, IActionStatusViewModel
     /// <see cref="BlogApiClient"/>. Production code uses the
     /// (Settings, BlogApiClient) overload below.
     /// </summary>
-    public MainViewModel(BlogApiClient blogClient, Settings? settings = null, IServiceProvider? services = null)
+    public BlogsViewModel(BlogApiClient blogClient, Settings? settings = null, IServiceProvider? services = null)
     {
         SettingsModel = new Settings();
         BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient)); ;
