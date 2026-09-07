@@ -11,6 +11,10 @@ namespace Yavsc.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            var declarationDateDefaultSql = ActiveProvider == "Microsoft.EntityFrameworkCore.Sqlite"
+                ? "CURRENT_TIMESTAMP"
+                : "LOCALTIMESTAMP";
+
             migrationBuilder.CreateTable(
                 name: "Activities",
                 columns: table => new
@@ -1484,7 +1488,7 @@ namespace Yavsc.Migrations
                     Platform = table.Column<string>(type: "text", nullable: true),
                     Version = table.Column<string>(type: "text", nullable: true),
                     DeviceOwnerId = table.Column<string>(type: "text", nullable: true),
-                    DeclarationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "LOCALTIMESTAMP"),
+                    DeclarationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: declarationDateDefaultSql),
                     LatestActivityUpdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
