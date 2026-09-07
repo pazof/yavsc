@@ -1,4 +1,4 @@
-﻿using IdentityServer8.EntityFramework.Entities;
+using IdentityServer8.EntityFramework.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -96,6 +96,15 @@ namespace Yavsc.Models
             builder.Entity<UserActivity>().HasKey(u => new { u.DoesCode, u.UserId });
             builder.Entity<Instrumentation>().HasKey(u => new { u.InstrumentId, u.UserId });
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a => new { a.CircleId, a.BlogPostId });
+            builder.Entity<CircleAuthorizationToFile>().HasKey(a => new { a.CircleId, a.FileId });
+            builder.Entity<CircleAuthorizationToFile>()
+                .HasOne(a => a.Allowed)
+                .WithMany()
+                .HasForeignKey(a => a.CircleId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<CircleAuthorizationToFile>()
+                .Property(a => a.Access)
+                .HasConversion<byte>();
             builder.Entity<CircleMember>().HasKey(c => new { c.MemberId, c.CircleId });
             builder.Entity<DismissClicked>().HasKey(c => new { uid = c.UserId, notid = c.NotificationId });
             builder.Entity<HairTaintInstance>().HasKey(ti => new { ti.TaintId, ti.PrestationId });
@@ -366,6 +375,8 @@ namespace Yavsc.Models
         public DbSet<Circle> Circle { get; set; }
 
         public DbSet<CircleAuthorizationToBlogPost> CircleAuthorizationToBlogPost { get; set; }
+
+        public DbSet<CircleAuthorizationToFile> CircleAuthorizationToFile { get; set; }
 
         public DbSet<CommandForm> CommandForm { get; set; }
 
