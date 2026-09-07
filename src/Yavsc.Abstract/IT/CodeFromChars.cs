@@ -44,7 +44,6 @@ namespace Yavsc.Abstract.IT
         public bool Validate()
         {
             // this is a n*n task
-
             throw new NotImplementedException();
         }
 
