@@ -5,15 +5,15 @@
              xmlns:vm="using:PostIt.ViewModels"
              xmlns:postitControls="using:PostIt.Controls"
              xmlns:models="using:Yavsc.Blogspot"
-             xmlns:views="using:PostIt.Views"
+             xmlns:views="using:PostIt.Views.Blogs"
              xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
              mc:Ignorable="d"
-             x:Class="PostIt.Views.MainPage"
-             x:DataType="vm:MainViewModel"
+             x:Class="PostIt.Views.Blogs.BlogsPage"
+             x:DataType="vm:BlogsViewModel"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch">
     <Design.DataContext>
-        <vm:MainViewModel />
+        <vm:BlogsViewModel />
     </Design.DataContext>
 
     <Grid Margin="12" RowSpacing="12"

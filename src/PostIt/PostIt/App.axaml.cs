@@ -148,7 +148,7 @@ private void ConfigureRootView(MainView rootView)
     public static async Task PushBlogsPageAsync()
     {
         var app = (App)Current!;
-        var mainVm = app.ServiceProvider!.GetRequiredService<MainViewModel>();
+        var mainVm = app.ServiceProvider!.GetRequiredService<BlogsViewModel>();
         await mainVm.InitializeAsync();
         await app.PushPageAsync(mainVm);
     }
