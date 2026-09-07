@@ -2,7 +2,7 @@
 namespace Yavsc.Models.Access
 {
     using System.ComponentModel.DataAnnotations.Schema;
-    using Yavsc.Abstract.Identity.Security;
+    using System.Text.Json.Serialization;
     using Models.Relationship;
     using Yavsc.Services;
 
@@ -10,14 +10,15 @@ namespace Yavsc.Models.Access
     {
         public FileAccessRight Access { get; set; }
 
-    }
-
-    public class FileAccessControlRulePayload : CircleAuthorization
-    {
-        public virtual string FileId { get; set; }
-
+        [JsonIgnore]
         [ForeignKey("CircleId")]
         public virtual Circle Allowed { get; set; }
+
+        public string OwnerId { get; set; }
+
+        [JsonIgnore]
+        [ForeignKey("OwnerId")]
+        public virtual ApplicationUser Owner { get; set; }
 
     }
 }

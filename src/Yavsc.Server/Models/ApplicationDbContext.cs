@@ -96,12 +96,19 @@ namespace Yavsc.Models
             builder.Entity<UserActivity>().HasKey(u => new { u.DoesCode, u.UserId });
             builder.Entity<Instrumentation>().HasKey(u => new { u.InstrumentId, u.UserId });
             builder.Entity<CircleAuthorizationToBlogPost>().HasKey(a => new { a.CircleId, a.BlogPostId });
-            builder.Entity<CircleAuthorizationToFile>().HasKey(a => new { a.CircleId, a.FileId });
+            builder.Entity<CircleAuthorizationToFile>().HasKey(a => new { a.CircleId, a.Path, a.OwnerId });
             builder.Entity<CircleAuthorizationToFile>()
                 .HasOne(a => a.Allowed)
                 .WithMany()
                 .HasForeignKey(a => a.CircleId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade)
+                ;
+            builder.Entity<CircleAuthorizationToFile>()
+                .HasOne(a => a.Owner)
+                .WithMany()
+                .HasForeignKey(a => a.OwnerId)
+                .OnDelete(DeleteBehavior.Cascade)
+                ;
             builder.Entity<CircleAuthorizationToFile>()
                 .Property(a => a.Access)
                 .HasConversion<byte>();
