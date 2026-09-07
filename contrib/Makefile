@@ -1,6 +1,8 @@
 APP_PROJECT_NAMES=Org Blogs Api
 SLNDIR=..
 
+MAIN_SECRET="***REMOVED***"
+
 include $(SLNDIR)/.env
 include .env
 
