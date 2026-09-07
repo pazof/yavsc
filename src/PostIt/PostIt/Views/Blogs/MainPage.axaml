@@ -12,118 +12,132 @@
              x:DataType="vm:BlogsViewModel"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch">
-    <Design.DataContext>
-        <vm:BlogsViewModel />
-    </Design.DataContext>
+  <Design.DataContext>
+    <vm:BlogsViewModel />
+  </Design.DataContext>
 
-    <Grid Margin="12" RowSpacing="12"
-          HorizontalAlignment="Stretch"
-          VerticalAlignment="Stretch">
+  <Grid Margin="12" RowSpacing="12"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+     <WrapPanel Grid.Row="0" HorizontalAlignment="Stretch">
+      <TextBlock Text="Blog Posts" FontSize="22" FontWeight="SemiBold" />
+    <TextBox Text="{Binding SearchText, Mode=TwoWay}" PlaceholderText="Filter by title or author..." />
+    <CommandBar IsDynamicOverflowEnabled="True">
+      <CommandBar.PrimaryCommands>
+       
+        <CommandBarButton Label="Filter" Command="{Binding SearchAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource FilterIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton Label="Refresh" Command="{Binding RefreshAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource RefreshIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton Label="Save" Command="{Binding SaveAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource SaveIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton Label="Delete" Command="{Binding DeleteAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource DeleteIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton Label="Ajouter fichiers" Click="AddAttachment_Click"
+                          x:Name="AddAttachmentButton">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource AddIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton x:Name="ManageAclButton"
+                          Label="ACL" Command="{Binding ManageAclAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource AclIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton x:Name="OpenCirclesButton"
+                          Label="Mes cercles" Command="{Binding OpenCirclesAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource CircleIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarToggleButton Label="Publié"
+                                IsChecked="{Binding DraftIsPublished, Mode=TwoWay}">
+          <CommandBarToggleButton.Icon>
+            <PathIcon Data="{StaticResource PublishedIcon}" />
+          </CommandBarToggleButton.Icon>
+        </CommandBarToggleButton>
+        <CommandBarButton x:Name="OpenSignatureDevButton"
+                          Label="[DEV] Signature" Command="{Binding OpenSignatureDevAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource SignIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+      </CommandBar.PrimaryCommands>
+    </CommandBar>
+    </WrapPanel>
+    <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Padding="8">
+      <ListBox ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}"
+               HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="40">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="models:BlogPostDto">
+            <StackPanel Spacing="4">
+              <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+              <TextBlock Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" FontSize="10" Foreground="Gray" />
+              <TextBlock Text="{Binding AuthorId}" FontSize="10" Foreground="DarkSlateGray" />
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Border>
+
+    <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" Padding="8">
+      <Grid RowSpacing="10"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Top"
-                Padding="0">
-            <WrapPanel Orientation="Horizontal">
-                <Button Command="{Binding RefreshAsync}" Content="🗘 Refresh" />
-                <Button Command="{Binding SearchAsync}" Content="🔍 Filter" />
-                <Button Command="{Binding SaveAsync}" Content="Save" />
-                <Button Command="{Binding DeleteAsync}" Content="Delete" />
-                <Button x:Name="AddAttachmentButton"
-                    Content="Ajouter fichiers"
-                    Click="AddAttachment_Click" />
-                <Button x:Name="ManageAclButton"
-                        Command="{Binding ManageAclAsync}"
-                        Content="ACL" />
-                <Button x:Name="OpenCirclesButton"
-                        Command="{Binding OpenCirclesAsync}"
-                        Content="Mes cercles" />
-                <!-- Publication toggle: a CheckBox wired to
-                     DraftIsPublished. Clicking it fires
-                     TogglePublishCommand, which pushes the
-                     new state to /api/blog/{id}/publish.
-                     The CheckBox is the canonical
-                     AvaloniaXaml 'toggle' surface; binding
-                     IsChecked TwoWay keeps the visual state
-                     and the buffer in sync. -->
-                <CheckBox Content="Publié"
-                          IsChecked="{Binding DraftIsPublished, Mode=TwoWay}"
-                          Command="{Binding TogglePublishAsync}"
-                          VerticalAlignment="Center"/>
-                <!--
-                    DEV ONLY: temporary shortcut to open the signature
-                    capture page. Production entry point is a SignalR
-                    push from Yavsc.Org ("devis received, sign here").
-                    Remove this button and its Click handler in
-                    MainPage.axaml.cs once the SignalR handler lands.
-                -->
-                <Button x:Name="OpenSignatureDevButton"
-                        Command="{Binding OpenSignatureDevAsync}"
-                        Content="[DEV] Signature"
-                        ToolTip.Tip="DEV ONLY — to remove when SignalR handler lands" />
-            </WrapPanel>
+        <TextBlock Grid.Row="0" Text="Post detail" FontWeight="SemiBold" />
+        <TextBox Grid.Row="1" Text="{Binding DraftTitle, Mode=TwoWay}" PlaceholderText="Title" />
+        <TextBox Grid.Row="2" PlaceholderText="Write something here !"
+                 Text="{Binding DraftArticle, Mode=TwoWay}"
+                 MinHeight="320"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch" />
+
+        <Border Grid.Row="3" BorderBrush="LightGray" BorderThickness="1" Padding="8">
+          <StackPanel Spacing="4">
+            <TextBlock Text="Pièces jointes" FontWeight="SemiBold" />
+            <ItemsControl ItemsSource="{Binding DraftAttachments}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding FileName}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
         </Border>
 
-        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Padding="8">
-            <ListBox ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="40">
-                <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="models:BlogPostDto">
-                        <StackPanel Spacing="4">
-                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
-                            <TextBlock Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" FontSize="10" Foreground="Gray" />
-                            <TextBlock Text="{Binding AuthorId}" FontSize="10" Foreground="DarkSlateGray" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Border>
+        <postitControls:StatusBar Grid.Row="4"
+                                  DataContext="{Binding ActionStatus}" />
 
-        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" Padding="8">
-            <Grid RowSpacing="10"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Row="0" Text="Post detail" FontWeight="SemiBold" />
-                <TextBox Grid.Row="1" Text="{Binding DraftTitle, Mode=TwoWay}" PlaceholderText="Title" />
-               <TextBox Grid.Row="2" PlaceholderText="Write something here !"
-                  Text="{Binding DraftArticle, Mode=TwoWay}"
-                  MinHeight="320"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch" />
-
-                <Border Grid.Row="3" BorderBrush="LightGray" BorderThickness="1" Padding="8">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Pièces jointes" FontWeight="SemiBold" />
-                        <ItemsControl ItemsSource="{Binding DraftAttachments}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding FileName}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
-
-                <postitControls:StatusBar Grid.Row="4"
-                                          DataContext="{Binding ActionStatus}" />
-
-            </Grid>
-        </Border>
-    </Grid>
+      </Grid>
+    </Border>
+  </Grid>
 </ContentPage>
