@@ -47,7 +47,10 @@
       "group": "build",
       "isBuildCommand": true,
       "isTestCommand": false,
-      "isBackground": true
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
     },
     {
       "label": "test blogs backend",
