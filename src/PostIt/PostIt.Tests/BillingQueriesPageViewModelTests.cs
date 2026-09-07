@@ -129,6 +129,12 @@ public class BillingQueriesPageViewModelTests
             return Task.CompletedTask;
         }
 
+        public Task<T> CallAsync<T>(HttpMethod method, string path, Func<HttpContent> contentFactory, CancellationToken ct = default)
+            => CallAsync<T>(method, path, (object?)null, ct);
+
+        public Task CallAsync(HttpMethod method, string path, Func<HttpContent> contentFactory, CancellationToken ct = default)
+            => CallAsync(method, path, (object?)null, ct);
+
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }
 }

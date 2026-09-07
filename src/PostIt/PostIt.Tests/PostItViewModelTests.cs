@@ -11,12 +11,12 @@ public class PostItViewModelTests
     [Fact]
     public void SearchCommand_filters_posts_by_title_article_or_author()
     {
-        // MainPageViewModel no longer owns a BlogApiClient instance by
+        // BlogsViewModel no longer owns a BlogApiClient instance by
         // default; tests construct one with a fake YavscApiClient that
         // throws on any call (we never call the API in this test).
         var fakeApi = new ThrowingYavscApiClient();
         var blog = new BlogApiClient(fakeApi, "http://localhost/");
-        var viewModel = new MainViewModel(blog);
+        var viewModel = new BlogsViewModel(blog);
 
         viewModel.Posts.Add(new BlogPostDto { Id = 1, Title = "First post", Article = "Hello world", AuthorId = "alice" });
         viewModel.Posts.Add(new BlogPostDto { Id = 2, Title = "Second post", Article = "Nothing here", AuthorId = "bob" });
@@ -60,7 +60,7 @@ public class PostItViewModelTests
     {
         var api = new RecordingPublishApi();
         var blog = new BlogApiClient(api, "http://localhost/");
-        var viewModel = new MainViewModel(blog);
+        var viewModel = new BlogsViewModel(blog);
 
         viewModel.SelectedPost = new BlogPostDto { Id = 42, IsPublished = false };
 
@@ -145,6 +145,12 @@ public class PostItViewModelTests
 
             return Task.CompletedTask;
         }
+
+        public Task<T> CallAsync<T>(HttpMethod method, string path, Func<HttpContent> contentFactory, CancellationToken ct = default)
+            => CallAsync<T>(method, path, (object?)null, ct);
+
+        public Task CallAsync(HttpMethod method, string path, Func<HttpContent> contentFactory, CancellationToken ct = default)
+            => CallAsync(method, path, (object?)null, ct);
 
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }

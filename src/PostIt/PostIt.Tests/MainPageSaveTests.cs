@@ -5,10 +5,11 @@ using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using PostIt.ViewModels;
 using PostIt.Views;
+using PostIt.Views.Blogs;
 namespace PostIt.Tests;
 
 /// <summary>
-/// Headless UI tests for the "Save" flow in <see cref="MainPage"/>.
+/// Headless UI tests for the "Save" flow in <see cref="BlogsPage"/>.
 /// The pattern is the one <c>SessionStatusBannerTests</c>
 /// established: <c>[AvaloniaFact]</c>, a <see cref="Window"/>
 /// hosting the page (via a <see cref="Frame"/> because
@@ -40,9 +41,9 @@ public class MainPageSaveTests
         var recorder = new CallRecorder();
         var api = new RecordingYavscApiClient(recorder);
         var blog = new BlogApiClient(api, "http://localhost/");
-        var viewModel = new MainViewModel(blog);
+        var viewModel = new BlogsViewModel(blog);
 
-        var page = new MainPage { DataContext = viewModel };
+        var page = new BlogsPage { DataContext = viewModel };
         // MainPage is a ContentPage (a Page, not a Control), so it
         // must be hosted in a navigation surface. The production
         // MainWindow.axaml uses NavigationPage, and the API is the

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Yavsc.Blogspot;
@@ -62,11 +64,18 @@ public sealed class BlogApiClient
     public Task<BlogPostDto?> GetPostAsync(long id, CancellationToken ct = default)
         => _api.CallAsync<BlogPostDto?>(HttpMethod.Get, $"{_pathPrefix}/{id}", ct: ct);
 
-    public Task<BlogPostDto?> CreatePostAsync(BlogPostDto post, CancellationToken ct = default)
-        => _api.CallAsync<BlogPostDto?>(HttpMethod.Post, _pathPrefix, body: post, ct: ct);
+    public Task<BlogPostDto?> CreatePostAsync(
+        BlogPostDto post,
+        IReadOnlyCollection<BlogUploadFile>? files = null,
+        CancellationToken ct = default)
+        => SendPostAsync(HttpMethod.Post, _pathPrefix, post, files, ct);
 
-    public Task UpdatePostAsync(long id, BlogPostDto post, CancellationToken ct = default)
-        => _api.CallAsync(HttpMethod.Put, $"{_pathPrefix}/{id}", body: post, ct: ct);
+    public Task UpdatePostAsync(
+        long id,
+        BlogPostDto post,
+        IReadOnlyCollection<BlogUploadFile>? files = null,
+        CancellationToken ct = default)
+        => SendPostAsync(HttpMethod.Put, $"{_pathPrefix}/{id}", post, files, ct);
 
     public Task DeletePostAsync(long id, CancellationToken ct = default)
         => _api.CallAsync(HttpMethod.Delete, $"{_pathPrefix}/{id}", ct: ct);
@@ -81,4 +90,39 @@ public sealed class BlogApiClient
     public Task SetPublishAsync(long id, bool publish, CancellationToken ct = default)
         => _api.CallAsync(HttpMethod.Put, $"{_pathPrefix}/{id}/publish",
             body: new { publish }, ct: ct);
+
+    private Task<BlogPostDto?> SendPostAsync(
+        HttpMethod method,
+        string path,
+        BlogPostDto post,
+        IReadOnlyCollection<BlogUploadFile>? files,
+        CancellationToken ct)
+    {
+        if (files is null || files.Count == 0)
+            return _api.CallAsync<BlogPostDto?>(method, path, body: post, ct: ct);
+
+        return _api.CallAsync<BlogPostDto?>(method, path, () => CreateMultipartContent(post, files), ct: ct);
+    }
+
+    private static HttpContent CreateMultipartContent(BlogPostDto post, IReadOnlyCollection<BlogUploadFile> files)
+    {
+        var content = new MultipartFormDataContent();
+        var blogJson = JsonSerializer.Serialize(post, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+        });
+
+        content.Add(new StringContent(blogJson), "blog");
+
+        foreach (var file in files)
+        {
+            var fileContent = new ByteArrayContent(file.Content);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(
+                string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType);
+            content.Add(fileContent, "file", file.FileName);
+        }
+
+        return content;
+    }
 }

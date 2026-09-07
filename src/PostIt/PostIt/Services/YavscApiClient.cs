@@ -191,7 +191,28 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         object? body = null,
         CancellationToken ct = default)
     {
-        using var response = await SendAsync(method, path, body, ct).ConfigureAwait(false);
+        using var response = await SendAsync(method, path, body is null ? null : () => JsonContent.Create(body), ct).ConfigureAwait(false);
+        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
+
+        var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
+        var dto = await JsonSerializer.DeserializeAsync<T>(stream,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, ct).ConfigureAwait(false);
+        return dto!;
+    }
+
+    /// <summary>
+    /// Call a multipart endpoint, transparently refreshing the token if needed.
+    /// </summary>
+    public virtual async Task<T> CallAsync<T>(
+        HttpMethod method,
+        string path,
+        Func<HttpContent> contentFactory,
+        CancellationToken ct = default)
+    {
+        if (contentFactory is null)
+            throw new ArgumentNullException(nameof(contentFactory));
+
+        using var response = await SendAsync(method, path, contentFactory, ct).ConfigureAwait(false);
         await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
 
         var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
@@ -217,7 +238,23 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         object? body = null,
         CancellationToken ct = default)
     {
-        using var response = await SendAsync(method, path, body, ct).ConfigureAwait(false);
+        using var response = await SendAsync(method, path, body is null ? null : () => JsonContent.Create(body), ct).ConfigureAwait(false);
+        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Call a multipart endpoint that returns no useful body (DELETE, etc.).
+    /// </summary>
+    public async Task CallAsync(
+        HttpMethod method,
+        string path,
+        Func<HttpContent> contentFactory,
+        CancellationToken ct = default)
+    {
+        if (contentFactory is null)
+            throw new ArgumentNullException(nameof(contentFactory));
+
+        using var response = await SendAsync(method, path, contentFactory, ct).ConfigureAwait(false);
         await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
     }
 
@@ -232,7 +269,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         => CallAsync(method, path, body: null, ct);
 
     private async Task<HttpResponseMessage> SendAsync(
-        HttpMethod method, string path, object? body, CancellationToken ct)
+        HttpMethod method, string path, Func<HttpContent>? contentFactory, CancellationToken ct)
     {
         if (_tokens is null)
             throw new InvalidOperationException("Not logged in. Call LoginInteractiveAsync first.");
@@ -240,8 +277,8 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         await EnsureFreshTokenAsync(ct).ConfigureAwait(false);
 
         using var req = new HttpRequestMessage(method, path);
-        if (body is not null)
-            req.Content = JsonContent.Create(body);
+        if (contentFactory is not null)
+            req.Content = contentFactory();
         var response = await Http.SendAsync(req, ct).ConfigureAwait(false);
 
         if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -252,8 +289,8 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             await ForceRefreshAsync(ct).ConfigureAwait(false);
 
             using var retry = new HttpRequestMessage(method, path);
-            if (body is not null)
-                retry.Content = JsonContent.Create(body);
+            if (contentFactory is not null)
+                retry.Content = contentFactory();
             response = await Http.SendAsync(retry, ct).ConfigureAwait(false);
         }
 
