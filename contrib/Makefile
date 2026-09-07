@@ -1,7 +1,7 @@
 APP_PROJECT_NAMES=Org Blogs Api
 SLNDIR=..
 
-MAIN_SECRET="4QSFD923c65sdf-654"
+MAIN_SECRET="4QqkjsfS345FD923c65sdf-654"
 
 include $(SLNDIR)/.env
 include .env
