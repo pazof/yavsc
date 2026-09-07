@@ -370,8 +370,6 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         }
     }
 
-
-
     /// <summary>Create a circle owned by <paramref name="ownerId"/>
     /// directly in the SQLite store and return its server-assigned
     /// id.</summary>
@@ -415,5 +413,4 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         db.SaveChanges();
         return post.Id;
     }
-
 }

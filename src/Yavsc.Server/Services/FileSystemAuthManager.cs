@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using rules;
 using Yavsc.Models;
+using Yavsc.Models.Access;
 using Yavsc.Server.Helpers;
 
 namespace Yavsc.Services
@@ -98,7 +99,35 @@ namespace Yavsc.Services
 
         public void SetAccess(long circleId, string normalizedFullPath, FileAccessRight access)
         {
-            throw new NotImplementedException();
+            var acl = _dbContext.CircleAuthorizationToFile.SingleOrDefault(a =>
+                a.CircleId == circleId && a.FileId == normalizedFullPath);
+
+            if (access == FileAccessRight.None)
+            {
+                if (acl != null)
+                {
+                    _dbContext.CircleAuthorizationToFile.Remove(acl);
+                }
+
+                _dbContext.SaveChanges();
+                return;
+            }
+
+            if (acl == null)
+            {
+                _dbContext.CircleAuthorizationToFile.Add(new CircleAuthorizationToFile
+                {
+                    CircleId = circleId,
+                    FileId = normalizedFullPath,
+                    Access = access
+                });
+            }
+            else
+            {
+                acl.Access = access;
+            }
+
+            _dbContext.SaveChanges();
         }
     }
 }
