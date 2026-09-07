@@ -99,8 +99,16 @@ namespace Yavsc.Services
 
         public void SetAccess(long circleId, string normalizedFullPath, FileAccessRight access)
         {
+            var providerUserName = normalizedFullPath.Split('/')[0];
+            var providerUserId = _dbContext.Users.SingleOrDefault(u => u.UserName == providerUserName)?.Id;
+
+            if (string.IsNullOrEmpty(providerUserId))
+            {
+                return;
+            }
+
             var acl = _dbContext.CircleAuthorizationToFile.SingleOrDefault(a =>
-                a.CircleId == circleId && a.FileId == normalizedFullPath);
+                a.CircleId == circleId && a.Path == normalizedFullPath && a.OwnerId == providerUserId);
 
             if (access == FileAccessRight.None)
             {
@@ -118,7 +126,8 @@ namespace Yavsc.Services
                 _dbContext.CircleAuthorizationToFile.Add(new CircleAuthorizationToFile
                 {
                     CircleId = circleId,
-                    FileId = normalizedFullPath,
+                    Path = normalizedFullPath,
+                    OwnerId = providerUserId,
                     Access = access
                 });
             }
