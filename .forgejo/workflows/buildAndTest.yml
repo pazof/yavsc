@@ -40,7 +40,10 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-
+    - name: Secret scan
+      uses: actions/secret-scan-action@v1
+      with:
+        install_scanners: true
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."
