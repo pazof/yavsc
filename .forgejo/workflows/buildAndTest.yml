@@ -52,4 +52,4 @@ jobs:
           --verbosity normal \
           --filter="Category!=Platform-Android" \
           --logger "xunit;LogFileName=test-results.xml" \
-          && echo "✅ Success !" || echo "❌ Fail ($?)!"
+          && echo "✅ Success !" || { echo "❌ Fail ($?)!"; exit 1; }
