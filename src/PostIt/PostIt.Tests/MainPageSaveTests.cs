@@ -64,9 +64,7 @@ public class MainPageSaveTests
         const string typed = "Mon premier billet";
         titleBox.Text = typed;
 
-        var saveButton = window.GetVisualDescendants()
-            .OfType<Button>()
-            .Single(b => b.Content as string == "Save");
+        var saveButton = page.SaveButton;
         saveButton.Command!.Execute(null);
 
         // The Save command is async (RelayCommand over Task) but
