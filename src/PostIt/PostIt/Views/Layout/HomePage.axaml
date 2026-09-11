@@ -22,5 +22,9 @@
               Command="{Binding OpenActivities}"
               HorizontalAlignment="Center"
               IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
+          <Button Content="Mes demandes en cours"
+              Command="{Binding OpenProviderRequests}"
+              HorizontalAlignment="Center"
+              IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
         </StackPanel>
 </ContentPage>

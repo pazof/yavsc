@@ -115,6 +115,7 @@ public class MainPageButtonsTests
         var window = new MainView();
         var page = new BlogsPage { DataContext = vm };
         var app = (PostIt.App)Application.Current!;
+
         app.AttachMainWindow(window);
         window.NavRoot.PushAsync(page).GetAwaiter().GetResult();
         return (window, page);

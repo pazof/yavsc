@@ -91,7 +91,7 @@ public sealed class BlogApiClient
         => _api.CallAsync(HttpMethod.Put, $"{_pathPrefix}/{id}/publish",
             body: new { publish }, ct: ct);
 
-    private Task<BlogPostDto?> SendPostAsync(
+    private async Task<BlogPostDto?> SendPostAsync(
         HttpMethod method,
         string path,
         BlogPostDto post,
@@ -99,9 +99,9 @@ public sealed class BlogApiClient
         CancellationToken ct)
     {
         if (files is null || files.Count == 0)
-            return _api.CallAsync<BlogPostDto?>(method, path, body: post, ct: ct);
+            return await _api.CallAsync<BlogPostDto?>(method, path, body: post, ct: ct);
 
-        return _api.CallAsync<BlogPostDto?>(method, path, () => CreateMultipartContent(post, files), ct: ct);
+        return await _api.CallAsync<BlogPostDto?>(method, path, () => CreateMultipartContent(post, files), ct: ct);
     }
 
     private static HttpContent CreateMultipartContent(BlogPostDto post, IReadOnlyCollection<BlogUploadFile> files)
