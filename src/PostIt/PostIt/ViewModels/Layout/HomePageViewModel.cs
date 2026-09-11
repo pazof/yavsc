@@ -30,10 +30,11 @@ public class HomePageViewModel : ViewModelBase
         SessionStatus = sessionStatus;
 
         OpenActivities = new AsyncRelayCommand(OpenActivitiesAsync);
-
+        OpenProviderRequests = new AsyncRelayCommand(OpenProviderRequestsAsync);
     }
     public IAsyncRelayCommand OpenBlogs { get; } = new AsyncRelayCommand(App.PushBlogsPageAsync);
     public IAsyncRelayCommand OpenActivities { get; }
+    public IAsyncRelayCommand OpenProviderRequests { get; }
 
     private async Task OpenActivitiesAsync()
     {
@@ -47,6 +48,8 @@ public class HomePageViewModel : ViewModelBase
         await vm.RefreshAsync();
         await app.PushPageAsync(vm);
     }
+
+    private Task OpenProviderRequestsAsync() => OpenActivitiesAsync();
 
     /// <summary>
     /// Avalonia designer constructor. Builds a self-contained VM

@@ -126,6 +126,27 @@ namespace Yavsc.Models
             builder.Entity<Activity>().Property(a => a.ParentCode).IsRequired(false);
             builder.Entity<Activity>().Property(a => a.Description).IsRequired(false);
 
+            builder.Entity<DictionnaireMetier>()
+                .HasOne(d => d.DomaineActivite)
+                .WithMany()
+                .HasForeignKey(d => d.DomaineActiviteCode)
+                .HasPrincipalKey(a => a.Code)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<DictionnaireMetier>()
+                .HasIndex(d => new { d.DomaineActiviteCode, d.Langue, d.Nom })
+                .IsUnique();
+
+            builder.Entity<TermeMetier>()
+                .HasOne(t => t.DictionnaireMetier)
+                .WithMany(d => d.Termes)
+                .HasForeignKey(t => t.DictionnaireMetierId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<TermeMetier>()
+                .HasIndex(t => new { t.DictionnaireMetierId, t.Langue, t.Mot })
+                .IsUnique();
+
             builder.Entity<Country>().HasKey(c => c.Code);
             builder.Entity<PerformerCodeInputValidation>()
                 .HasOne(v => v.Country)
@@ -262,6 +283,10 @@ namespace Yavsc.Models
         /// </summary>
         /// <returns></returns>
         public DbSet<Activity> Activities { get; set; }
+
+        public DbSet<DictionnaireMetier> DictionnaireMetier { get; set; }
+
+        public DbSet<TermeMetier> TermeMetier { get; set; }
 
         public DbSet<UserActivity> UserActivities { get; set; }
 

@@ -29,7 +29,7 @@
     <TextBox Text="{Binding SearchText, Mode=TwoWay}" PlaceholderText="Filter by title or author..." />
     <CommandBar IsDynamicOverflowEnabled="True">
       <CommandBar.PrimaryCommands>
-       
+
         <CommandBarButton Label="Filter" Command="{Binding SearchAsync}">
           <CommandBarButton.Icon>
             <PathIcon Data="{StaticResource FilterIcon}" />
@@ -40,7 +40,7 @@
             <PathIcon Data="{StaticResource RefreshIcon}" />
           </CommandBarButton.Icon>
         </CommandBarButton>
-        <CommandBarButton Label="Save" Command="{Binding SaveAsync}">
+        <CommandBarButton x:Name="SaveButton" Label="Save" Command="{Binding SaveAsync}">
           <CommandBarButton.Icon>
             <PathIcon Data="{StaticResource SaveIcon}" />
           </CommandBarButton.Icon>
@@ -57,7 +57,8 @@
           </CommandBarButton.Icon>
         </CommandBarButton>
         <CommandBarButton x:Name="ManageAclButton"
-                          Label="ACL" Command="{Binding ManageAclAsync}">
+          Label="ACL"
+          Command="{Binding ManageAclAsync}">
           <CommandBarButton.Icon>
             <PathIcon Data="{StaticResource AclIcon}" />
           </CommandBarButton.Icon>
@@ -114,7 +115,8 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Row="0" Text="Post detail" FontWeight="SemiBold" />
-        <TextBox Grid.Row="1" Text="{Binding DraftTitle, Mode=TwoWay}" PlaceholderText="Title" />
+        <TextBox x:Name="DraftTitleTextBox"
+        Grid.Row="1" Text="{Binding DraftTitle, Mode=TwoWay}" PlaceholderText="Title" />
         <TextBox Grid.Row="2" PlaceholderText="Write something here !"
                  Text="{Binding DraftArticle, Mode=TwoWay}"
                  MinHeight="320"
