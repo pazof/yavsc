@@ -8,7 +8,7 @@ namespace PostIt.Helpers;
 
 public static class ViewModelBaseHelpers
 {
-    public static async Task PushPageAsync(this App app, ViewModelBase vm)
+    public static async Task<Page> PushPageAsync(this App app, ViewModelBase vm)
     {
         var window = app.View;
         if (window is null)
@@ -43,9 +43,11 @@ public static class ViewModelBaseHelpers
         var stack = window.NavRoot.NavigationStack;
         if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], page))
         {
-            return;
+            return page;
         }
 
         await window.NavRoot.PushAsync(page);
+
+        return page;
     }
 }

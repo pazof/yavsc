@@ -9,6 +9,7 @@ using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
 using PostIt.Views.Blogs;
+using PostIt.Helpers;
 
 namespace PostIt.Tests;
 
@@ -117,7 +118,10 @@ public class MainPageButtonsTests
         var app = (PostIt.App)Application.Current!;
 
         app.AttachMainWindow(window);
+
         window.NavRoot.PushAsync(page).GetAwaiter().GetResult();
+        var mainWindow = new Window { Content = window };
+        mainWindow.Show();
         return (window, page);
     }
 
@@ -147,7 +151,7 @@ public class MainPageButtonsTests
     }
 
     [AvaloniaFact]
-    public void Acl_button_click_pushes_a_page_onto_nav_stack()
+    public async Task Acl_button_click_pushes_a_page_onto_nav_stack()
     {
         // Arrange: a VM whose SelectedPost is non-null so
         // CanManageAcl evaluates to true and the button is
@@ -180,7 +184,7 @@ public class MainPageButtonsTests
     }
 
     [AvaloniaFact]
-    public void Circles_button_click_pushes_a_page_onto_nav_stack()
+    public async Task Circles_button_click_pushes_a_page_onto_nav_stack()
     {
         // Arrange: OpenCircles has no CanExecute guard today —
         // any click should fire it and push the page.

@@ -46,35 +46,48 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var window = ServiceProvider.GetRequiredService<MainWindow>();
-            desktop.MainWindow = window;
-            View = window.MainView;
-            this.ConfigureRootView(window.MainView);
-
-            ApplyDarkMode(settings);
+            InitializeClassicDesktopLifetime(settings, desktop);
         }
         else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
         {
-            singleViewFactoryApplicationLifetime.MainViewFactory =
-                () =>
-                {
-                    View = ServiceProvider.GetRequiredService<MainView>();
-                    this.ConfigureRootView(View);
-                    ApplyDarkMode(settings);
-                    return View;
-                };
+            InitializeActivityLifetime(settings, singleViewFactoryApplicationLifetime);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = View = ServiceProvider.GetRequiredService<MainView>();
-            ConfigureRootView(View);
-            ApplyDarkMode(settings);
+            InitializeSingleViewLifetime(settings, singleViewPlatform);
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
-private void ConfigureRootView(MainView rootView)
+    public void InitializeSingleViewLifetime(Settings settings, ISingleViewApplicationLifetime singleViewPlatform)
+    {
+        singleViewPlatform.MainView = View = ServiceProvider!.GetRequiredService<MainView>();
+        ConfigureRootView(View);
+        ApplyDarkMode(settings);
+    }
+
+    public void InitializeActivityLifetime(Settings settings, IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
+    {
+        singleViewFactoryApplicationLifetime.MainViewFactory =
+                        () =>
+                        {
+                            this.ConfigureRootView(ServiceProvider!.GetRequiredService<MainView>());
+                            ApplyDarkMode(settings);
+                            return View!;
+                        };
+    }
+
+    public void InitializeClassicDesktopLifetime(Settings settings, IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        var window = ServiceProvider!.GetRequiredService<MainWindow>();
+        desktop.MainWindow = window;
+        this.ConfigureRootView(window.MainView);
+
+        ApplyDarkMode(settings);
+    }
+
+    public void ConfigureRootView(MainView rootView)
 {
     // Déclencher le Boot une seule fois lors du chargement du contrôle à l'écran.
     rootView.AttachedToVisualTree += async (_, _) => await BootOnceAsync();
@@ -87,6 +100,7 @@ private void ConfigureRootView(MainView rootView)
     };
 
     rootView.SessionBanner.DataContext = sessionStatus;
+    this.View = rootView;
 }
 
     private async Task BootOnceAsync()

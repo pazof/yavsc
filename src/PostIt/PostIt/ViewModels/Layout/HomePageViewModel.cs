@@ -31,8 +31,9 @@ public class HomePageViewModel : ViewModelBase
 
         OpenActivities = new AsyncRelayCommand(OpenActivitiesAsync);
         OpenProviderRequests = new AsyncRelayCommand(OpenProviderRequestsAsync);
+        OpenBlogs = new AsyncRelayCommand(App.PushBlogsPageAsync);
     }
-    public IAsyncRelayCommand OpenBlogs { get; } = new AsyncRelayCommand(App.PushBlogsPageAsync);
+    public IAsyncRelayCommand OpenBlogs { get; }
     public IAsyncRelayCommand OpenActivities { get; }
     public IAsyncRelayCommand OpenProviderRequests { get; }
 
