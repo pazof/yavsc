@@ -175,6 +175,12 @@ jobs:
         run: |
           cd /src/_src
           dotnet restore
+      - name: Test
+        run: |
+          cd /src/_src && dotnet test \
+          --verbosity normal \
+          --filter="Category!=Platform-Android" \
+          --logger "xunit;LogFileName=test-results.xml"
 
       - name: Build de PostIt.Android ARM64
         run: |
@@ -200,6 +206,7 @@ jobs:
           RELEASE_BODY: ${{ env.RELEASE_BODY }}
           IS_PRERELEASE: ${{ env.IS_PRERELEASE }}
         run: |
+          set -e
           if [[ -z "$TAG" ]]; then
             echo "::error::No tag resolved for the API call."
             exit 1
