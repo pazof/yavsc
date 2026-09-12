@@ -289,33 +289,11 @@ public sealed class BlogsWebServerFixture : WebHostFixture
 
     public override void Dispose()
     {
-        try
-        {
-            base.Dispose();
-        }
-        finally
-        {
-            // Close the shared SQLite connection only when the
-            // last fixture instance goes away, matching the
-            // lifetime contract of WebHostFixture.Dispose. We
-            // rely on base.Dispose's _instanceCount decrement
-            // having run, so we close only if the host is gone
-            // (base already nulled _app when count==0).
-            lock (_sqliteLock)
-            {
-                if (_sharedSqliteConnection is not null)
-                {
-                    // Synchronous close: SQLite's Close() is
-                    // documented as safe to call from a sync
-                    // context and avoids the GetAwaiter().GetResult()
-                    // pattern that's historically caused teardown
-                    // hangs in this repo's async pipeline.
-                    _sharedSqliteConnection.Close();
-                    _sharedSqliteConnection.Dispose();
-                    _sharedSqliteConnection = null;
-                }
-            }
-        }
+        // Keep the shared in-memory SQLite connection alive for the
+        // whole test process. Closing it from one fixture instance can
+        // destroy the database while other collections are still using
+        // it, which surfaces as intermittent "no such table" failures.
+        base.Dispose();
     }
 
     /// <summary>Seed an <see cref="ApplicationUser"/> in the shared
@@ -374,7 +352,7 @@ public sealed class BlogsWebServerFixture : WebHostFixture
     /// directly in the SQLite store and return its server-assigned
     /// id.</summary>
     public long SeedCircle(string ownerId, string name, bool isPublic = false,
-        ICollection<String> members = null
+        ICollection<String>? members = null
     )
     {
         using var scope = Services.CreateScope();

@@ -51,7 +51,7 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     private string BlogAclUrl()
         => $"{_fixture.Addresses.First(a => a.StartsWith("https://"))}/{APIPrefix}/{BlogAclPath}";
 
-    /// <summary>Delete any ACL rows tied to the fixture's seeded
+    /// <summary>Delete any ACL rows tied to the specified
     /// <c>(CircleId, BlogPostId)</c> pair. The shared SQLite store
     /// persists across tests, so tests that POST a successful ACL
     /// row would otherwise conflict with whichever other test runs
@@ -59,13 +59,13 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     /// execution order. Calling this at the start of each
     /// insert-bearing test guarantees a clean slate regardless of
     /// the previous test's outcome.</summary>
-    private void CleanupAcl()
+    private void CleanupAcl(long circleId, long blogPostId)
     {
         using var scope = _fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         db.CircleAuthorizationToBlogPost
-            .Where(a => a.CircleId == _fixture.CircleId
-                     && a.BlogPostId == _fixture.PostId)
+            .Where(a => a.CircleId == circleId
+                     && a.BlogPostId == blogPostId)
             .ExecuteDelete();
     }
 
@@ -122,13 +122,16 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         // The prod circle already exists with Name="test", Public=true,
         // owned by the caller. We seed the same shape pre-POST so the
         // test reproduces the prod scenario end-to-end.
-        CleanupAcl();
+        _fixture.SeedUser(_fixture.DefaultUserLogin);
+        var seededCircleId = _fixture.SeedCircle(_fixture.DefaultUserLogin, "test");
+        var seededBlogPostId = _fixture.SeedBlogPost(_fixture.DefaultUserLogin, "acl-target");
+        CleanupAcl(seededCircleId, seededBlogPostId);
         using var http = NewClient(_fixture.DefaultUserLogin);
 
         var payload = new PostAccessControlRulePayload
         {
-            CircleId = _fixture.CircleId,
-            BlogPostId = _fixture.PostId
+            CircleId = seededCircleId,
+            BlogPostId = seededBlogPostId
         };
 
         var response = await http.PostAsJsonAsync(
@@ -194,13 +197,16 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     async Task PostCircleAuthorization_dosent_return_500 ()
     {
-        CleanupAcl();
+        _fixture.SeedUser(_fixture.DefaultUserLogin);
+        var seededCircleId = _fixture.SeedCircle(_fixture.DefaultUserLogin, "test-" + Guid.NewGuid().ToString("N"));
+        var seededBlogPostId = _fixture.SeedBlogPost(_fixture.DefaultUserLogin, "acl-never-500");
+        CleanupAcl(seededCircleId, seededBlogPostId);
         await PostCircleAuthorization_never_returns_500(
 
             new PostAccessControlRulePayload
             {
                 BlogPostId = -1,
-                CircleId = _fixture.CircleId
+                CircleId = seededCircleId
             }
         );
 
@@ -209,13 +215,16 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     async Task PostCircleAuthorization_dosent_return_500_on_success ()
     {
-        CleanupAcl();
+        _fixture.SeedUser(_fixture.DefaultUserLogin);
+        var seededCircleId = _fixture.SeedCircle(_fixture.DefaultUserLogin, "test-" + Guid.NewGuid().ToString("N"));
+        var seededBlogPostId = _fixture.SeedBlogPost(_fixture.DefaultUserLogin, "acl-never-500-success");
+        CleanupAcl(seededCircleId, seededBlogPostId);
         await PostCircleAuthorization_never_returns_500(
 
             new PostAccessControlRulePayload
             {
-                BlogPostId = _fixture.PostId,
-                CircleId = _fixture.CircleId
+                BlogPostId = seededBlogPostId,
+                CircleId = seededCircleId
             }
         );
 
@@ -224,16 +233,17 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     [Fact]
     public async Task PostBlog_with_ACL_creates_a_post_and_Get_returns_it_in_the_list()
     {
-        CleanupAcl();
         _fixture.SeedUser(_fixture.DefaultUserLogin);
         _fixture.SeedUser("tester");
-        _fixture.SeedCircle(_fixture.DefaultUserLogin, "test",
+        var seededCircleId = _fixture.SeedCircle(_fixture.DefaultUserLogin, "test-" + Guid.NewGuid().ToString("N"),
         false,
          new String[]
         {
             _fixture.DefaultUserLogin,
             "tester"
         });
+        var seededBlogPostId = _fixture.SeedBlogPost(_fixture.DefaultUserLogin, "acl-seeded-target");
+        CleanupAcl(seededCircleId, seededBlogPostId);
         using var http = NewClient(_fixture.DefaultUserLogin );
 
         // Create a minimal BlogPost. The server assigns Id, so we
@@ -252,8 +262,8 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
                 {
                     new CircleAuthorizationToBlogPost
                     {
-                        CircleId = _fixture.CircleId,
-                        BlogPostId = _fixture.PostId
+                        CircleId = seededCircleId,
+                        BlogPostId = seededBlogPostId
                     }
                 }
             )
@@ -303,17 +313,16 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
 
         var aclEntry = acl[0];
         Assert.Equal(JsonValueKind.Object, aclEntry.ValueKind);
-        Assert.True(aclEntry.TryGetProperty("circleId", out var circleId));
-        Assert.Equal(_fixture.CircleId, circleId.GetInt64());
+        Assert.True(aclEntry.TryGetProperty("circleId", out var returnedCircleId));
+        Assert.Equal(seededCircleId, returnedCircleId.GetInt64());
     }
 
     [Fact]
     public async Task Non_owner_can_read_restricted_post_but_receives_empty_acl_in_list_and_detail()
     {
-        CleanupAcl();
         _fixture.SeedUser(_fixture.DefaultUserLogin);
         _fixture.SeedUser("tester");
-        _fixture.SeedCircle(_fixture.DefaultUserLogin, "test", false,
+        var seededCircleId = _fixture.SeedCircle(_fixture.DefaultUserLogin, "test-" + Guid.NewGuid().ToString("N"), false,
             new[] { _fixture.DefaultUserLogin, "tester" });
 
         using var ownerHttp = NewClient(_fixture.DefaultUserLogin);
@@ -343,7 +352,7 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
             BlogAclUrl(),
             new PostAccessControlRulePayload
             {
-                CircleId = _fixture.CircleId,
+                CircleId = seededCircleId,
                 BlogPostId = created.Id
             },
             TestContext.Current.CancellationToken);
