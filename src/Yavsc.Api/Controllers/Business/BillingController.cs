@@ -154,9 +154,28 @@ namespace Yavsc.ApiControllers
         public async Task<IActionResult> CliSign(string billingCode, long id)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var estimate = dbContext.Estimates.Include( e=>e.Query
-            ).Include(e=>e.Owner).Include(e=>e.Owner.Performer).Include(e=>e.Client)
-            .FirstOrDefault( e=> e.Id == id && e.Query.ClientId == uid );
+            var estimate = dbContext.Estimates
+                .Include(e => e.Owner)
+                .Include(e => e.Owner.Performer)
+                .Include(e => e.Client)
+                .FirstOrDefault(e => e.Id == id);
+            if (estimate is null)
+            {
+                return NotFound();
+            }
+
+            if (estimate.CommandId is null)
+            {
+                return new ChallengeResult();
+            }
+
+            var command = dbContext.Set<NominativeServiceCommand>()
+                .FirstOrDefault(c => c.Id == estimate.CommandId.Value);
+            if (command is null || command.ClientId != uid)
+            {
+                return new ChallengeResult();
+            }
+
             if (!(await authorizationService.AuthorizeAsync(User, estimate, new ReadPermission())).Succeeded)
             {
                 return new ChallengeResult();
