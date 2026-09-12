@@ -125,7 +125,8 @@ namespace Yavsc.Controllers
 
             if (estimate.CommandId != null)
             {
-                var query = _context.RdvQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
+                var query = _context.Set<NominativeServiceCommand>()
+                    .FirstOrDefault(q => q.Id == estimate.CommandId);
                 if (query == null)
                 {
                     return BadRequest(ModelState);
