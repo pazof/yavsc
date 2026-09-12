@@ -84,9 +84,11 @@ namespace Yavsc.Org.Tests
     [Fact]
     public async Task GetOpenIdConfiguration_returns_ok()
     {
-        using var client = _serverFixture.CreateHttpClient();
+        using var client = CreateHttpClient();
         var response = await GetRaw(client, "/.well-known/openid-configuration");
-        var payload = await response.Content.ReadAsStringAsync();
+        var payload = await response.Content.ReadAsStringAsync(
+            TestContext.Current.CancellationToken
+        );
 
         Assert.True(
             response.IsSuccessStatusCode,

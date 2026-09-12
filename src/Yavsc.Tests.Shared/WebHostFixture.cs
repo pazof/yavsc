@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
+using System.Runtime.Loader;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -37,6 +38,7 @@ public abstract class WebHostFixture : IBackendFixture
     private static readonly object _sync = new object();
     private static WebApplication? _app;
     private static bool _isInitialized;
+    private static bool _shutdownHooksRegistered;
     private static int _instanceCount;
     private static readonly List<string> _sharedAddresses = new();
     private static IServiceProvider? _sharedServices;
@@ -63,6 +65,8 @@ public abstract class WebHostFixture : IBackendFixture
     {
         lock (_sync)
         {
+            RegisterShutdownHooks();
+
             if (!_isInitialized)
             {
                 InitializeAsync().GetAwaiter().GetResult();
@@ -114,11 +118,19 @@ public abstract class WebHostFixture : IBackendFixture
     /// listen port.</summary>
     protected virtual int HttpsPort => 5101;
 
+    /// <summary>Options used to create the WebApplicationBuilder.
+    /// Derived fixtures can override (for example, to set
+    /// ApplicationName for MVC controller discovery).</summary>
+    protected virtual WebApplicationOptions CreateBuilderOptions()
+    {
+        return new WebApplicationOptions();
+    }
+
     public WebApplication App { get; private set; }
 
     private async Task InitializeAsync()
     {
-        var builder = WebApplication.CreateBuilder();
+        var builder = WebApplication.CreateBuilder(CreateBuilderOptions());
 
         builder.WebHost.ConfigureKestrel(options =>
         {
@@ -158,23 +170,40 @@ public abstract class WebHostFixture : IBackendFixture
                 _instanceCount--;
             }
 
-            IsInitialized = false;
+            IsInitialized = _isInitialized;
 
-            if (_instanceCount > 0)
+            // Keep the shared host alive for the whole test process.
+            // Disposing per class/collection can race with other test
+            // classes and intermittently drop the listener mid-run.
+        }
+    }
+
+    private static void RegisterShutdownHooks()
+    {
+        if (_shutdownHooksRegistered)
+        {
+            return;
+        }
+
+        AppDomain.CurrentDomain.ProcessExit += (_, __) => ShutdownSharedHost();
+        AssemblyLoadContext.Default.Unloading += _ => ShutdownSharedHost();
+        _shutdownHooksRegistered = true;
+    }
+
+    private static void ShutdownSharedHost()
+    {
+        lock (_sync)
+        {
+            if (!_isInitialized || _app is null)
             {
                 return;
             }
 
-            if (!_isInitialized)
-            {
-                return;
-            }
-
-            _app?.StopAsync().GetAwaiter().GetResult();
+            _app.StopAsync().GetAwaiter().GetResult();
             _app = null;
             _isInitialized = false;
-            _sharedAddresses.Clear();
             _sharedServices = null;
+            _sharedAddresses.Clear();
         }
     }
 
