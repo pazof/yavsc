@@ -1,14 +1,17 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Yavsc.Controllers;
+using Yavsc.Interfaces.Workflow;
 using Yavsc.Models;
+using Yavsc.Models.Google.Messaging;
 using Yavsc.Models.Haircut;
+using Yavsc.Models.Messaging;
 using Yavsc.Models.Relationship;
 using Yavsc.Models.Workflow;
+using Yavsc.Services;
 using Yavsc.Tests.Shared;
 
 namespace Yavsc.Api.Test.Fixtures;
@@ -40,6 +43,10 @@ public sealed class ApiWebServerFixture : WebHostFixture
         builder.Services.AddControllers()
             .AddApplicationPart(typeof(ActivityApiController).Assembly);
 
+        builder.Services.AddLocalization();
+        builder.Services.Configure<GoogleAuthSettings>(_ => { });
+        builder.Services.AddTransient<IBillingService, BillingService>();
+        builder.Services.AddTransient<IYavscMessageSender, NoopMessageSender>();
         builder.Services.AddAuthorization();
 
         builder.Services.AddAuthentication("Bearer")
@@ -82,6 +89,21 @@ public sealed class ApiWebServerFixture : WebHostFixture
     }
 
     public string BaseAddress => Addresses.First(a => a.StartsWith("https://", StringComparison.Ordinal));
+
+    private sealed class NoopMessageSender : IYavscMessageSender
+    {
+        public Task<MessageWithPayloadResponse> NotifyBookQueryAsync(IEnumerable<string> connectionIds, RdvQueryEvent ev)
+            => Task.FromResult(new MessageWithPayloadResponse());
+
+        public Task<MessageWithPayloadResponse> NotifyEstimateAsync(IEnumerable<string> connectionIds, EstimationEvent ev)
+            => Task.FromResult(new MessageWithPayloadResponse());
+
+        public Task<MessageWithPayloadResponse> NotifyHairCutQueryAsync(IEnumerable<string> connectionIds, HairCutQueryEvent ev)
+            => Task.FromResult(new MessageWithPayloadResponse());
+
+        public Task<MessageWithPayloadResponse> NotifyAsync(IEnumerable<string> connectionIds, IEvent yaev)
+            => Task.FromResult(new MessageWithPayloadResponse());
+    }
 
     public void ResetAndSeedActivityGraph()
     {
