@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Helpers;
 using PostIt.Services;
+using Yavsc.Api.Client;
 namespace PostIt.ViewModels;
 
 public class HomePageViewModel : ViewModelBase
@@ -50,7 +51,24 @@ public class HomePageViewModel : ViewModelBase
         await app.PushPageAsync(vm);
     }
 
-    private Task OpenProviderRequestsAsync() => OpenActivitiesAsync();
+    private async Task OpenProviderRequestsAsync()
+    {
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var billingClient = app.ServiceProvider?.GetRequiredService<BillingApiClient>();
+        if (billingClient is null)
+        {
+            throw new InvalidOperationException("Client billing indisponible.");
+        }
+
+        var vm = new ProviderOngoingRequestsPageViewModel(billingClient, Settings);
+        await vm.InitializeAsync();
+        await app.PushPageAsync(vm);
+    }
 
     /// <summary>
     /// Avalonia designer constructor. Builds a self-contained VM

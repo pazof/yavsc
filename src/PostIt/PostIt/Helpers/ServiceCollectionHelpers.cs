@@ -59,6 +59,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<BrushPage>();
         services.AddTransient<BillingQueriesPage>();
         services.AddTransient<BillingQueryDetailsPage>();
+        services.AddTransient<ProviderOngoingRequestsPage>();
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);
