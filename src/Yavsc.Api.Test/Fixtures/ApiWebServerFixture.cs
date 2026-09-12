@@ -357,21 +357,9 @@ public sealed class ApiWebServerFixture : WebHostFixture
 
     public override void Dispose()
     {
-        try
-        {
-            base.Dispose();
-        }
-        finally
-        {
-            lock (_sqliteLock)
-            {
-                if (_sharedSqliteConnection is not null)
-                {
-                    _sharedSqliteConnection.Close();
-                    _sharedSqliteConnection.Dispose();
-                    _sharedSqliteConnection = null;
-                }
-            }
-        }
+        // Keep the shared in-memory SQLite connection alive for the
+        // whole test process. Closing it from one fixture instance can
+        // drop the schema while other tests are still running.
+        base.Dispose();
     }
 }
