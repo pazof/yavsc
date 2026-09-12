@@ -14,11 +14,13 @@ namespace Yavsc.Org.Tests.Smoke;
 /// <c>doc/architecture/decoupage-organisation.md</c>. The smoke
 /// here asserts the front-end side of the BC.
 /// </summary>
-public class BlogSmokeTests : SmokeTestBase, IClassFixture<TestWebApplicationFactory>
+public class BlogSmokeTests : BaseTestContext, IClassFixture<TestWebApplicationFactory>
 {
     private readonly TestWebApplicationFactory _factory;
 
-    public BlogSmokeTests(TestWebApplicationFactory factory)
+    public BlogSmokeTests(TestWebApplicationFactory factory, ITestOutputHelper output,
+    WebServerFixture webServerFixture)
+    : base(output, webServerFixture)
     {
         _factory = factory;
     }

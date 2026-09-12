@@ -10,10 +10,10 @@ namespace Yavsc.Org.Tests
 {
     [Collection("Yavsc Server")]
     [Trait("regression", "oui")]
-    public class BaseTestContext : IClassFixture<WebServerFixture>, IDisposable
+    public abstract class BaseTestContext : IClassFixture<WebServerFixture>, IDisposable
     {
-        public readonly WebServerFixture _serverFixture;
-        private readonly ITestOutputHelper _output;
+        protected readonly WebServerFixture _serverFixture;
+        protected readonly ITestOutputHelper _output;
 
         public BaseTestContext(ITestOutputHelper output, WebServerFixture fixture)
         {
