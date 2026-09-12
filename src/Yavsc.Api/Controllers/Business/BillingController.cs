@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using System.Security.Claims;
+using Yavsc.Billing;
 using Yavsc.Helpers;
 using Yavsc.ViewModels;
 using Yavsc.Models.Billing;
@@ -100,6 +101,57 @@ namespace Yavsc.ApiControllers
             return ViewComponent("Bill",new object[] { billingCode, bill, OutputFormat.Pdf, true } );
         }
 
+        /// <summary>
+        /// Lists ongoing service commands for the authenticated performer.
+        /// This endpoint is tailored for the PostIt provider homepage flow
+        /// ("Mes demandes en cours").
+        /// </summary>
+        [HttpGet("provider/ongoing")]
+        [Produces("application/json")]
+        public IActionResult GetProviderOngoingCommands()
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Unauthorized();
+            }
+
+            if (billingService.BillingMap.Count == 0)
+            {
+                WorkflowHelpers.ConfigureBillingService();
+            }
+
+            var commands = dbContext.Set<NominativeServiceCommand>()
+                .AsNoTracking()
+                .Where(q => q.PerformerId == uid)
+                .Where(q => q.Status == QueryStatus.Inserted
+                    || q.Status == QueryStatus.Accepted
+                    || q.Status == QueryStatus.InProgress)
+                .OrderByDescending(q => q.DateModified)
+                .ThenByDescending(q => q.Id)
+                .ToList();
+
+            var payload = commands
+                .Select(q => new
+                {
+                    Id = q.Id,
+                    BillingCode = ResolveBillingCode(q),
+                    ActivityCode = q.ActivityCode,
+                    PerformerId = q.PerformerId,
+                    ClientId = q.ClientId,
+                    Status = q.Status,
+                    Description = q.Description,
+                    EventDate = ResolveEventDate(q),
+                    Reason = q is Models.Workflow.RdvQuery rdv ? rdv.Reason : string.Empty,
+                    AdditionalInfo = q is Models.Haircut.HairCutQuery hc ? hc.AdditionalInfo : string.Empty,
+                    Provisional = q.Provisional,
+                })
+                .Where(x => !string.IsNullOrWhiteSpace(x.BillingCode))
+                .ToList();
+
+            return Ok(payload);
+        }
+
 
         [HttpPost("prosign/{billingCode}/{id}")]
         public async Task<IActionResult> ProSign(string billingCode, long id)
@@ -132,6 +184,23 @@ namespace Yavsc.ApiControllers
                 gcmSent = grep.success>0;
             return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = gcmSent });
         }
+
+        private string ResolveBillingCode(NominativeServiceCommand command)
+        {
+            var typeName = command.GetType().Name;
+            return billingService.BillingMap.TryGetValue(typeName, out var code)
+                ? code
+                : string.Empty;
+        }
+
+        private static DateTime? ResolveEventDate(NominativeServiceCommand command)
+            => command switch
+            {
+                Models.Workflow.RdvQuery rdv => rdv.EventDate,
+                Models.Haircut.HairCutQuery brush => brush.EventDate,
+                Models.Haircut.HairMultiCutQuery mbrush => mbrush.EventDate,
+                _ => null,
+            };
 
         [HttpGet("prosign/{billingCode}/{id}")]
         public async Task<IActionResult> GetProSign(string billingCode, long id)

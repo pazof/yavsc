@@ -33,6 +33,9 @@ public partial class Settings : ViewModelBase
     public partial string SearchText { get; set; } = string.Empty;
 
     [ObservableProperty]
+    public partial string ProviderOngoingRequestsSortOption { get; set; } = string.Empty;
+
+    [ObservableProperty]
     [JsonIgnore]
     public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
 
@@ -62,6 +65,7 @@ public partial class Settings : ViewModelBase
     partial void OnBlogsApiUrlChanged(string value) => MarkDirty();
     partial void OnApiUrlChanged(string value) => MarkDirty();
     partial void OnSearchTextChanged(string value) => MarkDirty();
+    partial void OnProviderOngoingRequestsSortOptionChanged(string value) => MarkDirty();
 
     /// <summary>
     /// Authentication can be reassigned wholesale by
@@ -346,6 +350,7 @@ public partial class Settings : ViewModelBase
                     ? settings.ApiUrl
                     : this.ApiUrl;
                 this.SearchText = settings.SearchText ?? string.Empty;
+                this.ProviderOngoingRequestsSortOption = settings.ProviderOngoingRequestsSortOption ?? string.Empty;
                 if (!(settings.Authentication is null))
                 {
                     this.Authentication = new AuthenticationSettings();
@@ -424,6 +429,7 @@ public partial class Settings : ViewModelBase
         this.BlogsApiUrl = "https://blogs.pschneider.fr/api/v1/";
         this.ApiUrl = "https://api.pschneider.fr/api/v1/";
         this.SearchText = string.Empty;
+        this.ProviderOngoingRequestsSortOption = string.Empty;
     }
 
     /// <summary>
@@ -466,7 +472,7 @@ public partial class Settings : ViewModelBase
                         UnixFileMode.UserRead | UnixFileMode.UserWrite);
                 IsDirty = false;
                 SetActionStatus("Parametres sauvegardes.", StatusSeverity.Info);
-                
+
                 Console.WriteLine($"💾 Settings saved to {configPath}");
             }
             catch (Exception ex)

@@ -77,6 +77,14 @@ public sealed class BillingApiClient
         return items;
     }
 
+    public Task<List<BillingQuerySummaryDto>> GetProviderOngoingQueriesAsync(CancellationToken ct = default)
+    {
+        return _api.CallAsync<List<BillingQuerySummaryDto>>(
+            HttpMethod.Get,
+            Absolute("bill/provider/ongoing"),
+            ct: ct);
+    }
+
     public async Task<BillingQueryDetailsDto> GetQueryAsync(string billingCode, long queryId, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(billingCode))
