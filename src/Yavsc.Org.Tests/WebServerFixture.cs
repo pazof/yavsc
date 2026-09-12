@@ -78,6 +78,7 @@ public sealed class WebServerFixture : WebHostFixture
     public RecordingSmtpClientFactory? SmtpClientFactory { get; private set; }
     public ILogger? Logger { get; internal set; }
 
+    public string? HttpsAuthority => Addresses.FirstOrDefault(u => u.StartsWith("https:"));
     protected override WebApplication BuildApp(WebApplicationBuilder builder)
     {
         var authority = $"https://localhost:{_httpsPort}";
