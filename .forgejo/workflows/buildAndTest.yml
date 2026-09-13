@@ -52,3 +52,4 @@ jobs:
           --verbosity normal \
           --filter="Category!=Platform-Android" \
           --logger "xunit;LogFileName=test-results.xml"
+
