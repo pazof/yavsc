@@ -54,6 +54,4 @@ jobs:
         echo "🚀 Lancement des tests..."
         cd /src/_src && dotnet test \
           --verbosity normal \
-          --filter="Category!=Platform-Android" \
-          --logger "xunit;LogFileName=test-results.xml"
-
+          --filter="Category!=Platform-Android"
