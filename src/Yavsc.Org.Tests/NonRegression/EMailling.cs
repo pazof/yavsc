@@ -14,9 +14,11 @@ using Yavsc.Org.Tests.Fakes;
 using Yavsc.Services;
 using Yavsc.Settings;
 using Yavsc.ViewModels.Account;
+using Xunit;
 
 namespace Yavsc.Org.Tests
 {
+
 
     [Collection("EMaillingTeststCollection")]
     [Trait("regression", "II")]

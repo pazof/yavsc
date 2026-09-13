@@ -1,6 +1,7 @@
 using Yavsc.Abstract.Files;
 
 namespace Yavsc.Org.Tests.NonRegression;
+using Xunit;
 
 public class FileServerUrlHelpersTests
 {

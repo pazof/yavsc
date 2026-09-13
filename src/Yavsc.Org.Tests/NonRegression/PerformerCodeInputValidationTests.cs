@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Yavsc.Models.Relationship;
 using Yavsc.Models.Workflow;
+using Xunit;
 
 namespace Yavsc.Tests.NonRegression;
 

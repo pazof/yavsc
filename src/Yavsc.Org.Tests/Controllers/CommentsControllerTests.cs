@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Yavsc.Controllers;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
+using Xunit;
 
 namespace Yavsc.Org.Tests.Controllers;
 

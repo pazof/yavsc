@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Yavsc.Tests.Shared;
+using Xunit;
 
 namespace Yavsc.Org.Tests.Controllers;
 

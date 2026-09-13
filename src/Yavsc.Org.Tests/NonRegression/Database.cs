@@ -1,5 +1,8 @@
 namespace Yavsc.Org.Tests.Mandatory
-{[Collection("Database")]
+{
+    using Xunit;
+
+    [Collection("Database")]
     [Trait("regression", "II")]
     [Trait("dev", "wip")]
     public class Database : IClassFixture<WebServerFixture>

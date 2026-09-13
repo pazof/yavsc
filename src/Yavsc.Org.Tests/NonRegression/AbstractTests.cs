@@ -1,5 +1,6 @@
 
 using Yavsc.Server.Helpers;
+using Xunit;
 
 namespace Yavsc
 {

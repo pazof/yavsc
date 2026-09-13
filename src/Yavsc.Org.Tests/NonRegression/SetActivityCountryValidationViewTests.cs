@@ -1,3 +1,4 @@
+using Xunit;
 namespace Yavsc.Org.Tests.NonRegression;
 
 /// <summary>

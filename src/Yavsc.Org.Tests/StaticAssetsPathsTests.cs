@@ -1,4 +1,6 @@
 namespace Yavsc.Org.Tests;
+using Xunit;
+
 
 /// <summary>
 /// Diagnostic-only test that confirms the static-assets manifests

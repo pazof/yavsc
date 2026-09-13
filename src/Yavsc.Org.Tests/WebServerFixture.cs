@@ -17,6 +17,7 @@ using Yavsc.Server.Helpers;
 using Yavsc.Tests.Shared;
 using Client = IdentityServer8.EntityFramework.Entities.Client;
 using Yavsc.Org.Tests.Fakes;
+using Xunit;
 
 namespace Yavsc.Org.Tests;
 
