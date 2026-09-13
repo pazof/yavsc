@@ -1,5 +1,7 @@
 
 
+using Xunit;
+
 namespace Yavsc.Org.Tests
 {
     [Collection("Yavsc Server")]

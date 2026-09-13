@@ -4,6 +4,7 @@ using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Haircut;
 using Yavsc.Services;
+using Xunit;
 
 namespace Yavsc
 {

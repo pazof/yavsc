@@ -3,6 +3,7 @@ using IdentityServer8.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Yavsc.Org.Tests.Controllers;
 

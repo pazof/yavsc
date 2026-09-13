@@ -1,4 +1,5 @@
 namespace Yavsc.Org.Tests.NonRegression;
+using Xunit;
 
 /// <summary>
 /// Non-regression: avatar requests under /avatars must never return 404

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
 using Yavsc.Models.Workflow;
 using Yavsc.Server.Services;
+using Xunit;
 
 namespace Yavsc.Org.Tests;
 

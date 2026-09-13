@@ -1,4 +1,5 @@
 namespace Yavsc.Org.Tests.Mandatory;
+using Xunit;
 
 [Collection("Yavsc Server")]
 [Trait("regression", "oui")]

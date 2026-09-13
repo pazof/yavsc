@@ -1,4 +1,5 @@
 namespace Yavsc.Org.Tests.NonRegression;
+using Xunit;
 
 /// <summary>
 /// Régression du 500 sur <c>GET /BlogSpot/Details/{id}</c> (auteur

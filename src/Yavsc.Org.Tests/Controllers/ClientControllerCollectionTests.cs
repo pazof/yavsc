@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Models;
 using Yavsc.Tests.Shared;
+using Xunit;
 
 namespace Yavsc.Org.Tests.Controllers;
 

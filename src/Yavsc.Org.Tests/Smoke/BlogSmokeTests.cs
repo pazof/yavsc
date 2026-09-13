@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace Yavsc.Org.Tests.Smoke;
 
 /// <summary>
