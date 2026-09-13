@@ -7,6 +7,8 @@ using Yavsc.Billing;
 using Yavsc.Helpers;
 using Yavsc.ViewModels;
 using Yavsc.Models.Billing;
+using Yavsc.Models.Haircut;
+using Yavsc.Models.Workflow;
 using Yavsc.Server.Models.FileSystem;
 
 namespace Yavsc.ApiControllers
@@ -121,12 +123,38 @@ namespace Yavsc.ApiControllers
                 WorkflowHelpers.ConfigureBillingService();
             }
 
-            var commands = dbContext.Set<NominativeServiceCommand>()
+            // Query known derived types explicitly so legacy rows with
+            // invalid/empty discriminator values are naturally ignored.
+            var rdvCommands = dbContext.Set<RdvQuery>()
                 .AsNoTracking()
                 .Where(q => q.PerformerId == uid)
                 .Where(q => q.Status == QueryStatus.Inserted
                     || q.Status == QueryStatus.Accepted
                     || q.Status == QueryStatus.InProgress)
+                .Cast<NominativeServiceCommand>()
+                .ToList();
+
+            var hairCommands = dbContext.Set<HairCutQuery>()
+                .AsNoTracking()
+                .Where(q => q.PerformerId == uid)
+                .Where(q => q.Status == QueryStatus.Inserted
+                    || q.Status == QueryStatus.Accepted
+                    || q.Status == QueryStatus.InProgress)
+                .Cast<NominativeServiceCommand>()
+                .ToList();
+
+            var hairMultiCommands = dbContext.Set<HairMultiCutQuery>()
+                .AsNoTracking()
+                .Where(q => q.PerformerId == uid)
+                .Where(q => q.Status == QueryStatus.Inserted
+                    || q.Status == QueryStatus.Accepted
+                    || q.Status == QueryStatus.InProgress)
+                .Cast<NominativeServiceCommand>()
+                .ToList();
+
+            var commands = rdvCommands
+                .Concat(hairCommands)
+                .Concat(hairMultiCommands)
                 .OrderByDescending(q => q.DateModified)
                 .ThenByDescending(q => q.Id)
                 .ToList();

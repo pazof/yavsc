@@ -164,6 +164,7 @@ public sealed class BillingApiClient
                 ? null
                 : new BillingLocationDto
                 {
+                    Id = dto.Location.Id > 0 ? dto.Location.Id : null,
                     Address = dto.Location.Address ?? string.Empty,
                     Latitude = dto.Location.Latitude,
                     Longitude = dto.Location.Longitude,
@@ -191,6 +192,7 @@ public sealed class BillingApiClient
                 ? null
                 : new BillingLocationDto
                 {
+                    Id = dto.Location.Id > 0 ? dto.Location.Id : null,
                     Address = dto.Location.Address ?? string.Empty,
                     Latitude = dto.Location.Latitude,
                     Longitude = dto.Location.Longitude,
@@ -220,6 +222,7 @@ public sealed class BillingApiClient
                 ? null
                 : new BillingLocationDto
                 {
+                    Id = dto.Location.Id > 0 ? dto.Location.Id : null,
                     Address = dto.Location.Address ?? string.Empty,
                     Latitude = dto.Location.Latitude,
                     Longitude = dto.Location.Longitude,
@@ -313,6 +316,11 @@ public sealed class BillingApiClient
             ["Address"] = location.Address,
         };
 
+        if (location.Id.HasValue && location.Id.Value > 0)
+        {
+            payload["Id"] = location.Id.Value;
+        }
+
         if (location.Latitude.HasValue)
         {
             payload["Latitude"] = location.Latitude.Value;
@@ -328,6 +336,7 @@ public sealed class BillingApiClient
 
     private sealed class BillingLocationResponse
     {
+        public long Id { get; set; }
         public string? Address { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Api.Test.Fixtures;
 using Yavsc.Helpers;
@@ -99,6 +100,58 @@ public sealed class BillingControllerTests : IClassFixture<ApiWebServerFixture>
         Assert.NotEmpty(payload!);
         Assert.All(payload!, item => Assert.Equal("alice", item.PerformerId));
         Assert.Contains(payload!, item => item.BillingCode == BillingCodes.Rdv);
+    }
+
+    [Fact]
+    public async Task GetProviderOngoingCommands_ignores_rows_with_invalid_discriminator()
+    {
+        WorkflowHelpers.ConfigureBillingService();
+        _fixture.ResetAndSeedActivityGraph();
+
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            db.Database.ExecuteSqlInterpolated($@"
+INSERT INTO ""NominativeServiceCommand""
+(""ActivityCode"", ""ClientId"", ""Consent"", ""DateCreated"", ""DateModified"", ""Description"", ""Discriminator"", ""PerformerId"", ""Status"", ""UserCreated"", ""UserModified"")
+VALUES
+({"dev"}, {"bob"}, {true}, {DateTime.UtcNow.AddMinutes(-5)}, {DateTime.UtcNow.AddMinutes(-4)}, {"Legacy malformed row"}, {""}, {"alice"}, {(int)QueryStatus.Accepted}, {"alice"}, {"alice"});
+");
+
+            var location = db.Locations.Single();
+            db.RdvQueries.Add(new RdvQuery
+            {
+                ActivityCode = "dev",
+                ClientId = "bob",
+                PerformerId = "alice",
+                Consent = true,
+                UserCreated = "alice",
+                UserModified = "alice",
+                DateCreated = DateTime.UtcNow.AddMinutes(-3),
+                DateModified = DateTime.UtcNow.AddMinutes(-2),
+                EventDate = DateTime.UtcNow.AddDays(1),
+                Location = location,
+                Reason = "Commande valide",
+                Status = QueryStatus.InProgress,
+                Description = "Commande fournisseur valide",
+            });
+
+            db.SaveChanges();
+        }
+
+        using var http = NewClient();
+
+        var response = await http.GetAsync("/api/v1/bill/provider/ongoing", TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"Unexpected status {(int)response.StatusCode} ({response.StatusCode}): {body}");
+
+        var payload = await response.Content.ReadFromJsonAsync<List<ProviderOngoingCommandDto>>(TestContext.Current.CancellationToken);
+        Assert.NotNull(payload);
+        Assert.NotEmpty(payload!);
+        Assert.Contains(payload!, item => item.BillingCode == BillingCodes.Rdv && item.PerformerId == "alice");
+        Assert.DoesNotContain(payload!, item => string.IsNullOrWhiteSpace(item.BillingCode));
     }
 
     private sealed class ProviderOngoingCommandDto

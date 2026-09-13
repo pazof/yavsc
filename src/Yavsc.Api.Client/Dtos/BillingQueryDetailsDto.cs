@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Yavsc;
 
 namespace Yavsc.Api.Client;
@@ -29,7 +30,14 @@ public sealed class BillingQueryDetailsDto
 
 public sealed class BillingLocationDto
 {
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public long? Id { get; set; }
+
     public string Address { get; set; } = string.Empty;
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public double? Latitude { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public double? Longitude { get; set; }
 }

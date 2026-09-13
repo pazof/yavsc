@@ -3,6 +3,8 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
+using System.Runtime.Loader;
 using Yavsc.Controllers;
 using Yavsc.Interfaces.Workflow;
 using Yavsc.Models;
@@ -18,27 +20,45 @@ namespace Yavsc.Api.Test.Fixtures;
 
 public sealed class ApiWebServerFixture : WebHostFixture
 {
+    private const string DbProviderEnvVar = "YAVSC_API_TEST_DB_PROVIDER";
+    private const string NpgsqlAdminConnectionEnvVar = "YAVSC_API_TEST_NPGSQL_ADMIN_CONNECTION";
+    private const string DefaultDevelopmentConnectionString = "Server=localhost;Port=5432;Database=yavscdev;Username=yavscdev;Password=8*5idas;Include Error Detail=true";
+
     protected override int HttpsPort => 5104;
 
     private static SqliteConnection? _sharedSqliteConnection;
     private static readonly object _sqliteLock = new();
+    private static readonly object _npgsqlLock = new();
+    private static string? _sharedNpgsqlConnectionString;
+    private static string? _sharedNpgsqlAdminConnectionString;
+    private static string? _sharedNpgsqlDatabaseName;
+    private static bool _npgsqlCleanupRegistered;
 
     protected override WebApplication BuildApp(WebApplicationBuilder builder)
     {
-        SqliteConnection sharedConnection;
-        lock (_sqliteLock)
+        if (UseNpgsqlProvider())
         {
-            if (_sharedSqliteConnection is null)
-            {
-                _sharedSqliteConnection = new SqliteConnection(
-                    "Data Source=YavscApiTests;Mode=Memory;Cache=Shared");
-                _sharedSqliteConnection.Open();
-            }
-            sharedConnection = _sharedSqliteConnection;
+            var npgsqlConnectionString = EnsureNpgsqlDatabaseCreated();
+            builder.Services.AddDbContext<ApplicationDbContext>(opt =>
+                opt.UseNpgsql(npgsqlConnectionString));
         }
+        else
+        {
+            SqliteConnection sharedConnection;
+            lock (_sqliteLock)
+            {
+                if (_sharedSqliteConnection is null)
+                {
+                    _sharedSqliteConnection = new SqliteConnection(
+                        "Data Source=YavscApiTests;Mode=Memory;Cache=Shared");
+                    _sharedSqliteConnection.Open();
+                }
+                sharedConnection = _sharedSqliteConnection;
+            }
 
-        builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-            opt.UseSqlite(sharedConnection));
+            builder.Services.AddDbContext<ApplicationDbContext>(opt =>
+                opt.UseSqlite(sharedConnection));
+        }
 
         builder.Services.AddControllers()
             .AddApplicationPart(typeof(ActivityApiController).Assembly);
@@ -89,6 +109,127 @@ public sealed class ApiWebServerFixture : WebHostFixture
     }
 
     public string BaseAddress => Addresses.First(a => a.StartsWith("https://", StringComparison.Ordinal));
+
+    public static bool UseNpgsqlProvider()
+        => string.Equals(
+            Environment.GetEnvironmentVariable(DbProviderEnvVar),
+            "npgsql",
+            StringComparison.OrdinalIgnoreCase);
+
+    private static string EnsureNpgsqlDatabaseCreated()
+    {
+        lock (_npgsqlLock)
+        {
+            if (!string.IsNullOrWhiteSpace(_sharedNpgsqlConnectionString))
+            {
+                return _sharedNpgsqlConnectionString;
+            }
+
+            var adminConnectionString = BuildAdminConnectionString();
+            var databaseName = $"yavsc_api_test_{Guid.NewGuid():N}";
+
+            using (var adminConnection = new NpgsqlConnection(adminConnectionString))
+            {
+                adminConnection.Open();
+                using var createCommand = adminConnection.CreateCommand();
+                createCommand.CommandText = $"CREATE DATABASE \"{databaseName}\"";
+                createCommand.ExecuteNonQuery();
+            }
+
+            var testConnectionBuilder = new NpgsqlConnectionStringBuilder(adminConnectionString)
+            {
+                Database = databaseName,
+                Pooling = false,
+                IncludeErrorDetail = true
+            };
+
+            _sharedNpgsqlAdminConnectionString = adminConnectionString;
+            _sharedNpgsqlDatabaseName = databaseName;
+            _sharedNpgsqlConnectionString = testConnectionBuilder.ToString();
+            RegisterNpgsqlCleanup();
+            return _sharedNpgsqlConnectionString;
+        }
+    }
+
+    private static string BuildAdminConnectionString()
+    {
+        var configured = Environment.GetEnvironmentVariable(NpgsqlAdminConnectionEnvVar);
+        var source = string.IsNullOrWhiteSpace(configured)
+            ? DefaultDevelopmentConnectionString
+            : configured;
+
+        var builder = new NpgsqlConnectionStringBuilder(source)
+        {
+            Pooling = false,
+            IncludeErrorDetail = true
+        };
+
+        if (string.IsNullOrWhiteSpace(configured))
+        {
+            builder.Database = "postgres";
+        }
+        else if (string.IsNullOrWhiteSpace(builder.Database))
+        {
+            builder.Database = "postgres";
+        }
+
+        return builder.ToString();
+    }
+
+    private static void RegisterNpgsqlCleanup()
+    {
+        if (_npgsqlCleanupRegistered)
+        {
+            return;
+        }
+
+        AppDomain.CurrentDomain.ProcessExit += (_, __) => DropTemporaryNpgsqlDatabase();
+        AssemblyLoadContext.Default.Unloading += _ => DropTemporaryNpgsqlDatabase();
+        _npgsqlCleanupRegistered = true;
+    }
+
+    private static void DropTemporaryNpgsqlDatabase()
+    {
+        lock (_npgsqlLock)
+        {
+            if (string.IsNullOrWhiteSpace(_sharedNpgsqlDatabaseName)
+                || string.IsNullOrWhiteSpace(_sharedNpgsqlAdminConnectionString))
+            {
+                return;
+            }
+
+            try
+            {
+                using var adminConnection = new NpgsqlConnection(_sharedNpgsqlAdminConnectionString);
+                adminConnection.Open();
+
+                using (var terminateCommand = adminConnection.CreateCommand())
+                {
+                    terminateCommand.CommandText = @"
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE datname = @databaseName
+  AND pid <> pg_backend_pid();";
+                    terminateCommand.Parameters.AddWithValue("databaseName", _sharedNpgsqlDatabaseName);
+                    terminateCommand.ExecuteNonQuery();
+                }
+
+                using var dropCommand = adminConnection.CreateCommand();
+                dropCommand.CommandText = $"DROP DATABASE IF EXISTS \"{_sharedNpgsqlDatabaseName}\"";
+                dropCommand.ExecuteNonQuery();
+            }
+            catch
+            {
+                // Best-effort cleanup only.
+            }
+            finally
+            {
+                _sharedNpgsqlConnectionString = null;
+                _sharedNpgsqlAdminConnectionString = null;
+                _sharedNpgsqlDatabaseName = null;
+            }
+        }
+    }
 
     private sealed class NoopMessageSender : IYavscMessageSender
     {

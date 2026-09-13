@@ -1,8 +1,13 @@
+#nullable enable annotations
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Npgsql;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
+using Yavsc.Models.Relationship;
 using Yavsc.Models.Workflow;
 using Yavsc.Server.Helpers;
 
@@ -83,29 +88,31 @@ public class RdvQueryApiController : Controller
             return BadRequest(ModelState);
         }
 
-        if (query.Location is not null)
+        if (query.Location is null)
         {
-            var existingLocation = await _context.Locations.FirstOrDefaultAsync(
-                x => x.Address == query.Location.Address
-                  && x.Longitude == query.Location.Longitude
-                  && x.Latitude == query.Location.Latitude,
-                cancellationToken);
-
-            if (existingLocation is not null)
-            {
-                query.Location = existingLocation;
-            }
-            else
-            {
-                _context.Attach(query.Location);
-            }
+            return BadRequest(new { Error = "location is required" });
         }
 
-        _context.RdvQueries.Add(query);
+        var resolvedLocation = await ResolveLocationAsync(query.Location, cancellationToken);
+        if (resolvedLocation is null)
+        {
+            return BadRequest(new { Error = "location payload is invalid" });
+        }
+
+        await PersistLocationIfNeededAsync(resolvedLocation, uid, cancellationToken);
+
+        query.Location = resolvedLocation;
+
+        var addedEntry = _context.RdvQueries.Add(query);
+        EnsureLocationForeignKey(addedEntry, resolvedLocation.Id);
 
         try
         {
             await _context.SaveChangesAsync(User.GetUserId(), cancellationToken);
+        }
+        catch (DbUpdateException ex) when (IsLocationForeignKeyViolation(ex))
+        {
+            return BadRequest(new { Error = "location reference is invalid" });
         }
         catch (DbUpdateException)
         {
@@ -149,17 +156,16 @@ public class RdvQueryApiController : Controller
 
         if (query.Location is not null)
         {
-            var resolvedLocation = await _context.Locations.FirstOrDefaultAsync(
-                x => x.Address == query.Location.Address
-                  && x.Longitude == query.Location.Longitude
-                  && x.Latitude == query.Location.Latitude,
-                cancellationToken);
-
-            existing.Location = resolvedLocation ?? query.Location;
+            var resolvedLocation = await ResolveLocationAsync(query.Location, cancellationToken);
             if (resolvedLocation is null)
             {
-                _context.Attach(query.Location);
+                return BadRequest(new { Error = "location payload is invalid" });
             }
+
+            await PersistLocationIfNeededAsync(resolvedLocation, uid, cancellationToken);
+
+            existing.Location = resolvedLocation;
+            EnsureLocationForeignKey(_context.Entry(existing), resolvedLocation.Id);
         }
 
         try
@@ -174,6 +180,10 @@ public class RdvQueryApiController : Controller
             }
 
             throw;
+        }
+        catch (DbUpdateException ex) when (IsLocationForeignKeyViolation(ex))
+        {
+            return BadRequest(new { Error = "location reference is invalid" });
         }
 
         return NoContent();
@@ -206,6 +216,78 @@ public class RdvQueryApiController : Controller
     private bool QueryExists(long id)
     {
         return _context.RdvQueries.Any(e => e.Id == id);
+    }
+
+    private async Task<Location?> ResolveLocationAsync(Location postedLocation, CancellationToken cancellationToken)
+    {
+        if (postedLocation.Id > 0)
+        {
+            var byId = await _context.Locations
+                .FirstOrDefaultAsync(x => x.Id == postedLocation.Id, cancellationToken);
+            if (byId is not null)
+            {
+                return byId;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(postedLocation.Address))
+        {
+            return null;
+        }
+
+        var existingByCoordinates = await _context.Locations.FirstOrDefaultAsync(
+            x => x.Address == postedLocation.Address
+              && x.Longitude == postedLocation.Longitude
+              && x.Latitude == postedLocation.Latitude,
+            cancellationToken);
+
+        if (existingByCoordinates is not null)
+        {
+            return existingByCoordinates;
+        }
+
+        // Treat unknown location ids as client-side placeholders and insert a new row.
+        postedLocation.Id = 0;
+        _context.Locations.Add(postedLocation);
+        return postedLocation;
+    }
+
+    private async Task PersistLocationIfNeededAsync(Location location, string userId, CancellationToken cancellationToken)
+    {
+        if (_context.Entry(location).State != EntityState.Added)
+        {
+            return;
+        }
+
+        await _context.SaveChangesAsync(userId, cancellationToken);
+    }
+
+    private static bool IsLocationForeignKeyViolation(DbUpdateException ex)
+    {
+        if (ex.InnerException is not PostgresException pg)
+        {
+            return false;
+        }
+
+        return pg.SqlState == PostgresErrorCodes.ForeignKeyViolation
+            && string.Equals(pg.ConstraintName, "FK_NominativeServiceCommand_Locations_LocationId", StringComparison.Ordinal);
+    }
+
+    private static void EnsureLocationForeignKey(EntityEntry<RdvQuery> entry, long locationId)
+    {
+        SetFkIfPresent(entry, "LocationId", locationId);
+        SetFkIfPresent(entry, "RdvQuery_LocationId", locationId);
+    }
+
+    private static void SetFkIfPresent(EntityEntry<RdvQuery> entry, string propertyName, long value)
+    {
+        var property = entry.Metadata.FindProperty(propertyName);
+        if (property is null)
+        {
+            return;
+        }
+
+        entry.Property(propertyName).CurrentValue = value;
     }
 
     private static DateTime EnsureUtc(DateTime value)
