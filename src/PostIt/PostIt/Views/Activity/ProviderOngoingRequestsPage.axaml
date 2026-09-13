@@ -85,7 +85,8 @@
                 <Button Content="Ouvrir le détail"
                     Command="{Binding OpenSelectedQueryCommand}" />
                 <Button Content="Ouvrir en édition"
-                    Command="{Binding OpenSelectedEditorCommand}" />
+                    Command="{Binding OpenSelectedEditorCommand}"
+                    />
                 </StackPanel>
         </Grid>
 

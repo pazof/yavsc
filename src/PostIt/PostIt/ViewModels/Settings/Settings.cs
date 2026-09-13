@@ -346,7 +346,7 @@ public partial class Settings : ViewModelBase
             // → our overridden dispatcher-safe marshaller below.
             else lock (_mutationGate)
             {
-                var legacyApiUrl = TryReadLegacyApiUrl(json);
+                var legacyApiUrl = TryReadApiUrl(json);
                 this.Authentication = settings.Authentication;
                 this.DarkMode = settings.DarkMode;
                 this.BlogsApiUrl = !string.IsNullOrWhiteSpace(settings.BlogsApiUrl)
@@ -402,7 +402,7 @@ public partial class Settings : ViewModelBase
         }
     }
 
-    private static string? TryReadLegacyApiUrl(string json)
+    private static string? TryReadApiUrl(string json)
     {
         try
         {

@@ -97,12 +97,6 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     }
 
     [RelayCommand]
-    internal async Task SearchAsync() {
-        await RefreshAsync();
-        ApplyFilter();
-    }
-
-    [RelayCommand]
     internal async Task SaveAsync()
     {
         // The button is already disabled when the title is empty
