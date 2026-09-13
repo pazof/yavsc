@@ -101,7 +101,7 @@ public sealed class EstimateApiControllerTests : IClassFixture<ApiWebServerFixtu
 
         var response = await http.PostAsJsonAsync(
             "/api/v1/estimate",
-            NewEstimatePayload(commandId, clientId: "bob", ownerId: "alice"),
+            NewEstimatePayload(commandId, clientId: "bob"),
             TestContext.Current.CancellationToken);
         var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 

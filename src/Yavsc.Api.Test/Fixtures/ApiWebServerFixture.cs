@@ -8,6 +8,7 @@ using Npgsql;
 using Yavsc.Controllers;
 using Yavsc.Interfaces.Workflow;
 using Yavsc.Models;
+using Yavsc.Models.Billing;
 using Yavsc.Models.Google.Messaging;
 using Yavsc.Models.Haircut;
 using Yavsc.Models.Messaging;
@@ -38,7 +39,8 @@ public sealed class ApiWebServerFixture : WebHostFixture
         {
             var npgsqlConnectionString = EnsureNpgsqlDatabaseCreated();
             builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-                opt.UseNpgsql(npgsqlConnectionString));
+                opt.UseNpgsql(npgsqlConnectionString,
+                    x => x.MigrationsAssembly("Yavsc.Org")));
         }
         else
         {
@@ -99,7 +101,18 @@ public sealed class ApiWebServerFixture : WebHostFixture
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            db.Database.EnsureCreated();
+            if (UseNpgsqlProvider())
+            {
+                // Apply the EF Core migrations (Yavsc.Org assembly) so the
+                // test database schema matches the production provider.
+                // EnsureCreated must not be used here: it would create the
+                // schema without the migrations history and break Migrate().
+                db.Database.Migrate();
+            }
+            else
+            {
+                db.Database.EnsureCreated();
+            }
         }
 
         await Task.CompletedTask;
@@ -303,88 +316,28 @@ public sealed class ApiWebServerFixture : WebHostFixture
     {
         if (UseNpgsqlProvider())
         {
-                db.Set<UserActivity>().RemoveRange(db.Set<UserActivity>());
-                db.Set<Activity>().RemoveRange(db.Set<Activity>());
-                db.Set<PerformerProfile>().RemoveRange(db.Set<PerformerProfile>());
-                db.Set<ApplicationUser>().RemoveRange(db.Set<ApplicationUser>());
-                db.Set<Location>().RemoveRange(db.Set<Location>());
-                db.Set<RdvQuery>().RemoveRange(db.Set<RdvQuery>());
-                db.Set<HairCutQuery>().RemoveRange(db.Set<HairCutQuery>());
-                db.Set<HairMultiCutQuery>().RemoveRange(db.Set<HairMultiCutQuery>());
-                db.Set<HairPrestation>().RemoveRange(db.Set<HairPrestation>());
-                db.Set<HairPrestationCollectionItem>().RemoveRange(db.Set<HairPrestationCollectionItem>());
-           
+            // Purge only the tables of the test graph, children before
+            // parents, so no DELETE violates a foreign key. Estimate and
+            // CommandLine reference NominativeServiceCommand (CommandId) and
+            // must be deleted before the Rdv/HairCut/HairMultiCut queries.
+            db.Set<CommandLine>().RemoveRange(db.Set<CommandLine>());
+            db.Set<Estimate>().RemoveRange(db.Set<Estimate>());
+            db.Set<RdvQuery>().RemoveRange(db.Set<RdvQuery>());
+            db.Set<HairCutQuery>().RemoveRange(db.Set<HairCutQuery>());
+            db.Set<HairMultiCutQuery>().RemoveRange(db.Set<HairMultiCutQuery>());
+            db.Set<HairPrestationCollectionItem>().RemoveRange(db.Set<HairPrestationCollectionItem>());
+            db.Set<HairPrestation>().RemoveRange(db.Set<HairPrestation>());
+            db.Set<UserActivity>().RemoveRange(db.Set<UserActivity>());
+            db.Set<PerformerProfile>().RemoveRange(db.Set<PerformerProfile>());
+            db.Set<Activity>().RemoveRange(db.Set<Activity>());
+            db.Set<ApplicationUser>().RemoveRange(db.Set<ApplicationUser>());
+            db.Set<Location>().RemoveRange(db.Set<Location>());
+
             db.SaveChanges();
             return;
         }
 
         db.Database.EnsureDeleted();
-    }
-
-   
-
-    private static IReadOnlyList<IEntityType> GetDeletionOrder(IModel model)
-    {
-        var entityTypes = model
-            .GetEntityTypes()
-            .Where(et =>
-                et.ClrType is not null &&
-                !et.IsOwned() &&
-                et.FindPrimaryKey() is not null)
-            .ToArray();
-
-        var included = new HashSet<IEntityType>(entityTypes);
-        var dependencies = new Dictionary<IEntityType, HashSet<IEntityType>>();
-
-        foreach (var entityType in entityTypes)
-        {
-            var principals = entityType
-                .GetForeignKeys()
-                .Where(fk => !fk.IsOwnership)
-                .Select(fk => fk.PrincipalEntityType)
-                .Where(included.Contains)
-                .ToHashSet();
-
-            dependencies[entityType] = principals;
-        }
-
-        var queue = new Queue<IEntityType>(
-            dependencies.Where(kvp => kvp.Value.Count == 0).Select(kvp => kvp.Key));
-
-        var order = new List<IEntityType>(entityTypes.Length);
-
-        while (queue.Count > 0)
-        {
-            var current = queue.Dequeue();
-            if (!order.Contains(current))
-            {
-                order.Add(current);
-            }
-
-            foreach (var kvp in dependencies)
-            {
-                if (!kvp.Value.Remove(current) || kvp.Value.Count != 0)
-                {
-                    continue;
-                }
-
-                if (!order.Contains(kvp.Key) && !queue.Contains(kvp.Key))
-                {
-                    queue.Enqueue(kvp.Key);
-                }
-            }
-        }
-
-        // If cycles remain (rare), append unresolved types last and rely on DB cascades.
-        foreach (var entityType in entityTypes)
-        {
-            if (!order.Contains(entityType))
-            {
-                order.Add(entityType);
-            }
-        }
-
-        return order;
     }
 
     public void ResetAndSeedRdvQueryGraph()

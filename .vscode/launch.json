@@ -5,6 +5,22 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "PostIt Desktop",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/src/PostIt/PostIt.Desktop/PostIt.Desktop.csproj"
+    },
+    {
+      "name": "PostIt Desktop local",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/PostIt/PostIt.Desktop/bin/Debug/net10.0/PostIt.Desktop.dll",
+      "env": {
+        "POSTIT_SETTINGS_JSON": "/home/paul/Workspace/yavsc/src/PostIt/PostIt/postit-settings.json"
+      },
+      "preLaunchTask": "dotnet: build-postit-desktop"
+    },
+    {
       "name": "Android Debug",
       "type": "mono",
       "preLaunchTask": "run-debug-android",
@@ -20,10 +36,10 @@
       "port": 55555
     },
     {
-      "name": "API",
+      "name": "Yavsc API",
       "type": "dotnet",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/Api/Api.csproj"
+      "projectPath": "${workspaceFolder}/src/Yavsc.Api/Yavsc.Api.csproj"
     },
     {
       "name": "Yavsc Org",
@@ -37,12 +53,7 @@
       "request": "launch",
       "projectPath": "${workspaceFolder}/src/Yavsc.Blogs/Yavsc.Blogs.csproj"
     },
-    {
-      "name": "PostIt Desktop",
-      "type": "dotnet",
-      "request": "launch",
-      "projectPath": "${workspaceFolder}/src/PostIt/PostIt.Desktop/PostIt.Desktop.csproj",
-    },
+
     {
       "name": "Test PostIt.Android launch (Xamarin.UITest)",
       "type": "coreclr",
