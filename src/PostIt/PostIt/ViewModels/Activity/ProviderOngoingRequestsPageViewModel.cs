@@ -22,6 +22,7 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
     public const string SortByStatus = "Statut (en cours d'abord)";
 
     private readonly BillingApiClient _billingClient;
+    private readonly EstimateApiClient? _estimateClient;
     private readonly Settings? _settings;
     private List<BillingQuerySummaryDto> _allQueries = new();
 
@@ -42,6 +43,8 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
     public partial string SelectedSortOption { get; set; } = SortByDate;
 
     [ObservableProperty, NotifyCanExecuteChangedFor(nameof(OpenSelectedQueryCommand))]
+    [NotifyCanExecuteChangedFor(nameof(OpenSelectedEditorCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CreateEstimateForSelectedCommand))]
     public partial BillingQuerySummaryDto? SelectedQuery { get; set; }
 
     [ObservableProperty]
@@ -67,9 +70,13 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
         protected set { _ = value; }
     }
 
-    public ProviderOngoingRequestsPageViewModel(BillingApiClient billingClient, Settings? settings = null)
+    public ProviderOngoingRequestsPageViewModel(
+        BillingApiClient billingClient,
+        Settings? settings = null,
+        EstimateApiClient? estimateClient = null)
     {
         _billingClient = billingClient ?? throw new ArgumentNullException(nameof(billingClient));
+        _estimateClient = estimateClient;
         _settings = settings;
 
         if (_settings is not null)
@@ -208,6 +215,33 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
         {
             IsBusy = false;
         }
+    }
+
+    private bool CanCreateEstimateForSelected() => SelectedQuery is not null && _estimateClient is not null;
+
+    [RelayCommand(CanExecute = nameof(CanCreateEstimateForSelected))]
+    public async Task CreateEstimateForSelectedAsync()
+    {
+        if (SelectedQuery is null)
+        {
+            this.SetWarningStatus("Sélectionnez une demande.");
+            return;
+        }
+
+        if (_estimateClient is null)
+        {
+            this.SetWarningStatus("Le client devis n'est pas disponible.");
+            return;
+        }
+
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var vm = new EstimateEditionPageViewModel(SelectedQuery, _estimateClient);
+        await app.PushPageAsync(vm).ConfigureAwait(true);
     }
 
     partial void OnFilterTextChanged(string value)

@@ -65,7 +65,9 @@ public class HomePageViewModel : ViewModelBase
             throw new InvalidOperationException("Client billing indisponible.");
         }
 
-        var vm = new ProviderOngoingRequestsPageViewModel(billingClient, Settings);
+        var estimateClient = app.ServiceProvider?.GetRequiredService<EstimateApiClient>();
+
+        var vm = new ProviderOngoingRequestsPageViewModel(billingClient, Settings, estimateClient);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

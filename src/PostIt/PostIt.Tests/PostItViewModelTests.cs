@@ -23,13 +23,11 @@ public class PostItViewModelTests
         viewModel.Posts.Add(new BlogPostDto { Id = 3, Title = "Third post", Article = "Search me", AuthorId = "carol" });
 
         viewModel.SearchText = "search";
-        viewModel.SearchCommand.Execute(null);
 
         Assert.Single(viewModel.FilteredPosts);
         Assert.Equal(3, viewModel.FilteredPosts[0].Id);
 
         viewModel.SearchText = "bob";
-        viewModel.SearchCommand.Execute(null);
 
         Assert.Single(viewModel.FilteredPosts);
         Assert.Equal(2, viewModel.FilteredPosts[0].Id);

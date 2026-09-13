@@ -15,10 +15,11 @@
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
-  <ScrollViewer VerticalScrollBarVisibility="Visible"
-              HorizontalScrollBarVisibility="Disabled"
-      Padding="5"
-      Margin="5"
+  <ScrollViewer
+  VerticalScrollBarVisibility="Visible"
+  HorizontalScrollBarVisibility="Disabled"
+  Padding="5"
+  Margin="5"
       >
   <StackPanel HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" Spacing="10" Margin="5">

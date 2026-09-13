@@ -126,6 +126,36 @@ public class ProviderOngoingRequestsPageViewModelTests
         Assert.Equal(ProviderOngoingRequestsPageViewModel.SortByDate, vm.SelectedSortOption);
     }
 
+    [Fact]
+    public async Task CreateEstimateForSelectedCommand_requires_a_selection()
+    {
+        var api = new StubProviderApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var estimateClient = new EstimateApiClient(api, "https://business.example/api/v1/");
+        var vm = new ProviderOngoingRequestsPageViewModel(client, estimateClient: estimateClient);
+
+        await vm.InitializeAsync();
+
+        Assert.False(vm.CreateEstimateForSelectedCommand.CanExecute(null));
+
+        vm.SelectedQuery = vm.Queries[0];
+
+        Assert.True(vm.CreateEstimateForSelectedCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public async Task CreateEstimateForSelectedCommand_is_disabled_without_estimate_client()
+    {
+        var api = new StubProviderApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var vm = new ProviderOngoingRequestsPageViewModel(client);
+
+        await vm.InitializeAsync();
+        vm.SelectedQuery = vm.Queries[0];
+
+        Assert.False(vm.CreateEstimateForSelectedCommand.CanExecute(null));
+    }
+
     private sealed class StubProviderApi : IYavscApiClient
     {
         public HttpClient Http { get; } = new();
