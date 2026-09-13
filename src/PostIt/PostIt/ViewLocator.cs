@@ -53,6 +53,7 @@ public class ViewLocator : IDataTemplate
             BillingQueriesPageViewModel => services.GetRequiredService<BillingQueriesPage>(),
             BillingQueryDetailsPageViewModel => services.GetRequiredService<BillingQueryDetailsPage>(),
             ProviderOngoingRequestsPageViewModel => services.GetRequiredService<ProviderOngoingRequestsPage>(),
+            EstimateEditionPageViewModel => services.GetRequiredService<EstimateEditionPage>(),
             null => new TextBlock { Text = "No view for <null>" },
             _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };

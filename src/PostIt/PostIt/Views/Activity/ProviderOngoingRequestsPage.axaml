@@ -87,6 +87,9 @@
                 <Button Content="Ouvrir en édition"
                     Command="{Binding OpenSelectedEditorCommand}"
                     />
+                <Button Content="Créer un devis"
+                    Command="{Binding CreateEstimateForSelectedCommand}"
+                    />
                 </StackPanel>
         </Grid>
 

@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Yavsc.Models.Billing
 {
@@ -20,7 +21,7 @@ namespace Yavsc.Models.Billing
         /// it will result in a new estimate template
         /// </summary>
         /// <returns></returns>
-        [ForeignKey("CommandId"),JsonIgnore]
+        [ForeignKey("CommandId"),JsonIgnore,ValidateNever]
         public NominativeServiceCommand? Query { get; set; }
         public string Description { get; set; }
         public string Title { get; set; }
@@ -57,14 +58,15 @@ namespace Yavsc.Models.Billing
             set { AttachedFiles = value.Split(':').ToList(); }
         }
 
+        [ValidateNever]
         public string OwnerId { get; set; }
 
-        [ForeignKey("OwnerId"),JsonIgnore]
+        [ForeignKey("OwnerId"),JsonIgnore,ValidateNever]
         public virtual PerformerProfile Owner { get; set; }
 
         [Required]
         public string ClientId { get; set; }
-        [ForeignKey("ClientId"),JsonIgnore]
+        [ForeignKey("ClientId"),JsonIgnore,ValidateNever]
         public virtual ApplicationUser Client { get; set; }
 
         [Required]
