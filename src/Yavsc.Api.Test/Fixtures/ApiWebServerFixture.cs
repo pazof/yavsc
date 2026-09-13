@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
-using System.Runtime.Loader;
 using Yavsc.Controllers;
 using Yavsc.Interfaces.Workflow;
 using Yavsc.Models;
@@ -22,6 +22,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
 {
     private const string DbProviderEnvVar = "YAVSC_API_TEST_DB_PROVIDER";
     private const string NpgsqlAdminConnectionEnvVar = "YAVSC_API_TEST_NPGSQL_ADMIN_CONNECTION";
+    private const string DedicatedNpgsqlDatabaseName = "yavscTestDb";
     private const string DefaultDevelopmentConnectionString = "Server=localhost;Port=5432;Database=yavscdev;Username=yavscdev;Password=8*5idas;Include Error Detail=true";
 
     protected override int HttpsPort => 5104;
@@ -30,9 +31,6 @@ public sealed class ApiWebServerFixture : WebHostFixture
     private static readonly object _sqliteLock = new();
     private static readonly object _npgsqlLock = new();
     private static string? _sharedNpgsqlConnectionString;
-    private static string? _sharedNpgsqlAdminConnectionString;
-    private static string? _sharedNpgsqlDatabaseName;
-    private static bool _npgsqlCleanupRegistered;
 
     protected override WebApplication BuildApp(WebApplicationBuilder builder)
     {
@@ -126,14 +124,21 @@ public sealed class ApiWebServerFixture : WebHostFixture
             }
 
             var adminConnectionString = BuildAdminConnectionString();
-            var databaseName = $"yavsc_api_test_{Guid.NewGuid():N}";
+            var databaseName = DedicatedNpgsqlDatabaseName;
 
             using (var adminConnection = new NpgsqlConnection(adminConnectionString))
             {
                 adminConnection.Open();
-                using var createCommand = adminConnection.CreateCommand();
-                createCommand.CommandText = $"CREATE DATABASE \"{databaseName}\"";
-                createCommand.ExecuteNonQuery();
+                using var existsCommand = adminConnection.CreateCommand();
+                existsCommand.CommandText = "SELECT 1 FROM pg_database WHERE datname = @databaseName";
+                existsCommand.Parameters.AddWithValue("databaseName", databaseName);
+
+                if (existsCommand.ExecuteScalar() is null)
+                {
+                    using var createCommand = adminConnection.CreateCommand();
+                    createCommand.CommandText = $"CREATE DATABASE \"{databaseName}\"";
+                    createCommand.ExecuteNonQuery();
+                }
             }
 
             var testConnectionBuilder = new NpgsqlConnectionStringBuilder(adminConnectionString)
@@ -143,10 +148,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
                 IncludeErrorDetail = true
             };
 
-            _sharedNpgsqlAdminConnectionString = adminConnectionString;
-            _sharedNpgsqlDatabaseName = databaseName;
             _sharedNpgsqlConnectionString = testConnectionBuilder.ToString();
-            RegisterNpgsqlCleanup();
             return _sharedNpgsqlConnectionString;
         }
     }
@@ -176,61 +178,6 @@ public sealed class ApiWebServerFixture : WebHostFixture
         return builder.ToString();
     }
 
-    private static void RegisterNpgsqlCleanup()
-    {
-        if (_npgsqlCleanupRegistered)
-        {
-            return;
-        }
-
-        AppDomain.CurrentDomain.ProcessExit += (_, __) => DropTemporaryNpgsqlDatabase();
-        AssemblyLoadContext.Default.Unloading += _ => DropTemporaryNpgsqlDatabase();
-        _npgsqlCleanupRegistered = true;
-    }
-
-    private static void DropTemporaryNpgsqlDatabase()
-    {
-        lock (_npgsqlLock)
-        {
-            if (string.IsNullOrWhiteSpace(_sharedNpgsqlDatabaseName)
-                || string.IsNullOrWhiteSpace(_sharedNpgsqlAdminConnectionString))
-            {
-                return;
-            }
-
-            try
-            {
-                using var adminConnection = new NpgsqlConnection(_sharedNpgsqlAdminConnectionString);
-                adminConnection.Open();
-
-                using (var terminateCommand = adminConnection.CreateCommand())
-                {
-                    terminateCommand.CommandText = @"
-SELECT pg_terminate_backend(pid)
-FROM pg_stat_activity
-WHERE datname = @databaseName
-  AND pid <> pg_backend_pid();";
-                    terminateCommand.Parameters.AddWithValue("databaseName", _sharedNpgsqlDatabaseName);
-                    terminateCommand.ExecuteNonQuery();
-                }
-
-                using var dropCommand = adminConnection.CreateCommand();
-                dropCommand.CommandText = $"DROP DATABASE IF EXISTS \"{_sharedNpgsqlDatabaseName}\"";
-                dropCommand.ExecuteNonQuery();
-            }
-            catch
-            {
-                // Best-effort cleanup only.
-            }
-            finally
-            {
-                _sharedNpgsqlConnectionString = null;
-                _sharedNpgsqlAdminConnectionString = null;
-                _sharedNpgsqlDatabaseName = null;
-            }
-        }
-    }
-
     private sealed class NoopMessageSender : IYavscMessageSender
     {
         public Task<MessageWithPayloadResponse> NotifyBookQueryAsync(IEnumerable<string> connectionIds, RdvQueryEvent ev)
@@ -251,7 +198,7 @@ WHERE datname = @databaseName
         using var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        db.Database.EnsureDeleted();
+        ResetDatabase(db);
         db.Database.EnsureCreated();
 
         var user = new ApplicationUser
@@ -350,6 +297,94 @@ WHERE datname = @databaseName
         });
 
         db.SaveChanges();
+    }
+
+    private static void ResetDatabase(ApplicationDbContext db)
+    {
+        if (UseNpgsqlProvider())
+        {
+                db.Set<UserActivity>().RemoveRange(db.Set<UserActivity>());
+                db.Set<Activity>().RemoveRange(db.Set<Activity>());
+                db.Set<PerformerProfile>().RemoveRange(db.Set<PerformerProfile>());
+                db.Set<ApplicationUser>().RemoveRange(db.Set<ApplicationUser>());
+                db.Set<Location>().RemoveRange(db.Set<Location>());
+                db.Set<RdvQuery>().RemoveRange(db.Set<RdvQuery>());
+                db.Set<HairCutQuery>().RemoveRange(db.Set<HairCutQuery>());
+                db.Set<HairMultiCutQuery>().RemoveRange(db.Set<HairMultiCutQuery>());
+                db.Set<HairPrestation>().RemoveRange(db.Set<HairPrestation>());
+                db.Set<HairPrestationCollectionItem>().RemoveRange(db.Set<HairPrestationCollectionItem>());
+           
+            db.SaveChanges();
+            return;
+        }
+
+        db.Database.EnsureDeleted();
+    }
+
+   
+
+    private static IReadOnlyList<IEntityType> GetDeletionOrder(IModel model)
+    {
+        var entityTypes = model
+            .GetEntityTypes()
+            .Where(et =>
+                et.ClrType is not null &&
+                !et.IsOwned() &&
+                et.FindPrimaryKey() is not null)
+            .ToArray();
+
+        var included = new HashSet<IEntityType>(entityTypes);
+        var dependencies = new Dictionary<IEntityType, HashSet<IEntityType>>();
+
+        foreach (var entityType in entityTypes)
+        {
+            var principals = entityType
+                .GetForeignKeys()
+                .Where(fk => !fk.IsOwnership)
+                .Select(fk => fk.PrincipalEntityType)
+                .Where(included.Contains)
+                .ToHashSet();
+
+            dependencies[entityType] = principals;
+        }
+
+        var queue = new Queue<IEntityType>(
+            dependencies.Where(kvp => kvp.Value.Count == 0).Select(kvp => kvp.Key));
+
+        var order = new List<IEntityType>(entityTypes.Length);
+
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+            if (!order.Contains(current))
+            {
+                order.Add(current);
+            }
+
+            foreach (var kvp in dependencies)
+            {
+                if (!kvp.Value.Remove(current) || kvp.Value.Count != 0)
+                {
+                    continue;
+                }
+
+                if (!order.Contains(kvp.Key) && !queue.Contains(kvp.Key))
+                {
+                    queue.Enqueue(kvp.Key);
+                }
+            }
+        }
+
+        // If cycles remain (rare), append unresolved types last and rely on DB cascades.
+        foreach (var entityType in entityTypes)
+        {
+            if (!order.Contains(entityType))
+            {
+                order.Add(entityType);
+            }
+        }
+
+        return order;
     }
 
     public void ResetAndSeedRdvQueryGraph()

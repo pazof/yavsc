@@ -7,6 +7,7 @@ using Yavsc.Api.Test.Fixtures;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
+using Yavsc.Models.Haircut;
 using Yavsc.Models.Workflow;
 using Yavsc.Tests.Shared;
 
@@ -152,6 +153,74 @@ VALUES
         Assert.NotEmpty(payload!);
         Assert.Contains(payload!, item => item.BillingCode == BillingCodes.Rdv && item.PerformerId == "alice");
         Assert.DoesNotContain(payload!, item => string.IsNullOrWhiteSpace(item.BillingCode));
+    }
+
+    [Fact]
+    public async Task GetProviderOngoingCommands_returns_haircut_and_grouped_haircut_requests()
+    {
+        WorkflowHelpers.ConfigureBillingService();
+        _fixture.ResetAndSeedHaircutGraph();
+
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.UserActivities.Add(new UserActivity
+            {
+                UserId = "alice",
+                DoesCode = "brush",
+                Weight = 50,
+            });
+            db.UserActivities.Add(new UserActivity
+            {
+                UserId = "alice",
+                DoesCode = "mbrush",
+                Weight = 50,
+            });
+            db.CommandForm.Add(new CommandForm
+            {
+                ActivityCode = "brush",
+                ActionName = BillingCodes.Brush,
+                Title = "Brush",
+            });
+            db.CommandForm.Add(new CommandForm
+            {
+                ActivityCode = "mbrush",
+                ActionName = BillingCodes.MBrush,
+                Title = "MBrush",
+            });
+            db.SaveChanges();
+        }
+
+        using var http = NewClient();
+
+        var response = await http.GetAsync("/api/v1/bill/provider/ongoing", TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"Unexpected status {(int)response.StatusCode} ({response.StatusCode}): {body}");
+
+        var payload = await response.Content.ReadFromJsonAsync<List<ProviderOngoingCommandDto>>(TestContext.Current.CancellationToken);
+        Assert.NotNull(payload);
+        Assert.Contains(payload!, item => item.BillingCode == BillingCodes.Brush && item.PerformerId == "alice");
+        Assert.Contains(payload!, item => item.BillingCode == BillingCodes.MBrush && item.PerformerId == "alice");
+    }
+
+    [Fact]
+    public async Task GetProviderOngoingCommands_excludes_requests_outside_performer_declared_activities()
+    {
+        WorkflowHelpers.ConfigureBillingService();
+        _fixture.ResetAndSeedHaircutGraph();
+
+        using var http = NewClient();
+
+        var response = await http.GetAsync("/api/v1/bill/provider/ongoing", TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"Unexpected status {(int)response.StatusCode} ({response.StatusCode}): {body}");
+
+        var payload = await response.Content.ReadFromJsonAsync<List<ProviderOngoingCommandDto>>(TestContext.Current.CancellationToken);
+        Assert.NotNull(payload);
+        Assert.DoesNotContain(payload!, item => item.BillingCode == BillingCodes.Brush);
+        Assert.DoesNotContain(payload!, item => item.BillingCode == BillingCodes.MBrush);
     }
 
     private sealed class ProviderOngoingCommandDto
