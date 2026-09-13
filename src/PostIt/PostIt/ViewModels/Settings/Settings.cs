@@ -15,7 +15,7 @@ namespace PostIt.ViewModels;
 
 public partial class Settings : ViewModelBase
 {
-    const string SettingsFileName = "postit-settings.json";
+    public string SettingsFileName {get; private set;} = "postit-settings.json";
 
     [ObservableProperty]
     public partial AuthenticationSettings Authentication { get; set; } = new();
@@ -251,12 +251,18 @@ public partial class Settings : ViewModelBase
                 return;
             }
         }
-
+        if (Environment.GetEnvironmentVariable("POSTIT_SETTINGS_JSON") is string envJson
+            && !string.IsNullOrWhiteSpace(envJson))
+        {
+            Console.WriteLine("🔎 Loading settings from POSTIT_SETTINGS_JSON environment variable.");
+            ApplyJson(envJson, "POSTIT_SETTINGS_JSON");
+            Loaded = true;
+            return;
+        }
         string configDir = Path.Combine(
-    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-    "PostIt"
-);
-        Directory.CreateDirectory(configDir);
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "PostIt"
+        );
 
         string configPath = Path.Combine(configDir, SettingsFileName);
 
