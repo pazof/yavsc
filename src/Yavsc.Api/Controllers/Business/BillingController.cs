@@ -123,34 +123,65 @@ namespace Yavsc.ApiControllers
                 WorkflowHelpers.ConfigureBillingService();
             }
 
-            // Query known derived types explicitly so legacy rows with
-            // invalid/empty discriminator values are naturally ignored.
-            var rdvCommands = dbContext.Set<RdvQuery>()
+            var allowedActivityCodes = dbContext.UserActivities
                 .AsNoTracking()
-                .Where(q => q.PerformerId == uid)
-                .Where(q => q.Status == QueryStatus.Inserted
-                    || q.Status == QueryStatus.Accepted
-                    || q.Status == QueryStatus.InProgress)
-                .Cast<NominativeServiceCommand>()
+                .Where(a => a.UserId == uid)
+                .Select(a => a.DoesCode)
+                .Distinct()
                 .ToList();
 
-            var hairCommands = dbContext.Set<HairCutQuery>()
-                .AsNoTracking()
-                .Where(q => q.PerformerId == uid)
-                .Where(q => q.Status == QueryStatus.Inserted
-                    || q.Status == QueryStatus.Accepted
-                    || q.Status == QueryStatus.InProgress)
-                .Cast<NominativeServiceCommand>()
-                .ToList();
+            if (allowedActivityCodes.Count == 0)
+            {
+                return Ok(Array.Empty<object>());
+            }
 
-            var hairMultiCommands = dbContext.Set<HairMultiCutQuery>()
+            var allowedBillingCodes = dbContext.CommandForm
                 .AsNoTracking()
-                .Where(q => q.PerformerId == uid)
-                .Where(q => q.Status == QueryStatus.Inserted
-                    || q.Status == QueryStatus.Accepted
-                    || q.Status == QueryStatus.InProgress)
-                .Cast<NominativeServiceCommand>()
-                .ToList();
+                .Where(form => allowedActivityCodes.Contains(form.ActivityCode))
+                .Select(form => form.ActionName)
+                .Where(actionName => !string.IsNullOrWhiteSpace(actionName))
+                .Distinct()
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var fallbackToActivityFilteringOnly = allowedBillingCodes.Count == 0;
+
+            // Query only the command types allowed by the performer's declared
+            // activities; this avoids touching unrelated legacy slices.
+            var rdvCommands = fallbackToActivityFilteringOnly || allowedBillingCodes.Contains(BillingCodes.Rdv)
+                ? dbContext.Set<RdvQuery>()
+                    .AsNoTracking()
+                    .Where(q => q.PerformerId == uid)
+                    .Where(q => allowedActivityCodes.Contains(q.ActivityCode))
+                    .Where(q => q.Status == QueryStatus.Inserted
+                        || q.Status == QueryStatus.Accepted
+                        || q.Status == QueryStatus.InProgress)
+                    .Cast<NominativeServiceCommand>()
+                    .ToList()
+                : new List<NominativeServiceCommand>();
+
+            var hairCommands = fallbackToActivityFilteringOnly || allowedBillingCodes.Contains(BillingCodes.Brush)
+                ? dbContext.Set<HairCutQuery>()
+                    .AsNoTracking()
+                    .Where(q => q.PerformerId == uid)
+                    .Where(q => allowedActivityCodes.Contains(q.ActivityCode))
+                    .Where(q => q.Status == QueryStatus.Inserted
+                        || q.Status == QueryStatus.Accepted
+                        || q.Status == QueryStatus.InProgress)
+                    .Cast<NominativeServiceCommand>()
+                    .ToList()
+                : new List<NominativeServiceCommand>();
+
+            var hairMultiCommands = fallbackToActivityFilteringOnly || allowedBillingCodes.Contains(BillingCodes.MBrush)
+                ? dbContext.Set<HairMultiCutQuery>()
+                    .AsNoTracking()
+                    .Where(q => q.PerformerId == uid)
+                    .Where(q => allowedActivityCodes.Contains(q.ActivityCode))
+                    .Where(q => q.Status == QueryStatus.Inserted
+                        || q.Status == QueryStatus.Accepted
+                        || q.Status == QueryStatus.InProgress)
+                    .Cast<NominativeServiceCommand>()
+                    .ToList()
+                : new List<NominativeServiceCommand>();
 
             var commands = rdvCommands
                 .Concat(hairCommands)
