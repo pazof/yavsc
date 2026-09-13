@@ -67,6 +67,28 @@
       }
     },
     {
+      "label": "test api backend (npgsql)",
+      "type": "process",
+      "problemMatcher": ["$msCompile"],
+      "command": "dotnet",
+      "args": [
+        "test",
+        "Yavsc.Api.Test.csproj",
+        "-v",
+        "minimal"
+      ],
+      "options": {
+        "cwd": "src/Yavsc.Api.Test",
+        "env": {
+          "YAVSC_API_TEST_DB_PROVIDER": "npgsql",
+        }
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
       "label": "build-webapi",
       "type": "process",
       "problemMatcher": ["$msCompile"],

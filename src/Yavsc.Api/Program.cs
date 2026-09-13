@@ -62,6 +62,9 @@ internal class Program
         services.AddAuthentication("Bearer")
                  .AddYavscJwtBearer(builder.Configuration);
 
+        services.AddSignalR();
+        services.AddSingleton<IConnexionManager, HubConnectionManager>();
+
         // DbContextBuilder
         services.AddDbContext<ApplicationDbContext>(options =>
            options.UseNpgsql(builder.Configuration.GetConnectionString(

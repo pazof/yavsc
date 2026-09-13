@@ -23,8 +23,8 @@ public sealed class StatusNotice
 
         (Glyph, Background, BorderBrush, Foreground) = severity switch
         {
-            StatusSeverity.Error => ("!", "#FDECEA", "#C62828", "#7F1D1D"),
-            StatusSeverity.Warning => ("~", "#FFF8E1", "#E6A700", "#7C4A03"),
+            StatusSeverity.Error => ("!", "#7F1D1D", "#C62828", "#e1f0f6"),
+            StatusSeverity.Warning => ("~", "#7C4A03", "#E6A700", "#eaeaea"),
             _ => ("i", "#E8F0FE", "#5B8DEF", "#1E3A8A"),
         };
     }

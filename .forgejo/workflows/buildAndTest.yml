@@ -48,8 +48,8 @@ jobs:
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."
+        export YAVSC_API_TEST_DB_PROVIDER=npgsql
         cd /src/_src && dotnet test \
           --verbosity normal \
           --filter="Category!=Platform-Android" \
-          --logger "xunit;LogFileName=test-results.xml" \
-          && echo "✅ Success !" || { echo "❌ Fail ($?)!"; exit 1; }
+          --logger "xunit;LogFileName=test-results.xml"

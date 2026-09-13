@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Yavsc.Abstract.Chat;
 using Yavsc.Models;
 using Yavsc.ViewModels.Chat;
@@ -119,10 +121,10 @@ namespace Yavsc.Services
 
         public bool Part(string cxId, string roomName, string reason)
         {
-            ChatRoomInfo chanInfo;
-            if (Channels.TryGetValue(roomName, out chanInfo))
+            ChatRoomInfo channelInfo;
+            if (Channels.TryGetValue(roomName, out channelInfo))
             {
-                if (!chanInfo.Users.Contains(cxId))
+                if (!channelInfo.Users.Contains(cxId))
                 {
                     // TODO NotifyErrorToCaller(roomName, "you didn't join.");
                     return false;
@@ -130,11 +132,11 @@ namespace Yavsc.Services
                 // FIXME only remove cx, not username,
                 // as long as he might be connected
                 // from another device, to the same room
-                chanInfo.Users.Remove(cxId);
-                if (chanInfo.Users.Count == 0)
+                channelInfo.Users.Remove(cxId);
+                if (channelInfo.Users.Count == 0)
                 {
-                    ChatRoomInfo deadchanInfo;
-                    if (Channels.TryRemove(roomName, out deadchanInfo))
+                    ChatRoomInfo deadChannelInfo;
+                    if (Channels.TryRemove(roomName, out deadChannelInfo))
                     {
                         var room = _dbContext.ChatRoom.FirstOrDefault(r => r.Name == roomName);
                         room.LatestJoinPart = DateTime.UtcNow;
@@ -155,67 +157,67 @@ namespace Yavsc.Services
             var userName = ChatUserNames[cxId];
 
             _logger.LogInformation($"Join: {userName}=>{roomName}");
-            ChatRoomInfo chanInfo;
+            ChatRoomInfo channelInfo;
             // if channel already is open
             if (Channels.ContainsKey(roomName))
             {
-                if (Channels.TryGetValue(roomName, out chanInfo))
+                if (Channels.TryGetValue(roomName, out channelInfo))
                 {
                     if (IsPresent(roomName, userName))
                     {
                         // TODO implement some unique connection sharing protocol
                         // between all terminals from a single user.
-                        return chanInfo;
+                        return channelInfo;
                     }
                     else
                     {
                         if (IsCop(userName))
                         {
-                            chanInfo.Ops.Add(cxId);
+                            channelInfo.Ops.Add(cxId);
                         }
                         else{
-                            chanInfo.Users.Add(cxId);
+                            channelInfo.Users.Add(cxId);
                         }
                         _logger.LogInformation($"existing room joint: {userName}=>{roomName}");
                         if (!ChatRoomPresence[userName].Contains(roomName))
                             ChatRoomPresence[userName].Add(roomName);
-                        return chanInfo;
+                        return channelInfo;
                     }
                 }
                 else
                 {
-                    string msg = "room seemd to be avaible ... but we could get no info on it.";
+                    string msg = "room seemed to be available ... but we could get no info on it.";
                     _errorHandler(roomName, msg);
                     return null;
                 }
             }
             // room was closed.
             var room = _dbContext.ChatRoom.FirstOrDefault(r => r.Name == roomName);
-            chanInfo = new ChatRoomInfo();
+            channelInfo = new ChatRoomInfo();
 
 
             if (room != null)
             {
-                chanInfo.Topic = room.Topic;
-                chanInfo.Name = room.Name;
-                chanInfo.Users.Add(cxId);
+                channelInfo.Topic = room.Topic;
+                channelInfo.Name = room.Name;
+                channelInfo.Users.Add(cxId);
             }
             else
             { // a first join, we create it.
-                chanInfo.Name = roomName;
-                chanInfo.Topic =  _localizer.GetString(ChatHubConstants.JustCreatedBy)+userName;
-                chanInfo.Ops.Add(cxId);
+                channelInfo.Name = roomName;
+                channelInfo.Topic =  _localizer.GetString(ChatHubConstants.JustCreatedBy)+userName;
+                channelInfo.Ops.Add(cxId);
             }
 
-            if (Channels.TryAdd(roomName, chanInfo))
+            if (Channels.TryAdd(roomName, channelInfo))
             {
                 ChatRoomPresence[userName].Add(roomName);
                 _logger.LogInformation("new room joint");
-                return (chanInfo);
+                return (channelInfo);
             }
             else
             {
-                string msg = "Chan create failed unexpectly...";
+                string msg = "Chan create failed unexpectedly...";
                 _errorHandler(roomName, msg);
                 return null;
             }
@@ -226,7 +228,7 @@ namespace Yavsc.Services
             throw new System.NotImplementedException();
         }
 
-        public bool Deop(string roomName, string userName)
+        public bool DeOp(string roomName, string userName)
         {
             throw new System.NotImplementedException();
         }
@@ -246,9 +248,9 @@ namespace Yavsc.Services
             return ChatUserNames[cxId];
         }
 
-        public bool TryGetChanInfo(string room, out ChatRoomInfo chanInfo)
+        public bool TryGetChanInfo(string room, out ChatRoomInfo channelInfo)
         {
-            return Channels.TryGetValue(room, out chanInfo);
+            return Channels.TryGetValue(room, out channelInfo);
         }
 
         public IEnumerable<ChannelShortInfo> ListChannels(string pattern)
@@ -277,22 +279,22 @@ namespace Yavsc.Services
 
         public bool Kick(string cxId, string userName, string roomName, string reason)
         {
-            ChatRoomInfo chanInfo;
+            ChatRoomInfo channelInfo;
             if (!Channels.ContainsKey(roomName))
             {
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchChan).ToString());
                 return false;
             }
 
-            if (!Channels.TryGetValue(roomName, out chanInfo))
+            if (!Channels.TryGetValue(roomName, out channelInfo))
             {
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchChan).ToString());
                 return false;
             }
 
             var kickerName = GetUserName(cxId);
-            if (!chanInfo.Ops.Contains(cxId))
-            if (!chanInfo.Hops.Contains(cxId))
+            if (!channelInfo.Ops.Contains(cxId))
+            if (!channelInfo.Hops.Contains(cxId))
             {
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabYouNotOp).ToString());
                 return false;
@@ -303,9 +305,9 @@ namespace Yavsc.Services
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.LabNoSuchUser).ToString());
                 return false;
             }
-            var ucxs = GetConnexionIds(userName);
-            if (chanInfo.Hops.Contains(cxId))
-            if (chanInfo.Ops.Any(c => ucxs.Contains(c)))
+            var userConnectionIds = GetConnexionIds(userName);
+            if (channelInfo.Hops.Contains(cxId))
+            if (channelInfo.Ops.Any(c => userConnectionIds.Contains(c)))
             {
                 _errorHandler(roomName, _localizer.GetString(ChatHubConstants.HopWontKickOp).ToString());
                 return false;
@@ -317,15 +319,15 @@ namespace Yavsc.Services
             }
 
             // all good, time to kick :-)
-            foreach (var ucx in ucxs) {
-            if (chanInfo.Users.Contains(ucx))
-                chanInfo.Users.Remove(ucx);
+            foreach (var ucx in userConnectionIds) {
+            if (channelInfo.Users.Contains(ucx))
+                channelInfo.Users.Remove(ucx);
 
-            else if (chanInfo.Ops.Contains(ucx))
-                chanInfo.Ops.Remove(ucx);
+            else if (channelInfo.Ops.Contains(ucx))
+                channelInfo.Ops.Remove(ucx);
 
-            else if (chanInfo.Hops.Contains(ucx))
-                chanInfo.Hops.Remove(ucx);
+            else if (channelInfo.Hops.Contains(ucx))
+                channelInfo.Hops.Remove(ucx);
             }
 
             return true;
