@@ -22,7 +22,7 @@ public partial class AuthenticationSettings : ObservableObject
 
     public const string DefaultClientId  = "postit";
 
-    public static readonly string[] DefaultScopes  = { "blogs" };
+    public static readonly string[] DefaultScopes  = { "blogs", "api" };
 
     [ObservableProperty]
     public partial string Authority { get; set; }

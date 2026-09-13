@@ -507,5 +507,7 @@ namespace Yavsc.Models
         public DbSet<RegexAlertPattern> RegexAlertPatterns { get; set; }
 
         public DbSet<ModerationLog> ModerationLogs { get; set; }
+
+        public DbSet<NominativeServiceCommand> NominativeServiceCommands { get; set; }
     }
 }

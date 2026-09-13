@@ -114,7 +114,7 @@ public sealed class BillingControllerTests : IClassFixture<ApiWebServerFixture>
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             db.Database.ExecuteSqlInterpolated($@"
-INSERT INTO ""NominativeServiceCommand""
+INSERT INTO ""NominativeServiceCommands""
 (""ActivityCode"", ""ClientId"", ""Consent"", ""DateCreated"", ""DateModified"", ""Description"", ""Discriminator"", ""PerformerId"", ""Status"", ""UserCreated"", ""UserModified"")
 VALUES
 ({"dev"}, {"bob"}, {true}, {DateTime.UtcNow.AddMinutes(-5)}, {DateTime.UtcNow.AddMinutes(-4)}, {"Legacy malformed row"}, {""}, {"alice"}, {(int)QueryStatus.Accepted}, {"alice"}, {"alice"});

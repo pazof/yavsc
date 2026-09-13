@@ -15,7 +15,8 @@ namespace PostIt.ViewModels;
 
 public partial class Settings : ViewModelBase
 {
-    public string SettingsFileName {get; private set;} = "postit-settings.json";
+    [JsonIgnore]
+    public string? SettingsFileFullName { get; private set; }
 
     [ObservableProperty]
     public partial AuthenticationSettings Authentication { get; set; } = new();
@@ -38,6 +39,60 @@ public partial class Settings : ViewModelBase
     [ObservableProperty]
     [JsonIgnore]
     public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
+
+
+    public bool Loaded { get; private set; } = false;
+
+
+    /// <summary>
+    /// True when the in-memory state has drifted from the last
+    /// <see cref="Load"/> or <see cref="Save"/> snapshot. The
+    /// Settings page binds the Sauver button's <c>IsEnabled</c> to
+    /// this flag, so it only enables when the user has actually
+    /// touched something since the last load / save. Cleared by
+    /// <see cref="Load"/> (and by <see cref="ApplyJson"/>), set by
+    /// every successful setter on the four top-level mutable
+    /// properties and on the sub-properties of
+    /// <see cref="Authentication"/>.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsDirty { get; private set; } = false;
+
+
+    /// <summary>
+    /// Guards every mutation of the observable state. <c>[ObservableProperty]</c>
+    /// generates setters that call <c>SetProperty(...)</c> which fires
+    /// <c>PropertyChanged</c>. Avalonia bindings consume that event on
+    /// the UI thread, and a stray background-thread update is exactly
+    /// what crashed <c>DataValidationErrors.SetErrors</c> on
+    /// <c>postit://callback</c> re-launches. The lock makes mutations
+    /// atomic; <see cref="OnPropertyChanged(PropertyChangedEventArgs)"/>
+    /// then marshals the notification onto the UI thread so bindings
+    /// observe the change on the right thread.
+    /// </summary>
+    private readonly object _mutationGate = new();
+
+    /// <summary>
+    /// Scopes the PostIt client always requires from the OIDC provider,
+    /// regardless of what the user has in their settings file.
+    ///
+    /// <para>PostIt calls into the Blog API (and any other Yavsc API
+    /// gated by an <c>[Authorize("…Scope")]</c> policy) and is silent
+    /// about the contract: a missing scope here surfaces as a 401
+    /// on the very first API call after login, with no obvious link
+    /// to the settings. The "feature" scopes the user must opt into
+    /// (e.g. <c>blogs</c>) are still their choice — we only force the
+    /// structural ones that OIDC itself needs.</para>
+    /// </summary>
+    private static readonly string[] BuiltInScopes = new[]
+    {
+        "openid",        // OIDC: required for the id_token
+        "profile",       // OIDC: standard profile claims
+        "offline_access", // OIDC: required to receive a refresh_token
+        "blogs",
+        "api"
+    };
+    private readonly string DEFAULT_SETTINGS_FILENAME = "postit-settings.json";
 
     public void SetActionStatus(string message, StatusSeverity severity = StatusSeverity.Info)
     {
@@ -85,35 +140,6 @@ public partial class Settings : ViewModelBase
         }
         MarkDirty();
     }
-
-    public bool Loaded { get; private set; } = false;
-
-    /// <summary>
-    /// True when the in-memory state has drifted from the last
-    /// <see cref="Load"/> or <see cref="Save"/> snapshot. The
-    /// Settings page binds the Sauver button's <c>IsEnabled</c> to
-    /// this flag, so it only enables when the user has actually
-    /// touched something since the last load / save. Cleared by
-    /// <see cref="Load"/> (and by <see cref="ApplyJson"/>), set by
-    /// every successful setter on the four top-level mutable
-    /// properties and on the sub-properties of
-    /// <see cref="Authentication"/>.
-    /// </summary>
-    [ObservableProperty]
-    public partial bool IsDirty { get; private set; } = false;
-
-    /// <summary>
-    /// Guards every mutation of the observable state. <c>[ObservableProperty]</c>
-    /// generates setters that call <c>SetProperty(...)</c> which fires
-    /// <c>PropertyChanged</c>. Avalonia bindings consume that event on
-    /// the UI thread, and a stray background-thread update is exactly
-    /// what crashed <c>DataValidationErrors.SetErrors</c> on
-    /// <c>postit://callback</c> re-launches. The lock makes mutations
-    /// atomic; <see cref="OnPropertyChanged(PropertyChangedEventArgs)"/>
-    /// then marshals the notification onto the UI thread so bindings
-    /// observe the change on the right thread.
-    /// </summary>
-    private readonly object _mutationGate = new();
 
     /// <summary>
     /// Build OidcClient options configured for Authorization Code + PKCE
@@ -178,27 +204,6 @@ public partial class Settings : ViewModelBase
         Authentication.RefreshScopeListText();
     }
 
-    /// <summary>
-    /// Scopes the PostIt client always requires from the OIDC provider,
-    /// regardless of what the user has in their settings file.
-    ///
-    /// <para>PostIt calls into the Blog API (and any other Yavsc API
-    /// gated by an <c>[Authorize("…Scope")]</c> policy) and is silent
-    /// about the contract: a missing scope here surfaces as a 401
-    /// on the very first API call after login, with no obvious link
-    /// to the settings. The "feature" scopes the user must opt into
-    /// (e.g. <c>blogs</c>) are still their choice — we only force the
-    /// structural ones that OIDC itself needs.</para>
-    /// </summary>
-    private static readonly string[] BuiltInScopes = new[]
-    {
-        "openid",        // OIDC: required for the id_token
-        "profile",       // OIDC: standard profile claims
-        "offline_access", // OIDC: required to receive a refresh_token
-        "blogs",
-        "api"
-
-    };
 
     /// <summary>
     /// Merge user-configured scopes with the built-in ones. User scopes
@@ -255,7 +260,14 @@ public partial class Settings : ViewModelBase
             && !string.IsNullOrWhiteSpace(envJson))
         {
             Console.WriteLine("🔎 Loading settings from POSTIT_SETTINGS_JSON environment variable.");
-            ApplyJson(envJson, "POSTIT_SETTINGS_JSON");
+            FileInfo configByEnvFileInfo = new FileInfo(envJson);
+            if (!configByEnvFileInfo.Exists)
+            {
+                throw new Exception($"🩎 Settings file not found at {configByEnvFileInfo.FullName}");
+            }
+            string json = File.ReadAllText(configByEnvFileInfo.FullName);
+            ApplyJson(json, "POSTIT_SETTINGS_JSON");
+            SettingsFileFullName = configByEnvFileInfo.FullName;
             Loaded = true;
             return;
         }
@@ -264,9 +276,22 @@ public partial class Settings : ViewModelBase
             "PostIt"
         );
 
-        string configPath = Path.Combine(configDir, SettingsFileName);
+        if (SettingsFileFullName is not null)
+        {
+            // Already set by a previous Load() or by the environment
+            // variable path above. Use it as-is.
+        }
+        else if (Environment.GetEnvironmentVariable("POSTIT_SETTINGS_JSON") is string envPath
+            && !string.IsNullOrWhiteSpace(envPath))
+        {
+            SettingsFileFullName = envPath;
+        }
+        else
+        {
+            SettingsFileFullName = Path.Combine(configDir, "postit-settings.json");
+        }
 
-        FileInfo configFileInfo = new FileInfo(configPath);
+        FileInfo configFileInfo = new FileInfo(SettingsFileFullName);
 
         if (!configFileInfo.Exists)
         {
@@ -295,6 +320,7 @@ public partial class Settings : ViewModelBase
             using var reader = new StreamReader(stream);
             var json = reader.ReadToEnd();
             ApplyJson(json, $"user file {configFileInfo.FullName}");
+            SettingsFileFullName = configFileInfo.FullName;
             Loaded = true;
         }
         catch (Exception ex)
@@ -458,11 +484,17 @@ public partial class Settings : ViewModelBase
     {
         SetActionStatus("Enregistrement des parametres...", StatusSeverity.Info);
 
-        var configDir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "PostIt");
-        Directory.CreateDirectory(configDir);
-        var configPath = Path.Combine(configDir, SettingsFileName);
+        if (SettingsFileFullName is null)
+        {
+            var configDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "PostIt");
+            Directory.CreateDirectory(configDir);
+            SettingsFileFullName = Path.Combine(configDir, DEFAULT_SETTINGS_FILENAME);
+        }
+
+        var configPath = SettingsFileFullName!;
+        Directory.CreateDirectory(Path.GetDirectoryName(configPath)!);
 
         lock (_mutationGate)
         {

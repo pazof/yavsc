@@ -69,7 +69,7 @@
     {
       "label": "test api backend (npgsql)",
       "type": "process",
-      "problemMatcher": ["$msCompile"],
+      "problemMatcher": "$msCompile",
       "command": "dotnet",
       "args": [
         "test",
@@ -80,7 +80,7 @@
       "options": {
         "cwd": "src/Yavsc.Api.Test",
         "env": {
-          "YAVSC_API_TEST_DB_PROVIDER": "npgsql",
+          "YAVSC_API_TEST_DB_PROVIDER": "npgsql"
         }
       },
       "group": {
@@ -101,6 +101,21 @@
         "kind": "build"
       },
       "isBackground": true
+    },
+    {
+      "label": "dotnet: build-postit-desktop",
+      "type": "process",
+      "isBuildCommand": true,
+      "isTestCommand": false,
+      "isBackground": true,
+      "command": "dotnet",
+      "args": ["build", "/property:GenerateFullPaths=true"],
+      "options": {
+        "cwd": "src/PostIt/PostIt.Desktop"
+      },
+      "group": {
+        "kind": "build"
+      }
     }
   ]
 }

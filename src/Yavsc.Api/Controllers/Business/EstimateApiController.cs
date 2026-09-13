@@ -125,7 +125,7 @@ namespace Yavsc.Controllers
 
             if (estimate.CommandId != null)
             {
-                var query = _context.Set<NominativeServiceCommand>()
+                var query = _context.NominativeServiceCommands
                     .FirstOrDefault(q => q.Id == estimate.CommandId);
                 if (query == null)
                 {
