@@ -31,6 +31,7 @@ jobs:
     steps:
     - name: Clone yavsc
       run: |
+        set -e
         cd /src
         git clone https://forgejo.pschneider.fr/notazof/yavsc.git _src
         cd _src
@@ -44,7 +45,6 @@ jobs:
       run: |
         echo "🔍 Scanning for secrets..."
         cd /src/_src && dotnet tool restore && dotnet picket git --verbose --redact --exit-code 1 --log-opts -n1 \
-          && echo "✅ Success !" || echo "❌ Fail ($?)!"
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."
