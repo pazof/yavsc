@@ -62,6 +62,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<BillingQueryDetailsPage>();
         services.AddTransient<ProviderOngoingRequestsPage>();
         services.AddTransient<EstimateEditionPage>();
+        services.AddTransient<EstimateListPage>();
 
         // ViewModels
         services.AddSingleton(settings);

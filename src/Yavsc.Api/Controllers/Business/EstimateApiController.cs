@@ -198,6 +198,28 @@ namespace Yavsc.Controllers
             return Ok(estimate);
         }
 
+        // GET: api/estimate/asclient
+        // Ongoing estimates (not yet validated by the client) where the
+        // current user is the client who initiated the request.
+        [HttpGet("asclient")]
+        public IActionResult GetOngoingEstimatesAsClient()
+        {
+            var uid = User.GetUserId();
+            return Ok(_context.Estimates.Include(e => e.Bill)
+                .Where(e => e.ClientId == uid && e.ClientValidationDate == default));
+        }
+
+        // GET: api/estimate/asprovider
+        // Ongoing estimates (not yet validated by the client) established
+        // by the current user as the provider.
+        [HttpGet("asprovider")]
+        public IActionResult GetOngoingEstimatesAsProvider()
+        {
+            var uid = User.GetUserId();
+            return Ok(_context.Estimates.Include(e => e.Bill)
+                .Where(e => e.OwnerId == uid && e.ClientValidationDate == default));
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

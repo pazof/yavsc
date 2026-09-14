@@ -206,4 +206,110 @@ public sealed class EstimateApiControllerTests : IClassFixture<ApiWebServerFixtu
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
+
+    /// <summary>
+    /// Seeds an estimate owned by alice (the provider) for the given
+    /// client, optionally already validated by the client.
+    /// </summary>
+    private long SeedEstimate(string clientId, bool clientValidated)
+    {
+        using var scope = _fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var estimate = new Estimate
+        {
+            ClientId = clientId,
+            OwnerId = "alice",
+            CommandType = BillingCodes.Rdv,
+            Title = "Devis prestation",
+            Description = "Devis de test",
+            AttachedFiles = new List<string>(),
+            AttachedGraphics = new List<string>(),
+            Bill = new List<CommandLine>
+            {
+                new() { Name = "Prestation", Description = "Prestation de base", Count = 1, UnitaryCost = 120m, Currency = "EUR" },
+            },
+            ClientValidationDate = clientValidated ? DateTime.UtcNow : default,
+        };
+        db.Estimates.Add(estimate);
+        db.SaveChanges();
+        return estimate.Id;
+    }
+
+    [Fact]
+    public async Task GetOngoingEstimatesAsClient_returns_only_the_current_users_ongoing_estimates()
+    {
+        _fixture.ResetAndSeedActivityGraph();
+        var ongoingId = SeedEstimate(clientId: "bob", clientValidated: false);
+        SeedEstimate(clientId: "bob", clientValidated: true);    // already validated: excluded
+        SeedEstimate(clientId: "alice", clientValidated: false); // another client's: excluded
+
+        using var http = NewClient("bob");
+
+        var response = await http.GetAsync("/api/v1/estimate/asclient", TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"Unexpected status {(int)response.StatusCode} ({response.StatusCode}): {body}");
+
+        using var doc = JsonDocument.Parse(body);
+        var items = doc.RootElement.EnumerateArray().ToArray();
+        var item = Assert.Single(items);
+        Assert.Equal(ongoingId, item.GetProperty("id").GetInt64());
+        Assert.Equal("bob", item.GetProperty("clientId").GetString());
+        Assert.Equal("alice", item.GetProperty("ownerId").GetString());
+    }
+
+    [Fact]
+    public async Task GetOngoingEstimatesAsProvider_returns_only_ongoing_estimates_established_by_the_provider()
+    {
+        _fixture.ResetAndSeedActivityGraph();
+        var ongoingId = SeedEstimate(clientId: "bob", clientValidated: false);
+        SeedEstimate(clientId: "bob", clientValidated: true); // already validated: excluded
+
+        using var http = NewClient("alice");
+
+        var response = await http.GetAsync("/api/v1/estimate/asprovider", TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"Unexpected status {(int)response.StatusCode} ({response.StatusCode}): {body}");
+
+        using var doc = JsonDocument.Parse(body);
+        var items = doc.RootElement.EnumerateArray().ToArray();
+        var item = Assert.Single(items);
+        Assert.Equal(ongoingId, item.GetProperty("id").GetInt64());
+        Assert.Equal("alice", item.GetProperty("ownerId").GetString());
+        Assert.Single(item.GetProperty("bill").EnumerateArray());
+    }
+
+    [Fact]
+    public async Task GetOngoingEstimatesAsClient_without_token_is_unauthorized()
+    {
+        _fixture.ResetAndSeedActivityGraph();
+
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+        };
+        using var http = new HttpClient(handler) { BaseAddress = new Uri(_fixture.BaseAddress) };
+
+        var response = await http.GetAsync("/api/v1/estimate/asclient", TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetOngoingEstimatesAsProvider_without_token_is_unauthorized()
+    {
+        _fixture.ResetAndSeedActivityGraph();
+
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+        };
+        using var http = new HttpClient(handler) { BaseAddress = new Uri(_fixture.BaseAddress) };
+
+        var response = await http.GetAsync("/api/v1/estimate/asprovider", TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
 }
