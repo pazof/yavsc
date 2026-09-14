@@ -32,11 +32,15 @@ public class HomePageViewModel : ViewModelBase
 
         OpenActivities = new AsyncRelayCommand(OpenActivitiesAsync);
         OpenProviderRequests = new AsyncRelayCommand(OpenProviderRequestsAsync);
+        OpenClientEstimates = new AsyncRelayCommand(() => OpenEstimateListAsync(EstimateListPerspective.Client));
+        OpenProviderEstimates = new AsyncRelayCommand(() => OpenEstimateListAsync(EstimateListPerspective.Provider));
         OpenBlogs = new AsyncRelayCommand(App.PushBlogsPageAsync);
     }
     public IAsyncRelayCommand OpenBlogs { get; }
     public IAsyncRelayCommand OpenActivities { get; }
     public IAsyncRelayCommand OpenProviderRequests { get; }
+    public IAsyncRelayCommand OpenClientEstimates { get; }
+    public IAsyncRelayCommand OpenProviderEstimates { get; }
 
     private async Task OpenActivitiesAsync()
     {
@@ -68,6 +72,25 @@ public class HomePageViewModel : ViewModelBase
         var estimateClient = app.ServiceProvider?.GetRequiredService<EstimateApiClient>();
 
         var vm = new ProviderOngoingRequestsPageViewModel(billingClient, Settings, estimateClient);
+        await vm.InitializeAsync();
+        await app.PushPageAsync(vm);
+    }
+
+    private async Task OpenEstimateListAsync(EstimateListPerspective perspective)
+    {
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var estimateClient = app.ServiceProvider?.GetRequiredService<EstimateApiClient>();
+        if (estimateClient is null)
+        {
+            throw new InvalidOperationException("Client devis indisponible.");
+        }
+
+        var vm = new EstimateListPageViewModel(estimateClient, perspective);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

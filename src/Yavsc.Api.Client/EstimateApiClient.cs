@@ -56,6 +56,22 @@ public sealed class EstimateApiClient
     }
 
     /// <summary>
+    /// Lists the ongoing estimates (not yet validated by the client) where
+    /// the current user is the client who initiated the request
+    /// (<c>GET estimate/asclient</c>).
+    /// </summary>
+    public Task<List<EstimateDto>> GetOngoingEstimatesAsClientAsync(CancellationToken ct = default)
+        => _api.CallAsync<List<EstimateDto>>(HttpMethod.Get, Absolute($"{PathPrefix}/asclient"), ct: ct);
+
+    /// <summary>
+    /// Lists the ongoing estimates (not yet validated by the client)
+    /// established by the current user as the provider
+    /// (<c>GET estimate/asprovider</c>).
+    /// </summary>
+    public Task<List<EstimateDto>> GetOngoingEstimatesAsProviderAsync(CancellationToken ct = default)
+        => _api.CallAsync<List<EstimateDto>>(HttpMethod.Get, Absolute($"{PathPrefix}/asprovider"), ct: ct);
+
+    /// <summary>
     /// Creates an estimate. When <see cref="EstimateDto.CommandId"/> is set,
     /// the server also stamps the linked command as validated.
     /// </summary>
