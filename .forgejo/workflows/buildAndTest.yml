@@ -49,6 +49,12 @@ jobs:
       run: |
         echo "🏗️ Building the solution..."
         cd /src/_src && dotnet build --verbosity normal
+    - name: Install SkiaSharp native dependencies
+      run: |
+        echo "📦 Installing libfontconfig/libfreetype for SkiaSharp (Avalonia.Headless)..."
+        apt-get update && apt-get install -y --no-install-recommends \
+          libfontconfig1 libfreetype6 libexpat1 zlib1g libbz2-1.0 libpng16-16 libbrotli1 \
+          && rm -rf /var/lib/apt/lists/*
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."
