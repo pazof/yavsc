@@ -47,7 +47,10 @@
       "group": "build",
       "isBuildCommand": true,
       "isTestCommand": false,
-      "isBackground": true
+      "isBackground": true,
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
     },
     {
       "label": "test blogs backend",
@@ -57,6 +60,28 @@
       "args": ["test"],
       "options": {
         "cwd": "src/Yavsc.Blogs.Tests"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "test api backend (npgsql)",
+      "type": "process",
+      "problemMatcher": "$msCompile",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "Yavsc.Api.Test.csproj",
+        "-v",
+        "minimal"
+      ],
+      "options": {
+        "cwd": "src/Yavsc.Api.Test",
+        "env": {
+          "YAVSC_API_TEST_DB_PROVIDER": "npgsql"
+        }
       },
       "group": {
         "kind": "test",
@@ -76,6 +101,21 @@
         "kind": "build"
       },
       "isBackground": true
+    },
+    {
+      "label": "dotnet: build-postit-desktop",
+      "type": "process",
+      "isBuildCommand": true,
+      "isTestCommand": false,
+      "isBackground": true,
+      "command": "dotnet",
+      "args": ["build", "/property:GenerateFullPaths=true"],
+      "options": {
+        "cwd": "src/PostIt/PostIt.Desktop"
+      },
+      "group": {
+        "kind": "build"
+      }
     }
   ]
 }

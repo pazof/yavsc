@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using System.Security.Claims;
+using Yavsc.Billing;
 using Yavsc.Helpers;
 using Yavsc.ViewModels;
 using Yavsc.Models.Billing;
+using Yavsc.Models.Haircut;
+using Yavsc.Models.Workflow;
 using Yavsc.Server.Models.FileSystem;
 
 namespace Yavsc.ApiControllers
@@ -100,6 +103,114 @@ namespace Yavsc.ApiControllers
             return ViewComponent("Bill",new object[] { billingCode, bill, OutputFormat.Pdf, true } );
         }
 
+        /// <summary>
+        /// Lists ongoing service commands for the authenticated performer.
+        /// This endpoint is tailored for the PostIt provider homepage flow
+        /// ("Mes demandes en cours").
+        /// </summary>
+        [HttpGet("provider/ongoing")]
+        [Produces("application/json")]
+        public IActionResult GetProviderOngoingCommands()
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Unauthorized();
+            }
+
+            if (billingService.BillingMap.Count == 0)
+            {
+                WorkflowHelpers.ConfigureBillingService();
+            }
+
+            var allowedActivityCodes = dbContext.UserActivities
+                .AsNoTracking()
+                .Where(a => a.UserId == uid)
+                .Select(a => a.DoesCode)
+                .Distinct()
+                .ToList();
+
+            if (allowedActivityCodes.Count == 0)
+            {
+                return Ok(Array.Empty<object>());
+            }
+
+            var allowedBillingCodes = dbContext.CommandForm
+                .AsNoTracking()
+                .Where(form => allowedActivityCodes.Contains(form.ActivityCode))
+                .Select(form => form.ActionName)
+                .Where(actionName => !string.IsNullOrWhiteSpace(actionName))
+                .Distinct()
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var fallbackToActivityFilteringOnly = allowedBillingCodes.Count == 0;
+
+            // Query only the command types allowed by the performer's declared
+            // activities; this avoids touching unrelated legacy slices.
+            var rdvCommands = fallbackToActivityFilteringOnly || allowedBillingCodes.Contains(BillingCodes.Rdv)
+                ? dbContext.Set<RdvQuery>()
+                    .AsNoTracking()
+                    .Where(q => q.PerformerId == uid)
+                    .Where(q => allowedActivityCodes.Contains(q.ActivityCode))
+                    .Where(q => q.Status == QueryStatus.Inserted
+                        || q.Status == QueryStatus.Accepted
+                        || q.Status == QueryStatus.InProgress)
+                    .Cast<NominativeServiceCommand>()
+                    .ToList()
+                : new List<NominativeServiceCommand>();
+
+            var hairCommands = fallbackToActivityFilteringOnly || allowedBillingCodes.Contains(BillingCodes.Brush)
+                ? dbContext.Set<HairCutQuery>()
+                    .AsNoTracking()
+                    .Where(q => q.PerformerId == uid)
+                    .Where(q => allowedActivityCodes.Contains(q.ActivityCode))
+                    .Where(q => q.Status == QueryStatus.Inserted
+                        || q.Status == QueryStatus.Accepted
+                        || q.Status == QueryStatus.InProgress)
+                    .Cast<NominativeServiceCommand>()
+                    .ToList()
+                : new List<NominativeServiceCommand>();
+
+            var hairMultiCommands = fallbackToActivityFilteringOnly || allowedBillingCodes.Contains(BillingCodes.MBrush)
+                ? dbContext.Set<HairMultiCutQuery>()
+                    .AsNoTracking()
+                    .Where(q => q.PerformerId == uid)
+                    .Where(q => allowedActivityCodes.Contains(q.ActivityCode))
+                    .Where(q => q.Status == QueryStatus.Inserted
+                        || q.Status == QueryStatus.Accepted
+                        || q.Status == QueryStatus.InProgress)
+                    .Cast<NominativeServiceCommand>()
+                    .ToList()
+                : new List<NominativeServiceCommand>();
+
+            var commands = rdvCommands
+                .Concat(hairCommands)
+                .Concat(hairMultiCommands)
+                .OrderByDescending(q => q.DateModified)
+                .ThenByDescending(q => q.Id)
+                .ToList();
+
+            var payload = commands
+                .Select(q => new
+                {
+                    Id = q.Id,
+                    BillingCode = ResolveBillingCode(q),
+                    ActivityCode = q.ActivityCode,
+                    PerformerId = q.PerformerId,
+                    ClientId = q.ClientId,
+                    Status = q.Status,
+                    Description = q.Description,
+                    EventDate = ResolveEventDate(q),
+                    Reason = q is Models.Workflow.RdvQuery rdv ? rdv.Reason : string.Empty,
+                    AdditionalInfo = q is Models.Haircut.HairCutQuery hc ? hc.AdditionalInfo : string.Empty,
+                    Provisional = q.Provisional,
+                })
+                .Where(x => !string.IsNullOrWhiteSpace(x.BillingCode))
+                .ToList();
+
+            return Ok(payload);
+        }
+
 
         [HttpPost("prosign/{billingCode}/{id}")]
         public async Task<IActionResult> ProSign(string billingCode, long id)
@@ -133,6 +244,23 @@ namespace Yavsc.ApiControllers
             return Ok (new { ProviderValidationDate = estimate.ProviderValidationDate, GCMSent = gcmSent });
         }
 
+        private string ResolveBillingCode(NominativeServiceCommand command)
+        {
+            var typeName = command.GetType().Name;
+            return billingService.BillingMap.TryGetValue(typeName, out var code)
+                ? code
+                : string.Empty;
+        }
+
+        private static DateTime? ResolveEventDate(NominativeServiceCommand command)
+            => command switch
+            {
+                Models.Workflow.RdvQuery rdv => rdv.EventDate,
+                Models.Haircut.HairCutQuery brush => brush.EventDate,
+                Models.Haircut.HairMultiCutQuery mbrush => mbrush.EventDate,
+                _ => null,
+            };
+
         [HttpGet("prosign/{billingCode}/{id}")]
         public async Task<IActionResult> GetProSign(string billingCode, long id)
         {
@@ -154,9 +282,28 @@ namespace Yavsc.ApiControllers
         public async Task<IActionResult> CliSign(string billingCode, long id)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var estimate = dbContext.Estimates.Include( e=>e.Query
-            ).Include(e=>e.Owner).Include(e=>e.Owner.Performer).Include(e=>e.Client)
-            .FirstOrDefault( e=> e.Id == id && e.Query.ClientId == uid );
+            var estimate = dbContext.Estimates
+                .Include(e => e.Owner)
+                .Include(e => e.Owner.Performer)
+                .Include(e => e.Client)
+                .FirstOrDefault(e => e.Id == id);
+            if (estimate is null)
+            {
+                return NotFound();
+            }
+
+            if (estimate.CommandId is null)
+            {
+                return new ChallengeResult();
+            }
+
+            var command = dbContext.Set<NominativeServiceCommand>()
+                .FirstOrDefault(c => c.Id == estimate.CommandId.Value);
+            if (command is null || command.ClientId != uid)
+            {
+                return new ChallengeResult();
+            }
+
             if (!(await authorizationService.AuthorizeAsync(User, estimate, new ReadPermission())).Succeeded)
             {
                 return new ChallengeResult();

@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Helpers;
 using PostIt.Services;
+using Yavsc.Api.Client;
 namespace PostIt.ViewModels;
 
 public class HomePageViewModel : ViewModelBase
@@ -30,10 +31,12 @@ public class HomePageViewModel : ViewModelBase
         SessionStatus = sessionStatus;
 
         OpenActivities = new AsyncRelayCommand(OpenActivitiesAsync);
-
+        OpenProviderRequests = new AsyncRelayCommand(OpenProviderRequestsAsync);
+        OpenBlogs = new AsyncRelayCommand(App.PushBlogsPageAsync);
     }
-    public IAsyncRelayCommand OpenBlogs { get; } = new AsyncRelayCommand(App.PushBlogsPageAsync);
+    public IAsyncRelayCommand OpenBlogs { get; }
     public IAsyncRelayCommand OpenActivities { get; }
+    public IAsyncRelayCommand OpenProviderRequests { get; }
 
     private async Task OpenActivitiesAsync()
     {
@@ -45,6 +48,27 @@ public class HomePageViewModel : ViewModelBase
         }
 
         await vm.RefreshAsync();
+        await app.PushPageAsync(vm);
+    }
+
+    private async Task OpenProviderRequestsAsync()
+    {
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var billingClient = app.ServiceProvider?.GetRequiredService<BillingApiClient>();
+        if (billingClient is null)
+        {
+            throw new InvalidOperationException("Client billing indisponible.");
+        }
+
+        var estimateClient = app.ServiceProvider?.GetRequiredService<EstimateApiClient>();
+
+        var vm = new ProviderOngoingRequestsPageViewModel(billingClient, Settings, estimateClient);
+        await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }
 

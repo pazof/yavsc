@@ -43,7 +43,7 @@ public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusV
         ? $"Demandes en cours ({Form.Title})"
         : $"Commandes {Form.Title}";
     public string ContextLabel => $"{Performer.UserName} · {Activity.Name}";
-    public bool CanOpenDetails => true;
+    public bool CanOpenDetails => !IsReadOnly;
 
     public override bool CanNavigateNext
     {
@@ -75,7 +75,7 @@ public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusV
 
     public Task InitializeAsync() => RefreshAsync();
 
-    private bool CanOpenSelectedQuery() => SelectedQuery is not null;
+    private bool CanOpenSelectedQuery() => CanOpenDetails && SelectedQuery is not null;
 
     [RelayCommand]
     public async Task RefreshAsync()

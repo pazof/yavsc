@@ -8,6 +8,8 @@ using Yavsc.Blogspot;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
+using PostIt.Views.Blogs;
+using PostIt.Helpers;
 
 namespace PostIt.Tests;
 
@@ -72,13 +74,13 @@ public class MainPageButtonsTests
         { }
     }
 
-    private static MainViewModel MakeViewModel(BlogPostDto? selectedPost = null)
+    private static BlogsViewModel MakeViewModel(BlogPostDto? selectedPost = null)
     {
         var api = new ThrowingApi();
         var blog = new BlogApiClient(api, "http://localhost/");
         var circle = new CircleApiClient(api, "http://localhost/");
         var acl = new BlogAclApiClient(api, "http://localhost/");
-        // Minimal DI graph: only what MainPageViewModel resolves
+        // Minimal DI graph: only what BlogsViewModel resolves
         // when the user clicks a navigation button. Today that's
         // SignaturePageViewModel / CirclesPageViewModel / ACL
         // dependencies. The graph intentionally stays local to this
@@ -93,7 +95,7 @@ public class MainPageButtonsTests
         services.AddTransient<SignaturePage>();
         services.AddTransient<CirclesPage>();
         services.AddTransient<PostAclDialog>();
-        var vm = new MainViewModel(blog, services: services.BuildServiceProvider());
+        var vm = new BlogsViewModel(blog, services: services.BuildServiceProvider());
         if (selectedPost is not null) vm.SelectedPost = selectedPost;
         return vm;
     }
@@ -101,7 +103,7 @@ public class MainPageButtonsTests
     /// <summary>
     /// Mount a real <see cref="MainView"/> (as
     /// <c>SessionStatusBannerTests</c> does), push a
-    /// <see cref="MainPage"/> with the given VM onto
+    /// <see cref="BlogsPage"/> with the given VM onto
     /// <c>NavRoot</c>. <c>PushAsync</c> is awaited (via
     /// <c>GetAwaiter().GetResult()</c>) so the page is on the
     /// nav stack before the test tries to interact with its
@@ -109,13 +111,17 @@ public class MainPageButtonsTests
     /// realised and <c>KeyPressQwerty</c> has a real
     /// <see cref="TopLevel"/> to dispatch against.
     /// </summary>
-    private static (MainView window, MainPage page) MountMainPage(MainViewModel vm)
+    private static (MainView window, BlogsPage page) MountMainPage(BlogsViewModel vm)
     {
         var window = new MainView();
-        var page = new MainPage { DataContext = vm };
+        var page = new BlogsPage { DataContext = vm };
         var app = (PostIt.App)Application.Current!;
+
         app.AttachMainWindow(window);
+
         window.NavRoot.PushAsync(page).GetAwaiter().GetResult();
+        var mainWindow = new Window { Content = window };
+        mainWindow.Show();
         return (window, page);
     }
 
@@ -145,7 +151,7 @@ public class MainPageButtonsTests
     }
 
     [AvaloniaFact]
-    public void Acl_button_click_pushes_a_page_onto_nav_stack()
+    public async Task Acl_button_click_pushes_a_page_onto_nav_stack()
     {
         // Arrange: a VM whose SelectedPost is non-null so
         // CanManageAcl evaluates to true and the button is
@@ -178,7 +184,7 @@ public class MainPageButtonsTests
     }
 
     [AvaloniaFact]
-    public void Circles_button_click_pushes_a_page_onto_nav_stack()
+    public async Task Circles_button_click_pushes_a_page_onto_nav_stack()
     {
         // Arrange: OpenCircles has no CanExecute guard today —
         // any click should fire it and push the page.
@@ -203,7 +209,7 @@ public class MainPageButtonsTests
     public void Signature_dev_button_click_pushes_a_page_onto_nav_stack()
     {
         // Arrange: the "[DEV] Signature" button is bound to the
-        // MainPageViewModel.OpenSignatureDevCommand [RelayCommand].
+        // BlogsViewModel.OpenSignatureDevCommand [RelayCommand].
         // The click must push SignaturePage on top of NavRoot.
         // The ServiceCollection registered in MakeViewModel provides
         // SignaturePageViewModel so the command can resolve it via

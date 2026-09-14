@@ -19,7 +19,7 @@ namespace Yavsc.Services
         bool Kick(string cxId, string userName, string roomName,  string reason);
 
         bool Op(string roomName, string userName);
-        bool Deop(string roomName, string userName);
+        bool DeOp(string roomName, string userName);
         bool Hop(string roomName, string userName);
         bool DeHop(string roomName, string userName);
         bool TryGetChanInfo(string room, out ChatRoomInfo channelInfo);

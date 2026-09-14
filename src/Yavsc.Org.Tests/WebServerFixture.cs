@@ -17,6 +17,7 @@ using Yavsc.Server.Helpers;
 using Yavsc.Tests.Shared;
 using Client = IdentityServer8.EntityFramework.Entities.Client;
 using Yavsc.Org.Tests.Fakes;
+using Xunit;
 
 namespace Yavsc.Org.Tests;
 
@@ -63,6 +64,7 @@ public sealed class WebServerFixture : WebHostFixture
     private static string? _sharedTestingUserName;
     private static string? _sharedTestingUserPassword;
     private static string? _sharedTestingUserEmail;
+    private static string? _sharedHttpsAuthority;
     private static RecordingSmtpClientFactory? _sharedSmtpClientFactory;
 
     public IConfiguration? Configuration { get; private set; }
@@ -78,9 +80,19 @@ public sealed class WebServerFixture : WebHostFixture
     public RecordingSmtpClientFactory? SmtpClientFactory { get; private set; }
     public ILogger? Logger { get; internal set; }
 
+    public string? HttpsAuthority { get; private set; }
+
+    protected override WebApplicationOptions CreateBuilderOptions()
+    {
+        return new WebApplicationOptions
+        {
+            ApplicationName = typeof(Yavsc.Program).Assembly.GetName().Name
+        };
+    }
+
     protected override WebApplication BuildApp(WebApplicationBuilder builder)
     {
-        var authority = $"https://localhost:{_httpsPort}";
+        HttpsAuthority = $"https://localhost:{HttpsPort}";
 
         // WebApplication.CreateBuilder defaults WebRootPath to
         // {ContentRoot}/wwwroot. The test assembly runs from
@@ -99,7 +111,7 @@ public sealed class WebServerFixture : WebHostFixture
                 ["Smtp:Port"] = "465",
                 ["Smtp:UserName"] = "test-user",
                 ["Smtp:Password"] = "test-pass",
-                ["Site:Authority"] = authority
+                ["Site:Authority"] = HttpsAuthority
             });
 
         Configuration = builder.Configuration;
@@ -182,11 +194,55 @@ public sealed class WebServerFixture : WebHostFixture
         _sharedTestingUserName = TestingUserName;
         _sharedTestingUserPassword = TestingUserPassword;
         _sharedTestingUserEmail = TestingUserEmail;
+        _sharedHttpsAuthority = HttpsAuthority;
         _sharedLogger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger<WebServerFixture>();
         Logger = _sharedLogger;
         SmtpClientFactory = smtpFactory;
 
         return app;
+    }
+
+    public void ResetAndMigrateDatabase()
+    {
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.EnsureDeleted();
+        db.Database.EnsureCreated();
+        if (db.Database.IsRelational())
+        {
+            db.Database.Migrate();
+            ReseedAuthTestData(scope);
+            return;
+        }
+        ReseedAuthTestData(scope);
+    }
+
+    private void ReseedAuthTestData(IServiceScope scope)
+    {
+        TestingUserName ??= "Tester";
+        TestingUserPassword ??= "Test123!";
+        TestingUserEmail ??= "test@no-reply.com";
+        TestClientId ??= "testClientId";
+        TestClientSecret ??= Guid.CreateVersion7().ToString();
+
+        TestingUser = null;
+        EnsureUser(TestingUserName, TestingUserPassword, TestingUserEmail, scope);
+
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        TestingUser = db.Users.FirstOrDefault(u => u.UserName == TestingUserName);
+
+        var configDb = scope.ServiceProvider.GetRequiredService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
+        var hasClient = configDb.Set<Client>().Any(c => c.ClientId == TestClientId);
+        if (!hasClient)
+        {
+            AddAuthorizedClient(scope, TestClientId, TestClientSecret);
+        }
+
+        _sharedTestClientId = TestClientId;
+        _sharedTestClientSecret = TestClientSecret;
+        _sharedTestingUserName = TestingUserName;
+        _sharedTestingUserPassword = TestingUserPassword;
+        _sharedTestingUserEmail = TestingUserEmail;
     }
 
     protected override async Task<WebApplication> ConfigurePipelineAsync(WebApplication app)
@@ -211,6 +267,7 @@ public sealed class WebServerFixture : WebHostFixture
         TestingUserName = _sharedTestingUserName;
         TestingUserPassword = _sharedTestingUserPassword;
         TestingUserEmail = _sharedTestingUserEmail;
+        HttpsAuthority = _sharedHttpsAuthority;
         SmtpClientFactory = _sharedSmtpClientFactory;
         Configuration = _sharedConfiguration;
         SiteSettings = _sharedSiteSettings;

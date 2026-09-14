@@ -1427,6 +1427,81 @@ namespace Yavsc.Migrations
                     b.ToTable("ExceptionsSIREN");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Billing.NominativeServiceCommand", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ActivityCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Consent")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .HasColumnType("character varying(34)");
+
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PerformerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("Provisional")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserCreated")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserModified")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ValidationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityCode");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("PerformerId");
+
+                    b.ToTable("NominativeServiceCommands");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("NominativeServiceCommand");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("Yavsc.Models.Billing.Signature", b =>
                 {
                     b.Property<long>("Id")
@@ -1912,168 +1987,6 @@ namespace Yavsc.Migrations
                     b.HasIndex("ScheduleOwnerId");
 
                     b.ToTable("BrusherProfile");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Haircut.HairCutQuery", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("ActivityCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("AdditionalInfo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("Consent")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("EventDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("LocationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("PaymentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PerformerId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("PrestationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal?>("Provisional")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("SelectedProfileUserId")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserCreated")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserModified")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ValidationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityCode");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("LocationId");
-
-                    b.HasIndex("PaymentId");
-
-                    b.HasIndex("PerformerId");
-
-                    b.HasIndex("PrestationId");
-
-                    b.HasIndex("SelectedProfileUserId");
-
-                    b.ToTable("HairCutQueries");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Haircut.HairMultiCutQuery", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("ActivityCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("Consent")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("EventDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("LocationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("PaymentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PerformerId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("Provisional")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserCreated")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserModified")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ValidationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityCode");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("LocationId");
-
-                    b.HasIndex("PaymentId");
-
-                    b.HasIndex("PerformerId");
-
-                    b.ToTable("HairMultiCutQueries");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestation", b =>
@@ -3066,6 +2979,37 @@ namespace Yavsc.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Workflow.DictionnaireMetier", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("DomaineActiviteCode")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("Langue")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Nom")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DomaineActiviteCode", "Langue", "Nom")
+                        .IsUnique();
+
+                    b.ToTable("DictionnaireMetier");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Workflow.PerformerCodeInputValidation", b =>
                 {
                     b.Property<long>("Id")
@@ -3180,7 +3124,7 @@ namespace Yavsc.Migrations
                     b.ToTable("FormationSettings");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Workflow.RdvQuery", b =>
+            modelBuilder.Entity("Yavsc.Models.Workflow.TermeMetier", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -3188,77 +3132,51 @@ namespace Yavsc.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("ActivityCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("Consent")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("DateCreated")
+                    b.Property<DateTime>("DateSoumission")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DateModified")
+                    b.Property<DateTime?>("DateValidation")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Definition")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
 
-                    b.Property<DateTime>("EventDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("LocationId")
+                    b.Property<long>("DictionnaireMetierId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("LocationType")
+                    b.Property<string>("Langue")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Mot")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("ProposeParId")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<int>("StatutValidation")
                         .HasColumnType("integer");
 
-                    b.Property<string>("PaymentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PerformerId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("Provisional")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserCreated")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserModified")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ValidationDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("ValideParId")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ActivityCode");
+                    b.HasIndex("ProposeParId");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("ValideParId");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("DictionnaireMetierId", "Langue", "Mot")
+                        .IsUnique();
 
-                    b.HasIndex("PaymentId");
-
-                    b.HasIndex("PerformerId");
-
-                    b.ToTable("RdvQueries");
+                    b.ToTable("TermeMetier");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Workflow.UserActivity", b =>
@@ -3327,86 +3245,6 @@ namespace Yavsc.Migrations
                     b.ToTable("MailingTemplate");
                 });
 
-            modelBuilder.Entity("Yavsc.Server.Models.IT.Project", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("ActivityCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("Consent")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<long>("GitId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PaymentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PerformerId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("Provisional")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserCreated")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserModified")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ValidationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Version")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActivityCode");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("GitId");
-
-                    b.HasIndex("PaymentId");
-
-                    b.HasIndex("PerformerId");
-
-                    b.ToTable("Project");
-                });
-
             modelBuilder.Entity("Yavsc.Server.Models.IT.ProjectBuildConfiguration", b =>
                 {
                     b.Property<long>("Id")
@@ -3455,6 +3293,112 @@ namespace Yavsc.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("GitRepositoryReference");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairCutQuery", b =>
+                {
+                    b.HasBaseType("Yavsc.Models.Billing.NominativeServiceCommand");
+
+                    b.Property<string>("AdditionalInfo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("EventDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("LocationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PrestationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SelectedProfileUserId")
+                        .HasColumnType("text");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("PrestationId");
+
+                    b.HasIndex("SelectedProfileUserId");
+
+                    b.HasDiscriminator().HasValue("HairCutQuery");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairMultiCutQuery", b =>
+                {
+                    b.HasBaseType("Yavsc.Models.Billing.NominativeServiceCommand");
+
+                    b.Property<DateTime>("EventDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("LocationId")
+                        .HasColumnType("bigint");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("NominativeServiceCommands", t =>
+                        {
+                            t.Property("EventDate")
+                                .HasColumnName("HairMultiCutQuery_EventDate");
+
+                            t.Property("LocationId")
+                                .HasColumnName("HairMultiCutQuery_LocationId");
+                        });
+
+                    b.HasDiscriminator().HasValue("HairMultiCutQuery");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Workflow.RdvQuery", b =>
+                {
+                    b.HasBaseType("Yavsc.Models.Billing.NominativeServiceCommand");
+
+                    b.Property<DateTime>("EventDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("LocationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("LocationType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("NominativeServiceCommands", t =>
+                        {
+                            t.Property("EventDate")
+                                .HasColumnName("RdvQuery_EventDate");
+
+                            t.Property("LocationId")
+                                .HasColumnName("RdvQuery_LocationId");
+                        });
+
+                    b.HasDiscriminator().HasValue("RdvQuery");
+                });
+
+            modelBuilder.Entity("Yavsc.Server.Models.IT.Project", b =>
+                {
+                    b.HasBaseType("Yavsc.Models.Billing.NominativeServiceCommand");
+
+                    b.Property<long>("GitId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Version")
+                        .HasColumnType("text");
+
+                    b.HasIndex("GitId");
+
+                    b.HasDiscriminator().HasValue("Project");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResourceClaim", b =>
@@ -3870,7 +3814,7 @@ namespace Yavsc.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Yavsc.Models.Workflow.RdvQuery", "Query")
+                    b.HasOne("Yavsc.Models.Billing.NominativeServiceCommand", "Query")
                         .WithMany()
                         .HasForeignKey("CommandId");
 
@@ -3885,6 +3829,39 @@ namespace Yavsc.Migrations
                     b.Navigation("Owner");
 
                     b.Navigation("Query");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Billing.NominativeServiceCommand", b =>
+                {
+                    b.HasOne("Yavsc.Models.Workflow.Activity", "Context")
+                        .WithMany()
+                        .HasForeignKey("ActivityCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yavsc.Models.ApplicationUser", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
+                        .WithMany()
+                        .HasForeignKey("PaymentId");
+
+                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile", "PerformerProfile")
+                        .WithMany()
+                        .HasForeignKey("PerformerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Context");
+
+                    b.Navigation("PerformerProfile");
+
+                    b.Navigation("Regularization");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Billing.Signature", b =>
@@ -4068,100 +4045,6 @@ namespace Yavsc.Migrations
                     b.Navigation("BaseProfile");
 
                     b.Navigation("Schedule");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Haircut.HairCutQuery", b =>
-                {
-                    b.HasOne("Yavsc.Models.Workflow.Activity", "Context")
-                        .WithMany()
-                        .HasForeignKey("ActivityCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Models.ApplicationUser", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Models.Relationship.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
-
-                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
-                        .WithMany()
-                        .HasForeignKey("PaymentId");
-
-                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile", "PerformerProfile")
-                        .WithMany()
-                        .HasForeignKey("PerformerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Models.Haircut.HairPrestation", "Prestation")
-                        .WithMany()
-                        .HasForeignKey("PrestationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Models.Haircut.BrusherProfile", "SelectedProfile")
-                        .WithMany()
-                        .HasForeignKey("SelectedProfileUserId");
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Context");
-
-                    b.Navigation("Location");
-
-                    b.Navigation("PerformerProfile");
-
-                    b.Navigation("Prestation");
-
-                    b.Navigation("Regularization");
-
-                    b.Navigation("SelectedProfile");
-                });
-
-            modelBuilder.Entity("Yavsc.Models.Haircut.HairMultiCutQuery", b =>
-                {
-                    b.HasOne("Yavsc.Models.Workflow.Activity", "Context")
-                        .WithMany()
-                        .HasForeignKey("ActivityCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Models.ApplicationUser", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Models.Relationship.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
-                        .WithMany()
-                        .HasForeignKey("PaymentId");
-
-                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile", "PerformerProfile")
-                        .WithMany()
-                        .HasForeignKey("PerformerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Context");
-
-                    b.Navigation("Location");
-
-                    b.Navigation("PerformerProfile");
-
-                    b.Navigation("Regularization");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestationCollectionItem", b =>
@@ -4481,6 +4364,17 @@ namespace Yavsc.Migrations
                     b.Navigation("Context");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Workflow.DictionnaireMetier", b =>
+                {
+                    b.HasOne("Yavsc.Models.Workflow.Activity", "DomaineActivite")
+                        .WithMany()
+                        .HasForeignKey("DomaineActiviteCode")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DomaineActivite");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Workflow.PerformerCodeInputValidation", b =>
                 {
                     b.HasOne("Yavsc.Models.Workflow.Country", "Country")
@@ -4511,45 +4405,27 @@ namespace Yavsc.Migrations
                     b.Navigation("Performer");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Workflow.RdvQuery", b =>
+            modelBuilder.Entity("Yavsc.Models.Workflow.TermeMetier", b =>
                 {
-                    b.HasOne("Yavsc.Models.Workflow.Activity", "Context")
-                        .WithMany()
-                        .HasForeignKey("ActivityCode")
+                    b.HasOne("Yavsc.Models.Workflow.DictionnaireMetier", "DictionnaireMetier")
+                        .WithMany("Termes")
+                        .HasForeignKey("DictionnaireMetierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Yavsc.Models.ApplicationUser", "Client")
+                    b.HasOne("Yavsc.Models.ApplicationUser", "ProposePar")
                         .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProposeParId");
 
-                    b.HasOne("Yavsc.Models.Relationship.Location", "Location")
+                    b.HasOne("Yavsc.Models.ApplicationUser", "ValidePar")
                         .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ValideParId");
 
-                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
-                        .WithMany()
-                        .HasForeignKey("PaymentId");
+                    b.Navigation("DictionnaireMetier");
 
-                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile", "PerformerProfile")
-                        .WithMany()
-                        .HasForeignKey("PerformerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ProposePar");
 
-                    b.Navigation("Client");
-
-                    b.Navigation("Context");
-
-                    b.Navigation("Location");
-
-                    b.Navigation("PerformerProfile");
-
-                    b.Navigation("Regularization");
+                    b.Navigation("ValidePar");
                 });
 
             modelBuilder.Entity("Yavsc.Models.Workflow.UserActivity", b =>
@@ -4571,47 +4447,6 @@ namespace Yavsc.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Yavsc.Server.Models.IT.Project", b =>
-                {
-                    b.HasOne("Yavsc.Models.Workflow.Activity", "Context")
-                        .WithMany()
-                        .HasForeignKey("ActivityCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Models.ApplicationUser", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Server.Models.IT.SourceCode.GitRepositoryReference", "Repository")
-                        .WithMany()
-                        .HasForeignKey("GitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
-                        .WithMany()
-                        .HasForeignKey("PaymentId");
-
-                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile", "PerformerProfile")
-                        .WithMany()
-                        .HasForeignKey("PerformerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Context");
-
-                    b.Navigation("PerformerProfile");
-
-                    b.Navigation("Regularization");
-
-                    b.Navigation("Repository");
-                });
-
             modelBuilder.Entity("Yavsc.Server.Models.IT.ProjectBuildConfiguration", b =>
                 {
                     b.HasOne("Yavsc.Server.Models.IT.Project", "TargetProject")
@@ -4630,6 +4465,62 @@ namespace Yavsc.Migrations
                         .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairCutQuery", b =>
+                {
+                    b.HasOne("Yavsc.Models.Relationship.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("Yavsc.Models.Haircut.HairPrestation", "Prestation")
+                        .WithMany()
+                        .HasForeignKey("PrestationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yavsc.Models.Haircut.BrusherProfile", "SelectedProfile")
+                        .WithMany()
+                        .HasForeignKey("SelectedProfileUserId");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("Prestation");
+
+                    b.Navigation("SelectedProfile");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairMultiCutQuery", b =>
+                {
+                    b.HasOne("Yavsc.Models.Relationship.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Workflow.RdvQuery", b =>
+                {
+                    b.HasOne("Yavsc.Models.Relationship.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Yavsc.Server.Models.IT.Project", b =>
+                {
+                    b.HasOne("Yavsc.Server.Models.IT.SourceCode.GitRepositoryReference", "Repository")
+                        .WithMany()
+                        .HasForeignKey("GitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Repository");
                 });
 
             modelBuilder.Entity("IdentityServer8.EntityFramework.Entities.ApiResource", b =>
@@ -4746,11 +4637,6 @@ namespace Yavsc.Migrations
                     b.Navigation("Links");
                 });
 
-            modelBuilder.Entity("Yavsc.Models.Haircut.HairMultiCutQuery", b =>
-                {
-                    b.Navigation("Prestations");
-                });
-
             modelBuilder.Entity("Yavsc.Models.Haircut.HairPrestation", b =>
                 {
                     b.Navigation("Taints");
@@ -4795,6 +4681,11 @@ namespace Yavsc.Migrations
                     b.Navigation("Services");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Workflow.DictionnaireMetier", b =>
+                {
+                    b.Navigation("Termes");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Workflow.PerformerProfile", b =>
                 {
                     b.Navigation("Activity");
@@ -4803,6 +4694,11 @@ namespace Yavsc.Migrations
             modelBuilder.Entity("Yavsc.Models.Workflow.Profiles.FormationSettings", b =>
                 {
                     b.Navigation("CoWorking");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Haircut.HairMultiCutQuery", b =>
+                {
+                    b.Navigation("Prestations");
                 });
 
             modelBuilder.Entity("Yavsc.Server.Models.IT.Project", b =>

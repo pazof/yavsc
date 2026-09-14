@@ -143,4 +143,87 @@ public sealed class RdvQueryApiControllerTests : IClassFixture<ApiWebServerFixtu
         Assert.NotNull(created);
         Assert.Equal(DateTimeKind.Utc, created!.EventDate.Kind);
     }
+
+    [Fact]
+    public async Task PostQuery_with_unknown_location_id_creates_location_and_succeeds()
+    {
+        _fixture.ResetAndSeedRdvQueryGraph();
+        using var http = NewClient(subject: "alice");
+
+        var createPayload = new
+        {
+            ActivityCode = "dev",
+            PerformerId = "alice",
+            Consent = true,
+            EventDate = DateTime.UtcNow.AddDays(3),
+            Location = new
+            {
+                Id = 999999L,
+                Address = "4 rue du Test",
+                Latitude = 48.8569,
+                Longitude = 2.3525,
+            },
+            Reason = "Rendez-vous id location inconnu",
+            Status = QueryStatus.Inserted,
+        };
+
+        var createResponse = await http.PostAsJsonAsync("/api/v1/billing/Rdv", createPayload, TestContext.Current.CancellationToken);
+        var body = await createResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+
+        Assert.True(createResponse.StatusCode == HttpStatusCode.Created, $"Unexpected status {(int)createResponse.StatusCode} ({createResponse.StatusCode}): {body}");
+
+        var created = await createResponse.Content.ReadFromJsonAsync<RdvQuery>(TestContext.Current.CancellationToken);
+        Assert.NotNull(created);
+        Assert.NotNull(created!.Location);
+        Assert.True(created.Location.Id > 0);
+        Assert.NotEqual(999999L, created.Location.Id);
+        Assert.Equal("alice", created.ClientId);
+    }
+
+    [Fact]
+    public async Task PostQuery_without_location_returns_bad_request()
+    {
+        _fixture.ResetAndSeedRdvQueryGraph();
+        using var http = NewClient(subject: "alice");
+
+        var createPayload = new
+        {
+            ActivityCode = "dev",
+            PerformerId = "alice",
+            Consent = true,
+            EventDate = DateTime.UtcNow.AddDays(1),
+            Reason = "Rendez-vous sans location",
+            Status = QueryStatus.Inserted,
+        };
+
+        var createResponse = await http.PostAsJsonAsync("/api/v1/billing/Rdv", createPayload, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.BadRequest, createResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task PostQuery_with_unknown_location_id_and_missing_address_returns_bad_request()
+    {
+        _fixture.ResetAndSeedRdvQueryGraph();
+        using var http = NewClient(subject: "alice");
+
+        var createPayload = new
+        {
+            ActivityCode = "dev",
+            PerformerId = "alice",
+            Consent = true,
+            EventDate = DateTime.UtcNow.AddDays(1),
+            Location = new
+            {
+                Id = 777777L,
+                Address = "",
+                Latitude = 0.0,
+                Longitude = 0.0,
+            },
+            Reason = "Rendez-vous location invalide",
+            Status = QueryStatus.Inserted,
+        };
+
+        var createResponse = await http.PostAsJsonAsync("/api/v1/billing/Rdv", createPayload, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.BadRequest, createResponse.StatusCode);
+    }
 }

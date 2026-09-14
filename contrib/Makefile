@@ -95,6 +95,15 @@ showConfig:
 	@echo CONFIGURATION: $(CONFIGURATION)
 	@echo BASEAPPDIR: $(BASEAPPDIR)
 
+showApiLogs:
+	@sudo journalctl -u yavscApi.service -S "2 min ago" | tee yavscApi.log
+
+showOrgLogs:
+	@sudo journalctl -u yavscOrg.service -S "2 min ago" | tee yavscOrg.log
+
+showBlogsLogs:
+	@sudo journalctl -u yavscBlogs.service -S "2 min ago" | tee yavscBlogs.log
+
 clean:
 	@rm -rf generated
 

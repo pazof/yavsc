@@ -31,6 +31,7 @@ jobs:
     steps:
     - name: Clone yavsc
       run: |
+        set -e
         cd /src
         git clone https://forgejo.pschneider.fr/notazof/yavsc.git _src
         cd _src
@@ -40,12 +41,23 @@ jobs:
         fi
         git submodule update --init --recursive
         echo "✅ Checked out at $(git rev-parse HEAD) on $(git branch --show-current 2>/dev/null || echo detached HEAD)"
-
+    - name: Secret scan
+      run: |
+        echo "🔍 Scanning for secrets..."
+        cd /src/_src && dotnet tool restore && dotnet picket git --verbose --redact --exit-code 1 --log-opts -n10 \
+    - name: Build
+      run: |
+        echo "🏗️ Building the solution..."
+        cd /src/_src && dotnet build --verbosity normal
+    - name: Install SkiaSharp native dependencies
+      run: |
+        echo "📦 Installing libfontconfig/libfreetype for SkiaSharp (Avalonia.Headless)..."
+        apt-get update && apt-get install -y --no-install-recommends \
+          libfontconfig1 libfreetype6 libexpat1 zlib1g libbz2-1.0 libpng16-16 libbrotli1 \
+          && rm -rf /var/lib/apt/lists/*
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."
         cd /src/_src && dotnet test \
           --verbosity normal \
-          --filter="Category!=Platform-Android" \
-          --logger "xunit;LogFileName=test-results.xml" \
-          && echo "✅ Success !" || { echo "❌ Fail ($?)!"; exit 1; }
+          --filter="Category!=Platform-Android"

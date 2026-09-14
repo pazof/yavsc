@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
+using PostIt.Views.Blogs;
 using PostIt.Views.Commands;
 using Yavsc.Api.Client;
 
@@ -29,12 +30,13 @@ public static class ServiceCollectionHelpers
             () => settings.ApiUrl,
             () => settings.Authentication?.Authority);
         var billingClient = new BillingApiClient(api, () => settings.ApiUrl);
+        var estimateClient = new EstimateApiClient(api, () => settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
         var reverseGeocoding = new NominatimReverseGeocodingService();
 
         // Vues
         services.AddSingleton<MainView>();
-        services.AddSingleton<MainPage>();
+        services.AddSingleton<BlogsPage>();
         services.AddSingleton<MainWindow>();
 
         // SettingsPage is a singleton: there must be one and only one
@@ -58,6 +60,9 @@ public static class ServiceCollectionHelpers
         services.AddTransient<BrushPage>();
         services.AddTransient<BillingQueriesPage>();
         services.AddTransient<BillingQueryDetailsPage>();
+        services.AddTransient<ProviderOngoingRequestsPage>();
+        services.AddTransient<EstimateEditionPage>();
+
         // ViewModels
         services.AddSingleton(settings);
         services.AddSingleton<YavscApiClient>(api);
@@ -67,6 +72,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(userSearchClient);
         services.AddSingleton(activityClient);
         services.AddSingleton(billingClient);
+        services.AddSingleton(estimateClient);
         services.AddSingleton<IReverseGeocodingService>(reverseGeocoding);
         services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddSingleton<HomePageViewModel>();
@@ -89,7 +95,7 @@ public static class ServiceCollectionHelpers
         sessionStatus.Refresh();
         services.AddSingleton(sessionStatus);
         services.AddSingleton<SessionStatusBanner>();
-        services.AddSingleton<MainViewModel>();
+        services.AddSingleton<BlogsViewModel>();
         return services.BuildServiceProvider();
     }
 }

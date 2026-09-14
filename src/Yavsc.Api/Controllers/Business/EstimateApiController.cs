@@ -77,7 +77,7 @@ namespace Yavsc.Controllers
             {
                 return BadRequest();
             }
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             if (!User.IsInRole(Constants.AdminGroupName))
             {
                 if (uid != estimate.OwnerId)
@@ -111,7 +111,7 @@ namespace Yavsc.Controllers
         [HttpPost, Produces("application/json")]
         public IActionResult PostEstimate([FromBody] Estimate estimate)
         {
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             if (estimate.OwnerId == null) estimate.OwnerId = uid;
 
             if (!User.IsInRole(Constants.AdminGroupName))
@@ -125,7 +125,8 @@ namespace Yavsc.Controllers
 
             if (estimate.CommandId != null)
             {
-                var query = _context.RdvQueries.FirstOrDefault(q => q.Id == estimate.CommandId);
+                var query = _context.NominativeServiceCommands
+                    .FirstOrDefault(q => q.Id == estimate.CommandId);
                 if (query == null)
                 {
                     return BadRequest(ModelState);
@@ -182,7 +183,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             if (!User.IsInRole(Constants.AdminGroupName))
             {
                 if (uid != estimate.OwnerId)

@@ -1,0 +1,151 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PostIt.ViewModels"
+             xmlns:postitControls="using:PostIt.Controls"
+             xmlns:models="using:Yavsc.Blogspot"
+             xmlns:views="using:PostIt.Views.Blogs"
+             xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+             mc:Ignorable="d"
+             x:Class="PostIt.Views.Blogs.BlogsPage"
+             x:DataType="vm:BlogsViewModel"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch">
+  <Design.DataContext>
+    <vm:BlogsViewModel />
+  </Design.DataContext>
+  <ScrollViewer
+  VerticalScrollBarVisibility="Visible"
+  HorizontalScrollBarVisibility="Disabled"
+  Padding="5"
+  Margin="5"
+      >
+  <StackPanel HorizontalAlignment="Stretch">
+    <StackPanel Orientation="Horizontal" Spacing="10" Margin="5">
+      <TextBlock Text="Blog Posts" FontSize="20" FontWeight="SemiBold" />
+      <TextBox HorizontalAlignment="Right"
+               Text="{Binding SearchText, Mode=TwoWay}" PlaceholderText="Filter by title or author..." />
+    </StackPanel>
+    <CommandBar IsDynamicOverflowEnabled="True"
+           HorizontalAlignment="Right"     >
+      <CommandBar.PrimaryCommands>
+        <CommandBarButton Label="Refresh" Command="{Binding RefreshAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource RefreshIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton x:Name="SaveButton" Label="Save" Command="{Binding SaveAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource SaveIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton Label="Delete" Command="{Binding DeleteAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource DeleteIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton Label="Ajouter fichiers" Click="AddAttachment_Click"
+                          x:Name="AddAttachmentButton">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource AddIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton x:Name="ManageAclButton"
+                          Label="ACL"
+                          Command="{Binding ManageAclAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource AclIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton x:Name="OpenCirclesButton"
+                          Label="Mes cercles" Command="{Binding OpenCirclesAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource CircleIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarToggleButton Label="Publié"
+                                IsChecked="{Binding DraftIsPublished, Mode=TwoWay}">
+          <CommandBarToggleButton.Icon>
+            <PathIcon Data="{StaticResource PublishedIcon}" />
+          </CommandBarToggleButton.Icon>
+        </CommandBarToggleButton>
+        <CommandBarButton x:Name="OpenSignatureDevButton"
+                          Label="[DEV] Signature" Command="{Binding OpenSignatureDevAsync}">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource SignIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+      </CommandBar.PrimaryCommands>
+    </CommandBar>
+
+      <Grid Margin="12" RowSpacing="12">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <WrapPanel Grid.Row="0" ItemSpacing="10">
+
+        </WrapPanel>
+        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Padding="8">
+          <ListBox ItemsSource="{Binding FilteredPosts}"
+                   SelectedItem="{Binding SelectedPost, Mode=TwoWay}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="models:BlogPostDto">
+                <StackPanel Spacing="4">
+                  <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                  <TextBlock Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" FontSize="10" Foreground="Gray" />
+                  <TextBlock Text="{Binding AuthorId}" FontSize="10" Foreground="DarkSlateGray" />
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+
+        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" Padding="8">
+          <Grid RowSpacing="10"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="*" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Text="Post detail" FontWeight="SemiBold" />
+            <TextBox x:Name="DraftTitleTextBox"
+                     Grid.Row="1" Text="{Binding DraftTitle, Mode=TwoWay}" PlaceholderText="Title" />
+            <TextBox Grid.Row="2" PlaceholderText="Write something here !"
+                     Text="{Binding DraftArticle, Mode=TwoWay}"
+                     MinHeight="320"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch" />
+
+            <Border Grid.Row="3" BorderBrush="LightGray" BorderThickness="1" Padding="8">
+              <StackPanel Spacing="4">
+                <TextBlock Text="Pièces jointes" FontWeight="SemiBold" />
+                <ItemsControl ItemsSource="{Binding DraftAttachments}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding FileName}" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </Border>
+
+            <postitControls:StatusBar Grid.Row="4"
+                                      DataContext="{Binding ActionStatus}" />
+
+          </Grid>
+        </Border>
+      </Grid>
+  </StackPanel>
+    </ScrollViewer>
+</ContentPage>

@@ -12,6 +12,9 @@ namespace PostIt.ViewModels.Commands;
 
 public partial class RdvViewModel : BillingCommandPageViewModel
 {
+    private long? _existingLocationId;
+    private bool _hydratingExistingQuery;
+
     public override string SupportMessage => "Complétez les informations du rendez-vous puis postez la commande.";
 
     [ObservableProperty]
@@ -56,6 +59,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
     protected override void ApplyExistingQuery(BillingQueryDetailsDto existingQuery)
     {
+        _hydratingExistingQuery = true;
         ExistingQueryId = existingQuery.Id;
         CommandStatus = existingQuery.Status;
         Consent = existingQuery.Consent;
@@ -70,11 +74,18 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
         if (existingQuery.Location is not null)
         {
+            _existingLocationId = existingQuery.Location.Id;
             Address = existingQuery.Location.Address ?? string.Empty;
             SuggestedAddress = string.Empty;
             Latitude = existingQuery.Location.Latitude;
             Longitude = existingQuery.Location.Longitude;
         }
+        else
+        {
+            _existingLocationId = null;
+        }
+
+        _hydratingExistingQuery = false;
 
         this.SetInfoStatus($"Commande #{existingQuery.Id} chargée.");
     }
@@ -117,20 +128,22 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         }
     }
 
-    protected static object BuildLocationPayload(string address, double? latitude, double? longitude)
+    protected static BillingLocationDto BuildLocationPayload(string address, double? latitude, double? longitude, long? locationId = null)
     {
         if (latitude.HasValue && longitude.HasValue)
         {
-            return new
+            return new BillingLocationDto
             {
+                Id = locationId,
                 Address = address,
                 Latitude = latitude.Value,
                 Longitude = longitude.Value,
             };
         }
 
-        return new
+        return new BillingLocationDto
         {
+            Id = locationId,
             Address = address,
         };
     }
@@ -223,6 +236,30 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         OnPropertyChanged(nameof(EventDateSelection));
     }
 
+    partial void OnAddressChanged(string value)
+    {
+        if (_hydratingExistingQuery)
+            return;
+
+        _existingLocationId = null;
+    }
+
+    partial void OnLatitudeChanged(double? value)
+    {
+        if (_hydratingExistingQuery)
+            return;
+
+        _existingLocationId = null;
+    }
+
+    partial void OnLongitudeChanged(double? value)
+    {
+        if (_hydratingExistingQuery)
+            return;
+
+        _existingLocationId = null;
+    }
+
 
     protected override async Task SubmitAsync()
     {
@@ -257,7 +294,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         try
         {
             var address = Address.Trim();
-            var locationPayload = BuildLocationPayload(address, Latitude, Longitude);
+            var locationPayload = BuildLocationPayload(address, Latitude, Longitude, IsEditingExisting ? _existingLocationId : null);
 
             var payload = new BillingQueryDetailsDto
             {
@@ -270,12 +307,7 @@ public partial class RdvViewModel : BillingCommandPageViewModel
                 Status = CommandStatus,
                 Reason = Reason.Trim(),
                 AdditionalInfo = string.IsNullOrWhiteSpace(AdditionalInfo) ? string.Empty : AdditionalInfo.Trim(),
-                Location = new BillingLocationDto
-                {
-                    Address = address,
-                    Latitude = Latitude,
-                    Longitude = Longitude,
-                }
+                Location = locationPayload
             };
 
             if (IsEditingExisting)

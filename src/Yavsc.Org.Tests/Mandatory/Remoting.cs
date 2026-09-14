@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using IdentityModel.Client;
+using Xunit;
 
 namespace Yavsc.Org.Tests
 {
@@ -69,6 +70,31 @@ namespace Yavsc.Org.Tests
 
         }
 
+ [Fact]
+    public async Task GetSignin_returns_a_page()
+    {
+        using var client = new HttpClient(new BypassSslValidationHandler())
+        {
+            BaseAddress = new Uri(this._serverFixture.HttpsAuthority ?? throw new InvalidOperationException("Missing HttpsAuthority"))
+        };
+        await AssertResponds(client, "/signin");
+    }
+
+
+
+    [Fact]
+    public async Task GetOpenIdConfiguration_returns_ok()
+    {
+        using var client = CreateHttpClient();
+        var response = await GetRaw(client, "/.well-known/openid-configuration");
+        var payload = await response.Content.ReadAsStringAsync(
+            TestContext.Current.CancellationToken
+        );
+
+        Assert.True(
+            response.IsSuccessStatusCode,
+            $"GET /.well-known/openid-configuration returned {(int)response.StatusCode} {response.StatusCode}. Body: {payload}");
+    }
         public static IEnumerable<object[]> GetLoginIntentData()
         {
             return new object[][] { new object[] { "testuser", "test" } };
@@ -124,4 +150,5 @@ namespace Yavsc.Org.Tests
             return true;
         }
     }
+
 }

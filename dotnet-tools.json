@@ -1,5 +1,13 @@
 {
   "version": 1,
   "isRoot": true,
-  "tools": {}
+  "tools": {
+    "picket": {
+      "version": "0.2.12",
+      "commands": [
+        "picket"
+      ],
+      "rollForward": false
+    }
+  }
 }

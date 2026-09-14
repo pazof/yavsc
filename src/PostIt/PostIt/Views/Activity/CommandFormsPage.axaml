@@ -34,13 +34,13 @@
 
         <Grid Grid.Row="3" Margin="0,12,0,0" ColumnDefinitions="Auto,8,Auto,8,Auto,12,*">
             <Button Grid.Column="0"
-                    Content="Ouvrir le formulaire"
+                    Content="Ouvrir le formulaire de demande"
                     Command="{Binding OpenSelectedFormCommand}" />
             <Button Grid.Column="2"
-                Content="Voir les commandes"
+                Content="Voir les demandes non validées"
                 Command="{Binding OpenQueriesCommand}" />
             <Button Grid.Column="4"
-                    Content="Demandes en cours (lecture seule)"
+                    Content="Demandes en cours (validées, en lecture seule)"
                     Command="{Binding OpenOngoingQueriesCommand}" />
             <postitControls:StatusBar Grid.Column="6"
                                       DataContext="{Binding ActionStatus}" />
