@@ -4,11 +4,13 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Yavsc.Api.Client;
 using Yavsc.Models;
 using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;
 using Yavsc.Tests.Shared;
 using Yavsc.Blogs.Tests.Fixtures;
+using BlogPostDto = Yavsc.Blogspot.BlogPostDto;
 
 namespace Yavsc.Blogs.Tests;
 
@@ -448,6 +450,137 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
 
         var putResponse = await http.SendAsync(request, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.BadRequest, putResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task PutBlog_from_PostIt_client_with_attachment_returns_204_and_persists_attachment()
+    {
+        // Full PostIt "Save" flow for an existing post with a new
+        // attachment, driven through the real BlogApiClient — the
+        // same code PostIt runs — so any drift between the
+        // client's wire shape and the controller's contract fails
+        // here before it reaches a user:
+        //
+        //   1. BlogsViewModel.SaveAsync (update branch) calls
+        //      BlogApiClient.UpdatePostAsync(id, update, attachments)
+        //      with a non-empty attachments list →
+        //      multipart/form-data PUT built by
+        //      CreateMultipartContent: a "blog" field holding the
+        //      BlogPostDto serialised camelCase + WhenWritingNull,
+        //      plus one "file" part per attachment.
+        //   2. TryAppendAttachmentLinks then appends a markdown
+        //      link per attachment to the article, and the VM
+        //      issues a second UpdatePostAsync without files →
+        //      plain JSON PUT.
+        //
+        // The test asserts the final state: the article carries
+        // the markdown link, the attachment row is persisted, and
+        // the file physically landed under the user-files root
+        // the link points to.
+        ResetAndSeedDefaultUser();
+        using var http = NewClient(subject: "tester");
+
+        var previousRoot = AbstractFileSystemHelpers.UserFilesDirName;
+        var tempRoot = Path.Combine(Path.GetTempPath(), "yavsc-blogs-tests-files-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(tempRoot);
+        AbstractFileSystemHelpers.UserFilesDirName = tempRoot;
+
+        try
+        {
+            // BlogApiClient takes the versioned base address
+            // (…/api/v1/) and prepends its "blogspot" prefix —
+            // exactly how PostIt wires it against production.
+            var client = new BlogApiClient(
+                new TestApiTransport(http),
+                _fixture.ApiUrl(""));
+
+            // Seed the post through the same path PostIt uses for
+            // a first Save on a new draft: CreatePostAsync without
+            // files → plain JSON POST.
+            var draft = new BlogPostDto
+            {
+                Title = "Avant PostIt",
+                Article = "Contenu initial.",
+                DateCreated = DateTime.UtcNow,
+                DateModified = DateTime.UtcNow
+            };
+            var created = await client.CreatePostAsync(draft,
+                ct: TestContext.Current.CancellationToken);
+            Assert.NotNull(created);
+            Assert.NotEqual(0, created!.Id);
+            Assert.Equal("tester", created.AuthorId);
+
+            // Step 1 — the update DTO the VM builds from the
+            // editor buffer (SelectedPost is the read-only hint
+            // for Id, AuthorId, Photo and DateCreated), sent with
+            // one attachment → multipart PUT.
+            var update = new BlogPostDto
+            {
+                Id = created.Id,
+                AuthorId = created.AuthorId,
+                Photo = created.Photo,
+                Title = "Modifié depuis PostIt",
+                Article = "Contenu modifié.",
+                DateCreated = created.DateCreated,
+                DateModified = DateTime.UtcNow
+            };
+            var attachments = new[]
+            {
+                new BlogUploadFile(
+                    "note.txt",
+                    System.Text.Encoding.UTF8.GetBytes("payload test"),
+                    "text/plain")
+            };
+
+            await client.UpdatePostAsync(created.Id, update, attachments,
+                TestContext.Current.CancellationToken);
+
+            // Step 2 — TryAppendAttachmentLinks appended a
+            // markdown link to the article (the payload does not
+            // embed Author, so the owner segment falls back to
+            // AuthorId), and the VM PUTs the article again,
+            // without files → JSON path of UpdatePostAsync.
+            var fileUrl = $"{Yavsc.Constants.UserFilesPath}/tester/blogs/{created.Id}/note.txt";
+            var linkUpdate = new BlogPostDto
+            {
+                Id = created.Id,
+                AuthorId = created.AuthorId,
+                Photo = created.Photo,
+                Title = update.Title,
+                Article = update.Article + $"\n\n- [note.txt]({fileUrl})",
+                DateCreated = created.DateCreated,
+                DateModified = DateTime.UtcNow
+            };
+
+            await client.UpdatePostAsync(created.Id, linkUpdate,
+                ct: TestContext.Current.CancellationToken);
+
+            // Final state, read back through the client.
+            var details = await client.GetPostAsync(created.Id,
+                TestContext.Current.CancellationToken);
+            Assert.NotNull(details);
+            Assert.Equal("Modifié depuis PostIt", details!.Title);
+            Assert.Contains($"- [note.txt]({fileUrl})", details.Article);
+
+            // The attachment row is persisted…
+            Assert.True(CountAttachmentsForPost(created.Id) >= 1);
+
+            // …and the file physically landed where the appended
+            // markdown link points:
+            // {UserFilesDirName}/{user}/blogs/{postId}/{fileName}.
+            var expectedFile = Path.Combine(
+                tempRoot, "tester", "blogs", created.Id.ToString(), "note.txt");
+            var written = Directory.Exists(tempRoot)
+                ? string.Join(", ", Directory.EnumerateFiles(tempRoot, "*", SearchOption.AllDirectories))
+                : "<none>";
+            Assert.True(File.Exists(expectedFile),
+                $"Expected uploaded file at {expectedFile}. Actually written: {written}");
+        }
+        finally
+        {
+            AbstractFileSystemHelpers.UserFilesDirName = previousRoot;
+            try { Directory.Delete(tempRoot, recursive: true); } catch { }
+        }
     }
 
     [Fact]
