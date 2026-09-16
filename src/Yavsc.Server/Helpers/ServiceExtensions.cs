@@ -137,22 +137,6 @@ public static class ServiceExtensions
                 };
             }
 
-            options.Events = new JwtBearerEvents
-            {
-                OnMessageReceived = context =>
-                {
-                    // Fallback for clients that cannot reliably attach Authorization header
-                    // on multipart uploads. Restrict query-token support to this endpoint only.
-                    if (string.IsNullOrEmpty(context.Token)
-                        && context.Request.Path.Value?.Contains("/api/v1/account/set-avatar", StringComparison.OrdinalIgnoreCase) == true
-                        && context.Request.Query.TryGetValue("access_token", out var tokenValues))
-                    {
-                        context.Token = tokenValues.ToString();
-                    }
-
-                    return Task.CompletedTask;
-                }
-            };
         });
 
         return result;
