@@ -62,4 +62,17 @@ internal sealed class RecordingYavscApiClient : YavscApiClient
             });
         return Task.FromResult(default(T)!);
     }
+
+    /// <summary>Multipart overload: BlogApiClient routes
+    /// Create/UpdatePostAsync with attachments through here.
+    /// Without this override the call would fall through to the
+    /// base <see cref="YavscApiClient"/> and attempt a real HTTP
+    /// round-trip against the stub authority. The body is a
+    /// factory, so we record the delegate itself; tests that
+    /// care about the multipart shape invoke it.</summary>
+    public override Task<T> CallAsync<T>(HttpMethod method, string path, Func<HttpContent> contentFactory, CancellationToken ct = default)
+    {
+        _recorder.Calls.Add((method, path, contentFactory));
+        return Task.FromResult(default(T)!);
+    }
 }
