@@ -153,22 +153,23 @@ namespace Yavsc.Server.Helpers
             return new FsOperationInfo { Done = true };
         }
 
-        static string ParseFileNameFromDisposition(string disposition)
-        {
-            // form-data_ name=_file__ filename=_Constants.Private.cs_
-            var parts = disposition.Split(' ');
-            var filename = parts[2].Split('=')[1];
-            filename = filename.Substring(1, filename.Length - 2);
-            return filename;
-        }
-
         public static void AddQuota(this ApplicationUser user, int quota)
         {
             user.DiskQuota += quota;
         }
         public static FileReceivedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f, string destFileName = null)
         {
-            return ReceiveUserFile(user, root, f.OpenReadStream(), destFileName ?? ParseFileNameFromDisposition(f.ContentDisposition), f.ContentType, CancellationToken.None);
+            // f.FileName is parsed by ASP.NET Core from the
+            // Content-Disposition header: it handles unquoted
+            // values and the RFC 5987 filename* parameter that
+            // modern HttpClient multipart bodies emit. The
+            // previous hand-rolled parser assumed a quoted
+            // filename in a fixed position and silently dropped
+            // the first character ("note.txt" → "ote.txt"),
+            // which broke the attachment links PostIt appends
+            // to the article. FilterFileName, downstream, still
+            // sanitises any path traversal attempt.
+            return ReceiveUserFile(user, root, f.OpenReadStream(), destFileName ?? f.FileName, f.ContentType, CancellationToken.None);
         }
 
         /// <summary>

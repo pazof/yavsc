@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
+    <ProjectReference Include="..\Yavsc.Api.Client\Yavsc.Api.Client.csproj" />
     <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj" />
     <ProjectReference Include="..\Yavsc.Blogs\Yavsc.Blogs.csproj" />
     <ProjectReference Include="..\Yavsc.Tests.Shared\Yavsc.Tests.Shared.csproj" />
