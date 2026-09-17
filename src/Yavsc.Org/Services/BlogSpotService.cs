@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Yavsc;
 using Yavsc.Blogspot;
 using Yavsc.Models;
 using Yavsc.Models.Access;
@@ -18,14 +20,17 @@ public class OldBlogSpotService
     private readonly ApplicationDbContext _context;
     private readonly IAuthorizationService _authorizationService;
     private readonly IFileSystemAuthManager fileSystemAuthManager;
+    private readonly SiteSettings siteSettings;
 
     public OldBlogSpotService(ApplicationDbContext context,
     IAuthorizationService authorizationService,
-    IFileSystemAuthManager fileSystemAuthManager)
+    IFileSystemAuthManager fileSystemAuthManager,
+    IOptions<SiteSettings> siteSettings)
     {
         _authorizationService = authorizationService;
         _context = context;
         this.fileSystemAuthManager = fileSystemAuthManager;
+        this.siteSettings = siteSettings.Value;
     }
 
     public Yavsc.Models.Blog.BlogPost Create(string userId, Yavsc.Models.Blog.BlogPost post, IFormFileCollection files)
@@ -45,7 +50,7 @@ public class OldBlogSpotService
                     // Créer un répertoire pour les fichiers du blog
                     string blogFilesSubdir = $"blogs/{post.Id}";
                     string destDir = Path.Combine(
-                        AbstractFileSystemHelpers.UserFilesDirName,
+                        siteSettings.Blog,
                         user.UserName,
                         blogFilesSubdir
                     );

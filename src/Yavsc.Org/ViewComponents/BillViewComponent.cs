@@ -8,7 +8,7 @@ using Yavsc.ViewModels;
 using Yavsc.ViewModels.Gen;
 using Yavsc.Services;
 using Microsoft.EntityFrameworkCore;
-using Yavsc.Server.Helpers;
+using Microsoft.Extensions.Options;
 
 namespace Yavsc.ViewComponents
 {
@@ -17,20 +17,29 @@ namespace Yavsc.ViewComponents
         readonly ApplicationDbContext dbContext;
         readonly IBillingService billing;
         readonly IStringLocalizer<BillViewComponent> localizer;
+        private readonly SiteSettings siteSettings;
 
-        public BillViewComponent(ApplicationDbContext dbContext, 
+        public BillViewComponent(ApplicationDbContext dbContext,
             IStringLocalizer<BillViewComponent> localizer,
-            IBillingService billing)
+            IBillingService billing,
+            IOptions<SiteSettings> siteSettings)
         {
             this.billing = billing;
             this.dbContext = dbContext;
             this.localizer = localizer;
+            this.siteSettings = siteSettings.Value;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string code, IBillable billable, OutputFormat format, bool asBill)
+        public async Task<IViewComponentResult> InvokeAsync(
+            string code,
+        IBillable billable,
+        OutputFormat format,
+         bool asBill,
+            SiteSettings settings
+        )
         {
-            var di = new DirectoryInfo(Config.SiteSetup.Bills); 
-            var dia = new DirectoryInfo(Config.SiteSetup.Avatars); 
+            var di = new DirectoryInfo(settings.Bills);
+            var dia = new DirectoryInfo(settings.Avatars);
             ViewBag.BillsDir = di.FullName;
             ViewBag.AvatarsDir = dia.FullName;
             ViewBag.AsBill = asBill; // vrai pour une facture, sinon, c'est un devis
@@ -56,9 +65,9 @@ namespace Yavsc.ViewComponents
             ViewBag.PerformerProfile = profile;
             ViewBag.ActivityLabel = (await dbContext.Activities.SingleAsync(a => a.Code == billable.ActivityCode)).Name;
 
-            var proaddr = profile.OrganizationAddress.Address;
-            ViewBag.PerformerOrganizationAddress = proaddr.SplitAddressToTeX() ;
-            ViewBag.FooterPerformerOrganizationAddress = proaddr.SplitAddressToTeX(", ");
+            var proAddr = profile.OrganizationAddress.Address;
+            ViewBag.PerformerOrganizationAddress = proAddr.SplitAddressToTeX() ;
+            ViewBag.FooterPerformerOrganizationAddress = proAddr.SplitAddressToTeX(", ");
 
             ViewBag.PerformerAddress = performer.PostalAddress?.Address.SplitAddressToTeX() ;
             switch (format) {
@@ -75,23 +84,24 @@ namespace Yavsc.ViewComponents
                         tex = writer.ToString();
                     }
                     ViewComponentContext.ViewContext.Writer = oldWriter;
-                    
-                    var genrtrData = new PdfGenerationViewModel
-                    { 
+
+                    var pdfGenerationViewModel = new PdfGenerationViewModel
+                    {
                             Temp = Config.Temp,
-                            TeXSource = tex, 
-                            DestDir = AbstractFileSystemHelpers.UserBillsDirName,
+                            TeXSource = tex,
+                            DestDir = settings.Blog,
                             BaseFileName = billable.GetFileBaseName(billing)
                         };
-                    if (genrtrData.GenerateEstimatePdf()) {
-                        return this.View(new { Generated = genrtrData.BaseFileName+".pdf" });
+                    if (settings.GenerateEstimatePdf(pdfGenerationViewModel)) {
+                        return this.View(new { Generated = pdfGenerationViewModel.BaseFileName+".pdf" });
                     } else {
-                        return View(new { Error = genrtrData.GenerationErrorMessage } );
+                        return View(new { Error = pdfGenerationViewModel.GenerationErrorMessage } );
                     }
             }
-            ViewBag.BillFileInfo =  billable.GetBillInfo(billing);
+            ViewBag.BillFileInfo =  billable.GetBillInfo(billing, siteSettings);
+            ViewBag.Settings = settings;
             return View("Default",billable);
-           
+
         }
 
     }

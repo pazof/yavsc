@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.SignalR;
 using Yavsc.Server.Helpers;
 using static Yavsc.Constants;
 using Yavsc.Server.Hubs;
+using Microsoft.Extensions.Options;
 
 namespace Yavsc.Blogs.Controllers
 {
@@ -21,13 +22,20 @@ namespace Yavsc.Blogs.Controllers
         private readonly IHubContext<ChatHub> hubContext;
         readonly ApplicationDbContext dbContext;
 
-        public FileSystemStreamController(ApplicationDbContext context, ILiveProcessor liveProcessor, ILoggerFactory loggerFactory,
-        IHubContext<ChatHub> hubContext)
+        private readonly SiteSettings siteSettings;
+
+        public FileSystemStreamController(
+            ApplicationDbContext context, 
+            ILiveProcessor liveProcessor, 
+            ILoggerFactory loggerFactory,
+            IHubContext<ChatHub> hubContext,
+            IOptions<SiteSettings> siteSettings)
         {
             this.dbContext = context;
             this.logger = loggerFactory.CreateLogger<FileSystemStreamController>();
             this.liveProcessor = liveProcessor;
             this.hubContext = hubContext;
+            this.siteSettings = siteSettings.Value;
         }
 
         [Authorize, Route("put/{filename}")]
@@ -55,7 +63,7 @@ namespace Yavsc.Blogs.Controllers
             );
 
 
-            string destDir = HttpContext.User.EnsureDestinationDirectory(filePath);
+            string destDir = HttpContext.User.EnsureDestinationDirectory(filePath, siteSettings);
             logger.LogInformation($"Saving flow to {destDir}");
             var userId = User.GetUserId();
             var user = await dbContext.Users.FirstAsync(u => u.Id == userId);

@@ -6,8 +6,8 @@
 @using Yavsc.Helpers
 @model Yavsc.ViewModels.Gen.PdfGenerationViewModel
 
-@{ 
-  Model.GenerateEstimatePdf();
+@{
+  ViewBag.Settings.GenerateEstimatePdf(Model);
 }
 @if (Model.Generated) {
   <div>

@@ -7,8 +7,6 @@ namespace Yavsc.Server.Helpers
 {
     public static class AbstractFileSystemHelpers
     {
-        public static string UserBillsDirName {  set; get; }
-        public static string UserFilesDirName {  set; get; }
 
         /// <summary>
         /// Is Valid this Path?
@@ -62,17 +60,6 @@ namespace Yavsc.Server.Helpers
                 else sb.Append("#" + ((int)c).ToString("D3"));
             }
             return sb.ToString();
-        }
-
-        public static UserDirectoryInfo GetUserFiles(string userId, string subdir)
-        {
-            UserDirectoryInfo di = new UserDirectoryInfo(UserFilesDirName, userId, subdir);
-            return di;
-        }
-        public static bool IsRegularFile(string userName, string subdir)
-        {
-            FileInfo fi = new FileInfo( Path.Combine(Path.Combine(UserFilesDirName, userName), subdir));
-            return fi.Exists;
         }
 
 

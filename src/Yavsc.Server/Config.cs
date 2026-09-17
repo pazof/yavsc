@@ -27,12 +27,11 @@ public static class Config
                 throw new InvalidOperationException("Invalid Authority URL");
             }
     }
-             
+
 
         public static IConfigurationRoot? GoogleWebClientConfiguration { get;  set; }
         public static GoogleServiceAccount? GServiceAccount { get;  set; }
 
-        public static SiteSettings SiteSetup { get;  set; } = new SiteSettings();
         public static FileServerOptions? UserFilesOptions { get; set; }
         public static FileServerOptions? GitOptions { get; set; }
         public static string AvatarsDirName {  set; get; } = "Avatars";

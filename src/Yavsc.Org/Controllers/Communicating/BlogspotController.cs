@@ -109,8 +109,9 @@ namespace Yavsc.Org.Controllers
         {
             if (ModelState.IsValid)
             {
-                Models.Blog.BlogPost post = blogSpotService.Create(User.GetUserId(),
-                 blogInput, Request.Form.Files);
+                var uid = User.GetUserId();
+                Models.Blog.BlogPost post = blogSpotService.Create(uid, blogInput);
+                blogSpotService.AttachFiles(Request.Form.Files, uid, post.Id);
                 return RedirectToAction("Index");
             }
             return View("Edit", blogInput);

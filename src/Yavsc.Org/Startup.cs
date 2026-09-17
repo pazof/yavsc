@@ -21,13 +21,10 @@ public  class Startup
         {
             Config.GoogleSettings = googleSettings.Value;
             ResourcesHelpers.GlobalLocalizer = localizer;
-            Config.SiteSetup = siteSettings.Value;
             Config.SmtpSetup = smtpSettings.Value;
             Config.Authority = siteSettings.Value.Authority;
             string blogsDir = siteSettings.Value.Blog ?? throw new Exception("blogsDir is not set.");
             string billsDir = siteSettings.Value.Bills ?? throw new Exception("billsDir is not set.");
-            AbstractFileSystemHelpers.UserFilesDirName = new DirectoryInfo(blogsDir).FullName;
-            AbstractFileSystemHelpers.UserBillsDirName = new DirectoryInfo(billsDir).FullName;
             Config.Temp = siteSettings.Value.TempDir;
             Config.PayPalSettings = payPalSettings.Value;
 
@@ -35,7 +32,7 @@ public  class Startup
 
             // TODO implement an installation & upgrade procedure
             // Create required directories
-            foreach (string dir in new string[] { AbstractFileSystemHelpers.UserFilesDirName, AbstractFileSystemHelpers.UserBillsDirName, Config.Temp })
+            foreach (string dir in new string[] { blogsDir, billsDir, Config.Temp })
             {
                 if (dir == null)
                 {
@@ -48,27 +45,27 @@ public  class Startup
                     di.Create();
                 }
             }
-            CheckApp(loggerFactory.CreateLogger<Startup>(), environmentName);
+            CheckApp(siteSettings.Value, loggerFactory.CreateLogger<Startup>(), environmentName);
         }
 
-        public static void CheckApp(ILogger logger, string environmentName)
+        public static void CheckApp(SiteSettings settings, ILogger logger, string environmentName)
         {
             var appData = Environment.GetEnvironmentVariable("APPDATA");
             if (appData == null)
             {
                 logger.LogWarning("AppData was not found in environment variables");
-                if (Config.SiteSetup.DataDir == null) {
-                    Config.SiteSetup.DataDir = "AppData"+environmentName;
-                    logger.LogInformation("Using: "+Config.SiteSetup.DataDir);
-                } else logger.LogInformation("Using value from settings: "+Config.SiteSetup.DataDir);
-                DirectoryInfo di = new DirectoryInfo(Config.SiteSetup.DataDir);
+                if (settings.DataDir == null) {
+                    settings.DataDir = "AppData"+environmentName;
+                    logger.LogInformation("Using: "+settings.DataDir);
+                } else logger.LogInformation("Using value from settings: "+settings.DataDir);
+                DirectoryInfo di = new DirectoryInfo(settings.DataDir);
                 if (!di.Exists)
                 {
                     di.Create();
                     logger.LogWarning("Created dir : "+di.FullName);
                 }
                 logger.LogInformation("Using existing directory: "+di.FullName);
-                Environment.SetEnvironmentVariable("APPDATA", Config.SiteSetup.DataDir);
+                Environment.SetEnvironmentVariable("APPDATA", settings.DataDir);
                 logger.LogWarning("It has been set to : "+Environment.GetEnvironmentVariable("APPDATA"));
             }
 
