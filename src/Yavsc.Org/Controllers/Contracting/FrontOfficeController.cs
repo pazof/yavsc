@@ -8,6 +8,7 @@ namespace Yavsc.Controllers
     using Helpers;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Localization;
+    using Microsoft.Extensions.Options;
     using Models;
     using ViewModels.FrontOffice;
     using Yavsc.Server.Helpers;
@@ -20,18 +21,21 @@ namespace Yavsc.Controllers
         readonly ILogger _logger;
         readonly IStringLocalizer _SR;
         private readonly IBillingService _billing;
+        private readonly SiteSettings _siteSettings;
 
         public FrontOfficeController(ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             IBillingService billing,
             ILoggerFactory loggerFactory,
-        IStringLocalizer<FrontOfficeController> SR)
+        IStringLocalizer<FrontOfficeController> SR,
+        IOptions<SiteSettings> siteSettings)
         {
             _context = context;
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<FrontOfficeController>();
             _SR = SR;
             _billing = billing;
+            _siteSettings = siteSettings.Value;
         }
         public ActionResult Index()
         {
@@ -95,8 +99,8 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IActionResult EstimatePdf(long id)
         {
-            ViewBag.TempDir = Config.SiteSetup.TempDir;
-            ViewBag.BillsDir = AbstractFileSystemHelpers.UserBillsDirName;
+            ViewBag.TempDir = _siteSettings.TempDir;
+            ViewBag.BillsDir = _siteSettings.Bills;
             var estimate = _context.Estimates.Include(x => x.Query)
             .Include(x => x.Query.Client)
             .Include(x => x.Query.PerformerProfile)

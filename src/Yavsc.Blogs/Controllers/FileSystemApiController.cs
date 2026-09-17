@@ -12,6 +12,7 @@ namespace Yavsc.Blogs.Controllers
     using Yavsc.Server.Helpers;
     using Yavsc.Abstract.Helpers;
     using Yavsc.Server.Models.FileSystem;
+    using Microsoft.Extensions.Options;
 
     [Authorize,Route(APIPrefix + "/fs")]
     public partial class FileSystemApiController : Controller
@@ -19,15 +20,18 @@ namespace Yavsc.Blogs.Controllers
         readonly ApplicationDbContext dbContext;
         private readonly IAuthorizationService AuthorizationService;
         private readonly ILogger _logger;
+        private readonly SiteSettings siteSettings;
 
         public FileSystemApiController(ApplicationDbContext context,
         IAuthorizationService authorizationService,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory,
+        IOptions<SiteSettings> siteSettings)
 
         {
             AuthorizationService = authorizationService;
             dbContext = context;
             _logger = loggerFactory.CreateLogger<FileSystemApiController>();
+            this.siteSettings = siteSettings.Value;
         }
 
         [HttpGet()]
@@ -41,7 +45,7 @@ namespace Yavsc.Blogs.Controllers
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             // _logger.LogInformation($"listing files from {User.Identity.Name}{subdir}");
-            var files = AbstractFileSystemHelpers.GetUserFiles(User.GetUserId(), subdir);
+            var files = FileSystemHelpers.GetUserFiles(siteSettings, User.GetUserId(), subdir);
             return Ok(files);
         }
 
@@ -53,7 +57,7 @@ namespace Yavsc.Blogs.Controllers
             List<FileReceivedInfo> received = new List<FileReceivedInfo>();
             InvalidPathException pathex = null;
             try {
-                destDir = User.EnsureDestinationDirectory(subdir);
+                destDir = User.EnsureDestinationDirectory(subdir, siteSettings);
             } catch (InvalidPathException ex) {
                 pathex = ex;
             }
@@ -108,7 +112,7 @@ namespace Yavsc.Blogs.Controllers
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
-            var info = user.MoveUserFileToDir(query.Id, query.To);
+            var info = user.MoveUserFileToDir(query.Id, query.To, siteSettings);
             if (!info.Done) return new BadRequestObjectResult(info);
             return Ok(new { moved = query.Id });
         }
@@ -131,11 +135,11 @@ namespace Yavsc.Blogs.Controllers
             try {
                 if (Config.UserFilesOptions.FileProvider.GetFileInfo(Path.Combine(user.UserName, query.Id)).Exists)
                 {
-                    var result = user.MoveUserFile(query.Id, query.To);
+                    var result = user.MoveUserFile(query.Id, query.To, siteSettings);
                     if (!result.Done) return new BadRequestObjectResult(result);
                 }
                 else {
-                    var result = user.MoveUserDir(query.Id, query.To);
+                    var result = user.MoveUserDir(query.Id, query.To, siteSettings);
                     if (!result.Done) return new BadRequestObjectResult(result);
                 }
             }
@@ -161,7 +165,7 @@ namespace Yavsc.Blogs.Controllers
             );
 
             try {
-                var result = user.DeleteUserDirOrFile(id);
+                var result = user.DeleteUserDirOrFile(id, siteSettings);
                 if (!result.Done)
                     return new BadRequestObjectResult(result);
             }

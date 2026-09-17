@@ -35,6 +35,7 @@ namespace Yavsc.ApiControllers
 
         private readonly ILogger logger;
         private readonly IBillingService billingService;
+        private readonly SiteSettings siteSettings;
 
         public BillingController(
             IAuthorizationService authorizationService,
@@ -43,7 +44,8 @@ namespace Yavsc.ApiControllers
             ApplicationDbContext context,
             IOptions<GoogleAuthSettings> googleSettings,
             IYavscMessageSender GCMSender,
-            IBillingService billingService
+            IBillingService billingService,
+            IOptions<SiteSettings> siteSettings
             )
         {
             _googleSettings=googleSettings.Value;
@@ -53,6 +55,7 @@ namespace Yavsc.ApiControllers
             this._localizer = SR;
             _GCMSender=GCMSender;
             this.billingService=billingService;
+            this.siteSettings = siteSettings.Value;
         }
 
         [HttpGet("facture-{billingCode}-{id}.pdf"), Authorize]
@@ -65,7 +68,7 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
 
-            var fi = bill.GetBillInfo(billingService);
+            var fi = bill.GetBillInfo(billingService, siteSettings);
 
             if (!fi.Exists) return Ok(new { Error = "Not generated" });
             return File(fi.OpenRead(), "application/x-pdf", fi.Name);
@@ -229,7 +232,7 @@ namespace Yavsc.ApiControllers
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            await User.ReceiveProSignatureAsync(billingCode,id,Request.Form.Files[0],"pro");
+            await User.ReceiveProSignatureAsync(billingCode,id,Request.Form.Files[0],"pro", siteSettings);
             estimate.ProviderValidationDate = DateTime.UtcNow;
             dbContext.SaveChanges(User.GetUserId());
             // Notify the client
@@ -273,7 +276,7 @@ namespace Yavsc.ApiControllers
             }
 
             var filename = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, id);
-            FileInfo fi = new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
+            FileInfo fi = new FileInfo(Path.Combine(siteSettings.Bills, filename));
             if (!fi.Exists) return NotFound(new { Error = "Professional signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename); ;
         }
@@ -310,7 +313,7 @@ namespace Yavsc.ApiControllers
             }
             if (Request.Form.Files.Count!=1)
                 return new BadRequestResult();
-            await User.ReceiveProSignatureAsync(billingCode,id,Request.Form.Files[0],"cli");
+            await User.ReceiveProSignatureAsync(billingCode,id,Request.Form.Files[0],"cli", siteSettings);
             estimate.ClientValidationDate = DateTime.UtcNow;
             dbContext.SaveChanges(User.GetUserId());
             return Ok (new { ClientValidationDate = estimate.ClientValidationDate });
@@ -327,9 +330,9 @@ namespace Yavsc.ApiControllers
             }
 
             var filename = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, id);
-            FileInfo fi = new FileInfo(Path.Combine(AbstractFileSystemHelpers.UserBillsDirName, filename));
+            FileInfo fi = new FileInfo(Path.Combine(siteSettings.Bills, filename));
             if (!fi.Exists) return NotFound(new { Error = "Professional signature not found" });
-            return File(fi.OpenRead(), "application/x-pdf", filename); ;
+            return File(fi.OpenRead(), "application/x-pdf", filename);
         }
 
         /// <summary>
@@ -405,7 +408,8 @@ namespace Yavsc.ApiControllers
             FileReceivedInfo fi;
             try
             {
-                fi = await User.ReceiveEstimateSignatureAsync(id, type, payload, token);
+                fi = await User.ReceiveEstimateSignatureAsync(id, type, payload,
+                 siteSettings, token);
             }
             catch (Exception ex)
             {

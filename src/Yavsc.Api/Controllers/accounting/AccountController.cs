@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using ImageMagick;
 
 using Yavsc.Models;
 using Yavsc.Api.Helpers;
 using Yavsc.Server.Helpers;
 using System.Diagnostics;
+using Microsoft.Extensions.Options;
 
 namespace Yavsc.WebApi.Controllers
 {
@@ -28,13 +28,16 @@ namespace Yavsc.WebApi.Controllers
         ];
 
         readonly ApplicationDbContext _dbContext;
+        private readonly SiteSettings siteSettings;
         private readonly ILogger _logger;
 
         public ApiAccountController(
-        ILoggerFactory loggerFactory, ApplicationDbContext dbContext)
+        ILoggerFactory loggerFactory, ApplicationDbContext dbContext,
+        IOptions<SiteSettings> siteSettings)
         {
             _logger = loggerFactory.CreateLogger(nameof(ApiAccountController));
             _dbContext = dbContext;
+            this.siteSettings = siteSettings.Value;
         }
 
         [HttpGet("me")]
@@ -146,7 +149,7 @@ namespace Yavsc.WebApi.Controllers
 
             try
             {
-                var info = user.ReceiveAvatar(avatarFile);
+                var info = user.ReceiveAvatar(avatarFile, siteSettings);
                 await _dbContext.SaveChangesAsync();
                 return Ok(new
                 {

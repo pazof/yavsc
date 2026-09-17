@@ -1044,7 +1044,7 @@ public static class HostingExtensions
         Startup.Configure(app, siteSettings, smtpSettings,
             payPalSettings, googleAuthSettings, localization, loggerFactory,
             app.Environment.EnvironmentName);
-        app.ConfigureFileServerApp();
+        app.ConfigureFileServerApp(siteSettings.Value);
         app.UseSession();
         return app;
     }
@@ -1238,24 +1238,44 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
 #nullable disable
 
     public static IApplicationBuilder ConfigureFileServerApp(this IApplicationBuilder app,
+               SiteSettings settings,
                 bool enableDirectoryBrowsing = false)
     {
+        if (settings.GitRepository == null)
+        {
+            throw new InvalidOperationException("GitRepository path is not configured in SiteSettings.");
+        }
+        if (settings.Blog == null)
+        {
+            throw new InvalidOperationException("Blog path is not configured in SiteSettings.");
+        }
+        if (settings.Avatars == null)
+        {
+            throw new InvalidOperationException("Avatars path is not configured in SiteSettings.");
+        }
+        if (settings.Bills == null)
+        {
+            throw new InvalidOperationException("Bills path is not configured in SiteSettings.");
+        }
+        if (settings.TempDir == null)
+        {
+            throw new InvalidOperationException("TempDir path is not configured in SiteSettings.");
+        }
 
-        var userFilesDirInfo = new DirectoryInfo(Config.SiteSetup.Blog);
-        AbstractFileSystemHelpers.UserFilesDirName = userFilesDirInfo.FullName;
+        var userFilesDirInfo = new DirectoryInfo(settings.Blog);
 
         if (!userFilesDirInfo.Exists) userFilesDirInfo.Create();
 
         Config.UserFilesOptions = new FileServerOptions()
         {
-            FileProvider = new PhysicalFileProvider(AbstractFileSystemHelpers.UserFilesDirName),
+            FileProvider = new PhysicalFileProvider(userFilesDirInfo.FullName),
             RequestPath = PathString.FromUriComponent(Constants.UserFilesPath),
             EnableDirectoryBrowsing = enableDirectoryBrowsing,
         };
         Config.UserFilesOptions.EnableDefaultFiles = true;
         Config.UserFilesOptions.StaticFileOptions.ServeUnknownFileTypes = true;
 
-        var avatarsDirInfo = new DirectoryInfo(Config.SiteSetup.Avatars);
+        var avatarsDirInfo = new DirectoryInfo(settings.Avatars);
         if (!avatarsDirInfo.Exists) avatarsDirInfo.Create();
         Config.AvatarsDirName = avatarsDirInfo.FullName;
 
@@ -1267,7 +1287,7 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
         };
 
 
-        var gitdirinfo = new DirectoryInfo(Config.SiteSetup.GitRepository);
+        var gitdirinfo = new DirectoryInfo(settings.GitRepository);
         Config.GitDirName = gitdirinfo.FullName;
         if (!gitdirinfo.Exists) gitdirinfo.Create();
         Config.GitOptions = new FileServerOptions()

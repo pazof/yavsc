@@ -11,6 +11,7 @@ using Yavsc.Server.Helpers;
 using Yavsc.Tests.Shared;
 using Yavsc.Blogs.Tests.Fixtures;
 using BlogPostDto = Yavsc.Blogspot.BlogPostDto;
+using NuGet.Protocol;
 
 namespace Yavsc.Blogs.Tests;
 
@@ -338,10 +339,9 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         ResetAndSeedDefaultUser();
         using var http = NewClient(subject: "tester");
 
-        var previousRoot = AbstractFileSystemHelpers.UserFilesDirName;
-        var tempRoot = Path.Combine(Path.GetTempPath(), "yavsc-blogs-tests-files-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempRoot);
-        AbstractFileSystemHelpers.UserFilesDirName = tempRoot;
+        // AttachFiles writes under the fixture-configured
+        // SiteSettings.Blog (BlogFilesRoot), not a local temp dir.
+        var filesRoot = _fixture.BlogFilesRoot;
 
         try
         {
@@ -374,8 +374,10 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
                 DateModified = DateTime.UtcNow
             };
 
-            var form = new MultipartFormDataContent();
-            form.Add(new StringContent(JsonSerializer.Serialize(update)), "blog");
+            var form = new MultipartFormDataContent
+            {
+                { new StringContent(JsonSerializer.Serialize(update)), "blog" }
+            };
 
             var fileBytes = System.Text.Encoding.UTF8.GetBytes("payload test");
             var fileContent = new ByteArrayContent(fileBytes);
@@ -405,8 +407,9 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         }
         finally
         {
-            AbstractFileSystemHelpers.UserFilesDirName = previousRoot;
-            try { Directory.Delete(tempRoot, recursive: true); } catch { }
+            // BlogFilesRoot is the fixture-shared temp root (one per
+            // test run); leave it in place for the other multipart
+            // tests. The OS reclaims it.
         }
     }
 
@@ -480,10 +483,9 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         ResetAndSeedDefaultUser();
         using var http = NewClient(subject: "tester");
 
-        var previousRoot = AbstractFileSystemHelpers.UserFilesDirName;
-        var tempRoot = Path.Combine(Path.GetTempPath(), "yavsc-blogs-tests-files-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(tempRoot);
-        AbstractFileSystemHelpers.UserFilesDirName = tempRoot;
+        // AttachFiles writes under the fixture-configured
+        // SiteSettings.Blog (BlogFilesRoot), not a local temp dir.
+        var filesRoot = _fixture.BlogFilesRoot;
 
         try
         {
@@ -569,17 +571,18 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             // markdown link points:
             // {UserFilesDirName}/{user}/blogs/{postId}/{fileName}.
             var expectedFile = Path.Combine(
-                tempRoot, "tester", "blogs", created.Id.ToString(), "note.txt");
-            var written = Directory.Exists(tempRoot)
-                ? string.Join(", ", Directory.EnumerateFiles(tempRoot, "*", SearchOption.AllDirectories))
+                filesRoot, "tester", "blogs", created.Id.ToString(), "note.txt");
+            var written = Directory.Exists(filesRoot)
+                ? string.Join(", ", Directory.EnumerateFiles(filesRoot, "*", SearchOption.AllDirectories))
                 : "<none>";
             Assert.True(File.Exists(expectedFile),
                 $"Expected uploaded file at {expectedFile}. Actually written: {written}");
         }
         finally
         {
-            AbstractFileSystemHelpers.UserFilesDirName = previousRoot;
-            try { Directory.Delete(tempRoot, recursive: true); } catch { }
+            // BlogFilesRoot is the fixture-shared temp root (one per
+            // test run); leave it in place for the other multipart
+            // tests. The OS reclaims it.
         }
     }
 

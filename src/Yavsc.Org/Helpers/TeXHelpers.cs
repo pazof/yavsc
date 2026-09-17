@@ -91,7 +91,7 @@ namespace Yavsc.Helpers
             result = result.Replace("\n","\\tabularnewline ");
             return new TeXString(result);
         }
-        
+
 
         public static string NewLinesWith(this string target, string separator)
         {
@@ -115,11 +115,11 @@ namespace Yavsc.Helpers
             return new TeXString(string.Join(lineSeparator,texlines));
         }
 
-        public static bool GenerateEstimatePdf(this PdfGenerationViewModel Model)
+        public static bool GenerateEstimatePdf(this SiteSettings settings, PdfGenerationViewModel Model)
         {
             string errorMsg = null;
             var billdir = Model.DestDir;
-            var tempdir = Config.SiteSetup.TempDir;
+            var tempdir = settings.TempDir;
             string name = Model.BaseFileName;
             string fullname = new FileInfo(
                  System.IO.Path.Combine(tempdir, name)).FullName;
@@ -154,7 +154,7 @@ namespace Yavsc.Helpers
                     {
                         errorMsg = $"Pdf generation failed with exit code: {p.ExitCode}";
                     }
-                    else 
+                    else
                     {
                       fi.Delete();
                       var di = new DirectoryInfo(Path.Combine(tempdir,$"{Model.BaseFileName}.t2d"));

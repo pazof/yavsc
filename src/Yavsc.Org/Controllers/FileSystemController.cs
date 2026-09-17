@@ -1,20 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Yavsc.Server.Helpers;
 
-namespace Yavsc.Controllers
+namespace Yavsc.Org.Controllers
 {
     public class FileSystemController : Controller
     {
-        public FileSystemController()
+        private SiteSettings _siteSettings;
+
+        public FileSystemController(IOptions<SiteSettings> siteSettings)
         {
+            _siteSettings = siteSettings.Value;
         }
+        // Removed redundant empty constructor block
 
         public IActionResult Index(string subdir="")
-        { 
+        {
             if (subdir !=null)
                 if (!subdir.IsValidYavscPath())
                     return new BadRequestResult();
-            var files = AbstractFileSystemHelpers.GetUserFiles(User.GetUserId(), subdir);
+            var files = FileSystemHelpers.GetUserFiles(_siteSettings, User.GetUserId(), subdir);
             return View(files);
         }
     }

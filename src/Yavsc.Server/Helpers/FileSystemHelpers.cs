@@ -13,6 +13,7 @@ using Yavsc.Exceptions;
 using Yavsc.Abstract.Helpers;
 using ImageMagick;
 using Yavsc.Server.Models.FileSystem;
+using Yavsc.ViewModels.UserFiles;
 namespace Yavsc.Server.Helpers
 {
     public static class FileSystemHelpers
@@ -27,10 +28,12 @@ namespace Yavsc.Server.Helpers
                 }
             }
         }
-        public static async Task<FileReceivedInfo> ReceiveProSignatureAsync(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signType)
+        public static async Task<FileReceivedInfo> ReceiveProSignatureAsync(this ClaimsPrincipal user, string billingCode, long estimateId, IFormFile formFile, string signType,
+        SiteSettings settings
+        )
         {
             var item = new FileReceivedInfo(
-                Config.SiteSetup.Bills,
+                settings.Bills,
                 AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, estimateId));
 
             var fi = new FileInfo(item.FullName);
@@ -39,16 +42,11 @@ namespace Yavsc.Server.Helpers
             return item;
         }
 
-        public static string GetAvatarUri(this ApplicationUser user)
-        {
-            return $"/{Config.SiteSetup.Avatars}/{user.UserName}.png";
-        }
-
         public static string EnsureDestinationDirectory(
             this ClaimsPrincipal user,
-            string subpath)
+            string subpath, SiteSettings siteSettings)
         {
-            var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.Identity.Name);
+            var root = Path.Combine(siteSettings.Blog, user.Identity.Name);
             if (!string.IsNullOrWhiteSpace(subpath))
             {
                 if (!subpath.IsValidYavscPath())
@@ -69,18 +67,18 @@ namespace Yavsc.Server.Helpers
         /// <param name="user"></param>
         /// <param name="fileName"></param>
 
-        public static void DeleteUserFile(this ApplicationUser user, string fileName)
+        public static void DeleteUserFile(this ApplicationUser user, string fileName, SiteSettings siteSettings)
         {
-            var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
+            var root = Path.Combine(siteSettings.Blog, user.UserName);
             var fi = new FileInfo(Path.Combine(root, fileName));
             if (!fi.Exists) return;
             fi.Delete();
             user.DiskUsage -= fi.Length;
         }
 
-        public static FsOperationInfo DeleteUserDirOrFile(this ApplicationUser user, string dirName)
+        public static FsOperationInfo DeleteUserDirOrFile(this ApplicationUser user, string dirName, SiteSettings siteSettings)
         {
-            var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
+            var root = Path.Combine(siteSettings.Blog, user.UserName);
             if (string.IsNullOrEmpty(dirName))
                 return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.InvalidRequest, ErrorMessage = "specify a directory or file name" };
 
@@ -101,9 +99,9 @@ namespace Yavsc.Server.Helpers
             return new FsOperationInfo { Done = true };
         }
 
-        public static FsOperationInfo MoveUserDir(this ApplicationUser user, string fromDirName, string toDirName)
+        public static FsOperationInfo MoveUserDir(this ApplicationUser user, string fromDirName, string toDirName, SiteSettings siteSettings)
         {
-            var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
+            var root = Path.Combine(siteSettings.Blog, user.UserName);
             if (string.IsNullOrEmpty(fromDirName))
                 return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.InvalidRequest, ErrorMessage = "specify a dir name " };
 
@@ -127,28 +125,28 @@ namespace Yavsc.Server.Helpers
             di.MoveTo(destPath);
             return new FsOperationInfo { Done = true };
         }
-        public static FsOperationInfo MoveUserFileToDir(this ApplicationUser user, string fileNameFrom, string fileNameDest)
+        public static FsOperationInfo MoveUserFileToDir(this ApplicationUser user, string fileNameFrom, string fileNameDest, SiteSettings siteSettings)
         {
-            var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
+            var root = Path.Combine(siteSettings.Blog, user.UserName);
             var fi = new FileInfo(Path.Combine(root, fileNameFrom));
-            if (!fi.Exists) return new FsOperationInfo { ErrorCode = ErrorCode.NotFound, ErrorMessage = "no file to move" };
+            if (!fi.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.NotFound, ErrorMessage = "no file to move" };
             string dest;
             if (!string.IsNullOrEmpty(fileNameDest)) dest = Path.Combine(root, fileNameDest);
             else dest = root;
             var fo = new FileInfo(dest);
-            if (fo.Exists) return new FsOperationInfo { ErrorCode = ErrorCode.DestExists, ErrorMessage = "destination file name is an existing file" };
+            if (fo.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.DestExists, ErrorMessage = "destination file name is an existing file" };
             var dout = new DirectoryInfo(dest);
             if (!dout.Exists) dout.Create();
             fi.MoveTo(Path.Combine(dout.FullName, fi.Name));
             return new FsOperationInfo { Done = true };
         }
-        public static FsOperationInfo MoveUserFile(this ApplicationUser user, string fileNameFrom, string fileNameDest)
+        public static FsOperationInfo MoveUserFile(this ApplicationUser user, string fileNameFrom, string fileNameDest, SiteSettings siteSettings)
         {
-            var root = Path.Combine(AbstractFileSystemHelpers.UserFilesDirName, user.UserName);
+            var root = Path.Combine(siteSettings.Blog, user.UserName);
             var fi = new FileInfo(Path.Combine(root, fileNameFrom));
-            if (!fi.Exists) return new FsOperationInfo { ErrorCode = ErrorCode.NotFound, ErrorMessage = "no file to move" };
+            if (!fi.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.NotFound, ErrorMessage = "no file to move" };
             var fo = new FileInfo(Path.Combine(root, fileNameDest));
-            if (fo.Exists) return new FsOperationInfo { ErrorCode = ErrorCode.DestExists, ErrorMessage = "destination file name is an existing file" };
+            if (fo.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.DestExists, ErrorMessage = "destination file name is an existing file" };
             fi.MoveTo(fo.FullName);
             return new FsOperationInfo { Done = true };
         }
@@ -245,7 +243,9 @@ namespace Yavsc.Server.Helpers
 
         }
 
-        public static FileReceivedInfo ReceiveAvatar(this ApplicationUser user, IFormFile formFile)
+        public static FileReceivedInfo ReceiveAvatar(this ApplicationUser user,
+        IFormFile formFile,
+        SiteSettings settings)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (formFile == null) throw new ArgumentNullException(nameof(formFile));
@@ -256,7 +256,7 @@ namespace Yavsc.Server.Helpers
                 avatarsRequestPath = Constants.AvatarsPath;
             }
 
-            var avatarsDirectory = Config.SiteSetup?.Avatars;
+            var avatarsDirectory = settings.Avatars;
             if (string.IsNullOrWhiteSpace(avatarsDirectory))
             {
                 avatarsDirectory = "avatars";
@@ -304,6 +304,13 @@ namespace Yavsc.Server.Helpers
             var namelen = flow.DifferedFileName.Length - ext.Length;
             var basename = flow.DifferedFileName.Substring(0, namelen);
             return $"{basename}-{flow.SequenceNumber}{ext}";
+        }
+
+
+        public static UserDirectoryInfo GetUserFiles(SiteSettings settings, string userId, string subdir)
+        {
+            UserDirectoryInfo di = new UserDirectoryInfo(settings.Blog, userId, subdir);
+            return di;
         }
 
     }
