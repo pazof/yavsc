@@ -7,6 +7,7 @@
              xmlns:models="using:Yavsc.Blogspot"
              xmlns:views="using:PostIt.Views.Blogs"
              xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+             xmlns:md="using:MarkdownViewer.Core.Controls"
              mc:Ignorable="d"
              x:Class="PostIt.Views.Blogs.BlogsPage"
              x:DataType="vm:BlogsViewModel"
@@ -21,6 +22,8 @@
   Padding="5"
   Margin="5"
       >
+
+
   <StackPanel HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" Spacing="10" Margin="5">
       <TextBlock Text="Blog Posts" FontSize="20" FontWeight="SemiBold" />
@@ -70,6 +73,12 @@
             <PathIcon Data="{StaticResource PublishedIcon}" />
           </CommandBarToggleButton.Icon>
         </CommandBarToggleButton>
+        <CommandBarToggleButton Label="Markdown Viewer"
+                                IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}">
+          <CommandBarToggleButton.Icon>
+            <PathIcon Data="{StaticResource MarkdownIcon}" />
+          </CommandBarToggleButton.Icon>
+        </CommandBarToggleButton>
         <CommandBarButton x:Name="OpenSignatureDevButton"
                           Label="[DEV] Signature" Command="{Binding OpenSignatureDevAsync}">
           <CommandBarButton.Icon>
@@ -85,15 +94,12 @@
           <RowDefinition Height="*" />
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <WrapPanel Grid.Row="0" ItemSpacing="10">
-
-        </WrapPanel>
         <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Padding="8">
           <ListBox ItemsSource="{Binding FilteredPosts}"
                    SelectedItem="{Binding SelectedPost, Mode=TwoWay}">
             <ListBox.ItemTemplate>
               <DataTemplate x:DataType="models:BlogPostDto">
-                <StackPanel Spacing="4">
+                <StackPanel Spacing="4" >
                   <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
                   <TextBlock Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" FontSize="10" Foreground="Gray" />
                   <TextBlock Text="{Binding AuthorId}" FontSize="10" Foreground="DarkSlateGray" />
@@ -103,12 +109,16 @@
           </ListBox>
         </Border>
 
-        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" Padding="8">
+        <md:MarkdownViewer Grid.Row="2" Name="MarkdownViewer"
+          IsVisible="{Binding IsMarkdownViewerVisible}"
+          MarkdownText="{Binding DraftArticle}" />
+
+        <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" Padding="8"
+              IsVisible="{Binding !IsMarkdownViewerVisible}">
           <Grid RowSpacing="10"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
-              <RowDefinition Height="Auto" />
               <RowDefinition Height="Auto" />
               <RowDefinition Height="Auto" />
               <RowDefinition Height="*" />
