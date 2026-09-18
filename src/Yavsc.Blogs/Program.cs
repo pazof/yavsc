@@ -9,6 +9,7 @@ using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 namespace Yavsc.Blogs;
 
 internal class Program
@@ -22,6 +23,8 @@ internal class Program
 
         var services = builder.Services;
 
+        var siteSection = builder.Configuration.GetSection("Site");
+        services.Configure<SiteSettings>(siteSection);
         // MvcBuilder
         builder.Services
             .AddAuthorization(options =>
@@ -79,7 +82,16 @@ internal class Program
             options.SetDefaultCulture(supportedCultures[0])
             .AddSupportedCultures(supportedCultures)
             .AddSupportedUICultures(supportedCultures);
+        })
+        .Configure<SiteSettings>(settings => 
+        {
+            if (settings.Blog == null)
+            {
+                settings.Blog = "blog";
+            }
         });
+
+
 
         // App startup
         using (var app = builder.Build())
