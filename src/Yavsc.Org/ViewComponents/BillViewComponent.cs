@@ -32,9 +32,9 @@ namespace Yavsc.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync(
             string code,
-        IBillable billable,
-        OutputFormat format,
-         bool asBill,
+            IBillable billable,
+            OutputFormat format,
+            bool asBill,
             SiteSettings settings
         )
         {
@@ -87,9 +87,9 @@ namespace Yavsc.ViewComponents
 
                     var pdfGenerationViewModel = new PdfGenerationViewModel
                     {
-                            Temp = Config.Temp,
+                            Temp = siteSettings.TempDir,
                             TeXSource = tex,
-                            DestDir = settings.Blog,
+                            DestDir = siteSettings.Bills,
                             BaseFileName = billable.GetFileBaseName(billing)
                         };
                     if (settings.GenerateEstimatePdf(pdfGenerationViewModel)) {
