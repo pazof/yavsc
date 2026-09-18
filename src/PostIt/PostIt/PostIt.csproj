@@ -33,6 +33,7 @@
     <PackageReference Include="Mapsui.Avalonia12" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="IdentityModel.OidcClient" />
+    <PackageReference Include="MarkdownViewer.Core" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
   <ItemGroup>
