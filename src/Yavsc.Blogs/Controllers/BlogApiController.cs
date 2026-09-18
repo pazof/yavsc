@@ -15,10 +15,14 @@ namespace Yavsc.Blogs.Controllers
     public class BlogApiController : Controller
     {
         private readonly BlogSpotService blogSpotService;
+        private readonly ILogger<BlogApiController> logger;
 
-        public BlogApiController(BlogSpotService blogSpotService)
+        public BlogApiController(
+            BlogSpotService blogSpotService,
+            ILoggerFactory loggerFactory)
         {
             this.blogSpotService = blogSpotService;
+            this.logger = loggerFactory.CreateLogger<BlogApiController>();
         }
 
         // GET: api/v1/blogspot
@@ -60,6 +64,7 @@ namespace Yavsc.Blogs.Controllers
             var blog = await ReadBlogRequestAsync();
             if (blog is null)
             {
+                logger.LogWarning("PUT /api/v1/blogspot/{id} failed to read blog payload from request body or multipart form.", id);
                 return BadRequest(ModelState);
             }
 
@@ -79,6 +84,7 @@ namespace Yavsc.Blogs.Controllers
                         result.MemberNames.FirstOrDefault() ?? string.Empty,
                         result.ErrorMessage ?? "Invalid value.");
                 }
+                logger.LogWarning("PUT /api/v1/blogspot/{id} failed validation: {errors}", id, ModelState);
                 return BadRequest(ModelState);
             }
 
@@ -107,16 +113,27 @@ namespace Yavsc.Blogs.Controllers
             var existing = await blogSpotService.GetBlogPostAsync(id);
             if (existing == null)
             {
+                logger.LogWarning("PUT /api/v1/blogspot/{id} failed: blog post not found.", id);
                 return NotFound();
             }
 
             try
             {
                 await blogSpotService.Modify(User, blog);
-                blogSpotService.AttachFiles(files, User.GetUserId(), id);
+                logger.LogInformation("PUT /api/v1/blogspot/{id} modified successfully.", id);
+                if (files.Count > 0)
+                {
+                    logger.LogInformation("PUT /api/v1/blogspot/{id} attaching {fileCount} files.", id, files.Count);
+                    blogSpotService.AttachFiles(files, User.GetUserId(), id);
+                }
+                else
+                {
+                    logger.LogInformation("PUT /api/v1/blogspot/{id} no files to attach.", id);
+                }
             }
             catch (AuthorizationFailureException)
             {
+                logger.LogWarning("PUT /api/v1/blogspot/{id} failed: authorization failure.", id);
                 return Challenge();
             }
 

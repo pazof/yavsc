@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Yavsc;
 using Yavsc.Blogspot;
@@ -22,17 +23,24 @@ public class BlogSpotService
     private readonly IAuthorizationService _authorizationService;
     private readonly IFileSystemAuthManager fileSystemAuthManager;
     private readonly SiteSettings siteSettings;
+    private readonly ILogger<BlogSpotService> logger;
 
     public BlogSpotService(
         ApplicationDbContext context,
         IAuthorizationService authorizationService,
         IFileSystemAuthManager fileSystemAuthManager,
-        IOptions<SiteSettings> siteSettings)
+        IOptions<SiteSettings> siteSettings,
+        ILoggerFactory loggerFactory)
     {
         _authorizationService = authorizationService;
         _context = context;
         this.fileSystemAuthManager = fileSystemAuthManager;
         this.siteSettings = siteSettings.Value;
+        if (siteSettings.Value.Blog == null)
+        {
+            throw new InvalidOperationException("SiteSettings.Blog is not configured.");
+        }
+        this.logger = loggerFactory.CreateLogger<BlogSpotService>();
     }
 
     public void AttachFiles(IFormFileCollection files, string userId, long postId)
@@ -52,13 +60,19 @@ public class BlogSpotService
                     user.UserName,
                     blogFilesSubdir);
                 var di = new DirectoryInfo(destDir);
-                if (!di.Exists) di.Create();
+
+                if (!di.Exists) 
+                {
+                    logger.LogInformation("Creating directory for blog attachments: {destDir}", destDir);
+                    di.Create();
+                }
 
                 foreach (var formFile in files)
                 {
                     var fileInfo = user.ReceiveUserFile(destDir, formFile);
                     if (fileInfo != null && !fileInfo.QuotaOffense)
                     {
+                        logger.LogInformation("Attached file {fileName} to blog post {postId} for user {userId}.", fileInfo.FileName, postId, userId);
                         var uploadedFile = new UploadedFile
                         {
                             Path = fileInfo.FileName,
@@ -74,6 +88,11 @@ public class BlogSpotService
                             FileId = uploadedFile.Id
                         };
                         _context.BlogAttachedFiles.Add(attachment);
+                        logger.LogInformation("Created BlogAttachedFile entry for file {fileName} and blog post {postId}.", fileInfo.FileName, postId);
+                    }
+                    else
+                    {
+                        logger.LogWarning("Failed to attach file {fileName} to blog post {postId} for user {userId}. Quota offense: {quotaOffense}", formFile.FileName, postId, userId, fileInfo?.QuotaOffense);
                     }
                 }
                 _context.SaveChanges(userId);
@@ -81,6 +100,7 @@ public class BlogSpotService
             catch (Exception ex)
             {
                 Debug.WriteLine($"Erreur lors du traitement des fichiers : {ex.Message}");
+                logger.LogError(ex, "Error while processing attached files for blog post {postId} and user {userId}.", postId, userId);
             }
         }
     }
