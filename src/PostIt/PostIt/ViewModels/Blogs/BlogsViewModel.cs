@@ -80,6 +80,9 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     [ObservableProperty]
     public partial Settings Settings { get; private set; }
 
+    [ObservableProperty]
+    public partial bool IsMarkdownViewerVisible { get; set; }
+
     [RelayCommand]
     internal async Task RefreshAsync()
     {
@@ -374,6 +377,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         this.SetInfoStatus("Prêt.");
         Settings = settings ?? new Settings();
         SearchText = Settings.SearchText;
+        IsMarkdownViewerVisible = false;
         WindowTitle = "PostIt";
         DraftTitle = string.Empty;
         DraftArticle = string.Empty;

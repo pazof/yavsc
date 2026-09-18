@@ -34,6 +34,9 @@ public partial class Settings : ViewModelBase
     public partial string SearchText { get; set; } = string.Empty;
 
     [ObservableProperty]
+    public partial bool IsMarkdownViewerVisible { get; set; } = false;
+
+    [ObservableProperty]
     public partial string ProviderOngoingRequestsSortOption { get; set; } = string.Empty;
 
     [ObservableProperty]
