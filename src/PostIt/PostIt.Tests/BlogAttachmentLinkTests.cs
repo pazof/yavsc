@@ -63,13 +63,17 @@ public class BlogAttachmentLinkTests
         // carrying the file, then — because TryAppendAttachmentLinks
         // appended a link — a JSON one carrying the final article.
         var linkPut = recorder.Calls.LastOrDefault(
-            c => c.method == HttpMethod.Put && c.body is BlogPostDto);
+            c => c.method == HttpMethod.Put);
         Assert.NotEqual(default, linkPut);
-        var sent = Assert.IsType<BlogPostDto>(linkPut.body);
+        var sent = Assert.IsType<System.Func<HttpContent>>(linkPut.body);
+        var multipartContent = Assert.IsType<MultipartFormDataContent>(sent());
 
         var expectedUrl = $"{authority}/files/tester/blogs/42/note.txt";
-        Assert.Contains($"- [note.txt]({expectedUrl})", sent.Article);
+        var sentStringContent =  multipartContent.First() as StringContent ;
+
+        var sentString = await sentStringContent.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        Assert.Contains($"- [note.txt]({expectedUrl})", sentString);
         // The regression shape: a relative, authority-less link.
-        Assert.DoesNotContain("](/files/", sent.Article);
+        Assert.DoesNotContain("](/files/", sentString);
     }
 }

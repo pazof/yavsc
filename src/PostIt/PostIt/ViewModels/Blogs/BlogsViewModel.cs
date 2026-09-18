@@ -116,7 +116,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
             // Build a fresh BlogPostDto from the editor buffer on
             // every Save — we no longer mutate SelectedPost in
-            // place. The previous behaviour copied the buffer
+            // place. The previous behavior copied the buffer
             // (which was a no-op when SelectedPost was null)
             // back onto the model and relied on a
             // [Required] violation to surface the missing
@@ -160,6 +160,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
             }
             else
             {
+                TryAppendAttachmentLinks(SelectedPost, attachments);
                 var update = new BlogPostDto
                 {
                     Id = SelectedPost.Id,
@@ -170,24 +171,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
                     DateCreated = SelectedPost.DateCreated,
                     DateModified = DateTime.UtcNow,
                 };
-
                 await BlogClient!.UpdatePostAsync(SelectedPost.Id, update, attachments);
-
-                if (TryAppendAttachmentLinks(SelectedPost, attachments))
-                {
-                    var linkUpdate = new BlogPostDto
-                    {
-                        Id = SelectedPost.Id,
-                        AuthorId = SelectedPost.AuthorId,
-                        Photo = SelectedPost.Photo,
-                        Title = DraftTitle,
-                        Article = DraftArticle ?? string.Empty,
-                        DateCreated = SelectedPost.DateCreated,
-                        DateModified = DateTime.UtcNow,
-                    };
-                    await BlogClient.UpdatePostAsync(SelectedPost.Id, linkUpdate);
-                }
-
                 this.SetInfoStatus($"Billet {SelectedPost.Id} enregistré.");
                 DraftAttachments.Clear();
             }
@@ -374,6 +358,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
     public BlogsViewModel()
     {
+        WindowTitle = "Blog";
         SettingsModel = new Settings();
         Init(SettingsModel);
         BlogClient = null;
@@ -435,6 +420,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     /// </summary>
     public BlogsViewModel(BlogApiClient blogClient, Settings? settings = null, IServiceProvider? services = null)
     {
+        WindowTitle = "Blog";
         SettingsModel = new Settings();
         BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient)); ;
         Services = services;
