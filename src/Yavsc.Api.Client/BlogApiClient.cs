@@ -99,7 +99,18 @@ public sealed class BlogApiClient
         return await _api.CallAsync<BlogPostDto?>(method, path, () => CreateMultipartContent(post, files), ct: ct);
     }
 
-    private static HttpContent CreateMultipartContent(BlogPostDto post, IReadOnlyCollection<BlogUploadFile> files)
+    /// <summary>Build the <c>multipart/form-data</c> body PostIt
+    /// sends when a blog post is saved with one or more
+    /// attachments: a <c>blog</c> field holding the
+    /// <paramref name="post"/> serialised camelCase with
+    /// <c>WhenWritingNull</c>, plus one <c>file</c> part per entry
+    /// in <paramref name="files"/> (each carrying its
+    /// <see cref="BlogUploadFile.ContentType"/>, falling back to
+    /// <c>application/octet-stream</c> when unset). Exposed as
+    /// <c>public</c> so the blogs backend tests can assert on the
+    /// wire shape directly and round-trip it through the live
+    /// <c>BlogsWebServerFixture</c> host.</summary>
+    public static HttpContent CreateMultipartContent(BlogPostDto post, IReadOnlyCollection<BlogUploadFile> files)
     {
         var content = new MultipartFormDataContent();
         var blogJson = JsonSerializer.Serialize(post, new JsonSerializerOptions
