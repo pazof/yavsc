@@ -71,7 +71,7 @@ public sealed class BlogsWebServerFixture : WebHostFixture
     /// A fresh per-run temp directory, so tests can assert on the
     /// physical file without touching the developer's real
     /// user-files tree.</summary>
-    public string BlogFilesRoot { get; private set; } = string.Empty;
+    public string BlogFilesRoot { get; private set; } = "files-root";
 
     // A single SqliteConnection held open at the static level,
     // mirroring how Yavsc.Org.Tests.WebServerFixture hoists its

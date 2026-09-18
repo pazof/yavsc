@@ -364,6 +364,9 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             var created = (await postResponse.Content.ReadFromJsonAsync<BlogPost>(
                 TestContext.Current.CancellationToken))!;
 
+            var attachmentCount = CountAttachmentsForPost(created.Id);
+            Assert.True(attachmentCount == 0);
+
             var update = new BlogPost
             {
                 Id = created.Id,
@@ -402,8 +405,8 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
             using var detailsDoc = JsonDocument.Parse(
                 await detailsResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
             Assert.Equal("Mis a jour via multipart", detailsDoc.RootElement.GetProperty("title").GetString());
-
-            Assert.True(CountAttachmentsForPost(created.Id) >= 1);
+            attachmentCount = CountAttachmentsForPost(created.Id);
+            Assert.True(attachmentCount >= 1);
         }
         finally
         {

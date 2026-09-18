@@ -25,14 +25,15 @@ public  class Startup
             Config.Authority = siteSettings.Value.Authority;
             string blogsDir = siteSettings.Value.Blog ?? throw new Exception("blogsDir is not set.");
             string billsDir = siteSettings.Value.Bills ?? throw new Exception("billsDir is not set.");
-            Config.Temp = siteSettings.Value.TempDir;
+            string tempDir = siteSettings.Value.TempDir ?? throw new Exception("tempDir is not set.");
+           
             Config.PayPalSettings = payPalSettings.Value;
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             // TODO implement an installation & upgrade procedure
             // Create required directories
-            foreach (string dir in new string[] { blogsDir, billsDir, Config.Temp })
+            foreach (string dir in new string[] { blogsDir, billsDir, tempDir })
             {
                 if (dir == null)
                 {
