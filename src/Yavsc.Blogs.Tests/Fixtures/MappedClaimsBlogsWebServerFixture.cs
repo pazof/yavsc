@@ -39,6 +39,18 @@ public sealed class MappedClaimsBlogsWebServerFixture : IDisposable, IBackendFix
             opt.UseInMemoryDatabase("Yavsc.Blogs.Tests.MappedClaims", _inMemoryRoot));
 
         builder.Services.AddSingleton<IFileSystemAuthManager>(new NoopFileSystemAuthManager());
+
+        // BlogSpotService's constructor throws InvalidOperationException
+        // ("SiteSettings.Blog is not configured.") when Blog is null, so
+        // every request hitting BlogApiController would 500 resolving the
+        // service. These tests never upload files (JSON-only POST/PUT), so
+        // AttachFiles short-circuits — but the service still has to be
+        // constructible. Point Blog at a per-run temp directory, mirroring
+        // BlogsWebServerFixture.
+        builder.Services.Configure<SiteSettings>(s =>
+        {
+            s.Blog = Path.Combine(Path.GetTempPath(), "postit-blogs-mappedclaims-" + Guid.NewGuid().ToString("N"));
+        });
         builder.Services.AddScoped<BlogSpotService>();
         builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
         builder.Services.AddControllers()

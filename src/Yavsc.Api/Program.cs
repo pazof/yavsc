@@ -21,7 +21,6 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.AddConfiguration("api");
-        Config.SiteSetup = builder.Configuration.GetSection("Site").Get<SiteSettings>() ?? new SiteSettings();
 
         var services = builder.Services;
 

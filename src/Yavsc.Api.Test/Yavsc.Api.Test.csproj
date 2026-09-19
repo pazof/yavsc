@@ -6,8 +6,11 @@
     <IsPackable>false</IsPackable>
     <RootNamespace>Yavsc.Api.Test</RootNamespace>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <InformationalVersion>1.1.0-feat-sign-estimate.1+306.Branch.feat-sign-estimate.Sha.e9a33695b38154859729b61d1280e596f1597acf</InformationalVersion>
+    <Version>1.1.0-feat-sign-estimate.1</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
@@ -18,7 +21,6 @@
     <PackageReference Include="xunit.v3.extensibility.core" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
     <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj" />
@@ -26,7 +28,6 @@
     <ProjectReference Include="..\Yavsc.Org\Yavsc.Org.csproj" />
     <ProjectReference Include="..\Yavsc.Tests.Shared\Yavsc.Tests.Shared.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>

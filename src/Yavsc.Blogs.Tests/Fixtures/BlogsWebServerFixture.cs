@@ -63,6 +63,16 @@ public sealed class BlogsWebServerFixture : WebHostFixture
     public long PostId { get; private set; }
     public string DefaultUserLogin { get => "alice"; }
 
+    /// <summary>Root directory under which
+    /// <c>BlogSpotService.AttachFiles</c> writes uploaded files
+    /// during tests (the configured <c>SiteSettings.Blog</c>).
+    /// Attachments land at
+    /// <c>{BlogFilesRoot}/{userName}/blogs/{postId}/{fileName}</c>.
+    /// A fresh per-run temp directory, so tests can assert on the
+    /// physical file without touching the developer's real
+    /// user-files tree.</summary>
+    public string BlogFilesRoot { get; private set; } = "files-root";
+
     // A single SqliteConnection held open at the static level,
     // mirroring how Yavsc.Org.Tests.WebServerFixture hoists its
     // shared configuration into static slots. Closing the
@@ -111,6 +121,18 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         // into it, but the DI container needs an instance.
         builder.Services.AddSingleton<IFileSystemAuthManager>(
             new NoopFileSystemAuthManager());
+
+        // BlogSpotService.AttachFiles writes uploaded files under
+        // siteSettings.Blog. Without a configured SiteSettings the
+        // IOptions<SiteSettings> value has Blog == null and
+        // Path.Combine(null, …) throws inside AttachFiles' catch-all,
+        // silently persisting no attachment. Point Blog at a
+        // per-run temp directory so the multipart tests can assert
+        // on real files.
+        builder.Services.Configure<SiteSettings>(s =>
+        {
+            s.Blog = BlogFilesRoot;
+        });
 
         // Real BlogSpotService — same instance the production host
         // builds (ApplicationDbContext, IAuthorizationService,

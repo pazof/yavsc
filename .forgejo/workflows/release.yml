@@ -52,7 +52,7 @@ jobs:
   release:
     runs-on: docker
     container:
-      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v1
+      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v2
     steps:
       - name: Clone du repo au tag demandé
         env:
@@ -69,7 +69,7 @@ jobs:
           cd /src
 
           if [[ ! -d _src/.git ]]; then
-            git clone --depth=1 https://forgejo.pschneider.fr/notazof/yavsc.git _src
+            git clone --depth=1 "${FORGEJO_SERVER_URL}/${FORGEJO_REPOSITORY}.git" _src
           fi
 
           cd _src
@@ -175,12 +175,6 @@ jobs:
         run: |
           cd /src/_src
           dotnet restore
-      - name: Test
-        run: |
-          cd /src/_src && dotnet test \
-          --verbosity normal \
-          --filter="Category!=Platform-Android" \
-          --logger "xunit;LogFileName=test-results.xml"
 
       - name: Build de PostIt.Android ARM64
         run: |

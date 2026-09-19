@@ -1,6 +1,6 @@
 #nullable enable annotations
 
-﻿
+
 using IdentityServer8;
 using IdentityServer8.Models;
 using Microsoft.AspNetCore.Builder;
@@ -14,44 +14,42 @@ public static class Config
     /// <summary>
     /// Authority URL for IdentityServer, used for authentication and authorization.
     /// </summary>
-        public static string Authority { get;  set; }
+    public static string Authority { get; set; }
 
-        public static string AuthorityDomain
+    public static string AuthorityDomain
     {
         get
+        {
+            if (Uri.TryCreate(Authority, UriKind.Absolute, out var uri))
             {
-                if (Uri.TryCreate(Authority, UriKind.Absolute, out var uri))
-                {
-                    return uri.GetLeftPart(UriPartial.Authority);
-                }
-                throw new InvalidOperationException("Invalid Authority URL");
+                return uri.GetLeftPart(UriPartial.Authority);
             }
+            throw new InvalidOperationException("Invalid Authority URL");
+        }
     }
-             
 
-        public static IConfigurationRoot? GoogleWebClientConfiguration { get;  set; }
-        public static GoogleServiceAccount? GServiceAccount { get;  set; }
 
-        public static SiteSettings SiteSetup { get;  set; } = new SiteSettings();
-        public static FileServerOptions? UserFilesOptions { get; set; }
-        public static FileServerOptions? GitOptions { get; set; }
-        public static string AvatarsDirName {  set; get; } = "Avatars";
-        public static string GitDirName {  set; get; } = "Git";
+    public static IConfigurationRoot? GoogleWebClientConfiguration { get; set; }
+    public static GoogleServiceAccount? GServiceAccount { get; set; }
 
-    public static GoogleAuthSettings? GoogleSettings { get;  set; }
-    public static SmtpSettings? SmtpSetup { get;  set; }
-    public static string? Temp { get;  set; }
-        public static FileServerOptions? AvatarsOptions { get; set; }
-        public static string UserBillsDirName {  set; get; } = "Bills";
-        public static string UserFilesDirName {  set; get; } = "Files";
+    public static FileServerOptions? UserFilesOptions { get; set; }
+    public static FileServerOptions? GitOptions { get; set; }
+    public static string AvatarsDirName { set; get; } = "Avatars";
+    public static string GitDirName { set; get; } = "Git";
+
+    public static GoogleAuthSettings? GoogleSettings { get; set; }
+    public static SmtpSettings? SmtpSetup { get; set; }
+    public static FileServerOptions? AvatarsOptions { get; set; }
+    public static string UserBillsDirName { set; get; } = "Bills";
+    public static string UserFilesDirName { set; get; } = "Files";
 
 
 
-        /// <summary>
-        /// Lists Available user profile classes,
-        /// populated at startup, using reflection.
-        /// </summary>
-        public static List<Type> ProfileTypes = new List<Type>();
+    /// <summary>
+    /// Lists Available user profile classes,
+    /// populated at startup, using reflection.
+    /// </summary>
+    public static List<Type> ProfileTypes = new List<Type>();
 
 
     public static IEnumerable<IdentityResource> IdentityResources =>

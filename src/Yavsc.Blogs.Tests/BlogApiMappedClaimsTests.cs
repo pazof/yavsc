@@ -74,7 +74,7 @@ IClassFixture<MappedClaimsBlogsWebServerFixture>
         var draft = new BlogPost
         {
             Id = 0,
-            Title = "Billet JWT remappe",
+            Title = "Billet JWT re-mappé",
             AuthorId = "payload-attacker",
             Article = "Contenu de test.",
             DateCreated = DateTime.UtcNow,

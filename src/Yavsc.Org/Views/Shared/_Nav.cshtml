@@ -1,13 +1,13 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark" aria-label="Yavsc"
- style="background-image: url('@Config.SiteSetup.Banner'); 
+ style="background-image: url('@SiteSettings.Value.Banner');
 background-position: 0%;
 background-attachment: fixed;">
   <a class="navbar-brand" href="/">
     <img src="~/images/yavsc-logo.svg" alt="Yavsc" style="height:32px; margin-right:8px; display:inline-block; vertical-align:middle;" />
-    @Config.SiteSetup.Title
+    @SiteSettings.Value.Title
   </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-      data-bs-target="#navbar" aria-controls="navbar" 
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbar" aria-controls="navbar"
       aria-expanded="true" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>

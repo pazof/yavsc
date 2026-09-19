@@ -64,6 +64,7 @@ public static class EstimateSignatureFileHelper
         long estimateId,
         SignatureType type,
         SignaturePadPayload payload,
+        SiteSettings siteSettings,
         CancellationToken token = default)
     {
         if (user is null) throw new ArgumentNullException(nameof(user));
@@ -77,7 +78,7 @@ public static class EstimateSignatureFileHelper
         // (not user-derived), so we skip the IsValidYavscPath
         // check that ReceiveUserFile performs on user-supplied
         // subpaths.
-        var root = user.EnsureDestinationDirectory(SignaturesSubdir);
+        var root = user.EnsureDestinationDirectory(SignaturesSubdir, siteSettings);
 
         var fileName = FileNameFormat(type, estimateId, DateTime.UtcNow.Ticks);
         var fullPath = Path.Combine(root, fileName);

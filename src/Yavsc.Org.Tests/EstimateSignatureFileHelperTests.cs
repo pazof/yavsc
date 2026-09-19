@@ -18,6 +18,7 @@ namespace Yavsc.Org.Tests;
 public class EstimateSignatureFileHelperTests : IDisposable
 {
     private readonly string _tempRoot;
+    private SiteSettings siteSettings;
 
     public EstimateSignatureFileHelperTests()
     {
@@ -28,7 +29,7 @@ public class EstimateSignatureFileHelperTests : IDisposable
             Path.GetTempPath(),
             "yavsc-sig-tests-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_tempRoot);
-        AbstractFileSystemHelpers.UserFilesDirName = _tempRoot;
+        this.siteSettings = new SiteSettings { Blog = _tempRoot };
     }
 
     public void Dispose()
@@ -71,7 +72,7 @@ public class EstimateSignatureFileHelperTests : IDisposable
         };
 
         // Act
-        var fi = Run(user, 123L, SignatureType.Pro, payload);
+        var fi = Run(user, 123L, SignatureType.Pro, payload, this.siteSettings);
 
         // Assert: file exists, sits under the user's root, and
         // parses as a yavsc.signature/v1 envelope.
@@ -98,7 +99,8 @@ public class EstimateSignatureFileHelperTests : IDisposable
         var ct = TestContext.Current.CancellationToken;
         await Assert.ThrowsAsync<ArgumentNullException>(() =>
             EstimateSignatureFileHelper.ReceiveEstimateSignatureAsync(
-                user, 1L, SignatureType.Pro, payload: null!, token: ct));
+                user, 1L, SignatureType.Pro, payload: null!,
+                siteSettings, token: ct));
     }
 
     [Fact]
@@ -109,19 +111,19 @@ public class EstimateSignatureFileHelperTests : IDisposable
         var ct = TestContext.Current.CancellationToken;
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
             EstimateSignatureFileHelper.ReceiveEstimateSignatureAsync(
-                user, 0L, SignatureType.Pro, payload, token: ct));
+                user, 0L, SignatureType.Pro, payload, this.siteSettings, token: ct));
     }
 
     // --- helpers ----------------------------------------------------
 
     private static FileReceivedInfo Run(
-        ClaimsPrincipal user, long estimateId, SignatureType type, SignaturePadPayload payload)
+        ClaimsPrincipal user, long estimateId, SignatureType type, SignaturePadPayload payload, SiteSettings siteSettings)
     {
         // The helper is async; tests that don't care about the
         // result can call it sync via .GetAwaiter().GetResult()
         // because we know it never throws in the happy path.
         return EstimateSignatureFileHelper
-            .ReceiveEstimateSignatureAsync(user, estimateId, type, payload, CancellationToken.None)
+            .ReceiveEstimateSignatureAsync(user, estimateId, type, payload, siteSettings, CancellationToken.None)
             .GetAwaiter().GetResult();
     }
 

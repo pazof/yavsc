@@ -5,6 +5,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Yavsc;
 using Yavsc.Blogspot;
 using Yavsc.Models;
 using Yavsc.Models.Access;
@@ -19,72 +22,96 @@ public class BlogSpotService
     private readonly ApplicationDbContext _context;
     private readonly IAuthorizationService _authorizationService;
     private readonly IFileSystemAuthManager fileSystemAuthManager;
+    private readonly SiteSettings siteSettings;
+    private readonly ILogger<BlogSpotService> logger;
 
     public BlogSpotService(
         ApplicationDbContext context,
         IAuthorizationService authorizationService,
-        IFileSystemAuthManager fileSystemAuthManager)
+        IFileSystemAuthManager fileSystemAuthManager,
+        IOptions<SiteSettings> siteSettings,
+        ILoggerFactory loggerFactory)
     {
         _authorizationService = authorizationService;
         _context = context;
         this.fileSystemAuthManager = fileSystemAuthManager;
+        this.siteSettings = siteSettings.Value;
+        if (siteSettings.Value.Blog == null)
+        {
+            throw new InvalidOperationException("SiteSettings.Blog is not configured.");
+        }
+        this.logger = loggerFactory.CreateLogger<BlogSpotService>();
     }
 
-    public BlogPost Create(string userId, BlogPost post, IFormFileCollection files)
+    public void AttachFiles(IFormFileCollection files, string userId, long postId)
+    {
+        // Traiter les fichiers attaches s'il y en a
+        if (files != null && files.Count > 0)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+                throw new InvalidOperationException($"Utilisateur {userId} non trouvé.");
+
+            try
+            {
+                string blogFilesSubdir = $"blogs/{postId}";
+                string destDir = Path.Combine(
+                    siteSettings.Blog,
+                    user.UserName,
+                    blogFilesSubdir);
+                var di = new DirectoryInfo(destDir);
+
+                if (!di.Exists) 
+                {
+                    logger.LogInformation("Creating directory for blog attachments: {destDir}", destDir);
+                    di.Create();
+                }
+
+                foreach (var formFile in files)
+                {
+                    var fileInfo = user.ReceiveUserFile(destDir, formFile);
+                    if (fileInfo != null && !fileInfo.QuotaOffense)
+                    {
+                        logger.LogInformation("Attached file {fileName} to blog post {postId} for user {userId}.", fileInfo.FileName, postId, userId);
+                        var uploadedFile = new UploadedFile
+                        {
+                            Path = fileInfo.FileName,
+                            ContentType = formFile.ContentType,
+                            Length = formFile.Length
+                        };
+                        _context.UploadedFiles.Add(uploadedFile);
+                        _context.SaveChanges(userId);
+
+                        var attachment = new BlogAttachedFile
+                        {
+                            PostId = postId,
+                            FileId = uploadedFile.Id
+                        };
+                        _context.BlogAttachedFiles.Add(attachment);
+                        logger.LogInformation("Created BlogAttachedFile entry for file {fileName} and blog post {postId}.", fileInfo.FileName, postId);
+                    }
+                    else
+                    {
+                        logger.LogWarning("Failed to attach file {fileName} to blog post {postId} for user {userId}. Quota offense: {quotaOffense}", formFile.FileName, postId, userId, fileInfo?.QuotaOffense);
+                    }
+                }
+                _context.SaveChanges(userId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Erreur lors du traitement des fichiers : {ex.Message}");
+                logger.LogError(ex, "Error while processing attached files for blog post {postId} and user {userId}.", postId, userId);
+            }
+        }
+    }
+
+    public BlogPost Create(string userId, BlogPost post )
     {
         // Sauvegarder le post d'abord pour obtenir son ID
         // Le createur vient de l'authentification, donc on ne le prend pas du post
         post.AuthorId = userId;
         _context.BlogSpot.Add(post);
         _context.SaveChanges(userId);
-
-        // Traiter les fichiers attaches s'il y en a
-        if (files != null && files.Count > 0)
-        {
-            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (user != null)
-            {
-                try
-                {
-                    string blogFilesSubdir = $"blogs/{post.Id}";
-                    string destDir = Path.Combine(
-                        AbstractFileSystemHelpers.UserFilesDirName,
-                        user.UserName,
-                        blogFilesSubdir);
-                    var di = new DirectoryInfo(destDir);
-                    if (!di.Exists) di.Create();
-
-                    foreach (var formFile in files)
-                    {
-                        var fileInfo = user.ReceiveUserFile(destDir, formFile);
-                        if (fileInfo != null && !fileInfo.QuotaOffense)
-                        {
-                            var uploadedFile = new UploadedFile
-                            {
-                                Path = fileInfo.FileName,
-                                ContentType = formFile.ContentType,
-                                Length = formFile.Length
-                            };
-                            _context.UploadedFiles.Add(uploadedFile);
-                            _context.SaveChanges(userId);
-
-                            var attachment = new BlogAttachedFile
-                            {
-                                PostId = post.Id,
-                                FileId = uploadedFile.Id
-                            };
-                            _context.BlogAttachedFiles.Add(attachment);
-                        }
-                    }
-                    _context.SaveChanges(userId);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Erreur lors du traitement des fichiers : {ex.Message}");
-                }
-            }
-        }
-
         return post;
     }
 
@@ -186,58 +213,6 @@ public class BlogSpotService
         _context.SaveChanges(user.GetUserId());
     }
 
-    public async Task Modify(ClaimsPrincipal user, BlogPost blog, IFormFileCollection files)
-    {
-        await Modify(user, blog);
-
-        if (files == null || files.Count == 0)
-            return;
-
-        var userId = user.GetUserId();
-        var userEntity = _context.Users.FirstOrDefault(u => u.Id == userId);
-        if (userEntity == null)
-            return;
-
-        try
-        {
-            string blogFilesSubdir = $"blogs/{blog.Id}";
-            string destDir = Path.Combine(
-                AbstractFileSystemHelpers.UserFilesDirName,
-                userEntity.UserName,
-                blogFilesSubdir);
-            var di = new DirectoryInfo(destDir);
-            if (!di.Exists) di.Create();
-
-            foreach (var formFile in files)
-            {
-                var fileInfo = userEntity.ReceiveUserFile(destDir, formFile);
-                if (fileInfo != null && !fileInfo.QuotaOffense)
-                {
-                    var uploadedFile = new UploadedFile
-                    {
-                        Path = fileInfo.FileName,
-                        ContentType = formFile.ContentType,
-                        Length = formFile.Length
-                    };
-                    _context.UploadedFiles.Add(uploadedFile);
-                    _context.SaveChanges(userId);
-
-                    var attachment = new BlogAttachedFile
-                    {
-                        PostId = blog.Id,
-                        FileId = uploadedFile.Id
-                    };
-                    _context.BlogAttachedFiles.Add(attachment);
-                }
-            }
-
-            _context.SaveChanges(userId);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Erreur lors du traitement des fichiers : {ex.Message}");
-        }
-    }
 
     public async Task<IEnumerable<IBlogPost>> Index(ClaimsPrincipal user, string id, int skip = 0, int take = 25)
     {

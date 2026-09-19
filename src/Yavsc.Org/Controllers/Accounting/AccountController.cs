@@ -490,14 +490,17 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(3, "User created a new account with password.");
-                    await _emailSender.SendEmailAsync(Config.SiteSetup.Owner.Name, Config.SiteSetup.Owner.EMail,
-                     $"[{_siteSettings.Title}] Inscription avec mot de passe: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
+                    await _emailSender.SendEmailAsync(
+                        _siteSettings.Owner.Name,
+                        _siteSettings.Owner.EMail,
+                        $"[{_siteSettings.Title}] Inscription avec mot de passe: {user.UserName} ",
+                        $"{user.Id}/{user.UserName}/{user.Email}");
 
                     // TODO user.DiskQuota = Startup.SiteSetup.UserFiles.Quota;
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
 
-                    Uri authority = new Uri(Config.Authority);
+                    Uri authority = new Uri(_siteSettings.Authority);
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account",
@@ -703,10 +706,15 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
                         await _signInManager.SignInAsync(user, isPersistent: false);
 
 
-                        await _emailSender.SendEmailAsync(Config.SiteSetup.Owner.Name, Config.SiteSetup.Owner.EMail,
-                         $"[{_siteSettings.Title}] Inscription via {info.LoginProvider}: {user.UserName} ", $"{user.Id}/{user.UserName}/{user.Email}");
+                        await _emailSender.SendEmailAsync(
+                            _siteSettings.Owner.Name,
+                            _siteSettings.Owner.EMail,
+                            $"[{_siteSettings.Title}] Inscription via {info.LoginProvider}: {user.UserName} ",
+                            $"{user.Id}/{user.UserName}/{user.Email}");
 
-                        _logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
+                        _logger.LogInformation(6,
+                        "User created an account using {Name} provider.",
+                        info.LoginProvider);
 
                         return Redirect(returnUrl);
                     }

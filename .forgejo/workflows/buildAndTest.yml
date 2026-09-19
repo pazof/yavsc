@@ -19,21 +19,21 @@ on:
         required: false
         type: boolean
   push:
-    branches: [ "main" ]
+    branches: [ "main", "release/*", "hotfix/*", "fix/*" ]
   pull_request:
-    branches: [ "main", "release/*" ]
+    branches: [ "main", "release/*", "hotfix/*", "fix/*" ]
 
 jobs:
   build:
     runs-on: docker
     container:
-      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v1
+      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v2
     steps:
     - name: Clone yavsc
       run: |
         set -e
         cd /src
-        git clone https://forgejo.pschneider.fr/notazof/yavsc.git _src
+        git clone "${FORGEJO_SERVER_URL}/${FORGEJO_REPOSITORY}.git" _src
         cd _src
         if [ -n "${GITHUB_REF:-}" ]; then
           git fetch origin "$GITHUB_REF"
@@ -49,12 +49,6 @@ jobs:
       run: |
         echo "🏗️ Building the solution..."
         cd /src/_src && dotnet build --verbosity normal
-    - name: Install SkiaSharp native dependencies
-      run: |
-        echo "📦 Installing libfontconfig/libfreetype for SkiaSharp (Avalonia.Headless)..."
-        apt-get update && apt-get install -y --no-install-recommends \
-          libfontconfig1 libfreetype6 libexpat1 zlib1g libbz2-1.0 libpng16-16 libbrotli1 \
-          && rm -rf /var/lib/apt/lists/*
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."

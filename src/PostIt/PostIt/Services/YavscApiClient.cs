@@ -194,10 +194,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         using var response = await SendAsync(method, path, body is null ? null : () => JsonContent.Create(body), ct).ConfigureAwait(false);
         await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
 
-        var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-        var dto = await JsonSerializer.DeserializeAsync<T>(stream,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, ct).ConfigureAwait(false);
-        return dto!;
+        return await ReadJsonAsync<T>(response, ct).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -215,10 +212,31 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         using var response = await SendAsync(method, path, contentFactory, ct).ConfigureAwait(false);
         await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
 
-        var stream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-        var dto = await JsonSerializer.DeserializeAsync<T>(stream,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, ct).ConfigureAwait(false);
-        return dto!;
+        return await ReadJsonAsync<T>(response, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Deserialise the response body as <typeparamref name="T"/>,
+    /// tolerating an empty body. <c>PUT /blogspot/{id}</c> answers
+    /// <c>204 No Content</c>: without this guard,
+    /// <c>JsonSerializer.DeserializeAsync</c> throws
+    /// <c>JsonException: The input does not contain any JSON
+    /// tokens</c> and the VM surfaces a successful save as an
+    /// error. Callers that genuinely need a payload
+    /// (<c>GetPostAsync</c>, <c>CreatePostAsync</c>) are unaffected:
+    /// their endpoints always return a body.
+    /// </summary>
+    private static async Task<T> ReadJsonAsync<T>(HttpResponseMessage response, CancellationToken ct)
+    {
+        if (response.StatusCode == HttpStatusCode.NoContent)
+            return default!;
+
+        var payload = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(payload))
+            return default!;
+
+        return JsonSerializer.Deserialize<T>(payload,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
     }
 
     /// <summary>

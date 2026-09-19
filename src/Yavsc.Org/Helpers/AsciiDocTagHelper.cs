@@ -1,13 +1,12 @@
 
 using System.Web;
-using AsciiDocSharp;
-using AsciiDocSharp.Converters.Html;
+using Markdig;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Yavsc.Helpers
 {
-    public class AsciidocTagHelper : TagHelper
+    public class MarkdownTagHelper : TagHelper
     {
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
@@ -17,6 +16,7 @@ namespace Yavsc.Helpers
             string text = HttpUtility.HtmlDecode(content.GetContent());
 
             if (string.IsNullOrWhiteSpace(text)) return;
+
 
             try
             {
@@ -34,16 +34,10 @@ namespace Yavsc.Helpers
                         }
                     }
                 }
-                var processor = new AsciiDocProcessor(
-                    
-                );
-                var htmlConverter = new HtmlDocumentConverter();
+                var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+                var result = Markdown.ToHtml(text, pipeline);
 
-                var document = processor.ParseFromText(text);
-                var htmlResult = processor.ConvertDocument(document, htmlConverter);
-
-
-                output.Content.AppendHtml(htmlResult);
+                output.Content.AppendHtml(result);
             }
             catch (ArgumentException ex)
             {

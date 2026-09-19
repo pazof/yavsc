@@ -15,10 +15,14 @@ namespace Yavsc.Blogs.Controllers
     public class BlogApiController : Controller
     {
         private readonly BlogSpotService blogSpotService;
+        private readonly ILogger<BlogApiController> logger;
 
-        public BlogApiController(BlogSpotService blogSpotService)
+        public BlogApiController(
+            BlogSpotService blogSpotService,
+            ILoggerFactory loggerFactory)
         {
             this.blogSpotService = blogSpotService;
+            this.logger = loggerFactory.CreateLogger<BlogApiController>();
         }
 
         // GET: api/v1/blogspot
@@ -57,9 +61,30 @@ namespace Yavsc.Blogs.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBlog(long id)
         {
-            var blog = await ReadPutBlogRequestAsync();
+            var blog = await ReadBlogRequestAsync();
             if (blog is null)
             {
+                logger.LogWarning("PUT /api/v1/blogspot/{id} failed to read blog payload from request body or multipart form.", id);
+                return BadRequest(ModelState);
+            }
+
+            // Without [FromBody], the data-annotations attributes
+            // ([Required] on Title, etc.) are no longer evaluated by
+            // the model binder — the body is read manually. Run
+            // validation explicitly so an empty Title still yields
+            // 400 (and not a 500 from the DB NOT NULL constraint).
+            var validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(blog);
+            var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+            if (!System.ComponentModel.DataAnnotations.Validator.TryValidateObject(
+                    blog, validationContext, validationResults, validateAllProperties: true))
+            {
+                foreach (var result in validationResults)
+                {
+                    ModelState.AddModelError(
+                        result.MemberNames.FirstOrDefault() ?? string.Empty,
+                        result.ErrorMessage ?? "Invalid value.");
+                }
+                logger.LogWarning("PUT /api/v1/blogspot/{id} failed validation: {errors}", id, ModelState);
                 return BadRequest(ModelState);
             }
 
@@ -88,15 +113,27 @@ namespace Yavsc.Blogs.Controllers
             var existing = await blogSpotService.GetBlogPostAsync(id);
             if (existing == null)
             {
+                logger.LogWarning("PUT /api/v1/blogspot/{id} failed: blog post not found.", id);
                 return NotFound();
             }
 
             try
             {
-                await blogSpotService.Modify(User, blog, files);
+                await blogSpotService.Modify(User, blog);
+                logger.LogInformation("PUT /api/v1/blogspot/{id} modified successfully.", id);
+                if (files.Count > 0)
+                {
+                    logger.LogInformation("PUT /api/v1/blogspot/{id} attaching {fileCount} files.", id, files.Count);
+                    blogSpotService.AttachFiles(files, User.GetUserId(), id);
+                }
+                else
+                {
+                    logger.LogInformation("PUT /api/v1/blogspot/{id} no files to attach.", id);
+                }
             }
             catch (AuthorizationFailureException)
             {
+                logger.LogWarning("PUT /api/v1/blogspot/{id} failed: authorization failure.", id);
                 return Challenge();
             }
 
@@ -105,8 +142,14 @@ namespace Yavsc.Blogs.Controllers
 
         // POST: api/v1/blogspot
         [HttpPost]
-        public IActionResult PostBlog([FromBody] Models.Blog.BlogPost blog)
+        public async Task<IActionResult> PostBlog()
         {
+            var blog = await ReadBlogRequestAsync();
+            if (blog is null)
+            {
+                return BadRequest(ModelState);
+            }
+
             // These properties are server-managed or optional graph members and
             // should not block JSON payloads coming from API clients.
             ModelState.Remove(nameof(Models.Blog.BlogPost.Author));
@@ -115,35 +158,46 @@ namespace Yavsc.Blogs.Controllers
             ModelState.Remove(nameof(Models.Blog.BlogPost.UserCreated));
             ModelState.Remove(nameof(Models.Blog.BlogPost.UserModified));
 
+            // Without [FromBody], the data-annotations attributes
+            // ([Required] on Title, etc.) are no longer evaluated by
+            // the model binder — the body is read manually. Run
+            // validation explicitly so an empty Title still yields
+            // 400 (and not a 500 from the DB NOT NULL constraint).
+            var validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(blog);
+            var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+            if (!System.ComponentModel.DataAnnotations.Validator.TryValidateObject(
+                    blog, validationContext, validationResults, validateAllProperties: true))
+            {
+                foreach (var result in validationResults)
+                {
+                    ModelState.AddModelError(
+                        result.MemberNames.FirstOrDefault() ?? string.Empty,
+                        result.ErrorMessage ?? "Invalid value.");
+                }
+                return BadRequest(ModelState);
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            // The BlogSpotService.Create() signature requires an
-            // IFormFileCollection for file uploads. Reading
-            // Request.Form.Files when the request is a plain JSON
-            // body (e.g. from PostIt) throws
-            // "This request does not have a Content-Type header.
-            //  Forms are available from requests with bodies like
-            //  POSTs and a form Content-Type of either
-            //  application/x-www-form-urlencoded or
-            //  multipart/form-data."
-            //
             // Two valid use cases for this endpoint:
             //   1. JSON body only (no files) — PostIt path.
             //   2. multipart/form-data with a 'blog' field + 0..N
-            //      files — future browser / server-rendered path.
+            //      files — PostIt "create with attachments" path.
             //
             // Branch on HasFormContentType: pass the form files when
-            // present, pass an empty collection otherwise. The
-            // FileSystem branch in BlogSpotService.Create then
-            // short-circuits to "no files to handle".
+            // present, pass an empty collection otherwise. Reading
+            // Request.Form.Files on a plain JSON request throws
+            // "This request does not have a Content-Type header…",
+            // and AttachFiles short-circuits on an empty collection.
             var files = Request.HasFormContentType
                 ? Request.Form.Files
                 : (IFormFileCollection)new FormFileCollection();
             var uid = User.GetUserId();
-            var post = blogSpotService.Create(uid, blog, files);
+            var post = blogSpotService.Create(uid, blog);
+            blogSpotService.AttachFiles(files, uid, post.Id);
             return CreatedAtRoute("GetBlog", new { id = post.Id },
             post.GetPayload());
         }
@@ -210,7 +264,17 @@ namespace Yavsc.Blogs.Controllers
             base.Dispose(disposing);
         }
 
-        private async Task<Models.Blog.BlogPost?> ReadPutBlogRequestAsync()
+        /// <summary>
+        /// Read a <see cref="Models.Blog.BlogPost"/> from either a
+        /// JSON body or a multipart/form-data request carrying the
+        /// payload in a <c>blog</c> form field. Shared by
+        /// <see cref="PostBlog"/> and <see cref="PutBlog"/>: both
+        /// accept the two shapes so PostIt can attach files on
+        /// create as well as on update. Returns <c>null</c> (with
+        /// the reason recorded in <c>ModelState</c>) when the
+        /// multipart form has no usable <c>blog</c> field.
+        /// </summary>
+        private async Task<Models.Blog.BlogPost?> ReadBlogRequestAsync()
         {
             if (!Request.HasFormContentType)
             {
