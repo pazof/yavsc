@@ -68,6 +68,7 @@
           </CommandBarButton.Icon>
         </CommandBarButton>
         <CommandBarToggleButton Label="Publié"
+               Command="{Binding TogglePublishCommand}"
                                 IsChecked="{Binding DraftIsPublished, Mode=TwoWay}">
           <CommandBarToggleButton.Icon>
             <PathIcon Data="{StaticResource PublishedIcon}" />

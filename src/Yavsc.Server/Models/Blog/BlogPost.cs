@@ -103,13 +103,19 @@ namespace Yavsc.Models.Blog
         /// Whether this post is published. Not a column: the
         /// existence of a row in <c>BlogSpotPublication</c>
         /// is the source of truth. EF skips this property via
-        /// <c>[NotMapped]</c> so no migration is needed. The
-        /// service hydrates it after each fetch (single bulk
-        /// lookup, not N+1) and it surfaces through the wire
-        /// as part of the JSON-serialized <c>BlogPost</c>.
+        /// <c>[NotMapped]</c> so no migration is needed.
+        ///
+        /// <para>This is a value <c>BlogSpotService</c> owns and
+        /// sets explicitly on every post it returns — a single
+        /// bulk lookup against <c>blogSpotPublications</c> for a
+        /// list, an <c>AnyAsync</c> for a single post — so the
+        /// flag is correct whether or not the EF query Included
+        /// the <see cref="Publication"/> navigation. Clients
+        /// (PostIt) read it as-is off the wire and must not
+        /// recompute it.</para>
         /// </summary>
         [NotMapped]
-        public bool IsPublished { get => Publication != null; }
+        public bool IsPublished { get; set; }
 
         [JsonIgnore]
         /// <summary>
