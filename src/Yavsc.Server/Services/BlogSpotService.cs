@@ -108,7 +108,7 @@ public class BlogSpotService
     public BlogPost Create(string userId, BlogPost post )
     {
         // Sauvegarder le post d'abord pour obtenir son ID
-        // Le createur vient de l'authentification, donc on ne le prend pas du post
+        // Le créateur vient de l'authentification, donc on ne le prend pas du post
         post.AuthorId = userId;
         _context.BlogSpot.Add(post);
         _context.SaveChanges(userId);
@@ -139,14 +139,11 @@ public class BlogSpotService
             .Include(p => p.Tags)
             .Include(p => p.Comments)
             .Include(p => p.ACL)
+            .Include(p => p.Publication)
             .SingleAsync(m => m.Id == blogPostId);
 
         if (blog == null)
             return null;
-
-        // Hydrate le flag [NotMapped] depuis la table de publication.
-        blog.IsPublished = await _context.blogSpotPublications
-            .AnyAsync(pub => pub.PostId == blogPostId);
 
         var auth = await _authorizationService.AuthorizeAsync(user, blog, new ReadPermission());
         if (!auth.Succeeded)
@@ -233,6 +230,7 @@ public class BlogSpotService
                 .Include(p => p.Comments)
                 .Include(p => p.Publication)
                 .Where(p => p.Publication != null
+                    || p.AuthorId == viewerId
                     || (userCircles != null && p.ACL.Any(a => userCircles.Contains(a.CircleId))));
         }
         else
@@ -247,25 +245,12 @@ public class BlogSpotService
                 .ToArray();
         }
 
-        var materialised = posts.ToList();
+        var materialized = posts.ToList();
 
-        var postIds = materialised.Select(p => p.Id).ToList();
-        if (postIds.Count > 0)
-        {
-            var publishedIds = await _context.blogSpotPublications
-                .Where(pub => postIds.Contains(pub.PostId))
-                .Select(pub => pub.PostId)
-                .ToListAsync();
-
-            var publishedSet = publishedIds.ToHashSet();
-            foreach (var post in materialised.OfType<BlogPost>())
-                post.IsPublished = publishedSet.Contains(post.Id);
-        }
-
-        foreach (var post in materialised.OfType<BlogPost>())
+        foreach (var post in materialized.OfType<BlogPost>())
             ScrubAclForViewer(post, user);
 
-        return materialised
+        return materialized
             .OrderByDescending(p => p.DateModified)
             .Skip(skip)
             .Take(take);

@@ -13,7 +13,7 @@ using static Yavsc.Constants;
 namespace Yavsc.Blogs.Tests;
 
 /// <summary>
-/// Behavioural tests for <c>BlogAclApiController.PostCircleAuthorizationToBlogPost</c>:
+/// Behavioral tests for <c>BlogAclApiController.PostCircleAuthorizationToBlogPost</c>:
 /// <c>POST /api/v1/blogacl</c> with a JSON body of
 /// <c>CircleAuthorizationToBlogPost</c> (CircleId + BlogPostId).
 ///
@@ -84,7 +84,7 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
         // rather than being rewritten to ClaimTypes.NameIdentifier.
         // The controller, however, reads the user id via
         // User.FindFirstValue(ClaimTypes.NameIdentifier), so we add
-        // an explicit nameid claim to keep the legacy lookup happy.
+        // an explicit NameIdentifier claim to keep the legacy lookup happy.
         http.DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue(
                 "Bearer",
@@ -106,7 +106,7 @@ public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
     /// when <see cref="PostAclDialogViewModel.AddAsync"/> POSTs the
     /// shape <c>{ "circleId": &lt;id&gt; }</c> — the exact body the
     /// PostIt client builds from <see cref="CircleAuthorization"/>
-    /// (which only carries <c>CircleId</c>). The server deserialises
+    /// (which only carries <c>CircleId</c>). The server deserializes
     /// it into <see cref="CircleAuthorizationToBlogPost"/>, leaves
     /// <c>BlogPostId</c> at its <c>default(long) = 0</c>, attaches
     /// no <c>Target</c> navigation, and EF Core refuses to INSERT
