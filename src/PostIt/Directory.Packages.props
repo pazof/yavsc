@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Avalonia" Version="$(AvaloniaVersionBase)" />
+    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersionBase)" />
     <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersionBase)" />
     <PackageVersion Include="Avalonia.Browser" Version="$(AvaloniaVersionBase)" />
