@@ -112,6 +112,13 @@ public class BlogSpotService
         post.AuthorId = userId;
         _context.BlogSpot.Add(post);
         _context.SaveChanges(userId);
+        // A freshly created post has no BlogSpotPublication row,
+        // so the server-side truth is "not published". The client
+        // may have sent isPublished:true in the POST body, but
+        // publication is toggled separately via SetPublishAsync;
+        // overwrite whatever was deserialized so the create
+        // response reflects the actual state.
+        post.IsPublished = false;
         return post;
     }
 
@@ -150,6 +157,12 @@ public class BlogSpotService
             throw new AuthorizationFailureException(auth);
 
         ScrubAclForViewer(blog, user);
+
+        // IsPublished is a value the service serves to clients;
+        // set it from the loaded Publication navigation (Details
+        // Includes it above) rather than leaving it at the
+        // default false a deserialized entity would have.
+        blog.IsPublished = blog.Publication != null;
 
         foreach (var c in blog.Comments)
             c.Author = _context.Users.First(u => u.Id == c.AuthorId);
@@ -247,7 +260,16 @@ public class BlogSpotService
 
         var materialized = posts.ToList();
 
-        foreach (var post in materialized.OfType<BlogPost>())
+        // IsPublished is a value the service owns: hydrate it
+        // from blogSpotPublications in one bulk lookup so it is
+        // correct whether or not the branch above Included the
+        // Publication navigation (the anonymous branch does
+        // not). Without this, a freshly deserialized list would
+        // report IsPublished == false for every post.
+        var blogPosts = materialized.OfType<BlogPost>().ToList();
+        await HydrateIsPublishedAsync(blogPosts);
+
+        foreach (var post in blogPosts)
             ScrubAclForViewer(post, user);
 
         return materialized
@@ -291,10 +313,17 @@ public class BlogSpotService
 
     public async Task<BlogPost?> GetBlogPostAsync(long value)
     {
-        return await _context.BlogSpot
+        var blog = await _context.BlogSpot
             .Include(b => b.Author)
             .Include(b => b.ACL)
             .SingleOrDefaultAsync(x => x.Id == value);
+        if (blog != null)
+            // Serve the publication state from its source of truth
+            // so the delete response's isPublished is correct — the
+            // query above does not Include the Publication navigation.
+            blog.IsPublished = await _context.blogSpotPublications
+                .AnyAsync(p => p.PostId == blog.Id);
+        return blog;
     }
 
     public async Task<bool> SetPublishAsync(ClaimsPrincipal user, long postId, bool publish)
@@ -326,6 +355,29 @@ public class BlogSpotService
     {
         if (!IsOwner(post, user))
             post.ACL = new List<CircleAuthorizationToBlogPost>();
+    }
+
+    /// <summary>
+    /// Populate <see cref="BlogPost.IsPublished"/> for each post in
+    /// <paramref name="posts"/> from the <c>blogSpotPublications</c>
+    /// table — a single bulk lookup, not one query per post. The
+    /// <c>IsPublished</c> flag is a wire-only value the service owns:
+    /// clients (PostIt) read it as-is off the JSON response rather
+    /// than computing it themselves. Call this on every collection
+    /// the service returns to a caller, so the flag is correct
+    /// regardless of whether the EF query Included the
+    /// <see cref="BlogPost.Publication"/> navigation.
+    /// </summary>
+    private async Task HydrateIsPublishedAsync(IReadOnlyList<BlogPost> posts)
+    {
+        if (posts.Count == 0) return;
+        var ids = posts.Select(p => p.Id).ToArray();
+        var publishedIds = await _context.blogSpotPublications
+            .Where(p => ids.Contains(p.PostId))
+            .Select(p => p.PostId)
+            .ToHashSetAsync();
+        foreach (var post in posts)
+            post.IsPublished = publishedIds.Contains(post.Id);
     }
 
     private static bool IsOwner(BlogPost post, ClaimsPrincipal? user)
