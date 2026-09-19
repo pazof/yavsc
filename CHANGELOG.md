@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.0.8-rc15] - unstable
+
+### Added
+
+* [PostIt] Saisie et envoi de pieces jointes sur un billet de blog: le client monte les fichiers en `multipart/form-data` lors du `Save`, ajoute un lien Markdown par piece jointe a l'article, puis re-PUT le billet. Une collection `DraftAttachments` porte les fichiers en cours d'edition.
+* [PostIt] Apercu Markdown dans l'editeur de blogs (integration `MarkdownViewer.Core`) avec bascule edition/preview sur `BlogsPage`.
+* [PostIt] Gestion des devis: page de liste `EstimateListPage` (vues client et prestataire), page d'edition `EstimateEditionPage` avec lignes de devis (`EstimateLineItemViewModel`), et flux de validation d'un devis.
+* [PostIt] Flux des requetes en cours cote prestataire (`ProviderOngoingRequestsPage`) avec tri persistant.
+* [Yavsc.Api] Endpoints devis `GET /api/v1/estimate/asclient` et `GET /api/v1/estimate/asprovider` pour lister les devis en cours selon le role.
+* [Yavsc.Api] Endpoint `GET /api/v1/billing/provider/ongoing` et `POST /api/v1/billing/prosign/{billingCode}/{id}` pour le flux prestataire.
+* [Yavsc.Api.Client] `EstimateApiClient` + DTOs (`EstimateDto`, `EstimateLineDto`) pour le pipeline devis cote client lourd.
+* [Yavsc.Api.Client] Reprise de l'upload de fichiers blog dans `BlogApiClient` (`CreateMultipartContent`, `BlogUploadFile`) — la meme forme filaire que PostIt utilise en production.
+* [Yavsc.Abstract] `FileServerUrlHelpers` pour deriver les URLs publiques des fichiers utilisateur depuis l'autorite OIDC (alignement sur `UserFilesPath`).
+* [Yavsc.Server] `BlogSpotService.AttachFiles` : ecrit les pieces jointes sous la racine des fichiers utilisateur (`{UserFilesDirName}/{user}/blogs/{postId}/{fileName}`).
+* [Yavsc.Blogs] `BlogApiController` accepte `multipart/form-data` (champ `blog` + parts `file`) sur `POST` et `PUT /api/v1/blogspot`, en plus du payload JSON existant.
+* [PostIt] Variable d'environnement `POSTIT_SETTINGS_JSON` pour surcharger les parametres au lancement (utile en CI/test).
+* [Yavsc.Server] Migration EF `fileACL`: `CircleAuthorizationToFile` gagne `OwnerId` + `Access` et un graphe proprieetaire, base du controle d'acces fichier par cercle.
+* [Yavsc.Server] Migration EF `genericEstimate`: `Estimate.Query` passe de `RdvQuery` a `NominativeServiceCommand?` pour supporter des devis non lies a un RDV.
+* [Yavsc.Server] Migrations EF `NominativeServiceCommand` et `AddHairCutQueryLocationId` (localisation de la coupe).
+* [CI] Integration du scan de secrets Gitleaks dans le pipeline Forgejo + `.gitleaksignore`.
+* [Tests] Non-regressions: round-trip multipart blog (`BlogApiTests`, `CreateMultipartContentTests` forme + serveur), `BlogAttachmentLinkTests`, `FileServerUrlHelpersTests`, `EstimateApiControllerTests`, VMs `EstimateList`/`EstimateEdition`/`ProviderOngoingRequests`, `BillingControllerTests` (filtrage par utilisateur), `GetOpenIdConfiguration` contre l'hote de test.
+
+### Changed
+
+* [PostIt] Renommage `MainPage` -> `BlogsPage` (et `PushMainPageAsync` -> `PushBlogsPageAsync`) pour refletter le role de la page.
+* [PostIt] Refacto des `SiteSettings` : reorganisation des parametres, nouvelles valeurs par defaut, et indications plus claires dans les `appsettings`.
+* [Yavsc.Api] `BillingController` ne liste plus que les codes billing de l'utilisateur authentifie (filtre par `UserId`), au lieu de l'ensemble des requetes prestataire.
+* [Yavsc.Api] Mutualisation d'un `YavscMessageSender` partage dans l'hote API (au lieu d'une instance par controller).
+* [Yavsc.Org] La detection du doublon d'email a l'inscription utilise desormais le code erreur generic `DbException` 23505 (fournisseur-agnostique) au lieu de `PostgresException`, pour rester correct en test SQLite.
+* [PostIt] `YavscApiClient` tolere les corps vides (`204 No Content` sur `PUT /blogspot/{id}`) au lieu de lever un `JsonException`.
+* [CI] Le pipeline compile avant les tests, installe les dependances natives, et retire le `ItemGroup.Using Include=Xunit` superflu.
+
+### Fixed
+
+* [PostIt] Suppression d'un faux message d'erreur affiche apres un `PUT /blogspot/{id}` reussi (204 traite comme succes, plus comme une reponse vide invalide).
+* [PostIt] Correction de la creation des liens de pieces jointes (`TryAppendAttachmentLinks`) : segment proprietaire et chemin `blogs/{id}/{fileName}` alignes sur ce que `AttachFiles` ecrit reellement.
+* [Yavsc.Blogs] Correction de l'upload / de la persistance des pieces jointes (`FileSystemHelpers` + `BlogApiController` multipart).
+* [Tests] Stabilisation des suites: seeds billing avec metadonnees d'audit, `GetOpenIdConfiguration_returns_ok` contre l'hote de test, retraits d'assertions abusives, tests SQLite verts.
+* [PostIt] Nettoyage de fichiers temporaires accidentels et ignore des repertoires `tmp` dans le depot.
+
 ## [1.0.8-rc14] - unstable
 
 ### Added
