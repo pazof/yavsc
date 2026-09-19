@@ -13,12 +13,14 @@
     <Version>1.1.0-feat-sign-estimate.1</Version>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="DotMarkdown" />
     <PackageReference Include="HigginsSoft.IdentityServer8" />
     <PackageReference Include="HigginsSoft.IdentityServer8.AspNetIdentity" />
     <PackageReference Include="HigginsSoft.IdentityServer8.EntityFramework" />
     <PackageReference Include="HigginsSoft.IdentityServer8.EntityFramework.Storage" />
     <PackageReference Include="HigginsSoft.IdentityServer8.Security" />
     <PackageReference Include="HigginsSoft.IdentityServer8.Storage" />
+    <PackageReference Include="Markdig" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />

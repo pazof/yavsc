@@ -69,7 +69,7 @@ jobs:
           cd /src
 
           if [[ ! -d _src/.git ]]; then
-            git clone --depth=1 https://forgejo.pschneider.fr/notazof/yavsc.git _src
+            git clone --depth=1 "${FORGEJO_SERVER_URL}/${FORGEJO_REPOSITORY}.git" _src
           fi
 
           cd _src
