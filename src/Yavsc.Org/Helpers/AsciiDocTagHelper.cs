@@ -17,8 +17,8 @@ namespace Yavsc.Helpers
 
             if (string.IsNullOrWhiteSpace(text)) return;
 
-
             try
+
             {
                 if (context.AllAttributes.ContainsName("summary"))
                 {

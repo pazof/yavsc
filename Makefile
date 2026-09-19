@@ -13,6 +13,10 @@ all:
 clean:
 	dotnet clean -c $(CONFIG)
 
+brutal_clean:
+	@find -name "obj" -exec rm -rf {} \;
+	@find -name "bin" -exec rm -rf {} \;
+
 src/Yavsc/bin/output/wwwroot:
 	dotnet --project src/Yavsc.Org/Yavsc.Org.csproj publish
 

@@ -96,6 +96,9 @@ namespace Yavsc.Models.Blog
         [InverseProperty("Post")]
         public virtual List<Comment> Comments { get; set; }
 
+        [InverseProperty("Post")]
+        public virtual BlogSpotPublication Publication { get; set; }
+
         /// <summary>
         /// Whether this post is published. Not a column: the
         /// existence of a row in <c>BlogSpotPublication</c>
@@ -147,5 +150,7 @@ namespace Yavsc.Models.Blog
                 }).ToList() ?? new List<CircleAuthorization>();
             }
         }
+
+
     }
 }

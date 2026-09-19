@@ -14,9 +14,9 @@ namespace Yavsc.Server.Helpers
             if (readerId == null)
             {
                 var userPosts = dbContext.blogSpotPublications.Include(
-                b => b.BlogPost
-                ).Where(x => x.BlogPost.AuthorId == posterId)
-                .Select(x => x.BlogPost).ToArray();
+                b => b.Post
+                ).Where(x => x.Post.AuthorId == posterId)
+                .Select(x => x.Post).ToArray();
                 return userPosts;
             }
             else
