@@ -61,7 +61,7 @@ public class BlogSpotService
                     blogFilesSubdir);
                 var di = new DirectoryInfo(destDir);
 
-                if (!di.Exists) 
+                if (!di.Exists)
                 {
                     logger.LogInformation("Creating directory for blog attachments: {destDir}", destDir);
                     di.Create();
@@ -126,7 +126,7 @@ public class BlogSpotService
         if (!auth.Succeeded)
             throw new AuthorizationFailureException(auth);
 
-        var pub = await _context.blogSpotPublications.AnyAsync(x => x.BlogpostId == blog.Id);
+        var pub = await _context.blogSpotPublications.AnyAsync(x => x.PostId == blog.Id);
         ScrubAclForViewer(blog, user);
 
         return new BlogPostEditViewModel(blog, pub);
@@ -146,7 +146,7 @@ public class BlogSpotService
 
         // Hydrate le flag [NotMapped] depuis la table de publication.
         blog.IsPublished = await _context.blogSpotPublications
-            .AnyAsync(pub => pub.BlogpostId == blogPostId);
+            .AnyAsync(pub => pub.PostId == blogPostId);
 
         var auth = await _authorizationService.AuthorizeAsync(user, blog, new ReadPermission());
         if (!auth.Succeeded)
@@ -176,7 +176,7 @@ public class BlogSpotService
         _context.Update(blog);
 
         var publication = await _context.blogSpotPublications
-            .SingleOrDefaultAsync(p => p.BlogpostId == blogEdit.Id);
+            .SingleOrDefaultAsync(p => p.PostId == blogEdit.Id);
 
         if (publication != null)
         {
@@ -185,7 +185,7 @@ public class BlogSpotService
         }
         else if (blogEdit.Publish)
         {
-            _context.blogSpotPublications.Add(new BlogSpotPublication { BlogpostId = blogEdit.Id });
+            _context.blogSpotPublications.Add(new BlogSpotPublication { PostId = blogEdit.Id });
         }
 
         _context.SaveChanges(user.GetUserId());
@@ -231,21 +231,19 @@ public class BlogSpotService
                 .Include(p => p.ACL)
                 .Include(p => p.Tags)
                 .Include(p => p.Comments)
-                .Where(p => p.ACL == null
-                    || p.ACL.Count == 0
-                    || p.AuthorId == viewerId
+                .Include(p => p.Publication)
+                .Where(p => p.Publication != null
                     || (userCircles != null && p.ACL.Any(a => userCircles.Contains(a.CircleId))));
         }
         else
         {
             posts = _context.blogSpotPublications
-                .Include(p => p.BlogPost)
-                .Include(b => b.BlogPost.Author)
-                .Include(p => p.BlogPost.ACL)
-                .Include(p => p.BlogPost.Tags)
-                .Include(p => p.BlogPost.Comments)
-                .Where(p => p.BlogPost.ACL == null || p.BlogPost.ACL.Count == 0)
-                .Select(p => p.BlogPost)
+                .Include(p => p.Post)
+                .Include(b => b.Post.Author)
+                .Include(p => p.Post.ACL)
+                .Include(p => p.Post.Tags)
+                .Include(p => p.Post.Comments)
+                .Select(p => p.Post)
                 .ToArray();
         }
 
@@ -255,8 +253,8 @@ public class BlogSpotService
         if (postIds.Count > 0)
         {
             var publishedIds = await _context.blogSpotPublications
-                .Where(pub => postIds.Contains(pub.BlogpostId))
-                .Select(pub => pub.BlogpostId)
+                .Where(pub => postIds.Contains(pub.PostId))
+                .Select(pub => pub.PostId)
                 .ToListAsync();
 
             var publishedSet = publishedIds.ToHashSet();
@@ -323,11 +321,11 @@ public class BlogSpotService
         if (!auth.Succeeded)
             throw new AuthorizationFailureException(auth);
 
-        var existing = await _context.blogSpotPublications.SingleOrDefaultAsync(p => p.BlogpostId == postId);
+        var existing = await _context.blogSpotPublications.SingleOrDefaultAsync(p => p.PostId == postId);
         if (publish)
         {
             if (existing == null)
-                _context.blogSpotPublications.Add(new BlogSpotPublication { BlogpostId = postId });
+                _context.blogSpotPublications.Add(new BlogSpotPublication { PostId = postId });
         }
         else
         {

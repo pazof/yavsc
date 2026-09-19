@@ -58,11 +58,11 @@
         </a>
         <div>
           <a asp-action="Details" asp-route-id="@post.Id">
-            <asciidoc summary="@maxTextLen">@post.Article</asciidoc></a>
+            <markdown summary="@maxTextLen">@post.Article</markdown></a>
             <span style="font-size:x-small;">@Html.DisplayFor(m => post.Author)</span>
             <span style="font-size:xx-small;">
             posté le @post.DateCreated.ToString("dddd d MMM yyyy à H:mm")
-            @if ((post.DateModified - post.DateCreated).Minutes > 0){ 
+            @if ((post.DateModified - post.DateCreated).Minutes > 0){
                 @:- Modifié le @post.DateModified.ToString("dddd d MMM yyyy à H:mm")
             }
             </span>

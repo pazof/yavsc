@@ -59,7 +59,7 @@ public class PermissionHandler : IAuthorizationHandler
         {
             return
                 applicationDbContext.blogSpotPublications
-                .Any(p=>p.BlogpostId == blogPost.Id);
+                .Any(p=>p.PostId == blogPost.Id);
         }
         return false;
     }

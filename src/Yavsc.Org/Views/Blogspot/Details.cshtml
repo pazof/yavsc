@@ -3,7 +3,7 @@
     ViewBag.Title=Model.Title;
 }
 @section scripts {
-   
+
     <script src="~/js/comment.js" asp-append-version="true"></script>
     <script>
         $.psc.blogcomment.prototype.options.lang = '@System.Globalization.CultureInfo.CurrentUICulture.Name';
@@ -18,8 +18,8 @@
                     type: 'POST',
                     method: 'POST',
                     contentType:  "application/json",
-                    data: JSON.stringify({ 
-                        Article: $('#Comment').val(), 
+                    data: JSON.stringify({
+                        Article: $('#Comment').val(),
                         ReceiverId: @Model.Id
                         }),
                     error: function(xhr,data) {
@@ -36,7 +36,7 @@ $('#commentValidation').html(
                             )
                             }
                         }
-                        
+
                     },
                     success: function (data) {
                         var comment = $('#Comment').val();
@@ -65,12 +65,12 @@ $('#commentValidation').html(
         <div class="float-left">
             <img class="photo" src="@Model.Photo" >
         </div>
-       
+
         <h1 ismarkdown>@Model.Title</h1>
-        
+
         @Html.DisplayFor(m=>m.Author)
-        <asciidoc>@Html.DisplayFor(m=>m.Article)</asciidoc>
-        
+        <markdown>@Html.DisplayFor(m=>m.Article)</markdown>
+
     </div>
 
     <div id="comments">
@@ -89,7 +89,7 @@ $('#commentValidation').html(
                 <input type="button" value="Comment" class="btn btn-secondary"
                 data-receiverId="@Model.Id" id="cmtBtn"
                  />
-            </span> 
+            </span>
         </div>
         <span asp-validation-for="Article" class="text-danger" ></span>
     </div>
@@ -97,7 +97,7 @@ $('#commentValidation').html(
     else {
         <p><i>Vous devez être identifié pour commenter.</i> </p>
     }
-    
+
     @if ((await AuthorizationService.AuthorizeAsync(User, Model, new EditPermission())).Succeeded) {
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">Edit</a>
     }

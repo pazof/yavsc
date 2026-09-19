@@ -7,9 +7,9 @@ namespace Yavsc.Models
     public class BlogSpotPublication
     {
         [Key]
-        public long BlogpostId { get; set; }
-        
-        [ForeignKey("BlogpostId")]
-        public virtual BlogPost BlogPost{ get; set; }
+        public long PostId { get; set; }
+
+        [ForeignKey("PostId")]
+        public virtual BlogPost Post{ get; set; }
     }
 }
