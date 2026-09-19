@@ -33,7 +33,7 @@ jobs:
       run: |
         set -e
         cd /src
-        git clone https://forgejo.pschneider.fr/notazof/yavsc.git _src
+        git clone "${FORGEJO_SERVER_URL}/${FORGEJO_REPOSITORY}.git" _src
         cd _src
         if [ -n "${GITHUB_REF:-}" ]; then
           git fetch origin "$GITHUB_REF"
