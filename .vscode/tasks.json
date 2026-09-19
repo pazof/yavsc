@@ -1,27 +1,13 @@
 {
   "version": "2.0.0",
   "isRoot": true,
-  "problemMatcher": [
-        {
-          "owner": "dotnet",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "source": "dotnet",
-          "pattern": {
-            "regexp": "^\\s*(.*)\\((\\d+),(\\d+)\\):\\s+(error|warning) (.*)$",
-            "file": 1,
-            "line": 2,
-            "column": 3,
-            "severity": 4,
-            "code": 5,
-            "message": 6
-          }
-        }
-      ],
+
   "tasks": [
     {
       "label": "run-debug-android",
       "command": "dotnet",
       "type": "shell",
+      "problemMatcher": ["$msCompile"],
       "options": {
         "cwd": "${workspaceFolder}/src/PostIt/PostIt.Android",
         "env": {
@@ -43,6 +29,7 @@
       "label": "build",
       "command": "dotnet",
       "type": "process",
+      "problemMatcher": ["$msCompile"],
       "args": ["build", "/property:GenerateFullPaths=true"],
       "group": "build",
       "isBuildCommand": true,
@@ -109,6 +96,7 @@
       "isTestCommand": false,
       "isBackground": true,
       "command": "dotnet",
+      "problemMatcher": ["$msCompile"],
       "args": ["build", "/property:GenerateFullPaths=true"],
       "options": {
         "cwd": "src/PostIt/PostIt.Desktop"

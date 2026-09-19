@@ -57,7 +57,7 @@ namespace Yavsc.Models.Blog
             get; set;
         }
 
-        [Display(Name = "Utilisateur ayant modifé le dernier")]
+        [Display(Name = "Utilisateur ayant modifié le dernier")]
         public string? UserModified
         {
             get; set;
@@ -106,10 +106,10 @@ namespace Yavsc.Models.Blog
         /// <c>[NotMapped]</c> so no migration is needed. The
         /// service hydrates it after each fetch (single bulk
         /// lookup, not N+1) and it surfaces through the wire
-        /// as part of the JSON-serialised <c>BlogPost</c>.
+        /// as part of the JSON-serialized <c>BlogPost</c>.
         /// </summary>
         [NotMapped]
-        public bool IsPublished { get; set; }
+        public bool IsPublished { get => Publication != null; }
 
         [JsonIgnore]
         /// <summary>
