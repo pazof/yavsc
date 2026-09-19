@@ -2,5 +2,16 @@
   <PropertyGroup>
     <RootNamespace>Yavsc</RootNamespace>
     <NoWarn>NU1701, NU1901, NU1902, NU1507</NoWarn>
+    <!-- Disable the StaticWebAssets build cache (the *.dswa.cache.json
+         files written under obj/.../ by DefineStaticWebAssets).
+         ReadOrCreateCache opens them with File.OpenRead and no
+         try/catch, so under parallel solution builds a sharing
+         violation / TOCTOU race on the cache file escapes as
+         MSB4018 and fails the whole build (seen on Yavsc.Blogs
+         during the rc15 solution build). The cache is a pure
+         build-speed optimization; turning it off has no effect on
+         output correctness, only on incremental rebuild speed of
+         the (wwwroot-light) web projects. -->
+    <StaticWebAssetsCacheDefineStaticWebAssetsEnabled>false</StaticWebAssetsCacheDefineStaticWebAssetsEnabled>
   </PropertyGroup>
 </Project>
