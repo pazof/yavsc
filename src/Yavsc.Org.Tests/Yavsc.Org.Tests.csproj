@@ -30,7 +30,6 @@
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.v3.common" />
     <PackageReference Include="xunit.v3.extensibility.core" />
-    <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json">

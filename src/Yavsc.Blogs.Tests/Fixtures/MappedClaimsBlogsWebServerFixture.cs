@@ -33,7 +33,7 @@ public sealed class MappedClaimsBlogsWebServerFixture : IDisposable, IBackendFix
         JwtSecurityTokenHandler.DefaultInboundClaimTypeMap["sub"] = ClaimTypes.NameIdentifier;
 
         var builder = WebApplication.CreateBuilder();
-        builder.WebHost.UseUrls("http://127.0.0.1:5104");
+        builder.WebHost.UseUrls("http://127.0.0.1:5105");
 
         builder.Services.AddDbContext<ApplicationDbContext>(opt =>
             opt.UseInMemoryDatabase("Yavsc.Blogs.Tests.MappedClaims", _inMemoryRoot));
@@ -88,7 +88,7 @@ public sealed class MappedClaimsBlogsWebServerFixture : IDisposable, IBackendFix
         _app.MapControllers();
         _app.StartAsync().GetAwaiter().GetResult();
 
-        Addresses = ["http://127.0.0.1:5104"];
+        Addresses = ["http://127.0.0.1:5105"];
         Services = _app.Services;
     }
 
