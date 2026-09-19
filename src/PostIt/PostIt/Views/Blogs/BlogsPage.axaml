@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:PostIt.ViewModels"
              xmlns:postitControls="using:PostIt.Controls"
+             xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
              xmlns:models="using:Yavsc.Blogspot"
              xmlns:views="using:PostIt.Views.Blogs"
-             xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
              xmlns:md="using:MarkdownViewer.Core.Controls"
              mc:Ignorable="d"
              x:Class="PostIt.Views.Blogs.BlogsPage"
@@ -132,11 +132,14 @@
             <TextBlock Grid.Row="0" Text="Post detail" FontWeight="SemiBold" />
             <TextBox x:Name="DraftTitleTextBox"
                      Grid.Row="1" Text="{Binding DraftTitle, Mode=TwoWay}" PlaceholderText="Title" />
-            <TextBox Grid.Row="2" PlaceholderText="Write something here !"
-                     Text="{Binding DraftArticle, Mode=TwoWay}"
-                     MinHeight="320"
-                     HorizontalAlignment="Stretch"
-                     VerticalAlignment="Stretch" />
+
+                     <AvaloniaEdit:TextEditor
+                     Grid.Row="2" VerticalAlignment="Stretch"
+
+                      Document="{Binding DraftArticleDocument, Mode=TwoWay}"
+                           ShowLineNumbers="True"
+                           FontFamily="Cascadia Code,Consolas,Menlo,Monospace"/>
+
 
             <Border Grid.Row="3" BorderBrush="LightGray" BorderThickness="1" Padding="8">
               <StackPanel Spacing="4">

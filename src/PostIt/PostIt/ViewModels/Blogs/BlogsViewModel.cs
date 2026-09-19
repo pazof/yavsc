@@ -11,6 +11,7 @@ using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using Yavsc.Abstract.Files;
 using PostIt.Helpers;
+using AvaloniaEdit.Document;
 
 namespace PostIt.ViewModels;
 
@@ -36,8 +37,19 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
     /// <summary>Editor buffer for the post body. Same pattern as
     /// <see cref="DraftTitle"/>.</summary>
+
+    public string DraftArticle
+     {
+        get => DraftArticleDocument.Text;
+        set  {
+            OnPropertyChanging(nameof(DraftArticle));
+            DraftArticleDocument = new TextDocument(value);
+            this.OnPropertyChanged(nameof(DraftArticle));
+        }
+     }
+
     [ObservableProperty]
-    public partial string DraftArticle { get; set; }
+    public partial TextDocument DraftArticleDocument {get; set;}
 
     /// <summary>Editor buffer for the post's publication state.
     /// Reflects the server-side <c>IsPublished</c> flag (the
@@ -381,6 +393,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         WindowTitle = "PostIt";
         DraftTitle = string.Empty;
         DraftArticle = string.Empty;
+
         DraftIsPublished = false;
         IsLoaded = false;
         // Production path: DI injects the canonical Settings singleton
@@ -464,7 +477,6 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     // enable as soon as the user has typed a non-whitespace
     // title, regardless of whether a post is selected.
     partial void OnDraftTitleChanged(string value) => SaveCommand.NotifyCanExecuteChanged();
-    partial void OnDraftArticleChanged(string value) => SaveCommand.NotifyCanExecuteChanged();
 
 
     private async Task RefreshPostsAsync()
