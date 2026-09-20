@@ -53,5 +53,7 @@ jobs:
       run: |
         echo "🚀 Lancement des tests..."
         cd /src/_src && dotnet test \
-          --verbosity normal \
-          --filter="Category!=Platform-Android"
+          --stop-on-fail \
+          --report-xunit \
+          --report-xunit-html \
+          --report-xunit-html-filename "test-results.html"
