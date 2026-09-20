@@ -1,23 +1,25 @@
+DESTDIR=
+DOTNET_FRAMEWORK=net10.0
 APP_PROJECT_NAMES=Org Blogs Api
 SLNDIR=..
-
-include $(SLNDIR)/.env
-include .env
+APP_INSTALL_ENV=preprod
+APP_INSTALL_PREFIX=$(APP_INSTALL_ENV)-
+include .$(APP_INSTALL_ENV).env
 
 generated/:
 	@mkdir -p $@
 
-generated/yavscOrg.service:
-generated/yavscBlogs.service:
-generated/yavscApi.service:
+generated/$(APP_INSTALL_PREFIX)yavscOrg.service:
+generated/$(APP_INSTALL_PREFIX)yavscBlogs.service:
+generated/$(APP_INSTALL_PREFIX)yavscApi.service:
 
-generated/yavsc%.service: generated/ template.service $(SLNDIR)/.env
+generated/$(APP_INSTALL_PREFIX)yavsc%.service: generated/ template.service $(SLNDIR)/.env
 	@cat template.service | APP_NAME="$*" \
 	DESTDIR="$(DESTDIR)" \
 	HTTP_HOST="$(HTTP_HOST)" \
 	HTTP_PORT="$*_$(HTTP_PORT)" \
-	BASEAPPDIR="$(BASEAPPDIR)" \
-	APP_SYSLOG_ID="yavsc$*" \
+	APPDIR="$(APPDIR)" \
+	APP_SYSLOG_ID="$(APP_INSTALL_PREFIX)yavsc$*" \
 	POSTGRES_HOST="$(POSTGRES_HOST)" \
 	POSTGRES_PORT="$(POSTGRES_PORT)" \
 	POSTGRES_DB="$(POSTGRES_DB)" \
@@ -34,11 +36,13 @@ generated/yavsc%.service: generated/ template.service $(SLNDIR)/.env
 	envsubst > $@
 	@echo Created service file: $@
 
+generate-service-units: generated/$(APP_INSTALL_PREFIX)yavscOrg.service generated/$(APP_INSTALL_PREFIX)yavscBlogs.service generated/$(APP_INSTALL_PREFIX)yavscApi.service
 
-copy-services: copy-service-Org copy-service-Blogs copy-service-Api
-copy-service-Org: /etc/systemd/system/yavscOrg.service
-copy-service-Blogs: /etc/systemd/system/yavscBlogs.service
-copy-service-Api: /etc/systemd/system/yavscApi.service
+install-service-%: /etc/systemd/system/$(APP_INSTALL_PREFIX)yavsc%.service
+	sudo systemctl daemon-reload
+	sudo systemctl enable $(APP_INSTALL_PREFIX)yavsc$*
+
+install-services: install-service-Org install-service-Blogs install-service-Api
 
 copy-binaries: build_publish_Org build_publish_Blogs build_publish_Api stop-services
 	@for project in $(APP_PROJECT_NAMES); \
@@ -52,23 +56,23 @@ copy-binaries: build_publish_Org build_publish_Blogs build_publish_Api stop-serv
 		rm -f $${BINDIR}/appsettings-$${LCAPI}.json ; \
 		sync ; \
 		ls $${BINDIR}/appsettings* 2>&1 ; \
-		sudo cp -a $${BINDIR}/* $(BASEAPPDIR) ; \
+		sudo cp -a $${BINDIR}/* $(DESTDIR)$(APPDIR) ; \
 	done
-	@sudo chown -R $(USER_AND_GROUP) $(BASEAPPDIR)
+	@sudo chown -R $(USER_AND_GROUP) $(DESTDIR)$(APPDIR)
+	@sync
 
-/etc/systemd/system/yavsc%.service: generated/yavsc%.service
+
+$(DESTDIR)/etc/systemd/system/$(APP_INSTALL_PREFIX)yavsc%.service:  generated/$(APP_INSTALL_PREFIX)yavsc%.service
 	sudo cp $^ $@
 	sudo chown root:root $@
 
 build_publish_%: clean_publish_dir_%
 	@ASPNETCORE_ENV=$(CONFIGURATION) dotnet publish $(SLNDIR)/src/Yavsc.$*/Yavsc.$*.csproj
 
-build_publish: build_publish_Org build_publish_Blogs build_publish_Api
-
 clean_publish_dir_%:
 	@rm -rf $(SLNDIR)/src/Yavsc.$*/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish
 
-install: build_publish copy-binaries copy-services
+install: copy-binaries copy-services
 	@sudo systemctl daemon-reload
 	@for project in $(APP_PROJECT_NAMES); \
 	do \
@@ -77,9 +81,12 @@ install: build_publish copy-binaries copy-services
 	done
 
 reinstall: copy-binaries
-	@sync
 	@for project in $(APP_PROJECT_NAMES); do \
 		sudo systemctl start yavsc$${project} ; done
+
+reinstall-pre: copy-binaries
+	@for project in $(APP_PROJECT_NAMES); do \
+		sudo systemctl start yavscPre$${project} ; done
 
 stop-services:
 	@for project in $(APP_PROJECT_NAMES); \
@@ -93,7 +100,7 @@ $(SLNDIR)/src/Yavsc.Api/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish: build_
 
 showConfig:
 	@echo CONFIGURATION: $(CONFIGURATION)
-	@echo BASEAPPDIR: $(BASEAPPDIR)
+	@echo APPDIR: $(APPDIR)
 
 showApiLogs:
 	@sudo journalctl -u yavscApi.service -S "2 min ago" | tee yavscApi.log
