@@ -140,6 +140,10 @@ namespace Yavsc.Services
             catch (FormatException ex)
             {
                 logger.LogError(ex, "Refusing to send email because the recipient or sender address is malformed. To={To}, From={From}", email, siteSettings.Owner.EMail);
+                logger.LogError(ex.Message);
+                if (ex.InnerException!=null)
+                    logger.LogError(ex.InnerException.Message);
+
                 return string.Empty;
             }
             catch (SmtpCommandException ex)
