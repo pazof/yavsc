@@ -10,10 +10,10 @@ RestartSec=5s
 Type=simple
 User=yavsc
 Group=yavsc
-WorkingDirectory=$DESTDIR
-ExecStart=$DESTDIR/Yavsc.$APP_NAME
+WorkingDirectory=$APPDIR
+ExecStart=$APPDIR/Yavsc.$APP_NAME
 Restart=always
-Environment="HOME=$DESTDIR"
+Environment="HOME=$APPDIR"
 Environment="ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
 Environment="ANTHROPIC_MAX_TOKENS=$ANTHROPIC_MAX_TOKENS"
 Environment="ASPNETCORE_Environment=$ENV"

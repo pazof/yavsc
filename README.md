@@ -63,7 +63,7 @@ make test
 
 ### La Prod
 
-`cd srv/Yavsc` : `make pushInProd CONFIGURATION=Release`.
+`cd srv/Yavsc/contrib` : `make reinstall CONFIGURATION=Release APP_INSTALL_ENV=production`.
 
 puis, pour une première installation
 `make install_service`.
