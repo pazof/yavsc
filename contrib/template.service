@@ -29,8 +29,6 @@ Environment="ASPNETCORE_Smtp__Password=\"$ASPNETCORE_Smtp__Password\""
 
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_BIND_SERVICE
-StandardOutput=syslog
-StandardError=syslog
 SyslogIdentifier=$APP_SYSLOG_ID
 
 [Install]
