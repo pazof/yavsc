@@ -401,79 +401,12 @@ namespace Yavsc.ApiControllers
                 Strokes = body.Strokes,
             };
 
-            // Disk write first: a disk failure shouldn't leave
-            // a Signature row pointing at a file that doesn't
-            // exist. The file helper throws on filesystem
-            // problems and propagates here.
-            FileReceivedInfo fi;
-            try
-            {
-                fi = await User.ReceiveEstimateSignatureAsync(id, type, payload,
-                 siteSettings, token);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "estimate {Id}: signature file write failed", id);
-                return BadRequest(new { Error = "file write failed", Detail = ex.Message });
-            }
-
-            // Find-or-add: the (EstimateId, Type) pair is
-            // unique, so a second POST for the same side of the
-            // estimate replaces the previous signature. EF
-            // translates this into a single UPDATE when the
-            // row exists and an INSERT otherwise; the unique
-            // index in ApplicationDbContext is the
-            // database-level guarantee that the contract
-            // holds if two requests race.
-            var signature = await dbContext.Signatures
-                .FirstOrDefaultAsync(s => s.EstimateId == id && s.Type == type, token);
-
-            if (signature is null)
-            {
-                signature = new Signature
-                {
-                    EstimateId = id,
-                    SignerId = userId,
-                    Type = type,
-                };
-                dbContext.Signatures.Add(signature);
-            }
-            else
-            {
-                // Roll the signer's quota back by the size of
-                // the file we're about to orphan: the old
-                // FilePath is no longer referenced once we
-                // overwrite FilePath below.
-                try
-                {
-                    var orphan = new FileInfo(signature.FilePath);
-                    if (orphan.Exists)
-                    {
-                        var signerForOrphan = await dbContext.Users
-                            .FirstOrDefaultAsync(u => u.Id == userId, token);
-                        if (signerForOrphan is not null)
-                            signerForOrphan.DiskUsage =
-                                Math.Max(0, signerForOrphan.DiskUsage - orphan.Length);
-                    }
-                }
-                catch { /* best effort — the file is being replaced anyway */ }
-            }
-
-            signature.SignerId = userId;
-            signature.CoordinateMax = payload.CoordinateMax;
-            signature.Strokes = payload.Strokes;
-            signature.CapturedAtUtc = payload.CapturedAtUtc;
-            signature.FilePath = Path.Combine(fi.DestDir, fi.FileName);
-
-            // Bump the signer's quota. The Signature row's
-            // SignerId is the IdentityUser.Id (a string), so we
-            // look up by Id and not by username.
-            var signer = await dbContext.Users
-                .FirstOrDefaultAsync(u => u.Id == userId, token);
-            if (signer is not null)
-            {
-                signer.DiskUsage += new FileInfo(signature.FilePath).Length;
-            }
+            // The Signature row is staged by the shared persister; we
+            // SaveChanges here so the signature write is one
+            // transaction. The Strokes column is the source of truth —
+            // there is no on-disk copy to roll back on failure.
+            var signature = await EstimateSignaturePersister.StageAsync(
+                dbContext, id, type, userId, payload, token);
 
             try
             {
@@ -482,10 +415,6 @@ namespace Yavsc.ApiControllers
             catch (Exception ex)
             {
                 logger.LogError(ex, "estimate {Id}: signature db write failed", id);
-                // Best-effort rollback: remove the file we wrote
-                // so disk and db don't disagree.
-                try { System.IO.File.Delete(signature.FilePath); }
-                catch { /* swallow — the row will be re-orphaned, the user re-signs */ }
                 return BadRequest(new { Error = "db write failed", Detail = ex.Message });
             }
 
