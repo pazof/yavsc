@@ -31,7 +31,7 @@ public class Signature
 
     public long EstimateId { get; set; }
 
-    [ForeignKey(nameof(EstimateId)), JsonIgnore]
+    [ForeignKey(nameof(EstimateId)), JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
     public virtual Estimate Estimate { get; set; }
 
     /// <summary>
@@ -48,7 +48,7 @@ public class Signature
     [Required]
     public string SignerId { get; set; }
 
-    [ForeignKey(nameof(SignerId)), JsonIgnore]
+    [ForeignKey(nameof(SignerId)), JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
     public virtual ApplicationUser Signer { get; set; }
 
     public SignatureType Type { get; set; }

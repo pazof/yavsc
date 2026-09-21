@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Avalonia;
@@ -111,7 +112,10 @@ public partial class EstimateValidationPageViewModel : ViewModelBase, IActionSta
     /// <summary>
     /// Bind the page's signature pad control (the inner control of the
     /// page's <see cref="SignaturePadView"/>). Called from the view's
-    /// code-behind once the view is in the visual tree.
+    /// code-behind once the view is in the visual tree. Also calls
+    /// <see cref="LoadExistingSignature"/> so a previously drawn
+    /// signature — carried on the estimate payload — is rendered back
+    /// into the pad on reopen.
     /// </summary>
     public void Attach(SignaturePadControl pad)
     {
@@ -120,6 +124,7 @@ public partial class EstimateValidationPageViewModel : ViewModelBase, IActionSta
         _pad = pad;
         _pad.RedrawRequested += OnPadRedraw;
         RefreshFromPad();
+        LoadExistingSignature();
     }
 
     public void Detach()
@@ -130,6 +135,28 @@ public partial class EstimateValidationPageViewModel : ViewModelBase, IActionSta
     }
 
     private void OnPadRedraw(object? sender, EventArgs e) => RefreshFromPad();
+
+    /// <summary>
+    /// Render the signature already stored for this side of the
+    /// estimate back into the pad. The strokes are carried on the
+    /// estimate payload (<see cref="EstimateDto.Signatures"/>); the
+    /// side is chosen by the current <see cref="_perspective"/> — the
+    /// provider reopens to see their "Pro" signature, the client their
+    /// "Client" signature. No network round-trip: the payload is used
+    /// as-is, in the same wire format PostIt captured.
+    /// </summary>
+    public void LoadExistingSignature()
+    {
+        if (_pad is null) return;
+        // SignatureType.Pro = 0, SignatureType.Client = 1 (server enum).
+        int wanted = _perspective == EstimateListPerspective.Provider ? 0 : 1;
+        var sig = _estimate.Signatures?.FirstOrDefault(s => s.Type == wanted);
+        if (sig?.Strokes is { Length: > 0 } strokes)
+        {
+            _pad.Load(strokes);
+            RefreshFromPad();
+        }
+    }
 
     private void RefreshFromPad()
     {

@@ -182,6 +182,38 @@ public class SignaturePadControl : TemplatedControl
     }
 
     /// <summary>
+    /// Replace the buffer with the given wire-format strokes — e.g. a
+    /// signature loaded back from the server — and raise
+    /// <see cref="RedrawRequested"/> so the host view repaints the ink.
+    /// Loaded strokes are all sealed (there is no pending stroke).
+    /// Malformed input (a non-positive length prefix, or a stroke that
+    /// runs past the end of the array) is truncated at the offending
+    /// point so the buffer never holds an inconsistent state.
+    /// </summary>
+    public void Load(int[] strokes)
+    {
+        if (strokes is null) throw new ArgumentNullException(nameof(strokes));
+
+        _strokes.Clear();
+        _pendingPoints = 0;
+        _capturing = false;
+
+        int i = 0;
+        while (i < strokes.Length)
+        {
+            int k = strokes[i];
+            if (k <= 0) break;
+            if (i + 1 + 2 * k > strokes.Length) break;
+            _strokes.Add(k);
+            for (int p = 0; p < 2 * k; p++)
+                _strokes.Add(strokes[i + 1 + p]);
+            i += 1 + 2 * k;
+        }
+
+        RedrawRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
     /// Defensive copy of the current buffer wrapped in a
     /// <see cref="SignaturePadData"/>. Cheap; call only when the
     /// view needs to ship the data off (e.g. to a backend).

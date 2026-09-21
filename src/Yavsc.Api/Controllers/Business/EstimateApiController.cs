@@ -40,7 +40,7 @@ namespace Yavsc.Controllers
             else if (!UserIsAdminOrThis(ownerId)) // throw new Exception("Not authorized") ;
                                                   // or just do nothing
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
-            return Ok(_context.Estimates.Include(e => e.Bill).Where(e => e.OwnerId == ownerId));
+            return Ok(_context.Estimates.Include(e => e.Bill).Include(e => e.Signatures).Where(e => e.OwnerId == ownerId));
         }
         // GET: api/Estimate/5
         [HttpGet("{id}", Name = "GetEstimate")]
@@ -51,7 +51,7 @@ namespace Yavsc.Controllers
                 return BadRequest(ModelState);
             }
 
-            Estimate estimate = _context.Estimates.Include(e => e.Bill).Single(m => m.Id == id);
+            Estimate estimate = _context.Estimates.Include(e => e.Bill).Include(e => e.Signatures).Single(m => m.Id == id);
 
             if (estimate == null)
             {
@@ -209,7 +209,7 @@ namespace Yavsc.Controllers
         public IActionResult GetOngoingEstimatesAsClient()
         {
             var uid = User.GetUserId();
-            return Ok(_context.Estimates.Include(e => e.Bill)
+            return Ok(_context.Estimates.Include(e => e.Bill).Include(e => e.Signatures)
                 .Where(e => e.ClientId == uid
                     && e.ProviderValidationDate != default
                     && e.ClientValidationDate == default));
@@ -222,7 +222,7 @@ namespace Yavsc.Controllers
         public IActionResult GetOngoingEstimatesAsProvider()
         {
             var uid = User.GetUserId();
-            return Ok(_context.Estimates.Include(e => e.Bill)
+            return Ok(_context.Estimates.Include(e => e.Bill).Include(e => e.Signatures)
                 .Where(e => e.OwnerId == uid && e.ClientValidationDate == default));
         }
 
