@@ -39,11 +39,6 @@
 }
 <h2>@ViewBag.Title</h2>
 <p class="text-success">@ViewBag.StatusMessage</p>
-@if (User.IsSignedIn()) {
-<p>
-    <a asp-action="Create">Create a new article</a>
-</p>
-}
 
 <div class="blog-index">
 @{
@@ -78,8 +73,6 @@
             }
             @if ((await AuthorizationService.AuthorizeAsync(User, post, new EditPermission())).Succeeded)
             {
-           <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-primary">Edit</a>
-
             <a asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete</a>
 
             }

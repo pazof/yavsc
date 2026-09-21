@@ -6,7 +6,7 @@ namespace Yavsc.Models.Blog
         public BlogPostEditViewModel()
         {
         }
-        
+
         public BlogPostEditViewModel(BlogPost post, bool publish)
         {
             Id = post.Id;
