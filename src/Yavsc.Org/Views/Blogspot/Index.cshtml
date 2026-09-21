@@ -1,85 +1,155 @@
-
 @model IEnumerable<IBlogPost>
 @{
     ViewBag.Title = "Blogs, l'index";
+
+    // Pagination reflects the Index(string id, int skip, int take)
+    // call profile. The service applies Skip/Take server-side, so
+    // the view only needs the current page params to build Prev/Next
+    // links — it does not receive a total count.
+    int currentSkip = Context.Request.Query.TryGetValue("skip", out var skipVal) && int.TryParse(skipVal, out var s) ? s : 0;
+    int currentTake = Context.Request.Query.TryGetValue("take", out var takeVal) && int.TryParse(takeVal, out var t) ? t : 25;
+
+    var posts = Model.ToList();
+    bool hasPrev = currentSkip > 0;
+    bool hasNext = posts.Count >= currentTake;
+
+    int prevSkip = Math.Max(0, currentSkip - currentTake);
+    int nextSkip = currentSkip + currentTake;
+
+    int maxSummaryLen = 256;
 }
 @section header {
     <style>
-        .collapsed {
-            height: 1em;
+        .blog-index {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
-        .sametitlegrip {
-            text-decoration: underline;
-            cursor: pointer;
+        .blog-index .post {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1rem;
+            align-items: start;
         }
-        .sametitle {
-            overflow: hidden;
-            transition: height 1s;
+        .blog-index .post-photo {
+            width: 96px;
+            height: 96px;
+            object-fit: cover;
+            border-radius: .375rem;
         }
-        td {
-            transition: height 1s;
+        .blog-index .post-body {
+            min-width: 0;
         }
-        div.row {
-            border-bottom: dashed black 1px;
+        .blog-index .index-post-title {
+            margin: 0 0 .25rem;
+            font-size: 1.15rem;
         }
-        </style>
-}
-@section scripts {
-    <script>
-        $(document).ready(function () {
-                $(".sametitle").addClass("collapsed")
-                .on("mouseover",function(){
-                    $(this).removeClass("collapsed")
-                }).on("mouseout",function(){
-                    $(this).addClass("collapsed")
-                });
-            }
-        )
-   </script>
+        .blog-index .post-meta {
+            font-size: .8rem;
+            color: var(--bs-secondary-color, #6c757d);
+        }
+        .blog-index .post-author img {
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: .25rem;
+        }
+        .blog-index .actiongroup {
+            margin-top: .5rem;
+            display: flex;
+            gap: .5rem;
+        }
+        .blog-index .post-summary {
+            margin: .25rem 0;
+        }
+        .blog-index .post-summary > p:last-child {
+            margin-bottom: 0;
+        }
+        .blog-pager {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+    </style>
 }
 <h2>@ViewBag.Title</h2>
 <p class="text-success">@ViewBag.StatusMessage</p>
 
-<div class="blog-index">
-@{
-    int maxTextLen = 75;
-  foreach (var post in Model) {
-    <div class="post card">
-
-
-        <a asp-action="Details" asp-route-id="@post.Id" class="bloglink" >
-            <div class="float-left"><img class="photo card-photo" src="@post.Photo" ></div>
-            <h3 class="index-post-title">@post.Title</h3>
-        </a>
-        <div>
-          <a asp-action="Details" asp-route-id="@post.Id">
-            <markdown summary="@maxTextLen">@post.Article</markdown></a>
-            <span style="font-size:x-small;">@Html.DisplayFor(m => post.Author)</span>
-            <span style="font-size:xx-small;">
-            posté le @post.DateCreated.ToString("dddd d MMM yyyy à H:mm")
-            @if ((post.DateModified - post.DateCreated).Minutes > 0){
-                @:- Modifié le @post.DateModified.ToString("dddd d MMM yyyy à H:mm")
-            }
-            </span>
-        </div>
-        <div class="actiongroup">
-            @if ((await AuthorizationService.AuthorizeAsync(User, post, new ReadPermission())).Succeeded)
-            {
-                <a asp-action="Details" asp-route-id="@post.Id"  class="btn btn-light">Details</a>
-            }
-            else
-            {
-            <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-light">Details</a>
-            }
-            @if ((await AuthorizationService.AuthorizeAsync(User, post, new EditPermission())).Succeeded)
-            {
-            <a asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete</a>
-
-            }
-        </div>
-    </div>
-  }
+@if (!posts.Any())
+{
+    <p>Néant</p>
 }
-</div>
+else
+{
+    <div class="blog-index">
+    @foreach (var post in posts)
+    {
+        var canEdit = (await AuthorizationService.AuthorizeAsync(User, post, new EditPermission())).Succeeded;
+        <article class="post card">
+            @if (!string.IsNullOrEmpty(post.Photo))
+            {
+                <a asp-action="Details" asp-route-id="@post.Id" class="bloglink">
+                    <img class="post-photo" src="@post.Photo" alt="@post.Title" />
+                </a>
+            }
+            <div class="post-body">
+                <h3 class="index-post-title">
+                    <a asp-action="Details" asp-route-id="@post.Id" class="bloglink">@post.Title</a>
+                </h3>
+                <div class="post-summary">
+                    <a asp-action="Details" asp-route-id="@post.Id" class="bloglink text-decoration-none">
+                        <markdown summary="@maxSummaryLen">@post.Article</markdown>
+                    </a>
+                </div>
+                <div class="post-meta">
+                    @if (post.Author != null)
+                    {
+                        <span class="post-author">
+                            @if (!string.IsNullOrEmpty(post.Author.Avatar))
+                            {
+                                <img src="@post.Author.Avatar" alt="" />
+                            }
+                            @@@post.Author.UserName
+                        </span>
+                        <span> · </span>
+                    }
+                    <span>posté le @post.DateCreated.ToString("dddd d MMM yyyy à H:mm")</span>
+                    @if (post.DateModified > post.DateCreated)
+                    {
+                        <span> · modifié le @post.DateModified.ToString("dddd d MMM yyyy à H:mm")</span>
+                    }
+                </div>
+                <div class="actiongroup">
+                    <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-light">Details</a>
+                    @if (canEdit)
+                    {
+                        <a asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete</a>
+                    }
+                </div>
+            </div>
+        </article>
+    }
+    </div>
 
-@if(Model.Count()==0){<p>Néant</p>}
+    <nav class="blog-pager" aria-label="Pagination">
+        @if (hasPrev)
+        {
+            <a asp-action="Index"
+               asp-route-skip="@prevSkip"
+               asp-route-take="@currentTake"
+               class="btn btn-outline-secondary">← Précédent</a>
+        }
+        else
+        {
+            <span></span>
+        }
+        @if (hasNext)
+        {
+            <a asp-action="Index"
+               asp-route-skip="@nextSkip"
+               asp-route-take="@currentTake"
+               class="btn btn-outline-secondary">Suivant →</a>
+        }
+    </nav>
+}
