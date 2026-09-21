@@ -166,6 +166,8 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
         => status switch
         {
             QueryStatus.Accepted => "#E6F7EC",
+            QueryStatus.ProAccepted => "#E6F7EC",
+            QueryStatus.ClientAccepted => "#E1F5FE",
             QueryStatus.InProgress => "#FFF4D6",
             QueryStatus.Rejected => "#FDECEA",
             QueryStatus.Failed => "#ECEFF1",
@@ -177,6 +179,8 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
         => status switch
         {
             QueryStatus.Accepted => "#2E7D32",
+            QueryStatus.ProAccepted => "#2E7D32",
+            QueryStatus.ClientAccepted => "#1565C0",
             QueryStatus.InProgress => "#B26A00",
             QueryStatus.Rejected => "#C62828",
             QueryStatus.Failed => "#607D8B",
@@ -188,6 +192,8 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
         => status switch
         {
             QueryStatus.Accepted => "#1B5E20",
+            QueryStatus.ProAccepted => "#1B5E20",
+            QueryStatus.ClientAccepted => "#0D47A1",
             QueryStatus.InProgress => "#7A4A00",
             QueryStatus.Rejected => "#8E0000",
             QueryStatus.Failed => "#37474F",
@@ -199,6 +205,8 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
         => status switch
         {
             QueryStatus.Accepted => "OK",
+            QueryStatus.ProAccepted => "P",
+            QueryStatus.ClientAccepted => "C",
             QueryStatus.InProgress => "~",
             QueryStatus.Rejected => "!",
             QueryStatus.Failed => "X",

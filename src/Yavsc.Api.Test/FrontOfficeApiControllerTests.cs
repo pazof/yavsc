@@ -127,7 +127,8 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
         var assertDb = assertScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var updated = assertDb.RdvQueries.Single(q => q.Id == queryId);
 
-        Assert.Equal(QueryStatus.Accepted, updated.Status);
+        // Default caller is "alice" (the provider) → ProAccepted.
+        Assert.Equal(QueryStatus.ProAccepted, updated.Status);
     }
 
     [Fact]
@@ -146,7 +147,7 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
         using var assertScope = _fixture.Services.CreateScope();
         var assertDb = assertScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        Assert.Equal(QueryStatus.Accepted, assertDb.RdvQueries.Single(q => q.Id == queryId).Status);
+        Assert.Equal(QueryStatus.ProAccepted, assertDb.RdvQueries.Single(q => q.Id == queryId).Status);
 
         var estimate = assertDb.Estimates.Single(e => e.Id == estimateId);
         Assert.True(estimate.ProviderValidationDate != default);
@@ -173,7 +174,7 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
         using var assertScope = _fixture.Services.CreateScope();
         var assertDb = assertScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        Assert.Equal(QueryStatus.Accepted, assertDb.RdvQueries.Single(q => q.Id == queryId).Status);
+        Assert.Equal(QueryStatus.ClientAccepted, assertDb.RdvQueries.Single(q => q.Id == queryId).Status);
 
         var estimate = assertDb.Estimates.Single(e => e.Id == estimateId);
         Assert.True(estimate.ClientValidationDate != default);
