@@ -7,8 +7,14 @@ APP_INSTALL_PREFIX=preprod-
 
 include .$(APP_INSTALL_ENV).env
 
-generated/:
-	@mkdir -p $@
+reinstall: copy-binaries
+	@for project in $(APP_PROJECT_NAMES); do \
+		echo "🚀 Starting $(APP_INSTALL_PREFIX)yavsc$${project}" \
+		sudo systemctl start $(APP_INSTALL_PREFIX)yavsc$${project} ; done
+	@echo "💯 backend started"
+
+reinstall-prod:
+	make APP_INSTALL_ENV= APP_INSTALL_PREFIX= APP_INSTALL_ENV=production
 
 generated/$(APP_INSTALL_PREFIX)yavscOrg.service:
 generated/$(APP_INSTALL_PREFIX)yavscBlogs.service:
@@ -62,7 +68,6 @@ copy-binaries: build_publish_Org build_publish_Blogs build_publish_Api stop-serv
 	@sudo chown -R $(USER_AND_GROUP) $(DESTDIR)$(APPDIR)
 	@sync
 
-
 $(DESTDIR)/etc/systemd/system/$(APP_INSTALL_PREFIX)yavsc%.service:  generated/$(APP_INSTALL_PREFIX)yavsc%.service
 	sudo cp $^ $@
 	sudo chown root:root $@
@@ -81,21 +86,11 @@ install: copy-binaries copy-services
 		sudo systemctl start yavsc$${project} ; \
 	done
 
-reinstall: copy-binaries
-	@for project in $(APP_PROJECT_NAMES); do \
-		sudo systemctl start yavsc$${project} ; done
-
-reinstall-prod:
-	make APP_INSTALL_ENV= APP_INSTALL_PREFIX=
-
-reinstall-pre: copy-binaries
-	@for project in $(APP_PROJECT_NAMES); do \
-		sudo systemctl start yavscPre$${project} ; done
 
 stop-services:
 	@for project in $(APP_PROJECT_NAMES); \
 	do \
-		sudo systemctl stop yavsc$${project} ; \
+		sudo systemctl stop $(APP_INSTALL_PREFIX)yavsc$${project} ; \
 	done
 
 $(SLNDIR)/src/Yavsc.Org/bin/$(CONFIGURATION)/$(DOTNET_FRAMEWORK)/publish: build_publish
@@ -118,3 +113,5 @@ showBlogsLogs:
 clean:
 	@rm -rf generated
 
+generated/:
+	@mkdir -p $@
