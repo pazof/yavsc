@@ -113,6 +113,7 @@ public static class ServiceExtensions
             options.ClaimsIssuer = authority;
             options.Audience = audiences[0];
 
+
             // Dev: every Yavsc resource service (Yavsc.Api, Yavsc.Blogs,
             // Yavsc.Org itself) validates JWTs against the OP that runs
             // on https://localhost:5001 with a self-signed dev cert.
