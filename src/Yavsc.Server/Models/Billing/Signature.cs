@@ -7,8 +7,8 @@ namespace Yavsc.Models.Billing;
 /// <summary>
 /// One captured signature, attached to a single
 /// <see cref="Estimate"/>. Multiple versions are allowed per
-/// (EstimateId, Type, SignerId) tuple — the controller reads
-/// the most recent when asked. The wire-format payload is the
+/// (EstimateId, Type, SignerId) tuple — the controller reads the
+/// most recent when asked. The wire-format payload is the
 /// same <c>int[]</c> shape PostIt produces (see
 /// <c>PostIt.Models.SignaturePadData</c>): a length-prefixed
 /// sequence of strokes, each stroke being
@@ -16,13 +16,12 @@ namespace Yavsc.Models.Billing;
 /// CoordinateMax]</c>.
 ///
 /// <para>
-/// Why a separate table (instead of a JSON column on
-/// <see cref="Estimate"/>): the jalon 1 spec calls for at least
-/// two distinct signatures per estimate cycle (provider
-/// validation + client agreement) and the audit value of
-/// preserving superseded versions. A dedicated table also keeps
-/// the <see cref="Estimate"/> row narrow, which matters for
-/// list views.
+/// The <see cref="Strokes"/> column is the source of truth: the
+/// signature is captured and stored entirely in-app (PostIt) and
+/// round-tripped as JSON, with no on-disk copy. A dedicated table
+/// (instead of a JSON column on <see cref="Estimate"/>) keeps the
+/// <see cref="Estimate"/> row narrow for list views and preserves
+/// superseded versions for audit.
 /// </para>
 /// </summary>
 public class Signature
@@ -75,16 +74,4 @@ public class Signature
     public int[] Strokes { get; set; } = Array.Empty<int>();
 
     public DateTime CapturedAtUtc { get; set; }
-
-    /// <summary>
-    /// Path to the JSON-serialised wire payload on disk,
-    /// relative to <c>UserFilesDirName</c>. The disk copy is the
-    /// source of truth for the wire bytes; the <see cref="Strokes"/>
-    /// column is a denormalised index for queries. They are
-    /// written together in the same transaction by the
-    /// controller; the migration should keep them in sync
-    /// through <c>ApplicationDbContext.SaveChanges</c>.
-    /// </summary>
-    [Required]
-    public string FilePath { get; set; }
 }
