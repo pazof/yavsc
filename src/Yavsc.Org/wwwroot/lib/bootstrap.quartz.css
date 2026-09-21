@@ -3924,7 +3924,7 @@ fieldset:disabled .btn {
     --bs-dropdown-box-shadow: var(--bs-box-shadow);
     --bs-dropdown-link-color: var(--bs-body-color);
     --bs-dropdown-link-hover-color: #fff;
-    --bs-dropdown-link-hover-bg: rgba(255, 255, 255, 0.4);
+    --bs-dropdown-link-hover-bg: rgba(0, 0, 0, 0.4);
     --bs-dropdown-link-active-color: #fff;
     --bs-dropdown-link-active-bg: #e83283;
     --bs-dropdown-link-disabled-color: var(--bs-tertiary-color);
