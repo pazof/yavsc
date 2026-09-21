@@ -3,7 +3,8 @@ DOTNET_FRAMEWORK=net10.0
 APP_PROJECT_NAMES=Org Blogs Api
 SLNDIR=..
 APP_INSTALL_ENV=preprod
-APP_INSTALL_PREFIX=$(APP_INSTALL_ENV)-
+APP_INSTALL_PREFIX=preprod-
+
 include .$(APP_INSTALL_ENV).env
 
 generated/:
@@ -83,6 +84,9 @@ install: copy-binaries copy-services
 reinstall: copy-binaries
 	@for project in $(APP_PROJECT_NAMES); do \
 		sudo systemctl start yavsc$${project} ; done
+
+reinstall-prod:
+	make APP_INSTALL_ENV= APP_INSTALL_PREFIX=
 
 reinstall-pre: copy-binaries
 	@for project in $(APP_PROJECT_NAMES); do \
