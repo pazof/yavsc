@@ -35,7 +35,11 @@
             margin: .3em 0;
             padding: .5rem .75rem;
             border-left: 3px solid var(--bs-border-color, #dee2e6);
-            background: var(--bs-tertiary-bg, #f8f9fa);
+            /* Quartz ships white body text on a coloured page bg, so
+               use a semi-transparent black overlay rather than
+               --bs-tertiary-bg (which is near-white in the quartz
+               light variant and would render white-on-white). */
+            background: rgba(0, 0, 0, 0.15);
             border-radius: .25rem;
         }
         .blogcomment .comment-body > :last-child {
