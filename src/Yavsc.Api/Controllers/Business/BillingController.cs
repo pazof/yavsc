@@ -157,6 +157,8 @@ namespace Yavsc.ApiControllers
                     .Where(q => allowedActivityCodes.Contains(q.ActivityCode))
                     .Where(q => q.Status == QueryStatus.Inserted
                         || q.Status == QueryStatus.Accepted
+                        || q.Status == QueryStatus.ProAccepted
+                        || q.Status == QueryStatus.ClientAccepted
                         || q.Status == QueryStatus.InProgress)
                     .Cast<NominativeServiceCommand>()
                     .ToList()
@@ -169,6 +171,8 @@ namespace Yavsc.ApiControllers
                     .Where(q => allowedActivityCodes.Contains(q.ActivityCode))
                     .Where(q => q.Status == QueryStatus.Inserted
                         || q.Status == QueryStatus.Accepted
+                        || q.Status == QueryStatus.ProAccepted
+                        || q.Status == QueryStatus.ClientAccepted
                         || q.Status == QueryStatus.InProgress)
                     .Cast<NominativeServiceCommand>()
                     .ToList()
@@ -181,6 +185,8 @@ namespace Yavsc.ApiControllers
                     .Where(q => allowedActivityCodes.Contains(q.ActivityCode))
                     .Where(q => q.Status == QueryStatus.Inserted
                         || q.Status == QueryStatus.Accepted
+                        || q.Status == QueryStatus.ProAccepted
+                        || q.Status == QueryStatus.ClientAccepted
                         || q.Status == QueryStatus.InProgress)
                     .Cast<NominativeServiceCommand>()
                     .ToList()

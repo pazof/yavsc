@@ -344,11 +344,13 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
         => status switch
         {
             QueryStatus.InProgress => 0,
-            QueryStatus.Accepted => 1,
-            QueryStatus.Inserted => 2,
-            QueryStatus.Success => 3,
-            QueryStatus.Rejected => 4,
-            QueryStatus.Failed => 5,
+            QueryStatus.ClientAccepted => 1,
+            QueryStatus.ProAccepted => 2,
+            QueryStatus.Accepted => 2,
+            QueryStatus.Inserted => 3,
+            QueryStatus.Success => 4,
+            QueryStatus.Rejected => 5,
+            QueryStatus.Failed => 6,
             _ => 99,
         };
 

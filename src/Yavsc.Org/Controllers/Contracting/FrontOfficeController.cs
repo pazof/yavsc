@@ -46,9 +46,9 @@ namespace Yavsc.Controllers
             {
                 EstimateToProduceCount = _context.RdvQueries.Where(c => c.PerformerId == uid && c.EventDate > now &&  c.Status == QueryStatus.Inserted
                && c.ValidationDate == null && !_context.Estimates.Any(e => e.CommandId == c.Id)).Count(),
-                EstimateToHonorAsProCount = _context.RdvQueries.Where(c => c.PerformerId == uid && c.EventDate > now &&  c.Status == QueryStatus.Accepted
+                EstimateToHonorAsProCount = _context.RdvQueries.Where(c => c.PerformerId == uid && c.EventDate > now &&  (c.Status == QueryStatus.ProAccepted || c.Status == QueryStatus.Accepted)
                 && c.ValidationDate == null && _context.Estimates.Any(e => e.CommandId == c.Id )).Count(),
-                EstimateToSignAsCliCount = _context.Estimates.Where(e => e.ClientId == uid && e.Query.Status == QueryStatus.Accepted).Count(),
+                EstimateToSignAsCliCount = _context.Estimates.Where(e => e.ClientId == uid && (e.Query.Status == QueryStatus.ProAccepted || e.Query.Status == QueryStatus.Accepted)).Count(),
 
                 BillToSignAsCliCount = 0,
                 NewPayementsCount = 0

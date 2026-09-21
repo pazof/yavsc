@@ -171,5 +171,9 @@ public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusV
     }
 
     private static bool IsOngoingStatus(QueryStatus status)
-        => status is QueryStatus.Inserted or QueryStatus.Accepted or QueryStatus.InProgress;
+        => status is QueryStatus.Inserted
+            or QueryStatus.Accepted
+            or QueryStatus.ProAccepted
+            or QueryStatus.ClientAccepted
+            or QueryStatus.InProgress;
 }

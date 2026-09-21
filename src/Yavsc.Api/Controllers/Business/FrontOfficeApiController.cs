@@ -100,7 +100,16 @@ namespace Yavsc.ApiControllers
                     estimate.ClientValidationDate = DateTime.UtcNow;
             }
 
-            query.Status = QueryStatus.Accepted;
+            // The party-specific status records who accepted: the
+            // provider (ProAccepted) or the client (ClientAccepted).
+            // An admin accepting (neither party) falls back to the
+            // legacy generic Accepted.
+            query.Status = role switch
+            {
+                ActorRole.Provider => QueryStatus.ProAccepted,
+                ActorRole.Client => QueryStatus.ClientAccepted,
+                _ => QueryStatus.Accepted,
+            };
 
             try
             {
