@@ -1,4 +1,7 @@
+using System.Net;
+using System.Net.Http;
 using IdentityServer8.Stores;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -39,5 +42,27 @@ public class AccountSmokeTests : IClassFixture<TestWebApplicationFactory>
         var exception = await Record.ExceptionAsync(resourceStore.GetAllResourcesAsync);
 
         Assert.Null(exception);
+    }
+
+    // Regression: anonymous access to a restricted page used to redirect to
+    // the ASP.NET Identity default LoginPath "/Account/Login", which has no
+    // controller here. The application cookie must redirect to the real
+    // sign-in endpoint at /signin instead.
+    [Fact]
+    public async Task Anonymous_access_to_protected_page_redirects_to_signin()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+        });
+
+        // EstimateController is [Authorize]; GET /Estimate hits Index().
+        var response = await client.GetAsync("/Estimate", TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        var location = response.Headers.Location;
+        Assert.NotNull(location);
+        Assert.Equal("/signin", location.AbsolutePath);
+        Assert.Contains("ReturnUrl=%2FEstimate", location.Query);
     }
 }

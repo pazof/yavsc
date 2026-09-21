@@ -215,6 +215,18 @@ public static class HostingExtensions
 
         services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>>();
 
+        // The default application cookie LoginPath is "/Account/Login", which
+        // has no controller here — anonymous access to a restricted page must
+        // redirect to the actual sign-in endpoint instead. The paths mirror
+        // the route attributes on AccountController (Constants.SigninPath etc.,
+        // which carry a "~/" prefix that the cookie middleware does not want).
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/signin";
+            options.LogoutPath = "/signout";
+            options.AccessDeniedPath = "/Account/AccessDenied";
+        });
+
         // Dev-only: Chromium rejects SameSite=None without Secure on http://
         // (e.g. http://localhost:5000). The default Identity cookie policy
         // sets SameSite=None, which is invalid without Secure. Force Lax in

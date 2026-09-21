@@ -209,9 +209,12 @@ public sealed class EstimateApiControllerTests : IClassFixture<ApiWebServerFixtu
 
     /// <summary>
     /// Seeds an estimate owned by alice (the provider) for the given
-    /// client, optionally already validated by the client.
+    /// client, optionally already validated by the client. By default the
+    /// estimate is also provider-validated (i.e. the provider has submitted
+    /// it); pass <paramref name="providerValidated"/> = false to seed a
+    /// freshly inserted request the provider hasn't worked on yet.
     /// </summary>
-    private long SeedEstimate(string clientId, bool clientValidated)
+    private long SeedEstimate(string clientId, bool clientValidated, bool providerValidated = true)
     {
         using var scope = _fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -229,6 +232,7 @@ public sealed class EstimateApiControllerTests : IClassFixture<ApiWebServerFixtu
             {
                 new() { Name = "Prestation", Description = "Prestation de base", Count = 1, UnitaryCost = 120m, Currency = "EUR" },
             },
+            ProviderValidationDate = providerValidated ? DateTime.UtcNow : default,
             ClientValidationDate = clientValidated ? DateTime.UtcNow : default,
         };
         db.Estimates.Add(estimate);
@@ -257,6 +261,26 @@ public sealed class EstimateApiControllerTests : IClassFixture<ApiWebServerFixtu
         Assert.Equal(ongoingId, item.GetProperty("id").GetInt64());
         Assert.Equal("bob", item.GetProperty("clientId").GetString());
         Assert.Equal("alice", item.GetProperty("ownerId").GetString());
+    }
+
+    [Fact]
+    public async Task GetOngoingEstimatesAsClient_excludes_inserted_requests_not_yet_provider_validated()
+    {
+        _fixture.ResetAndSeedActivityGraph();
+        var submittedId = SeedEstimate(clientId: "bob", clientValidated: false);                  // provider submitted: visible
+        SeedEstimate(clientId: "bob", clientValidated: false, providerValidated: false);          // inserted, not worked on: excluded
+
+        using var http = NewClient("bob");
+
+        var response = await http.GetAsync("/api/v1/estimate/asclient", TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"Unexpected status {(int)response.StatusCode} ({response.StatusCode}): {body}");
+
+        using var doc = JsonDocument.Parse(body);
+        var items = doc.RootElement.EnumerateArray().ToArray();
+        var item = Assert.Single(items);
+        Assert.Equal(submittedId, item.GetProperty("id").GetInt64());
     }
 
     [Fact]
