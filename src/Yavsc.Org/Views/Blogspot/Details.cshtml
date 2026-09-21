@@ -98,8 +98,5 @@ $('#commentValidation').html(
         <p><i>Vous devez être identifié pour commenter.</i> </p>
     }
 
-    @if ((await AuthorizationService.AuthorizeAsync(User, Model, new EditPermission())).Succeeded) {
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-link">Edit</a>
-    }
     <a asp-action="Index" class="btn btn-link">Back to List</a>
 
