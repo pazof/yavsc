@@ -201,12 +201,18 @@ namespace Yavsc.Controllers
         // GET: api/estimate/asclient
         // Ongoing estimates (not yet validated by the client) where the
         // current user is the client who initiated the request.
+        // An estimate only becomes visible to the client once the provider
+        // has actually established and submitted it (ProviderValidationDate);
+        // a freshly inserted request the provider hasn't worked on yet is
+        // not something the client can validate, so it's excluded.
         [HttpGet("asclient")]
         public IActionResult GetOngoingEstimatesAsClient()
         {
             var uid = User.GetUserId();
             return Ok(_context.Estimates.Include(e => e.Bill)
-                .Where(e => e.ClientId == uid && e.ClientValidationDate == default));
+                .Where(e => e.ClientId == uid
+                    && e.ProviderValidationDate != default
+                    && e.ClientValidationDate == default));
         }
 
         // GET: api/estimate/asprovider
