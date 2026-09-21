@@ -29,29 +29,15 @@
                    FontWeight="Bold" />
 
         <!--
-            Capture surface. The SignaturePadControl is render-
-            agnostic, so we host it inside a fixed-size Border
-            that is the PART_CaptureArea, and overlay a Canvas
-            for the visual feedback. The view's code-behind
-            repaints the canvas on every RedrawRequested.
+            Capture surface. SignaturePadView owns the SignaturePadControl,
+            the capture-area Border, the ink overlay canvas, and the
+            repaint logic; the page just sizes it from the VM and reads
+            the captured data through the view's API.
         -->
-        <Border Grid.Row="1"
-                x:Name="PadFrame"
-                Width="{Binding Width}"
-                Height="{Binding Height}"
-                BorderBrush="Black"
-                BorderThickness="1"
-                Background="White"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                ClipToBounds="True">
-            <Grid>
-                <controls:SignaturePadControl x:Name="Pad" />
-                <Canvas x:Name="InkLayer"
-                        Background="Transparent"
-                        IsHitTestVisible="False" />
-            </Grid>
-        </Border>
+        <controls:SignaturePadView Grid.Row="1"
+                                   x:Name="Pad"
+                                   CaptureWidth="{Binding Width}"
+                                   CaptureHeight="{Binding Height}" />
 
         <StackPanel Grid.Row="2"
                     Orientation="Horizontal"

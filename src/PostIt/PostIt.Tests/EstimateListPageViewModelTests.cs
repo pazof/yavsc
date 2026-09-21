@@ -11,7 +11,8 @@ public class EstimateListPageViewModelTests
     {
         var api = new StubEstimateListApi();
         var client = new EstimateApiClient(api, "https://business.example/api/v1/");
-        var vm = new EstimateListPageViewModel(client, EstimateListPerspective.Client);
+        var front = new FrontOfficeApiClient(api, "https://business.example/api/v1/");
+        var vm = new EstimateListPageViewModel(client, EstimateListPerspective.Client, front);
 
         await vm.InitializeAsync();
 
@@ -28,7 +29,8 @@ public class EstimateListPageViewModelTests
     {
         var api = new StubEstimateListApi();
         var client = new EstimateApiClient(api, "https://business.example/api/v1/");
-        var vm = new EstimateListPageViewModel(client, EstimateListPerspective.Provider);
+        var front = new FrontOfficeApiClient(api, "https://business.example/api/v1/");
+        var vm = new EstimateListPageViewModel(client, EstimateListPerspective.Provider, front);
 
         await vm.InitializeAsync();
 
@@ -42,7 +44,8 @@ public class EstimateListPageViewModelTests
     {
         var api = new StubEstimateListApi();
         var client = new EstimateApiClient(api, "https://business.example/api/v1/");
-        var vm = new EstimateListPageViewModel(client, EstimateListPerspective.Provider);
+        var front = new FrontOfficeApiClient(api, "https://business.example/api/v1/");
+        var vm = new EstimateListPageViewModel(client, EstimateListPerspective.Provider, front);
 
         await vm.InitializeAsync();
 
@@ -63,7 +66,8 @@ public class EstimateListPageViewModelTests
     {
         var api = new StubEstimateListApi { Empty = true };
         var client = new EstimateApiClient(api, "https://business.example/api/v1/");
-        var vm = new EstimateListPageViewModel(client, EstimateListPerspective.Client);
+        var front = new FrontOfficeApiClient(api, "https://business.example/api/v1/");
+        var vm = new EstimateListPageViewModel(client, EstimateListPerspective.Client, front);
 
         await vm.InitializeAsync();
 

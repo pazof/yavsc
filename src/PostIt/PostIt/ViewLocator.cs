@@ -55,6 +55,7 @@ public class ViewLocator : IDataTemplate
             ProviderOngoingRequestsPageViewModel => services.GetRequiredService<ProviderOngoingRequestsPage>(),
             EstimateEditionPageViewModel => services.GetRequiredService<EstimateEditionPage>(),
             EstimateListPageViewModel => services.GetRequiredService<EstimateListPage>(),
+            EstimateValidationPageViewModel => services.GetRequiredService<EstimateValidationPage>(),
             null => new TextBlock { Text = "No view for <null>" },
             _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };
