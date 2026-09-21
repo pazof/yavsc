@@ -12,6 +12,8 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        CLIOptionHandler.HandleArgs(args);
+
         // Short-circuit 2nd-instance launches (OS handing us the
         // postit://callback URL) BEFORE Avalonia spins up a window.
         // If we let Avalonia initialise, the new MainWindow flashes

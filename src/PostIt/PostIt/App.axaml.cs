@@ -17,6 +17,7 @@ namespace PostIt;
 public partial class App : Application
 {
     private int _bootStarted;
+    public string? CliConfigFileSpecification {  get; private set; }
 
     /// <summary>
     /// DI container the platform entry points hand to ViewModels so
@@ -202,5 +203,10 @@ public partial class App : Application
     internal async Task GoBackAsync()
     {
         await View!.NavRoot.PopAsync();
+    }
+
+    internal void UseConfigFileWhenLoading(string configFile)
+    {
+        this.CliConfigFileSpecification = configFile;
     }
 }

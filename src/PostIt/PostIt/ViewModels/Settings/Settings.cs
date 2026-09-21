@@ -259,25 +259,13 @@ public partial class Settings : ViewModelBase
                 return;
             }
         }
-        if (Environment.GetEnvironmentVariable("POSTIT_SETTINGS_JSON") is string envJson
-            && !string.IsNullOrWhiteSpace(envJson))
+
+        var app = App.Current as App;
+        if (app!=null)
+        if (app.CliConfigFileSpecification!=null)
         {
-            Console.WriteLine("🔎 Loading settings from POSTIT_SETTINGS_JSON environment variable.");
-            FileInfo configByEnvFileInfo = new FileInfo(envJson);
-            if (!configByEnvFileInfo.Exists)
-            {
-                throw new Exception($"🩎 Settings file not found at {configByEnvFileInfo.FullName}");
-            }
-            string json = File.ReadAllText(configByEnvFileInfo.FullName);
-            ApplyJson(json, "POSTIT_SETTINGS_JSON");
-            SettingsFileFullName = configByEnvFileInfo.FullName;
-            Loaded = true;
-            return;
+            SettingsFileFullName = app.CliConfigFileSpecification;
         }
-        string configDir = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "PostIt"
-        );
 
         if (SettingsFileFullName is not null)
         {
@@ -287,10 +275,18 @@ public partial class Settings : ViewModelBase
         else if (Environment.GetEnvironmentVariable("POSTIT_SETTINGS_JSON") is string envPath
             && !string.IsNullOrWhiteSpace(envPath))
         {
-            SettingsFileFullName = envPath;
+            FileInfo configByEnvFileInfo = new FileInfo(envPath);
+            if (!configByEnvFileInfo.Exists)
+            {
+                throw new Exception($"🩎 Settings file not found at {configByEnvFileInfo.FullName}");
+            }
+            SettingsFileFullName = configByEnvFileInfo.FullName;
         }
         else
         {
+             string configDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "PostIt");
             SettingsFileFullName = Path.Combine(configDir, "postit-settings.json");
         }
 
@@ -535,6 +531,7 @@ public partial class Settings : ViewModelBase
     /// / <see cref="ApplyJson"/>).
     /// </summary>
     partial void OnIsDirtyChanged(bool value) => SaveCommand.NotifyCanExecuteChanged();
+
 
     public override bool CanNavigateNext { get => false; protected set => throw new System.NotImplementedException(); }
     public override bool CanNavigatePrevious { get => true; protected set => throw new System.NotImplementedException(); }

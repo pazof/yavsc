@@ -36,6 +36,7 @@
     <PackageReference Include="IdentityModel.OidcClient" />
     <PackageReference Include="MarkdownViewer.Core" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Mono.Options" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../Yavsc.Abstract/Yavsc.Abstract.csproj" />
