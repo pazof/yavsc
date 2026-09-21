@@ -1061,6 +1061,7 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             }
             return View();
         }
+
         [HttpPost, Authorize]
         public async Task<IActionResult> Delete(UnregisterViewModel model)
         {
