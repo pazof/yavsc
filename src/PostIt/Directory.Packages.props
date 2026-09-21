@@ -22,6 +22,7 @@
     <PackageVersion Include="Material.Avalonia" Version="3.20.0" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="Mono.Options" Version="6.12.0.148" />
     <PackageVersion Include="Xamarin.AndroidX.Browser" Version="1.10.0.1" />
     <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0.3" />
     <PackageVersion Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.11.0.1" />
