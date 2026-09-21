@@ -90,7 +90,13 @@ public class HomePageViewModel : ViewModelBase
             throw new InvalidOperationException("Client devis indisponible.");
         }
 
-        var vm = new EstimateListPageViewModel(estimateClient, perspective);
+        var frontClient = app.ServiceProvider?.GetRequiredService<FrontOfficeApiClient>();
+        if (frontClient is null)
+        {
+            throw new InvalidOperationException("Client front-office indisponible.");
+        }
+
+        var vm = new EstimateListPageViewModel(estimateClient, perspective, frontClient);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

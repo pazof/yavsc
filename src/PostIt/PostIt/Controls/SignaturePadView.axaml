@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:PostIt.Controls"
+             x:Class="PostIt.Controls.SignaturePadView"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch">
+    <!--
+        Capture surface. The SignaturePadControl is render-agnostic,
+        so we host it inside a Border that is the capture area, and
+        overlay a Canvas for the visual feedback. The code-behind
+        repaints the canvas on every RedrawRequested. The Border size
+        is driven by the CaptureWidth / CaptureHeight styled properties.
+    -->
+    <Border x:Name="PadFrame"
+            BorderBrush="Black"
+            BorderThickness="1"
+            Background="White"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            ClipToBounds="True">
+        <Grid>
+            <controls:SignaturePadControl x:Name="InnerPad" />
+            <Canvas x:Name="InkLayer"
+                    Background="Transparent"
+                    IsHitTestVisible="False" />
+        </Grid>
+    </Border>
+</UserControl>

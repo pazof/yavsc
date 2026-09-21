@@ -85,10 +85,12 @@ public partial class SignaturePageViewModel : ViewModelBase, IActionStatusViewMo
     }
 
     /// <summary>
-    /// Bind a freshly-constructed (or re-templated) control to this
-    /// VM. Called from the view's code-behind once the control has
-    /// been added to the visual tree and its template applied (so
-    /// <see cref="SignaturePadControl.CaptureArea"/> is wired).
+    /// Bind the inner <see cref="SignaturePadControl"/> of the page's
+    /// <see cref="SignaturePadView"/> to this VM. Called from the
+    /// page's code-behind once the view is in the visual tree (so the
+    /// control's <see cref="SignaturePadControl.CaptureArea"/> is
+    /// wired). Attaching to the control directly (rather than the
+    /// view) keeps the same contract the headless tests use.
     /// </summary>
     public void Attach(SignaturePadControl control)
     {

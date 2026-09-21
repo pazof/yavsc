@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PostIt.Helpers;
@@ -32,6 +33,7 @@ public enum EstimateListPerspective
 public partial class EstimateListPageViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly EstimateApiClient _estimateClient;
+    private readonly FrontOfficeApiClient _frontClient;
     private readonly EstimateListPerspective _perspective;
     private List<EstimateDto> _allEstimates = new();
 
@@ -83,10 +85,14 @@ public partial class EstimateListPageViewModel : ViewModelBase, IActionStatusVie
         protected set { _ = value; }
     }
 
-    public EstimateListPageViewModel(EstimateApiClient estimateClient, EstimateListPerspective perspective)
+    public EstimateListPageViewModel(
+        EstimateApiClient estimateClient,
+        EstimateListPerspective perspective,
+        FrontOfficeApiClient frontClient)
     {
         _estimateClient = estimateClient ?? throw new ArgumentNullException(nameof(estimateClient));
         _perspective = perspective;
+        _frontClient = frontClient ?? throw new ArgumentNullException(nameof(frontClient));
     }
 
     public Task InitializeAsync() => RefreshAsync();
@@ -153,4 +159,25 @@ public partial class EstimateListPageViewModel : ViewModelBase, IActionStatusVie
     private static bool ContainsInsensitive(string? value, string query)
         => !string.IsNullOrWhiteSpace(value)
            && value.Contains(query, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Open the estimate validation (accept/reject with signature)
+    /// page for a specific estimate. The perspective the list was
+    /// opened in is forwarded as the actor-role UI hint; the server
+    /// independently enforces the real authorization.
+    /// </summary>
+    [RelayCommand]
+    private async Task OpenEstimateAsync(EstimateDto? estimate)
+    {
+        if (estimate is null) return;
+
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var vm = new EstimateValidationPageViewModel(estimate, _perspective, _frontClient);
+        await app.PushPageAsync(vm).ConfigureAwait(true);
+    }
 }

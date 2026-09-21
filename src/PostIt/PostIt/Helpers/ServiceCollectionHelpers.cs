@@ -31,6 +31,7 @@ public static class ServiceCollectionHelpers
             () => settings.Authentication?.Authority);
         var billingClient = new BillingApiClient(api, () => settings.ApiUrl);
         var estimateClient = new EstimateApiClient(api, () => settings.ApiUrl);
+        var frontClient = new FrontOfficeApiClient(api, () => settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
         var reverseGeocoding = new NominatimReverseGeocodingService();
 
@@ -63,6 +64,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<ProviderOngoingRequestsPage>();
         services.AddTransient<EstimateEditionPage>();
         services.AddTransient<EstimateListPage>();
+        services.AddTransient<EstimateValidationPage>();
 
         // ViewModels
         services.AddSingleton(settings);
@@ -74,6 +76,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(activityClient);
         services.AddSingleton(billingClient);
         services.AddSingleton(estimateClient);
+        services.AddSingleton(frontClient);
         services.AddSingleton<IReverseGeocodingService>(reverseGeocoding);
         services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddSingleton<HomePageViewModel>();
