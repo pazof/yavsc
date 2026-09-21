@@ -3,6 +3,7 @@ using System.Net.Http;
 using IdentityServer8.Stores;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Yavsc.Tests.Shared;
 using Xunit;
 
 namespace Yavsc.Org.Tests.Smoke;
@@ -64,5 +65,27 @@ public class AccountSmokeTests : IClassFixture<TestWebApplicationFactory>
         Assert.NotNull(location);
         Assert.Equal("/signin", location.AbsolutePath);
         Assert.Contains("ReturnUrl=%2FEstimate", location.Query);
+    }
+
+    // Regression: the POST Delete action existed, but neither the GET
+    // Delete view nor a rendered confirmation page was reachable —
+    // Views/Account/Delete.cshtml was missing. An authenticated GET
+    // must now return the confirmation page (200).
+    [Fact]
+    public async Task Authenticated_get_account_delete_returns_confirmation_page()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+        });
+        client.DefaultRequestHeaders.Add(
+            TestAuthPolicyProvider.HeaderName, TestAuthPolicyProvider.AdminRole);
+
+        var response = await client.GetAsync("/Account/Delete", TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync(
+            TestContext.Current.CancellationToken);
+        Assert.Contains("Supprimer mon compte", body);
     }
 }
