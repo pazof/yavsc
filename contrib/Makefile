@@ -9,12 +9,12 @@ include .$(APP_INSTALL_ENV).env
 
 reinstall: copy-binaries
 	@for project in $(APP_PROJECT_NAMES); do \
-		echo "🚀 Starting $(APP_INSTALL_PREFIX)yavsc$${project}" \
+		echo "🚀 Starting $(APP_INSTALL_PREFIX)yavsc$${project}" ; \
 		sudo systemctl start $(APP_INSTALL_PREFIX)yavsc$${project} ; done
 	@echo "💯 backend started"
 
 reinstall-prod:
-	make APP_INSTALL_ENV= APP_INSTALL_PREFIX= APP_INSTALL_ENV=production
+	make reinstall APP_INSTALL_ENV= APP_INSTALL_PREFIX= APP_INSTALL_ENV=production
 
 generated/$(APP_INSTALL_PREFIX)yavscOrg.service:
 generated/$(APP_INSTALL_PREFIX)yavscBlogs.service:
@@ -82,14 +82,16 @@ install: copy-binaries copy-services
 	@sudo systemctl daemon-reload
 	@for project in $(APP_PROJECT_NAMES); \
 	do \
-		sudo systemctl enable yavsc$${project} ; \
-		sudo systemctl start yavsc$${project} ; \
+	  echo "🖒 enable $(APP_INSTALL_PREFIX)yavsc$${project}" ; \
+		sudo systemctl enable $(APP_INSTALL_PREFIX)yavsc$${project} ; \
+	  echo "🚀 start $(APP_INSTALL_PREFIX)yavsc$${project}" ; \
+		sudo systemctl start $(APP_INSTALL_PREFIX)yavsc$${project} ; \
 	done
-
 
 stop-services:
 	@for project in $(APP_PROJECT_NAMES); \
 	do \
+	  echo "🔥 Stopping $(APP_INSTALL_PREFIX)yavsc$${project}" ; \
 		sudo systemctl stop $(APP_INSTALL_PREFIX)yavsc$${project} ; \
 	done
 
