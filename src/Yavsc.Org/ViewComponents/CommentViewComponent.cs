@@ -18,7 +18,10 @@ namespace Yavsc.ViewComponents
         }
         public async Task<IViewComponentResult> InvokeAsync(long id)
         {
-            var comment = await context.Comment.Include(c=>c.Children).FirstOrDefaultAsync(c => c.Id==id);
+            var comment = await context.Comment
+                .Include(c => c.Children)
+                .Include(c => c.Author)
+                .FirstOrDefaultAsync(c => c.Id==id);
             if (comment == null) 
                 throw new InvalidOperationException();
             ViewBag.apictlr = "/api/v1/blogcomments";

@@ -1,102 +1,231 @@
 @model BlogPost
 @{
-    ViewBag.Title=Model.Title;
+    ViewBag.Title = Model.Title;
 }
-@section scripts {
-
-    <script src="~/js/comment.js" asp-append-version="true"></script>
-    <script>
-        $.psc.blogcomment.prototype.options.lang = '@System.Globalization.CultureInfo.CurrentUICulture.Name';
-        $.psc.blogcomment.prototype.options.apictrlr = '/api/v1/blogcomments';
-        $.psc.blogcomment.prototype.options.authorId = '@User.GetUserId()';
-        $.psc.blogcomment.prototype.options.authorName = '@User.GetUserName()';
-        $(document).ready(function() {
-            $('#cmtBtn').click(function() {
-                $.ajax({
-                    async: true,
-                    cache: false,
-                    type: 'POST',
-                    method: 'POST',
-                    contentType:  "application/json",
-                    data: JSON.stringify({
-                        Article: $('#Comment').val(),
-                        ReceiverId: @Model.Id
-                        }),
-                    error: function(xhr,data) {
-                        if (xhr.status === 400)
-                        {
-                            if (xhr.responseJSON)
-                            {
-                            $('#commentValidation').html(
-                                xhr.responseJSON.Article);
-                            } else {
-$('#commentValidation').html(
-                            "Une erreur est survenue : "+xhr.status+"<br/>"+
-                            "<code><pre>"+xhr.responseText+"</pre></code>"
-                            )
-                            }
-                        }
-
-                    },
-                    success: function (data) {
-                        var comment = $('#Comment').val();
-                        $('#Comment').val('');
-                        $('#commentValidation').empty();
-                        var nnode = '<div data-type="blogcomment" data-id="'+data.id+'" data-allow-edit="True" data-allow-moderate="@ViewBag.moderatoFlag" data-date="'+data.dateCreated+'" data-username="@User.GetUserName()">'+comment+'</div>';
-                        $('#comments').append($(nnode).blogcomment())
-                    },
-                    url:'/api/v1/blogcomments'
-                    });
-            });
-        })
-    </script>
+@section header {
     <style>
-        .avatar, .commentmeta, .blogcomment p ,  .subcomments {
-            display: inline-block;
+        .blog-details .post {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1rem;
+            align-items: start;
+            margin-bottom: 1.5rem;
+        }
+        .blog-details .post-photo {
+            width: 128px;
+            height: 128px;
+            object-fit: cover;
+            border-radius: .375rem;
+        }
+        .blog-details .post-title {
+            margin: 0 0 .25rem;
+        }
+        .blog-details .post-meta {
+            font-size: .85rem;
+            color: var(--bs-secondary-color, #6c757d);
+            margin-bottom: .5rem;
+        }
+        .blog-details .post-article {
+            grid-column: 1 / -1;
+        }
+        #comments {
+            margin-top: 1.5rem;
         }
         .blogcomment {
-            display: inline-block;
-            margin:.3em;
+            margin: .3em 0;
+            padding: .5rem .75rem;
+            border-left: 3px solid var(--bs-border-color, #dee2e6);
+            background: var(--bs-tertiary-bg, #f8f9fa);
+            border-radius: .25rem;
+        }
+        .blogcomment .comment-body > :last-child {
+            margin-bottom: 0;
+        }
+        .blogcomment .commentmeta {
+            display: block;
+            font-size: .75rem;
+            color: var(--bs-secondary-color, #6c757d);
+            margin-top: .25rem;
+        }
+        .blogcomment .reply-btn {
+            padding: 0;
+            font-size: .75rem;
+        }
+        .subcomments {
+            margin-left: 1.25rem;
+            margin-top: .5rem;
+        }
+        .reply-form {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            margin: .5rem 0;
+            max-width: 40rem;
+        }
+        .reply-form .form-control {
+            flex: 1;
+        }
+        .comment-form .input-group {
+            max-width: 40rem;
+        }
+        #commentValidation,
+        .reply-validation {
+            color: var(--bs-danger, #dc3545);
+            font-size: .8rem;
         }
     </style>
 }
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            var api = '/api/v1/blogcomments';
+            var receiverId = @Model.Id;
+            var userName = @Json.Serialize(User.GetUserName());
+            // Reply buttons are rendered server-side only when the
+            // user is authenticated, so a non-empty userName here
+            // means freshly appended nodes may carry one too.
+            var canReply = !!userName;
 
-    <div class="post">
-        <div class="float-left">
-            <img class="photo" src="@Model.Photo" >
+            // Build a plain, escaped comment node from a just-posted
+            // comment. The server-side Comment view component is what
+            // markdown-renders and decorates persisted comments; a
+            // newly created one is plain text until the page reloads.
+            function buildCommentNode(text, data, parentId) {
+                var $node = $('<div class="blogcomment"></div>')
+                    .attr('data-type', 'blogcomment')
+                    .attr('data-id', data.id)
+                    .attr('data-receiver-id', receiverId);
+                if (parentId != null) $node.attr('data-parent-id', parentId);
+                $node.append($('<div class="comment-body"></div>').append($('<p></p>').text(text)));
+                $node.append($('<span class="commentmeta"></span>')
+                    .text('— ' + (userName || 'Vous') + ', posté à ' + new Date(data.dateCreated).toLocaleTimeString()));
+                if (canReply) {
+                    $node.append($('<button type="button" class="btn btn-link btn-sm reply-btn">Répondre</button>'));
+                }
+                $node.append($('<div class="subcomments"></div>'));
+                return $node;
+            }
+
+            function postComment(text, parentId, $validation) {
+                return $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json',
+                    url: api,
+                    data: JSON.stringify({
+                        Article: text,
+                        ReceiverId: receiverId,
+                        ParentId: parentId
+                    })
+                }).fail(function (xhr) {
+                    var msg;
+                    if (xhr.status === 400 && xhr.responseJSON) {
+                        msg = xhr.responseJSON.Article || xhr.responseJSON.title || 'Validation error';
+                    } else {
+                        msg = 'Une erreur est survenue : ' + xhr.status;
+                    }
+                    ($validation || $('#commentValidation')).text(msg);
+                });
+            }
+
+            // Top-level comment form.
+            $('#cmtBtn').click(function () {
+                var text = $('#Comment').val();
+                if (!text) return;
+                $('#commentValidation').empty();
+                postComment(text, null, $('#commentValidation')).done(function (data) {
+                    $('#comments').append(buildCommentNode(text, data, null));
+                    $('#Comment').val('');
+                });
+            });
+
+            // Tree replies — delegated so it works for every nested
+            // comment, including ones appended at runtime.
+            $('#comments').on('click', '.reply-btn', function () {
+                var $comment = $(this).closest('[data-type="blogcomment"]');
+                // Toggle: if a reply form is already open for this
+                // comment, close it instead of opening a second one.
+                var $existing = $comment.children('.reply-form');
+                if ($existing.length) { $existing.remove(); return; }
+
+                var $form = $('<div class="reply-form"></div>');
+                $form.append('<input class="form-control reply-input" placeholder="..." />');
+                $form.append('<button type="button" class="btn btn-secondary reply-submit">Envoyer</button>');
+                $form.append('<span class="reply-validation"></span>');
+                // Insert before this comment's .subcomments so nested
+                // replies land in the right place.
+                $comment.children('.subcomments').before($form);
+                $form.find('.reply-input').focus();
+            });
+
+            $('#comments').on('click', '.reply-submit', function () {
+                var $form = $(this).closest('.reply-form');
+                var $comment = $form.closest('[data-type="blogcomment"]');
+                var parentId = parseInt($comment.attr('data-id'), 10);
+                var text = $form.find('.reply-input').val();
+                if (!text) return;
+                var $val = $form.find('.reply-validation');
+                $val.empty();
+                postComment(text, parentId, $val).done(function (data) {
+                    var $sub = $comment.children('.subcomments');
+                    $sub.append(buildCommentNode(text, data, parentId));
+                    $form.remove();
+                });
+            });
+        });
+    </script>
+}
+
+<div class="blog-details">
+    <div class="post card">
+        @if (!string.IsNullOrEmpty(Model.Photo))
+        {
+            <img class="post-photo" src="@Model.Photo" alt="@Model.Title" />
+        }
+        <div>
+            <h1 class="post-title">@Model.Title</h1>
+            <div class="post-meta">
+                @Html.DisplayFor(m => m.Author)
+                @if (Model.DateModified > Model.DateCreated)
+                {
+                    <span> · modifié le @Model.DateModified.ToString("dddd d MMM yyyy à H:mm")</span>
+                }
+                else
+                {
+                    <span> · posté le @Model.DateCreated.ToString("dddd d MMM yyyy à H:mm")</span>
+                }
+            </div>
         </div>
-
-        <h1 ismarkdown>@Model.Title</h1>
-
-        @Html.DisplayFor(m=>m.Author)
-        <markdown>@Html.DisplayFor(m=>m.Article)</markdown>
-
+        <div class="post-body post-article">
+            <markdown>@Model.Article</markdown>
+        </div>
     </div>
 
     <div id="comments">
-        @if (Model.Comments!=null) {
-            foreach (var comment in Model.Comments.Where(c=>c.ParentId==null)) {
+        @if (Model.Comments != null)
+        {
+            foreach (var comment in Model.Comments.Where(c => c.ParentId == null))
+            {
                 @await Component.InvokeAsync("Comment", new { id = comment.Id })
             }
         }
     </div>
-@if (User.GetUserId()!=null) {
-    <div class="form-horizontal">
-        <div class="input-group" >
-            <input name="Comment" id="Comment" class="form-control" placeholder="..."/>
-            <span class="input-group-btn">
-                <span id="commentValidation"></span>
-                <input type="button" value="Comment" class="btn btn-secondary"
-                data-receiverId="@Model.Id" id="cmtBtn"
-                 />
-            </span>
+
+    @if (User.GetUserId() != null)
+    {
+        <div class="comment-form form-horizontal">
+            <div class="input-group">
+                <input name="Comment" id="Comment" class="form-control" placeholder="..." />
+                <span class="input-group-btn">
+                    <span id="commentValidation"></span>
+                    <input type="button" value="Comment" class="btn btn-secondary" id="cmtBtn" />
+                </span>
+            </div>
         </div>
-        <span asp-validation-for="Article" class="text-danger" ></span>
-    </div>
     }
-    else {
-        <p><i>Vous devez être identifié pour commenter.</i> </p>
+    else
+    {
+        <p><i>Vous devez être identifié pour commenter.</i></p>
     }
 
     <a asp-action="Index" class="btn btn-link">Back to List</a>
-
+</div>

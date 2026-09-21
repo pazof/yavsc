@@ -1,16 +1,30 @@
 @model Comment
 
-<div data-type="blogcomment" data-id="@Model.Id" data-receiver-id="@Model.ReceiverId" data-allow-edit="@(User.GetUserId()==Model.AuthorId?"true":"false")"
-        data-allow-moderate="@ViewBag.moderatoFlag" data-date="@Model.DateCreated.ToString("yyyy-MM-dd hh:mm:ss")" data-username="@Model.Author.UserName" >
+<div class="blogcomment" data-type="blogcomment"
+     data-id="@Model.Id"
+     data-receiver-id="@Model.ReceiverId"
+     data-allow-edit="@(User.GetUserId()==Model.AuthorId?"true":"false")"
+     data-allow-moderate="@ViewBag.moderatoFlag"
+     data-date="@Model.DateCreated.ToString("yyyy-MM-dd hh:mm:ss")"
+     data-username="@(Model.Author?.UserName)">
+    <div class="comment-body">
         <markdown>@Model.Article</markdown>
-
- @if (Model.Children!=null) {
-    <div class="subcomments">
-            @foreach (var comment in Model.Children)
-            {
-                @await this.Component.InvokeAsync("Comment", new { id = comment.Id});
-            }
     </div>
-}
+    <span class="commentmeta">
+        — @(Model.Author?.UserName ?? "Anonyme"),
+        posté le @Model.DateCreated.ToString("dddd d MMM yyyy à H:mm")
+    </span>
+    @if (User.GetUserId() != null)
+    {
+        <button type="button" class="btn btn-link btn-sm reply-btn">Répondre</button>
+    }
+    <div class="subcomments">
+        @if (Model.Children != null)
+        {
+            foreach (var comment in Model.Children)
+            {
+                @await this.Component.InvokeAsync("Comment", new { id = comment.Id })
+            }
+        }
+    </div>
 </div>
-
