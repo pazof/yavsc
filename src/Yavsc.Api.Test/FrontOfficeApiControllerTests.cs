@@ -1,6 +1,8 @@
+using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Api.Test.Fixtures;
 using Yavsc.Helpers;
@@ -243,5 +245,37 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
             TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Estimate_payload_carries_existing_signature_strokes()
+    {
+        var (queryId, estimateId) = SeedQuery(withEstimate: true);
+
+        // Provider accepts with a signature.
+        using (var pro = NewClient(subject: "alice"))
+        {
+            var r = await pro.PostAsync(
+                $"/api/v1/front/query/accept?billingCode=Rdv&queryId={queryId}",
+                WithSignature(),
+                TestContext.Current.CancellationToken);
+            Assert.True(r.IsSuccessStatusCode, await r.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        }
+
+        // The estimate read endpoint carries the signature strokes on
+        // the estimate payload, so PostIt can repaint them on reopen.
+        using var reader = NewClient(subject: "alice");
+        var response = await reader.GetAsync(
+            $"/api/v1/estimate/{estimateId}",
+            TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>(TestContext.Current.CancellationToken);
+        var sigs = body.GetProperty("signatures");
+        Assert.Equal(JsonValueKind.Array, sigs.ValueKind);
+        var first = sigs.EnumerateArray().First();
+        // SignatureType.Pro = 0.
+        Assert.Equal(0, first.GetProperty("type").GetInt32());
+        Assert.Equal(JsonValueKind.Array, first.GetProperty("strokes").ValueKind);
     }
 }

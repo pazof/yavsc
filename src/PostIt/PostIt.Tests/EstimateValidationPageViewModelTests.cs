@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using PostIt.Controls;
 using PostIt.ViewModels;
@@ -130,6 +131,51 @@ public class EstimateValidationPageViewModelTests
 
         Assert.Contains("prestataire", pro.RoleLabel, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("client", cli.RoleLabel, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Load_existing_signature_renders_loaded_strokes_in_pad()
+    {
+        var strokes = new[] { 1, 5000, 5000 };
+        var front = new FrontOfficeApiClient(new RecordingApi(), "https://business.example/api/v1/");
+        var estimate = SampleEstimate();
+        estimate.Signatures = new List<EstimateSignatureDto>
+        {
+            new() { Type = 0, Strokes = strokes, CoordinateMax = 10_000 },
+        };
+        var vm = new EstimateValidationPageViewModel(estimate, EstimateListPerspective.Provider, front);
+
+        var pad = new SignaturePadControl();
+        vm.Attach(pad);
+
+        var snap = pad.Snapshot();
+        Assert.False(snap.IsEmpty);
+        Assert.Equal(strokes, snap.Strokes);
+        Assert.True(vm.HasSignature);
+    }
+
+    [Fact]
+    public void Load_existing_signature_picks_side_by_perspective()
+    {
+        var proStrokes = new[] { 1, 1000, 1000 };
+        var cliStrokes = new[] { 1, 9000, 9000 };
+        var front = new FrontOfficeApiClient(new RecordingApi(), "https://business.example/api/v1/");
+        var estimate = SampleEstimate();
+        estimate.Signatures = new List<EstimateSignatureDto>
+        {
+            new() { Type = 0, Strokes = proStrokes },
+            new() { Type = 1, Strokes = cliStrokes },
+        };
+
+        var proPad = new SignaturePadControl();
+        var proVm = new EstimateValidationPageViewModel(estimate, EstimateListPerspective.Provider, front);
+        proVm.Attach(proPad);
+        Assert.Equal(proStrokes, proPad.Snapshot().Strokes);
+
+        var cliPad = new SignaturePadControl();
+        var cliVm = new EstimateValidationPageViewModel(estimate, EstimateListPerspective.Client, front);
+        cliVm.Attach(cliPad);
+        Assert.Equal(cliStrokes, cliPad.Snapshot().Strokes);
     }
 
     private sealed class RecordingApi : IYavscApiClient
