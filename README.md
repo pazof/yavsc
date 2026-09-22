@@ -73,7 +73,7 @@ systemd `yavscApi`.
 Sous Debian/Ubuntu :
 
 ```bash
-sudo apt install texlive-binaries texlive-luatex
+sudo apt install texlive-binaries texlive-luatex texlive-pictures texlive-fonts-extra
 ```
 
 - `texlive-binaries` fournit l'exécutable `lualatex` (collection basic).
@@ -82,6 +82,11 @@ sudo apt install texlive-binaries texlive-luatex
   `module 'luaotfload-main' not found … Emergency stop` et ne produit aucun PDF.
   (Sur les Debian récents, `luaotfload` a migré de `texlive-latex-extra` vers
   `texlive-luatex` — avoir `texlive-latex-extra` seul ne suffit plus.)
+- `texlive-pictures` fournit `tikz`/`pgf`, utilisé pour dessiner les signatures
+  du client et du fournisseur en bas du devis (vecteur, pas de PNG).
+- `texlive-fonts-extra` fournit la fonte `bera` chargée par le modèle de devis.
+  Sans elle, lualatex s'arrête sur `! LaTeX Error: File 'bera.sty' not found`
+  (`Emergency stop`, aucun PDF).
 
 Sur un hôte sans `lualatex`, les endpoints PDF renvoient une erreur 500 « PDF
 generation failed » ; l'endpoint TeX (`estimate.tex`) reste utilisable et permet
