@@ -134,7 +134,13 @@ namespace Yavsc.Helpers
             // directory. lualatex is a file-based engine — it cannot emit
             // the PDF on stdout — so the pdf lands at its final destination
             // and we only clean the transient aux/log artifacts beside it.
+            //
+            // We capture stdout/stderr so a LaTeX error (missing .sty,
+            // missing \includegraphics target, …) is surfaced in
+            // GenerationErrorMessage instead of being buried in the .log
+            // we then delete.
             int exitCode;
+            string stdout = null, stderr = null;
             try
             {
                 using (Process p = new Process())
@@ -147,14 +153,21 @@ namespace Yavsc.Helpers
                         Arguments = $"-interaction=nonstopmode -halt-on-error"
                             + $" -jobname=\"{name}\" -output-directory=\"{billdir}\"",
                         RedirectStandardInput = true,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
                     };
                     p.Start();
+                    // Write the TeX source, then drain stdout/stderr. Read
+                    // them after WaitForExit — lualatex's output is small
+                    // (a few KB), well under the pipe buffer, so no deadlock.
                     using (var stdin = p.StandardInput)
                     {
                         stdin.Write(Model.TeXSource);
                     }
                     p.WaitForExit();
                     exitCode = p.ExitCode;
+                    stdout = p.StandardOutput.ReadToEnd();
+                    stderr = p.StandardError.ReadToEnd();
                 }
             }
             catch (Exception ex)
@@ -164,15 +177,24 @@ namespace Yavsc.Helpers
             }
 
             if (exitCode != 0 && errorMsg == null)
-                errorMsg = $"Pdf generation failed with exit code: {exitCode}";
+            {
+                // Surface the engine's own diagnostics (stderr carries the
+                // "! Emergency stop" / "! LaTeX Error: …" lines; stdout has
+                // the transcript banner) so the caller can see why it failed
+                // without having to find the (soon-deleted) .log file.
+                var diag = string.IsNullOrWhiteSpace(stderr) ? stdout : stderr;
+                errorMsg = $"Pdf generation failed with exit code {exitCode}: {diag}";
+            }
             else if (!fo.Exists && errorMsg == null)
                 errorMsg = "Pdf generation produced no output";
 
             // Remove the LaTeX build artifacts left beside the pdf so only
-            // <name>.pdf persists in the bills directory.
+            // <name>.pdf persists in the bills directory. Keep the .log on
+            // failure so it can be inspected.
             foreach (var ext in new[] { ".aux", ".log", ".out", ".fls",
                         ".fdb_latexmk", ".synctex.gz", ".toc" })
             {
+                if (ext == ".log" && !fo.Exists) continue;
                 var f = new FileInfo(System.IO.Path.Combine(billdir, name + ext));
                 if (f.Exists) { try { f.Delete(); } catch { } }
             }
