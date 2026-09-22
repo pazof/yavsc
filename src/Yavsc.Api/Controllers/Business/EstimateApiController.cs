@@ -216,14 +216,16 @@ namespace Yavsc.Controllers
         }
 
         // GET: api/estimate/asprovider
-        // Ongoing estimates (not yet validated by the client) established
-        // by the current user as the provider.
+        // Estimates awaiting the provider's signature, established by the
+        // current user as the provider. Once the provider validates
+        // (ProviderValidationDate stamped), the estimate leaves this list
+        // and appears in the client's "awaiting client signature" list.
         [HttpGet("asprovider")]
         public IActionResult GetOngoingEstimatesAsProvider()
         {
             var uid = User.GetUserId();
             return Ok(_context.Estimates.Include(e => e.Bill).Include(e => e.Signatures)
-                .Where(e => e.OwnerId == uid && e.ClientValidationDate == default));
+                .Where(e => e.OwnerId == uid && e.ProviderValidationDate == default));
         }
 
         protected override void Dispose(bool disposing)

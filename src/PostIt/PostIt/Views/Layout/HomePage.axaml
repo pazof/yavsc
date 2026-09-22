@@ -26,11 +26,11 @@
               Command="{Binding OpenProviderRequests}"
               HorizontalAlignment="Center"
               IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
-          <Button Content="Mes devis à valider"
+          <Button Content="Devis en attente de signature client"
               Command="{Binding OpenClientEstimates}"
               HorizontalAlignment="Center"
               IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
-          <Button Content="Mes devis en attente"
+          <Button Content="Devis en attente de signature fournisseur"
               Command="{Binding OpenProviderEstimates}"
               HorizontalAlignment="Center"
               IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>

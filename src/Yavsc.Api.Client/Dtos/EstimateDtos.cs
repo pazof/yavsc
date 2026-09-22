@@ -41,32 +41,34 @@ public sealed class EstimateDto
     public DateTime ClientValidationDate { get; set; }
 
     /// <summary>
-    /// Signatures already captured against this estimate (Pro and/or
-    /// Client), as returned with the estimate payload. Each carries the
-    /// PostIt wire-format <see cref="EstimateSignatureDto.Strokes"/>
-    /// so the pad can repaint a previously drawn signature on reopen
-    /// without a second round-trip. Null/empty when nobody has signed.
+    /// The provider's signature on this estimate, or null when the
+    /// provider has not signed. Carries the PostIt wire-format
+    /// <see cref="EstimateSignatureDto.Strokes"/> so the pad can
+    /// repaint a previously drawn signature on reopen without a second
+    /// round-trip.
     /// </summary>
-    public List<EstimateSignatureDto>? Signatures { get; set; }
+    public EstimateSignatureDto? SignaturePro { get; set; }
+
+    /// <summary>
+    /// The client's signature on this estimate, or null when the
+    /// client has not signed.
+    /// </summary>
+    public EstimateSignatureDto? SignatureClient { get; set; }
 }
 
 /// <summary>
 /// One stored signature on an estimate, mirroring the JSON shape of
 /// the server-side <c>Yavsc.Models.Billing.Signature</c> entity. The
 /// <see cref="Strokes"/> are the same PostIt wire-format payload that
-/// was captured and are loaded back into the pad unchanged.
+/// was captured and are loaded back into the pad unchanged. The side
+/// (Pro/Client) is implicit in which property of
+/// <see cref="EstimateDto"/> carries this DTO, so no <c>Type</c>
+/// field is needed.
 /// </summary>
 public sealed class EstimateSignatureDto
 {
     public long Id { get; set; }
     public long EstimateId { get; set; }
-    /// <summary>
-    /// Who signed, as the integer value of the server
-    /// <c>SignatureType</c> enum: <c>0</c> = Pro (provider),
-    /// <c>1</c> = Client. Matched by value on the client so PostIt
-    /// need not reference the server enum.
-    /// </summary>
-    public int Type { get; set; }
     public int CoordinateMax { get; set; }
     public DateTime CapturedAtUtc { get; set; }
     public int[]? Strokes { get; set; }

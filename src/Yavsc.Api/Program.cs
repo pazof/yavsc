@@ -55,7 +55,11 @@ internal class Program
                 });
             })
             .AddYavscCors(builder.Configuration)
-            .AddControllers();
+            .AddControllersWithViews();
+
+        // Binds the "Site" section (Bills, TempDir, Avatars, …) used by
+        // the document-generation flow and BillingController.
+        services.Configure<SiteSettings>(builder.Configuration.GetSection("Site"));
 
         // accepts any access token issued by identity server
         services.AddAuthentication("Bearer")

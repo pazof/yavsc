@@ -4,12 +4,13 @@ using System.Net.Http;
 using PostIt.Controls;
 using PostIt.ViewModels;
 using Yavsc.Api.Client;
+using Yavsc.Models.Billing;
 
 namespace PostIt.Tests;
 
 /// <summary>
-/// Verifies <see cref="EstimateValidationPageViewModel"/> wires the
-/// signature pad + perspective into the right
+/// Verifies <see cref="EstimateValidationPageViewModel"/> wires the two
+/// signature pads (provider + client) into the right
 /// <see cref="FrontOfficeApiClient"/> call. The view (XAML, rendering)
 /// is not tested here; the VM is driven through the same
 /// <see cref="SignaturePadControl"/> test hooks the signature tests use,
@@ -46,9 +47,10 @@ public class EstimateValidationPageViewModelTests
         var vm = new EstimateValidationPageViewModel(
             SampleEstimate(), EstimateListPerspective.Provider, front);
 
-        var pad = new SignaturePadControl();
-        vm.Attach(pad);
-        DrawOneStroke(pad);
+        var proPad = new SignaturePadControl();
+        var clientPad = new SignaturePadControl();
+        vm.Attach(proPad, clientPad);
+        DrawOneStroke(proPad); // provider signs on their writable pad
 
         await vm.ValidateAsync();
 
@@ -60,6 +62,28 @@ public class EstimateValidationPageViewModelTests
         Assert.NotNull(body.Strokes);
         Assert.NotEmpty(body.Strokes);
         Assert.Equal(10_000, body.CoordinateMax);
+        // The provider perspective declares the Pro side, so the
+        // server stores the signature under the provider's author
+        // regardless of role inference.
+        Assert.Equal(SignatureType.Pro, body.SignatureType);
+    }
+
+    [Fact]
+    public async Task Validate_from_client_perspective_declares_client_side()
+    {
+        var api = new RecordingApi();
+        var front = new FrontOfficeApiClient(api, "https://business.example/api/v1/");
+        var vm = new EstimateValidationPageViewModel(
+            SampleEstimate(), EstimateListPerspective.Client, front);
+
+        var cliPad = new SignaturePadControl();
+        vm.Attach(new SignaturePadControl(), cliPad);
+        DrawOneStroke(cliPad); // client signs on their writable pad
+
+        await vm.ValidateAsync();
+
+        var body = Assert.IsType<QueryAcceptanceRequestDto>(api.LastBody);
+        Assert.Equal(SignatureType.Client, body.SignatureType); // Client side
     }
 
     [Fact]
@@ -70,7 +94,7 @@ public class EstimateValidationPageViewModelTests
         var vm = new EstimateValidationPageViewModel(
             SampleEstimate(), EstimateListPerspective.Client, front);
 
-        vm.Attach(new SignaturePadControl());
+        vm.Attach(new SignaturePadControl(), new SignaturePadControl());
 
         await vm.RejectAsync();
 
@@ -88,7 +112,7 @@ public class EstimateValidationPageViewModelTests
         var vm = new EstimateValidationPageViewModel(
             SampleEstimate(), EstimateListPerspective.Provider, front);
 
-        vm.Attach(new SignaturePadControl()); // empty pad
+        vm.Attach(new SignaturePadControl(), new SignaturePadControl()); // empty pads
 
         await vm.ValidateAsync(); // no throw: returns before GoBack
 
@@ -104,19 +128,19 @@ public class EstimateValidationPageViewModelTests
         var vm = new EstimateValidationPageViewModel(
             SampleEstimate(commandId: null), EstimateListPerspective.Provider, front);
 
-        var pad = new SignaturePadControl();
-        vm.Attach(pad);
+        var proPad = new SignaturePadControl();
+        vm.Attach(proPad, new SignaturePadControl());
 
         // No CommandId ⇒ cannot validate even after signing.
-        DrawOneStroke(pad);
+        DrawOneStroke(proPad);
         Assert.False(vm.ValidateCommand.CanExecute(null));
 
         var vm2 = new EstimateValidationPageViewModel(
             SampleEstimate(), EstimateListPerspective.Provider, front);
-        var pad2 = new SignaturePadControl();
-        vm2.Attach(pad2);
+        var proPad2 = new SignaturePadControl();
+        vm2.Attach(proPad2, new SignaturePadControl());
         Assert.False(vm2.ValidateCommand.CanExecute(null)); // no signature yet
-        DrawOneStroke(pad2);
+        DrawOneStroke(proPad2);
         Assert.True(vm2.ValidateCommand.CanExecute(null));
     }
 
@@ -134,48 +158,67 @@ public class EstimateValidationPageViewModelTests
     }
 
     [Fact]
-    public void Load_existing_signature_renders_loaded_strokes_in_pad()
+    public void Only_the_author_pad_is_writable()
     {
-        var strokes = new[] { 1, 5000, 5000 };
         var front = new FrontOfficeApiClient(new RecordingApi(), "https://business.example/api/v1/");
-        var estimate = SampleEstimate();
-        estimate.Signatures = new List<EstimateSignatureDto>
-        {
-            new() { Type = 0, Strokes = strokes, CoordinateMax = 10_000 },
-        };
-        var vm = new EstimateValidationPageViewModel(estimate, EstimateListPerspective.Provider, front);
 
-        var pad = new SignaturePadControl();
-        vm.Attach(pad);
+        var proVm = new EstimateValidationPageViewModel(
+            SampleEstimate(), EstimateListPerspective.Provider, front);
+        var proPad = new SignaturePadControl();
+        var cliPad = new SignaturePadControl();
+        proVm.Attach(proPad, cliPad);
+        Assert.False(proPad.IsReadOnly);  // provider writes the Pro pad
+        Assert.True(cliPad.IsReadOnly);
 
-        var snap = pad.Snapshot();
-        Assert.False(snap.IsEmpty);
-        Assert.Equal(strokes, snap.Strokes);
-        Assert.True(vm.HasSignature);
+        var cliVm = new EstimateValidationPageViewModel(
+            SampleEstimate(), EstimateListPerspective.Client, front);
+        var proPad2 = new SignaturePadControl();
+        var cliPad2 = new SignaturePadControl();
+        cliVm.Attach(proPad2, cliPad2);
+        Assert.True(proPad2.IsReadOnly);
+        Assert.False(cliPad2.IsReadOnly); // client writes the Client pad
     }
 
     [Fact]
-    public void Load_existing_signature_picks_side_by_perspective()
+    public void Load_existing_signatures_renders_both_sides_in_their_pads()
     {
         var proStrokes = new[] { 1, 1000, 1000 };
         var cliStrokes = new[] { 1, 9000, 9000 };
         var front = new FrontOfficeApiClient(new RecordingApi(), "https://business.example/api/v1/");
         var estimate = SampleEstimate();
-        estimate.Signatures = new List<EstimateSignatureDto>
-        {
-            new() { Type = 0, Strokes = proStrokes },
-            new() { Type = 1, Strokes = cliStrokes },
-        };
+        estimate.SignaturePro = new EstimateSignatureDto { Strokes = proStrokes };
+        estimate.SignatureClient = new EstimateSignatureDto { Strokes = cliStrokes };
+
+        // Client perspective: both pads show the stored signatures, but
+        // only the client pad is writable.
+        var vm = new EstimateValidationPageViewModel(estimate, EstimateListPerspective.Client, front);
+        var proPad = new SignaturePadControl();
+        var cliPad = new SignaturePadControl();
+        vm.Attach(proPad, cliPad);
+
+        Assert.Equal(proStrokes, proPad.Snapshot().Strokes);
+        Assert.Equal(cliStrokes, cliPad.Snapshot().Strokes);
+        Assert.True(vm.HasProSignature);
+        Assert.True(vm.HasClientSignature);
+    }
+
+    [Fact]
+    public void Load_existing_pro_signature_renders_in_pro_pad_only()
+    {
+        var strokes = new[] { 1, 5000, 5000 };
+        var front = new FrontOfficeApiClient(new RecordingApi(), "https://business.example/api/v1/");
+        var estimate = SampleEstimate();
+        estimate.SignaturePro = new EstimateSignatureDto { Strokes = strokes, CoordinateMax = 10_000 };
+        var vm = new EstimateValidationPageViewModel(estimate, EstimateListPerspective.Provider, front);
 
         var proPad = new SignaturePadControl();
-        var proVm = new EstimateValidationPageViewModel(estimate, EstimateListPerspective.Provider, front);
-        proVm.Attach(proPad);
-        Assert.Equal(proStrokes, proPad.Snapshot().Strokes);
-
         var cliPad = new SignaturePadControl();
-        var cliVm = new EstimateValidationPageViewModel(estimate, EstimateListPerspective.Client, front);
-        cliVm.Attach(cliPad);
-        Assert.Equal(cliStrokes, cliPad.Snapshot().Strokes);
+        vm.Attach(proPad, cliPad);
+
+        Assert.Equal(strokes, proPad.Snapshot().Strokes);
+        Assert.True(cliPad.Snapshot().IsEmpty);
+        Assert.True(vm.HasProSignature);
+        Assert.False(vm.HasClientSignature);
     }
 
     private sealed class RecordingApi : IYavscApiClient

@@ -14,6 +14,7 @@ namespace PostIt.ViewModels;
 public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly BillingApiClient _billingClient;
+    private readonly FrontOfficeApiClient _frontClient;
     private readonly BillingQueryDetailsDto _details;
 
     public ActivityInfo Activity { get; }
@@ -68,6 +69,7 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
         ActivityUserDisplayItem performer,
         CommandFormSummary form,
         BillingApiClient billingClient,
+        FrontOfficeApiClient frontClient,
         BillingQueryDetailsDto details,
         bool isReadOnly)
     {
@@ -75,6 +77,7 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
         Performer = performer ?? throw new ArgumentNullException(nameof(performer));
         Form = form ?? throw new ArgumentNullException(nameof(form));
         _billingClient = billingClient ?? throw new ArgumentNullException(nameof(billingClient));
+        _frontClient = frontClient ?? throw new ArgumentNullException(nameof(frontClient));
         _details = details ?? throw new ArgumentNullException(nameof(details));
         IsReadOnly = isReadOnly;
 
@@ -129,6 +132,53 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
         }
 
         await app.GoBackAsync().ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Download the estimate linked to this command as a LaTeX source
+    /// (<c>GET api/v1/front/query/{Id}/estimate.tex</c>). The estimate is
+    /// resolved server-side from <c>Estimate.CommandId == query Id</c>.
+    /// </summary>
+    [RelayCommand]
+    public async Task DownloadTexAsync()
+    {
+        await DownloadAsync(
+            () => _frontClient.GetEstimateTexAsync(_details.Id),
+            $"devis-{_details.Id}", "tex").ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Download the estimate linked to this command as a compiled PDF
+    /// (<c>GET api/v1/front/query/{Id}/estimate.pdf</c>). Requires
+    /// <c>texi2pdf</c> on the server host.
+    /// </summary>
+    [RelayCommand]
+    public async Task DownloadPdfAsync()
+    {
+        await DownloadAsync(
+            () => _frontClient.GetEstimatePdfAsync(_details.Id),
+            $"devis-{_details.Id}", "pdf").ConfigureAwait(true);
+    }
+
+    private async Task DownloadAsync(Func<Task<byte[]>> fetch, string fileName, string ext)
+    {
+        IsBusy = true;
+        try
+        {
+            var bytes = await fetch().ConfigureAwait(true);
+            var saved = await FileSaveHelpers.SaveAsync(fileName, ext, bytes).ConfigureAwait(true);
+            this.SetInfoStatus(saved
+                ? $"Fichier .{ext} enregistré."
+                : "Téléchargement annulé.");
+        }
+        catch (Exception ex)
+        {
+            this.SetErrorStatus($"Échec du téléchargement: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     private static string EmptyAsPlaceholder(string? value, string placeholder)

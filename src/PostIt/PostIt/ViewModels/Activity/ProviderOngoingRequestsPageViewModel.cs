@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using PostIt.Helpers;
 using Yavsc;
 using Yavsc.Abstract.Workflow;
@@ -153,12 +154,14 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
                 .GetQueryAsync(SelectedQuery.BillingCode, SelectedQuery.Id)
                 .ConfigureAwait(true);
             var (activity, performer, form) = BuildNavigationContext(SelectedQuery);
+            var frontClient = app.ServiceProvider?.GetRequiredService<FrontOfficeApiClient>();
 
             var vm = new BillingQueryDetailsPageViewModel(
                 activity,
                 performer,
                 form,
                 _billingClient,
+                frontClient,
                 details,
                 isReadOnly: false);
 

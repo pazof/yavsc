@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Helpers;
 using Yavsc.Models;
@@ -8,6 +11,7 @@ using Yavsc.Models.Billing;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
 using Yavsc.ViewModels.FrontOffice;
+using Yavsc.ViewModels.Gen;
 
 namespace Yavsc.ApiControllers
 {
@@ -18,21 +22,156 @@ namespace Yavsc.ApiControllers
         ApplicationDbContext dbContext;
         private readonly IBillingService billing;
         private readonly ILogger logger;
+        private readonly SiteSettings siteSettings;
+        private readonly IViewEngine viewEngine;
 
+        // The view-rendering dependencies (siteSettings, viewEngine) are
+        // optional: only EstimateTex/EstimatePdf use them, and those run in
+        // the Api host where Program.cs wires AddControllersWithViews +
+        // SiteSettings. The accept/reject endpoints (and the Api integration
+        // test host, which composes with AddControllers alone) never touch
+        // them, so they must not be required for controller activation.
+        //
+        // .NET 10 does not register a single IViewEngine service (the view
+        // engine is registered as IRazorViewEngine and surfaced through
+        // MvcViewOptions.ViewEngines). IRazorViewEngine (RazorViewEngine)
+        // implements IViewEngine, so we inject that and hand it to
+        // TeXHelpers.RenderViewToString as an IViewEngine. RenderViewToString
+        // builds its ActionContext from the controller's own ControllerContext,
+        // so no IActionContextAccessor is needed (and that type is deprecated
+        // in .NET 10).
         public FrontOfficeApiController(
             ApplicationDbContext context,
             ILoggerFactory loggerFactory,
+            IOptions<SiteSettings> siteSettings = null,
+            IRazorViewEngine viewEngine = null,
             IBillingService billing = null)
         {
             dbContext = context;
             this.billing = billing ?? new BillingService(context);
             logger = loggerFactory.CreateLogger<FrontOfficeApiController>();
+            this.siteSettings = siteSettings?.Value;
+            this.viewEngine = viewEngine as IViewEngine;
         }
 
         [HttpGet("profiles/{actCode}")]
         async Task <IEnumerable<PerformerProfileViewModel>> Profiles(string actCode)
         {
             return await dbContext.ListPerformersAsync(billing, actCode);
+        }
+
+        // GET: api/front/query/{queryId}/estimate.tex
+        //
+        // Renders the estimate linked to the query (Estimate.CommandId ==
+        // queryId) as a LaTeX source document. The view is a generation
+        // template (Layout = "null"), not a web page: it is returned with
+        // a text/x-tex content type so the caller can save it as a .tex
+        // file. Either party (client or provider) or an admin may read it.
+        [HttpGet("query/{queryId}/estimate.tex")]
+        public async Task<IActionResult> EstimateTex(long queryId, CancellationToken token)
+        {
+            if (viewEngine is null || siteSettings is null)
+                return Problem("TeX rendering is not configured on this host.",
+                    statusCode: StatusCodes.Status503ServiceUnavailable);
+
+            var estimate = await LoadEstimateForRenderAsync(queryId, token);
+            if (estimate is null) return NotFound(new { Error = "no estimate linked to this query" });
+
+            var uid = User.GetUserId();
+            if (!User.IsInRole(Constants.AdminGroupName)
+                && uid != estimate.ClientId && uid != estimate.OwnerId)
+                return Forbid();
+
+            PrepareEstimateViewBag(estimate);
+            Response.ContentType = "text/x-tex";
+            return View("Estimate_tex", estimate);
+        }
+
+        // GET: api/front/query/{queryId}/estimate.pdf
+        //
+        // Renders the same LaTeX template to a string, compiles it to PDF
+        // via texi2pdf (see SiteSettings.GenerateEstimatePdf), and streams
+        // the generated PDF bytes back. Requires /usr/bin/texi2pdf on the
+        // server host; on hosts without it the endpoint returns a problem.
+        [HttpGet("query/{queryId}/estimate.pdf")]
+        public async Task<IActionResult> EstimatePdf(long queryId, CancellationToken token)
+        {
+            if (viewEngine is null || siteSettings is null)
+                return Problem("PDF rendering is not configured on this host.",
+                    statusCode: StatusCodes.Status503ServiceUnavailable);
+
+            var estimate = await LoadEstimateForRenderAsync(queryId, token);
+            if (estimate is null) return NotFound(new { Error = "no estimate linked to this query" });
+
+            var uid = User.GetUserId();
+            if (!User.IsInRole(Constants.AdminGroupName)
+                && uid != estimate.ClientId && uid != estimate.OwnerId)
+                return Forbid();
+
+            PrepareEstimateViewBag(estimate);
+
+            var baseFileName = $"estimate-{estimate.Id}";
+            // Resolve the bills dir to an absolute path once: appsettings
+            // configures it as a relative path ("bills"), and both the
+            // generation (GenerateEstimatePdf) and the read-back below must
+            // agree on the same location regardless of the host's cwd.
+            var billsDir = new System.IO.DirectoryInfo(siteSettings.Bills).FullName;
+            var model = new PdfGenerationViewModel
+            {
+                BaseFileName = baseFileName,
+                DestDir = billsDir,
+                Temp = siteSettings.TempDir,
+            };
+
+            try
+            {
+                // 1. Render the LaTeX template (Estimate_tex) to a TeX source
+                //    string, using the estimate as the view model.
+                model.TeXSource = this.RenderViewToString(viewEngine, "Estimate_tex", estimate);
+                // 2. Render the generation view (Estimate_pdf). Its @{} block
+                //    calls SiteSettings.GenerateEstimatePdf(Model), which
+                //    compiles the TeX to PDF on disk as a side effect of the
+                //    render. The HTML the view emits is not what we return —
+                //    we stream the generated PDF bytes — but driving the
+                //    generation through the view keeps the template as the
+                //    output producer, per the original design.
+                this.RenderViewToString(viewEngine, "Estimate_pdf", model);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "estimate {QueryId}: TeX/PDF render failed", queryId);
+                return Problem("TeX render failed: " + ex.Message);
+            }
+
+            if (!model.Generated)
+                return Problem("PDF generation failed: "
+                    + (model.GenerationErrorMessage?.Value ?? "unknown error"));
+
+            var pdfPath = System.IO.Path.Combine(billsDir, baseFileName + ".pdf");
+            var bytes = await System.IO.File.ReadAllBytesAsync(pdfPath, token);
+            return File(bytes, "application/pdf", baseFileName + ".pdf");
+        }
+
+        // Loads the estimate linked to a query with the navigation the
+        // Estimate_tex template reads (client + performer profile + bill).
+        private Task<Estimate?> LoadEstimateForRenderAsync(long queryId, CancellationToken token)
+            => dbContext.Estimates
+                .Where(e => e.CommandId == queryId)
+                .OrderByDescending(e => e.Id)
+                .Include(e => e.Bill)
+                .Include(e => e.Query).ThenInclude(q => q!.Client).ThenInclude(c => c!.PostalAddress)
+                .Include(e => e.Query).ThenInclude(q => q!.PerformerProfile).ThenInclude(p => p!.OrganizationAddress)
+                .Include(e => e.Query).ThenInclude(q => q!.PerformerProfile).ThenInclude(p => p!.Performer)
+                .FirstOrDefaultAsync(token);
+
+        // Sets the ViewBag keys the Estimate_tex template reads. A devis
+        // is never a bill (AsBill=false) and is never acquitted.
+        private void PrepareEstimateViewBag(Estimate estimate)
+        {
+            ViewBag.AsBill = false;
+            ViewBag.Acquitted = false;
+            ViewBag.BillsDir = new System.IO.DirectoryInfo(siteSettings.Bills).FullName;
+            ViewBag.AvatarsDir = new System.IO.DirectoryInfo(siteSettings.Avatars).FullName;
         }
 
         // POST: api/front/query/accept
@@ -57,6 +196,15 @@ namespace Yavsc.ApiControllers
             if (query is null) return BadRequest(new { Error = "query not found" });
 
             Signature? signature = null;
+            // actingRole is the role the caller is signing / accepting
+            // as. It defaults to the role inferred from the caller's
+            // identity, but when a signature is submitted the caller
+            // declares the side (Pro/Client) and the server honors it
+            // only if the caller is that party. This disambiguates a
+            // user who is both parties (where inference would always
+            // pick the provider) and makes "write only for its author"
+            // explicit.
+            ActorRole actingRole = role;
             if (HasSignature(body))
             {
                 // Admins bypass authorization but are neither party of
@@ -71,20 +219,37 @@ namespace Yavsc.ApiControllers
                 if (estimate is null)
                     return BadRequest(new { Error = "no estimate linked to this query" });
 
-                var type = role == ActorRole.Provider
+                var uid = User.GetUserId();
+                bool isProvider = query.PerformerId == uid;
+                bool isClient = query.ClientId == uid;
+
+                // The caller declares which side they sign as. Null
+                // falls back to the role inferred from identity.
+                var declared = body!.SignatureType;
+                if (declared.HasValue)
+                {
+                    if (declared.Value == SignatureType.Pro && !isProvider)
+                        return Forbid();
+                    if (declared.Value == SignatureType.Client && !isClient)
+                        return Forbid();
+                    actingRole = declared.Value == SignatureType.Pro
+                        ? ActorRole.Provider
+                        : ActorRole.Client;
+                }
+
+                var type = actingRole == ActorRole.Provider
                     ? SignatureType.Pro
                     : SignatureType.Client;
 
                 var payload = new SignaturePadPayload
                 {
-                    CoordinateMax = body!.CoordinateMax,
+                    CoordinateMax = body.CoordinateMax,
                     CapturedAtUtc = body.CapturedAtUtc ?? DateTime.UtcNow,
                     Strokes = body.Strokes!,
                 };
 
                 try
                 {
-                    var uid = User.GetUserId();
                     signature = await EstimateSignaturePersister.StageAsync(
                         dbContext, estimate.Id, type, uid, payload, token);
                 }
@@ -94,7 +259,7 @@ namespace Yavsc.ApiControllers
                     return BadRequest(new { Error = "signature stage failed", Detail = ex.Message });
                 }
 
-                if (role == ActorRole.Provider)
+                if (actingRole == ActorRole.Provider)
                     estimate.ProviderValidationDate = DateTime.UtcNow;
                 else
                     estimate.ClientValidationDate = DateTime.UtcNow;
@@ -104,7 +269,7 @@ namespace Yavsc.ApiControllers
             // provider (ProAccepted) or the client (ClientAccepted).
             // An admin accepting (neither party) falls back to the
             // legacy generic Accepted.
-            query.Status = role switch
+            query.Status = actingRole switch
             {
                 ActorRole.Provider => QueryStatus.ProAccepted,
                 ActorRole.Client => QueryStatus.ClientAccepted,
@@ -222,5 +387,19 @@ namespace Yavsc.ViewModels.FrontOffice
         public int CoordinateMax { get; set; } = 10_000;
 
         public DateTime? CapturedAtUtc { get; set; }
+
+        /// <summary>
+        /// Which signature is being submitted:
+        /// <see cref="SignatureType.Pro"/> (the provider) or
+        /// <see cref="SignatureType.Client"/>. When <see cref="Strokes"/>
+        /// is present this declares the side the caller is signing as;
+        /// the server honors it only if the caller is that party
+        /// (<c>query.PerformerId</c> for Pro, <c>query.ClientId</c>
+        /// for Client). This disambiguates the case where one user is
+        /// both parties, and makes "write only for its author"
+        /// explicit. When null, the server falls back to the role
+        /// inferred from the caller's identity.
+        /// </summary>
+        public SignatureType? SignatureType { get; set; }
     }
 }

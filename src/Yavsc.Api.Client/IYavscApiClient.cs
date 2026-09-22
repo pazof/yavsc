@@ -73,4 +73,23 @@ public interface IYavscApiClient : IAsyncDisposable
         string path,
         Func<HttpContent> contentFactory,
         CancellationToken ct = default);
+
+    /// <summary>
+    /// Download a binary resource (PDF, TeX, image, …). Unlike
+    /// <see cref="CallAsync{T}(HttpMethod,string,object?,CancellationToken)"/>,
+    /// which JSON-decodes the response, this returns the raw response
+    /// bytes. The same Bearer-token attach + 401-refresh-retry-once
+    /// contract applies.
+    /// </summary>
+    /// <remarks>
+    /// A default interface implementation is provided so that test
+    /// fakes that do not exercise binary download still compile without
+    /// declaring the member; the real <see cref="YavscApiClient"/>
+    /// overrides it with the authenticated transport.
+    /// </remarks>
+    Task<byte[]> DownloadAsync(
+        HttpMethod method,
+        string path,
+        CancellationToken ct = default)
+        => Task.FromResult(Array.Empty<byte>());
 }

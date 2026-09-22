@@ -19,10 +19,10 @@ namespace PostIt.ViewModels;
 /// </summary>
 public enum EstimateListPerspective
 {
-    /// <summary>« Mes devis à valider » — l'utilisateur courant est le client.</summary>
+    /// <summary>« Devis en attente de signature client » — l'utilisateur courant est le client.</summary>
     Client,
 
-    /// <summary>« Mes devis en attente » — l'utilisateur courant est le fournisseur.</summary>
+    /// <summary>« Devis en attente de signature fournisseur » — l'utilisateur courant est le fournisseur.</summary>
     Provider,
 }
 
@@ -40,8 +40,8 @@ public partial class EstimateListPageViewModel : ViewModelBase, IActionStatusVie
     public EstimateListPerspective Perspective => _perspective;
 
     public string Title => _perspective == EstimateListPerspective.Client
-        ? "Mes devis à valider"
-        : "Mes devis en attente";
+        ? "Devis en attente de signature client"
+        : "Devis en attente de signature fournisseur";
 
     public string Subtitle => _perspective == EstimateListPerspective.Client
         ? "Point de vue client"

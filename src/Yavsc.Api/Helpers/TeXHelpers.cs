@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Yavsc.Helpers
 {
-    using Microsoft.AspNetCore.Mvc.Infrastructure;
     using ViewModels.Gen;
     public class TeXString : HtmlString
     {
@@ -118,51 +118,65 @@ namespace Yavsc.Helpers
         public static bool GenerateEstimatePdf(this SiteSettings settings, PdfGenerationViewModel Model)
         {
             string errorMsg = null;
-            var billdir = Model.DestDir;
-            var tempdir = settings.TempDir;
+            // Resolve to an absolute path: SiteSettings.Bills may be a
+            // relative path (e.g. "bills"), and lualatex resolves
+            // -output-directory against its working directory — passing a
+            // relative path to both would nest them (<cwd>/bills/bills) and
+            // the log/pdf write would fail.
+            var billdir = new DirectoryInfo(Model.DestDir).FullName;
             string name = Model.BaseFileName;
-            string fullname = new FileInfo(
-                 System.IO.Path.Combine(tempdir, name)).FullName;
-            string ofullname = new FileInfo(
-                 System.IO.Path.Combine(billdir, name)).FullName;
+            FileInfo fo = new FileInfo(System.IO.Path.Combine(billdir, name + ".pdf"));
+            System.IO.Directory.CreateDirectory(billdir);
 
-            FileInfo fi = new FileInfo(fullname + ".tex");
-            FileInfo fo = new FileInfo(ofullname + ".pdf");
-            using (StreamWriter sw = new StreamWriter(fi.FullName))
-            {
-                sw.Write(Model.TeXSource);
-            }
-            if (!fi.Exists)
-            {
-                errorMsg = "Source write failed";
-            }
-            else
+            // Compile the LaTeX source with the system lualatex, feeding it
+            // the TeX on standard input (no intermediate .tex file) and
+            // directing the resulting <name>.pdf straight into the bills
+            // directory. lualatex is a file-based engine — it cannot emit
+            // the PDF on stdout — so the pdf lands at its final destination
+            // and we only clean the transient aux/log artifacts beside it.
+            int exitCode;
+            try
             {
                 using (Process p = new Process())
                 {
-                    p.StartInfo.WorkingDirectory = tempdir;
                     p.StartInfo = new ProcessStartInfo
                     {
                         UseShellExecute = false,
-                        WorkingDirectory = tempdir,
-                        FileName = "/usr/bin/texi2pdf",
-                        Arguments = $"--batch --build-dir=. -o {fo.FullName} {fi.FullName}"
+                        WorkingDirectory = billdir,
+                        FileName = "lualatex",
+                        Arguments = $"-interaction=nonstopmode -halt-on-error"
+                            + $" -jobname=\"{name}\" -output-directory=\"{billdir}\"",
+                        RedirectStandardInput = true,
                     };
                     p.Start();
+                    using (var stdin = p.StandardInput)
+                    {
+                        stdin.Write(Model.TeXSource);
+                    }
                     p.WaitForExit();
-                    if (p.ExitCode != 0)
-                    {
-                        errorMsg = $"Pdf generation failed with exit code: {p.ExitCode}";
-                    }
-                    else
-                    {
-                      fi.Delete();
-                      var di = new DirectoryInfo(Path.Combine(tempdir,$"{Model.BaseFileName}.t2d"));
-                      di.Delete(true);
-
-                    }
+                    exitCode = p.ExitCode;
                 }
             }
+            catch (Exception ex)
+            {
+                errorMsg = "lualatex invocation failed: " + ex.Message;
+                exitCode = -1;
+            }
+
+            if (exitCode != 0 && errorMsg == null)
+                errorMsg = $"Pdf generation failed with exit code: {exitCode}";
+            else if (!fo.Exists && errorMsg == null)
+                errorMsg = "Pdf generation produced no output";
+
+            // Remove the LaTeX build artifacts left beside the pdf so only
+            // <name>.pdf persists in the bills directory.
+            foreach (var ext in new[] { ".aux", ".log", ".out", ".fls",
+                        ".fdb_latexmk", ".synctex.gz", ".toc" })
+            {
+                var f = new FileInfo(System.IO.Path.Combine(billdir, name + ext));
+                if (f.Exists) { try { f.Delete(); } catch { } }
+            }
+
             Model.Generated = fo.Exists;
             Model.GenerationErrorMessage = new HtmlString(errorMsg);
             return fo.Exists;
@@ -170,27 +184,41 @@ namespace Yavsc.Helpers
 
         public static string RenderViewToString(
             this Controller controller, IViewEngine engine,
-            IActionContextAccessor contextAccessor,
-         string viewName, object model, bool isMainPage = true)
+            string viewName, object model, bool isMainPage = true)
         {
+            if (engine == null)
+                throw new InvalidOperationException("no engine");
+
+            // Build an ActionContext from the controller's own context —
+            // .NET 10 deprecated IActionContextAccessor, and the controller
+            // already holds the live request context on its ControllerContext.
+            var controllerContext = controller.ControllerContext;
+            var actionContext = new ActionContext(
+                controllerContext.HttpContext,
+                controllerContext.RouteData,
+                controllerContext.ActionDescriptor);
+
+            ViewEngineResult viewResult = engine.FindView(actionContext, viewName, isMainPage);
+            if (!viewResult.Success)
+                throw new InvalidOperationException(
+                    $"View '{viewName}' not found. Searched locations: "
+                    + string.Join(", ", viewResult.SearchedLocations));
+
+            // Hand the model to the view through ViewData so the template's
+            // @model directive resolves it (the previous implementation never
+            // set ViewData.Model, leaving Model null inside the template).
+            controller.ViewData.Model = model;
+
             using (var sw = new StringWriter())
             {
-                if (engine == null)
-                    throw new InvalidOperationException("no engine");
-
-                // try to find the specified view
-                controller.TryValidateModel(model);
-                ViewEngineResult viewResult = engine.FindView(contextAccessor.ActionContext, viewName, isMainPage);
-
-                // create the associated context
-                ViewContext viewContext = new ViewContext();
-                viewContext.ActionDescriptor = contextAccessor.ActionContext.ActionDescriptor;
-                viewContext.HttpContext = contextAccessor.ActionContext.HttpContext;
-                viewContext.TempData = controller.TempData;
-                viewContext.View = viewResult.View;
-                viewContext.Writer = sw;
-                // write the render view with the given context to the stringwriter
-                viewResult.View.RenderAsync(viewContext).Wait();
+                var viewContext = new ViewContext(
+                    actionContext,
+                    viewResult.View,
+                    controller.ViewData,
+                    controller.TempData,
+                    sw,
+                    new HtmlHelperOptions());
+                viewResult.View.RenderAsync(viewContext).GetAwaiter().GetResult();
                 return sw.GetStringBuilder().ToString();
             }
         }

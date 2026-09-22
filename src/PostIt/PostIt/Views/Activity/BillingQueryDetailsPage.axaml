@@ -14,7 +14,7 @@
             <TextBlock Text="{Binding ContextLabel}" Opacity="0.75" />
         </StackPanel>
 
-        <Grid Grid.Row="1" Margin="0,10,0,0" ColumnDefinitions="Auto,8,Auto,*">
+        <Grid Grid.Row="1" Margin="0,10,0,0" ColumnDefinitions="Auto,8,Auto,8,Auto,8,Auto,*">
             <Button Grid.Column="0"
                     Content="Retour"
                     Command="{Binding BackCommand}" />
@@ -22,6 +22,12 @@
                     Content="Ouvrir en edition"
                     Command="{Binding OpenEditorCommand}"
                     IsVisible="{Binding CanEdit}" />
+            <Button Grid.Column="4"
+                    Content="Télécharger PDF"
+                    Command="{Binding DownloadPdfCommand}" />
+            <Button Grid.Column="6"
+                    Content="Télécharger TeX"
+                    Command="{Binding DownloadTexCommand}" />
         </Grid>
 
         <ScrollViewer Grid.Row="2" Margin="0,12,0,12">
