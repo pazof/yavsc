@@ -5,7 +5,7 @@ namespace Yavsc.ViewModels.Gen
 {
     public class PdfGenerationViewModel
     {
-        
+
         [Required]
         public string TeXSource { get; set; }
         [Required]

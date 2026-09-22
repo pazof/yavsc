@@ -23,7 +23,7 @@ namespace Yavsc.ApiControllers
         private readonly IBillingService billing;
         private readonly ILogger logger;
         private readonly SiteSettings siteSettings;
-        private readonly IViewEngine viewEngine;
+        private readonly IRazorViewEngine viewEngine;
 
         // The view-rendering dependencies (siteSettings, viewEngine) are
         // optional: only EstimateTex/EstimatePdf use them, and those run in
@@ -51,7 +51,7 @@ namespace Yavsc.ApiControllers
             this.billing = billing ?? new BillingService(context);
             logger = loggerFactory.CreateLogger<FrontOfficeApiController>();
             this.siteSettings = siteSettings?.Value;
-            this.viewEngine = viewEngine as IViewEngine;
+            this.viewEngine = viewEngine;
         }
 
         [HttpGet("profiles/{actCode}")]
@@ -97,8 +97,13 @@ namespace Yavsc.ApiControllers
         public async Task<IActionResult> EstimatePdf(long queryId, CancellationToken token)
         {
             if (viewEngine is null || siteSettings is null)
-                return Problem("PDF rendering is not configured on this host.",
+            {
+                string msg = "PDF rendering is not configured on this host.";
+                logger.LogError(msg);
+                         return Problem(msg,
                     statusCode: StatusCodes.Status503ServiceUnavailable);
+
+            }
 
             var estimate = await LoadEstimateForRenderAsync(queryId, token);
             if (estimate is null) return NotFound(new { Error = "no estimate linked to this query" });
@@ -135,22 +140,21 @@ namespace Yavsc.ApiControllers
                 //    we stream the generated PDF bytes — but driving the
                 //    generation through the view keeps the template as the
                 //    output producer, per the original design.
-                this.RenderViewToString(viewEngine, "Estimate_pdf", model);
+                if (model.GenerateEstimatePdf() is FileInfo fo)
+                {
+                     return File(fo.OpenRead(), "application/pdf");
+                }
+                string msg = "TeX render failed: " + model.GenerationErrorMessage;
+                logger.LogError(msg);
+                return Problem(msg);
+
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "estimate {QueryId}: TeX/PDF render failed", queryId);
                 return Problem("TeX render failed: " + ex.Message);
             }
-
-            if (!model.Generated)
-                return Problem("PDF generation failed: "
-                    + (model.GenerationErrorMessage?.Value ?? "unknown error"));
-
-            var pdfPath = System.IO.Path.Combine(billsDir, baseFileName + ".pdf");
-            var bytes = await System.IO.File.ReadAllBytesAsync(pdfPath, token);
-            return File(bytes, "application/pdf", baseFileName + ".pdf");
-        }
+      }
 
         // Loads the estimate linked to a query with the navigation the
         // Estimate_tex template reads (client + performer profile + bill).

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Yavsc.Helpers
 {
+    using Microsoft.AspNetCore.Mvc.Razor;
     using ViewModels.Gen;
     public class TeXString : HtmlString
     {
@@ -115,7 +116,7 @@ namespace Yavsc.Helpers
             return new TeXString(string.Join(lineSeparator,texlines));
         }
 
-        public static bool GenerateEstimatePdf(this SiteSettings settings, PdfGenerationViewModel Model)
+        public static FileInfo GenerateEstimatePdf(this PdfGenerationViewModel Model)
         {
             string errorMsg = null;
             // Resolve to an absolute path: SiteSettings.Bills may be a
@@ -195,17 +196,18 @@ namespace Yavsc.Helpers
                         ".fdb_latexmk", ".synctex.gz", ".toc" })
             {
                 if (ext == ".log" && !fo.Exists) continue;
-                var f = new FileInfo(System.IO.Path.Combine(billdir, name + ext));
+                var fileName = name + ext;
+                var f = new FileInfo(System.IO.Path.Combine(billdir, fileName));
                 if (f.Exists) { try { f.Delete(); } catch { } }
             }
 
             Model.Generated = fo.Exists;
             Model.GenerationErrorMessage = new HtmlString(errorMsg);
-            return fo.Exists;
+            return fo;
         }
 
         public static string RenderViewToString(
-            this Controller controller, IViewEngine engine,
+            this Controller controller, IRazorViewEngine engine,
             string viewName, object model, bool isMainPage = true)
         {
             if (engine == null)
