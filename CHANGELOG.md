@@ -1,5 +1,81 @@
 # Changelog
 
+## [1.0.8-rc16] - unstable
+
+Flux de signature et de génération de devis : un devis peut désormais être
+signé par les deux parties (fournisseur et client) puis téléchargé en PDF
+ou TeX depuis PostIt, avec les signatures dessinées en vecteur.
+
+### Added
+
+* [PostIt] Pad de signature sur la page de validation d'un devis : on valide
+  ou on refuse en joignant une signature (côté fournisseur ou client), capturée
+  au format filaire PostIt (strokes) et envoyée sur l'acceptation.
+* [Yavsc.Api] Finalisation de `POST /api/v1/front/query/accept` et `.../reject` :
+  autorisation selon le rôle (fournisseur/client/admin), signature optionnelle
+  persistée sur l'estimate avec horodatage `ProviderValidationDate` /
+  `ClientValidationDate` selon le côté signataire.
+* [Yavsc.Api] `QueryStatus.Accepted` éclaté en `ProAccepted` / `ClientAccepted`
+  pour distinguer l'acceptation de chaque partie.
+* [Yavsc.Api] Endpoints de devis `GET /api/v1/front/query/{id}/estimate.tex` et
+  `estimate.pdf` (clé par id de query). Le flux de génération TeX/PDF est
+  rapatrié de Yavsc.Org vers Yavsc.Api (`TeXHelpers`, `PdfGenerationViewModel`,
+  `BillViewComponent`, modèles Bill/Estimate, `_ViewImports` ; `Program.cs`
+  câble `AddControllersWithViews` + `SiteSettings`).
+* [Yavsc.Api] Signatures du devis dessinées en TikZ vectoriel
+  (`TeXHelpers.SignatureToTikz`) en bas du document, fournisseur et client
+  côte à côte dans deux minipages ; plus de dépendance à un PNG de signature.
+* [Yavsc.Api.Client] `DownloadAsync` sur le client + `GetEstimateTexAsync` /
+  `GetEstimatePdfAsync` ; boutons « Télécharger PDF » / « Télécharger TeX »
+  dans PostIt sur la page de validation du devis et le détail de commande,
+  avec un helper `StorageProvider` d'enregistrement de fichier.
+* [PostIt] La liste des devis se rafraîchit au retour de navigation (pop-back),
+  de sorte qu'un devis validé quitte immédiatement la liste du signataire.
+* [PostIt] Renommage des titres de liste : « Devis en attente de signature
+  fournisseur » / « Devis en attente de signature client ».
+* [Yavsc.Abstract] `SignatureType` déplacé dans `Yavsc.Abstract.Billing`.
+* [CLI] Option `-c configuration-file.json` au lancement.
+* [Tests] `EstimatePdfGenerationTests` : tests unitaires du pipeline
+  signature → TikZ → PDF (devis signé des deux côtés), assertant que le PDF
+  existe au chemin de sortie attendu et que seul le PDF persiste (aux/log
+  nettoyés) ; skip propre si `lualatex` est absent.
+* [README] Dépendances système au runtime pour la génération PDF :
+  `texlive-binaries` (lualatex), `texlive-luatex` (luaotfload),
+  `texlive-pictures` (tikz), `texlive-fonts-extra` (bera).
+
+### Changed
+
+* [Yavsc.Api] `GetOngoingEstimatesAsProvider` filtre désormais sur
+  `ProviderValidationDate` : un devis signé par le fournisseur quitte sa liste
+  « en attente ».
+* [Yavsc.Api] La génération PDF compile via le `lualatex` système, le TeX fourni
+  sur l'entrée standard (`/dev/stdin`), le PDF écrit directement dans le
+  répertoire des factures (`Site.Bills`), les artefacts `.aux`/`.log` nettoyés
+  afin que seul le `.pdf` persiste.
+
+### Fixed
+
+* [Yavsc.Api] `Emergency stop` à la génération PDF : `lualatex` sans argument
+  fichier lit stdin en mode terminal et s'arrête après la première ligne d'un
+  document multi-lignes. Corrigé en passant `/dev/stdin` comme nom de fichier
+  d'entrée — stdin est alors traité comme un fichier régulier et le document
+  multi-lignes compile. C'était la cause racine de l'échec en production, pas
+  `bera` ni `luaotfload` (problèmes réels mais séparés, comblés côté paquets).
+* [Yavsc.Api] `I can't write on file 'estimate-1.log'` : le chemin relatif
+  `Site.Bills` (`"bills"`) était imbriqué quand il servait à la fois de
+  `-output-directory` et de répertoire de travail ; résolu en chemin absolu.
+* [Yavsc.Api] NRE dans `RenderViewToString` (RouteData / `ViewData.Model`
+  nuls) : reconstruit sur le `ControllerContext` du contrôleur ; `IViewEngine`
+  résolu via `IRazorViewEngine` (.NET 10 n'enregistre pas de `IViewEngine`
+  unique).
+* [Yavsc.Api] `Layout = "null"` (chaîne) dans les modèles TeX cherchait
+  `null.cshtml` ; corrigé en `Layout = null` (null C#).
+* [Yavsc.Api] `texi2pdf` (outil Texinfo, inadapté au LaTeX) remplacé par
+  `lualatex`.
+* [Yavsc.Api] Les diagnostics lualatex étaient perdus (écrits dans le `.log`
+  qu'on supprimait) ; stdout/stderr sont désormais capturés dans le message
+  d'erreur, et le `.log` est conservé en cas d'échec.
+
 ## [1.0.8-rc15] - unstable
 
 ### Added
@@ -369,6 +445,8 @@ the ACL now comes along with the article,
   the same user-visible switch without a schema change.
 
 [Unreleased]: https://forgejo.pschneider.fr/notazof/yavsc/compare/HEAD
+[1.0.8-rc16]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.8-rc15...1.0.8-rc16
+[1.0.8-rc15]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.8-rc14...1.0.8-rc15
 [1.0.8-rc1]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.7...1.0.8-rc1
 [1.0.7]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.6...1.0.7
 [1.0.6]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.5...1.0.6
