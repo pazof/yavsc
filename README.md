@@ -61,6 +61,32 @@ make test
 
 ### les services et l'API
 
+#### Dépendances système au runtime
+
+La génération des devis et factures en PDF (`/api/v1/front/query/{id}/estimate.pdf`,
+`BillingController` → `BillViewComponent`) compile un source LaTeX via la commande
+système `lualatex` : le TeX est fourni sur l'entrée standard et le PDF est écrit
+directement dans le répertoire des factures (`Site.Bills`). `lualatex` doit donc
+être installé et opérationnel sur l'hôte qui exécute l'API — typiquement le service
+systemd `yavscApi`.
+
+Sous Debian/Ubuntu :
+
+```bash
+sudo apt install texlive-binaries texlive-luatex
+```
+
+- `texlive-binaries` fournit l'exécutable `lualatex` (collection basic).
+- `texlive-luatex` fournit les paquets de support chargés au démarrage de lualatex,
+  notamment `luaotfload`. Sans lui, lualatex démarre mais s'arrête sur
+  `module 'luaotfload-main' not found … Emergency stop` et ne produit aucun PDF.
+  (Sur les Debian récents, `luaotfload` a migré de `texlive-latex-extra` vers
+  `texlive-luatex` — avoir `texlive-latex-extra` seul ne suffit plus.)
+
+Sur un hôte sans `lualatex`, les endpoints PDF renvoient une erreur 500 « PDF
+generation failed » ; l'endpoint TeX (`estimate.tex`) reste utilisable et permet
+de compiler le document hors-ligne.
+
 ### La Prod
 
 `cd srv/Yavsc/contrib` : `make reinstall CONFIGURATION=Release APP_INSTALL_ENV=production`.
