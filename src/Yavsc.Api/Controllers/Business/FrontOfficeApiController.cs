@@ -157,12 +157,14 @@ namespace Yavsc.ApiControllers
       }
 
         // Loads the estimate linked to a query with the navigation the
-        // Estimate_tex template reads (client + performer profile + bill).
+        // Estimate_tex template reads (client + performer profile + bill
+        // + the captured signatures, drawn as tikz at the foot of the devis).
         private Task<Estimate?> LoadEstimateForRenderAsync(long queryId, CancellationToken token)
             => dbContext.Estimates
                 .Where(e => e.CommandId == queryId)
                 .OrderByDescending(e => e.Id)
                 .Include(e => e.Bill)
+                .Include(e => e.Signatures)
                 .Include(e => e.Query).ThenInclude(q => q!.Client).ThenInclude(c => c!.PostalAddress)
                 .Include(e => e.Query).ThenInclude(q => q!.PerformerProfile).ThenInclude(p => p!.OrganizationAddress)
                 .Include(e => e.Query).ThenInclude(q => q!.PerformerProfile).ThenInclude(p => p!.Performer)

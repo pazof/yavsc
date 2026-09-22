@@ -1,9 +1,12 @@
 using System.Diagnostics;
+using System.Globalization;
+using System.Text;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Yavsc.Models.Billing;
 
 namespace Yavsc.Helpers
 {
@@ -114,6 +117,69 @@ namespace Yavsc.Helpers
             var alines = source.Split(',');
             var texlines = alines.Select(l=>l.ToTeX().ToString());
             return new TeXString(string.Join(lineSeparator,texlines));
+        }
+
+        /// <summary>
+        /// Renders a captured signature as TikZ <c>\draw</c>/<c>\fill</c>
+        /// paths, suitable for embedding in a <c>tikzpicture</c> at the
+        /// foot of a devis. The signature is the PostIt wire format — a
+        /// length-prefixed sequence of strokes, each stroke being
+        /// <c>[k, x0, y0, x1, y1, …]</c> with coordinates normalised to
+        /// <c>[0, CoordinateMax]</c> and y growing downward (screen
+        /// orientation). We denormalise to a <paramref name="widthCm"/> ×
+        /// <paramref name="heightCm"/> canvas and flip y so the signature
+        /// appears upright on paper. A single-point stroke (a pen-down
+        /// tap) is rendered as a filled dot, mirroring the round-capped
+        /// <c>Polyline</c> the Avalonia pad draws for it.
+        /// </summary>
+        /// <param name="sig">The persisted signature. Null/empty yields
+        /// <see cref="HtmlString.Empty"/>, so the caller can gate the
+        /// <c>tikzpicture</c> on a non-empty result.</param>
+        public static HtmlString SignatureToTikz(
+            this Signature sig, double widthCm, double heightCm)
+        {
+            if (sig is null || sig.Strokes is null || sig.Strokes.Length == 0)
+                return HtmlString.Empty;
+
+            double max = sig.CoordinateMax > 0 ? sig.CoordinateMax : 10_000.0;
+            var strokes = sig.Strokes;
+            var sb = new StringBuilder();
+
+            int i = 0;
+            while (i < strokes.Length)
+            {
+                int k = strokes[i];
+                if (k <= 0) break;
+                if (i + 1 + 2 * k > strokes.Length) break;
+                i++; // skip the length prefix
+
+                // A single-point stroke: a tap. Draw a round dot so it
+                // shows instead of a zero-length, invisible \draw.
+                if (k == 1)
+                {
+                    double px = strokes[i] / max * widthCm;
+                    double py = heightCm - strokes[i + 1] / max * heightCm;
+                    sb.Append(CultureInfo.InvariantCulture,
+                        $"\\fill ({px:F3},{py:F3}) circle (0.8pt); ");
+                    i += 2;
+                    continue;
+                }
+
+                sb.Append("\\draw[line cap=round, line join=round, line width=1.5pt] ");
+                for (int p = 0; p < k; p++)
+                {
+                    double px = strokes[i + 2 * p] / max * widthCm;
+                    double py = heightCm - strokes[i + 2 * p + 1] / max * heightCm;
+                    if (p == 0) sb.Append(CultureInfo.InvariantCulture,
+                        $"({px:F3},{py:F3})");
+                    else sb.Append(CultureInfo.InvariantCulture,
+                        $" -- ({px:F3},{py:F3})");
+                }
+                sb.Append("; ");
+                i += 2 * k;
+            }
+
+            return new HtmlString(sb.ToString());
         }
 
         public static FileInfo GenerateEstimatePdf(this PdfGenerationViewModel Model)

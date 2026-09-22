@@ -11,7 +11,6 @@
     var proaddr = Model.Query.PerformerProfile.OrganizationAddress.Address.SplitAddressToTeX();
     var proaddrm = new HtmlString(Model.Query.PerformerProfile.OrganizationAddress.Address);
     var isestimate = !ViewBag.AsBill;
-    var prosign = new FileInfo($"{ViewBag.BillsDir}/estimate-prosign-{Model.Id}.png");
 
 }
 \documentclass[french,11pt]{article}
@@ -25,6 +24,7 @@
 \usepackage{graphicx}
 \usepackage{fancyhdr}
 \usepackage{fp}
+\usepackage{tikz}
 
 \def\TVA{20}    % Taux de la TVA
 
@@ -188,19 +188,46 @@
 }
 
 
-@if (!(Model.ProviderValidationDate==null)) {
-    <text>
-\begin{flushright}
-  @(new HtmlString(isestimate?"Devis validé":"Facture validée")) le @TeXHelpers.ToTeX(Model.ProviderValidationDate.ToString("dddd dd MMMM yyyy"))
-\end{flushright}
-@if (prosign.Exists) {
-<text>
-\begin{center}
-	\hspace{263pt}
-    \includegraphics[height=60pt]{@(ViewBag.BillsDir)/estimate-prosign-@(Model.Id).png}
-\end{center}
-</text>
+@{
+    // Captured signatures, if any. The Estimate.Signatures collection
+    // is loaded by the controller; SignaturePro/SignatureClient project
+    // the row by type. We draw them as vector TikZ at the foot of the
+    // devis (see TeXHelpers.SignatureToTikz), so there is no PNG to
+    // produce or \includegraphics to fail on.
+    var fr = CultureInfo.CreateSpecificCulture("fr-FR");
+    var proSig = Model.SignaturePro;
+    var cliSig = Model.SignatureClient;
 }
-    </text>
+
+\vspace{2em}
+\noindent
+\begin{minipage}[t]{0.45\textwidth}
+  \textbf{Signature du fournisseur}\\
+@if (Model.ProviderValidationDate != default(DateTime)) {
+<text>\small Validé le @TeXHelpers.ToTeX(Model.ProviderValidationDate.ToString("dddd dd MMMM yyyy", fr))\\</text>
 }
+@if (proSig != null && proSig.Strokes != null && proSig.Strokes.Length > 0) {
+<text>\begin{tikzpicture}
+  \useasboundingbox (0,0) rectangle (5,2.5);
+  @proSig.SignatureToTikz(5, 2.5)
+\end{tikzpicture}</text>
+} else {
+<text>\rule[-2.2cm]{5cm}{0.4pt}</text>
+}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.45\textwidth}
+  \textbf{Signature du client}\\
+@if (Model.ClientValidationDate != default(DateTime)) {
+<text>\small Validé le @TeXHelpers.ToTeX(Model.ClientValidationDate.ToString("dddd dd MMMM yyyy", fr))\\</text>
+}
+@if (cliSig != null && cliSig.Strokes != null && cliSig.Strokes.Length > 0) {
+<text>\begin{tikzpicture}
+  \useasboundingbox (0,0) rectangle (5,2.5);
+  @cliSig.SignatureToTikz(5, 2.5)
+\end{tikzpicture}</text>
+} else {
+<text>\rule[-2.2cm]{5cm}{0.4pt}</text>
+}
+\end{minipage}
+
 \end{document}
