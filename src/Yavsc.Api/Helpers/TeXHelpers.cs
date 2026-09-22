@@ -202,6 +202,14 @@ namespace Yavsc.Helpers
             // the PDF on stdout — so the pdf lands at its final destination
             // and we only clean the transient aux/log artifacts beside it.
             //
+            // We pass "/dev/stdin" as the input filename so lualatex treats
+            // stdin as a regular input *file* rather than the terminal: with
+            // no filename argument it reads stdin in terminal mode, which
+            // emergency-stops after the first line of a multi-line document.
+            // /dev/stdin makes the full multi-line TeX compile cleanly. (The
+            // API host is Linux — the systemd service and lualatex dep are
+            // Linux-only too.)
+            //
             // We capture stdout/stderr so a LaTeX error (missing .sty,
             // missing \includegraphics target, …) is surfaced in
             // GenerationErrorMessage instead of being buried in the .log
@@ -218,7 +226,8 @@ namespace Yavsc.Helpers
                         WorkingDirectory = billdir,
                         FileName = "lualatex",
                         Arguments = $"-interaction=nonstopmode -halt-on-error"
-                            + $" -jobname=\"{name}\" -output-directory=\"{billdir}\"",
+                            + $" -jobname=\"{name}\" -output-directory=\"{billdir}\""
+                            + " /dev/stdin",
                         RedirectStandardInput = true,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
