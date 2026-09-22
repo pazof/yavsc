@@ -45,19 +45,26 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
 
     private static HttpContent NoSignature() => JsonBody(new { });
 
-    private static HttpContent WithSignature() =>
-        JsonBody(new { strokes = SampleStrokes, coordinateMax = 10_000 });
+    private static HttpContent WithSignature(SignatureType? type = null) =>
+        type is null
+            ? JsonBody(new { strokes = SampleStrokes, coordinateMax = 10_000 })
+            : JsonBody(new { strokes = SampleStrokes, coordinateMax = 10_000, signatureType = type });
 
     private static JsonContent JsonBody(object value) =>
         JsonContent.Create(value, mediaType: new MediaTypeHeaderValue("application/json"));
 
     /// <summary>
-    /// Seeds an Rdv query with distinct parties (provider alice,
-    /// client bob) and, when <paramref name="withEstimate"/> is true,
-    /// an estimate linked to it via CommandId. Returns the query id
-    /// and (when seeded) the estimate id.
+    /// Seeds an Rdv query and, when <paramref name="withEstimate"/> is
+    /// true, an estimate linked to it via CommandId. The provider is
+    /// <paramref name="performer"/> (default alice) and the client is
+    /// <paramref name="client"/> (default bob) — pass the same value
+    /// for both to model a user who is both parties. Returns the query
+    /// id and (when seeded) the estimate id.
     /// </summary>
-    private (long queryId, long estimateId) SeedQuery(bool withEstimate)
+    private (long queryId, long estimateId) SeedQuery(
+        bool withEstimate,
+        string performer = "alice",
+        string client = "bob")
     {
         WorkflowHelpers.ConfigureBillingService();
         _fixture.ResetAndSeedActivityGraph();
@@ -70,11 +77,11 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
         var query = new RdvQuery
         {
             ActivityCode = "dev",
-            ClientId = "bob",
-            PerformerId = "alice",
+            ClientId = client,
+            PerformerId = performer,
             Consent = true,
-            UserCreated = "alice",
-            UserModified = "alice",
+            UserCreated = performer,
+            UserModified = performer,
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow,
             EventDate = DateTime.UtcNow.AddDays(1),
@@ -91,8 +98,8 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
             var estimate = new Estimate
             {
                 CommandId = query.Id,
-                ClientId = "bob",
-                OwnerId = "alice",
+                ClientId = client,
+                OwnerId = performer,
                 CommandType = BillingCodes.Rdv,
                 Title = "Devis prestation",
                 Description = "Devis de test",
@@ -271,11 +278,65 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var body = await response.Content.ReadFromJsonAsync<JsonElement>(TestContext.Current.CancellationToken);
-        var sigs = body.GetProperty("signatures");
-        Assert.Equal(JsonValueKind.Array, sigs.ValueKind);
-        var first = sigs.EnumerateArray().First();
-        // SignatureType.Pro = 0.
-        Assert.Equal(0, first.GetProperty("type").GetInt32());
-        Assert.Equal(JsonValueKind.Array, first.GetProperty("strokes").ValueKind);
+
+        // Signatures ride on the estimate payload as two dedicated
+        // slots, not a list: the provider signed here, so signaturePro
+        // is populated and signatureClient is absent/null.
+        var proSig = body.GetProperty("signaturePro");
+        Assert.Equal(JsonValueKind.Object, proSig.ValueKind);
+        Assert.Equal(JsonValueKind.Array, proSig.GetProperty("strokes").ValueKind);
+        Assert.True(body.TryGetProperty("signatureClient", out var cli)
+            && cli.ValueKind == JsonValueKind.Null,
+            "signatureClient should be null when only the provider has signed");
+    }
+
+    // When one user is both the provider and the client of a query, the
+    // server cannot infer which side they are signing as from identity
+    // alone (it would always pick the provider). The caller declares the
+    // side (signatureType=1 here = Client); the server honors it because
+    // the caller is that party, and stores a Client signature.
+    [Fact]
+    public async Task Accept_declared_client_side_stores_client_signature_when_user_is_both_parties()
+    {
+        var (queryId, estimateId) = SeedQuery(withEstimate: true, performer: "alice", client: "alice");
+
+        using var http = NewClient(subject: "alice");
+        var response = await http.PostAsync(
+            $"/api/v1/front/query/accept?billingCode=Rdv&queryId={queryId}",
+            WithSignature(SignatureType.Client), // signing as the client
+            TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        Assert.True(response.StatusCode == HttpStatusCode.OK, $"Unexpected status {(int)response.StatusCode} ({response.StatusCode}): {body}");
+
+        using var assertScope = _fixture.Services.CreateScope();
+        var assertDb = assertScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        Assert.Equal(QueryStatus.ClientAccepted, assertDb.RdvQueries.Single(q => q.Id == queryId).Status);
+
+        var estimate = assertDb.Estimates.Single(e => e.Id == estimateId);
+        Assert.True(estimate.ClientValidationDate != default);
+        Assert.True(estimate.ProviderValidationDate == default);
+
+        var signature = assertDb.Signatures.Single(s => s.EstimateId == estimateId);
+        Assert.Equal(SignatureType.Client, signature.Type);
+        Assert.Equal("alice", signature.SignerId);
+    }
+
+    // A provider may not sign as the client (and vice versa): declaring
+    // the other party's side is refused even though the caller is a
+    // party to the query. Write is authorized only for the signature's
+    // author.
+    [Fact]
+    public async Task Accept_declaring_other_party_side_is_forbidden()
+    {
+        var (queryId, _) = SeedQuery(withEstimate: true); // provider alice, client bob
+
+        using var http = NewClient(subject: "alice"); // alice is the provider
+        var response = await http.PostAsync(
+            $"/api/v1/front/query/accept?billingCode=Rdv&queryId={queryId}",
+            WithSignature(SignatureType.Client), // alice tries to sign as the client
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 }

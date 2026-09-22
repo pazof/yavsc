@@ -82,22 +82,38 @@
                         CornerRadius="8"
                         Padding="10">
                     <StackPanel Spacing="8">
-                        <TextBlock Text="Signature" FontWeight="SemiBold" />
-                        <TextBlock Text="Signez ci-dessous pour valider ce devis."
+                        <TextBlock Text="Signature du prestataire" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding ProSignatureHint}"
                                    FontSize="11"
                                    Opacity="0.7" />
-                        <controls:SignaturePadView x:Name="Pad"
+                        <controls:SignaturePadView x:Name="ProPad"
                                                    CaptureWidth="560"
-                                                   CaptureHeight="200" />
-                        <TextBlock FontSize="11"
-                                   Foreground="DarkSlateGray">
-                            <Run Text="Traits: " />
-                            <Run Text="{Binding StrokeCount, Mode=OneWay}" />
-                            <Run Text="  ·  Points: " />
-                            <Run Text="{Binding PointCount, Mode=OneWay}" />
-                        </TextBlock>
+                                                   CaptureHeight="160" />
                     </StackPanel>
                 </Border>
+
+                <Border BorderThickness="1"
+                        BorderBrush="#22000000"
+                        CornerRadius="8"
+                        Padding="10">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Signature du client" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding ClientSignatureHint}"
+                                   FontSize="11"
+                                   Opacity="0.7" />
+                        <controls:SignaturePadView x:Name="ClientPad"
+                                                   CaptureWidth="560"
+                                                   CaptureHeight="160" />
+                    </StackPanel>
+                </Border>
+
+                <TextBlock FontSize="11"
+                           Foreground="DarkSlateGray">
+                    <Run Text="Votre signature : traits " />
+                    <Run Text="{Binding StrokeCount, Mode=OneWay}" />
+                    <Run Text=" · points " />
+                    <Run Text="{Binding PointCount, Mode=OneWay}" />
+                </TextBlock>
             </StackPanel>
         </ScrollViewer>
 
@@ -109,6 +125,10 @@
                         Command="{Binding ValidateCommand}" />
                 <Button Content="Refuser"
                         Command="{Binding RejectCommand}" />
+                <Button Content="Télécharger PDF"
+                        Command="{Binding DownloadPdfCommand}" />
+                <Button Content="Télécharger TeX"
+                        Command="{Binding DownloadTexCommand}" />
                 <Button Content="Retour"
                         Command="{Binding BackCommand}" />
             </StackPanel>

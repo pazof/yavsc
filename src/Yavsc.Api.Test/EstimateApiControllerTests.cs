@@ -284,11 +284,14 @@ public sealed class EstimateApiControllerTests : IClassFixture<ApiWebServerFixtu
     }
 
     [Fact]
-    public async Task GetOngoingEstimatesAsProvider_returns_only_ongoing_estimates_established_by_the_provider()
+    public async Task GetOngoingEstimatesAsProvider_returns_estimates_the_provider_has_not_yet_signed()
     {
         _fixture.ResetAndSeedActivityGraph();
-        var ongoingId = SeedEstimate(clientId: "bob", clientValidated: false);
-        SeedEstimate(clientId: "bob", clientValidated: true); // already validated: excluded
+        // Not yet provider-signed: visible in the provider's "awaiting
+        // provider signature" list.
+        var pendingId = SeedEstimate(clientId: "bob", clientValidated: false, providerValidated: false);
+        // Provider already signed: must leave the list immediately.
+        SeedEstimate(clientId: "bob", clientValidated: false, providerValidated: true);
 
         using var http = NewClient("alice");
 
@@ -300,7 +303,7 @@ public sealed class EstimateApiControllerTests : IClassFixture<ApiWebServerFixtu
         using var doc = JsonDocument.Parse(body);
         var items = doc.RootElement.EnumerateArray().ToArray();
         var item = Assert.Single(items);
-        Assert.Equal(ongoingId, item.GetProperty("id").GetInt64());
+        Assert.Equal(pendingId, item.GetProperty("id").GetInt64());
         Assert.Equal("alice", item.GetProperty("ownerId").GetString());
         Assert.Single(item.GetProperty("bill").EnumerateArray());
     }

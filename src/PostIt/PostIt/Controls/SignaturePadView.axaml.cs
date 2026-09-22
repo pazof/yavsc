@@ -32,6 +32,11 @@ public partial class SignaturePadView : UserControl
     private const double StrokeThickness = 2.0;
     private const double CoordinateMax = 10_000.0;
 
+    // Last size the ink layer was painted at. LayoutUpdated repaints
+    // only when this changes, so adding/removing polyline children
+    // (which invalidates layout) does not loop.
+    private Size _lastPaintedSize;
+
     public static readonly StyledProperty<double> CaptureWidthProperty =
         AvaloniaProperty.Register<SignaturePadView, double>(nameof(CaptureWidth), 600);
 
@@ -71,6 +76,19 @@ public partial class SignaturePadView : UserControl
         ApplyFrameSize();
 
         InnerPad.RedrawRequested += OnPadRedrawRequested;
+        // Repaint once layout completes so an ink buffer loaded before
+        // the first arrange (e.g. an existing signature on reopen)
+        // still renders without waiting for a pointer event. The
+        // handler repaints only on a size change to avoid a layout
+        // loop (child changes invalidate layout → LayoutUpdated).
+        LayoutUpdated += OnLayoutUpdated;
+    }
+
+    private void OnLayoutUpdated(object? sender, EventArgs e)
+    {
+        var size = EffectivePadSize();
+        if (size != _lastPaintedSize)
+            Repaint();
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -101,14 +119,34 @@ public partial class SignaturePadView : UserControl
     /// <summary>Wire-format strokes, forwarded from the inner control.</summary>
     public IReadOnlyList<int> Strokes => InnerPad.Strokes;
 
+    /// <summary>
+    /// The effective ink surface size: the arranged bounds when
+    /// available, otherwise the explicitly sized
+    /// <see cref="CaptureWidth"/>/<see cref="CaptureHeight"/>. The
+    /// latter covers a repaint triggered before the first layout pass
+    /// (e.g. loading an existing signature on reopen), when Bounds is
+    /// still empty.
+    /// </summary>
+    private Size EffectivePadSize()
+    {
+        var w = PadFrame.Bounds.Width > 0 ? PadFrame.Bounds.Width : PadFrame.Width;
+        var h = PadFrame.Bounds.Height > 0 ? PadFrame.Bounds.Height : PadFrame.Height;
+        if (w <= 0 || double.IsNaN(w) || h <= 0 || double.IsNaN(h))
+            return default;
+        return new Size(w, h);
+    }
+
     private void Repaint()
     {
         if (InkLayer is null) return;
 
+        var size = EffectivePadSize();
+        if (size == default) return;
+        _lastPaintedSize = size;
+
         InkLayer.Children.Clear();
-        var w = PadFrame.Bounds.Width;
-        var h = PadFrame.Bounds.Height;
-        if (w <= 0 || h <= 0) return;
+        var w = size.Width;
+        var h = size.Height;
 
         var pending = InnerPad.PendingStroke;
         var strokes = InnerPad.Strokes;

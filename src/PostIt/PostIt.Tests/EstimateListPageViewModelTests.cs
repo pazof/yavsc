@@ -17,7 +17,7 @@ public class EstimateListPageViewModelTests
         await vm.InitializeAsync();
 
         Assert.Contains("https://business.example/api/v1/estimate/asclient", api.Paths);
-        Assert.Equal("Mes devis à valider", vm.Title);
+        Assert.Equal("Devis en attente de signature client", vm.Title);
         Assert.Equal(2, vm.Estimates.Count);
         // Most recent first
         Assert.Equal(2, vm.Estimates[0].Id);
@@ -35,7 +35,7 @@ public class EstimateListPageViewModelTests
         await vm.InitializeAsync();
 
         Assert.Contains("https://business.example/api/v1/estimate/asprovider", api.Paths);
-        Assert.Equal("Mes devis en attente", vm.Title);
+        Assert.Equal("Devis en attente de signature fournisseur", vm.Title);
         Assert.Equal(2, vm.Estimates.Count);
     }
 

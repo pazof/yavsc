@@ -335,9 +335,9 @@ namespace Yavsc.ApiControllers
                 return new ChallengeResult();
             }
 
-            var filename = AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, id);
+            var filename = AbstractFileSystemHelpers.SignFileNameFormat("cli", billingCode, id);
             FileInfo fi = new FileInfo(Path.Combine(siteSettings.Bills, filename));
-            if (!fi.Exists) return NotFound(new { Error = "Professional signature not found" });
+            if (!fi.Exists) return NotFound(new { Error = "Client signature not found" });
             return File(fi.OpenRead(), "application/x-pdf", filename);
         }
 

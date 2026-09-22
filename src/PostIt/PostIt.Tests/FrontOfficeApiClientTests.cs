@@ -84,6 +84,34 @@ public class FrontOfficeApiClientTests
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => client.RejectQueryAsync("Rdv", 0));
     }
 
+    [Fact]
+    public async Task GetEstimatePdf_gets_estimate_pdf_endpoint()
+    {
+        var api = new RecordingApi();
+        var client = new FrontOfficeApiClient(api, "https://business.example/api/v1/");
+
+        await client.GetEstimatePdfAsync(42);
+
+        Assert.Equal(HttpMethod.Get, api.LastMethod);
+        Assert.Equal(
+            "https://business.example/api/v1/front/query/42/estimate.pdf",
+            api.LastPath);
+    }
+
+    [Fact]
+    public async Task GetEstimateTex_gets_estimate_tex_endpoint()
+    {
+        var api = new RecordingApi();
+        var client = new FrontOfficeApiClient(api, "https://business.example/api/v1/");
+
+        await client.GetEstimateTexAsync(42);
+
+        Assert.Equal(HttpMethod.Get, api.LastMethod);
+        Assert.Equal(
+            "https://business.example/api/v1/front/query/42/estimate.tex",
+            api.LastPath);
+    }
+
     private sealed class RecordingApi : IYavscApiClient
     {
         public HttpClient Http { get; } = new();
@@ -115,6 +143,14 @@ public class FrontOfficeApiClientTests
 
         public Task CallAsync(HttpMethod method, string path, Func<HttpContent> contentFactory, CancellationToken ct = default)
             => CallAsync(method, path, (object?)null, ct);
+
+        public Task<byte[]> DownloadAsync(HttpMethod method, string path, CancellationToken ct = default)
+        {
+            LastMethod = method;
+            LastPath = path;
+            LastBody = null;
+            return Task.FromResult(Array.Empty<byte>());
+        }
 
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }

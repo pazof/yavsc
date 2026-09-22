@@ -1,31 +1,36 @@
 @using Yavsc.Helpers
 @using System.IO
 @using System.Globalization
-@model Estimate
+@model IBillable
 @{
-    Layout = "null";
-    var pro = Model.Query.PerformerProfile;
-    var from = Model.Query.PerformerProfile.Performer;
-    var to = Model.Query.Client;
-    var PostalAddress = to.PostalAddress?.Address.SplitAddressToTeX();
-    var proaddr = Model.Query.PerformerProfile.OrganizationAddress.Address.SplitAddressToTeX();
-    var proaddrm = new HtmlString(Model.Query.PerformerProfile.OrganizationAddress.Address);
+    Layout = null;
+    var pro = ViewBag.PerformerProfile;
+    var from = ViewBag.Performer;
+    var to = ViewBag.Client;
+    var PostalAddress = ViewBag.ClientAddress;
+    var proaddr = ViewBag.PerformerOrganizationAddress;
     var isestimate = !ViewBag.AsBill;
-    var prosign = new FileInfo($"{ViewBag.BillsDir}/estimate-prosign-{Model.Id}.png");
-
+    var prosign = new FileInfo($"{ViewBag.BillsDir}/sign-{ViewBag.BillingCode}-{Model.Id}.png");
+    var clisign = new FileInfo($"{ViewBag.BillsDir}/sign-{ViewBag.BillingCode}-{Model.Id}.png");
+    var activity = ViewBag.ActivityLabel;
+    var bill = Model.GetBillItems();
+    string validationDate = null ;
+    if (Model.ValidationDate.HasValue) {
+        validationDate = Model.ValidationDate.Value.ToString("dddd dd MMMM yyyy", CultureInfo.CreateSpecificCulture("fr-FR"));
+    }
 }
 \documentclass[french,11pt]{article}
 \usepackage{eurosym}
+\usepackage{textcomp}
 \usepackage{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[a4paper]{geometry}
 \usepackage{units}
-\usepackage{bera}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
 \usepackage{fp}
-
+\usepackage[space]{grffile}
 \def\TVA{20}    % Taux de la TVA
 
 \def\TotalHT{0}
@@ -49,7 +54,7 @@
     \global\let\TotalHT\TotalHT
     \global\let\TotalTVA\TotalTVA
     \global\let\TotalTTC\TotalTTC
-    \cr 
+    \cr
     \hline
     \textbf{Total}    & & &    \TotalHT
 }
@@ -66,9 +71,9 @@
 %%%%%%%%%%%%%%%%%%%%% A MODIFIER DANS LA FACTURE %%%%%%%%%%%%%%%%%%%%%
 
 \def\FactureNum            {@Model.Id.ToString()}    % Numéro de facture
-\def\FactureAcquittee    {@ViewBag.Acquitted?"oui":"non"}        % Facture acquittée : oui/non
-\def\FactureLieu    {@proaddrm}    % Lieu de l'édition de la facture
-\def\FactureObjet    {@(new HtmlString(isestimate?"Devis":"Facture")) : @TeXHelpers.ToTeX(Model.Title)}    % Objet du document
+\def\FactureAcquittee    {@(ViewBag.Acquitted?"oui":"non")}        % Facture acquittée : oui/non
+\def\FactureLieu    {@proaddr}    % Lieu de l'édition de la facture
+\def\FactureObjet    {@(new HtmlString(isestimate?"Devis":"Facture")) en @TeXHelpers.ToTeX(activity)}    % Objet du document
 % Description de la facture
 \def\FactureDescr    {
    @TeXHelpers.ToTeX(Model.Description)
@@ -77,19 +82,18 @@
 % Infos Client
 \def\ClientNom{@TeXHelpers.ToTeX(to.UserName)}    % Nom du client
 
-\def\ClientAdresse{                    
+\def\ClientAdresse{
 % Adresse du client
-@PostalAddress
-@if (PostalAddress!=null) {<text>@PostalAddress</text>}
-@if (!string.IsNullOrWhiteSpace(to.PhoneNumber)) {<text>@TeXHelpers.ToTeX(to.PhoneNumber)<text>\\</text>
-   </text>} 
-  E-mail:  @TeXHelpers.ToTeX(to.Email)
+@PostalAddress @if (!string.IsNullOrWhiteSpace(to.PhoneNumber)) {<text>\\
+    @TeXHelpers.ToTeX(to.PhoneNumber)
+   </text>}\\
+   E-mail:  @TeXHelpers.ToTeX(to.Email)
 }
 
 % Liste des produits facturés : Désignation, prix
-@if (Model.Bill!=null) { foreach (CommandLine line in Model.Bill) {
-<text>\AjouterService{@TeXHelpers.ToTeX(line.Description)}{@line.Count}{@line.UnitaryCost.ToString("F2",CultureInfo.InvariantCulture)}
-</text>} }
+@foreach (var line in bill) {
+<text>\AjouterService{@TeXHelpers.ToTeXCell(line.Description)}{@line.Count}{@line.UnitaryCost.ToString("F2",CultureInfo.InvariantCulture)}
+</text>}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -104,8 +108,8 @@
 \setlength{\parindent}{0pt}
 
 \renewcommand{\headrulewidth}{0pt}
-\cfoot{   @TeXHelpers.ToTeX(from.UserName)  @if (proaddrm!=null) { <text> - @proaddrm </text> } \newline
-    \small{ E-mail:  @TeXHelpers.ToTeX(from.Email) @if (!string.IsNullOrWhiteSpace(from.PhoneNumber)) {  <text> - Téléphone fixe:  @TeXHelpers.ToTeX(from.PhoneNumber) </text>  } 
+\cfoot{   @TeXHelpers.ToTeX(from.UserName) - @ViewBag.FooterPerformerOrganizationAddress \\
+    \small{ E-mail:  @TeXHelpers.ToTeX(from.Email) @if (!string.IsNullOrWhiteSpace(from.PhoneNumber)) {  <text> - Téléphone :  @TeXHelpers.ToTeX(from.PhoneNumber) </text>  }
     }
 }
 
@@ -113,9 +117,9 @@
 
 % Logo de la société
 @if (from.Avatar != null) {
-<text>\includegraphics[height=60pt]{@(ViewBag.AvatarsDir)/@(from.UserName).png}  
+<text>\includegraphics[height=60pt]{@(ViewBag.AvatarsDir)/@(from.UserName).png}
 </text>
-} else { 
+} else {
 <text>%\includegraphics{logo.png}
 </text>
 }
@@ -123,7 +127,7 @@
  @TeXHelpers.ToTeX(from.UserName) \\
  @proaddr
 
-@(isestimate?"Devis":"Facture") n°\FactureNum
+@(isestimate?"Devis":"Facture") n\textdegree\FactureNum
 
 
 {\addtolength{\leftskip}{10.5cm} %in ERT
@@ -157,27 +161,33 @@
 
 \end{flushright}
 ~\\
-@if (!isestimate) {
-    <text>
+@if (ViewBag.AsBill) {
+    if (ViewBag.Acquitted) {
+<text>
 \ifthenelse{\equal{\FactureAcquittee}{oui}}{
     Facture acquittée.
-}{ </text>
-
-    if (from.BankInfo!=null) foreach (var bi in from.BankInfo){
+}
+</text>
+} else {
+    var bi = from.BankInfo;
+    if (bi==null){
+    <text>À régler sur site, en utilisant le paiment PayPal:\\
+        Le relevé d'identité bancaire de ce prestaire n'est pas renseigné.
+    </text>
+    } else {
         <text>À régler par chèque ou par virement bancaire :
-
 
     \begin{center}
         \begin{tabular}{|c c c c|}
 @if (!string.IsNullOrWhiteSpace(bi.BankCode) && !string.IsNullOrWhiteSpace(bi.WicketCode)
-        && !string.IsNullOrWhiteSpace(bi.AccountNumber) ) { 
-<text>\hline \textbf{Code banque} & \textbf{Code guichet} & \textbf{N° de Compte} & \textbf{Clé RIB} \\
+        && !string.IsNullOrWhiteSpace(bi.AccountNumber) ) {
+<text>\hline \textbf{Code banque} & \textbf{Code guichet} & \textbf{N\textdegree de Compte} & \textbf{Clé RIB} \\
 @bi.BankCode                      &  @bi.WicketCode       & @bi.AccountNumber     & @bi.BankedKey   \\
 </text>
          }
-        @if (!string.IsNullOrWhiteSpace(@bi.IBAN) && !string.IsNullOrWhiteSpace(@bi.BIC)) { 
+        @if (!string.IsNullOrWhiteSpace(@bi.IBAN) && !string.IsNullOrWhiteSpace(@bi.BIC)) {
             <text>
-               \hline     \textbf{IBAN N°}        & \multicolumn{3}{|l|}{  @bi.IBAN  }         \\
+               \hline     \textbf{IBAN N\textdegree}        & \multicolumn{3}{|l|}{  @bi.IBAN  }         \\
             \hline     \textbf{Code BIC}        & \multicolumn{3}{|l|}{  @bi.BIC  }
             </text>
          }          \\
@@ -186,21 +196,33 @@
     \end{center}</text>
     }
 }
+}
 
 
-@if (!(Model.ProviderValidationDate==null)) {
+@if (validationDate!=null) {
     <text>
 \begin{flushright}
-  @(new HtmlString(isestimate?"Devis validé":"Facture validée")) le @TeXHelpers.ToTeX(Model.ProviderValidationDate.ToString("dddd dd MMMM yyyy"))
+  @(new TeXString(isestimate?"Devis demandé le ":"Facture suite à la demande du ")+
+    TeXHelpers.ToTeX(validationDate))
 \end{flushright}
 @if (prosign.Exists) {
 <text>
 \begin{center}
 	\hspace{263pt}
-    \includegraphics[height=60pt]{@(ViewBag.BillsDir)/estimate-prosign-@(Model.Id).png}
+    \includegraphics[height=60pt]{@(ViewBag.BillsDir)/{ViewBag.BillingCode}-prosign-@(Model.Id).png}
 \end{center}
 </text>
 }
+
+@if (clisign.Exists) {
+<text>
+\begin{center}
+	\hspace{263pt}
+    \includegraphics[height=60pt]{@(ViewBag.BillsDir)/{ViewBag.BillingCode}-clisign-@(Model.Id).png}
+\end{center}
+</text>
+}
+
     </text>
 }
 \end{document}

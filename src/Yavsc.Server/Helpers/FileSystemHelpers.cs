@@ -34,7 +34,7 @@ namespace Yavsc.Server.Helpers
         {
             var item = new FileReceivedInfo(
                 settings.Bills,
-                AbstractFileSystemHelpers.SignFileNameFormat("pro", billingCode, estimateId));
+                AbstractFileSystemHelpers.SignFileNameFormat(signType, billingCode, estimateId));
 
             var fi = new FileInfo(item.FullName);
             if (fi.Exists) item.Overridden = true;

@@ -25,8 +25,8 @@ public partial class EstimateValidationPage : ContentPage
 
         _vm = vm;
 
-        if (_vm is null || Pad is null) return;
+        if (_vm is null || ProPad is null || ClientPad is null) return;
 
-        _vm.Attach(Pad.SignaturePad);
+        _vm.Attach(ProPad.SignaturePad, ClientPad.SignaturePad);
     }
 }

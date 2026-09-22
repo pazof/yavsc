@@ -95,6 +95,33 @@ public sealed class FrontOfficeApiClient
         return response ?? new QueryAcceptanceResponseDto { QueryId = queryId };
     }
 
+    /// <summary>
+    /// Download the estimate linked to query <paramref name="queryId"/>
+    /// as a LaTeX (<c>.tex</c>) source document
+    /// (<c>GET api/v1/front/query/{queryId}/estimate.tex</c>). Returns
+    /// the raw TeX bytes (UTF-8 text).
+    /// </summary>
+    public Task<byte[]> GetEstimateTexAsync(long queryId, CancellationToken ct = default)
+    {
+        if (queryId <= 0) throw new ArgumentOutOfRangeException(nameof(queryId));
+        var path = $"{PathPrefix}/query/{queryId}/estimate.tex";
+        return _api.DownloadAsync(HttpMethod.Get, Absolute(path), ct);
+    }
+
+    /// <summary>
+    /// Download the estimate linked to query <paramref name="queryId"/>
+    /// as a compiled PDF document
+    /// (<c>GET api/v1/front/query/{queryId}/estimate.pdf</c>). Returns
+    /// the raw PDF bytes. Requires <c>texi2pdf</c> on the server host;
+    /// a non-2xx response throws <see cref="HttpRequestException"/>.
+    /// </summary>
+    public Task<byte[]> GetEstimatePdfAsync(long queryId, CancellationToken ct = default)
+    {
+        if (queryId <= 0) throw new ArgumentOutOfRangeException(nameof(queryId));
+        var path = $"{PathPrefix}/query/{queryId}/estimate.pdf";
+        return _api.DownloadAsync(HttpMethod.Get, Absolute(path), ct);
+    }
+
     private string Absolute(string relativePath) => new Uri(ResolveBusinessBaseAddress(), relativePath).ToString();
 
     private Uri ResolveBusinessBaseAddress()

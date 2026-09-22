@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using PostIt.Helpers;
 using Yavsc;
 using Yavsc.Api.Client;
@@ -130,11 +131,13 @@ public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusV
         try
         {
             var details = await _billingClient.GetQueryAsync(Form.ActionName, SelectedQuery.Id).ConfigureAwait(true);
+            var frontClient = app.ServiceProvider?.GetRequiredService<FrontOfficeApiClient>();
             var vm = new BillingQueryDetailsPageViewModel(
                 Activity,
                 Performer,
                 Form,
                 _billingClient,
+                frontClient,
                 details,
                 IsReadOnly);
             await app.PushPageAsync(vm).ConfigureAwait(true);

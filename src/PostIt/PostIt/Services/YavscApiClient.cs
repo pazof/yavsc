@@ -478,6 +478,41 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         return "Avatar mis à jour.";
     }
 
+    /// <summary>
+    /// Download a binary resource (PDF, TeX, …) from the API. Unlike
+    /// <see cref="CallAsync{T}(HttpMethod, string, object?, CancellationToken)"/>,
+    /// which JSON-decodes the response, this returns the raw response
+    /// bytes. Reuses the same Bearer-token attach + 401-refresh-retry-once
+    /// contract as <see cref="SetAvatarAsync"/>.
+    /// </summary>
+    public virtual async Task<byte[]> DownloadAsync(
+        HttpMethod method,
+        string path,
+        CancellationToken ct = default)
+    {
+        if (_tokens is null)
+            throw new InvalidOperationException("Not logged in. Call LoginInteractiveAsync first.");
+
+        await EnsureFreshTokenAsync(ct).ConfigureAwait(false);
+
+        var sendOnce = async () =>
+        {
+            using var request = new HttpRequestMessage(method, path);
+            return await Http.SendAsync(request, ct).ConfigureAwait(false);
+        };
+
+        var response = await sendOnce().ConfigureAwait(false);
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            response.Dispose();
+            await ForceRefreshAsync(ct).ConfigureAwait(false);
+            response = await sendOnce().ConfigureAwait(false);
+        }
+
+        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
+        return await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
+    }
+
     public async Task LogoutAsync()
     {
         _store.Clear();

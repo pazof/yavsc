@@ -47,6 +47,21 @@ public class SignaturePadControl : TemplatedControl
     }
 
     /// <summary>
+    /// When true the control ignores pointer input — it only displays
+    /// strokes loaded into its buffer (e.g. the other party's
+    /// signature, which must be shown but not editable). <see cref="Load"/>
+    /// and <see cref="Clear"/> still work.
+    /// </summary>
+    public static readonly StyledProperty<bool> IsReadOnlyProperty =
+        AvaloniaProperty.Register<SignaturePadControl, bool>(nameof(IsReadOnly));
+
+    public bool IsReadOnly
+    {
+        get => GetValue(IsReadOnlyProperty);
+        set => SetValue(IsReadOnlyProperty, value);
+    }
+
+    /// <summary>
     /// Captured strokes in wire form. Exposed as a read-only view
     /// over the internal buffer. The buffer only mutates on the UI
     /// thread, between pointer events.
@@ -109,6 +124,7 @@ public class SignaturePadControl : TemplatedControl
 
     private void OnCapturePressed(object? sender, PointerPressedEventArgs e)
     {
+        if (IsReadOnly) return;
         if (!e.GetCurrentPoint(CaptureArea).Properties.IsLeftButtonPressed) return;
         e.Pointer.Capture(CaptureArea);
         _capturing = true;

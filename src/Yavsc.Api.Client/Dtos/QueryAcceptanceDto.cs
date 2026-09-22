@@ -1,4 +1,5 @@
 using System;
+using Yavsc.Models.Billing;
 
 namespace Yavsc.Api.Client;
 
@@ -17,6 +18,17 @@ public sealed class QueryAcceptanceRequestDto
     public int CoordinateMax { get; set; } = 10_000;
 
     public DateTime? CapturedAtUtc { get; set; }
+
+    /// <summary>
+    /// Which signature is being submitted:
+    /// <see cref="SignatureType.Pro"/> (the provider) or
+    /// <see cref="SignatureType.Client"/>. The PostIt client sets this
+    /// from the perspective the page was opened in (provider signs Pro,
+    /// client signs Client), so the server stores the signature under
+    /// the right author even when one user is both parties. Null lets
+    /// the server infer the role from the caller's identity.
+    /// </summary>
+    public SignatureType? SignatureType { get; set; }
 }
 
 /// <summary>
