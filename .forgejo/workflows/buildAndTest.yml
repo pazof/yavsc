@@ -44,7 +44,7 @@ jobs:
     - name: Secret scan
       run: |
         echo "🔍 Scanning for secrets..."
-        cd /src/_src && dotnet tool restore && dotnet picket git --verbose --redact --exit-code 1 --log-opts -n10 \
+        cd /src/_src && dotnet tool restore && dotnet picket git --verbose --redact --exit-code 1 --log-opts main..HEAD \
     - name: Build
       run: |
         echo "🏗️ Building the solution..."
