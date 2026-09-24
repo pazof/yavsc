@@ -43,3 +43,6 @@ DataDir/
 
 *.log
 
+# gitleaks scan output (local secret-scan report, not for the repo)
+gitleaks-report.json
+
