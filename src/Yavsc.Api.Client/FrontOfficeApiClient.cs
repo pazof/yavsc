@@ -122,6 +122,48 @@ public sealed class FrontOfficeApiClient
         return _api.DownloadAsync(HttpMethod.Get, Absolute(path), ct);
     }
 
+    /// <summary>
+    /// Liste les pièces jointes (fichiers de l'espace perso du client)
+    /// rattachées à la demande <paramref name="queryId"/> par référence
+    /// (<c>GET front/query/{queryId}/attachments</c>).
+    /// </summary>
+    public Task<List<AttachmentDto>> GetQueryAttachmentsAsync(string billingCode, long queryId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(billingCode))
+            throw new ArgumentException("billingCode is required.", nameof(billingCode));
+        if (queryId <= 0) throw new ArgumentOutOfRangeException(nameof(queryId));
+        var path = $"{PathPrefix}/query/{queryId}/attachments?billingCode={Uri.EscapeDataString(billingCode)}";
+        return _api.CallAsync<List<AttachmentDto>>(HttpMethod.Get, Absolute(path), ct: ct);
+    }
+
+    /// <summary>
+    /// Attache un fichier de l'espace perso du client à sa demande
+    /// (<c>POST front/query/{queryId}/attachments</c>). Réservé au client.
+    /// </summary>
+    public Task AttachQueryFileAsync(string billingCode, long queryId, long fileId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(billingCode))
+            throw new ArgumentException("billingCode is required.", nameof(billingCode));
+        if (queryId <= 0) throw new ArgumentOutOfRangeException(nameof(queryId));
+        if (fileId <= 0) throw new ArgumentOutOfRangeException(nameof(fileId));
+        var path = $"{PathPrefix}/query/{queryId}/attachments?billingCode={Uri.EscapeDataString(billingCode)}";
+        return _api.CallAsync(HttpMethod.Post, Absolute(path), body: new { fileId }, ct: ct);
+    }
+
+    /// <summary>
+    /// Détache un fichier de la demande
+    /// (<c>DELETE front/query/{queryId}/attachments/{fileId}</c>). Réservé au client.
+    /// </summary>
+    public Task DetachQueryFileAsync(string billingCode, long queryId, long fileId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(billingCode))
+            throw new ArgumentException("billingCode is required.", nameof(billingCode));
+        if (queryId <= 0) throw new ArgumentOutOfRangeException(nameof(queryId));
+        if (fileId <= 0) throw new ArgumentOutOfRangeException(nameof(fileId));
+        var path = $"{PathPrefix}/query/{queryId}/attachments/{fileId}?billingCode={Uri.EscapeDataString(billingCode)}";
+        return _api.CallAsync(HttpMethod.Delete, Absolute(path), ct: ct);
+    }
+
     private string Absolute(string relativePath) => new Uri(ResolveBusinessBaseAddress(), relativePath).ToString();
 
     private Uri ResolveBusinessBaseAddress()

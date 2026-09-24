@@ -25,6 +25,7 @@ namespace PostIt.ViewModels;
 public partial class EstimateEditionPageViewModel : ViewModelBase, IActionStatusViewModel
 {
     private readonly EstimateApiClient _estimateClient;
+    private readonly UserFilesApiClient _fsClient;
     private readonly BillingQuerySummaryDto _query;
 
     public long QueryId => _query.Id;
@@ -68,6 +69,14 @@ public partial class EstimateEditionPageViewModel : ViewModelBase, IActionStatus
     [ObservableProperty]
     public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Prêt.");
 
+    /// <summary>Identifiant du devis, renseigné après l'envoi.</summary>
+    [ObservableProperty, NotifyCanExecuteChangedFor(nameof(AddAttachmentCommand))]
+    public partial long? EstimateId { get; set; }
+
+    /// <summary>Pièces jointes rattachées au devis (par référence).</summary>
+    [ObservableProperty]
+    public partial ObservableCollection<AttachmentDto> Attachments { get; set; } = new();
+
     public decimal Total => Lines.Sum(line => line.LineTotal);
 
     public string TotalLabel => $"{Total:0.00} {Lines.FirstOrDefault()?.Currency ?? "EUR"}";
@@ -86,10 +95,14 @@ public partial class EstimateEditionPageViewModel : ViewModelBase, IActionStatus
         protected set { _ = value; }
     }
 
-    public EstimateEditionPageViewModel(BillingQuerySummaryDto query, EstimateApiClient estimateClient)
+    public EstimateEditionPageViewModel(
+        BillingQuerySummaryDto query,
+        EstimateApiClient estimateClient,
+        UserFilesApiClient fsClient)
     {
         _query = query ?? throw new ArgumentNullException(nameof(query));
         _estimateClient = estimateClient ?? throw new ArgumentNullException(nameof(estimateClient));
+        _fsClient = fsClient ?? throw new ArgumentNullException(nameof(fsClient));
 
         EstimateDescription = query.Description ?? string.Empty;
         Lines.CollectionChanged += OnLinesCollectionChanged;
@@ -97,6 +110,9 @@ public partial class EstimateEditionPageViewModel : ViewModelBase, IActionStatus
         AddLine();
         this.SetInfoStatus("Complétez le devis puis envoyez-le. La demande associée sera validée.");
     }
+
+    /// <summary>Constructeur pour le designer Avalonia.</summary>
+    public EstimateEditionPageViewModel() : this(null!, null!, null!) { }
 
     [RelayCommand]
     private void AddLine()
@@ -141,9 +157,11 @@ public partial class EstimateEditionPageViewModel : ViewModelBase, IActionStatus
             var created = await _estimateClient.CreateAsync(payload).ConfigureAwait(true);
 
             HasSent = true;
+            EstimateId = created.Id;
             OnPropertyChanged(nameof(SendLabel));
             this.SetInfoStatus(
                 $"Devis #{created.Id} envoyé ({created.Bill.Count} ligne(s)). La demande #{QueryId} est validée.");
+            await LoadAttachmentsAsync().ConfigureAwait(true);
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
         {
@@ -169,6 +187,106 @@ public partial class EstimateEditionPageViewModel : ViewModelBase, IActionStatus
         }
 
         await app.GoBackAsync().ConfigureAwait(true);
+    }
+
+    /// <summary>
+    /// Charge les pièces jointes rattachées au devis courant
+    /// (<c>GET estimate/{id}/attachments</c>).
+    /// </summary>
+    [RelayCommand]
+    private async Task LoadAttachmentsAsync()
+    {
+        if (EstimateId is null || _estimateClient is null) return;
+        try
+        {
+            var list = await _estimateClient.GetAttachmentsAsync(EstimateId.Value).ConfigureAwait(true);
+            Attachments.Clear();
+            if (list is not null)
+                foreach (var a in list) Attachments.Add(a);
+        }
+        catch (Exception ex)
+        {
+            this.SetWarningStatus($"Impossible de charger les pièces jointes : {ex.Message}");
+        }
+    }
+
+    private bool CanAddAttachment() => EstimateId is not null && !IsBusy;
+
+    /// <summary>
+    /// Ouvre la page « My Files » en mode sélecteur ; le fichier choisi
+    /// est rattaché au devis par référence via
+    /// <c>POST estimate/{id}/attachments</c>.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddAttachment))]
+    private async Task AddAttachmentAsync()
+    {
+        if (EstimateId is null) return;
+
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var estimateId = EstimateId.Value;
+        var picker = new MyFilesViewModel(_fsClient, async fileId =>
+        {
+            try
+            {
+                await _estimateClient.AttachFileAsync(estimateId, fileId).ConfigureAwait(true);
+                await LoadAttachmentsAsync().ConfigureAwait(true);
+                this.SetInfoStatus("Pièce jointe ajoutée au devis.");
+            }
+            catch (Exception ex)
+            {
+                this.SetErrorStatus($"Échec de l'attachement : {ex.Message}");
+            }
+        });
+        await picker.InitializeAsync().ConfigureAwait(true);
+        await app.PushPageAsync(picker).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task DetachFileAsync(AttachmentDto? attachment)
+    {
+        if (attachment is null || EstimateId is null) return;
+        IsBusy = true;
+        try
+        {
+            await _estimateClient.DetachFileAsync(EstimateId.Value, attachment.FileId).ConfigureAwait(true);
+            Attachments.Remove(attachment);
+            this.SetInfoStatus("Pièce jointe détachée du devis.");
+        }
+        catch (Exception ex)
+        {
+            this.SetErrorStatus($"Échec du détachement : {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task DownloadAttachmentAsync(AttachmentDto? attachment)
+    {
+        if (attachment is null) return;
+        IsBusy = true;
+        try
+        {
+            var bytes = await _fsClient.DownloadFileAsync(attachment.FileId).ConfigureAwait(true);
+            var name = System.IO.Path.GetFileName(attachment.Path ?? "file");
+            var saved = await FileSaveHelpers.SaveAsync(name, "bin", bytes).ConfigureAwait(true);
+            this.SetInfoStatus(saved ? "Fichier enregistré." : "Téléchargement annulé.");
+        }
+        catch (Exception ex)
+        {
+            this.SetErrorStatus($"Échec du téléchargement : {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     internal EstimateDto BuildPayload()

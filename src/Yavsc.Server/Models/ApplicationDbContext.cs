@@ -509,5 +509,9 @@ namespace Yavsc.Models
         public DbSet<ModerationLog> ModerationLogs { get; set; }
 
         public DbSet<NominativeServiceCommand> NominativeServiceCommands { get; set; }
+
+        public DbSet<EstimateAttachedFile> EstimateAttachedFiles { get; set; }
+
+        public DbSet<QueryAttachedFile> QueryAttachedFiles { get; set; }
     }
 }

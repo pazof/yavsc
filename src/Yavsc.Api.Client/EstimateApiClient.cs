@@ -113,6 +113,41 @@ public sealed class EstimateApiClient
         return _api.CallAsync(HttpMethod.Delete, Absolute($"{PathPrefix}/{id}"), ct: ct);
     }
 
+    /// <summary>
+    /// Liste les pièces jointes (fichiers de l'espace perso du fournisseur)
+    /// rattachées au devis <paramref name="id"/> par référence
+    /// (<c>GET estimate/{id}/attachments</c>).
+    /// </summary>
+    public Task<List<AttachmentDto>> GetAttachmentsAsync(long id, CancellationToken ct = default)
+    {
+        if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+        return _api.CallAsync<List<AttachmentDto>>(HttpMethod.Get, Absolute($"{PathPrefix}/{id}/attachments"), ct: ct);
+    }
+
+    /// <summary>
+    /// Attache un fichier de l'espace perso du fournisseur au devis
+    /// <paramref name="id"/> par référence (<c>POST estimate/{id}/attachments</c>).
+    /// Réservé au fournisseur côté serveur.
+    /// </summary>
+    public Task AttachFileAsync(long id, long fileId, CancellationToken ct = default)
+    {
+        if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+        if (fileId <= 0) throw new ArgumentOutOfRangeException(nameof(fileId));
+        return _api.CallAsync(HttpMethod.Post, Absolute($"{PathPrefix}/{id}/attachments"),
+            body: new { fileId }, ct: ct);
+    }
+
+    /// <summary>
+    /// Détache un fichier du devis <paramref name="id"/>
+    /// (<c>DELETE estimate/{id}/attachments/{fileId}</c>). Réservé au fournisseur.
+    /// </summary>
+    public Task DetachFileAsync(long id, long fileId, CancellationToken ct = default)
+    {
+        if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+        if (fileId <= 0) throw new ArgumentOutOfRangeException(nameof(fileId));
+        return _api.CallAsync(HttpMethod.Delete, Absolute($"{PathPrefix}/{id}/attachments/{fileId}"), ct: ct);
+    }
+
     private string Absolute(string relativePath) => new Uri(ResolveBusinessBaseAddress(), relativePath).ToString();
 
     private Uri ResolveBusinessBaseAddress()

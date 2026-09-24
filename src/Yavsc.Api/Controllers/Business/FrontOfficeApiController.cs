@@ -8,6 +8,7 @@ using Yavsc.Abstract.Workflow;
 using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
+using Yavsc.Models.Blog;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
 using Yavsc.ViewModels.FrontOffice;
@@ -366,6 +367,95 @@ namespace Yavsc.ApiControllers
 
         private static bool HasSignature(QueryAcceptanceRequest? body)
             => body is not null && body.Strokes is not null && body.Strokes.Length > 0;
+
+        // GET: api/v1/front/query/{queryId}/attachments?billingCode=…
+        //
+        // Liste les fichiers de l'espace perso du client rattachés à la
+        // demande, par référence (UploadedFile). Lecture ouverte aux deux
+        // parties (client/fournisseur) de la demande et aux admin ; le
+        // téléchargement des octets est servi par le host Blogs.
+        [HttpGet("query/{queryId}/attachments")]
+        public async Task<IActionResult> GetQueryAttachments(
+            string billingCode, long queryId, CancellationToken token)
+        {
+            var (query, role, error) = await ResolveAndAuthorizeAsync(billingCode, queryId, token);
+            if (error is not null) return error;
+            if (query is null) return BadRequest(new { Error = "query not found" });
+
+            var attached = await dbContext.QueryAttachedFiles
+                .Where(a => a.CommandId == queryId)
+                .Select(a => new
+                {
+                    fileId = a.FileId,
+                    path = a.File.Path,
+                    size = a.File.Length,
+                    contentType = a.File.ContentType,
+                    ownerId = a.File.OwnerId
+                })
+                .ToListAsync(token);
+            return Ok(attached);
+        }
+
+        // POST: api/v1/front/query/{queryId}/attachments?billingCode=…   { fileId }
+        //
+        // Attache un fichier de l'espace perso du client à sa demande, par
+        // référence. Réservé au client (rôle Client) : c'est lui qui
+        // documente sa demande. Le fichier doit lui appartenir.
+        [HttpPost("query/{queryId}/attachments")]
+        public async Task<IActionResult> AttachQueryFile(
+            string billingCode, long queryId, [FromBody] AttachFileRequest? body, CancellationToken token)
+        {
+            var (query, role, error) = await ResolveAndAuthorizeAsync(billingCode, queryId, token);
+            if (error is not null) return error;
+            if (query is null) return BadRequest(new { Error = "query not found" });
+
+            if (role != ActorRole.Client && !User.IsInRole(Constants.AdminGroupName))
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
+            if (body == null || body.FileId <= 0)
+                return BadRequest(new { error = "fileId required" });
+
+            var uid = User.GetUserId();
+            var file = await dbContext.UploadedFiles
+                .FirstOrDefaultAsync(f => f.Id == body.FileId, token);
+            if (file == null) return BadRequest(new { error = "file not found" });
+            if (file.OwnerId != uid && !User.IsInRole(Constants.AdminGroupName))
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
+            var existing = await dbContext.QueryAttachedFiles
+                .FirstOrDefaultAsync(a => a.CommandId == queryId && a.FileId == body.FileId, token);
+            if (existing != null) return Ok(new { queryId, fileId = body.FileId });
+
+            dbContext.QueryAttachedFiles.Add(new QueryAttachedFile
+            {
+                CommandId = queryId,
+                FileId = body.FileId
+            });
+            await dbContext.SaveChangesAsync(User.GetUserId(), token);
+            return Ok(new { queryId, fileId = body.FileId });
+        }
+
+        // DELETE: api/v1/front/query/{queryId}/attachments/{fileId}?billingCode=…
+        //
+        // Détache un fichier de la demande. Réservé au client.
+        [HttpDelete("query/{queryId}/attachments/{fileId}")]
+        public async Task<IActionResult> DetachQueryFile(
+            string billingCode, long queryId, long fileId, CancellationToken token)
+        {
+            var (query, role, error) = await ResolveAndAuthorizeAsync(billingCode, queryId, token);
+            if (error is not null) return error;
+            if (query is null) return BadRequest(new { Error = "query not found" });
+
+            if (role != ActorRole.Client && !User.IsInRole(Constants.AdminGroupName))
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
+            var link = await dbContext.QueryAttachedFiles
+                .FirstOrDefaultAsync(a => a.CommandId == queryId && a.FileId == fileId, token);
+            if (link == null) return NotFound();
+            dbContext.QueryAttachedFiles.Remove(link);
+            await dbContext.SaveChangesAsync(User.GetUserId(), token);
+            return Ok(new { queryId, fileId });
+        }
     }
 
     internal enum ActorRole { None, Provider, Client, Admin }

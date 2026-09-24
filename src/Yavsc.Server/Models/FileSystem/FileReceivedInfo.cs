@@ -43,11 +43,29 @@ namespace Yavsc.Server.Models.FileSystem
         }
 
         public string DestDir { get; set; }
-        
+
         public string FileName { get; set; }
         public bool Overridden { get; set; }
 
         public bool QuotaOffense { get; set; }
+
+        /// <summary>
+        /// Identifiant de la ligne <see cref="Yavsc.Models.Blog.UploadedFile"/>
+        /// créée à l'enregistrement du fichier dans l'espace perso
+        /// (<c>api/v1/fs</c>). Nul si aucune métadonnée n'a été persistée.
+        /// </summary>
+        public long? FileId { get; set; }
+
+        /// <summary>
+        /// Taille du fichier reçu (octets), pour le reflet côté métadonnées.
+        /// </summary>
+        public long Length { get; set; }
+
+        /// <summary>
+        /// Type MIME du fichier reçu.
+        /// </summary>
+        public string ContentType { get; set; }
+
         public string FullName { get => Path.Combine(DestDir, FileName); }
 
     }

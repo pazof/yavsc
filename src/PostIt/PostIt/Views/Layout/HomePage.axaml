@@ -34,5 +34,9 @@
               Command="{Binding OpenProviderEstimates}"
               HorizontalAlignment="Center"
               IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
+          <Button Content="Mes fichiers"
+              Command="{Binding OpenMyFiles}"
+              HorizontalAlignment="Center"
+              IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
         </StackPanel>
 </ContentPage>

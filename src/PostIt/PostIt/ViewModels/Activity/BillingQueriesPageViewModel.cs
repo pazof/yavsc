@@ -132,14 +132,18 @@ public partial class BillingQueriesPageViewModel : ViewModelBase, IActionStatusV
         {
             var details = await _billingClient.GetQueryAsync(Form.ActionName, SelectedQuery.Id).ConfigureAwait(true);
             var frontClient = app.ServiceProvider?.GetRequiredService<FrontOfficeApiClient>();
+            var fsClient = app.ServiceProvider?.GetRequiredService<UserFilesApiClient>();
             var vm = new BillingQueryDetailsPageViewModel(
                 Activity,
                 Performer,
                 Form,
                 _billingClient,
                 frontClient,
+                fsClient,
                 details,
-                IsReadOnly);
+                IsReadOnly,
+                canAttach: !IsReadOnly);
+            await vm.InitializeAsync().ConfigureAwait(true);
             await app.PushPageAsync(vm).ConfigureAwait(true);
         }
         catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)

@@ -1,3 +1,4 @@
+#nullable enable annotations
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,19 @@ namespace Yavsc.Models.Blog
     /// </summary>
     /// <value></value>
     public string ContentType { get; set; }
+
+    /// <summary>
+    /// Propriétaire du fichier dans l'espace de stockage personnel.
+    /// Renseigné pour les fichiers téléversés via <c>api/v1/fs</c>
+    /// (référencés par <see cref="EstimateAttachedFile"/> /
+    /// <see cref="QueryAttachedFile"/>). Reste <c>null</c> pour les
+    /// pièces jointes de blog historiques (<see cref="BlogAttachedFile"/>),
+    /// qui ne sont pas adressées par propriétaire.
+    /// </summary>
+    public string? OwnerId { get; set; }
+
+    [ForeignKey("OwnerId")]
+    public virtual ApplicationUser? Owner { get; set; }
   }
 
   [PrimaryKey(nameof(FileId), nameof(PostId))]

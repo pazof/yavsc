@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -15,7 +16,16 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
 {
     private readonly BillingApiClient _billingClient;
     private readonly FrontOfficeApiClient _frontClient;
+    private readonly UserFilesApiClient _fsClient;
     private readonly BillingQueryDetailsDto _details;
+
+    /// <summary>
+    /// Vrai lorsque l'utilisateur courant est le client de la demande
+    /// et peut y attacher/détacher des fichiers de son espace perso.
+    /// Le fournisseur consulte et télécharge les pièces mais n'attache
+    /// pas (il joint ses documents au devis, côté <c>EstimateEditionPage</c>).
+    /// </summary>
+    public bool CanAttach { get; }
 
     public ActivityInfo Activity { get; }
     public ActivityUserDisplayItem Performer { get; }
@@ -52,6 +62,10 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
     [ObservableProperty]
     public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
 
+    /// <summary>Pièces jointes rattachées à la demande (par référence).</summary>
+    [ObservableProperty]
+    public partial ObservableCollection<AttachmentDto> Attachments { get; set; } = new();
+
     public override bool CanNavigateNext
     {
         get => false;
@@ -70,19 +84,26 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
         CommandFormSummary form,
         BillingApiClient billingClient,
         FrontOfficeApiClient frontClient,
+        UserFilesApiClient fsClient,
         BillingQueryDetailsDto details,
-        bool isReadOnly)
+        bool isReadOnly,
+        bool canAttach)
     {
         Activity = activity ?? throw new ArgumentNullException(nameof(activity));
         Performer = performer ?? throw new ArgumentNullException(nameof(performer));
         Form = form ?? throw new ArgumentNullException(nameof(form));
         _billingClient = billingClient ?? throw new ArgumentNullException(nameof(billingClient));
         _frontClient = frontClient ?? throw new ArgumentNullException(nameof(frontClient));
+        _fsClient = fsClient ?? throw new ArgumentNullException(nameof(fsClient));
         _details = details ?? throw new ArgumentNullException(nameof(details));
         IsReadOnly = isReadOnly;
+        CanAttach = canAttach;
 
         this.SetInfoStatus("Details de commande charges.");
     }
+
+    /// <summary>Constructeur pour le designer Avalonia.</summary>
+    public BillingQueryDetailsPageViewModel() : this(null!, null!, null!, null!, null!, null!, null!, false, false) { }
 
     [RelayCommand]
     private async Task OpenEditorAsync()
@@ -132,6 +153,110 @@ public partial class BillingQueryDetailsPageViewModel : ViewModelBase, IActionSt
         }
 
         await app.GoBackAsync().ConfigureAwait(true);
+    }
+
+    /// <summary>Charge les pièces jointes de la demande.</summary>
+    public async Task InitializeAsync()
+    {
+        await LoadQueryAttachmentsAsync().ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task LoadQueryAttachmentsAsync()
+    {
+        try
+        {
+            var list = await _frontClient
+                .GetQueryAttachmentsAsync(BillingCode, Id)
+                .ConfigureAwait(true);
+            Attachments.Clear();
+            if (list is not null)
+                foreach (var a in list) Attachments.Add(a);
+        }
+        catch (Exception ex)
+        {
+            // Non bloquant : les pièces jointes sont un complément.
+            this.SetWarningStatus($"Pièces jointes indisponibles : {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Ouvre la page « My Files » en mode sélecteur ; le fichier choisi
+    /// est rattaché à la demande par référence via
+    /// <c>POST front/query/{id}/attachments</c>. Réservé au client
+    /// (<see cref="CanAttach"/>).
+    /// </summary>
+    [RelayCommand]
+    private async Task AddQueryAttachmentAsync()
+    {
+        if (!CanAttach) return;
+
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var billingCode = BillingCode;
+        var queryId = Id;
+        var picker = new MyFilesViewModel(_fsClient, async fileId =>
+        {
+            try
+            {
+                await _frontClient.AttachQueryFileAsync(billingCode, queryId, fileId).ConfigureAwait(true);
+                await LoadQueryAttachmentsAsync().ConfigureAwait(true);
+                this.SetInfoStatus("Pièce jointe ajoutée à la demande.");
+            }
+            catch (Exception ex)
+            {
+                this.SetErrorStatus($"Échec de l'attachement : {ex.Message}");
+            }
+        });
+        await picker.InitializeAsync().ConfigureAwait(true);
+        await app.PushPageAsync(picker).ConfigureAwait(true);
+    }
+
+    [RelayCommand]
+    private async Task DetachQueryFileAsync(AttachmentDto? attachment)
+    {
+        if (attachment is null || !CanAttach) return;
+        IsBusy = true;
+        try
+        {
+            await _frontClient.DetachQueryFileAsync(BillingCode, Id, attachment.FileId).ConfigureAwait(true);
+            Attachments.Remove(attachment);
+            this.SetInfoStatus("Pièce jointe détachée de la demande.");
+        }
+        catch (Exception ex)
+        {
+            this.SetErrorStatus($"Échec du détachement : {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task DownloadQueryAttachmentAsync(AttachmentDto? attachment)
+    {
+        if (attachment is null) return;
+        IsBusy = true;
+        try
+        {
+            var bytes = await _fsClient.DownloadFileAsync(attachment.FileId).ConfigureAwait(true);
+            var name = System.IO.Path.GetFileName(attachment.Path ?? "file");
+            var saved = await FileSaveHelpers.SaveAsync(name, "bin", bytes).ConfigureAwait(true);
+            this.SetInfoStatus(saved ? "Fichier enregistré." : "Téléchargement annulé.");
+        }
+        catch (Exception ex)
+        {
+            this.SetErrorStatus($"Échec du téléchargement : {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     /// <summary>

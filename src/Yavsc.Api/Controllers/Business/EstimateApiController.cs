@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
+using Yavsc.Models.Blog;
 using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
@@ -235,6 +236,96 @@ namespace Yavsc.Controllers
                 _context.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        // GET: api/v1/estimate/{id}/attachments
+        //
+        // Liste les fichiers de l'espace perso du fournisseur rattachés au
+        // devis, par référence (UploadedFile). Lecture ouverte aux deux
+        // parties (fournisseur/client) du devis et aux admin, comme
+        // GetEstimate : la contrepartie doit pouvoir voir et télécharger
+        // les pièces (le téléchargement des octets reste servi par le host
+        // Blogs, qui autorise via cette même table de jointure).
+        [HttpGet("{id}/attachments")]
+        public IActionResult GetAttachments(long id)
+        {
+            var estimate = _context.Estimates.FirstOrDefault(e => e.Id == id);
+            if (estimate == null) return NotFound();
+            if (!UserIsAdminOrInThese(estimate.ClientId, estimate.OwnerId))
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
+            var attached = _context.EstimateAttachedFiles
+                .Where(a => a.EstimateId == id)
+                .Select(a => new
+                {
+                    fileId = a.FileId,
+                    path = a.File.Path,
+                    size = a.File.Length,
+                    contentType = a.File.ContentType,
+                    ownerId = a.File.OwnerId
+                })
+                .ToList();
+            return Ok(attached);
+        }
+
+        // POST: api/v1/estimate/{id}/attachments   { fileId }
+        //
+        // Attache un fichier de l'espace perso du fournisseur au devis, par
+        // référence. Réservé au fournisseur (estimate.OwnerId == caller) :
+        // seul le fournisseur constitue le devis et y joint ses documents
+        // (dont les documents à faire signer par le client, per README).
+        // Le fichier doit appartenir au fournisseur (UploadedFile.OwnerId).
+        [HttpPost("{id}/attachments")]
+        public IActionResult AttachFile(long id, [FromBody] AttachFileRequest body)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var estimate = _context.Estimates.FirstOrDefault(e => e.Id == id);
+            if (estimate == null) return NotFound();
+
+            var uid = User.GetUserId();
+            if (!User.IsInRole(Constants.AdminGroupName) && uid != estimate.OwnerId)
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
+            if (body == null || body.FileId <= 0)
+                return BadRequest(new { error = "fileId required" });
+
+            var file = _context.UploadedFiles.FirstOrDefault(f => f.Id == body.FileId);
+            if (file == null) return BadRequest(new { error = "file not found" });
+            if (file.OwnerId != uid)
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
+            var existing = _context.EstimateAttachedFiles
+                .FirstOrDefault(a => a.EstimateId == id && a.FileId == body.FileId);
+            if (existing != null) return Ok(new { estimateId = id, fileId = body.FileId });
+
+            _context.EstimateAttachedFiles.Add(new EstimateAttachedFile
+            {
+                EstimateId = id,
+                FileId = body.FileId
+            });
+            _context.SaveChanges(User.GetUserId());
+            return Ok(new { estimateId = id, fileId = body.FileId });
+        }
+
+        // DELETE: api/v1/estimate/{id}/attachments/{fileId}
+        //
+        // Détache un fichier du devis. Réservé au fournisseur.
+        [HttpDelete("{id}/attachments/{fileId}")]
+        public IActionResult DetachFile(long id, long fileId)
+        {
+            var estimate = _context.Estimates.FirstOrDefault(e => e.Id == id);
+            if (estimate == null) return NotFound();
+
+            var uid = User.GetUserId();
+            if (!User.IsInRole(Constants.AdminGroupName) && uid != estimate.OwnerId)
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
+            var link = _context.EstimateAttachedFiles
+                .FirstOrDefault(a => a.EstimateId == id && a.FileId == fileId);
+            if (link == null) return NotFound();
+            _context.EstimateAttachedFiles.Remove(link);
+            _context.SaveChanges(User.GetUserId());
+            return Ok(new { estimateId = id, fileId });
         }
 
         private bool EstimateExists(long id)

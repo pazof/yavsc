@@ -1,6 +1,7 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PostIt.ViewModels"
+             xmlns:client="using:Yavsc.Api.Client"
              xmlns:postitControls="using:PostIt.Controls"
              x:Class="PostIt.Views.BillingQueryDetailsPage"
              x:DataType="vm:BillingQueryDetailsPageViewModel"
@@ -78,6 +79,53 @@
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="Consentement" FontWeight="SemiBold" />
                         <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding ConsentLabel}" />
                     </Grid>
+                </Border>
+
+                <!-- Pièces jointes (par référence à l'espace perso du client) -->
+                <Border BorderThickness="1"
+                        BorderBrush="#22000000"
+                        CornerRadius="8"
+                        Padding="10">
+                    <StackPanel Spacing="8">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="Pièces jointes"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center" />
+                            <Button Grid.Column="1"
+                                    Content="Ajouter depuis My Files"
+                                    Command="{Binding AddQueryAttachmentCommand}"
+                                    IsVisible="{Binding CanAttach}" />
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding Attachments}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="client:AttachmentDto">
+                                    <Border BorderThickness="1"
+                                            BorderBrush="#11000000"
+                                            CornerRadius="6"
+                                            Padding="8"
+                                            Margin="0,0,0,6">
+                                        <Grid ColumnDefinitions="*,Auto,8,Auto">
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding Path}"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <Button Grid.Column="1"
+                                                    Content="Télécharger"
+                                                    Command="{Binding $parent[vm:BillingQueryDetailsPageViewModel].DownloadQueryAttachmentCommand}"
+                                                    CommandParameter="{Binding}" />
+                                            <Button Grid.Column="3"
+                                                    Content="Détacher"
+                                                    Command="{Binding $parent[vm:BillingQueryDetailsPageViewModel].DetachQueryFileCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    IsVisible="{Binding $parent[vm:BillingQueryDetailsPageViewModel].CanAttach}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                 </Border>
 
                 <Expander Header="Metadonnees techniques"

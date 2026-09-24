@@ -155,6 +155,7 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
                 .ConfigureAwait(true);
             var (activity, performer, form) = BuildNavigationContext(SelectedQuery);
             var frontClient = app.ServiceProvider?.GetRequiredService<FrontOfficeApiClient>();
+            var fsClient = app.ServiceProvider?.GetRequiredService<UserFilesApiClient>();
 
             var vm = new BillingQueryDetailsPageViewModel(
                 activity,
@@ -162,9 +163,12 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
                 form,
                 _billingClient,
                 frontClient,
+                fsClient,
                 details,
-                isReadOnly: false);
+                isReadOnly: false,
+                canAttach: false);
 
+            await vm.InitializeAsync().ConfigureAwait(true);
             await app.PushPageAsync(vm).ConfigureAwait(true);
         }
         catch (Exception ex)
@@ -243,7 +247,13 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
             throw new InvalidOperationException("Application PostIt indisponible.");
         }
 
-        var vm = new EstimateEditionPageViewModel(SelectedQuery, _estimateClient);
+        var fsClient = app.ServiceProvider?.GetRequiredService<UserFilesApiClient>();
+        if (fsClient is null)
+        {
+            throw new InvalidOperationException("Client fichiers indisponible.");
+        }
+
+        var vm = new EstimateEditionPageViewModel(SelectedQuery, _estimateClient, fsClient);
         await app.PushPageAsync(vm).ConfigureAwait(true);
     }
 

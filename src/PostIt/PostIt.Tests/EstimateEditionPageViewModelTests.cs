@@ -22,7 +22,8 @@ public class EstimateEditionPageViewModelTests
     private static EstimateEditionPageViewModel CreateViewModel(StubEstimateApi api, BillingQuerySummaryDto? query = null)
     {
         var client = new EstimateApiClient(api, "https://business.example/api/v1/");
-        return new EstimateEditionPageViewModel(query ?? SampleQuery(), client);
+        var fsClient = new UserFilesApiClient(api, "https://blogs.example/api/v1/");
+        return new EstimateEditionPageViewModel(query ?? SampleQuery(), client, fsClient);
     }
 
     [Fact]
@@ -143,10 +144,8 @@ public class EstimateEditionPageViewModelTests
 
         await vm.SendCommand.ExecuteAsync(null);
 
-        Assert.Equal("https://business.example/api/v1/estimate", api.LastPath);
-        Assert.Equal(HttpMethod.Post, api.LastMethod);
-
-        var payload = Assert.IsType<EstimateDto>(api.LastBody);
+        var postCall = Assert.Single(api.Calls, c => c.Method == HttpMethod.Post && c.Path == "https://business.example/api/v1/estimate");
+        var payload = Assert.IsType<EstimateDto>(postCall.Body);
         Assert.Equal(42, payload.CommandId);
         Assert.Equal("cli-1", payload.ClientId);
         Assert.Equal("Brush", payload.CommandType);
@@ -216,7 +215,8 @@ public class EstimateEditionPageViewModelTests
 
         await vm.SendCommand.ExecuteAsync(null);
 
-        var payload = Assert.IsType<EstimateDto>(api.LastBody);
+        var postCall = Assert.Single(api.Calls, c => c.Method == HttpMethod.Post && c.Path == "https://business.example/api/v1/estimate");
+        var payload = Assert.IsType<EstimateDto>(postCall.Body);
         Assert.Equal(2, payload.Bill.Count);
         Assert.Equal(-5m, payload.Bill[1].UnitaryCost);
         Assert.True(vm.HasSent);
@@ -230,11 +230,20 @@ public class EstimateEditionPageViewModelTests
         public object? LastBody { get; private set; }
         public Exception? Failure { get; init; }
 
-        public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        /// <summary>Historique complet des appels (le plus récent en dernier).</summary>
+        public List<(HttpMethod Method, string Path, object? Body)> Calls { get; } = new();
+
+        private void Record(HttpMethod method, string path, object? body)
         {
             LastMethod = method;
             LastPath = path;
             LastBody = body;
+            Calls.Add((method, path, body));
+        }
+
+        public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        {
+            Record(method, path, body);
 
             if (Failure is not null)
             {
@@ -253,9 +262,7 @@ public class EstimateEditionPageViewModelTests
 
         public Task CallAsync(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
         {
-            LastMethod = method;
-            LastPath = path;
-            LastBody = body;
+            Record(method, path, body);
             return Task.CompletedTask;
         }
 
@@ -264,6 +271,12 @@ public class EstimateEditionPageViewModelTests
 
         public Task CallAsync(HttpMethod method, string path, Func<HttpContent> contentFactory, CancellationToken ct = default)
             => CallAsync(method, path, (object?)null, ct);
+
+        public Task<byte[]> DownloadAsync(HttpMethod method, string path, CancellationToken ct = default)
+        {
+            Record(method, path, null);
+            return Task.FromResult(Array.Empty<byte>());
+        }
 
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }

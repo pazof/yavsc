@@ -35,12 +35,14 @@ public class HomePageViewModel : ViewModelBase
         OpenClientEstimates = new AsyncRelayCommand(() => OpenEstimateListAsync(EstimateListPerspective.Client));
         OpenProviderEstimates = new AsyncRelayCommand(() => OpenEstimateListAsync(EstimateListPerspective.Provider));
         OpenBlogs = new AsyncRelayCommand(App.PushBlogsPageAsync);
+        OpenMyFiles = new AsyncRelayCommand(OpenMyFilesAsync);
     }
     public IAsyncRelayCommand OpenBlogs { get; }
     public IAsyncRelayCommand OpenActivities { get; }
     public IAsyncRelayCommand OpenProviderRequests { get; }
     public IAsyncRelayCommand OpenClientEstimates { get; }
     public IAsyncRelayCommand OpenProviderEstimates { get; }
+    public IAsyncRelayCommand OpenMyFiles { get; }
 
     private async Task OpenActivitiesAsync()
     {
@@ -97,6 +99,29 @@ public class HomePageViewModel : ViewModelBase
         }
 
         var vm = new EstimateListPageViewModel(estimateClient, perspective, frontClient);
+        await vm.InitializeAsync();
+        await app.PushPageAsync(vm);
+    }
+
+    /// <summary>
+    /// Ouvre la page « Mes fichiers » (espace de stockage personnel),
+    /// servie par le host Blogs via <c>api/v1/fs</c>.
+    /// </summary>
+    private async Task OpenMyFilesAsync()
+    {
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var fsClient = app.ServiceProvider?.GetRequiredService<Yavsc.Api.Client.UserFilesApiClient>();
+        if (fsClient is null)
+        {
+            throw new InvalidOperationException("Client fichiers indisponible.");
+        }
+
+        var vm = new MyFilesViewModel(fsClient);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

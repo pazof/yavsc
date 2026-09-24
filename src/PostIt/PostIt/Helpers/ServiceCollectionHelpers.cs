@@ -22,6 +22,7 @@ public static class ServiceCollectionHelpers
 
         var api = new YavscApiClient(settings, tokenStore);
         var client = new BlogApiClient(api, settings.BlogsApiUrl);
+        var userFilesClient = new UserFilesApiClient(api, settings.BlogsApiUrl);
         var circleClient = new CircleApiClient(api, settings.BlogsApiUrl);
         var blogAclClient = new BlogAclApiClient(api, settings.BlogsApiUrl);
         var userSearchClient = new UserSearchClient(api, settings.BlogsApiUrl);
@@ -65,6 +66,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<EstimateEditionPage>();
         services.AddTransient<EstimateListPage>();
         services.AddTransient<EstimateValidationPage>();
+        services.AddTransient<MyFilesPage>();
 
         // ViewModels
         services.AddSingleton(settings);
@@ -77,6 +79,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(billingClient);
         services.AddSingleton(estimateClient);
         services.AddSingleton(frontClient);
+        services.AddSingleton(userFilesClient);
         services.AddSingleton<IReverseGeocodingService>(reverseGeocoding);
         services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddSingleton<HomePageViewModel>();
