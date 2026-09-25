@@ -1,0 +1,44 @@
+# Généré depuis contrib/template.vhost par `make generate-nginx` — NE PAS ÉDITER.
+# Vhost $DOMAIN — backend $BACKEND_SCHEME://$HTTP_HOST:$BACKEND_PORT
+# HTTP/3 (QUIC) termine au edge nginx ; Kestrel reste en h1/h2 backend.
+#
+# Variables substituées par envsubst (allowlist) :
+#   DOMAIN BACKEND_SCHEME HTTP_HOST BACKEND_PORT QUIC_OPTS
+# Les variables nginx intrinsèques ($host, $scheme, $remote_addr, …) sont
+# préservées (hors allowlist).
+
+# Port 80 : redirection vers HTTPS. (Certbot/nginx-plugin gère les
+# challenges ACME ; ne pas servir l'app en HTTP clair.)
+server {
+    listen 80;
+    server_name $DOMAIN;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen 443 quic $QUIC_OPTS;            # HTTP/3 (UDP 443) — reuseport sur un seul vhost
+    http2 on;                              # HTTP/2 sur TCP
+    server_name $DOMAIN;
+
+    # Annonce HTTP/3 au client sur le même port 443/udp. `always` pour
+    # émettre l'en-tête même sur les réponses d'erreur. Le navigateur
+    # fait d'abord h1/h2 puis upgrade en h3.
+    add_header Alt-Svc 'h3=":443"; ma=86400' always;
+
+    ssl_certificate     /etc/letsencrypt/live/$DOMAIN/fullchain.pem;   # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/$DOMAIN/privkey.pem;     # managed by Certbot
+    ssl_protocols TLSv1.2 TLSv1.3;        # QUIC exige TLS 1.3 ; TLS 1.2 gardé pour le fallback TCP
+
+    location / {
+        proxy_pass         $BACKEND_SCHEME://$HTTP_HOST:$BACKEND_PORT;
+        proxy_http_version 1.1;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_read_timeout 100s;
+        proxy_buffering off;
+    }
+    include server-status.conf;
+}

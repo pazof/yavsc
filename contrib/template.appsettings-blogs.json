@@ -1,0 +1,39 @@
+{
+  "Site": {
+    "Title": "Yavsc Blogs",
+    "Description": "A collection of blogs about software development, technology, and programming.",
+    "Keywords": "software development, technology, programming, coding, blogs",
+    "Authority": "https://preprod-yavsc.$DOMAIN",
+    "Audience": ["blogs"],
+    "CorsAllowedOrigins": [
+      "https://preprod-api.$DOMAIN"
+    ],
+    "Blog": "blog"
+  },
+  "ConnectionStrings": {
+    "YavscConnection": "Server=localhost;Port=5432;Database=lame-db-name;Username=lame-user-name;Password=lame-password;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information",
+      "Microsoft.AspNetCore.Authentication": "Debug"
+    }
+  },
+  "AllowedHosts": "*",
+  "Kestrel": {
+    "Endpoints": {
+      "Http": {
+        "Url": "http://localhost:90"
+      },
+      "Https": {
+        "Url": "https://localhost:91",
+        "Certificate": {
+          "Path": "/etc/letsencrypt/live/preprod-blogs.$DOMAIN/fullchain.pem",
+          "KeyPath": "/etc/letsencrypt/live/preprod-blogs.$DOMAIN/privkey.pem"
+        }
+      }
+    }
+  }
+}

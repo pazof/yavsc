@@ -1,0 +1,73 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "Site": {
+    "Title": "yavsc",
+    "Slogan": "Yavsc!",
+    "StyleSheet": "/css/default.css",
+    "Authority": "https://preprod-yavsc.$DOMAIN",
+    "Audience": [
+      "blogs",
+      "api"
+    ],
+    "ExternalUrl": "https://preprod-yavsc.$DOMAIN",
+    "ApiUrl": "https://preprod-api.$DOMAIN",
+    "CorsAllowedOrigins": [
+      "https://preprod-blogs.$DOMAIN",
+      "https://preprod-api.$DOMAIN"
+    ],
+    "Banner": "/images/banner-dewang.jpg",
+    "Owner": {
+      "Name": "Paul Schneider",
+      "EMail": "paul@pschneider.fr"
+    },
+    "Admin": {
+      "Name": "Paul Schneider",
+      "EMail": "paul@pschneider.fr"
+    },
+    "Quota": 200000000,
+    "Blog": "blog",
+    "Avatars": "avatars",
+    "Bills": "bills",
+    "TempDir": "temp",
+    "DataDir": "data",
+    "GitRepository": "git"
+  },
+  "Smtp": {
+    "Host": "mercure.pschneider.fr",
+    "Port": 465,
+    "SenderName": "Paul Schneider",
+    "SenderEmail": "paul@pschneider.fr",
+    "UserName": "paul",
+    "Password": "$SMTP_PASSWORD"
+  },
+  "DataProtection": {
+    "Keys": {
+      "Dir": "DataProtection"
+    },
+    "RSAParamFile": "RSA-Params.json",
+    "ExpiresInHours": 168
+  },
+  "Moderation": {
+    "AutoApproveThreshold": 0.7,
+    "AutoRejectThreshold": 0.9
+  },
+  "Kestrel": {
+    "Endpoints": {
+      "Http": {
+        "Url": "http://localhost:88"
+      },
+      "Https": {
+        "Url": "https://localhost:89",
+        "Certificate": {
+          "Path": "/etc/letsencrypt/live/preprod-yavsc.$DOMAIN/fullchain.pem",
+          "KeyPath": "/etc/letsencrypt/live/preprod-yavsc.$DOMAIN/privkey.pem"
+        }
+      }
+    }
+  }
+}

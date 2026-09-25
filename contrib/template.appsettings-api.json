@@ -1,0 +1,32 @@
+{
+  "Site": {
+    "Authority": "https://preprod-yavsc.$DOMAIN",
+    "Audience": ["api"],
+    "CorsAllowedOrigins": [
+      "https://preprod-blogs.$DOMAIN"
+    ],
+    "Bills": "bills",
+    "TempDir": "temp"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "Kestrel": {
+    "Endpoints": {
+      "Http": {
+        "Url": "http://localhost:92"
+      },
+      "Https": {
+        "Url": "https://localhost:93",
+        "Certificate": {
+          "Path": "/etc/letsencrypt/live/preprod-api.$DOMAIN/fullchain.pem",
+          "KeyPath": "/etc/letsencrypt/live/preprod-api.$DOMAIN/privkey.pem"
+        }
+      }
+    }
+  }
+}
