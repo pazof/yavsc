@@ -1,5 +1,88 @@
 # Changelog
 
+## [1.0.8-rc18] - unstable
+
+Accès aux fichiers personnels PostIt rendu fonctionnel de bout en bout
+(arbre de stockage indexé par le login, pas par le `sub`), boutons
+d'action des listes réparés (binding `$parent`), revendication `name`
+enfin présente dans les access tokens (branchement du `ProfileService`),
+et négociation HTTP/3 côté client PostIt.
+
+### Added
+
+* [PostIt] Négociation HTTP/3 (QUIC) pour les appels API Yavsc :
+  `DefaultRequestVersion = 3.0`, `DefaultVersionPolicy =
+  RequestVersionOrLower` sur le `HttpClient` partagé de `YavscApiClient`,
+  avec repli h2/h1.1 où QUIC n'est pas disponible (WASM fetch, Android/
+  desktop sans libmsquic).
+* [Tests] `MyFilesPageHeadlessTests` : monte `MyFilesPage` via
+  `NavigationPage` + `Window.Show()` et vérifie que chaque bouton de
+  ligne (Télécharger / Supprimer) a sa `Command` liée, est armé
+  (`CanExecute`) et déclenche l'appel API au clic.
+* [Tests] `Remoting.PasswordToken_carries_name_claim_equal_to_login` :
+  mint un vrai JWT via le token endpoint IdentityServer (password grant,
+  `openid profile`) et asserte que l'access token porte `name`=login et
+  que `GetUserName()` résout vers ce login.
+* [Tests] `FileSystemApiTests.Get_fs_lists_files_stored_under_the_user_login` :
+  découple `sub` et login, téléverse sous le login, et asserte que
+  `GET /api/v1/fs` retourne le fichier (et que le répertoire nommé d'après
+  le `sub` n'existe pas).
+
+### Changed
+
+* [Yavsc.Org] Branchement du `ProfileService` custom
+  (`AddProfileService<ProfileService>()` après
+  `AddAspNetIdentity<ApplicationUser>()`). La classe était du code mort :
+  IdentityServer8 retombait sur son profile service par défaut, qui
+  n'émet que les claims listés dans les `UserClaims` des API resources.
+  `name` n'en faisait jamais partie, donc tout access token était sans
+  `name` et `GetUserName()` résolvait à `null` sur les hosts ressources
+  (Blogs/Api) — cause du 500 sur l'upload MyFiles et du
+  `User.Identity.Name` injoignable. Le service émet désormais
+  `name`=`user.UserName`, `email` et les rôles pour tout client dont
+  les `AllowedScopes` contiennent `profile`, indépendamment du caller.
+* [Yavsc.Server] `ServiceExtensions` : `NameClaimType =
+  JwtClaimTypes.Name`, `MapInboundClaims = false` (conserver les noms
+  courts de claims tels qu'émis).
+* [Yavsc.Blogs] `FileSystemHelpers.EnsureDestinationDirectory` utilise
+  `GetUserName()` (claim `name`) au lieu de `User.Identity.Name` pour
+  la racine de stockage par utilisateur.
+* [Tests] `WebServerFixture` : `AccessTokenType = 0` (Jwt dans IS8 ;
+  1 = Reference, l'inverse de Duende) ; `openid`+`profile` sur le client
+  de test ; réensemencement des identity resources openid/profile dans
+  `ReseedAuthTestData` (un `ResetAndMigrateDatabase` vide le store
+  in-memory partagé et les laissait absentes → `invalid_scope`).
+* [Tests] `TestTokenIssuer.Issue` gagne un paramètre `name` optionnel
+  (défaut = subject) pour refléter la forme production où
+  `sub` (GUID) ≠ `name` (login).
+* [Tests] `BillingServiceTests` : `[Collection("Yavsc Server")]` pour
+  sérialiser avec le build d'hôte qui mute les registres statiques
+  `BillingService`/`Config` (race parallèle pré-existante).
+
+### Fixed
+
+* [Yavsc.Blogs] La liste `GET /api/v1/fs` cherchait sous
+  `{Blog}/{sub-GUID}` (`User.GetUserId()`), alors que l'arbre de
+  stockage perso est indexé par le login partout ailleurs
+  (`EnsureDestinationDirectory` écrit sous `{Blog}/{name-claim}`,
+  le endpoint de téléchargement et les avatars utilisent
+  `user.UserName`). Une fois l'upload corrigé, les fichiers
+  atterrissaient sous `{Blog}/{login}` tandis que la liste cherchait
+  sous `{Blog}/{GUID}` — un arbre vide — d'où la page PostIt
+  « Mes fichiers » qui ne listait rien. `GetDir` résout désormais
+  l'utilisateur en base et liste sous `user.UserName`.
+  `UploadedFile.OwnerId` reste `sub`, donc `EnrichWithFileIds`
+  interpole toujours par `uid`.
+* [PostIt] Boutons d'action des lignes de liste grisés et inactifs au
+  clic (Télécharger / Supprimer / Joindre sur MyFiles ; download/detach
+  sur les listes de pièces jointes de `BillingQueryDetailsPage` et
+  `EstimateEditionPage`). Le binding `$parent[vm:XxxViewModel].Cmd`
+  cherchait un ancêtre CONTRÔLE de type `XxxViewModel` — un viewmodel,
+  pas un contrôle — donc résolvait à `null` et le `Button` restait
+  désactivé (grisé) et inerte au clic. Corrigé en
+  `$parent[ContentPage].((vm:XxxViewModel)DataContext).Cmd` (syntaxe
+  déjà en vigueur dans `CirclesPage` / `EstimateListPage`).
+
 ## [1.0.8-rc17] - unstable
 
 Fichiers utilisateur et pièces jointes sur les devis/demandes (PostIt +
@@ -509,6 +592,8 @@ the ACL now comes along with the article,
 
 [Unreleased]: https://forgejo.pschneider.fr/notazof/yavsc/compare/HEAD
 [1.0.8-rc16]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.8-rc15...1.0.8-rc16
+[1.0.8-rc17]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.8-rc16...1.0.8-rc17
+[1.0.8-rc18]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.8-rc17...1.0.8-rc18
 [1.0.8-rc15]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.8-rc14...1.0.8-rc15
 [1.0.8-rc1]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.7...1.0.8-rc1
 [1.0.7]: https://forgejo.pschneider.fr/notazof/yavsc/compare/1.0.6...1.0.7
