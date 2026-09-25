@@ -74,6 +74,14 @@ public static class TestTokenIssuer
         var claims = new List<Claim>
         {
             new("sub", subject),
+            // Mirror production: IdentityServer's ProfileService emits the
+            // "name" claim as the user's login (UserName) when the profile
+            // scope is granted, and the file-system helpers resolve the
+            // per-user storage root via GetUserName() (FindFirstValue("name"))
+            // — not via User.Identity.Name. A test token without "name" would
+            // make ReceiveUserFile / EnsureDestinationDirectory compute a
+            // null owner root and 500 on upload, so stamp it here.
+            new("name", subject),
             new("scope", scope),
         };
         if (extraClaims is not null) claims.AddRange(extraClaims);

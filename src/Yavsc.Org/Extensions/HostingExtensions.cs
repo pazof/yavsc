@@ -368,6 +368,17 @@ public static class HostingExtensions
 
          })
             .AddAspNetIdentity<ApplicationUser>()
+            // Register the custom ProfileService so IdentityServer actually
+            // calls it instead of the default UserProfileService. Without
+            // this, the class is dead code: IS8 falls back to the default,
+            // which only emits claims listed in each API resource's
+            // UserClaims (RequestedClaimTypes) — "name" is never among
+            // them, so every access token lacks "name" and the Blogs/Api
+            // bearer hosts get GetUserName() == null (the MyFiles upload
+            // 500). Our ProfileService emits name/email/roles for any
+            // user grant whose client is allowed "profile", independent
+            // of the caller, so the access token carries the login.
+            .AddProfileService<ProfileService>()
             .AddClientStore<ClientStore>()
             .AddClientConfigurationValidator<DefaultClientConfigurationValidator>()
             .AddCorsPolicyService<CorsPolicyService>()

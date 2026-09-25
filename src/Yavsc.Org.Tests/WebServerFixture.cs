@@ -1,4 +1,5 @@
 using IdentityServer8.EntityFramework.Entities;
+using IdentityServer8.EntityFramework.Mappers;
 using IdentityServer8.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -238,6 +239,26 @@ public sealed class WebServerFixture : WebHostFixture
             AddAuthorizedClient(scope, TestClientId, TestClientSecret);
         }
 
+        // EnsureDefaultApplicationScopes seeds the standard identity
+        // resources (openid, profile) once at host startup, but a
+        // ResetAndMigrateDatabase call does EnsureDeleted on the shared
+        // in-memory store, which wipes them — and ReseedAuthTestData
+        // previously only re-added the client. Without openid/profile
+        // present, any token request asking for those scopes returns
+        // invalid_scope, so a password-grant token carrying the "name"
+        // claim (scope "openid profile") could not be minted after a
+        // reset. Re-seed them here to mirror the startup seed.
+        var identityResources = configDb.Set<IdentityServer8.EntityFramework.Entities.IdentityResource>();
+        if (!identityResources.Any(r => r.Name == "openid"))
+        {
+            identityResources.Add(new IdentityResources.OpenId().ToEntity());
+        }
+        if (!identityResources.Any(r => r.Name == "profile"))
+        {
+            identityResources.Add(new IdentityResources.Profile().ToEntity());
+        }
+        configDb.SaveChanges();
+
         _sharedTestClientId = TestClientId;
         _sharedTestClientSecret = TestClientSecret;
         _sharedTestingUserName = TestingUserName;
@@ -284,7 +305,12 @@ public sealed class WebServerFixture : WebHostFixture
         {
             ClientId = testClientId,
             AccessTokenLifetime = 3600000,
-            AccessTokenType = 1,
+            // AccessTokenType = 0 → Jwt in IdentityServer8 (1 = Reference,
+            // the inverse of Duende's enum). The real PostIt client issues
+            // JWT access tokens so the Blogs/Api bearer hosts can validate
+            // them with JwtBearer; mirror that here so the token can be
+            // decoded and its "name" claim asserted.
+            AccessTokenType = 0,
             ClientName = "Testing client",
             Enabled = true,
             RequireClientSecret = true
@@ -326,6 +352,23 @@ public sealed class WebServerFixture : WebHostFixture
         {
             ClientId = testingClient.Id,
             Scope = "test"
+        });
+        // Allow the identity scopes so a resource-owner-password token
+        // can request "openid profile" and trigger ProfileService to
+        // emit the "name" claim (user.UserName). Without profile in the
+        // client's AllowedScopes, IdentityServer strips the scope from
+        // the request and the access_token carries no "name" — the
+        // regression that left GetUserName() / the MyFiles upload root
+        // null. Additive only: existing tests request "test" alone.
+        configDb.Set<ClientScope>().Add(new ClientScope
+        {
+            ClientId = testingClient.Id,
+            Scope = "openid"
+        });
+        configDb.Set<ClientScope>().Add(new ClientScope
+        {
+            ClientId = testingClient.Id,
+            Scope = "profile"
         });
 
         configDb.SaveChanges();

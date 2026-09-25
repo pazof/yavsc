@@ -28,35 +28,40 @@ namespace Yavsc.Services
             var claims = new List<Claim> {
                 new Claim(JwtClaimTypes.Subject,user.Id.ToString()),
             };
-            List<string> claimAdds = new List<string>();
 
             foreach (var scope in context.RequestedResources.ParsedScopes)
             {
                 if (context.Client.AllowedScopes.Contains(scope.ParsedName))
                 {
                     claims.Add(new Claim(JwtClaimTypes.Scope, scope.ParsedName));
-                    claimAdds.Add(scope.ParsedName);
                 }
             }
 
-            if (claimAdds.Contains(JwtClaimTypes.Profile))
+            // name / email / roles are gated on the client being granted
+            // the "profile" identity scope. They MUST land in the *access
+            // token*: the Blogs/Api bearer resource hosts read the login
+            // via GetUserName() (FindFirstValue("name")) and roles via
+            // IsInMsRole() from the access token. But "profile" is an
+            // identity scope, which only appears in the id-token caller's
+            // ParsedScopes — never in the access-token caller's — so the
+            // previous gate (claimAdds.Contains("profile")) left name,
+            // email and roles out of every access token, and GetUserName()
+            // resolved to null on every bearer host (the MyFiles upload
+            // 500). Gate on the client's AllowedScopes instead, which is
+            // caller-independent, so both the access token and the id
+            // token carry these claims for any user grant whose client is
+            // allowed "profile".
+            if (context.Client.AllowedScopes.Contains(JwtClaimTypes.Profile))
             {
-                claimAdds.Remove("profile");
-                claimAdds.Add(JwtClaimTypes.Name);
-                claimAdds.Add(JwtClaimTypes.Email);
-                claimAdds.Add(Constants.RoleClaimType);
-            }
-
-            if (claimAdds.Contains(JwtClaimTypes.Name))
-                claims.Add(new Claim(JwtClaimTypes.Name, user.FullName));
-
-            if (claimAdds.Contains(JwtClaimTypes.Email))
+                // "name" carries the login (UserName), not the display
+                // FullName: GetUserName() / User.Identity.Name feed
+                // filesystem paths (user files root, avatar file name),
+                // and FullName can contain spaces. No bearer-host
+                // consumer displays this claim as a human name today.
+                claims.Add(new Claim(JwtClaimTypes.Name, user.UserName));
                 claims.Add(new Claim(JwtClaimTypes.Email, user.Email));
-
-            if (claimAdds.Contains(Constants.RoleClaimType))
-            {
                 var roles = await this._userManager.GetRolesAsync(user);
-                if (roles.Count()>0)
+                if (roles.Count() > 0)
                 {
                     claims.AddRange(roles.Select(r => new Claim(Constants.RoleClaimType, r)));
                 }

@@ -1,5 +1,6 @@
 #nullable enable annotations
 
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -107,9 +108,23 @@ public static class ServiceExtensions
                 ValidateAudience = true,
                 ValidAudiences = audiences,
                 RoleClaimType = Constants.RoleClaimType,
-                NameClaimType = Constants.NameClaimType,
+                // IdentityServer's ProfileService emits the name claim as
+                // JwtClaimTypes.Name ("name", short form). MapInboundClaims
+                // (below) is disabled, so it stays "name" on the principal —
+                // NameClaimType must therefore be "name" too, or
+                // User.Identity.Name / GetUserName() resolve to null. The
+                // previous Constants.NameClaimType (the Microsoft long URI)
+                // never matched the remapped xmlsoap URI either, so the name
+                // was unreachable on every bearer host regardless of scope.
+                NameClaimType = JwtClaimTypes.Name,
             };
-            options.MapInboundClaims = true;
+            // Keep JWT claim names as-emitted ("sub", "name", …). The default
+            // inbound map rewrites "name" → xmlsoap name URI and "sub" →
+            // nameid URI, which neither Constants.NameClaimType (microsoft
+            // URI) nor GetUserName()'s FindFirstValue("name") could match.
+            // Roles are already emitted as Constants.RoleClaimType (a long
+            // URI), so disabling the map leaves IsInMsRole() working.
+            options.MapInboundClaims = false;
             options.ClaimsIssuer = authority;
             options.Audience = audiences[0];
 

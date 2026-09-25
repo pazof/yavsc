@@ -1,19 +1,17 @@
 #nullable enable annotations
-
-
-
 using System.Security.Claims;
 using Microsoft.AspNetCore.Html;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http;
+using ImageMagick;
 using Yavsc.Models;
 using Yavsc.Models.Streaming;
 using Yavsc.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Yavsc.Exceptions;
 using Yavsc.Abstract.Helpers;
-using ImageMagick;
 using Yavsc.Server.Models.FileSystem;
 using Yavsc.ViewModels.UserFiles;
+
 namespace Yavsc.Server.Helpers
 {
     public static class FileSystemHelpers
@@ -46,7 +44,7 @@ namespace Yavsc.Server.Helpers
             this ClaimsPrincipal user,
             string subpath, SiteSettings siteSettings)
         {
-            var root = Path.Combine(siteSettings.Blog, user.Identity.Name);
+            var root = Path.Combine(siteSettings.Blog, user.GetUserName());
             if (!string.IsNullOrWhiteSpace(subpath))
             {
                 if (!subpath.IsValidYavscPath())
