@@ -45,5 +45,6 @@
             ]
         }
     },
-    "dotnet.defaultSolution": "yavsc.sln"
+    "dotnet.defaultSolution": "yavsc.sln",
+    "axaml.selectedSolution": "/home/paul/Workspace/yavsc/yavsc.sln"
 }

@@ -34,6 +34,18 @@ test-postit:
     --report-xunit-html-filename "postit-test-results.html" \
 	  --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj
 
+backend-tests: Blogs-backend-test Org-backend-test Api-backend-test
+Api-backend-test:
+Blogs-backend-test:
+Org-backend-test:
+%-backend-test:
+	ASPNETCORE_ENVIRONMENT=Development dotnet test \
+	  --report-xunit \
+    --report-xunit-html \
+		--results-directory "test-reports" \
+    --report-xunit-html-filename "$*-backend-test-results.html" \
+	  --project src/test/Yavsc.$*.Tests/Yavsc.$*.Tests.csproj
+
 watch:
 	dotnet watch -p:Configuration=$(CONFIG) --project src/Yavsc/Yavsc.csproj
 
