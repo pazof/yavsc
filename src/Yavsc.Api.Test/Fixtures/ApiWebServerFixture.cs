@@ -24,7 +24,6 @@ public sealed class ApiWebServerFixture : WebHostFixture
     private const string DbProviderEnvVar = "YAVSC_API_TEST_DB_PROVIDER";
     private const string NpgsqlAdminConnectionEnvVar = "YAVSC_API_TEST_NPGSQL_ADMIN_CONNECTION";
     private const string DedicatedNpgsqlDatabaseName = "yavscTestDb";
-    private const string DefaultDevelopmentConnectionString = "Server=localhost;Port=5432;Database=yavscdev;Username=yavscdev;Password=8*5idas;Include Error Detail=true";
 
     protected override int HttpsPort => 5104;
 
@@ -168,25 +167,32 @@ public sealed class ApiWebServerFixture : WebHostFixture
 
     private static string BuildAdminConnectionString()
     {
+        // The admin connection string (host + credentials) is supplied
+        // via environment, never embedded in source — committing a
+        // real dev password would leak it into git history. The Npgsql
+        // path is opt-in, so requiring the env var is fine: a missing
+        // value produces a clear failure rather than a silent fallback
+        // onto someone's local dev database.
         var configured = Environment.GetEnvironmentVariable(NpgsqlAdminConnectionEnvVar);
-        var source = string.IsNullOrWhiteSpace(configured)
-            ? DefaultDevelopmentConnectionString
-            : configured;
+        if (string.IsNullOrWhiteSpace(configured))
+            throw new InvalidOperationException(
+                $"{NpgsqlAdminConnectionEnvVar} is not set. The Npgsql test "
+                + "provider requires an admin PostgreSQL connection string "
+                + "in that environment variable (e.g. "
+                + "'Server=localhost;Port=5432;Database=postgres;"
+                + "Username=yavscdev;Password=...;Include Error Detail=true').");
 
-        var builder = new NpgsqlConnectionStringBuilder(source)
+        var builder = new NpgsqlConnectionStringBuilder(configured)
         {
             Pooling = false,
             IncludeErrorDetail = true
         };
 
-        if (string.IsNullOrWhiteSpace(configured))
-        {
+        // The admin connection targets the maintenance database
+        // (postgres) so we can CREATE/DROP the dedicated test database;
+        // whatever database the env var names is overridden here.
+        if (string.IsNullOrWhiteSpace(builder.Database))
             builder.Database = "postgres";
-        }
-        else if (string.IsNullOrWhiteSpace(builder.Database))
-        {
-            builder.Database = "postgres";
-        }
 
         return builder.ToString();
     }
