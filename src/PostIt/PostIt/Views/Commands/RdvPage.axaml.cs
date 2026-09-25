@@ -15,6 +15,9 @@ using PostIt.Services;
 using PostIt.ViewModels.Commands;
 
 namespace PostIt.Views.Commands;
+using Mapsui.Tiling; // Ensure you have this namespace
+
+
 
 public partial class RdvPage : ContentPage
 {
@@ -44,6 +47,16 @@ public partial class RdvPage : ContentPage
         _reverseGeocodingService = reverseGeocodingService ?? new NominatimReverseGeocodingService();
         InitializeComponent();
         InitializeMap();
+        // ... inside your Map setup logic ...
+        string version = GetType().Assembly.GetName().Version?.ToString() ?? "1.1";
+        // 1. Create a unique user-agent string for your app (e.g., "AppName/Version (ContactEmail)")
+        string myCustomUserAgent = $"PostIt/{version} (paul@pschneider.fr)";
+
+        // 2. Pass your custom user agent into the OpenStreetMap helper
+        var osmLayer = OpenStreetMap.CreateTileLayer(myCustomUserAgent);
+
+        // 3. add your newly identified layer
+        _locationMap.Map.Layers.Add(osmLayer);
     }
 
     private void InitializeComponent()
