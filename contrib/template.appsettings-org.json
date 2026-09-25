@@ -66,7 +66,8 @@
         "Certificate": {
           "Path": "/etc/letsencrypt/live/preprod-yavsc.$DOMAIN/fullchain.pem",
           "KeyPath": "/etc/letsencrypt/live/preprod-yavsc.$DOMAIN/privkey.pem"
-        }
+        },
+        "Protocols": "Http1AndHttp2AndHttp3"
       }
     }
   }

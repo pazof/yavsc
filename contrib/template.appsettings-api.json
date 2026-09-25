@@ -25,7 +25,8 @@
         "Certificate": {
           "Path": "/etc/letsencrypt/live/preprod-api.$DOMAIN/fullchain.pem",
           "KeyPath": "/etc/letsencrypt/live/preprod-api.$DOMAIN/privkey.pem"
-        }
+        },
+        "Protocols": "Http1AndHttp2AndHttp3"
       }
     }
   }

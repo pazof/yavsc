@@ -49,8 +49,9 @@ generate-service-units: generated/$(APP_INSTALL_PREFIX)yavscOrg.service generate
 #   make generate-nginx                                      -> generated/nginx/preprod-yavsc{Org,Blogs,Api}
 #   make generate-nginx APP_INSTALL_ENV=production APP_INSTALL_PREFIX= -> prod (yavsc/api/blogs.pschneider.fr)
 #
-# HTTP/3 (QUIC) termine au edge nginx ; Kestrel reste en h1/h2 backend.
-# Les vhosts générés vont dans generated/nginx/ (gitignoré, comme generated/*.service).
+# HTTP/3 (QUIC) termine au edge nginx (plan contrib/quic.md). Requiert nginx
+# avec http_v3_module + UDP 443 ouvert. reuseport sur Org uniquement
+# (QUIC_OPTS). Les vhosts générés vont dans generated/nginx/ (gitignoré).
 NGINX_TEMPLATE := template.vhost
 NGINX_OUT_DIR  := generated/nginx
 NGINX_HOSTS    := Org Blogs Api
@@ -81,6 +82,32 @@ generate-nginx-prod:
 	make generate-nginx APP_INSTALL_ENV=production APP_INSTALL_PREFIX=
 
 $(NGINX_OUT_DIR):
+	@mkdir -p $@
+
+# --- appsettings (générés depuis template.appsettings-*.json) ---
+#   make generate-appsettings -> generated/appsettings/appsettings-{org,api,blogs}.json
+#
+# Substitue $DOMAIN (racine du domaine, cf. DOMAIN_ROOT) dans toutes les
+# chaînes, et $SMTP_PASSWORD (secret du .env) dans Smtp.Password.
+# On utilise jq (et non envsubst) car envsubst n'échappe pas le JSON : un
+# secret contenant \ ou " casserait le JSON (le mot de passe SMTP actuel
+# contient un \). jq lit le secret depuis l'environnement (export) ->
+# échappement JSON correct, aucun shell-quoting ni exposition en ligne de cmd.
+# Les templates actuels sont issus de la preprod (préfixe preprod-, ports
+# 88-93) ; pour la prod il faudra un template prod (ports 82-87, sans préfixe).
+export ASPNETCORE_Smtp__Password
+APPSETTINGS_OUT_DIR := generated/appsettings
+APPSETTINGS_HOSTS   := org api blogs
+
+$(APPSETTINGS_OUT_DIR)/appsettings-%.json: $(APPSETTINGS_OUT_DIR) template.appsettings-%.json .$(APP_INSTALL_ENV).env
+	@jq --arg domain "$(DOMAIN_ROOT)" \
+	    'walk(if type=="string" then gsub("\\$$DOMAIN"; $$domain) else . end) | if has("Smtp") then .Smtp.Password = env["ASPNETCORE_Smtp__Password"] else . end' \
+	    template.appsettings-$*.json > $@
+	@echo Created appsettings: $@
+
+generate-appsettings: $(addprefix $(APPSETTINGS_OUT_DIR)/appsettings-,$(addsuffix .json,$(APPSETTINGS_HOSTS)))
+
+$(APPSETTINGS_OUT_DIR):
 	@mkdir -p $@
 
 install-service-%: /etc/systemd/system/$(APP_INSTALL_PREFIX)yavsc%.service
