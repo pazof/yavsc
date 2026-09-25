@@ -50,9 +50,20 @@ jobs:
         echo "🏗️ Building the solution..."
         cd /src/_src && dotnet build --verbosity normal
     - name: Test
+      artifacts:
+        name: test-results
+        path: test-results.html
       run: |
         echo "🚀 Lancement des tests..."
         cd /src/_src && dotnet test \
           --report-xunit \
           --report-xunit-html \
           --report-xunit-html-filename "test-results.html"
+        TEST_EXIT_CODE=$?
+        echo "Test exit code: $TEST_EXIT_CODE"
+        if [ $TEST_EXIT_CODE -ne 0 ]; then
+          echo "❌ Tests failed with exit code $TEST_EXIT_CODE"
+          exit $TEST_EXIT_CODE
+        else
+          echo "✅ All tests passed successfully."
+        fi
