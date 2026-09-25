@@ -36,7 +36,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="client:DirEntryDto">
                             <Button Content="📁 {Binding Name}"
-                                    Command="{Binding $parent[vm:MyFilesViewModel].OpenDirCommand}"
+                                    Command="{Binding $parent[ContentPage].((vm:MyFilesViewModel)DataContext).OpenDirCommand}"
                                     CommandParameter="{Binding}"
                                     HorizontalAlignment="Left"
                                     Margin="0,0,0,4" />
@@ -59,16 +59,16 @@
                                                TextWrapping="NoWrap" />
                                     <Button Grid.Column="1"
                                             Content="Joindre"
-                                            Command="{Binding $parent[vm:MyFilesViewModel].PickFileCommand}"
+                                            Command="{Binding $parent[ContentPage].((vm:MyFilesViewModel)DataContext).PickFileCommand}"
                                             CommandParameter="{Binding}"
-                                            IsVisible="{Binding $parent[vm:MyFilesViewModel].IsPickerMode}" />
+                                            IsVisible="{Binding $parent[ContentPage].((vm:MyFilesViewModel)DataContext).IsPickerMode}" />
                                     <Button Grid.Column="3"
                                             Content="Télécharger"
-                                            Command="{Binding $parent[vm:MyFilesViewModel].DownloadFileCommand}"
+                                            Command="{Binding $parent[ContentPage].((vm:MyFilesViewModel)DataContext).DownloadFileCommand}"
                                             CommandParameter="{Binding}" />
                                     <Button Grid.Column="5"
                                             Content="Supprimer"
-                                            Command="{Binding $parent[vm:MyFilesViewModel].DeleteFileCommand}"
+                                            Command="{Binding $parent[ContentPage].((vm:MyFilesViewModel)DataContext).DeleteFileCommand}"
                                             CommandParameter="{Binding}" />
                                 </Grid>
                             </Border>

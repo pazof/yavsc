@@ -167,11 +167,11 @@
                                                        TextTrimming="CharacterEllipsis" />
                                             <Button Grid.Column="1"
                                                     Content="Télécharger"
-                                                    Command="{Binding $parent[vm:EstimateEditionPageViewModel].DownloadAttachmentCommand}"
+                                                    Command="{Binding $parent[ContentPage].((vm:EstimateEditionPageViewModel)DataContext).DownloadAttachmentCommand}"
                                                     CommandParameter="{Binding}" />
                                             <Button Grid.Column="3"
                                                     Content="Détacher"
-                                                    Command="{Binding $parent[vm:EstimateEditionPageViewModel].DetachFileCommand}"
+                                                    Command="{Binding $parent[ContentPage].((vm:EstimateEditionPageViewModel)DataContext).DetachFileCommand}"
                                                     CommandParameter="{Binding}" />
                                         </Grid>
                                     </Border>

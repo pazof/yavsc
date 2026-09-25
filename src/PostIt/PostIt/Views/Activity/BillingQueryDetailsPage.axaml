@@ -113,13 +113,13 @@
                                                        TextTrimming="CharacterEllipsis" />
                                             <Button Grid.Column="1"
                                                     Content="Télécharger"
-                                                    Command="{Binding $parent[vm:BillingQueryDetailsPageViewModel].DownloadQueryAttachmentCommand}"
+                                                    Command="{Binding $parent[ContentPage].((vm:BillingQueryDetailsPageViewModel)DataContext).DownloadQueryAttachmentCommand}"
                                                     CommandParameter="{Binding}" />
                                             <Button Grid.Column="3"
                                                     Content="Détacher"
-                                                    Command="{Binding $parent[vm:BillingQueryDetailsPageViewModel].DetachQueryFileCommand}"
+                                                    Command="{Binding $parent[ContentPage].((vm:BillingQueryDetailsPageViewModel)DataContext).DetachQueryFileCommand}"
                                                     CommandParameter="{Binding}"
-                                                    IsVisible="{Binding $parent[vm:BillingQueryDetailsPageViewModel].CanAttach}" />
+                                                    IsVisible="{Binding $parent[ContentPage].((vm:BillingQueryDetailsPageViewModel)DataContext).CanAttach}" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
