@@ -1,5 +1,68 @@
 # Changelog
 
+## [1.0.8-rc17] - unstable
+
+Fichiers utilisateur et pièces jointes sur les devis/demandes (PostIt +
+API), système de génération `contrib` (vhosts nginx HTTP/3 edge +
+appsettings jq + QUIC logiciel Kestrel), et correction du bug de
+production où `IsPublished` disparaissait du payload de liste du blog API.
+
+### Added
+
+* [PostIt] Espace de stockage personnel (« MyFiles ») : page de gestion
+  des fichiers de l'utilisateur, entrée depuis la page d'accueil.
+* [PostIt] Pièces jointes aux devis et aux demandes : attachement depuis
+  le détail de demande et la page d'édition de devis.
+* [Yavsc.Api] Endpoints d'attachement de fichiers sur les devis
+  (`EstimateApiController`) et les demandes front-office
+  (`FrontOfficeApiController`).
+* [Yavsc.Api.Client] `UserFilesApiClient` + DTOs associés ; méthodes
+  d'attachement sur `EstimateApiClient` et `FrontOfficeApiClient`.
+* [Yavsc.Server] Modèles `EstimateAttachedFile`, `QueryAttachedFile`,
+  `BlogAttachedFile`, `AttachFileRequest` ; migration EF Core
+  `UserFileAttachments`.
+* [contrib] Système de génération `Makefile` : vhosts nginx HTTP/3 edge
+  (`template.vhost`, `QUIC_OPTS`), appsettings générés via jq
+  (`template.appsettings-{org,api,blogs}.json`, échappement JSON-safe des
+  secrets), QUIC logiciel Kestrel (`Http1AndHttp2AndHttp3`), et
+  `README.nginx.md`.
+* [Tests] Projet `Yavsc.Server.Tests` : tests du service
+  `BlogSpotService.Details` + `ServerServicesFixture` (SQLite `:memory:`
+  par défaut, Npgsql opt-in via `YAVSC_SERVER_TEST_DB_PROVIDER`).
+* [Tests] `IBlogPostWireShapeTests` (forme du wire blog),
+  `EstimateAttachmentsApiTests`, `FrontOfficeQueryAttachmentsApiTests`,
+  `FileSystemApiTests` (pièces jointes et stockage perso).
+* [CI] Intégration Gitleaks / analyse de secrets (`.pre-commit-config.yaml`).
+
+### Changed
+
+* [contrib] `QUIC_OPTS` (`reuseport`) désormais activé uniquement en
+  production sur le vhost Org. La preprod et la prod partageant la même
+  IP, `reuseport` — légal une seule fois par `addr:port` (443/udp) —
+  serait sinon en conflit entre preprod-Org et prod-Org et ferait refuser
+  la config par nginx.
+* [Yavsc.Api.Test] `ApiWebServerFixture` : la connexion admin PostgreSQL
+  provient de la variable d'environnement
+  `YAVSC_API_TEST_NPGSQL_ADMIN_CONNECTION` ; plus de mot de passe en
+  source.
+
+### Fixed
+
+* [Yavsc.Blogs] Bug de production : `IsPublished` était absent du payload
+  de la liste du blog API. Le endpoint `GetBlogspot` retourne
+  `IEnumerable<IBlogPost>` sérialisé par System.Text.Json d'après le type
+  déclaré (l'interface), qui omet les propriétés du type concret —
+  `IsPublished` vivait sur `BlogPost` / `BlogPostDto` mais pas sur
+  `IBlogPost`. PostIt lisait donc `IsPublished == false` pour tout billet,
+  y compris publiés (https://yavsc.pschneider.fr/BlogSpot/Details/13).
+  Corrigé en déclarant `IsPublished` sur `IBlogPost`.
+* [Yavsc.Org] Accès au Swagger UI : les actions MVC scaffoldées de
+  `CommentsController` (Index/Details/…) atterrissaient sur la même route
+  `POST api/v1/blogcomments` que l'action d'API `Post`, provoquant une
+  `SwaggerGeneratorException` (conflit method/path) au chargement de
+  `/swagger`. Corrigé par `[ApiExplorerSettings(IgnoreApi = true)]` sur
+  les actions scaffoldées.
+
 ## [1.0.8-rc16] - unstable
 
 Flux de signature et de génération de devis : un devis peut désormais être
