@@ -45,7 +45,6 @@ DataDir/
 
 # gitleaks scan output (local secret-scan report, not for the repo)
 /gitleaks-report.json
-/test-report.html
-/test-report.xml
 
-
+# Exclude test reports (local test report, not for the repo)
+/test-reports

@@ -21,7 +21,17 @@ src/Yavsc/bin/output/wwwroot:
 	dotnet --project src/Yavsc.Org/Yavsc.Org.csproj publish
 
 test:
-	ASPNETCORE_ENVIRONMENT=Development dotnet test
+	ASPNETCORE_ENVIRONMENT=Development dotnet test --report-xunit \
+          --report-xunit-html \
+          --report-xunit-html-filename "test-results.html"
+
+test-postit:
+	ASPNETCORE_ENVIRONMENT=Development dotnet test \
+	  --report-xunit \
+    --report-xunit-html \
+		--results-directory "test-reports" \
+    --report-xunit-html-filename "postit-test-results.html" \
+	  --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj
 
 watch:
 	dotnet watch -p:Configuration=$(CONFIG) --project src/Yavsc/Yavsc.csproj
