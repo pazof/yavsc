@@ -66,13 +66,18 @@ nginx_subdomain = $(if $(filter Org,$1),yavsc,$(if $(filter Api,$1),api,$(if $(f
 #   preprod Org -> preprod-yavsc.pschneider.fr
 nginx_domain = $(APP_INSTALL_PREFIX)$(call nginx_subdomain,$1).$(DOMAIN_ROOT)
 
+# QUIC_OPTS : "reuseport" n'est légal qu'une seule fois par addr:port
+# (443/udp). preprod et prod partagent aujourd'hui la même IP, donc on ne
+# l'active qu'en production, sur Org uniquement. En preprod, QUIC_OPTS est
+# vide sur tous les vhosts (sinon nginx refuse la config : duplicate
+# reuseport sur le même socket 443/udp entre preprod-Org et prod-Org).
 $(NGINX_OUT_DIR)/$(APP_INSTALL_PREFIX)yavsc%: $(NGINX_OUT_DIR) $(NGINX_TEMPLATE) .$(APP_INSTALL_ENV).env
 	@cat $(NGINX_TEMPLATE) \
 	  | DOMAIN="$(call nginx_domain,$*)" \
 	    BACKEND_SCHEME="$(BACKEND_SCHEME)" \
 	    HTTP_HOST="$(HTTP_HOST)" \
 	    BACKEND_PORT="$($*_PORT)" \
-	    QUIC_OPTS="$(if $(filter Org,$*),reuseport,)" \
+	    QUIC_OPTS="$(if $(filter production,$(APP_INSTALL_ENV)),$(if $(filter Org,$*), reuseport,),)" \
 	  envsubst '$$DOMAIN $$BACKEND_SCHEME $$HTTP_HOST $$BACKEND_PORT $$QUIC_OPTS' > $@
 	@echo Created nginx vhost: $@
 

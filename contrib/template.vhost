@@ -8,8 +8,10 @@
 #
 # Variables substituées par envsubst (allowlist) :
 #   DOMAIN BACKEND_SCHEME HTTP_HOST BACKEND_PORT QUIC_OPTS
-# $QUIC_OPTS = "reuseport" sur un seul vhost (Org), vide sur les autres
-# (règle : reuseport une seule fois par addr:port, cf. contrib/quic.md).
+# $QUIC_OPTS = "reuseport" sur un seul vhost (Org) ET en production
+# uniquement ; vide en preprod et sur les autres hôtes. Règle : reuseport
+# une seule fois par addr:port (443/udp) — or preprod et prod partagent la
+# même IP, donc seule la prod (Org) l'active.
 # Les variables nginx intrinsèques ($host, $scheme, $remote_addr, …) sont
 # préservées (hors allowlist).
 
@@ -29,8 +31,8 @@ server {
     http2 on;
 
     # 2. UDP : HTTP/3 (QUIC). reuseport sur UN seul vhost (Org via QUIC_OPTS).
-    listen 443 quic $QUIC_OPTS;
-    listen [::]:443 quic $QUIC_OPTS;
+    listen 443 quic$QUIC_OPTS;
+    listen [::]:443 quic$QUIC_OPTS;
     http3 on;
 
     server_name $DOMAIN;
