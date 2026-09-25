@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Models;
@@ -19,7 +20,7 @@ namespace Yavsc.Controllers
 
         public CommentsController(ApplicationDbContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         [HttpGet("{id:long}", Name = "GetComment")]
@@ -82,8 +83,17 @@ namespace Yavsc.Controllers
             return CreatedAtRoute("GetComment", new { id = comment.Id }, new { id = comment.Id, dateCreated = comment.DateCreated });
         }
 
+        // --- Actions MVC scaffoldées (vues CRUD) ---------------------
+        // Ces actions ne font pas partie de la surface d'API documentée
+        // par Swagger. Elles sont exclues de l'ApiExplorer : sinon, comme
+        // le contrôleur porte [Route("~/api/v1/blogcomments")], leurs
+        // [HttpPost] sans template propre atterrissent sur la même route
+        // "POST api/v1/blogcomments" que l'action Post ci-dessus, et
+        // Swashbuckle lève une SwaggerGeneratorException (conflicting
+        // method/path) au démarrage de /swagger.
         // GET: Comments
         [HttpGet]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Comment.Include(c => c.Post);
@@ -91,6 +101,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Comments/Details/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -109,6 +120,7 @@ namespace Yavsc.Controllers
 
         // GET: Comments/Create (MVC form endpoint)
         [HttpGet("form")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Create()
         {
             ViewBag.ReceiverId = new SelectList(_context.BlogSpot, "Id", "Title");
@@ -118,6 +130,7 @@ namespace Yavsc.Controllers
         // POST: Comments/Create (MVC form endpoint)
         [HttpPost("form")]
         [ValidateAntiForgeryToken]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Create(Comment comment)
         {
             comment.UserCreated = User.GetUserId();
@@ -126,7 +139,7 @@ namespace Yavsc.Controllers
             // remove the stale binding error so a valid authenticated POST
             // does not fall into the invalid branch.
             ModelState.Remove(nameof(Comment.AuthorId));
-            
+
             if (ModelState.IsValid)
             {
                 _context.Comment.Add(comment);
@@ -138,6 +151,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: Comments/Edit/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -157,6 +171,7 @@ namespace Yavsc.Controllers
         // POST: Comments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Edit(Comment comment)
         {
             if (ModelState.IsValid)
@@ -171,6 +186,7 @@ namespace Yavsc.Controllers
 
         // GET: Comments/Delete/5
         [ActionName("Delete")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -190,6 +206,7 @@ namespace Yavsc.Controllers
         // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             Comment comment = await _context.Comment.SingleAsync(m => m.Id == id);
