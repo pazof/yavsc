@@ -49,6 +49,16 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         _bearer = new BearerTokenHandler(this);
         Http = new HttpClient(_bearer, disposeHandler: true);
 
+        // HTTP/3 (QUIC) vers les APIs Yavsc : le edge nginx termine h3 sur
+        // tous les vhosts (listen 443 quic ; http3 on ; Alt-Svc h3=":443").
+        // RequestVersionOrLower négocie h3 quand le serveur ET la plateforme
+        // le permettent (Desktop avec libmsquic), et retombe sur h2/h1.1
+        // sinon — notamment WASM, où le navigateur n'expose pas QUIC au
+        // fetch, et Android si libmsquic n'est pas disponible. Tous les
+        // clients Yavsc.Api.Client partagent cette même instance `Http`.
+        Http.DefaultRequestVersion = new Version(3, 0);
+        Http.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower;
+
         _tokens = store.Load();
     }
 
