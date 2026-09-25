@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Yavsc.Server.Tests</RootNamespace>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <InformationalVersion>1.1.0-estimate.1+343.Branch.feature-estimate.Sha.ba40698cc9562f0f4ad2dcad4dd20e638c05b07d</InformationalVersion>
+    <Version>1.1.0-estimate.1</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.v3.common" />
+    <PackageReference Include="xunit.v3.extensibility.core" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Yavsc.Abstract\Yavsc.Abstract.csproj" />
+    <ProjectReference Include="..\Yavsc.Server\Yavsc.Server.csproj" />
+    <ProjectReference Include="..\Yavsc.Org\Yavsc.Org.csproj" />
+    <ProjectReference Include="..\Yavsc.Tests.Shared\Yavsc.Tests.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>
