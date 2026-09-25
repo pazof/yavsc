@@ -70,8 +70,12 @@ namespace Yavsc.Server.Helpers
             var root = Path.Combine(siteSettings.Blog, user.UserName);
             var fi = new FileInfo(Path.Combine(root, fileName));
             if (!fi.Exists) return;
+            // Capture the length BEFORE deleting: FileInfo.Length throws
+            // FileNotFoundException once the file is gone, which would
+            // surface as a 400 even though the delete already succeeded.
+            var length = fi.Length;
             fi.Delete();
-            user.DiskUsage -= fi.Length;
+            user.DiskUsage -= length;
         }
 
         public static FsOperationInfo DeleteUserDirOrFile(this ApplicationUser user, string dirName, SiteSettings siteSettings)
@@ -85,8 +89,15 @@ namespace Yavsc.Server.Helpers
             {
                 var fi = new FileInfo(Path.Combine(root, dirName));
                 if (!fi.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.NotFound, ErrorMessage = "non existent" };
+                // Capture the length BEFORE deleting: FileInfo.Length
+                // throws FileNotFoundException once the file is gone, so
+                // reading it after fi.Delete() would throw — the caller's
+                // catch turns that into a 400 even though the file was
+                // already removed (the user sees "file does not exist"
+                // while the delete in fact succeeded).
+                var length = fi.Length;
                 fi.Delete();
-                user.DiskUsage -= fi.Length;
+                user.DiskUsage -= length;
             }
             else
             {

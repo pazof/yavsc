@@ -82,6 +82,15 @@ et négociation HTTP/3 côté client PostIt.
   désactivé (grisé) et inerte au clic. Corrigé en
   `$parent[ContentPage].((vm:XxxViewModel)DataContext).Cmd` (syntaxe
   déjà en vigueur dans `CirclesPage` / `EstimateListPage`).
+* [Yavsc.Blogs] La suppression d'un fichier (`DELETE api/v1/fs/{name}`)
+  renvoyait un 40x alors que le fichier était bien supprimé du disque.
+  `DeleteUserDirOrFile` (et `DeleteUserFile`) lisaient
+  `FileInfo.Length` **après** `fi.Delete()` ; or `FileInfo.Length`
+  lève `FileNotFoundException` une fois le fichier disparu — le `catch`
+  du contrôleur transformait cette exception en 400, d'où le message
+  perçu « le fichier n'existe pas sur le serveur » tandis que la
+  suppression avait réussi. La taille est désormais capturée avant la
+  suppression.
 
 ## [1.0.8-rc17] - unstable
 

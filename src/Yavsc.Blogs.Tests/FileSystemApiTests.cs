@@ -363,4 +363,35 @@ public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
+
+    /// <summary>
+    /// Regression for the "delete returns 40x yet the file is gone"
+    /// report: <c>DeleteUserDirOrFile</c> read <c>FileInfo.Length</c>
+    /// <b>after</b> <c>fi.Delete()</c>, and <c>FileInfo.Length</c>
+    /// throws <c>FileNotFoundException</c> once the file no longer
+    /// exists. The controller's <c>catch</c> turned that into a 400
+    /// even though the file had already been removed — the user saw
+    /// "le fichier n'existe pas sur le serveur" while the delete in
+    /// fact succeeded. This test asserts a clean 200 and that the
+    /// file is gone from disk.
+    /// </summary>
+    [Fact]
+    public async Task Delete_fs_removes_the_file_and_returns_200()
+    {
+        _fixture.ResetDatabase();
+        _fixture.SeedUser("alice");
+
+        var bytes = System.Text.Encoding.UTF8.GetBytes("delete me");
+        WritePhysicalFile(_fixture, "alice", "doomed.txt", bytes);
+
+        using var http = NewClient("alice");
+        var response = await http.DeleteAsync(
+            "/api/v1/fs/doomed.txt", TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+
+        Assert.True(response.StatusCode == HttpStatusCode.OK,
+            $"Expected 200, got {(int)response.StatusCode} ({response.StatusCode}): {body}");
+        Assert.False(File.Exists(PhysicalFile(_fixture, "alice", "doomed.txt")),
+            "The file must be gone from disk after a successful delete.");
+    }
 }
