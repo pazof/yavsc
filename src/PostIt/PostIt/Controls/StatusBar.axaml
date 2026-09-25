@@ -13,7 +13,10 @@
                        FontWeight="Bold"
                        Foreground="{Binding Foreground}"
                        VerticalAlignment="Top"/>
-            <TextBlock Text="{Binding Message}"
+            <!-- SelectableTextBlock so the user can select + copy the
+                 status message (TextBlock is not selectable in
+                 Avalonia). Keeps Text/TextWrapping/Foreground. -->
+            <SelectableTextBlock Text="{Binding Message}"
                        Foreground="{Binding Foreground}"
                        TextWrapping="Wrap"
                        VerticalAlignment="Center"/>

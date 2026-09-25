@@ -82,6 +82,9 @@ et négociation HTTP/3 côté client PostIt.
   désactivé (grisé) et inerte au clic. Corrigé en
   `$parent[ContentPage].((vm:XxxViewModel)DataContext).Cmd` (syntaxe
   déjà en vigueur dans `CirclesPage` / `EstimateListPage`).
+* [PostIt] Les messages de la barre de statut (`StatusBar`) n'étaient
+  pas sélectionnables/copiables : le texte était un `TextBlock` (non
+  sélectionnable dans Avalonia). Remplacé par `SelectableTextBlock`.
 * [Yavsc.Blogs] La suppression d'un fichier (`DELETE api/v1/fs/{name}`)
   renvoyait un 40x alors que le fichier était bien supprimé du disque.
   `DeleteUserDirOrFile` (et `DeleteUserFile`) lisaient
