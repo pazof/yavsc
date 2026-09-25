@@ -90,6 +90,34 @@
       "isBackground": true
     },
     {
+      "label": "build-web-yavsc-org",
+      "type": "process",
+      "problemMatcher": ["$msCompile"],
+      "command": "dotnet",
+      "args": ["build"],
+      "options": {
+        "cwd": "src/Yavsc.Org"
+      },
+      "group": {
+        "kind": "build"
+      },
+      "isBackground": true
+    },
+    {
+      "label": "build-web-yavsc-blogs",
+      "type": "process",
+      "problemMatcher": ["$msCompile"],
+      "command": "dotnet",
+      "args": ["build"],
+      "options": {
+        "cwd": "src/Yavsc.Blogs"
+      },
+      "group": {
+        "kind": "build"
+      },
+      "isBackground": true
+    },
+    {
       "label": "dotnet: build-postit-desktop",
       "type": "process",
       "isBuildCommand": true,
