@@ -54,7 +54,18 @@ namespace Yavsc.Blogs.Controllers
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             var uid = User.GetUserId();
-            var files = FileSystemHelpers.GetUserFiles(siteSettings, uid, subdir);
+            // The personal-storage tree is keyed by the user's login
+            // (UserName): EnsureDestinationDirectory writes under
+            // {Blog}/{UserName}, the download endpoint and avatar paths
+            // use user.UserName too. GetUserId() returns the "sub" claim
+            // (a GUID in production), so passing uid here made the listing
+            // look under {Blog}/{sub-GUID} — an empty tree, hence the
+            // "Mes fichiers" page listing nothing. Resolve the login and
+            // list under it. OwnerId on UploadedFile stays "sub" (uid),
+            // so EnrichWithFileIds still queries by uid.
+            var user = dbContext.Users.SingleOrDefault(u => u.Id == uid);
+            if (user == null) return NotFound();
+            var files = FileSystemHelpers.GetUserFiles(siteSettings, user.UserName, subdir);
             EnrichWithFileIds(files, uid, subdir);
             return Ok(files);
         }

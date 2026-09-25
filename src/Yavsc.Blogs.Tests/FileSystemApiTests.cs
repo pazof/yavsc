@@ -44,7 +44,7 @@ public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
         _fixture = fixture;
     }
 
-    private HttpClient NewClient(string subject = "alice")
+    private HttpClient NewClient(string subject = "alice", string? name = null)
     {
         var handler = new HttpClientHandler
         {
@@ -54,8 +54,11 @@ public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
         {
             BaseAddress = new Uri(_fixture.Addresses.First(a => a.StartsWith("https://")))
         };
+        // Pass a distinct name to mirror production (sub = GUID, name =
+        // login); defaults to subject for the existing tests where the
+        // two are equal.
         http.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", TestTokenIssuer.Issue(subject));
+            new AuthenticationHeaderValue("Bearer", TestTokenIssuer.Issue(subject, name: name));
         return http;
     }
 
@@ -127,6 +130,75 @@ public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
         // The file physically landed under {BlogFilesRoot}/alice/note.txt.
         Assert.True(File.Exists(PhysicalFile(_fixture, "alice", "note.txt")),
             "Expected the uploaded file on disk under the owner's personal root");
+    }
+
+    /// <summary>
+    /// Regression for the "Mes fichiers" page listing nothing: the
+    /// personal-storage tree is keyed by the user's <b>login</b>
+    /// (<c>UserName</c>) — <c>EnsureDestinationDirectory</c> writes
+    /// under <c>{Blog}/{name-claim}</c>, the download endpoint and
+    /// avatar paths use <c>user.UserName</c> — but <c>GET api/v1/fs</c>
+    /// passed <c>User.GetUserId()</c> (the <c>sub</c> claim, a GUID in
+    /// production) to <c>GetUserFiles</c>, so the listing looked under
+    /// <c>{Blog}/{sub-GUID}</c>, an empty tree. This test decouples
+    /// <c>sub</c> from the login (mirroring production) and asserts the
+    /// listing returns the file stored under the login.
+    /// </summary>
+    [Fact]
+    public async Task Get_fs_lists_files_stored_under_the_user_login()
+    {
+        _fixture.ResetDatabase();
+        // sub = "alice-sub" (GUID-like), login = "alice" — the shape
+        // ProfileService mints in production. DiskQuota non-zero so the
+        // upload persists the UploadedFile row (see Post_fs test).
+        _fixture.SeedUser("alice", u =>
+        {
+            u.Id = "alice-sub";
+            u.DiskQuota = 10_000_000;
+        });
+
+        var payload = System.Text.Encoding.UTF8.GetBytes("list me");
+
+        using var form = new MultipartFormDataContent();
+        var fileContent = new ByteArrayContent(payload);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
+        form.Add(fileContent, "file", "note.txt");
+
+        // Upload with a token whose sub is the GUID-like id and whose
+        // name is the login — EnsureDestinationDirectory keys off "name".
+        using (var http = NewClient("alice-sub", name: "alice"))
+        {
+            var post = await http.PostAsync("/api/v1/fs", form, TestContext.Current.CancellationToken);
+            var postBody = await post.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+            Assert.True(post.StatusCode == HttpStatusCode.OK,
+                $"Upload failed: {(int)post.StatusCode} ({post.StatusCode}): {postBody}");
+        }
+
+        // The file landed under the login, not the subject.
+        Assert.True(File.Exists(PhysicalFile(_fixture, "alice", "note.txt")),
+            "Expected the uploaded file under {BlogFilesRoot}/alice/note.txt (the login)");
+        Assert.False(Directory.Exists(Path.Combine(_fixture.BlogFilesRoot, "alice-sub")),
+            "The subject-named directory must NOT exist — storage is keyed by the login");
+
+        // GET /api/v1/fs must list under the login and find the file.
+        using var get = NewClient("alice-sub", name: "alice");
+        var response = await get.GetAsync("/api/v1/fs", TestContext.Current.CancellationToken);
+        var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        Assert.True(response.StatusCode == HttpStatusCode.OK,
+            $"List failed: {(int)response.StatusCode} ({response.StatusCode}): {body}");
+
+        using var doc = JsonDocument.Parse(body);
+        Assert.True(doc.RootElement.TryGetProperty("files", out var filesEl),
+            $"Response has no 'files' property. Body: {body}");
+        var names = filesEl.EnumerateArray().Select(f => f.GetProperty("name").GetString()).ToArray();
+        Assert.Contains("note.txt", names);
+
+        // The UploadedFile row (OwnerId = sub) is enriched onto the
+        // entry, so the client can attach the file by reference.
+        var noteEntry = filesEl.EnumerateArray()
+            .First(f => f.GetProperty("name").GetString() == "note.txt");
+        Assert.True(noteEntry.TryGetProperty("id", out var idEl) && idEl.GetInt64() > 0,
+            "Expected the enriched UploadedFile id on the listed entry");
     }
 
     [Fact]

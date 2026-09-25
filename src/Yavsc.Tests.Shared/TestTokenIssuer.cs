@@ -63,11 +63,18 @@ public static class TestTokenIssuer
     /// <param name="scope">Value of the <c>scope</c> claim. The
     /// production <c>BlogScope</c> policy requires
     /// <c>RequireClaim("scope", "blogs")</c>.</param>
+    /// <param name="name">Value of the <c>name</c> claim. Defaults to
+    /// <paramref name="subject"/> (the test convention where the login
+    /// equals the subject). Pass a distinct login to mirror production,
+    /// where <c>sub</c> is a GUID and <c>name</c> is the user's
+    /// <c>UserName</c> — the file-system list/upload paths key the
+    /// personal-storage tree off the login, not the subject.</param>
     /// <param name="extraClaims">Optional additional claims
     /// (e.g. a role for an admin-bypass test).</param>
     public static string Issue(
         string subject,
         string scope = "blogs",
+        string? name = null,
         IEnumerable<Claim>? extraClaims = null)
     {
         var now = DateTime.UtcNow;
@@ -81,7 +88,7 @@ public static class TestTokenIssuer
             // — not via User.Identity.Name. A test token without "name" would
             // make ReceiveUserFile / EnsureDestinationDirectory compute a
             // null owner root and 500 on upload, so stamp it here.
-            new("name", subject),
+            new("name", name ?? subject),
             new("scope", scope),
         };
         if (extraClaims is not null) claims.AddRange(extraClaims);
