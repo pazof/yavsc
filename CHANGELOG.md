@@ -1,12 +1,23 @@
 # Changelog
 
+
+## [1.0.8-rc19] - Blogs UX
+
+### Fixed
+
+La saisie du billet est maintenant plutôt possible,
+en petit écran.
+
 ## [1.0.8-rc18] - unstable
 
-Accès aux fichiers personnels PostIt rendu fonctionnel de bout en bout
+* [PostIt] Page "About" avec lines vers le dépôt et les issues Forgejo
+
+* Accès aux fichiers personnels PostIt rendu fonctionnel de bout en bout
 (arbre de stockage indexé par le login, pas par le `sub`), boutons
 d'action des listes réparés (binding `$parent`), revendication `name`
 enfin présente dans les access tokens (branchement du `ProfileService`),
 et négociation HTTP/3 côté client PostIt.
+
 
 ### Added
 
