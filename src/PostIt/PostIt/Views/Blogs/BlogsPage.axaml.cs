@@ -5,6 +5,9 @@ using Avalonia.Platform.Storage;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Controls.Platform;
+using Avalonia.Input;
+using System;
+using Avalonia;
 
 namespace PostIt.Views.Blogs;
 
@@ -17,7 +20,7 @@ public partial class BlogsPage : ContentPage
         InitializeComponent();
     }
 
-     protected override void OnLoaded(RoutedEventArgs e)
+    protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);
 
@@ -49,25 +52,15 @@ public partial class BlogsPage : ContentPage
 
    private void UpdateLayoutForKeyboard(double keyboardHeight)
     {
-        var app = App.Current as App;
-
-        app.View.Margin = new Avalonia.Thickness(0, 0, 0, keyboardHeight);
-// OPTION B : Si vous devez explicitement appliquer un masque de découpage (Clip) basé sur la hauteur :
-        /*
+        double visibleHeight = this.Bounds.Height - keyboardHeight;
         if (keyboardHeight > 0)
         {
-            double visibleHeight = this.Bounds.Height - keyboardHeight;
-            if (visibleHeight > 0)
-            {
-                MainContainer.Clip = new Avalonia.Media.RectangleGeometry(
-                    new Avalonia.Rect(0, 0, this.Bounds.Width, visibleHeight));
-            }
+            DraftArticleTextEditor.MaxHeight = visibleHeight;
         }
         else
         {
-            MainContainer.Clip = null; // Réinitialise le clip quand le clavier se ferme
+            DraftArticleTextEditor.MaxHeight = double.PositiveInfinity;
         }
-        */
     }
 
     private void OnInputPaneStateChanged(object? sender, InputPaneStateEventArgs e)

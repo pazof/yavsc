@@ -17,18 +17,14 @@
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
-  <ScrollViewer
-    Margin="5"
-    Padding="5"
-    HorizontalScrollBarVisibility="Disabled"
-    VerticalScrollBarVisibility="Visible">
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+    Margin="5,5,10,5" HorizontalAlignment="Stretch" BringIntoViewOnFocusChange="False"
+    VerticalAlignment="Stretch">
+    <StackPanel>
 
-
-    <StackPanel HorizontalAlignment="Stretch">
-      <StackPanel
+      <WrapPanel x:Name="BlogsHeaderPanel"
         Margin="5"
-        Orientation="Horizontal"
-        Spacing="10">
+        Orientation="Horizontal">
         <TextBlock
           FontSize="20"
           FontWeight="SemiBold"
@@ -37,8 +33,9 @@
           HorizontalAlignment="Right"
           PlaceholderText="Filter by title or author..."
           Text="{Binding SearchText, Mode=TwoWay}" />
-      </StackPanel>
-      <CommandBar HorizontalAlignment="Right" IsDynamicOverflowEnabled="True">
+      </WrapPanel>
+      <CommandBar x:Name="BlogsCommandBar"
+       HorizontalAlignment="Right" IsDynamicOverflowEnabled="True">
         <CommandBar.PrimaryCommands>
           <CommandBarButton Command="{Binding RefreshAsync}" Label="Refresh">
             <CommandBarButton.Icon>
@@ -106,10 +103,12 @@
         </CommandBar.PrimaryCommands>
       </CommandBar>
 
-      <Grid Margin="12" RowSpacing="12">
+      <Grid Margin="12" RowSpacing="12" x:Name="MainGrid">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Border
@@ -117,7 +116,9 @@
           Padding="8"
           BorderBrush="Gray"
           BorderThickness="1">
-          <ListBox ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}">
+          <ListBox
+          x:Name="PostsListBox"
+          ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}">
             <ListBox.ItemTemplate>
               <DataTemplate x:DataType="models:BlogPostDto">
                 <StackPanel Spacing="4">
@@ -139,6 +140,8 @@
         <Border
           Grid.Row="2"
           Padding="8"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
           BorderBrush="Gray"
           BorderThickness="1"
           IsVisible="{Binding IsMarkdownViewerVisible}">
@@ -150,6 +153,8 @@
           Padding="8"
           BorderBrush="Gray"
           BorderThickness="1"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
           IsVisible="{Binding !IsMarkdownViewerVisible}">
           <Grid
             HorizontalAlignment="Stretch"
@@ -177,6 +182,7 @@
 
 
             <AvaloniaEdit:TextEditor
+              x:Name="DraftArticleTextEditor"
               Grid.Row="2"
               VerticalAlignment="Stretch"
               Document="{Binding DraftArticleDocument, Mode=TwoWay}"
@@ -190,14 +196,15 @@
               HorizontalScrollBarVisibility="Disabled"
               TextInputOptions.Multiline="True"
               TextInputOptions.ReturnKeyType="Default"
-              ClipToBounds="True"
               />
 
-            <Border
+            <Border x:Name="AttachmentsBorder"
               Grid.Row="3"
               Padding="8"
               BorderBrush="LightGray"
-              BorderThickness="1">
+              BorderThickness="1"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
               <StackPanel Spacing="4">
                 <TextBlock FontWeight="SemiBold" Text="Pièces jointes" />
                 <ItemsControl ItemsSource="{Binding DraftAttachments}">
@@ -210,7 +217,7 @@
               </StackPanel>
             </Border>
 
-            <postitControls:StatusBar Grid.Row="4" DataContext="{Binding ActionStatus}" />
+            <postitControls:StatusBar Grid.Row="4" DataContext="{Binding ActionStatus}" x:Name="StatusBar" />
 
           </Grid>
         </Border>
