@@ -4,9 +4,13 @@
 
   "tasks": [
     {
-      "label": "run-debug-android",
+      "label": "build-debug-android",
       "command": "dotnet",
+      "detail": "Build the PostIt Android project in debug mode",
       "type": "shell",
+      "runOptions": {
+
+      },
       "problemMatcher": ["$msCompile"],
       "options": {
         "cwd": "${workspaceFolder}/src/PostIt/PostIt.Android",

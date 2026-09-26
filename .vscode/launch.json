@@ -22,11 +22,9 @@
     },
     {
       "name": "Android Debug",
-      "type": "mono",
-      "preLaunchTask": "run-debug-android",
-      "request": "attach",
-      "address": "localhost",
-      "port": 55555
+      "type": "maui",
+      "request": "launch",
+      "project": "${workspaceFolder}/src/PostIt/PostIt.Android/PostIt.Android.csproj"
     },
     {
       "name": "Android Attach - Debug",

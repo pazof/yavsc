@@ -1,6 +1,6 @@
 {
   "Authentication": {
-    "Authority": "https://localhost:5001",
+    "Authority": "https://yavsc.pschneider.fr",
     "ClientId": "postit",
     "Scopes": [
       "blogs",
@@ -9,13 +9,8 @@
     "RedirectUri": "postit://callback"
   },
   "DarkMode": true,
-  "BlogsApiUrl": "https://localhost:5003/api/v1/",
-  "ApiUrl": "https://localhost:5005/api/v1/",
+  "BlogsApiUrl": "https://blogs.pschneider.fr/api/v1/",
+  "ApiUrl": "https://api.pschneider.fr/api/v1/",
   "SearchText": "",
-  "ProviderOngoingRequestsSortOption": "",
-  "Loaded": true,
-  "IsDirty": true,
-  "CanNavigateNext": false,
-  "CanNavigatePrevious": true,
-  "SaveCommand": {}
+  "ProviderOngoingRequestsSortOption": ""
 }

@@ -94,6 +94,7 @@ et négociation HTTP/3 côté client PostIt.
   perçu « le fichier n'existe pas sur le serveur » tandis que la
   suppression avait réussi. La taille est désormais capturée avant la
   suppression.
+* PostIt default settings
 
 ## [1.0.8-rc17] - unstable
 

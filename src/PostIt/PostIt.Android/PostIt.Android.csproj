@@ -27,4 +27,14 @@
   <ItemGroup>
     <ProjectReference Include="..\PostIt\PostIt.csproj" />
   </ItemGroup>
+  <!-- This is an Avalonia app, not a MAUI app: exclude the .NET MAUI VS Code
+       extension's injected HotReload agent (references Microsoft.Maui.*).
+       The agent file is added via CustomAfterMicrosoftCommonTargets, i.e. after
+       this file's item groups, so the removal must run in a target. -->
+  <Target Name="ExcludeMauiDeployHotReloadAgent" BeforeTargets="CoreCompile"
+          Condition="'$(MauiDeployHotReloadAgentSource)' != ''">
+    <ItemGroup>
+      <Compile Remove="$(MauiDeployHotReloadAgentSource)" />
+    </ItemGroup>
+  </Target>
 </Project>
