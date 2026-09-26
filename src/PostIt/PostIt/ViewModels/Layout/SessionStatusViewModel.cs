@@ -143,4 +143,11 @@ public partial class SessionStatusViewModel : ViewModelBase
         await app.PushPageAsync(app.ServiceProvider!.GetRequiredService<Settings>()).ConfigureAwait(true);
     }
 
+    [RelayCommand]
+    internal async Task OpenAbout()
+    {
+        var app = (App)App.Current!;
+        await app.PushPageAsync(app.ServiceProvider!.GetRequiredService<AboutPageViewModel>()).ConfigureAwait(true);
+    }
+
 }

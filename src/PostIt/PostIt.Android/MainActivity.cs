@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Views;
 using AndroidX.Core.Provider;
 using AndroidX.Emoji2.Text;
 using Avalonia.Android;
@@ -15,7 +16,9 @@ namespace PostIt.Android;
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,
-    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
+    WindowSoftInputMode = SoftInput.AdjustResize,
+    ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)
+    ]
 public class MainActivity : AvaloniaMainActivity
 {
     /// <summary>

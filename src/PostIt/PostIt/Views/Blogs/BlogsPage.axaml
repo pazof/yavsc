@@ -175,6 +175,7 @@
               PlaceholderText="Title"
               Text="{Binding DraftTitle, Mode=TwoWay}" />
 
+
             <AvaloniaEdit:TextEditor
               Grid.Row="2"
               VerticalAlignment="Stretch"
@@ -186,9 +187,11 @@
               BorderBrush="LightGray"
               CornerRadius="5"
               Padding="5,5,5,15"
-
+              HorizontalScrollBarVisibility="Disabled"
+              TextInputOptions.Multiline="True"
+              TextInputOptions.ReturnKeyType="Default"
+              ClipToBounds="True"
               />
-
 
             <Border
               Grid.Row="3"

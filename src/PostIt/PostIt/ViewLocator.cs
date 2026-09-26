@@ -41,6 +41,7 @@ public class ViewLocator : IDataTemplate
         {
             BlogsViewModel => services.GetRequiredService<BlogsPage>(),
             Settings => services.GetRequiredService<SettingsPage>(),
+            AboutPageViewModel => services.GetRequiredService<AboutPage>(),
             HomePageViewModel => services.GetRequiredService<HomePage>(),
             ActivitiesPageViewModel => services.GetRequiredService<ActivitiesPage>(),
             CommandFormsPageViewModel => services.GetRequiredService<CommandFormsPage>(),

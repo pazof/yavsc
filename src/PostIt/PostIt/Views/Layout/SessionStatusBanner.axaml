@@ -28,6 +28,9 @@
       <Button Content="Paramètres"
               Command="{Binding OpenSettingsCommand}"
               DockPanel.Dock="Right"/>
+      <Button Content="À propos"
+              Command="{Binding OpenAboutCommand}"
+              DockPanel.Dock="Right"/>
     </DockPanel>
   </Border>
 </UserControl>

@@ -53,6 +53,7 @@ public static class ServiceCollectionHelpers
         // the navigation stack, each bound to a fresh
         // SettingsViewModel and missing any in-flight edits.
         services.AddSingleton<SettingsPage>();
+        services.AddSingleton<AboutPage>();
         services.AddSingleton<HomePage>();
         services.AddSingleton<SignaturePage>();
         services.AddSingleton<CirclesPage>();
@@ -82,6 +83,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(userFilesClient);
         services.AddSingleton<IReverseGeocodingService>(reverseGeocoding);
         services.AddSingleton<IUserDirectory>(userDirectory);
+        services.AddSingleton<AboutPageViewModel>();
         services.AddSingleton<HomePageViewModel>();
         services.AddSingleton<SignaturePageViewModel>();
         services.AddSingleton<CirclesPageViewModel>();

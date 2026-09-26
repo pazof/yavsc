@@ -46,5 +46,9 @@
         }
     },
     "dotnet.defaultSolution": "yavsc.sln",
-    "axaml.selectedSolution": "/home/paul/Workspace/yavsc/yavsc.sln"
+    "axaml.selectedSolution": "/home/paul/Workspace/yavsc/yavsc.sln",
+    "chat.tools.terminal.autoApprove": {
+        "dotnet build": true,
+        "dotnet test": true
+    }
 }
