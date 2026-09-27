@@ -24,41 +24,24 @@
 # =====================================================================
 
 # syntax=docker/dockerfile:1.7
-ARG BUILD_ENV_TAG=debian12-dotnet10-android36-v1
+ARG BUILD_ENV_TAG=debian13-dotnet10-android36-jdk21-v2
 FROM pazof/yavsc-build-env:${BUILD_ENV_TAG} AS build-env
 WORKDIR /src
 
-# (1) Manifest + fichiers de projet pour le cache de restore
-COPY *.sln ./
-COPY Directory.*.props ./
-COPY src/Yavsc.Org/*.csproj ./src/Yavsc.Org/
-COPY src/Yavsc.Abstract/*.csproj ./src/Yavsc.Abstract/
-COPY src/Yavsc.Server/*.csproj ./src/Yavsc.Server/
-COPY src/Yavsc.Api/*.csproj ./src/Yavsc.Api/
-COPY src/Yavsc.Blogs/*.csproj ./src/Yavsc.Blogs/
-COPY src/cli/*.csproj ./src/cli/
-COPY src/Yavsc.Org.Tests/*.csproj ./src/Yavsc.Org.Tests/
-COPY src/PostIt/PostIt/*.csproj ./src/PostIt/PostIt/
-COPY src/PostIt/PostIt.Android/*.csproj ./src/PostIt/PostIt.Android/
-COPY src/PostIt/PostIt.Browser/*.csproj ./src/PostIt/PostIt.Browser/
-COPY src/PostIt/PostIt.Desktop/*.csproj ./src/PostIt/PostIt.Desktop/
-
-# (2) Tout le code source
 COPY . .
 
-# (4) Restore
 RUN dotnet restore
 
-# (5) Build des trois services web principaux
+# Build des trois services web principaux
 RUN dotnet build src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-restore -clp:ErrorsOnly
 RUN dotnet build src/Yavsc.Api/Yavsc.Api.csproj -c Release --no-restore -clp:ErrorsOnly
 RUN dotnet build src/Yavsc.Blogs/Yavsc.Blogs.csproj -c Release --no-restore -clp:ErrorsOnly
 
-# (6) Build APK Android (utilisé par le workflow docker-publish-android).
+# Build APK Android (utilisé par le workflow docker-publish-android).
 ARG ANDROID_TARGET_RID=android-arm64
 RUN dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj -c Release --no-restore -clp:ErrorsOnly -r ${ANDROID_TARGET_RID}
 
-# (7) Publish des trois services web (les artifacts sont consommés par
+# Publish des trois services web (les artifacts sont consommés par
 # les stages publish-org / publish-api / publish-blogs ci-dessous).
 RUN mkdir -p /app/publish
 RUN dotnet publish src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-build -o /app/publish/Yavsc.Org

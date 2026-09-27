@@ -26,7 +26,7 @@ services:
       dockerfile: Dockerfile
       target: web-runtime
       args:
-        BUILD_ENV_TAG: debian12-dotnet10-android36-v1
+        BUILD_ENV_TAG: debian13-dotnet10-android36-jdk21-v2
       secrets:
         - source: yavsc_appsettings
           target: yavsc_appsettings
@@ -53,9 +53,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - yavsc-internal
-      - yavsc-public
+    network_mode: host
     # volumes:
     #   # Indispensable pour que Yavsc.Org (IdentityServer8) démarre.
     #   # Sans ce montage, 'docker compose up' échoue côté web avec
@@ -73,7 +71,7 @@ services:
       dockerfile: Dockerfile
       target: api-runtime
       args:
-        BUILD_ENV_TAG: debian12-dotnet10-android36-v1
+        BUILD_ENV_TAG: debian13-dotnet10-android36-jdk21-v2
       secrets:
         - source: yavsc_appsettings
           target: yavsc_appsettings
@@ -90,9 +88,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - yavsc-internal
-      - yavsc-public
+    network_mode: host
     # volumes:
     #   - /etc/letsencrypt:/etc/letsencrypt:ro
 
@@ -105,7 +101,7 @@ services:
       dockerfile: Dockerfile
       target: blogs-runtime
       args:
-        BUILD_ENV_TAG: debian12-dotnet10-android36-v1
+        BUILD_ENV_TAG: debian13-dotnet10-android36-jdk21-v2
       secrets:
         - source: yavsc_appsettings
           target: yavsc_appsettings
@@ -122,9 +118,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - yavsc-internal
-      - yavsc-public
+    network_mode: host
     # volumes:
     #   - /etc/letsencrypt:/etc/letsencrypt:ro
 

@@ -23,8 +23,7 @@ src/Yavsc/bin/output/wwwroot:
 test:
 	ASPNETCORE_ENVIRONMENT=Development dotnet test --report-xunit \
     --report-xunit-html \
-		--results-directory "test-reports" \
-    --report-xunit-html-filename "test-results.html"
+		--results-directory "test-reports"
 
 test-postit:
 	ASPNETCORE_ENVIRONMENT=Development dotnet test \
