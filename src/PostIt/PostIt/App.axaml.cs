@@ -11,6 +11,7 @@ using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
 using PostIt.Helpers;
+using System.Globalization;
 
 namespace PostIt;
 
@@ -36,6 +37,7 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -65,7 +67,7 @@ public partial class App : Application
     {
         singleViewPlatform.MainView = View = ServiceProvider!.GetRequiredService<MainView>();
         ConfigureRootView(View);
-        ApplyDarkMode(settings);
+        ApplyStettings(settings);
     }
 
     public void InitializeActivityLifetime(Settings settings, IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
@@ -74,7 +76,7 @@ public partial class App : Application
                         () =>
                         {
                             this.ConfigureRootView(ServiceProvider!.GetRequiredService<MainView>());
-                            ApplyDarkMode(settings);
+                            ApplyStettings(settings);
                             return View!;
                         };
     }
@@ -85,7 +87,7 @@ public partial class App : Application
         desktop.MainWindow = window;
         this.ConfigureRootView(window.MainView);
 
-        ApplyDarkMode(settings);
+        ApplyStettings(settings);
     }
 
     public void ConfigureRootView(MainView rootView)
@@ -126,10 +128,12 @@ public partial class App : Application
         View = mainView ?? throw new ArgumentNullException(nameof(mainView));
     }
 
-    private static void ApplyDarkMode(Settings settings)
+    private static void ApplyStettings(Settings settings)
     {
-        Application.Current!.RequestedThemeVariant =
-                            settings.DarkMode ? ThemeVariant.Dark : ThemeVariant.Light;
+        if (!string.IsNullOrWhiteSpace(settings.SelectedLanguage))
+            Yavsc.Lang.Resources.Culture = new CultureInfo(settings.SelectedLanguage);
+        Current!.RequestedThemeVariant =
+            settings.DarkMode ? ThemeVariant.Dark : ThemeVariant.Light;
     }
 
     /// <summary>

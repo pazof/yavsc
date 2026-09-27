@@ -7,6 +7,8 @@
     <FileVersion>1.1.0.0</FileVersion>
     <InformationalVersion>1.1.0-estimate.1+364.Branch.feature-estimate.Sha.3d6ab6e72f9ba4ccfa250a1cce154b550281405e</InformationalVersion>
     <Version>1.1.0-estimate.1</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
@@ -30,6 +32,7 @@
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="LibVLCSharp.Avalonia" />
     <PackageReference Include="Mapsui" />
     <PackageReference Include="Mapsui.Avalonia12" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
@@ -37,9 +40,25 @@
     <PackageReference Include="MarkdownViewer.Core" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Mono.Options" />
+    <PackageReference Include="PvRecorder" />
+    <PackageReference Include="Silk.NET.OpenAL" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../Yavsc.Abstract/Yavsc.Abstract.csproj" />
     <ProjectReference Include="../../Yavsc.Api.Client/Yavsc.Api.Client.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+  <EmbeddedResource Update="Lang/Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Lang/Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Lang/Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

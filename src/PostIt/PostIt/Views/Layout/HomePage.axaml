@@ -1,6 +1,7 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PostIt.ViewModels"
+             xmlns:lang="using:Yavsc.Lang"
              x:Class="PostIt.Views.HomePage"
              x:DataType="vm:HomePageViewModel"
              Header="Home">
@@ -10,7 +11,7 @@
         <StackPanel HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Spacing="12">
-                <TextBlock Text="Welcome to the Home Page"
+                <TextBlock Text="{x:Static lang:Resources.GreetingText}"
                            FontSize="22"
                            FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>

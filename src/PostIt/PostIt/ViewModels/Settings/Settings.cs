@@ -8,6 +8,7 @@ using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Globalization;
 
 [assembly: InternalsVisibleTo("PostIt.Tests")]
 
@@ -44,6 +45,7 @@ public partial class Settings : ViewModelBase
     public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
 
 
+    [JsonIgnore]
     public bool Loaded { get; private set; } = false;
 
 
@@ -59,8 +61,16 @@ public partial class Settings : ViewModelBase
     /// <see cref="Authentication"/>.
     /// </summary>
     [ObservableProperty]
+    [JsonIgnore]
     public partial bool IsDirty { get; private set; } = false;
 
+    [JsonIgnore]
+    public override bool CanNavigateNext { get => false; protected set => throw new System.NotImplementedException(); }
+
+    [JsonIgnore]
+    public override bool CanNavigatePrevious { get => true; protected set => throw new System.NotImplementedException(); }
+
+    public string SelectedLanguage { get; internal set; } = CultureInfo.CurrentUICulture.Name;
 
     /// <summary>
     /// Guards every mutation of the observable state. <c>[ObservableProperty]</c>
@@ -532,7 +542,4 @@ public partial class Settings : ViewModelBase
     /// </summary>
     partial void OnIsDirtyChanged(bool value) => SaveCommand.NotifyCanExecuteChanged();
 
-
-    public override bool CanNavigateNext { get => false; protected set => throw new System.NotImplementedException(); }
-    public override bool CanNavigatePrevious { get => true; protected set => throw new System.NotImplementedException(); }
 }
