@@ -16,7 +16,7 @@ public sealed class StatusNotice
     public string BorderBrush { get; }
     public string Foreground { get; }
 
-    private StatusNotice(string message, StatusSeverity severity)
+    public StatusNotice(string message, StatusSeverity severity)
     {
         Message = string.IsNullOrWhiteSpace(message) ? "Pret." : message;
         Severity = severity;

@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Helpers;
 using PostIt.Services;
+using PostIt.ViewModels.Chat;
 using Yavsc.Api.Client;
 namespace PostIt.ViewModels;
 
@@ -36,7 +37,11 @@ public class HomePageViewModel : ViewModelBase
         OpenProviderEstimates = new AsyncRelayCommand(() => OpenEstimateListAsync(EstimateListPerspective.Provider));
         OpenBlogs = new AsyncRelayCommand(App.PushBlogsPageAsync);
         OpenMyFiles = new AsyncRelayCommand(OpenMyFilesAsync);
+        OpenChat = new AsyncRelayCommand(OpenChatAsync);
     }
+
+
+    public IAsyncRelayCommand OpenChat { get; }
     public IAsyncRelayCommand OpenBlogs { get; }
     public IAsyncRelayCommand OpenActivities { get; }
     public IAsyncRelayCommand OpenProviderRequests { get; }
@@ -101,6 +106,14 @@ public class HomePageViewModel : ViewModelBase
         var vm = new EstimateListPageViewModel(estimateClient, perspective, frontClient);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
+    }
+
+    private async Task OpenChatAsync()
+    {
+        var app = (App?)Application.Current;
+        var vm = app!.ServiceProvider?.GetRequiredService<ChatViewModel>();
+        await app.PushPageAsync(vm!);
+
     }
 
     /// <summary>

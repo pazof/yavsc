@@ -15,6 +15,11 @@
                            FontSize="22"
                            FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
+
+          <Button Content="Chat"
+                  Command="{Binding OpenChat}"
+                  HorizontalAlignment="Center"
+                  IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
           <Button Content="Open Blog Interface"
                   Command="{Binding OpenBlogs}"
                   HorizontalAlignment="Center"

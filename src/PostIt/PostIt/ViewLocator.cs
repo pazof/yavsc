@@ -5,8 +5,10 @@ using Avalonia.Controls.Templates;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.ViewModels;
 using PostIt.ViewModels.Commands;
+using PostIt.ViewModels.Chat;
 using PostIt.Views;
 using PostIt.Views.Blogs;
+using PostIt.Views.Chat;
 using PostIt.Views.Commands;
 
 namespace PostIt;
@@ -58,6 +60,7 @@ public class ViewLocator : IDataTemplate
             EstimateListPageViewModel => services.GetRequiredService<EstimateListPage>(),
             EstimateValidationPageViewModel => services.GetRequiredService<EstimateValidationPage>(),
             MyFilesViewModel => services.GetRequiredService<MyFilesPage>(),
+            ChatViewModel => services.GetRequiredService<ChatPage>(),
             null => new TextBlock { Text = "No view for <null>" },
             _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };

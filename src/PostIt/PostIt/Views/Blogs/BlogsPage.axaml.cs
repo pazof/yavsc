@@ -5,15 +5,12 @@ using Avalonia.Platform.Storage;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Controls.Platform;
-using Avalonia.Input;
-using System;
-using Avalonia;
 
 namespace PostIt.Views.Blogs;
 
 public partial class BlogsPage : ContentPage
 {
-    private IInputPane _inputPane;
+    private IInputPane? _inputPane;
 
     public BlogsPage()
     {
@@ -28,7 +25,7 @@ public partial class BlogsPage : ContentPage
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel != null)
         {
-            _inputPane = topLevel.InputPane;
+            _inputPane = topLevel!.InputPane;
             if (_inputPane != null)
             {
                 // S'abonne aux changements d'état du clavier virtuel

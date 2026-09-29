@@ -2,8 +2,10 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels;
+using PostIt.ViewModels.Chat;
 using PostIt.Views;
 using PostIt.Views.Blogs;
+using PostIt.Views.Chat;
 using PostIt.Views.Commands;
 using Yavsc.Api.Client;
 
@@ -11,7 +13,7 @@ namespace PostIt.Helpers;
 
 public static class ServiceCollectionHelpers
 {
-    public static IServiceProvider BuildServices(this ServiceCollection services)
+    public static IServiceProvider BuildPostItServices(this ServiceCollection services)
     {
         var settings = new Settings();
         settings.Load();
@@ -40,6 +42,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<MainView>();
         services.AddSingleton<BlogsPage>();
         services.AddSingleton<MainWindow>();
+        services.AddSingleton<ChatViewModel>();
 
         // SettingsPage is a singleton: there must be one and only one
         // instance of the settings UI for the lifetime of the app.
@@ -59,6 +62,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<CirclesPage>();
         services.AddSingleton<ActivitiesPage>();
         services.AddTransient<CommandFormsPage>();
+        services.AddTransient<ChatPage>();
         services.AddTransient<RdvPage>();
         services.AddTransient<BrushPage>();
         services.AddTransient<BillingQueriesPage>();

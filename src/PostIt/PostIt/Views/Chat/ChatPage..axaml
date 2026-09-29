@@ -1,0 +1,60 @@
+<ContentPage
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:md="using:MarkdownViewer.Core.Controls"
+  xmlns:models="using:Yavsc.Blogspot"
+  xmlns:postitControls="using:PostIt.Controls"
+  xmlns:views="using:PostIt.Views.Chat"
+  xmlns:vm="using:PostIt.ViewModels.Chat"
+  x:Class="PostIt.Views.Chat.ChatPage"
+  x:DataType="vm:ChatViewModel" >
+
+    <Grid RowDefinitions="Auto, *, Auto" Margin="10">
+
+        <!-- SECTION 1 : BARRE DE CONNEXION & PSEUDO -->
+        <Border Grid.Row="0" Background="#F5F5F5" CornerRadius="5" Padding="10" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBox Text="{Binding ServerUrl}" Watermark="URL du Hub SignalR" Width="250" VerticalAlignment="Center"/>
+                <Button Content="Connexion" Command="{Binding ConnectCommand}" IsEnabled="{Binding !IsConnected}"/>
+
+                <Separator Background="Gray" Width="1" Margin="5,0"/>
+
+                <TextBox Text="{Binding NickName}" Watermark="Nouveau Pseudo" Width="150" VerticalAlignment="Center"/>
+                <Button Content="Changer Nick" Command="{Binding ChangeNickCommand}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- SECTION 2 : ESPACE CENTRAL DU CHAT -->
+        <Grid Grid.Row="1" ColumnDefinitions="*, 200" Margin="0,0,0,10">
+
+            <!-- Journal des flux de messages & notifications -->
+            <Grid Grid.Column="0" RowDefinitions="Auto, *">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,5">
+                    <TextBox Text="{Binding CurrentRoom}" Watermark="Nom du salon" Width="200" VerticalAlignment="Center"/>
+                    <Button Content="Rejoindre Salon (Join)" Command="{Binding JoinRoomCommand}"/>
+                </StackPanel>
+
+                <ListBox Grid.Row="1" ItemsSource="{Binding Messages}" Background="#FAFAFA" BorderBrush="#E0E0E0" BorderThickness="1">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+
+            <!-- Liste des utilisateurs présents (MàJ via l'événement 'joint') -->
+            <Border Grid.Column="1" Margin="10,0,0,0" BorderBrush="#E0E0E0" BorderThickness="1" Background="#FFF">
+                <Grid RowDefinitions="Auto, *">
+                    <TextBlock Grid.Row="0" Text="Membres Présents" FontWeight="Bold" Margin="5" HorizontalAlignment="Center"/>
+                    <ListBox Grid.Row="1" ItemsSource="{Binding ConnectedUsers}" BorderThickness="0"/>
+                </Grid>
+            </Border>
+        </Grid>
+        <postitControls:StatusBar Grid.Row="4" DataContext="{Binding Status+ "Raaaahhh!"}" x:Name="StatusBar" />
+
+    </Grid>
+</ContentPage>

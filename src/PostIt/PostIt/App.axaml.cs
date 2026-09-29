@@ -12,10 +12,14 @@ using PostIt.ViewModels;
 using PostIt.Views;
 using PostIt.Helpers;
 using System.Globalization;
+using Live.Avalonia;
+using System.Diagnostics;
+using ReactiveUI;
+using System.Reactive;
 
 namespace PostIt;
 
-public partial class App : Application
+public partial class App : Application, ILiveView
 {
     private int _bootStarted;
     public string? CliConfigFileSpecification {  get; private set; }
@@ -38,13 +42,29 @@ public partial class App : Application
     {
         AvaloniaXamlLoader.Load(this);
 
+#if DEBUG
+        this.AttachDeveloperTools();
+#endif
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
+
+#if DEBUG
+        if (Debugger.IsAttached && !IsProduction())
+        {
+            // Debugging requires pdb loading etc, so we disable live reloading
+            // during a test run with an attached debugger.
+            var window = new Window();
+            window.Content = CreateView(window);
+            window.Show();
+        }
+        else
+#endif
+        {
         if (TryHandOffCustomSchemeUrl()) return;
 
-        this.ServiceProvider = new ServiceCollection().BuildServices();
+        this.ServiceProvider = new ServiceCollection().BuildPostItServices();
         var settings = ServiceProvider.GetRequiredService<Settings>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -60,7 +80,28 @@ public partial class App : Application
             InitializeSingleViewLifetime(settings, singleViewPlatform);
         }
 
+        }
+
+#if DEBUG
+        // Here we subscribe to ReactiveUI default exception handler to avoid app
+        // termination in case if we do something wrong in our view models. See:
+        // https://www.reactiveui.net/docs/handbook/default-exception-handler/
+        //
+        // In case if you are using another MV* framework, please refer to its
+        // documentation explaining global exception handling.
+        RxApp.DefaultExceptionHandler = Observer.Create<Exception>(Console.WriteLine);
+#endif
+
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private bool IsProduction()
+    {
+#if DEBUG
+    return false;
+#else
+    return true;
+#endif
     }
 
     public void InitializeSingleViewLifetime(Settings settings, ISingleViewApplicationLifetime singleViewPlatform)
@@ -212,5 +253,23 @@ public partial class App : Application
     internal void UseConfigFileWhenLoading(string configFile)
     {
         this.CliConfigFileSpecification = configFile;
+    }
+
+    public object CreateView(Window window)
+    {
+        if (this.ServiceProvider==null)
+        {
+            var serviceCollection = new ServiceCollection();
+            this.ServiceProvider = serviceCollection.BuildPostItServices();
+        }
+        if (window.DataContext == null)
+        window.DataContext = ServiceProvider!.GetRequiredService<HomePageViewModel>();
+
+        // The AppView class will inherit the DataContext
+        // of the window. The AppView class can be a
+        // UserControl, a Grid, a TextBlock, whatever.
+        this.View = ServiceProvider!.GetRequiredService<MainView>();
+        this.ConfigureRootView(this.View);
+        return this.View;
     }
 }
