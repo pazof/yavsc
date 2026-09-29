@@ -232,11 +232,11 @@ L'impact de l'usage d'un nouveau nom d’environnement d'execution, à l'heure d
   * ~/Views/Home/Index.cshtml
   * ~/Views/Home/About.cshtml
 
-# 👥 Crédits & Co-autorat
+# 👥 Crédits & Co-autoraClaudt
 
 Ce projet a été développé de manière hybride :
 - **Conception, architecture et revue de code :** Paul Schneider
-- **Assistance au code et optimisation :** IA générative (Gemini, Google, Claude)
+- **Assistance au code et optimisation :** IA générative (Gemini, Google, Claude (Anthropic), https://qoder.com/ (ex-Windsurf))
 
 # Remerciements
 
