@@ -54,7 +54,7 @@
                 </Grid>
             </Border>
         </Grid>
-        <postitControls:StatusBar Grid.Row="4" DataContext="{Binding Status+ "Raaaahhh!"}" x:Name="StatusBar" />
+        <postitControls:StatusBar Grid.Row="4" DataContext="{Binding Status}" x:Name="StatusBar" />
 
     </Grid>
 </ContentPage>

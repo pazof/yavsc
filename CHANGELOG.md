@@ -1,9 +1,24 @@
 # Changelog
 
+## [1.0.8-rc20] - unstable
+
+### Added
+
+* [PostIt][WIP] Chat user interface 
+
+* [PostIt][WIP] Live.Avalonia start of integration
+
+### Fixed
+
+nothing
+
+### Changed
+
+nothçing
 
 ## [1.0.8-rc19] - unstable
 
-[PostIt] Blogs UX 
+[PostIt] Blogs UX
 
 ### Fixed
 

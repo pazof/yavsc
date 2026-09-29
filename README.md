@@ -232,6 +232,12 @@ L'impact de l'usage d'un nouveau nom d’environnement d'execution, à l'heure d
   * ~/Views/Home/Index.cshtml
   * ~/Views/Home/About.cshtml
 
+# 👥 Crédits & Co-autorat
+
+Ce projet a été développé de manière hybride :
+- **Conception, architecture et revue de code :** Paul Schneider
+- **Assistance au code et optimisation :** IA générative (Gemini, Google, Claude)
+
 # Remerciements
 
 Photo de <a href="https://unsplash.com/fr/@dewang?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Dewang Gupta</a>sur <a href="https://unsplash.com/fr/photos/homme-debout-pres-dun-arbre-Mu3T3DmvQQw?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
