@@ -271,10 +271,9 @@ public partial class Settings : ViewModelBase
         }
 
         var app = App.Current as App;
-        if (app!=null)
-        if (app.CliConfigFileSpecification!=null)
+        if (App.CliConfigFileSpecification!=null)
         {
-            SettingsFileFullName = app.CliConfigFileSpecification;
+            SettingsFileFullName = App.CliConfigFileSpecification;
         }
 
         if (SettingsFileFullName is not null)

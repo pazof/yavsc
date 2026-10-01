@@ -1,6 +1,7 @@
 using System;
 using Avalonia;
 using PostIt.Services;
+using PostIt.CLIOptions;
 
 namespace PostIt.Desktop;
 

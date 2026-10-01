@@ -14,15 +14,17 @@ using PostIt.Helpers;
 using System.Globalization;
 using Live.Avalonia;
 using System.Diagnostics;
+using System.Linq;
 using ReactiveUI;
 using System.Reactive;
 
 namespace PostIt;
 
-public partial class App : Application, ILiveView
+public partial class App : Application, ILiveView, IVMPusherApp
 {
+    public static bool LiveMode { get; private set; }
     private int _bootStarted;
-    public string? CliConfigFileSpecification {  get; private set; }
+    public static string? CliConfigFileSpecification { get; private set; }
 
     /// <summary>
     /// DI container the platform entry points hand to ViewModels so
@@ -49,38 +51,57 @@ public partial class App : Application, ILiveView
 
     public override void OnFrameworkInitializationCompleted()
     {
-
-#if DEBUG
-        if (Debugger.IsAttached && !IsProduction())
-        {
-            // Debugging requires pdb loading etc, so we disable live reloading
-            // during a test run with an attached debugger.
-            var window = new Window();
-            window.Content = CreateView(window);
-            window.Show();
-        }
-        else
-#endif
-        {
         if (TryHandOffCustomSchemeUrl()) return;
 
         this.ServiceProvider = new ServiceCollection().BuildPostItServices();
         var settings = ServiceProvider.GetRequiredService<Settings>();
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (!LiveMode)
         {
-            InitializeClassicDesktopLifetime(settings, desktop);
+            // Debugging requires pdb loading etc, so we disable live reloading
+            // during a test run with an attached debugger.
+
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                InitializeClassicDesktopLifetime(settings, desktop);
+            }
+            else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
+            {
+                InitializeActivityLifetime(settings, singleViewFactoryApplicationLifetime);
+            }
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+            {
+                InitializeSingleViewLifetime(settings, singleViewPlatform);
+            }
         }
-        else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
+        else
         {
-            InitializeActivityLifetime(settings, singleViewFactoryApplicationLifetime);
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            InitializeSingleViewLifetime(settings, singleViewPlatform);
+            // Here, we create a new LiveViewHost, located in the 'Live.Avalonia'
+            // namespace, and pass an ILiveView implementation to it. The ILiveView
+            // implementation should have a parameterless constructor! Next, we
+            // start listening for any changes in the source files. And then, we
+            // show the LiveViewHost window. Simple enough, huh?
+            var window = new LiveViewHost(this, Console.WriteLine);
+            var view = ServiceProvider!.GetRequiredService<MainView>();
+
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                InitializeClassicDesktopLifetime(window, view, settings, desktop);
+            }
+            else if (ApplicationLifetime is IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
+            {
+                InitializeActivityLifetime(settings, singleViewFactoryApplicationLifetime);
+            }
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+            {
+                InitializeSingleViewLifetime(settings, singleViewPlatform);
+            }
+
+            window.StartWatchingSourceFilesForHotReloading();
+            Console.WriteLine("LiveViewHost started for hot reloading.");
+            window.Show();
         }
 
-        }
 
 #if DEBUG
         // Here we subscribe to ReactiveUI default exception handler to avoid app
@@ -89,6 +110,7 @@ public partial class App : Application, ILiveView
         //
         // In case if you are using another MV* framework, please refer to its
         // documentation explaining global exception handling.
+        Console.WriteLine("Debug mode: ReactiveUI default exception handler is set.");
         RxApp.DefaultExceptionHandler = Observer.Create<Exception>(Console.WriteLine);
 #endif
 
@@ -98,10 +120,48 @@ public partial class App : Application, ILiveView
     private bool IsProduction()
     {
 #if DEBUG
-    return false;
+        return false;
 #else
     return true;
 #endif
+    }
+
+    public async Task<Page> PushPageAsync(ViewModelBase viewModel)
+    {
+        var template = DataTemplates.FirstOrDefault(t => t.Match(viewModel));
+        if (template is null)
+        {
+            throw new InvalidOperationException($"No IDataTemplate found for {viewModel.GetType().Name}.");
+        }
+
+        Control? view = template.Build(viewModel) ;
+        if (view is null)
+        {
+            throw new InvalidOperationException(
+                $"Template for {viewModel.GetType().Name} returned <null>.");
+        }
+
+        var page = view as Page;
+        if (page is null)
+        {
+            // NavigationPage expects Page instances. Wrap any fallback control
+            // (e.g. ViewLocator error TextBlock) into a ContentPage so it can render.
+            page = new ContentPage { Content = view };
+        }
+
+        page.DataContext = viewModel;
+
+        MainView? mainView = (Current as App).View;
+
+        // Avoid stacking the same singleton page twice (e.g. SettingsPage).
+        var stack = mainView.NavRoot.NavigationStack;
+        if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], page))
+        {
+            return page;
+        }
+
+        await mainView.NavRoot.PushAsync(page);
+        return page;
     }
 
     public void InitializeSingleViewLifetime(Settings settings, ISingleViewApplicationLifetime singleViewPlatform)
@@ -125,37 +185,34 @@ public partial class App : Application, ILiveView
     public void InitializeClassicDesktopLifetime(Settings settings, IClassicDesktopStyleApplicationLifetime desktop)
     {
         var window = ServiceProvider!.GetRequiredService<MainWindow>();
-        desktop.MainWindow = window;
-        this.ConfigureRootView(window.MainView);
+        var mainView = (MainView)CreateView(window);
+        InitializeClassicDesktopLifetime(window, mainView, settings, desktop);
+    }
 
+    public void InitializeClassicDesktopLifetime(Window window, MainView mainView,  Settings settings, IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        this.ConfigureRootView(mainView);
         ApplyStettings(settings);
+        desktop.MainWindow = window;
+        window.Content = mainView;
+        window.Show();
     }
 
     public void ConfigureRootView(MainView rootView)
-{
-    // Déclencher le Boot une seule fois lors du chargement du contrôle à l'écran.
-    rootView.AttachedToVisualTree += async (_, _) => await BootOnceAsync();
-
-    var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
-    sessionStatus.LogoutCompleted += () =>
     {
-        // Remplacer Window.NavRoot par rootView.NavRoot
-        rootView.NavRoot.PopToRootAsync();
-    };
+        rootView.AttachedToVisualTree += async (_, _) => await BootOnceAsync();
 
-    rootView.SessionBanner.DataContext = sessionStatus;
-    this.View = rootView;
-}
-
-    private async Task BootOnceAsync()
-    {
-        if (Interlocked.Exchange(ref _bootStarted, 1) == 1)
+        var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
+        sessionStatus.LogoutCompleted += () =>
         {
-            return;
-        }
+            // Remplacer Window.NavRoot par rootView.NavRoot
+            rootView.NavRoot.PopToRootAsync();
+        };
+        if (rootView.DataContext==null)
+            rootView.DataContext = ServiceProvider!.GetRequiredService<HomePageViewModel>();
 
-        var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
-        await BootAsync(this.ServiceProvider!, api);
+        rootView.SessionBanner.DataContext = sessionStatus;
+        this.View = rootView;
     }
 
     /// <summary>
@@ -177,6 +234,18 @@ public partial class App : Application, ILiveView
             settings.DarkMode ? ThemeVariant.Dark : ThemeVariant.Light;
     }
 
+
+    private async Task BootOnceAsync()
+    {
+        if (Interlocked.Exchange(ref _bootStarted, 1) == 1)
+        {
+            return;
+        }
+
+        var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
+        await BootAsync(this.ServiceProvider!, api);
+    }
+
     /// <summary>
     /// Run once after the main window is shown: try to refresh the
     /// cached OIDC tokens silently; on success, push MainPage on top
@@ -192,9 +261,9 @@ public partial class App : Application, ILiveView
         var refreshed = await api.TrySilentLoginAsync().ConfigureAwait(true);
         var sessionStatus = provider.GetRequiredService<SessionStatusViewModel>();
         sessionStatus.Refresh();
-        var homePage = provider.GetRequiredService<HomePageViewModel>();
+        var homePageVm = provider.GetRequiredService<HomePageViewModel>();
         var app = (App)Current!;
-        await app.PushPageAsync(homePage);
+        await app.PushPageAsync(homePageVm);
     }
 
     /// <summary>
@@ -250,20 +319,25 @@ public partial class App : Application, ILiveView
         await View!.NavRoot.PopAsync();
     }
 
-    internal void UseConfigFileWhenLoading(string configFile)
+    internal static void UseConfigFileWhenLoading(string configFile)
     {
-        this.CliConfigFileSpecification = configFile;
+        CliConfigFileSpecification = configFile;
+    }
+
+    internal static void EnableLiveMode()
+    {
+        LiveMode = true;
     }
 
     public object CreateView(Window window)
     {
-        if (this.ServiceProvider==null)
+        if (this.ServiceProvider == null)
         {
             var serviceCollection = new ServiceCollection();
             this.ServiceProvider = serviceCollection.BuildPostItServices();
         }
         if (window.DataContext == null)
-        window.DataContext = ServiceProvider!.GetRequiredService<HomePageViewModel>();
+            window.DataContext = ServiceProvider!.GetRequiredService<HomePageViewModel>();
 
         // The AppView class will inherit the DataContext
         // of the window. The AppView class can be a

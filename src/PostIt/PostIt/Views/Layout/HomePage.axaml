@@ -16,7 +16,7 @@
                            FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
 
-          <Button Content="Chat"
+          <Button Content="Les Salons de discussion"
                   Command="{Binding OpenChat}"
                   HorizontalAlignment="Center"
                   IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>

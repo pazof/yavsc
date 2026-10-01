@@ -101,7 +101,7 @@ public class SessionStatusBannerTests
     {
         MainWindow window = new MainWindow();
         window.Show();
-        var banner = window.MainView.SessionBanner;
+        var banner = new SessionStatusBanner();
         var status = new SessionStatusViewModel();
         banner.DataContext = status;
         return banner;

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Avalonia;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
-using PostIt.Helpers;
 using PostIt.Services;
 using PostIt.ViewModels.Chat;
 using Yavsc.Api.Client;

@@ -8,5 +8,5 @@
         x:Class="PostIt.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="PostIt">
-        <views:MainView x:Name="MainView" />
+        <views:MainView />
 </Window>

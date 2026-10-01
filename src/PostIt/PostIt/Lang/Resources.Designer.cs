@@ -61,7 +61,7 @@ namespace Yavsc.Lang {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bienvenue dans PostIt!.
+        ///   Looks up a localized string similar to Bienvenue dans PostIt !!!.
         /// </summary>
         public static string GreetingText {
             get {

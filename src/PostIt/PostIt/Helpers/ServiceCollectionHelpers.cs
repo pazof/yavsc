@@ -39,9 +39,12 @@ public static class ServiceCollectionHelpers
         var reverseGeocoding = new NominatimReverseGeocodingService();
 
         // Vues
-        services.AddSingleton<MainView>();
-        services.AddSingleton<BlogsPage>();
-        services.AddSingleton<MainWindow>();
+        services.AddTransient<MainWindow>();
+        services.AddTransient<MainView>();
+        services.AddTransient<BlogsPage>();
+
+
+        // Models
         services.AddSingleton<ChatViewModel>();
 
         // SettingsPage is a singleton: there must be one and only one
