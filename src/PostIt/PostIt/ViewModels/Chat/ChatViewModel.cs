@@ -148,6 +148,41 @@ namespace PostIt.ViewModels.Chat
                 await _connection.StartAsync();
                 IsConnected = true;
                 Status = new StatusNotice("Connecté au Hub SignalR", StatusSeverity.Info, new RelayCheckCommand("Déconnecter", async () => await DisconnectAsync()));
+
+                // WithAutomaticReconnect ne lève pas d'exception en cas de
+                // perte réseau : l'état passe par Reconnecting/Closed. Sans
+                // ces handlers, IsConnected resterait optimiste et Join()
+                // échouerait avec "connection is not active".
+                _connection.Reconnecting += error =>
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    {
+                        IsConnected = false;
+                        Status = new StatusNotice($"Connexion perdue ({error?.Message ?? "réseau"}), reconnexion...", StatusSeverity.Error,
+                            new RelayCheckCommand("Déconnecter", async () => await DisconnectAsync()));
+                    });
+                    return Task.CompletedTask;
+                };
+                _connection.Reconnected += _ =>
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    {
+                        IsConnected = true;
+                        Status = new StatusNotice("Reconnecté au Hub SignalR", StatusSeverity.Info,
+                            new RelayCheckCommand("Déconnecter", async () => await DisconnectAsync()));
+                    });
+                    return Task.CompletedTask;
+                };
+                _connection.Closed += error =>
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    {
+                        IsConnected = false;
+                        Status = new StatusNotice($"Déconnecté ({error?.Message ?? "fin de connexion"})", StatusSeverity.Info,
+                            new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
+                    });
+                    return Task.CompletedTask;
+                };
             }
             catch (Exception ex)
             {
@@ -156,14 +191,33 @@ namespace PostIt.ViewModels.Chat
             }
         }
 
-        private async Task CheckConnectionAsync()
+        private Task CheckConnectionAsync()
         {
-            throw new NotImplementedException();
+            var state = _connection?.State.ToString() ?? "aucune connexion";
+            Messages.Add($"État de la connexion : {state}");
+            return Task.CompletedTask;
         }
 
         private async Task JoinRoomAsync()
         {
             if (_connection == null || string.IsNullOrWhiteSpace(CurrentRoom)) return;
+
+            // InvokeCoreAsync exige une connexion active : avec la
+            // reconnexion automatique, l'état peut être Reconnecting au
+            // moment de l'appel. On tente une (re)connexion si nécessaire.
+            if (_connection.State != HubConnectionState.Connected)
+            {
+                Messages.Add($"Connexion non active ({_connection.State}), tentative de reconnexion...");
+                try
+                {
+                    await _connection.StartAsync();
+                }
+                catch (Exception ex)
+                {
+                    Messages.Add($"Reconnexion impossible : {ex.Message}");
+                    return;
+                }
+            }
 
             try
             {

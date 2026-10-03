@@ -18,6 +18,7 @@
               TextWrapping="Wrap"
               VerticalAlignment="Center"/>
             <Button Content="{Binding CheckCommandLabel}"
+                Foreground="{Binding Foreground}"
                     VerticalAlignment="Center"
                     IsVisible="{Binding HasCheckCommand}"
                     Command="{Binding CheckCommand}"

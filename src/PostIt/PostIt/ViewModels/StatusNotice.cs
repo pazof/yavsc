@@ -12,7 +12,7 @@ public sealed class StatusNotice
     public string BorderBrush { get; }
     public string Foreground { get; }
 
-    public bool HasCheckCommand { get; }
+    public bool HasCheckCommand { get => CheckCommand != null; }
 
     public ICommand? CheckCommand { get; }
 
@@ -29,12 +29,9 @@ public sealed class StatusNotice
             StatusSeverity.Warning => ("~", "#7C4A03", "#E6A700", "#eaeaea"),
             _ => ("i", "#E8F0FE", "#5B8DEF", "#1E3A8A"),
         };
-        HasCheckCommand = checkCommand != null;
         CheckCommand = checkCommand;
-        CheckCommandLabel = HasCheckCommand ? "Check" :
-            checkCommand == null ?
-                string.Empty :
-                checkCommand is IWithLabel labeled ? labeled.Label : string.Empty;
+        CheckCommandLabel = HasCheckCommand ?
+                (checkCommand is IWithLabel labeled ? labeled.Label : "Check") : string.Empty;
     }
 
     public static StatusNotice Info(string message, ICommand? checkCommand = null) => new(message, StatusSeverity.Info, checkCommand);

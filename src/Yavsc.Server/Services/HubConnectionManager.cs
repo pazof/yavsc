@@ -53,13 +53,15 @@ namespace Yavsc.Services
             _localizer = stringLocFactory.Create(typeof(HubConnectionManager));
         }
 
-        // Username must have been set before calling this method.
-        public void OnConnected(string cxId,  bool isCop)
+        public void OnConnected(string cxId, string userName, bool isCop)
         {
-            var username = ChatUserNames[cxId];
-            if (!IsConnected(username))
-                ChatRoomPresence[username] = new List<string>();
-            _isCop[username] = isCop;
+            ChatUserNames[cxId] = userName;
+            ChatCxIds.AddOrUpdate(userName,
+                _ => new List<string> { cxId },
+                (_, list) => { lock (list) { if (!list.Contains(cxId)) list.Add(cxId); } return list; });
+            if (!IsConnected(userName))
+                ChatRoomPresence[userName] = new List<string>();
+            _isCop[userName] = isCop;
         }
 
         public bool IsConnected(string candidate)

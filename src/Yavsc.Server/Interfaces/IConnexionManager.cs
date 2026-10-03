@@ -4,7 +4,7 @@ namespace Yavsc.Services
 {
     public interface IConnexionManager {
         string GetUserName (string cxId);
-        void OnConnected(string cxId, bool isCop);
+        void OnConnected(string cxId, string userName, bool isCop);
         bool IsConnected(string candidate);
 
         void OnDisconnected (string cxId);

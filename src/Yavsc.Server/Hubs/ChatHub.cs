@@ -90,7 +90,7 @@ namespace Yavsc.Server.Hubs
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, ChatHubConstants.HubGroupFollowingPrefix + uid);
             }
-            _cxManager.OnConnected(Context.ConnectionId, isCop);
+            _cxManager.OnConnected(Context.ConnectionId, userName, isCop);
             await base.OnConnectedAsync();
         }
 
