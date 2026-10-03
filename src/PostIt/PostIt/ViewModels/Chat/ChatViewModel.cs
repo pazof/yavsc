@@ -45,7 +45,16 @@ namespace PostIt.ViewModels.Chat
         public partial StatusNotice Status { get; set; }
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
         public partial bool IsConnected { get; set; } = false;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
+        public partial bool HasJoinedRoom { get; set; } = false;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
+        public partial string MessageToSend { get; set; } = "";
 
         // Listes dynamiques pour l'UI
         public ObservableCollection<string> Messages { get; } = new();
@@ -57,6 +66,28 @@ namespace PostIt.ViewModels.Chat
 
         [RelayCommand]
         public async Task JoinRoomCommand() => await JoinRoomAsync();
+
+        // Le serveur (ChatHub.Send) refuse tout message d'un utilisateur
+        // qui n'a pas joint le salon ("NoJoinNoSend") : on garde la
+        // commande inactive tant que le Join n'a pas abouti.
+        private bool CanSendMessage() =>
+            IsConnected && HasJoinedRoom && !string.IsNullOrWhiteSpace(MessageToSend);
+
+        [RelayCommand(CanExecute = nameof(CanSendMessage))]
+        private async Task SendMessageAsync()
+        {
+            if (_connection == null) return;
+            var text = MessageToSend.Trim();
+            try
+            {
+                await _connection.InvokeAsync("Send", CurrentRoom, text);
+                MessageToSend = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Messages.Add($"Erreur d'envoi : {ex.Message}");
+            }
+        }
 
         public override bool CanNavigateNext { get; protected set; } = false;
         public override bool CanNavigatePrevious { get; protected set; } = true;
@@ -70,6 +101,7 @@ namespace PostIt.ViewModels.Chat
                 _connection = null;
             }
             IsConnected = false;
+            HasJoinedRoom = false;
             Status = new StatusNotice("Déconnecté", StatusSeverity.Info,
              new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
         }
@@ -140,9 +172,17 @@ namespace PostIt.ViewModels.Chat
                     Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                     {
                         Messages.Add($"Salon rejoint avec succès : {roomInfo.Name}");
+                        HasJoinedRoom = true;
                         ConnectedUsers.Clear();
                         foreach (var u in roomInfo.Users) ConnectedUsers.Add(u);
                     });
+                });
+
+                // 4. Réception des messages du salon (diffusés par ChatHub.Send)
+                _connection.On<ChatMessage>("ReceiveMessage", (msg) =>
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                        Messages.Add($"[{msg.Room}] {msg.Name} : {msg.Message}"));
                 });
 
                 await _connection.StartAsync();
