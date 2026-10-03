@@ -2,19 +2,71 @@
 
 ## [1.0.8-rc20] - unstable
 
+Chat SignalR fonctionnel de bout en bout (connexion, salons multiples,
+envoi/réception de messages), enregistreur audio et localisation dans
+PostIt, intégration Live.Avalonia démarrée, et reverse-proxy nginx
+apprêté pour WebSocket.
+
 ### Added
 
-* [PostIt][WIP] Chat user interface 
+* [PostIt] Interface de chat : page `ChatPage` (connexion au hub,
+  saisie du nom de salon, liste des messages et des membres présents),
+  entrée depuis la page d'accueil.
+* [PostIt] Envoi de messages dans un salon joint : DTO `ChatMessage`
+  (Name/Room/Message) pour l'événement `ReceiveMessage`, saisie avec
+  envoi sur `Enter`, commande inactive tant qu'aucune salle n'est en
+  focus (le hub refuse l'envoi hors salon, `LabNoJoinNoSend`).
+* [PostIt] Modèle multi-salles côté client : `JoinedRooms`,
+  `SelectedRoom` (salle en focus), messages et utilisateurs indexés par
+  salle (`FocusedMessages`/`FocusedUsers`), ComboBox de choix de la
+  salle active ; un `Join` sur une salle déjà jointe ne fait que
+  changer le focus.
+* [PostIt] Enregistreur audio (`AudioRecorder`, interface
+  `IPCMProcessor`) et ressources de localisation
+  (`Resources.{resx,en-EN,pt-PT}`).
+* [PostIt][WIP] Début d'intégration Live.Avalonia (preview XAML à
+  chaud ; encore KO).
+* [contrib] Bloc `location /chathub` dans `template.vhost` : upgrade
+  WebSocket (`Upgrade`/`Connection`), `proxy_read_timeout 3600s` et
+  `proxy_buffering off` — sans quoi la connexion SignalR tombait au
+  premier silence ou l'upgrade échouait derrière nginx.
 
-* [PostIt][WIP] Live.Avalonia start of integration
+### Changed
+
+* [PostIt] `StatusNotice` déplacé de `Models` vers `ViewModels` et
+  enrichi d'une commande d'action optionnelle (`CheckCommand` +
+  `CheckCommandLabel`, interface `IWithLabel`) : le bandeau de statut
+  propose désormais l'action contextuelle (Connecter / Déconnecter /
+  Reconnecter / Vérifier la connexion).
+* [PostIt] `ChatViewModel` suit le cycle de vie complet de la
+  connexion : handlers `Reconnecting` / `Reconnected` / `Closed` de
+  `WithAutomaticReconnect`, pour refléter l'état réel au lieu d'un
+  `IsConnected` optimiste.
+* [Yavsc.Api] `AddSignalR().AddJsonProtocol(IncludeFields = true)` :
+  `ChatRoomInfo` n'expose que des champs publics, que System.Text.Json
+  ne sérialise pas par défaut — le client recevait des objets vides
+  (`Name` null, `Users` vide) et la liste des salons joints n'était
+  jamais alimentée.
+* [Yavsc.Server] `IConnexionManager.OnConnected` prend le `userName`
+  en paramètre (résolu depuis les claims dans `ChatHub`) au lieu de le
+  relire depuis un dictionnaire jamais alimenté.
+* [PostIt.Android] `network_security_config.xml` déplacé sous
+  `Resources/xml/` (chemin canonique Android).
 
 ### Fixed
 
-nothing
-
-### Changed
-
-nothçing
+* [Yavsc.Server] `KeyNotFoundException` dans
+  `HubConnectionManager.OnConnected` à chaque connexion SignalR :
+  `ChatUserNames` (et `ChatCxIds`) n'étaient jamais alimentés — relique
+  d'un `SetUserName` disparu lors d'une refactorisation. L'exception
+  dans `OnConnectedAsync` faisait fermer la connexion par le hub, et
+  PostIt affichait « Déconnecté (The server closed the connection…) »
+  immédiatement après la connexion.
+* [PostIt] URL du hub SignalR : retrait du préfixe `/api/v1` de
+  `ApiUrl` avant d'apposer `Constants.ChatHubPath` (le hub est mappé à
+  la racine du service, pas sous le préfixe versionné).
+* [PostIt] La `StatusBar` de la page chat référençait `Grid.Row="4"`
+  sur une grille à 3 rangées (rangée hors limites, bandeau invisible).
 
 ## [1.0.8-rc19] - unstable
 
