@@ -1,4 +1,5 @@
 <ContentPage
+  x:Class="PostIt.Views.Chat.ChatPage"
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
@@ -9,38 +10,71 @@
   xmlns:postitControls="using:PostIt.Controls"
   xmlns:views="using:PostIt.Views.Chat"
   xmlns:vm="using:PostIt.ViewModels.Chat"
-  x:Class="PostIt.Views.Chat.ChatPage"
-  x:DataType="vm:ChatViewModel" >
+  x:DataType="vm:ChatViewModel"
+  >
+  <Design.DataContext>
+    <vm:ChatViewModel />
+  </Design.DataContext>
 
-    <Grid RowDefinitions="Auto, *, Auto" Margin="10">
+  <Grid Margin="10" RowDefinitions="Auto, *, Auto">
 
-        <Grid Grid.Row="1" ColumnDefinitions="*, 200" Margin="0,0,0,10">
+    <Grid
+      Grid.Row="1"
+      Margin="0,0,0,10"
+      ColumnDefinitions="*, 200">
 
-            <!-- Journal des flux de messages & notifications -->
-            <Grid Grid.Column="0" RowDefinitions="Auto, *">
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,5">
-                    <TextBox Text="{Binding CurrentRoom}" Watermark="Nom du salon" Width="200" VerticalAlignment="Center"/>
-                    <Button Content="Rejoindre Salon (Join)" Command="{Binding JoinRoomCommand}"/>
-                </StackPanel>
+      <!--  Journal des flux de messages & notifications  -->
+      <Grid Grid.Column="0" RowDefinitions="Auto, *">
+        <StackPanel
+          Grid.Row="0"
+          Margin="0,0,0,5"
+          Orientation="Horizontal"
+          Spacing="10">
+          <TextBox
+            Width="200"
+            VerticalAlignment="Center"
+            Text="{Binding CurrentRoom}"
+            PlaceholderText="Nom du salon" />
+          <Button Command="{Binding JoinRoomCommand}" Content="Rejoindre Salon (Join)" />
+        </StackPanel>
 
-                <ListBox Grid.Row="1" ItemsSource="{Binding Messages}"  BorderBrush="#E0E0E0" BorderThickness="1">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
+        <ListBox
+          Grid.Row="1"
+          BorderBrush="#E0E0E0"
+          BorderThickness="1"
+          ItemsSource="{Binding Messages}">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
 
-            <!-- Liste des utilisateurs présents (MàJ via l'événement 'joint') -->
-            <Border Grid.Column="1" Margin="10,0,0,0" BorderBrush="#E0E0E0" BorderThickness="1" >
-                <Grid RowDefinitions="Auto, *">
-                    <TextBlock Grid.Row="0" Text="Membres Présents" FontWeight="Bold" Margin="5" HorizontalAlignment="Center"/>
-                    <ListBox Grid.Row="1" ItemsSource="{Binding ConnectedUsers}" BorderThickness="0"/>
-                </Grid>
-            </Border>
+      <!--  Liste des utilisateurs présents (MàJ via l'événement 'joint')  -->
+      <Border
+        Grid.Column="1"
+        Margin="10,0,0,0"
+        BorderBrush="#E0E0E0"
+        BorderThickness="1">
+        <Grid RowDefinitions="Auto, *">
+          <TextBlock
+            Grid.Row="0"
+            Margin="5"
+            HorizontalAlignment="Center"
+            FontWeight="Bold"
+            Text="Membres Présents" />
+          <ListBox
+            Grid.Row="1"
+            BorderThickness="0"
+            ItemsSource="{Binding ConnectedUsers}" />
         </Grid>
-        <postitControls:StatusBar Grid.Row="4" DataContext="{Binding Status}" x:Name="StatusBar" />
-
+      </Border>
     </Grid>
+    <postitControls:StatusBar
+      x:Name="StatusBar"
+      Grid.Row="4"
+      DataContext="{Binding Status}" />
+
+  </Grid>
 </ContentPage>

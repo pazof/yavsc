@@ -8,6 +8,7 @@ using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PostIt.Helpers;
+using PostIt.Models;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;
 

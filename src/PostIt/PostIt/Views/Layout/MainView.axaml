@@ -16,6 +16,7 @@
   <DockPanel LastChildFill="True">
     <views:SessionStatusBanner
       x:Name="SessionBanner"
+      DataContext="{Binding SessionStatus}"
       DockPanel.Dock="Bottom"/>
     <NavigationPage x:Name="NavRoot"/>
   </DockPanel>

@@ -4,10 +4,8 @@ namespace Yavsc.Abstract.Chat
 {
     public static class ChatHubConstants
     {
-        public const string HubGroupAuthenticated = "authenticated";
-        public const string HubGroupAnonymous = "anonymous";
         public const string HubGroupCops= "cops";
-        public const string HubGroupRomsPrefix = "room_";
+        public const string HubGroupRoomsPrefix = "room_";
         public const int MaxChanelName = 255;
 
         public const string HubGroupFollowingPrefix = "fol ";
@@ -21,6 +19,6 @@ namespace Yavsc.Abstract.Chat
         public const string HopWontKickOp  = "Half operator cannot kick any operator";
         public const string LabAuthChatUser  = "Authenticated chat user";
         public const string NoKickOnCop  = "No, you won´t, you´ĺl never do kick a cop, it is the bad.";
-        public const string LabNoJoinNoSend = "LabnoJoinNoSend";
+        public const string LabNoJoinNoSend = "LabNoJoinNoSend";
     }
 }

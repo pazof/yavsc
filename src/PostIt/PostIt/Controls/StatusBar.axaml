@@ -10,16 +10,18 @@
             Padding="8">
         <StackPanel Orientation="Horizontal" Spacing="8">
             <TextBlock Text="{Binding Glyph}"
-                       FontWeight="Bold"
-                       Foreground="{Binding Foreground}"
-                       VerticalAlignment="Top"/>
-            <!-- SelectableTextBlock so the user can select + copy the
-                 status message (TextBlock is not selectable in
-                 Avalonia). Keeps Text/TextWrapping/Foreground. -->
+              FontWeight="Bold"
+              Foreground="{Binding Foreground}"
+              VerticalAlignment="Top"/>
             <SelectableTextBlock Text="{Binding Message}"
-                       Foreground="{Binding Foreground}"
-                       TextWrapping="Wrap"
-                       VerticalAlignment="Center"/>
+              Foreground="{Binding Foreground}"
+              TextWrapping="Wrap"
+              VerticalAlignment="Center"/>
+            <Button Content="{Binding CheckCommandLabel}"
+                    VerticalAlignment="Center"
+                    IsVisible="{Binding HasCheckCommand}"
+                    Command="{Binding CheckCommand}"
+                    />
         </StackPanel>
     </Border>
 </UserControl>

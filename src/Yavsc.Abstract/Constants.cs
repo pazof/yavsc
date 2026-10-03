@@ -13,6 +13,7 @@ namespace Yavsc
         public const string BlogTagPath = "blogtag";
         public const string CirclePath = "circle";
         public const string CommentsPath = "blogcomments";
+        public const string ChatHubPath = "chathub";
 
         public static readonly Scope[] SiteScopes = {
             new Scope { Id = "profile", Description = "Your profile informations" },

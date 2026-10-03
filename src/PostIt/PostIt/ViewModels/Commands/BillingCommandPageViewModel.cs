@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PostIt.Models;
 using Yavsc;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;

@@ -12,6 +12,7 @@ using PostIt.Helpers;
 using Yavsc;
 using Yavsc.Api.Client;
 using Yavsc.Abstract.Workflow;
+using PostIt.Models;
 
 namespace PostIt.ViewModels;
 

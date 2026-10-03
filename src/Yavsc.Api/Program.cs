@@ -11,6 +11,7 @@ using Yavsc.Models;
 using Yavsc;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
+using Yavsc.Server.Hubs;
 
 internal class Program
 {
@@ -114,13 +115,11 @@ internal class Program
                 .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
-                .UseCors("default")
-                ;
+                .UseCors("default");
             app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope");
             app.MapDefaultControllerRoute();
-
-
             app.UseSession();
+            app.MapHub<ChatHub>("/" + Constants.ChatHubPath);
             await app.RunAsync();
         }
     }

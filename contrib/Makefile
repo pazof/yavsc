@@ -14,7 +14,7 @@ reinstall: copy-binaries
 	@echo "💯 backend started"
 
 reinstall-prod:
-	make reinstall APP_INSTALL_ENV= APP_INSTALL_PREFIX= APP_INSTALL_ENV=production
+	make reinstall APP_INSTALL_PREFIX= APP_INSTALL_ENV=production
 
 generated/$(APP_INSTALL_PREFIX)yavscOrg.service:
 generated/$(APP_INSTALL_PREFIX)yavscBlogs.service:

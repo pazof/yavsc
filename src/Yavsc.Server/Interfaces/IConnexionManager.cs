@@ -3,8 +3,6 @@ using Yavsc.ViewModels.Chat;
 namespace Yavsc.Services
 {
     public interface IConnexionManager {
-        void SetUserName(string cxId, string userName);
-
         string GetUserName (string cxId);
         void OnConnected(string cxId, bool isCop);
         bool IsConnected(string candidate);

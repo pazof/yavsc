@@ -53,23 +53,6 @@ namespace Yavsc.Services
             _localizer = stringLocFactory.Create(typeof(HubConnectionManager));
         }
 
-        public void SetUserName(string cxId, string userName)
-        {
-            string oldUname;
-            if (ChatUserNames.TryGetValue(cxId, out oldUname))
-            {
-                // this is a rename
-                if (oldUname == userName) return;
-                ChatCxIds[userName] = ChatCxIds[oldUname];
-                ChatCxIds[oldUname] = null;
-            }
-            else
-            {
-                // this is a connexion
-                ChatCxIds[userName] = new List<string>() { cxId };
-            }
-            ChatUserNames[cxId] = userName;
-        }
         // Username must have been set before calling this method.
         public void OnConnected(string cxId,  bool isCop)
         {

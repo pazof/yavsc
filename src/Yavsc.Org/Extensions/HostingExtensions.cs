@@ -1053,8 +1053,6 @@ public static class HostingExtensions
         app.UseCors("default");
         app.MapDefaultControllerRoute();
         app.MapStaticAssets(staticAssetsManifestPath);
-        //app.MapRazorPages();
-        app.MapHub<ChatHub>("/chathub");
 
         WorkflowHelpers.ConfigureBillingService();
 

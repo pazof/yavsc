@@ -12,6 +12,7 @@ using Yavsc.Api.Client;
 using Yavsc.Abstract.Files;
 using PostIt.Helpers;
 using AvaloniaEdit.Document;
+using PostIt.Models;
 
 namespace PostIt.ViewModels;
 

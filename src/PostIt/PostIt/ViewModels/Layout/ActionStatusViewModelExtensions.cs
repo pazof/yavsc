@@ -1,3 +1,5 @@
+using PostIt.Models;
+
 namespace PostIt.ViewModels;
 
 public interface IActionStatusViewModel

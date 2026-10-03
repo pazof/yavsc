@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PostIt.Models;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Api.Client;
 using Yavsc.Models.Billing;

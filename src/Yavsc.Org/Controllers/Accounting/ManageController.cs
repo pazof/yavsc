@@ -400,7 +400,7 @@ namespace Yavsc.Controllers
 
         public IActionResult SetUserName()
         {
-            return View(new SetUserNameViewModel() { UserName = User.Identity.Name });
+            return View(new SetUserNameViewModel() { UserName = User.GetUserName() });
         }
 
         [HttpPost]

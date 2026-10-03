@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
 using PostIt.Controls;
+using PostIt.Models;
 using PostIt.ViewModels;
 
 namespace PostIt.Tests;
@@ -21,7 +22,9 @@ public class StatusBarTests
     [AvaloniaFact]
     public void Status_message_is_rendered_by_a_SelectableTextBlock()
     {
-        var bar = new StatusBar { DataContext = StatusNotice.Error("Échec de la suppression : boom") };
+        var bar = new StatusBar {
+            DataContext =
+            StatusNotice.Error("Échec de la suppression : boom") };
         var window = new Window { Content = bar };
         window.Show();
 

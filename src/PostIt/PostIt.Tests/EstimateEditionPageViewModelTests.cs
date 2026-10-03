@@ -1,4 +1,5 @@
 using System.Net.Http;
+using PostIt.Models;
 using PostIt.ViewModels;
 using Yavsc;
 using Yavsc.Api.Client;

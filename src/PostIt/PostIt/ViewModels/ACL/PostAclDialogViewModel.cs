@@ -12,6 +12,7 @@ using Yavsc.Api.Client.Dtos;
 using Yavsc.Abstract.BlogSpot;
 using Yavsc.Abstract.Identity.Security;
 using System.Net.Http;
+using PostIt.Models;
 
 namespace PostIt.ViewModels;
 
