@@ -66,7 +66,12 @@ internal class Program
         services.AddAuthentication("Bearer")
                  .AddYavscJwtBearer(builder.Configuration);
 
-        services.AddSignalR();
+        services.AddSignalR()
+            // ChatRoomInfo et d'autres DTO de hub exposent des champs
+            // publics (pas des propriétés) : STJ ne les sérialise pas
+            // sans IncludeFields, et le client recevrait des objets vides.
+            .AddJsonProtocol(options =>
+                options.PayloadSerializerOptions.IncludeFields = true);
         services.AddSingleton<IConnexionManager, HubConnectionManager>();
 
         // DbContextBuilder

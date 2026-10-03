@@ -152,7 +152,11 @@ namespace Yavsc.Server.Hubs
                 // in case in an additional connection,
                 // one only send info on room without
                 // warning any other user.
-                _cxManager.TryGetChanInfo(roomName, out channelInfo);
+                if (!_cxManager.TryGetChanInfo(roomName, out channelInfo))
+                {
+                    _logger.LogError($"Failed to retrieve channel info for room: {roomName}");
+                    return null;
+                }
             }
 
             _logger.LogInformation($"returning channel info");

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -31,6 +32,7 @@ namespace PostIt.ViewModels.Chat
             _api = api;
             Status = new StatusNotice("Déconnecté", StatusSeverity.Info,
             new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
+            FocusedMessages = _systemMessages;
         }
 
         private HubConnection? _connection;
@@ -50,15 +52,49 @@ namespace PostIt.ViewModels.Chat
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
-        public partial bool HasJoinedRoom { get; set; } = false;
-
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
         public partial string MessageToSend { get; set; } = "";
 
-        // Listes dynamiques pour l'UI
-        public ObservableCollection<string> Messages { get; } = new();
-        public ObservableCollection<string> ConnectedUsers { get; } = new();
+        // Salles jointes (choix de la salle en focus dans la vue).
+        public ObservableCollection<string> JoinedRooms { get; } = new();
+
+        // Salle en focus ; null = aucune salle, le journal affiche
+        // alors les notifications système.
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
+        public partial string? SelectedRoom { get; set; }
+
+        // Notifications globales (connexion, erreurs de join, ...)
+        private readonly ObservableCollection<string> _systemMessages = new();
+
+        // Messages et utilisateurs présents, indexés par salle.
+        private readonly Dictionary<string, ObservableCollection<string>> _messagesByRoom = new();
+        private readonly Dictionary<string, ObservableCollection<string>> _usersByRoom = new();
+        private static readonly ObservableCollection<string> _noUsers = new();
+
+        // Vues "focus" exposées à la page : pointent vers la salle
+        // sélectionnée, ou vers le journal système / une liste vide.
+        [ObservableProperty]
+        public partial ObservableCollection<string> FocusedMessages { get; set; }
+
+        [ObservableProperty]
+        public partial ObservableCollection<string> FocusedUsers { get; set; } = _noUsers;
+
+        partial void OnSelectedRoomChanged(string? value)
+        {
+            FocusedMessages = value != null && _messagesByRoom.TryGetValue(value, out var msgs)
+                ? msgs : _systemMessages;
+            FocusedUsers = value != null && _usersByRoom.TryGetValue(value, out var users)
+                ? users : _noUsers;
+        }
+
+        // Trace une notification système dans la vue courante
+        // (et dans le journal global pour consultation ultérieure).
+        private void Log(string line)
+        {
+            _systemMessages.Add(line);
+            if (!ReferenceEquals(FocusedMessages, _systemMessages))
+                FocusedMessages.Add(line);
+        }
 
         // Commandes pour les boutons
         [RelayCommand]
@@ -69,23 +105,23 @@ namespace PostIt.ViewModels.Chat
 
         // Le serveur (ChatHub.Send) refuse tout message d'un utilisateur
         // qui n'a pas joint le salon ("NoJoinNoSend") : on garde la
-        // commande inactive tant que le Join n'a pas abouti.
+        // commande inactive tant qu'aucune salle n'est en focus.
         private bool CanSendMessage() =>
-            IsConnected && HasJoinedRoom && !string.IsNullOrWhiteSpace(MessageToSend);
+            IsConnected && SelectedRoom != null && !string.IsNullOrWhiteSpace(MessageToSend);
 
         [RelayCommand(CanExecute = nameof(CanSendMessage))]
         private async Task SendMessageAsync()
         {
-            if (_connection == null) return;
+            if (_connection == null || SelectedRoom == null) return;
             var text = MessageToSend.Trim();
             try
             {
-                await _connection.InvokeAsync("Send", CurrentRoom, text);
+                await _connection.InvokeAsync("Send", SelectedRoom, text);
                 MessageToSend = string.Empty;
             }
             catch (Exception ex)
             {
-                Messages.Add($"Erreur d'envoi : {ex.Message}");
+                Log($"Erreur d'envoi : {ex.Message}");
             }
         }
 
@@ -101,7 +137,11 @@ namespace PostIt.ViewModels.Chat
                 _connection = null;
             }
             IsConnected = false;
-            HasJoinedRoom = false;
+            SelectedRoom = null;
+            JoinedRooms.Clear();
+            _messagesByRoom.Clear();
+            _usersByRoom.Clear();
+            _systemMessages.Clear();
             Status = new StatusNotice("Déconnecté", StatusSeverity.Info,
              new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
         }
@@ -152,7 +192,7 @@ namespace PostIt.ViewModels.Chat
                 _connection.On<string, string, string>("notifyUser", (type, user, msg) =>
                 {
                     Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                        Messages.Add($"[{type}] {user}: {msg}"));
+                        Log($"[{type}] {user}: {msg}"));
                 });
 
                 // 2. Ecoute des notifications de salon (notifyRoom)
@@ -160,29 +200,32 @@ namespace PostIt.ViewModels.Chat
                 {
                     Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                     {
-                        Messages.Add($"*{user} a interagi avec le salon {room} (Action: {type})");
-                        if (type == "UserJoin" && !ConnectedUsers.Contains(user))
-                            ConnectedUsers.Add(user);
+                        if (_messagesByRoom.TryGetValue(room, out var roomLog))
+                            roomLog.Add($"*{user} a interagi avec le salon {room} (Action: {type})");
+                        else
+                            Log($"*{user} a interagi avec le salon {room} (Action: {type})");
+                        if (type == "UserJoin" && _usersByRoom.TryGetValue(room, out var users)
+                            && !users.Contains(user))
+                            users.Add(user);
                     });
                 });
 
                 // 3. Réception de l'état complet suite au Join réussi (joint)
                 _connection.On<ChatRoomInfo>("joint", (roomInfo) =>
                 {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                    {
-                        Messages.Add($"Salon rejoint avec succès : {roomInfo.Name}");
-                        HasJoinedRoom = true;
-                        ConnectedUsers.Clear();
-                        foreach (var u in roomInfo.Users) ConnectedUsers.Add(u);
-                    });
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() => OnRoomJoined(roomInfo));
                 });
 
-                // 4. Réception des messages du salon (diffusés par ChatHub.Send)
+                // 4. Réception des messages de salon (diffusés par ChatHub.Send)
                 _connection.On<ChatMessage>("ReceiveMessage", (msg) =>
                 {
                     Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                        Messages.Add($"[{msg.Room}] {msg.Name} : {msg.Message}"));
+                    {
+                        var room = msg.Room ?? "?";
+                        if (!_messagesByRoom.TryGetValue(room, out var roomLog))
+                            roomLog = _messagesByRoom[room] = new();
+                        roomLog.Add($"{msg.Name} : {msg.Message}");
+                    });
                 });
 
                 await _connection.StartAsync();
@@ -231,10 +274,30 @@ namespace PostIt.ViewModels.Chat
             }
         }
 
+        // Alimente JoinedRooms et les collections par salle à partir
+        // du ChatRoomInfo renvoyé par le hub (valeur de retour du Join
+        // et/ou événement "joint"). Idempotent.
+        private void OnRoomJoined(ChatRoomInfo roomInfo)
+        {
+            // ChatHub.Join renseigne toujours Name (salle existante ou
+            // créée) ; un Name nul signalerait un payload inattendu.
+            var roomName = roomInfo.Name ?? CurrentRoom;
+            if (roomInfo.Name == null)
+                Log("OnRoomJoined : nom de salle absent du payload, repli sur la salle demandée.");
+            if (!_messagesByRoom.TryGetValue(roomName, out var roomLog))
+                roomLog = _messagesByRoom[roomName] = new();
+            roomLog.Add($"Salon rejoint avec succès : {roomName}");
+            var users = _usersByRoom[roomName] = new();
+            foreach (var u in roomInfo.Users) users.Add(u);
+            if (!JoinedRooms.Contains(roomName))
+                JoinedRooms.Add(roomName);
+            SelectedRoom = roomName;
+        }
+
         private Task CheckConnectionAsync()
         {
             var state = _connection?.State.ToString() ?? "aucune connexion";
-            Messages.Add($"État de la connexion : {state}");
+            Log($"État de la connexion : {state}");
             return Task.CompletedTask;
         }
 
@@ -242,19 +305,26 @@ namespace PostIt.ViewModels.Chat
         {
             if (_connection == null || string.IsNullOrWhiteSpace(CurrentRoom)) return;
 
+            // Salle déjà jointe : on se contente de la mettre en focus.
+            if (JoinedRooms.Contains(CurrentRoom))
+            {
+                SelectedRoom = CurrentRoom;
+                return;
+            }
+
             // InvokeCoreAsync exige une connexion active : avec la
             // reconnexion automatique, l'état peut être Reconnecting au
             // moment de l'appel. On tente une (re)connexion si nécessaire.
             if (_connection.State != HubConnectionState.Connected)
             {
-                Messages.Add($"Connexion non active ({_connection.State}), tentative de reconnexion...");
+                Log($"Connexion non active ({_connection.State}), tentative de reconnexion...");
                 try
                 {
                     await _connection.StartAsync();
                 }
                 catch (Exception ex)
                 {
-                    Messages.Add($"Reconnexion impossible : {ex.Message}");
+                    Log($"Reconnexion impossible : {ex.Message}");
                     return;
                 }
             }
@@ -265,12 +335,18 @@ namespace PostIt.ViewModels.Chat
                 var info = await _connection.InvokeAsync<ChatRoomInfo>("Join", CurrentRoom);
                 if (info == null)
                 {
-                    Messages.Add("Erreur lors de la validation du salon par le serveur.");
+                    Log("Erreur lors de la validation du salon par le serveur.");
+                }
+                else
+                {
+                    // On alimente le modèle depuis la valeur de retour,
+                    // sans attendre l'événement "joint".
+                    OnRoomJoined(info);
                 }
             }
             catch (Exception ex)
             {
-                Messages.Add($"Erreur Join: {ex.Message}");
+                Log($"Erreur Join: {ex.Message}");
             }
         }
     }

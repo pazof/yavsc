@@ -36,13 +36,20 @@
             Text="{Binding CurrentRoom}"
             PlaceholderText="Nom du salon" />
           <Button Command="{Binding JoinRoomCommand}" Content="Rejoindre Salon (Join)" />
+          <!--  Choix de la salle en focus parmi celles jointes  -->
+          <ComboBox
+            Width="180"
+            VerticalAlignment="Center"
+            ItemsSource="{Binding JoinedRooms}"
+            PlaceholderText="Salle active"
+            SelectedItem="{Binding SelectedRoom}" />
         </StackPanel>
 
         <ListBox
           Grid.Row="1"
           BorderBrush="#E0E0E0"
           BorderThickness="1"
-          ItemsSource="{Binding Messages}">
+          ItemsSource="{Binding FocusedMessages}">
           <ListBox.ItemTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding}" TextWrapping="Wrap" />
@@ -67,7 +74,7 @@
           <ListBox
             Grid.Row="1"
             BorderThickness="0"
-            ItemsSource="{Binding ConnectedUsers}" />
+            ItemsSource="{Binding FocusedUsers}" />
         </Grid>
       </Border>
     </Grid>
@@ -80,7 +87,7 @@
         Grid.Column="0"
         VerticalAlignment="Center"
         AcceptsReturn="False"
-        IsEnabled="{Binding HasJoinedRoom}"
+        IsEnabled="{Binding !!SelectedRoom}"
         PlaceholderText="Votre message..."
         Text="{Binding MessageToSend}">
         <TextBox.KeyBindings>
