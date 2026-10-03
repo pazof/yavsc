@@ -1054,7 +1054,7 @@ public static class HostingExtensions
         app.MapDefaultControllerRoute();
         app.MapStaticAssets(staticAssetsManifestPath);
         //app.MapRazorPages();
-        app.MapHub<ChatHub>("/chatHub");
+        app.MapHub<ChatHub>("/chathub");
 
         WorkflowHelpers.ConfigureBillingService();
 

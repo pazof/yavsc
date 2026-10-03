@@ -13,7 +13,7 @@ namespace PostIt.ViewModels.Chat
         private HubConnection? _connection;
 
         [ObservableProperty]
-        public partial string ServerUrl { get; protected set; } = "http://localhost:5000/chathub";
+        public partial string ServerUrl { get; protected set; } = "https://yavsc.pschneider.fr/chathub";
 
 
         [ObservableProperty]
