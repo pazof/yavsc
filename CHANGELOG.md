@@ -1,5 +1,12 @@
 # Changelog
 
+
+## [1.0.8-rc21] - unstable
+
+### Fixed
+
+User experience editing the blog article.
+
 ## [1.0.8-rc20] - unstable
 
 Chat SignalR fonctionnel de bout en bout (connexion, salons multiples,
