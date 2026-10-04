@@ -39,18 +39,56 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     /// <summary>Editor buffer for the post body. Same pattern as
     /// <see cref="DraftTitle"/>.</summary>
 
-    public string DraftArticle
+    public string? DraftArticle
      {
-        get => DraftArticleDocument.Text;
-        set  {
+        get => DraftArticleDocument?.Text ?? null;
+        set
+        {
+            var currentText = DraftArticleDocument?.Text;
+            if (string.Equals(currentText, value, StringComparison.Ordinal))
+            {
+                OnPropertyChanged(nameof(DraftArticle));
+                return;
+            }
+
             OnPropertyChanging(nameof(DraftArticle));
-            DraftArticleDocument = new TextDocument(value);
-            this.OnPropertyChanged(nameof(DraftArticle));
+            DraftArticleDocument = value is not null ? new TextDocument(value) : null;
+            OnPropertyChanged(nameof(DraftArticle));
         }
      }
 
-    [ObservableProperty]
-    public partial TextDocument DraftArticleDocument {get; set;}
+    private TextDocument? _draftArticleDocument;
+
+    public TextDocument? DraftArticleDocument
+    {
+        get => _draftArticleDocument;
+        set
+        {
+            if (ReferenceEquals(_draftArticleDocument, value))
+            {
+                return;
+            }
+
+            if (_draftArticleDocument is not null)
+            {
+                _draftArticleDocument.TextChanged -= DraftArticleDocument_TextChanged;
+            }
+
+            _draftArticleDocument = value;
+
+            if (_draftArticleDocument is not null)
+            {
+                _draftArticleDocument.TextChanged += DraftArticleDocument_TextChanged;
+            }
+
+            OnPropertyChanged(nameof(DraftArticleDocument));
+        }
+    }
+
+    private void DraftArticleDocument_TextChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(DraftArticle));
+    }
 
     /// <summary>Editor buffer for the post's publication state.
     /// Reflects the server-side <c>IsPublished</c> flag (the

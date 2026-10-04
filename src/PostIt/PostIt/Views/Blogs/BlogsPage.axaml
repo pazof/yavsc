@@ -17,10 +17,7 @@
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
-  <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-    Margin="5,5,10,5" HorizontalAlignment="Stretch" BringIntoViewOnFocusChange="False"
-    VerticalAlignment="Stretch">
-    <StackPanel>
+  <StackPanel Margin="5,5,10,5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
       <WrapPanel x:Name="BlogsHeaderPanel"
         Margin="5"
@@ -87,7 +84,7 @@
               <PathIcon Data="{StaticResource PublishedIcon}" />
             </CommandBarToggleButton.Icon>
           </CommandBarToggleButton>
-          <CommandBarToggleButton IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}" Label="Markdown Viewer">
+          <CommandBarToggleButton IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}" Label="Aperçu">
             <CommandBarToggleButton.Icon>
               <PathIcon Data="{StaticResource MarkdownIcon}" />
             </CommandBarToggleButton.Icon>
@@ -137,91 +134,61 @@
           </ListBox>
         </Border>
 
-        <Border
+        <Grid
           Grid.Row="2"
-          Padding="8"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch"
+          RowSpacing="10">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+
+          <TextBlock
+            Grid.Row="0"
+            FontWeight="SemiBold"
+            Text="Post detail" />
+          <TextBox
+            x:Name="DraftTitleTextBox"
+            Grid.Row="1"
+            PlaceholderText="Title"
+            Text="{Binding DraftTitle, Mode=TwoWay}" />
+
+          <postitControls:MarkdownEditorControl
+            Grid.Row="2"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-          BorderBrush="Gray"
-          BorderThickness="1"
-          IsVisible="{Binding IsMarkdownViewerVisible}">
-          <md:MarkdownViewer Name="MarkdownViewer" MarkdownText="{Binding DraftArticle}" />
-        </Border>
+            IsPreviewVisible="{Binding IsMarkdownViewerVisible, Mode=TwoWay}"
+            MarkdownText="{Binding DraftArticle, Mode=TwoWay}"
+            Document="{Binding DraftArticleDocument, Mode=TwoWay}" />
 
-        <Border
-          Grid.Row="2"
-          Padding="8"
-          BorderBrush="Gray"
-          BorderThickness="1"
+          <Border x:Name="AttachmentsBorder"
+            Grid.Row="3"
+            Padding="8"
+            BorderBrush="LightGray"
+            BorderThickness="1"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-          IsVisible="{Binding !IsMarkdownViewerVisible}">
-          <Grid
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            RowSpacing="10">
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="*" />
-              <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+            VerticalAlignment="Stretch">
+            <StackPanel Spacing="4">
+              <TextBlock FontWeight="SemiBold" Text="Pièces jointes" />
+              <ItemsControl ItemsSource="{Binding DraftAttachments}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding FileName}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
 
-            <TextBlock
-              Grid.Row="0"
-              FontWeight="SemiBold"
-              Text="Post detail" />
-            <TextBox
-              x:Name="DraftTitleTextBox"
-              Grid.Row="1"
-              PlaceholderText="Title"
-              Text="{Binding DraftTitle, Mode=TwoWay}" />
+          <postitControls:StatusBar Grid.Row="4" DataContext="{Binding ActionStatus}" x:Name="StatusBar" />
 
-
-            <AvaloniaEdit:TextEditor
-              x:Name="DraftArticleTextEditor"
-              Grid.Row="2"
-              VerticalAlignment="Stretch"
-              Document="{Binding DraftArticleDocument, Mode=TwoWay}"
-              FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
-              ShowLineNumbers="True"
-              WordWrap="True"
-              BorderThickness="1"
-              BorderBrush="LightGray"
-              CornerRadius="5"
-              Padding="5,5,5,15"
-              HorizontalScrollBarVisibility="Disabled"
-              TextInputOptions.Multiline="True"
-              TextInputOptions.ReturnKeyType="Default"
-              />
-
-            <Border x:Name="AttachmentsBorder"
-              Grid.Row="3"
-              Padding="8"
-              BorderBrush="LightGray"
-              BorderThickness="1"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch">
-              <StackPanel Spacing="4">
-                <TextBlock FontWeight="SemiBold" Text="Pièces jointes" />
-                <ItemsControl ItemsSource="{Binding DraftAttachments}">
-                  <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                      <TextBlock Text="{Binding FileName}" />
-                    </DataTemplate>
-                  </ItemsControl.ItemTemplate>
-                </ItemsControl>
-              </StackPanel>
-            </Border>
-
-            <postitControls:StatusBar Grid.Row="4" DataContext="{Binding ActionStatus}" x:Name="StatusBar" />
-
-          </Grid>
-        </Border>
+        </Grid>
       </Grid>
     </StackPanel>
-  </ScrollViewer>
 </ContentPage>

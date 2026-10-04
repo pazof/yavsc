@@ -1,0 +1,51 @@
+<UserControl
+    x:Class="PostIt.Controls.MarkdownEditorControl"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+    xmlns:md="using:MarkdownViewer.Core.Controls"
+    x:Name="Root"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Border
+            BorderBrush="LightGray"
+            BorderThickness="1"
+            CornerRadius="5"
+            IsVisible="{Binding !IsPreviewVisible, ElementName=Root}"
+            Padding="0">
+            <AvaloniaEdit:TextEditor
+                x:Name="SourceEditor"
+                Document="{Binding Document, ElementName=Root, Mode=TwoWay}"
+                FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
+                ShowLineNumbers="True"
+                WordWrap="True"
+                BorderThickness="0"
+                Padding="5,5,5,15"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalScrollBarVisibility="Disabled"
+                TextInputOptions.Multiline="True"
+                TextInputOptions.ReturnKeyType="Default" />
+        </Border>
+
+        <Border
+            BorderBrush="LightGray"
+            BorderThickness="1"
+            CornerRadius="5"
+            IsVisible="{Binding IsPreviewVisible, ElementName=Root}"
+            Padding="8">
+            <ScrollViewer
+                BringIntoViewOnFocusChange="False"
+                HorizontalScrollBarVisibility="Disabled"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+                <md:MarkdownViewer
+                    x:Name="PreviewViewer"
+                    MarkdownText="{Binding MarkdownText, ElementName=Root}"
+                    ClipToBounds="False" />
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>
