@@ -17,7 +17,14 @@
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
-  <StackPanel Margin="5,5,10,5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+  <ScrollViewer
+    Margin="5,5,10,5"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch"
+    HorizontalScrollBarVisibility="Disabled"
+    VerticalScrollBarVisibility="Auto"
+    BringIntoViewOnFocusChange="False">
+    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
       <WrapPanel x:Name="BlogsHeaderPanel"
         Margin="5"
@@ -100,7 +107,7 @@
         </CommandBar.PrimaryCommands>
       </CommandBar>
 
-      <Grid Margin="12" RowSpacing="12" x:Name="MainGrid">
+      <Grid Margin="12" RowSpacing="12" x:Name="MainGrid" MinHeight="500">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
@@ -191,4 +198,5 @@
         </Grid>
       </Grid>
     </StackPanel>
+  </ScrollViewer>
 </ContentPage>
