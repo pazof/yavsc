@@ -1048,6 +1048,7 @@ public static class HostingExtensions
         app.UseSwaggerUI();
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseAuthentication();
         app.UseIdentityServer();
         app.UseAuthorization();
         app.UseCors("default");

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.8-rc22] - unstable
+
+### Fixed
+
+User experience login into PostIt
+
 ## [1.0.8-rc21] - unstable
 
 ### Fixed
