@@ -52,7 +52,15 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
             }
 
             OnPropertyChanging(nameof(DraftArticle));
-            DraftArticleDocument = value is not null ? new TextDocument(value) : null;
+            try
+            {
+                DraftArticleDocument = value is not null ? new TextDocument(value) : null;
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error setting DraftArticleDocument: {ex.Message}";
+                // Handle any exceptions that might occur when setting the DraftArticleDocument
+            }
             OnPropertyChanged(nameof(DraftArticle));
         }
      }

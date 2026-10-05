@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels;
@@ -200,7 +201,8 @@ public partial class App : Application, ILiveView, IVMPusherApp
 
     public void ConfigureRootView(MainView rootView)
     {
-        rootView.AttachedToVisualTree += async (_, _) => await BootOnceAsync();
+        rootView.AttachedToVisualTree += (_, _) =>
+            Dispatcher.UIThread.Post(() => _ = BootOnceAsync());
 
         var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
         sessionStatus.LogoutCompleted += () =>
