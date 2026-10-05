@@ -50,10 +50,6 @@ jobs:
         echo "🏗️ Building the solution..."
         cd /src/_src && dotnet build --verbosity normal
     - name: Test
-      artifacts:
-        name: test-results
-        path: test-results.html
-
       run: |
         echo "🚀 Lancement des tests..."
         cd /src/_src && dotnet test \
