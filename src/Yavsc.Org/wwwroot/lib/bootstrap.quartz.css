@@ -14229,10 +14229,6 @@ body {
     --bs-secondary-rgb: transparent
 }
 
-.card a {
-    color: #fff
-}
-
 .card .text-muted {
     color: rgba(255, 255, 255, .7) !important
 }
