@@ -22,22 +22,49 @@ namespace Yavsc.Controllers
         [HttpGet]
         public IEnumerable<UserInfo> GetApplicationUser(int skip=0, int take = 25)
         {
-            return _context.Users.Skip(skip).Take(take)
-            .Select(u=> new UserInfo{
-            UserId = u.Id,
-            UserName = u.UserName,
-            Avatar = u.Avatar});
+            return _context.Users
+                .Include(u => u.PostalAddress)
+                .Include(u => u.BankInfo)
+                .Skip(skip).Take(take)
+                .Select(u => new UserInfo
+                {
+                    UserId = u.Id,
+                    UserName = u.UserName,
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    Address = u.PostalAddress != null ? u.PostalAddress.Address : string.Empty,
+                    Avatar = u.Avatar,
+                    DedicatedGoogleCalendar = u.DedicatedGoogleCalendar,
+                    BankInfoSummary = u.BankInfo != null && u.BankInfo.Count > 0
+                        ? string.Join(" | ", u.BankInfo.Select(b => string.IsNullOrWhiteSpace(b.IBAN) ? b.BIC : $"{b.IBAN} / {b.BIC}"))
+                        : string.Empty
+                });
         }
 
         [HttpGet("search/{pattern}")]
         public IEnumerable<UserInfo> SearchApplicationUser(string pattern, int skip=0, int take = 25)
         {
-            return _context.Users.Where(u => u.UserName.Contains(pattern))
-            .Skip(skip).Take(take)
-            .Select(u=> new UserInfo {
-            UserId = u.Id,
-            UserName = u.UserName,
-            Avatar = u.Avatar   });
+            var normalizedPattern = pattern ?? string.Empty;
+            return _context.Users
+                .Include(u => u.PostalAddress)
+                .Include(u => u.BankInfo)
+                .Where(u => u.UserName.Contains(normalizedPattern)
+                    || (u.FullName != null && u.FullName.Contains(normalizedPattern))
+                    || (u.Email != null && u.Email.Contains(normalizedPattern)))
+                .Skip(skip).Take(take)
+                .Select(u => new UserInfo
+                {
+                    UserId = u.Id,
+                    UserName = u.UserName,
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    Address = u.PostalAddress != null ? u.PostalAddress.Address : string.Empty,
+                    Avatar = u.Avatar,
+                    DedicatedGoogleCalendar = u.DedicatedGoogleCalendar,
+                    BankInfoSummary = u.BankInfo != null && u.BankInfo.Count > 0
+                        ? string.Join(" | ", u.BankInfo.Select(b => string.IsNullOrWhiteSpace(b.IBAN) ? b.BIC : $"{b.IBAN} / {b.BIC}"))
+                        : string.Empty
+                });
         }
 
         // GET: api/ApplicationUserApi/5

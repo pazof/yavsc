@@ -32,6 +32,7 @@ public partial class AdministrationPageViewModel : ViewModelBase
             ? Users.ToList()
             : Users.Where(user =>
                     (user.UserName ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                 || (user.FullName ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase)
                  || (user.Email ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase)
                  || (user.UserId ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase))
                 .ToList();
