@@ -13,12 +13,14 @@ namespace Yavsc.Models.Auth
            DedicatedGoogleCalendar = gCalId;
            FullName = fullName ?? string.Empty;
            Address = address?.Address ?? string.Empty;
+           BankInfoSummary = string.Empty;
         }
         public string Id { get;  set; }
         public string UserName { get; set; }
         public string FullName { get; set; }
         public string EMail { get; set; }
         public string Address { get; set; }
+        public string? BankInfoSummary { get; set; }
         public string[] Roles { get; set; }
         /// <summary>
         /// Known as profile, could point to an avatar

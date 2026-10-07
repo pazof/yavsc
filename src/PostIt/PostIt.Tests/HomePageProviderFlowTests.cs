@@ -61,6 +61,8 @@ public class HomePageProviderFlowTests
 
         Assert.Equal("—", vm.FullName);
         Assert.Equal("—", vm.Address);
+        Assert.Equal("Non configuré", vm.DedicatedGoogleCalendar);
+        Assert.Equal("Aucune information bancaire", vm.BankInfoSummary);
         Assert.NotNull(vm.RefreshCommand);
     }
 
@@ -70,7 +72,9 @@ public class HomePageProviderFlowTests
         var vm = new UserProfilePageViewModel
         {
             FullName = "Alice Example",
-            Address = "14 rue de l’Érable"
+            Address = "14 rue de l’Érable",
+            DedicatedGoogleCalendar = "calendar-123",
+            BankInfoSummary = "FR14 2004 1010 0505 0001 3M02 606"
         };
 
         Assert.NotNull(vm.SaveProfileCommand);

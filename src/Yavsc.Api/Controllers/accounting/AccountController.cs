@@ -58,6 +58,9 @@ namespace Yavsc.WebApi.Controllers
             userData.Avatar,
             userData.PostalAddress, userData.DedicatedGoogleCalendar, userData.FullName);
             user.Address = userData.PostalAddress?.Address ?? string.Empty;
+            user.BankInfoSummary = userData.BankInfo is { Count: > 0 }
+                ? string.Join(" | ", userData.BankInfo.Select(b => string.IsNullOrWhiteSpace(b.IBAN) ? b.BIC : $"{b.IBAN} / {b.BIC}"))
+                : string.Empty;
 
             var userRoles = _dbContext.UserRoles.Where(u => u.UserId == uid).Select(r => r.RoleId).ToArray();
 
@@ -92,6 +95,7 @@ namespace Yavsc.WebApi.Controllers
 
             var user = await _dbContext.Users
                 .Include(u => u.PostalAddress)
+                .Include(u => u.BankInfo)
                 .FirstOrDefaultAsync(u => u.Id == uid);
 
             if (user is null)
@@ -116,8 +120,31 @@ namespace Yavsc.WebApi.Controllers
                 }
             }
 
+            if (!string.IsNullOrWhiteSpace(request.GoogleCalendarId))
+            {
+                user.DedicatedGoogleCalendar = request.GoogleCalendarId.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.BankInfoSummary) && (user.BankInfo is null || user.BankInfo.Count == 0))
+            {
+                var bank = new Yavsc.Models.Bank.BankIdentity
+                {
+                    UserId = uid,
+                    User = user,
+                    IBAN = request.BankInfoSummary,
+                    BIC = string.Empty,
+                    AccountNumber = string.Empty,
+                    BankCode = string.Empty,
+                    WicketCode = string.Empty,
+                    BankedKey = 0
+                };
+
+                user.BankInfo ??= [];
+                user.BankInfo.Add(bank);
+            }
+
             await _dbContext.SaveChangesAsync(uid);
-            return Ok(new { status = "saved", fullName = user.FullName, address = user.PostalAddress?.Address });
+            return Ok(new { status = "saved", fullName = user.FullName, address = user.PostalAddress?.Address, googleCalendarId = user.DedicatedGoogleCalendar });
         }
 
         [HttpGet("performer-profile")]

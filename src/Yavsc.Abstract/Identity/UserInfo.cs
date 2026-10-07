@@ -24,5 +24,6 @@ namespace  Yavsc.Abstract.Identity
         public string? Avatar { get; set; }
         public string[] Roles { get; set; } = [];
         public string? DedicatedGoogleCalendar { get; set; }
+        public string? BankInfoSummary { get; set; }
     }
 }

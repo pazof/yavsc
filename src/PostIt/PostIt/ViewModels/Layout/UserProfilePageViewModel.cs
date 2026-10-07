@@ -37,6 +37,9 @@ public partial class UserProfilePageViewModel : ViewModelBase
     public partial string DedicatedGoogleCalendar { get; set; } = "Non configuré";
 
     [ObservableProperty]
+    public partial string BankInfoSummary { get; set; } = "Aucune information bancaire";
+
+    [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Prêt.";
 
     public override bool CanNavigateNext { get => false; protected set { _ = value; } }
@@ -71,6 +74,7 @@ public partial class UserProfilePageViewModel : ViewModelBase
             Avatar = string.IsNullOrWhiteSpace(me?.Avatar) ? "Aucun avatar" : me.Avatar;
             Roles = me?.Roles is { Length: > 0 } ? string.Join(", ", me.Roles) : "Aucun rôle";
             DedicatedGoogleCalendar = string.IsNullOrWhiteSpace(me?.DedicatedGoogleCalendar) ? "Non configuré" : me.DedicatedGoogleCalendar;
+            BankInfoSummary = string.IsNullOrWhiteSpace(me?.BankInfoSummary) ? "Aucune information bancaire" : me.BankInfoSummary;
             StatusMessage = "Profil chargé.";
         }
         catch (Exception ex)
@@ -82,6 +86,7 @@ public partial class UserProfilePageViewModel : ViewModelBase
             Avatar = "—";
             Roles = "—";
             DedicatedGoogleCalendar = "Non configuré";
+            BankInfoSummary = "Aucune information bancaire";
             StatusMessage = $"Impossible de charger le profil : {ex.Message}";
         }
         finally
@@ -105,7 +110,9 @@ public partial class UserProfilePageViewModel : ViewModelBase
             var payload = new ProfileUpdateRequest
             {
                 FullName = FullName,
-                Address = Address
+                Address = Address,
+                GoogleCalendarId = DedicatedGoogleCalendar == "Non configuré" ? string.Empty : DedicatedGoogleCalendar,
+                BankInfoSummary = BankInfoSummary == "Aucune information bancaire" ? string.Empty : BankInfoSummary
             };
 
             var endpoint = new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "account/me").ToString();
