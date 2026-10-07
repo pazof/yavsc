@@ -35,6 +35,7 @@ public static class ServiceCollectionHelpers
         var billingClient = new BillingApiClient(api, () => settings.ApiUrl);
         var estimateClient = new EstimateApiClient(api, () => settings.ApiUrl);
         var frontClient = new FrontOfficeApiClient(api, () => settings.ApiUrl);
+        var resourceUsageClient = new ResourceUsageApiClient(api, () => settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
         var reverseGeocoding = new NominatimReverseGeocodingService();
 
@@ -75,6 +76,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<EstimateListPage>();
         services.AddTransient<EstimateValidationPage>();
         services.AddTransient<MyFilesPage>();
+        services.AddTransient<ResourceUsagePage>();
 
         // ViewModels
         services.AddSingleton(settings);
@@ -87,6 +89,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(billingClient);
         services.AddSingleton(estimateClient);
         services.AddSingleton(frontClient);
+        services.AddSingleton(resourceUsageClient);
         services.AddSingleton(userFilesClient);
         services.AddSingleton<IReverseGeocodingService>(reverseGeocoding);
         services.AddSingleton<IUserDirectory>(userDirectory);

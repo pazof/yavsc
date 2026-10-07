@@ -36,12 +36,14 @@ public class HomePageViewModel : ViewModelBase
         OpenProviderEstimates = new AsyncRelayCommand(() => OpenEstimateListAsync(EstimateListPerspective.Provider));
         OpenBlogs = new AsyncRelayCommand(App.PushBlogsPageAsync);
         OpenMyFiles = new AsyncRelayCommand(OpenMyFilesAsync);
+        OpenResourceUsage = new AsyncRelayCommand(OpenResourceUsageAsync);
         OpenChat = new AsyncRelayCommand(OpenChatAsync);
     }
 
 
     public IAsyncRelayCommand OpenChat { get; }
     public IAsyncRelayCommand OpenBlogs { get; }
+    public IAsyncRelayCommand OpenResourceUsage { get; }
     public IAsyncRelayCommand OpenActivities { get; }
     public IAsyncRelayCommand OpenProviderRequests { get; }
     public IAsyncRelayCommand OpenClientEstimates { get; }
@@ -134,6 +136,25 @@ public class HomePageViewModel : ViewModelBase
         }
 
         var vm = new MyFilesViewModel(fsClient);
+        await vm.InitializeAsync();
+        await app.PushPageAsync(vm);
+    }
+
+    private async Task OpenResourceUsageAsync()
+    {
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var resourceUsageClient = app.ServiceProvider?.GetRequiredService<ResourceUsageApiClient>();
+        if (resourceUsageClient is null)
+        {
+            throw new InvalidOperationException("Client usage indisponible.");
+        }
+
+        var vm = new ResourceUsagePageViewModel(resourceUsageClient);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

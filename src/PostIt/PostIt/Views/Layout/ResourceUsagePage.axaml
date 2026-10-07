@@ -1,0 +1,57 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             xmlns:resources="using:Yavsc.Abstract.Resources"
+             x:Class="PostIt.Views.ResourceUsagePage"
+             x:DataType="vm:ResourceUsagePageViewModel"
+             Header="Usage des ressources">
+
+  <StackPanel Margin="16" Spacing="12">
+    <TextBlock Text="{Binding Heading}"
+               FontSize="22"
+               FontWeight="SemiBold"/>
+
+    <Button Content="Actualiser"
+            Command="{Binding RefreshCommand}"
+            IsEnabled="{Binding !IsBusy}"/>
+
+    <ProgressBar IsVisible="{Binding IsBusy}"
+                 IsIndeterminate="True"
+                 Height="8"/>
+
+    <StackPanel IsVisible="{Binding !IsAdminView}">
+      <TextBlock Text="Résumé personnel" FontWeight="Bold"/>
+      <StackPanel DataContext="{Binding CurrentSummary}" Spacing="4">
+        <TextBlock Text="{Binding UserName, StringFormat='Utilisateur : {0}'}"/>
+        <TextBlock Text="{Binding ApiCalls, StringFormat='Appels API : {0:F0}'}"/>
+        <TextBlock Text="{Binding CpuSeconds, StringFormat='CPU : {0:F3} s'}"/>
+        <TextBlock Text="{Binding BandwidthMb, StringFormat='Bande passante : {0:F3} Mo'}"/>
+        <TextBlock Text="{Binding StorageMb, StringFormat='Stockage : {0:F3} Mo'}"/>
+        <TextBlock Text="{Binding EstimatedCompensation, StringFormat='Estimation : {0:F2}'}"/>
+      </StackPanel>
+    </StackPanel>
+
+    <ItemsControl ItemsSource="{Binding Overview}"
+                  IsVisible="{Binding IsAdminView}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="resources:ResourceUsageSummary">
+          <Border Margin="0,0,0,8"
+                  Padding="12"
+                  CornerRadius="8"
+                  BorderBrush="#D0D7DE"
+                  BorderThickness="1">
+            <StackPanel Spacing="4">
+              <TextBlock Text="{Binding UserName}"
+                         FontWeight="Bold"/>
+              <TextBlock Text="{Binding ApiCalls, StringFormat='Appels API : {0:F0}'}"/>
+              <TextBlock Text="{Binding CpuSeconds, StringFormat='CPU : {0:F3} s'}"/>
+              <TextBlock Text="{Binding BandwidthMb, StringFormat='Bande passante : {0:F3} Mo'}"/>
+              <TextBlock Text="{Binding StorageMb, StringFormat='Stockage : {0:F3} Mo'}"/>
+              <TextBlock Text="{Binding EstimatedCompensation, StringFormat='Estimation : {0:F2}'}"/>
+            </StackPanel>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </StackPanel>
+</ContentPage>

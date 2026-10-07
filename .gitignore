@@ -48,3 +48,4 @@ DataDir/
 
 # Exclude test reports (local test report, not for the repo)
 /test-reports
+/doc/**/.*.md
