@@ -106,4 +106,41 @@ public class HomePageProviderFlowTests
         Assert.NotNull(vm.SaveProfileCommand);
         Assert.True(vm.SaveProfileCommand.CanExecute(null));
     }
+
+    [Fact]
+    public void UserProfilePage_builds_profile_payload_for_calendar_and_bank_values()
+    {
+        var vm = new UserProfilePageViewModel
+        {
+            UserName = "alice.new",
+            FullName = "Alice Example",
+            Address = "14 rue de l’Érable",
+            DedicatedGoogleCalendar = "calendar-123",
+            BankInfoSummary = "FR14 2004 1010 0505 0001 3M02 606"
+        };
+
+        var payload = vm.BuildProfileUpdateRequest();
+
+        Assert.Equal("alice.new", payload.UserName);
+        Assert.Equal("calendar-123", payload.GoogleCalendarId);
+        Assert.Equal("FR14 2004 1010 0505 0001 3M02 606", payload.BankInfoSummary);
+    }
+
+    [Fact]
+    public void UserProfilePage_turns_placeholder_values_into_empty_payload_fields()
+    {
+        var vm = new UserProfilePageViewModel
+        {
+            UserName = "alice.new",
+            FullName = "Alice Example",
+            Address = "14 rue de l’Érable",
+            DedicatedGoogleCalendar = "Non configuré",
+            BankInfoSummary = "Aucune information bancaire"
+        };
+
+        var payload = vm.BuildProfileUpdateRequest();
+
+        Assert.Equal(string.Empty, payload.GoogleCalendarId);
+        Assert.Equal(string.Empty, payload.BankInfoSummary);
+    }
 }

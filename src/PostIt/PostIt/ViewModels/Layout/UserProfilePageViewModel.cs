@@ -95,6 +95,31 @@ public partial class UserProfilePageViewModel : ViewModelBase
         }
     }
 
+    public ProfileUpdateRequest BuildProfileUpdateRequest()
+    {
+        static string NormalizeField(string? value, string placeholder)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            var trimmed = value.Trim();
+            return string.Equals(trimmed, placeholder, StringComparison.OrdinalIgnoreCase)
+                ? string.Empty
+                : trimmed;
+        }
+
+        return new ProfileUpdateRequest
+        {
+            UserName = NormalizeField(UserName, "—"),
+            FullName = NormalizeField(FullName, "—"),
+            Address = NormalizeField(Address, "—"),
+            GoogleCalendarId = NormalizeField(DedicatedGoogleCalendar, "Non configuré"),
+            BankInfoSummary = NormalizeField(BankInfoSummary, "Aucune information bancaire")
+        };
+    }
+
     [RelayCommand]
     public async Task SaveProfileAsync()
     {
@@ -107,14 +132,7 @@ public partial class UserProfilePageViewModel : ViewModelBase
         IsBusy = true;
         try
         {
-            var payload = new ProfileUpdateRequest
-            {
-                UserName = string.IsNullOrWhiteSpace(UserName) ? string.Empty : UserName.Trim(),
-                FullName = string.IsNullOrWhiteSpace(FullName) ? string.Empty : FullName.Trim(),
-                Address = string.IsNullOrWhiteSpace(Address) ? string.Empty : Address.Trim(),
-                GoogleCalendarId = DedicatedGoogleCalendar == "Non configuré" ? string.Empty : DedicatedGoogleCalendar.Trim(),
-                BankInfoSummary = BankInfoSummary == "Aucune information bancaire" ? string.Empty : BankInfoSummary.Trim()
-            };
+            var payload = BuildProfileUpdateRequest();
 
             var endpoint = new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "account/me").ToString();
             await _api.CallAsync(HttpMethod.Put, endpoint, payload).ConfigureAwait(true);

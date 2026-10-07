@@ -116,44 +116,69 @@ namespace Yavsc.WebApi.Controllers
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(request.FullName))
+            if (request.FullName is not null)
             {
                 user.FullName = request.FullName.Trim();
             }
 
-            if (!string.IsNullOrWhiteSpace(request.Address))
+            if (request.Address is not null)
             {
-                if (user.PostalAddress is null)
+                var trimmedAddress = request.Address.Trim();
+                if (string.IsNullOrWhiteSpace(trimmedAddress))
                 {
-                    user.PostalAddress = new Yavsc.Models.Relationship.Location { Address = request.Address.Trim() };
+                    user.PostalAddress = null;
+                }
+                else if (user.PostalAddress is null)
+                {
+                    user.PostalAddress = new Yavsc.Models.Relationship.Location { Address = trimmedAddress };
                 }
                 else
                 {
-                    user.PostalAddress.Address = request.Address.Trim();
+                    user.PostalAddress.Address = trimmedAddress;
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(request.GoogleCalendarId))
+            if (request.GoogleCalendarId is not null)
             {
                 user.DedicatedGoogleCalendar = request.GoogleCalendarId.Trim();
             }
 
-            if (!string.IsNullOrWhiteSpace(request.BankInfoSummary) && (user.BankInfo is null || user.BankInfo.Count == 0))
+            if (request.BankInfoSummary is not null)
             {
-                var bank = new Yavsc.Models.Bank.BankIdentity
+                var bankSummary = request.BankInfoSummary.Trim();
+                if (string.IsNullOrWhiteSpace(bankSummary))
                 {
-                    UserId = uid,
-                    User = user,
-                    IBAN = request.BankInfoSummary,
-                    BIC = string.Empty,
-                    AccountNumber = string.Empty,
-                    BankCode = string.Empty,
-                    WicketCode = string.Empty,
-                    BankedKey = 0
-                };
+                    if (user.BankInfo is not null)
+                    {
+                        user.BankInfo.Clear();
+                    }
+                }
+                else if (user.BankInfo is null || user.BankInfo.Count == 0)
+                {
+                    var bank = new Yavsc.Models.Bank.BankIdentity
+                    {
+                        UserId = uid,
+                        User = user,
+                        IBAN = bankSummary,
+                        BIC = string.Empty,
+                        AccountNumber = string.Empty,
+                        BankCode = string.Empty,
+                        WicketCode = string.Empty,
+                        BankedKey = 0
+                    };
 
-                user.BankInfo ??= [];
-                user.BankInfo.Add(bank);
+                    user.BankInfo ??= [];
+                    user.BankInfo.Add(bank);
+                }
+                else
+                {
+                    var firstBank = user.BankInfo.First();
+                    firstBank.IBAN = bankSummary;
+                    firstBank.BIC = string.Empty;
+                    firstBank.AccountNumber = string.Empty;
+                    firstBank.BankCode = string.Empty;
+                    firstBank.WicketCode = string.Empty;
+                }
             }
 
             await _dbContext.SaveChangesAsync(uid);
