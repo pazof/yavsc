@@ -109,10 +109,11 @@ public partial class UserProfilePageViewModel : ViewModelBase
         {
             var payload = new ProfileUpdateRequest
             {
-                FullName = FullName,
-                Address = Address,
-                GoogleCalendarId = DedicatedGoogleCalendar == "Non configuré" ? string.Empty : DedicatedGoogleCalendar,
-                BankInfoSummary = BankInfoSummary == "Aucune information bancaire" ? string.Empty : BankInfoSummary
+                UserName = string.IsNullOrWhiteSpace(UserName) ? string.Empty : UserName.Trim(),
+                FullName = string.IsNullOrWhiteSpace(FullName) ? string.Empty : FullName.Trim(),
+                Address = string.IsNullOrWhiteSpace(Address) ? string.Empty : Address.Trim(),
+                GoogleCalendarId = DedicatedGoogleCalendar == "Non configuré" ? string.Empty : DedicatedGoogleCalendar.Trim(),
+                BankInfoSummary = BankInfoSummary == "Aucune information bancaire" ? string.Empty : BankInfoSummary.Trim()
             };
 
             var endpoint = new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "account/me").ToString();

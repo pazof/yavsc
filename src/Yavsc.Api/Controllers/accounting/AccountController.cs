@@ -103,6 +103,19 @@ namespace Yavsc.WebApi.Controllers
                 return NotFound();
             }
 
+            if (!string.IsNullOrWhiteSpace(request.UserName))
+            {
+                var trimmedUserName = request.UserName.Trim();
+                if (!string.Equals(user.UserName, trimmedUserName, StringComparison.Ordinal))
+                {
+                    var usernameUpdate = await _userManager.SetUserNameAsync(user, trimmedUserName);
+                    if (!usernameUpdate.Succeeded)
+                    {
+                        return BadRequest(new { error = "Unable to update username.", details = usernameUpdate.Errors.Select(e => e.Description) });
+                    }
+                }
+            }
+
             if (!string.IsNullOrWhiteSpace(request.FullName))
             {
                 user.FullName = request.FullName.Trim();

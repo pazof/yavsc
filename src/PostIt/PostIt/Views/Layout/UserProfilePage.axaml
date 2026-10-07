@@ -18,12 +18,13 @@
                  IsIndeterminate="True"
                  Height="8"/>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*" RowSpacing="8">
-      <TextBox Watermark="Nom complet" Text="{Binding FullName}"/>
-      <TextBox Grid.Row="1" Watermark="Adresse" Text="{Binding Address}" AcceptsReturn="True" TextWrapping="Wrap"/>
-      <TextBox Grid.Row="2" Watermark="Calendrier Google" Text="{Binding DedicatedGoogleCalendar}"/>
-      <TextBox Grid.Row="3" Watermark="Détails bancaires" Text="{Binding BankInfoSummary}" AcceptsReturn="True" TextWrapping="Wrap"/>
-      <Button Grid.Row="4" Content="Enregistrer" Command="{Binding SaveProfileCommand}" IsEnabled="{Binding !IsBusy}"/>
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*" RowSpacing="8">
+      <TextBox Watermark="Nom d’utilisateur" Text="{Binding UserName}"/>
+      <TextBox Grid.Row="1" Watermark="Nom complet" Text="{Binding FullName}"/>
+      <TextBox Grid.Row="2" Watermark="Adresse" Text="{Binding Address}" AcceptsReturn="True" TextWrapping="Wrap"/>
+      <TextBox Grid.Row="3" Watermark="Calendrier Google" Text="{Binding DedicatedGoogleCalendar}"/>
+      <TextBox Grid.Row="4" Watermark="Détails bancaires" Text="{Binding BankInfoSummary}" AcceptsReturn="True" TextWrapping="Wrap"/>
+      <Button Grid.Row="5" Content="Enregistrer" Command="{Binding SaveProfileCommand}" IsEnabled="{Binding !IsBusy}"/>
     </Grid>
 
     <TextBlock Text="{Binding UserName, StringFormat='Nom d’utilisateur : {0}'}"/>

@@ -1,3 +1,4 @@
+using Yavsc.Abstract.Identity;
 using PostIt.ViewModels;
 
 namespace PostIt.Tests;
@@ -67,10 +68,22 @@ public class HomePageProviderFlowTests
     }
 
     [Fact]
+    public void ProfileUpdateRequest_allows_username_updates()
+    {
+        var request = new ProfileUpdateRequest
+        {
+            UserName = "alice.new"
+        };
+
+        Assert.Equal("alice.new", request.UserName);
+    }
+
+    [Fact]
     public void UserProfilePage_can_save_profile_values()
     {
         var vm = new UserProfilePageViewModel
         {
+            UserName = "alice.new",
             FullName = "Alice Example",
             Address = "14 rue de l’Érable",
             DedicatedGoogleCalendar = "calendar-123",
