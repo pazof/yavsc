@@ -12,4 +12,68 @@ public class HomePageProviderFlowTests
         Assert.NotNull(vm.OpenProviderRequests);
         Assert.True(vm.OpenProviderRequests.CanExecute(null));
     }
+
+    [Fact]
+    public void HomePage_exposes_profile_command()
+    {
+        var vm = new HomePageViewModel();
+
+        Assert.NotNull(vm.OpenProfile);
+        Assert.True(vm.OpenProfile.CanExecute(null));
+    }
+
+    [Fact]
+    public void HomePage_exposes_performer_configuration_command()
+    {
+        var vm = new HomePageViewModel();
+
+        Assert.NotNull(vm.OpenPerformerConfiguration);
+        Assert.True(vm.OpenPerformerConfiguration.CanExecute(null));
+    }
+
+    [Fact]
+    public void HomePage_exposes_administration_command()
+    {
+        var vm = new HomePageViewModel();
+
+        Assert.NotNull(vm.OpenAdministration);
+        Assert.True(vm.OpenAdministration.CanExecute(null));
+    }
+
+    [Fact]
+    public void Administration_page_filters_users_by_search_text()
+    {
+        var vm = new AdministrationPageViewModel();
+        vm.Users.Add(new Yavsc.Abstract.Identity.UserInfo { UserId = "1", UserName = "alice" });
+        vm.Users.Add(new Yavsc.Abstract.Identity.UserInfo { UserId = "2", UserName = "bob" });
+        vm.Users.Add(new Yavsc.Abstract.Identity.UserInfo { UserId = "3", UserName = "carol" });
+
+        vm.SearchText = "ali";
+
+        Assert.Single(vm.FilteredUsers);
+        Assert.Equal("alice", vm.FilteredUsers[0].UserName);
+    }
+
+    [Fact]
+    public void UserProfilePage_exposes_full_name_and_address_fields()
+    {
+        var vm = new UserProfilePageViewModel();
+
+        Assert.Equal("—", vm.FullName);
+        Assert.Equal("—", vm.Address);
+        Assert.NotNull(vm.RefreshCommand);
+    }
+
+    [Fact]
+    public void UserProfilePage_can_save_profile_values()
+    {
+        var vm = new UserProfilePageViewModel
+        {
+            FullName = "Alice Example",
+            Address = "14 rue de l’Érable"
+        };
+
+        Assert.NotNull(vm.SaveProfileCommand);
+        Assert.True(vm.SaveProfileCommand.CanExecute(null));
+    }
 }

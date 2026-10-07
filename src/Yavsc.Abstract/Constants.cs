@@ -30,6 +30,13 @@ namespace Yavsc
         public const string UserNameRegExp = @"^[a-zA-Z][a-zA-Z0-9._-]*$";
         public const string UserFileNamePatternRegExp = @"^([a-zA-Z0-9._-]*/)*[a-zA-Z0-9._-]+$";
 
+        public const string ResourceUsagePath = "resource-usage";
+        public const string ResourceUsageCurrentUserRoute = "me";
+        public const string ResourceUsageAdminRoute = "admin";
+        public const string ResourceUsageDefaultCurrency = "EUR";
+        public const string ResourceUsageCurrentUserDisplayName = "current-user";
+        public const string ResourceUsageAdminDisplayName = "administrator";
+
         public const string SigninPath = "~/signin";
         public const string LogoutPath = "~/signout";
 

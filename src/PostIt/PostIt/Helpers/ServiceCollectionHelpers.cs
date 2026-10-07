@@ -76,6 +76,9 @@ public static class ServiceCollectionHelpers
         services.AddTransient<EstimateListPage>();
         services.AddTransient<EstimateValidationPage>();
         services.AddTransient<MyFilesPage>();
+        services.AddTransient<UserProfilePage>();
+        services.AddTransient<PerformerConfigurationPage>();
+        services.AddTransient<AdministrationPage>();
         services.AddTransient<ResourceUsagePage>();
 
         // ViewModels
@@ -95,6 +98,9 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<IUserDirectory>(userDirectory);
         services.AddSingleton<AboutPageViewModel>();
         services.AddSingleton<HomePageViewModel>();
+        services.AddTransient<UserProfilePageViewModel>();
+        services.AddTransient<PerformerConfigurationPageViewModel>();
+        services.AddTransient<AdministrationPageViewModel>();
         services.AddSingleton<SignaturePageViewModel>();
         services.AddSingleton<CirclesPageViewModel>();
         services.AddSingleton<ActivitiesPageViewModel>();

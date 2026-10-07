@@ -83,7 +83,7 @@ internal class Program
             .AddSupportedCultures(supportedCultures)
             .AddSupportedUICultures(supportedCultures);
         })
-        .Configure<SiteSettings>(settings => 
+        .Configure<SiteSettings>(settings =>
         {
             if (settings.Blog == null)
             {
@@ -98,6 +98,7 @@ internal class Program
         {
             if (app.Environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
+            app.UseMiddleware<ResourceUsageTelemetryMiddleware>();
             app
                 .UseRouting()
                 .UseAuthentication()

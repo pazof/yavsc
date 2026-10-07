@@ -99,7 +99,7 @@ namespace Yavsc.Blogs.Controllers
         }
 
         [HttpPost("{*subdir}")]
-        public IActionResult Post([ValidRemoteUserFilePath] string subdir="")
+        public async Task<IActionResult> Post([ValidRemoteUserFilePath] string subdir="")
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             string destDir = null;
@@ -159,6 +159,14 @@ namespace Yavsc.Blogs.Controllers
                     item.Length = f.Length;
                     item.ContentType = f.ContentType;
                 }
+
+                await ResourceUsageTracker.RecordAsync(
+                    dbContext,
+                    uid,
+                    user.UserName,
+                    storageBytes: item.Length,
+                    actorUserId: uid);
+
                 received.Add(item);
                 _logger.LogInformation($"Received  '{item.FileName}'.");
                 if (item.QuotaOffense)

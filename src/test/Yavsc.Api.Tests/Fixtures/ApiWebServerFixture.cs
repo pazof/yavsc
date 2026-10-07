@@ -66,7 +66,14 @@ public sealed class ApiWebServerFixture : WebHostFixture
         builder.Services.Configure<GoogleAuthSettings>(_ => { });
         builder.Services.AddTransient<IBillingService, BillingService>();
         builder.Services.AddTransient<IYavscMessageSender, NoopMessageSender>();
-        builder.Services.AddAuthorization();
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdministratorOnly", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireClaim(Yavsc.Constants.RoleClaimType, Yavsc.Constants.AdminGroupName);
+            });
+        });
 
         builder.Services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>

@@ -58,6 +58,14 @@ namespace Yavsc.Models
             }
             builder.UseIdentityByDefaultColumns();
 
+            builder.Entity<ResourceUsageRecord>(entity =>
+            {
+                entity.HasKey(r => r.Id);
+                entity.HasIndex(r => new { r.UserId, r.RecordedAtUtc });
+                entity.Property(r => r.Currency).HasMaxLength(8).HasDefaultValue(Constants.ResourceUsageDefaultCurrency);
+                entity.Property(r => r.UserName).HasMaxLength(256);
+            });
+
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
@@ -324,6 +332,7 @@ namespace Yavsc.Models
 
         public DbSet<Estimate> Estimates { get; set; }
         public DbSet<Signature> Signatures { get; set; }
+        public DbSet<ResourceUsageRecord> ResourceUsageRecords { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
         public DbSet<BalanceImpact> BalanceImpact { get; set; }
 

@@ -54,6 +54,13 @@ internal class Program
                         .RequireAuthenticatedUser()
                         .RequireClaim(JwtClaimTypes.Scope, new string[] { "api" });
                 });
+
+                options.AddPolicy("AdministratorOnly", policy =>
+                {
+                    policy
+                        .RequireAuthenticatedUser()
+                        .RequireClaim(Constants.RoleClaimType, Constants.AdminGroupName);
+                });
             })
             .AddYavscCors(builder.Configuration)
             .AddControllersWithViews();
@@ -116,6 +123,7 @@ internal class Program
             if (app.Environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
+            app.UseMiddleware<ResourceUsageTelemetryMiddleware>();
             app
                 .UseRouting()
                 .UseAuthentication()

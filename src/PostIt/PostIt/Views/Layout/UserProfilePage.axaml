@@ -1,0 +1,34 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             x:Class="PostIt.Views.UserProfilePage"
+             x:DataType="vm:UserProfilePageViewModel"
+             Header="Mon profil">
+
+  <StackPanel Margin="16" Spacing="12">
+    <TextBlock Text="Mon profil"
+               FontSize="22"
+               FontWeight="SemiBold"/>
+
+    <Button Content="Actualiser"
+            Command="{Binding RefreshCommand}"
+            IsEnabled="{Binding !IsBusy}"/>
+
+    <ProgressBar IsVisible="{Binding IsBusy}"
+                 IsIndeterminate="True"
+                 Height="8"/>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*" RowSpacing="8">
+      <TextBox Watermark="Nom complet" Text="{Binding FullName}"/>
+      <TextBox Grid.Row="1" Watermark="Adresse" Text="{Binding Address}" AcceptsReturn="True" TextWrapping="Wrap"/>
+      <Button Grid.Row="2" Content="Enregistrer" Command="{Binding SaveProfileCommand}" IsEnabled="{Binding !IsBusy}"/>
+    </Grid>
+
+    <TextBlock Text="{Binding UserName, StringFormat='Nom d’utilisateur : {0}'}"/>
+    <TextBlock Text="{Binding Email, StringFormat='Email : {0}'}"/>
+    <TextBlock Text="{Binding Roles, StringFormat='Rôles : {0}'}"/>
+    <TextBlock Text="{Binding DedicatedGoogleCalendar, StringFormat='Calendrier dédié : {0}'}"/>
+    <TextBlock Text="{Binding Avatar, StringFormat='Avatar : {0}'}" TextWrapping="Wrap"/>
+    <TextBlock Text="{Binding StatusMessage}" Foreground="#4B5563" TextWrapping="Wrap"/>
+  </StackPanel>
+</ContentPage>

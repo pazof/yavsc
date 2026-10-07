@@ -1,0 +1,59 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             x:Class="PostIt.Views.PerformerConfigurationPage"
+             x:DataType="vm:PerformerConfigurationPageViewModel"
+             Header="Mon activité / performer">
+
+  <ScrollViewer>
+    <StackPanel Margin="16" Spacing="12">
+      <TextBlock Text="Mon activité / performer"
+                 FontSize="22"
+                 FontWeight="SemiBold"/>
+
+      <Button Content="Actualiser"
+              Command="{Binding RefreshCommand}"
+              IsEnabled="{Binding !IsBusy}"/>
+
+      <ProgressBar IsVisible="{Binding IsBusy}"
+                   IsIndeterminate="True"
+                   Height="8"/>
+
+      <TextBlock Text="{Binding UserName, StringFormat='Nom d’utilisateur : {0}'}"/>
+      <TextBox Text="{Binding ExerciseCountryCode, Mode=TwoWay}"
+               Watermark="Code pays (fr, en...)"/>
+      <TextBox Text="{Binding SIREN, Mode=TwoWay}"
+               Watermark="SIREN"/>
+      <TextBox Text="{Binding Website, Mode=TwoWay}"
+               Watermark="Site web"/>
+
+      <CheckBox Content="Disponible / actif"
+                IsChecked="{Binding Active, Mode=TwoWay}"/>
+      <CheckBox Content="Accepter les notifications"
+                IsChecked="{Binding AcceptNotifications, Mode=TwoWay}"/>
+      <CheckBox Content="Accepter les demandes publiques"
+                IsChecked="{Binding AcceptPublicContact, Mode=TwoWay}"/>
+      <CheckBox Content="Utiliser la géolocalisation"
+                IsChecked="{Binding UseGeoLocalizationToReduceDistanceWithClients, Mode=TwoWay}"/>
+
+      <TextBlock Text="Activités" FontWeight="SemiBold"/>
+      <ItemsControl ItemsSource="{Binding AvailableActivities}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <CheckBox Margin="0,0,0,6"
+                      Content="{Binding Name}"
+                      IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <Button Content="Enregistrer"
+              Command="{Binding SaveCommand}"
+              IsEnabled="{Binding !IsBusy}"/>
+
+      <TextBlock Text="{Binding StatusMessage}"
+                 Foreground="#4B5563"
+                 TextWrapping="Wrap"/>
+    </StackPanel>
+  </ScrollViewer>
+</ContentPage>

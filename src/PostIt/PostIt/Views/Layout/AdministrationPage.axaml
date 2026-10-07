@@ -1,0 +1,42 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             x:Class="PostIt.Views.AdministrationPage"
+             x:DataType="vm:AdministrationPageViewModel"
+             Header="Administration">
+
+  <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="16" RowSpacing="12">
+    <TextBlock Grid.Row="0"
+               Text="Administration"
+               FontSize="22"
+               FontWeight="SemiBold"/>
+
+    <StackPanel Grid.Row="1" Spacing="8">
+      <TextBox Text="{Binding SearchText, Mode=TwoWay}"
+               PlaceholderText="Rechercher un utilisateur..."/>
+      <Button Content="Actualiser"
+              Command="{Binding RefreshCommand}"
+              IsEnabled="{Binding !IsBusy}"/>
+      <ProgressBar IsVisible="{Binding IsBusy}"
+                   IsIndeterminate="True"
+                   Height="8"/>
+      <TextBlock Text="{Binding StatusMessage}"
+                 TextWrapping="Wrap"/>
+    </StackPanel>
+
+    <ListBox Grid.Row="3"
+             ItemsSource="{Binding FilteredUsers}">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Border Padding="8" BorderBrush="#D0D7DE" BorderThickness="1" CornerRadius="6">
+            <StackPanel Spacing="4">
+              <TextBlock Text="{Binding UserName, StringFormat='Nom : {0}'}" FontWeight="SemiBold"/>
+              <TextBlock Text="{Binding Email, StringFormat='Email : {0}'}" TextWrapping="Wrap"/>
+              <TextBlock Text="{Binding UserId, StringFormat='ID : {0}'}" Foreground="#4B5563" TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </Grid>
+</ContentPage>

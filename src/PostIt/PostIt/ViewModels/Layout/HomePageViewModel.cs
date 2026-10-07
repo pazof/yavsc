@@ -36,6 +36,9 @@ public class HomePageViewModel : ViewModelBase
         OpenProviderEstimates = new AsyncRelayCommand(() => OpenEstimateListAsync(EstimateListPerspective.Provider));
         OpenBlogs = new AsyncRelayCommand(App.PushBlogsPageAsync);
         OpenMyFiles = new AsyncRelayCommand(OpenMyFilesAsync);
+        OpenProfile = new AsyncRelayCommand(OpenProfileAsync);
+        OpenPerformerConfiguration = new AsyncRelayCommand(OpenPerformerConfigurationAsync);
+        OpenAdministration = new AsyncRelayCommand(OpenAdministrationAsync);
         OpenResourceUsage = new AsyncRelayCommand(OpenResourceUsageAsync);
         OpenChat = new AsyncRelayCommand(OpenChatAsync);
     }
@@ -43,6 +46,9 @@ public class HomePageViewModel : ViewModelBase
 
     public IAsyncRelayCommand OpenChat { get; }
     public IAsyncRelayCommand OpenBlogs { get; }
+    public IAsyncRelayCommand OpenProfile { get; }
+    public IAsyncRelayCommand OpenPerformerConfiguration { get; }
+    public IAsyncRelayCommand OpenAdministration { get; }
     public IAsyncRelayCommand OpenResourceUsage { get; }
     public IAsyncRelayCommand OpenActivities { get; }
     public IAsyncRelayCommand OpenProviderRequests { get; }
@@ -136,6 +142,60 @@ public class HomePageViewModel : ViewModelBase
         }
 
         var vm = new MyFilesViewModel(fsClient);
+        await vm.InitializeAsync();
+        await app.PushPageAsync(vm);
+    }
+
+    private async Task OpenProfileAsync()
+    {
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var vm = app.ServiceProvider?.GetRequiredService<UserProfilePageViewModel>();
+        if (vm is null)
+        {
+            throw new InvalidOperationException("Page profil indisponible.");
+        }
+
+        await vm.InitializeAsync();
+        await app.PushPageAsync(vm);
+    }
+
+    private async Task OpenPerformerConfigurationAsync()
+    {
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var vm = app.ServiceProvider?.GetRequiredService<PerformerConfigurationPageViewModel>();
+        if (vm is null)
+        {
+            throw new InvalidOperationException("Page performer indisponible.");
+        }
+
+        await vm.InitializeAsync();
+        await app.PushPageAsync(vm);
+    }
+
+    private async Task OpenAdministrationAsync()
+    {
+        var app = (App?)Application.Current;
+        if (app is null)
+        {
+            throw new InvalidOperationException("Application PostIt indisponible.");
+        }
+
+        var vm = app.ServiceProvider?.GetRequiredService<AdministrationPageViewModel>();
+        if (vm is null)
+        {
+            throw new InvalidOperationException("Page administration indisponible.");
+        }
+
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

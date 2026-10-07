@@ -3,7 +3,7 @@ using Yavsc.Abstract.Identity;
 namespace Yavsc.Models.Auth
 {
     public class Me : IApplicationUser {
-        public Me(string userId, string userName, string email, string avatar, ILocation address, string gCalId)
+        public Me(string userId, string userName, string email, string avatar, ILocation address, string gCalId, string? fullName = null)
         {
            Id = userId;
            UserName = userName;
@@ -11,10 +11,14 @@ namespace Yavsc.Models.Auth
            Avatar = avatar;
            PostalAddress = address;
            DedicatedGoogleCalendar = gCalId;
+           FullName = fullName ?? string.Empty;
+           Address = address?.Address ?? string.Empty;
         }
         public string Id { get;  set; }
         public string UserName { get; set; }
+        public string FullName { get; set; }
         public string EMail { get; set; }
+        public string Address { get; set; }
         public string[] Roles { get; set; }
         /// <summary>
         /// Known as profile, could point to an avatar
@@ -24,17 +28,17 @@ namespace Yavsc.Models.Auth
 
         public IAccountBalance AccountBalance
         {
-            get; set; 
+            get; set;
         }
 
         public string DedicatedGoogleCalendar
         {
-            get; set; 
+            get; set;
         }
 
         public ILocation PostalAddress
         {
-            get; set; 
+            get; set;
         }
     }
 

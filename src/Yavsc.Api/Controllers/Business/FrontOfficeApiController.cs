@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -129,6 +130,9 @@ namespace Yavsc.ApiControllers
                 Temp = siteSettings.TempDir,
             };
 
+            var stopwatch = Stopwatch.StartNew();
+            FileInfo? renderedPdf = null;
+
             try
             {
                 // 1. Render the LaTeX template (Estimate_tex) to a TeX source
@@ -141,10 +145,28 @@ namespace Yavsc.ApiControllers
                 //    we stream the generated PDF bytes — but driving the
                 //    generation through the view keeps the template as the
                 //    output producer, per the original design.
-                if (model.GenerateEstimatePdf() is FileInfo fo && fo.Exists)
+                renderedPdf = model.GenerateEstimatePdf();
+                if (renderedPdf is FileInfo fo && fo.Exists)
                 {
-                     return File(fo.OpenRead(), "application/pdf");
+                    await ResourceUsageTracker.RecordAsync(
+                        dbContext,
+                        uid,
+                        User.Identity?.Name ?? uid,
+                        cpuSeconds: (decimal)stopwatch.Elapsed.TotalSeconds,
+                        storageBytes: fo.Length,
+                        actorUserId: uid);
+
+                    return File(fo.OpenRead(), "application/pdf");
                 }
+
+                await ResourceUsageTracker.RecordAsync(
+                    dbContext,
+                    uid,
+                    User.Identity?.Name ?? uid,
+                    cpuSeconds: (decimal)stopwatch.Elapsed.TotalSeconds,
+                    storageBytes: 0,
+                    actorUserId: uid);
+
                 string msg = "TeX render failed: " + model.GenerationErrorMessage;
                 logger.LogError(msg);
                 return Problem(msg);
@@ -152,6 +174,14 @@ namespace Yavsc.ApiControllers
             }
             catch (Exception ex)
             {
+                await ResourceUsageTracker.RecordAsync(
+                    dbContext,
+                    uid,
+                    User.Identity?.Name ?? uid,
+                    cpuSeconds: (decimal)stopwatch.Elapsed.TotalSeconds,
+                    storageBytes: renderedPdf?.Length ?? 0,
+                    actorUserId: uid);
+
                 logger.LogError(ex, "estimate {QueryId}: TeX/PDF render failed", queryId);
                 return Problem("TeX render failed: " + ex.Message);
             }

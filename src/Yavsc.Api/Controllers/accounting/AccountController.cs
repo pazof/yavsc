@@ -9,6 +9,8 @@ using Yavsc.Api.Helpers;
 using Yavsc.Server.Helpers;
 using System.Diagnostics;
 using Microsoft.Extensions.Options;
+using Yavsc.Abstract.Identity;
+using Yavsc.Abstract.Workflow;
 
 namespace Yavsc.WebApi.Controllers
 {
@@ -30,14 +32,16 @@ namespace Yavsc.WebApi.Controllers
         readonly ApplicationDbContext _dbContext;
         private readonly SiteSettings siteSettings;
         private readonly ILogger _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public ApiAccountController(
         ILoggerFactory loggerFactory, ApplicationDbContext dbContext,
-        IOptions<SiteSettings> siteSettings)
+        IOptions<SiteSettings> siteSettings, UserManager<ApplicationUser> userManager)
         {
             _logger = loggerFactory.CreateLogger(nameof(ApiAccountController));
             _dbContext = dbContext;
             this.siteSettings = siteSettings.Value;
+            _userManager = userManager;
         }
 
         [HttpGet("me")]
@@ -52,7 +56,8 @@ namespace Yavsc.WebApi.Controllers
             Debug.Assert(userData != null, "userData is null");
             var user = new Yavsc.Models.Auth.Me(userData.Id, userData.UserName, userData.Email,
             userData.Avatar,
-            userData.PostalAddress, userData.DedicatedGoogleCalendar);
+            userData.PostalAddress, userData.DedicatedGoogleCalendar, userData.FullName);
+            user.Address = userData.PostalAddress?.Address ?? string.Empty;
 
             var userRoles = _dbContext.UserRoles.Where(u => u.UserId == uid).Select(r => r.RoleId).ToArray();
 
@@ -69,6 +74,190 @@ namespace Yavsc.WebApi.Controllers
                             .Include(u => u.PostalAddress)
                             .Include(u => u.AccountBalance)
                             .FirstAsync(u => u.Id == uid);
+        }
+
+        [HttpPut("me")]
+        public async Task<IActionResult> UpdateMe([FromBody] ProfileUpdateRequest request)
+        {
+            if (request is null)
+            {
+                return BadRequest(new { error = "Payload is required." });
+            }
+
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var user = await _dbContext.Users
+                .Include(u => u.PostalAddress)
+                .FirstOrDefaultAsync(u => u.Id == uid);
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.FullName))
+            {
+                user.FullName = request.FullName.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Address))
+            {
+                if (user.PostalAddress is null)
+                {
+                    user.PostalAddress = new Yavsc.Models.Relationship.Location { Address = request.Address.Trim() };
+                }
+                else
+                {
+                    user.PostalAddress.Address = request.Address.Trim();
+                }
+            }
+
+            await _dbContext.SaveChangesAsync(uid);
+            return Ok(new { status = "saved", fullName = user.FullName, address = user.PostalAddress?.Address });
+        }
+
+        [HttpGet("performer-profile")]
+        public async Task<IActionResult> GetPerformerProfile()
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var profile = await _dbContext.Performers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.PerformerId == uid);
+
+            var selectedActivityCodes = await _dbContext.UserActivities
+                .AsNoTracking()
+                .Where(x => x.UserId == uid)
+                .Select(x => x.DoesCode)
+                .ToListAsync();
+
+            return Ok(new PerformerProfileSettings
+            {
+                PerformerId = uid,
+                UserName = User.Identity?.Name ?? string.Empty,
+                ExerciseCountryCode = profile?.ExerciseCountryCode ?? "fr",
+                SIREN = profile?.SIREN ?? string.Empty,
+                WebSite = profile?.WebSite ?? string.Empty,
+                Active = profile?.Active ?? false,
+                AcceptNotifications = profile?.AcceptNotifications ?? false,
+                AcceptPublicContact = profile?.AcceptPublicContact ?? false,
+                UseGeoLocalizationToReduceDistanceWithClients = profile?.UseGeoLocalizationToReduceDistanceWithClients ?? false,
+                SelectedActivityCodes = selectedActivityCodes
+            });
+        }
+
+        [HttpPut("performer-profile")]
+        public async Task<IActionResult> SavePerformerProfile([FromBody] PerformerProfileSettings model)
+        {
+            if (model is null)
+            {
+                return BadRequest(new { error = "Payload is required." });
+            }
+
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid) || !string.Equals(model.PerformerId, uid, StringComparison.Ordinal))
+            {
+                return Forbid();
+            }
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == uid);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrWhiteSpace(model.ExerciseCountryCode))
+            {
+                model.ExerciseCountryCode = "fr";
+            }
+
+            var profile = await _dbContext.Performers.FirstOrDefaultAsync(p => p.PerformerId == uid);
+            if (profile is null)
+            {
+                profile = new Yavsc.Models.Workflow.PerformerProfile
+                {
+                    PerformerId = uid,
+                    Performer = user,
+                    ExerciseCountryCode = model.ExerciseCountryCode,
+                    SIREN = model.SIREN ?? string.Empty,
+                    WebSite = model.WebSite ?? string.Empty,
+                    Active = model.Active,
+                    AcceptNotifications = model.AcceptNotifications,
+                    AcceptPublicContact = model.AcceptPublicContact,
+                    UseGeoLocalizationToReduceDistanceWithClients = model.UseGeoLocalizationToReduceDistanceWithClients,
+                    OrganizationAddress = new Yavsc.Models.Relationship.Location()
+                };
+                _dbContext.Performers.Add(profile);
+            }
+            else
+            {
+                profile.ExerciseCountryCode = model.ExerciseCountryCode;
+                profile.SIREN = model.SIREN ?? string.Empty;
+                profile.WebSite = model.WebSite ?? string.Empty;
+                profile.Active = model.Active;
+                profile.AcceptNotifications = model.AcceptNotifications;
+                profile.AcceptPublicContact = model.AcceptPublicContact;
+                profile.UseGeoLocalizationToReduceDistanceWithClients = model.UseGeoLocalizationToReduceDistanceWithClients;
+            }
+
+            var desiredCodes = (model.SelectedActivityCodes ?? [])
+                .Where(code => !string.IsNullOrWhiteSpace(code))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var existingLinks = await _dbContext.UserActivities
+                .Where(x => x.UserId == uid)
+                .ToListAsync();
+
+            foreach (var link in existingLinks)
+            {
+                if (!desiredCodes.Contains(link.DoesCode, StringComparer.OrdinalIgnoreCase))
+                {
+                    _dbContext.UserActivities.Remove(link);
+                }
+            }
+
+            foreach (var code in desiredCodes)
+            {
+                if (existingLinks.Any(x => string.Equals(x.DoesCode, code, StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+
+                var activity = await _dbContext.Activities
+                    .FirstOrDefaultAsync(a => a.Code == code);
+
+                if (activity is not null)
+                {
+                    _dbContext.UserActivities.Add(new Yavsc.Models.Workflow.UserActivity
+                    {
+                        UserId = uid,
+                        DoesCode = activity.Code,
+                        Weight = 100
+                    });
+                }
+            }
+
+            await _dbContext.SaveChangesAsync(uid);
+
+            if (!User.IsInRole("Performer"))
+            {
+                var roleResult = await _userManager.AddToRoleAsync(user, "Performer");
+                if (!roleResult.Succeeded)
+                {
+                    return BadRequest(new { error = "Performer role could not be assigned.", details = roleResult.Errors.Select(e => e.Description) });
+                }
+            }
+
+            return Ok(new { status = "saved", performer = model });
         }
 
         [HttpGet("myhost")]
