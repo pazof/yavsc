@@ -228,7 +228,17 @@ namespace Yavsc.WebApi.Controllers
             }
 
             var uid = User.GetUserId();
-            if (string.IsNullOrWhiteSpace(uid) || !string.Equals(model.PerformerId, uid, StringComparison.Ordinal))
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            if (string.IsNullOrWhiteSpace(model.PerformerId))
+            {
+                model.PerformerId = uid;
+            }
+
+            if (!string.Equals(model.PerformerId, uid, StringComparison.Ordinal))
             {
                 return Forbid();
             }

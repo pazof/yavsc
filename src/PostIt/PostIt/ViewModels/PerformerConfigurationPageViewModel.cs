@@ -29,11 +29,14 @@ public partial class ActivitySelectionOption : ObservableObject
 
 public partial class PerformerConfigurationPageViewModel : ViewModelBase
 {
-    private readonly YavscApiClient _api;
-    private readonly ActivityApiClient _activityClient;
+    private readonly YavscApiClient? _api;
+    private readonly ActivityApiClient? _activityClient;
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
+
+    [ObservableProperty]
+    public partial string PerformerId { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial string UserName { get; set; } = "—";
@@ -68,25 +71,32 @@ public partial class PerformerConfigurationPageViewModel : ViewModelBase
     public override bool CanNavigateNext { get => false; protected set { _ = value; } }
     public override bool CanNavigatePrevious { get => true; protected set { _ = value; } }
 
-    public PerformerConfigurationPageViewModel(YavscApiClient api, ActivityApiClient activityClient)
+    public PerformerConfigurationPageViewModel(YavscApiClient? api, ActivityApiClient? activityClient)
     {
-        _api = api ?? throw new ArgumentNullException(nameof(api));
-        _activityClient = activityClient ?? throw new ArgumentNullException(nameof(activityClient));
+        _api = api;
+        _activityClient = activityClient;
     }
 
-    public PerformerConfigurationPageViewModel() : this(null!, null!) { }
+    public PerformerConfigurationPageViewModel() : this(null, null) { }
 
     public Task InitializeAsync() => RefreshAsync();
 
     [RelayCommand]
     public async Task RefreshAsync()
     {
+        if (_api is null || _activityClient is null)
+        {
+            StatusMessage = "Client API de configuration indisponible.";
+            return;
+        }
+
         IsBusy = true;
         try
         {
             var endpoint = new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "account/performer-profile").ToString();
             var dto = await _api.CallAsync<PerformerProfileSettings>(HttpMethod.Get, endpoint).ConfigureAwait(true);
 
+            PerformerId = dto?.PerformerId ?? string.Empty;
             UserName = dto?.UserName ?? "—";
             ExerciseCountryCode = string.IsNullOrWhiteSpace(dto?.ExerciseCountryCode) ? "fr" : dto.ExerciseCountryCode;
             SIREN = dto?.SIREN ?? string.Empty;
@@ -123,29 +133,40 @@ public partial class PerformerConfigurationPageViewModel : ViewModelBase
         }
     }
 
+    public PerformerProfileSettings BuildPerformerProfileSettings()
+    {
+        return new PerformerProfileSettings
+        {
+            PerformerId = string.IsNullOrWhiteSpace(PerformerId) ? string.Empty : PerformerId,
+            UserName = UserName,
+            ExerciseCountryCode = string.IsNullOrWhiteSpace(ExerciseCountryCode) ? "fr" : ExerciseCountryCode,
+            SIREN = SIREN,
+            WebSite = Website,
+            Active = Active,
+            AcceptNotifications = AcceptNotifications,
+            AcceptPublicContact = AcceptPublicContact,
+            UseGeoLocalizationToReduceDistanceWithClients = UseGeoLocalizationToReduceDistanceWithClients,
+            SelectedActivityCodes = AvailableActivities
+                .Where(a => a.IsSelected)
+                .Select(a => a.Code)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList()
+        };
+    }
+
     [RelayCommand]
     public async Task SaveAsync()
     {
+        if (_api is null)
+        {
+            StatusMessage = "Client API de configuration indisponible.";
+            return;
+        }
+
         IsBusy = true;
         try
         {
-            var dto = new PerformerProfileSettings
-            {
-                PerformerId = string.Empty,
-                UserName = UserName,
-                ExerciseCountryCode = string.IsNullOrWhiteSpace(ExerciseCountryCode) ? "fr" : ExerciseCountryCode,
-                SIREN = SIREN,
-                WebSite = Website,
-                Active = Active,
-                AcceptNotifications = AcceptNotifications,
-                AcceptPublicContact = AcceptPublicContact,
-                UseGeoLocalizationToReduceDistanceWithClients = UseGeoLocalizationToReduceDistanceWithClients,
-                SelectedActivityCodes = AvailableActivities
-                    .Where(a => a.IsSelected)
-                    .Select(a => a.Code)
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList()
-            };
+            var dto = BuildPerformerProfileSettings();
 
             var endpoint = new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "account/performer-profile").ToString();
             var response = await _api.CallAsync<PerformerProfileSettings>(HttpMethod.Put, endpoint, dto).ConfigureAwait(true);

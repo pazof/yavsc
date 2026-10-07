@@ -143,4 +143,27 @@ public class HomePageProviderFlowTests
         Assert.Equal(string.Empty, payload.GoogleCalendarId);
         Assert.Equal(string.Empty, payload.BankInfoSummary);
     }
+
+    [Fact]
+    public void PerformerConfigurationPage_preserves_current_user_id_in_save_payload()
+    {
+        var vm = new PerformerConfigurationPageViewModel
+        {
+            PerformerId = "user-42",
+            UserName = "alice",
+            ExerciseCountryCode = "fr",
+            SIREN = "123456789",
+            Website = "https://example.com",
+            Active = true,
+            AcceptNotifications = true,
+            AcceptPublicContact = true,
+            UseGeoLocalizationToReduceDistanceWithClients = true
+        };
+
+        var payload = vm.BuildPerformerProfileSettings();
+
+        Assert.Equal("user-42", payload.PerformerId);
+        Assert.Equal("alice", payload.UserName);
+        Assert.Equal("fr", payload.ExerciseCountryCode);
+    }
 }
