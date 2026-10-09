@@ -1,5 +1,67 @@
 # Changelog
 
+
+## [1.0.8-rc23] - unstable
+
+### Added
+
+* [PostIt] Gestion native du compte inspirée de `/Manage` : modification
+  du nom d'utilisateur, du nom complet et de l'adresse, téléversement
+  d'avatar, confirmation e-mail, préférence de courriel mensuel,
+  création ou changement de mot de passe et activation/désactivation
+  de l'authentification à deux facteurs.
+* [PostIt][Yavsc.Api] Sélection d'un agenda Google, gestion séparée des
+  comptes bancaires, dissociation des connexions externes et suppression
+  du compte avec confirmation du nom d'utilisateur.
+* [PostIt] Configuration du profil professionnel et des activités,
+  navigation vers les cercles et les publications depuis le compte.
+* [PostIt][Yavsc.Api] Administration des utilisateurs avec recherche
+  dans les métadonnées du profil et consultation de la consommation
+  de ressources.
+* [Yavsc.Server][Yavsc.Api][Yavsc.Blogs] Suivi de la consommation de
+  ressources, API de synthèse et migration `ResourceUsageRecords`.
+* [Tests] Couverture des parcours profil et professionnel, de l'API de
+  consommation de ressources et du renouvellement des jetons :
+  rotation à usage unique, appels simultanés, réponses 401 concurrentes
+  et rejet d'un jeton de renouvellement révoqué.
+
+### Changed
+
+* [PostIt] Réorganisation de la page de compte en sections de profil,
+  sécurité et préférences ; actions de modification désactivées tant
+  que le profil n'est pas chargé ou qu'une opération est en cours.
+* [PostIt] Utilisation de `PlaceholderText` à la place de `Watermark`
+  dans les pages de profil et de configuration professionnelle.
+* [Yavsc.Api] `GET account/me` renvoie le DTO partagé attendu par
+  PostIt, avec l'état de sécurité, les connexions externes, les comptes
+  bancaires et les compteurs du compte.
+
+### Fixed
+
+* [Yavsc.Api] Enregistrement des services ASP.NET Identity et des stores
+  EF nécessaires à `UserManager<ApplicationUser>` : leur absence
+  empêchait l'activation du contrôleur de compte et provoquait une 500.
+* [Yavsc.Api] Chargement du profil : réponse adaptée lorsqu'un jeton
+  ne contient pas d'identifiant utilisateur ou que le compte n'existe
+  plus, au lieu d'une exception serveur.
+* [PostIt] Synchronisation de tous les chemins de renouvellement des
+  jetons, y compris après une 401 et au démarrage : les appels
+  concurrents ne réutilisent plus le même `refresh_token`. Un rejet
+  `invalid_grant` efface la session et invite à se reconnecter.
+* [PostIt] Effacement des informations obsolètes après un échec de
+  rechargement du profil et normalisation des valeurs de calendrier
+  lors de la sauvegarde.
+* [PostIt][Yavsc.Api] Préservation de l'identité du profil professionnel
+  lors de son enregistrement.
+* [Yavsc.Api] Les coordonnées bancaires ne sont plus modifiées à partir
+  d'un résumé agrégé : opérations dédiées avec contrôle de propriété
+  et validation de longueur des champs.
+
+### Known limitations
+
+* [PostIt] L'ajout d'un nouveau fournisseur OAuth et la gestion des
+  crédits ne sont pas encore disponibles dans l'interface native.
+
 ## [1.0.8-rc22] - unstable
 
 ### Fixed
