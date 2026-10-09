@@ -1,6 +1,17 @@
 # Changelog
 
 
+
+## [1.0.8-rc24] - unstable
+
+### Added
+
+* [PostIt] Reconnection automatique aux salons de discussion au reconnect
+
+### Changed
+
+### Fixed
+
 ## [1.0.8-rc23] - unstable
 
 ### Added

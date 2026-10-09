@@ -246,7 +246,7 @@ namespace PostIt.ViewModels.Chat
                     });
                     return Task.CompletedTask;
                 };
-                _connection.Reconnected += _ =>
+                _connection.Reconnected += async _ =>
                 {
                     Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                     {
@@ -254,7 +254,11 @@ namespace PostIt.ViewModels.Chat
                         Status = new StatusNotice("Reconnecté au Hub SignalR", StatusSeverity.Info,
                             new RelayCheckCommand("Déconnecter", async () => await DisconnectAsync()));
                     });
-                    return Task.CompletedTask;
+                    // La reconnexion crée une nouvelle ConnectionId côté
+                    // serveur : l'appartenance aux salons est perdue, il
+                    // faut rejoindre à nouveau le salon courant.
+                    if (!string.IsNullOrWhiteSpace(CurrentRoom))
+                        await JoinRoomAsync();
                 };
                 _connection.Closed += error =>
                 {
