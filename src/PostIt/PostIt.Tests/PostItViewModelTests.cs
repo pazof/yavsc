@@ -1,12 +1,47 @@
+using Avalonia.Controls;
+using Avalonia.Headless.XUnit;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using PostIt.Services;
 using PostIt.ViewModels;
+using PostIt.Views.Blogs;
 
 namespace PostIt.Tests;
 
 public class PostItViewModelTests
 {
+    [AvaloniaFact]
+    public void Published_badge_tracks_post_publication_state()
+    {
+        var post = new BlogPostDto { Id = 42, Title = "Test post", IsPublished = true };
+        var page = new BlogsPage();
+        var row = page.PostsListBox.ItemTemplate!.Build(post)!;
+        row.DataContext = post;
+        var window = new Window { Content = row };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            var badge = Assert.Single(row.GetVisualDescendants().OfType<Border>(),
+                border => border.Name == "PublishedBadge");
+
+            Assert.True(badge.IsVisible);
+
+            post.IsPublished = false;
+            Dispatcher.UIThread.RunJobs();
+            Assert.False(badge.IsVisible);
+
+            post.IsPublished = true;
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(badge.IsVisible);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
 
     [Fact]
     public void SearchCommand_filters_posts_by_title_article_or_author()
@@ -61,11 +96,22 @@ public class PostItViewModelTests
         var viewModel = new BlogsViewModel(blog);
 
         viewModel.SelectedPost = new BlogPostDto { Id = 42, IsPublished = false };
+        var changes = new List<string?>();
+        viewModel.SelectedPost.PropertyChanged += (_, args) => changes.Add(args.PropertyName);
 
         await viewModel.SetPublishStateAsync(true);
 
         Assert.True(api.LastPublishValue);
         Assert.True(viewModel.DraftIsPublished);
+        Assert.True(viewModel.SelectedPost.IsPublished);
+        Assert.Equal(new[] { nameof(BlogPostDto.IsPublished) }, changes);
+
+        await viewModel.SetPublishStateAsync(false);
+
+        Assert.False(api.LastPublishValue);
+        Assert.False(viewModel.DraftIsPublished);
+        Assert.False(viewModel.SelectedPost.IsPublished);
+        Assert.Equal(new[] { nameof(BlogPostDto.IsPublished), nameof(BlogPostDto.IsPublished) }, changes);
     }
 
     /// <summary>Test fake that always throws if the API is invoked.</summary>
