@@ -126,7 +126,27 @@
             <ListBox.ItemTemplate>
               <DataTemplate x:DataType="models:BlogPostDto">
                 <StackPanel Spacing="4">
-                  <TextBlock FontWeight="SemiBold" Text="{Binding Title}" />
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock
+                      VerticalAlignment="Center"
+                      FontWeight="SemiBold"
+                      Text="{Binding Title}" />
+                    <Border
+                      x:Name="PublishedBadge"
+                      VerticalAlignment="Center"
+                      Padding="6,2"
+                      Background="#F2F7F2"
+                      BorderBrush="#2F6D2F"
+                      BorderThickness="1"
+                      CornerRadius="6"
+                      IsVisible="{Binding IsPublished}">
+                      <TextBlock
+                        FontSize="10"
+                        FontWeight="SemiBold"
+                        Foreground="#2F6D2F"
+                        Text="Publié" />
+                    </Border>
+                  </StackPanel>
                   <TextBlock
                     FontSize="10"
                     Foreground="Gray"

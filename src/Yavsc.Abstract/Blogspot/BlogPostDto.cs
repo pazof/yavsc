@@ -1,12 +1,16 @@
 #nullable enable annotations
 
 using Yavsc.Abstract.Identity.Security;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace Yavsc.Blogspot;
 
-public class BlogPostDto : IBlogPost
+public class BlogPostDto : IBlogPost, INotifyPropertyChanged
 {
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private bool _isPublished;
+
     public string AuthorId { get; set; }
 
     public BlogPostAuthorDto? Author { get; set; }
@@ -30,7 +34,18 @@ public class BlogPostDto : IBlogPost
     /// follow-up request. Toggled via
     /// <c>PUT /api/BlogApi/{id}/publish</c>.
     /// </summary>
-    public bool IsPublished { get; set; }
+    public bool IsPublished
+    {
+        get => _isPublished;
+        set
+        {
+            if (_isPublished == value)
+                return;
+
+            _isPublished = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPublished)));
+        }
+    }
 
     public virtual bool AuthorizeCircle(long circleId)
     {

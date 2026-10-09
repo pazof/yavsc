@@ -5,6 +5,8 @@
 
 ### Added
 
+* [PostIt] Badge « Publié » à côté du titre des billets publiés dans la
+  liste, mis à jour lors de la publication ou du retour en brouillon.
 * [PostIt] Gestion native du compte inspirée de `/Manage` : modification
   du nom d'utilisateur, du nom complet et de l'adresse, téléversement
   d'avatar, confirmation e-mail, préférence de courriel mensuel,
