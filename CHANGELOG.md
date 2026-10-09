@@ -10,7 +10,17 @@
 
 ### Changed
 
+* [PostIt] La liste des billets et l'éditeur Markdown se partagent
+  l'espace disponible et défilent séparément ; un séparateur permet
+  de redimensionner les deux zones.
+
 ### Fixed
+
+* [PostIt] Défilement des articles longs en édition et en aperçu :
+  suppression de la limite de hauteur qui masquait le contenu Markdown
+  et du défilement imbriqué autour d'AvaloniaEdit. Six tests headless
+  couvrent les barres automatiques, le redimensionnement et le
+  défilement indépendant de la liste.
 
 ## [1.0.8-rc23] - unstable
 

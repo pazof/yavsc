@@ -38,8 +38,6 @@ public partial class MarkdownEditorControl : UserControl
     {
         InitializeComponent();
         PropertyChanged += OnPropertyChanged;
-        SizeChanged += OnSizeChanged;
-        UpdateEditorLimits();
     }
 
     private void OnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
@@ -60,29 +58,6 @@ public partial class MarkdownEditorControl : UserControl
             {
                 MarkdownText = text;
             }
-        }
-    }
-
-    private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
-    {
-        UpdateEditorLimits();
-    }
-
-    private void UpdateEditorLimits()
-    {
-        var visibleHeight = Bounds.Height > 0 ? Bounds.Height - 24 : 260;
-        visibleHeight = Math.Max(visibleHeight, 80);
-
-        if (SourceEditor is not null)
-        {
-            SourceEditor.MaxHeight = visibleHeight;
-            SourceEditor.Height = double.NaN;
-        }
-
-        if (PreviewViewer is not null)
-        {
-            PreviewViewer.MaxHeight = visibleHeight;
-            PreviewViewer.Height = double.NaN;
         }
     }
 }

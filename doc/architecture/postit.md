@@ -126,6 +126,20 @@ le DI est construit. Ordre, dans cet ordre :
 > à cette table, *ne pas* ajouter de registration pour
 > `Settings` ailleurs que la ligne `AddSingleton(settings)`.
 
+## Défilement de la page des billets
+
+La page `BlogsPage` utilise une grille à hauteur contrainte : l'en-tête
+et les commandes restent visibles, tandis que la liste des billets et
+l'éditeur se partagent l'espace disponible. Un `GridSplitter` permet
+de modifier cette répartition. La liste et l'article défilent séparément.
+
+Dans `MarkdownEditorControl`, AvaloniaEdit gère son propre défilement ;
+l'aperçu Markdown est placé dans un `ScrollViewer`. Ne pas limiter
+la hauteur du `MarkdownViewer` lui-même : son contenu doit pouvoir
+dépasser le viewport pour que les barres automatiques s'activent.
+Ne pas placer cette grille dans un `StackPanel` vertical ou un
+`ScrollViewer` de page, qui lui donnerait une hauteur de mesure illimitée.
+
 ## Navigation
 
 Le host de navigation est un `NavigationPage x:Name="NavRoot"`

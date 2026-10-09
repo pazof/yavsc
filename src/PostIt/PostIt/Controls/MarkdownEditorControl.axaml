@@ -7,35 +7,27 @@
     x:Name="Root"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="260">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Border
             BorderBrush="LightGray"
             BorderThickness="1"
             CornerRadius="5"
             IsVisible="{Binding !IsPreviewVisible, ElementName=Root}"
-            Padding="0"
-            MinHeight="260">
-            <ScrollViewer
-                BringIntoViewOnFocusChange="False"
+            Padding="0">
+            <AvaloniaEdit:TextEditor
+                x:Name="SourceEditor"
+                Document="{Binding Document, ElementName=Root, Mode=TwoWay}"
+                FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
+                ShowLineNumbers="True"
+                WordWrap="True"
+                BorderThickness="0"
+                Padding="5,5,5,15"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
                 HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Auto"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
-                <AvaloniaEdit:TextEditor
-                    x:Name="SourceEditor"
-                    Document="{Binding Document, ElementName=Root, Mode=TwoWay}"
-                    FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
-                    ShowLineNumbers="True"
-                    WordWrap="True"
-                    BorderThickness="0"
-                    Padding="5,5,5,15"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    HorizontalScrollBarVisibility="Disabled"
-                    VerticalScrollBarVisibility="Auto"
-                    TextInputOptions.Multiline="True"
-                    TextInputOptions.ReturnKeyType="Default" />
-            </ScrollViewer>
+                TextInputOptions.Multiline="True"
+                TextInputOptions.ReturnKeyType="Default" />
         </Border>
 
         <Border
@@ -43,18 +35,21 @@
             BorderThickness="1"
             CornerRadius="5"
             IsVisible="{Binding IsPreviewVisible, ElementName=Root}"
-            Padding="8"
-            MinHeight="260">
+            Padding="8">
             <ScrollViewer
+                x:Name="PreviewScrollViewer"
                 BringIntoViewOnFocusChange="False"
-                HorizontalScrollBarVisibility="Disabled"
                 VerticalScrollBarVisibility="Auto"
                 HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
+                VerticalAlignment="Stretch"
+                HorizontalScrollBarVisibility="Auto">
                 <md:MarkdownViewer
                     x:Name="PreviewViewer"
-                    MarkdownText="{Binding MarkdownText, ElementName=Root}"
-                    ClipToBounds="False" />
+                    HorizontalContentAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    ClipToBounds="False"
+                    UseLayoutRounding="True"
+                    MarkdownText="{Binding MarkdownText, ElementName=Root}" />
             </ScrollViewer>
         </Border>
     </Grid>

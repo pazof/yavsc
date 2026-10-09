@@ -17,14 +17,11 @@
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
-  <ScrollViewer
+  <Grid
+    RowDefinitions="Auto,Auto,*"
     Margin="5,5,10,5"
     HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch"
-    HorizontalScrollBarVisibility="Disabled"
-    VerticalScrollBarVisibility="Auto"
-    BringIntoViewOnFocusChange="False">
-    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    VerticalAlignment="Stretch">
 
       <WrapPanel x:Name="BlogsHeaderPanel"
         Margin="5"
@@ -39,6 +36,7 @@
           Text="{Binding SearchText, Mode=TwoWay}" />
       </WrapPanel>
       <CommandBar x:Name="BlogsCommandBar"
+       Grid.Row="1"
        HorizontalAlignment="Right" IsDynamicOverflowEnabled="True">
         <CommandBar.PrimaryCommands>
           <CommandBarButton Command="{Binding RefreshAsync}" Label="Refresh">
@@ -107,16 +105,14 @@
         </CommandBar.PrimaryCommands>
       </CommandBar>
 
-      <Grid Margin="12" RowSpacing="12" x:Name="MainGrid" MinHeight="500">
+      <Grid Grid.Row="2" Margin="12" RowSpacing="12" x:Name="MainGrid">
         <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
+          <RowDefinition Height="4" />
+          <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
         <Border
-          Grid.Row="1"
+          Grid.Row="0"
           Padding="8"
           BorderBrush="Gray"
           BorderThickness="1">
@@ -161,6 +157,11 @@
           </ListBox>
         </Border>
 
+        <GridSplitter
+          Grid.Row="1"
+          HorizontalAlignment="Stretch"
+          ResizeDirection="Rows" />
+
         <Grid
           Grid.Row="2"
           HorizontalAlignment="Stretch"
@@ -170,6 +171,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
           <Grid.ColumnDefinitions>
@@ -217,6 +219,5 @@
 
         </Grid>
       </Grid>
-    </StackPanel>
-  </ScrollViewer>
+  </Grid>
 </ContentPage>
