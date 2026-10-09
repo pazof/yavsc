@@ -314,7 +314,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             // Server rejected: could be revocation, clock skew, audience mismatch.
             // Force a refresh and retry exactly once.
             response.Dispose();
-            await ForceRefreshAsync(ct).ConfigureAwait(false);
+            await ForceRefreshAsync(ct, req.Headers.Authorization?.Parameter).ConfigureAwait(false);
 
             using var retry = new HttpRequestMessage(method, path);
             if (contentFactory is not null)
@@ -379,42 +379,51 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         if (_tokens.AccessTokenExpiresAt - DateTimeOffset.UtcNow > RefreshSkew)
             return;
 
+        await ForceRefreshAsync(ct).ConfigureAwait(false);
+    }
+
+    private async Task ForceRefreshAsync(CancellationToken ct, string? rejectedAccessToken = null)
+    {
         await _refreshGate.WaitAsync(ct).ConfigureAwait(false);
         try
         {
-            if (_tokens.AccessTokenExpiresAt - DateTimeOffset.UtcNow > RefreshSkew)
+            var tokens = _tokens;
+            if (tokens is null || string.IsNullOrEmpty(tokens.RefreshToken))
+                throw new InvalidOperationException("Session expirée. Veuillez vous reconnecter.");
+
+            if (rejectedAccessToken is null
+                ? tokens.AccessTokenExpiresAt - DateTimeOffset.UtcNow > RefreshSkew
+                : !string.Equals(tokens.AccessToken, rejectedAccessToken, StringComparison.Ordinal))
                 return;
 
-            await ForceRefreshAsync(ct).ConfigureAwait(false);
+            var result = await _oidc.RefreshTokenAsync(tokens.RefreshToken, cancellationToken: ct).ConfigureAwait(false);
+            if (result.IsError)
+            {
+                var isPermanent = result.Error is "invalid_grant" or "invalid_client";
+                if (isPermanent)
+                {
+                    _store.Clear();
+                    _tokens = null;
+                }
+                throw new RefreshFailedException(
+                    isPermanent
+                        ? $"Session expirée. Veuillez vous reconnecter ({result.Error})."
+                        : $"Impossible de renouveler la session : {result.Error ?? "refresh failed"}.",
+                    isPermanent);
+            }
+
+            _tokens = new RefreshTokenRecord(
+                AccessToken: result.AccessToken!,
+                RefreshToken: result.RefreshToken ?? tokens.RefreshToken,
+                AccessTokenExpiresAt: ComputeExpiry(result.AccessTokenExpiration, result.AccessToken),
+                IdToken: result.IdentityToken ?? tokens.IdToken);
+
+            _store.Save(_tokens);
         }
         finally
         {
             _refreshGate.Release();
         }
-    }
-
-    private async Task ForceRefreshAsync(CancellationToken ct)
-    {
-        if (_tokens is null || string.IsNullOrEmpty(_tokens.RefreshToken))
-            throw new InvalidOperationException("No refresh token available.");
-
-        var result = await _oidc.RefreshTokenAsync(_tokens.RefreshToken, cancellationToken: ct).ConfigureAwait(false);
-        if (result.IsError)
-        {
-            // Refresh token dead: revoked, expired, or rotation-theft
-            // detected. Purge and force an interactive re-login.
-            _store.Clear();
-            _tokens = null;
-            throw new RefreshFailedException(result.Error ?? "refresh failed", isPermanent: true);
-        }
-
-        _tokens = new RefreshTokenRecord(
-            AccessToken: result.AccessToken!,
-            RefreshToken: result.RefreshToken ?? _tokens.RefreshToken,
-            AccessTokenExpiresAt: ComputeExpiry(result.AccessTokenExpiration, result.AccessToken),
-            IdToken: result.IdentityToken ?? _tokens.IdToken);
-
-        _store.Save(_tokens);
     }
 
     /// <summary>
@@ -459,8 +468,9 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         var response = await attemptUpload().ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
+            var rejectedAccessToken = response.RequestMessage?.Headers.Authorization?.Parameter;
             response.Dispose();
-            await ForceRefreshAsync(ct).ConfigureAwait(false);
+            await ForceRefreshAsync(ct, rejectedAccessToken).ConfigureAwait(false);
             response = await attemptUpload().ConfigureAwait(false);
         }
 
@@ -514,8 +524,9 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         var response = await sendOnce().ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
+            var rejectedAccessToken = response.RequestMessage?.Headers.Authorization?.Parameter;
             response.Dispose();
-            await ForceRefreshAsync(ct).ConfigureAwait(false);
+            await ForceRefreshAsync(ct, rejectedAccessToken).ConfigureAwait(false);
             response = await sendOnce().ConfigureAwait(false);
         }
 

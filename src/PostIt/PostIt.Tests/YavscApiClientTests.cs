@@ -370,20 +370,105 @@ public class YavscApiClientTests
         }
     }
 
-    // SKIPPED — see comment.
-    //
-    // We can't cover "TrySilentLoginAsync purges the store when the
-    // refresh token is rejected" with OidcStubAuthority: the stub's
-    // /connect/token endpoint is unconditional and hands out a fresh
-    // refresh token regardless of what the caller sends. To exercise
-    // the RefreshFailedException path we'd need an authority option
-    // to fail on a specific refresh-token string; until then the
-    // production refresh-failure path is covered manually (and by
-    // the structural guarantee that _store.Clear() runs in the catch
-    // block of ForceRefreshAsync when result.IsError).
-    //
-    // [Fact]
-    // public async Task TrySilentLoginAsync_purges_store_when_refresh_fails_permanently() { ... }
+    [Fact]
+    public async Task Concurrent_silent_login_and_api_calls_share_one_refresh()
+    {
+        using var authority = await OIDCStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        try
+        {
+            await using var original = await LoginAndPersistAsync(settings, authority, tokensPath);
+            ExpireCachedAccessToken(tokensPath);
+            var store = new TokenStore(tokensPath);
+            var previousRefreshToken = store.Load()!.RefreshToken;
+            await using var client = new YavscApiClient(settings, store);
+            client.Http.BaseAddress = new Uri(settings.ApiUrl);
+            var ct = TestContext.Current.CancellationToken;
+
+            var silentLogins = Enumerable.Range(0, 8)
+                .Select(_ => client.TrySilentLoginAsync(null, ct)).ToArray();
+            var calls = Enumerable.Range(0, 8)
+                .Select(_ => client.CallAsync<List<StubApiServer.Post>>(HttpMethod.Get, "posts", ct)).ToArray();
+            await Task.WhenAll(silentLogins.Cast<Task>().Concat(calls));
+
+            Assert.All(silentLogins, login => Assert.True(login.Result));
+            Assert.All(calls, call => Assert.NotEmpty(call.Result));
+            Assert.Equal(1, authority.RefreshRequestCount);
+            Assert.NotEqual(previousRefreshToken, store.Load()!.RefreshToken);
+            Assert.True(client.HasValidSession);
+        }
+        finally
+        {
+            if (File.Exists(tokensPath)) File.Delete(tokensPath);
+        }
+    }
+
+    [Fact]
+    public async Task Concurrent_401_responses_share_one_refresh()
+    {
+        using var authority = await OIDCStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        try
+        {
+            await using var client = await LoginAndPersistAsync(settings, authority, tokensPath);
+            apiServer.RejectedBearer = $"Bearer {client.CurrentAccessToken}";
+            var ct = TestContext.Current.CancellationToken;
+
+            var calls = Enumerable.Range(0, 8)
+                .Select(_ => client.CallAsync<List<StubApiServer.Post>>(HttpMethod.Get, "posts", ct)).ToArray();
+            await Task.WhenAll(calls);
+
+            Assert.All(calls, call => Assert.NotEmpty(call.Result));
+            Assert.Equal(1, authority.RefreshRequestCount);
+            Assert.True(client.HasValidSession);
+        }
+        finally
+        {
+            if (File.Exists(tokensPath)) File.Delete(tokensPath);
+        }
+    }
+
+    [Fact]
+    public async Task CallAsync_reports_expired_session_and_clears_rejected_refresh_token()
+    {
+        using var authority = await OIDCStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        try
+        {
+            await using var original = await LoginAndPersistAsync(settings, authority, tokensPath);
+            var store = new TokenStore(tokensPath);
+            var tokens = store.Load()!;
+            store.Save(tokens with
+            {
+                RefreshToken = "revoked-refresh-token",
+                AccessTokenExpiresAt = DateTimeOffset.UtcNow.AddMinutes(-5)
+            });
+            await using var client = new YavscApiClient(settings, store);
+            client.Http.BaseAddress = new Uri(settings.ApiUrl);
+
+            var error = await Assert.ThrowsAsync<RefreshFailedException>(() =>
+                client.CallAsync<JsonElement>(HttpMethod.Get, "posts", TestContext.Current.CancellationToken));
+
+            Assert.True(error.IsPermanent);
+            Assert.Contains("reconnecter", error.Message);
+            Assert.False(client.HasValidSession);
+            Assert.Null(store.Load());
+            Assert.Equal(0, apiServer.RequestCount);
+        }
+        finally
+        {
+            if (File.Exists(tokensPath)) File.Delete(tokensPath);
+        }
+    }
 
     private static T Last<T>(System.Collections.Generic.List<T> list)
     {
@@ -467,6 +552,7 @@ internal sealed class StubApiServer : IAsyncDisposable, IDisposable
     public string BaseUrl { get; private set; } = string.Empty;
     public List<string> SeenBearers { get; } = new();
     public int RequestCount => _requestCount;
+    public string? RejectedBearer { get; set; }
 
     public StubApiServer(bool forceFirstRequest = false)
     {
@@ -499,7 +585,8 @@ internal sealed class StubApiServer : IAsyncDisposable, IDisposable
             if (!string.IsNullOrEmpty(auth))
                 SeenBearers.Add(auth!);
 
-            if (_forceFirstRequest && _requestCount == 1)
+            if ((_forceFirstRequest && _requestCount == 1)
+                || (RejectedBearer is not null && auth == RejectedBearer))
             {
                 ctx.Response.StatusCode = 401;
                 ctx.Response.Close();

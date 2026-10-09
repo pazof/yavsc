@@ -21,9 +21,11 @@ public sealed class OIDCStubAuthority : IAsyncDisposable, IDisposable
     private readonly RSA _rsa;
     private readonly string _kid;
     private readonly CancellationTokenSource _cts = new();
+    private readonly HashSet<string> _refreshTokens = new(StringComparer.Ordinal);
 
     public string Issuer { get; }
     public string LoopbackRedirectUri { get; }
+    public int RefreshRequestCount { get; private set; }
 
     private OIDCStubAuthority(HttpListener listener, RSA rsa, string kid, string issuer, string loopback)
     {
@@ -100,7 +102,7 @@ public sealed class OIDCStubAuthority : IAsyncDisposable, IDisposable
         ["response_types_supported"] = new[] { "code" },
         ["subject_types_supported"] = new[] { "public" },
         ["id_token_signing_alg_values_supported"] = new[] { "RS256" },
-        ["grant_types_supported"] = new[] { "authorization_code" },
+        ["grant_types_supported"] = new[] { "authorization_code", "refresh_token" },
         ["code_challenge_methods_supported"] = new[] { "S256" },
     };
 
@@ -132,6 +134,16 @@ public sealed class OIDCStubAuthority : IAsyncDisposable, IDisposable
             body = await reader.ReadToEndAsync();
 
         var form = ParseForm(body);
+        if (form.TryGetValue("grant_type", out var grantType) && grantType == "refresh_token")
+        {
+            RefreshRequestCount++;
+            if (!form.TryGetValue("refresh_token", out var suppliedToken)
+                || !_refreshTokens.Remove(suppliedToken))
+            {
+                await WriteJsonAsync(ctx.Response, new { error = "invalid_grant" }, 400);
+                return;
+            }
+        }
         // We accept any code and don't validate PKCE on the stub side;
         // the OidcClient itself validates the redirect_uri match.
         var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -142,11 +154,13 @@ public sealed class OIDCStubAuthority : IAsyncDisposable, IDisposable
             ["aud"] = form.TryGetValue("client_id", out var cid) ? cid : "postit-tests",
             ["exp"] = now + 600,
             ["iat"] = now,
+            ["jti"] = Guid.NewGuid().ToString("N"),
         };
 
         var accessToken = SignJwt(claims);
         var refreshToken = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32))
             .TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        _refreshTokens.Add(refreshToken);
         var response = new
         {
             access_token = accessToken,
@@ -193,10 +207,10 @@ public sealed class OIDCStubAuthority : IAsyncDisposable, IDisposable
         return dict;
     }
 
-    private static async Task WriteJsonAsync(HttpListenerResponse response, object payload)
+    private static async Task WriteJsonAsync(HttpListenerResponse response, object payload, int statusCode = 200)
     {
         response.ContentType = "application/json";
-        response.StatusCode = 200;
+        response.StatusCode = statusCode;
         var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
         await response.OutputStream.WriteAsync(bytes);
         response.Close();
