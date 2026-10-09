@@ -1,6 +1,7 @@
 
 using Anthropic.SDK;
 using IdentityModel;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Yavsc.Abstract.Interfaces;
@@ -85,6 +86,16 @@ internal class Program
         services.AddDbContext<ApplicationDbContext>(options =>
            options.UseNpgsql(builder.Configuration.GetConnectionString(
             Yavsc.Constants.YavscConnectionStringName)));
+
+        services.AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.PreferredUserName;
+                options.ClaimsIdentity.RoleClaimType = Constants.RoleClaimType;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders()
+            .AddSignInManager();
 
         services.AddLocalization(options =>
         {

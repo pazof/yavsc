@@ -1,38 +1,298 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PostIt.ViewModels"
+             xmlns:identity="using:Yavsc.Abstract.Identity"
              x:Class="PostIt.Views.UserProfilePage"
              x:DataType="vm:UserProfilePageViewModel"
-             Header="Mon profil">
+             Header="Mon compte">
 
-  <StackPanel Margin="16" Spacing="12">
-    <TextBlock Text="Mon profil"
-               FontSize="22"
-               FontWeight="SemiBold"/>
+  <ScrollViewer>
+    <StackPanel Margin="16" Spacing="16">
+      <Grid ColumnDefinitions="*,Auto">
+        <StackPanel Spacing="4">
+          <TextBlock Text="Gérer votre compte"
+                     FontSize="22"
+                     FontWeight="SemiBold"/>
+          <TextBlock Text="Paramètres de votre compte"
+                     Foreground="#4B5563"/>
+        </StackPanel>
+        <Button Grid.Column="1"
+                Content="Actualiser"
+                Command="{Binding RefreshCommand}"
+                IsEnabled="{Binding !IsBusy}"
+                VerticalAlignment="Center"/>
+      </Grid>
 
-    <Button Content="Actualiser"
-            Command="{Binding RefreshCommand}"
-            IsEnabled="{Binding !IsBusy}"/>
+      <ProgressBar IsVisible="{Binding IsBusy}"
+                   IsIndeterminate="True"
+                   Height="8"/>
 
-    <ProgressBar IsVisible="{Binding IsBusy}"
-                 IsIndeterminate="True"
-                 Height="8"/>
+      <Border Padding="16"
+              BorderBrush="#D0D7DE"
+              BorderThickness="1"
+              CornerRadius="6">
+        <StackPanel Spacing="12">
+          <TextBlock Text="Paramètres du compte"
+                     FontSize="18"
+                     FontWeight="SemiBold"/>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="*" RowSpacing="8">
-      <TextBox Watermark="Nom d’utilisateur" Text="{Binding UserName}"/>
-      <TextBox Grid.Row="1" Watermark="Nom complet" Text="{Binding FullName}"/>
-      <TextBox Grid.Row="2" Watermark="Adresse" Text="{Binding Address}" AcceptsReturn="True" TextWrapping="Wrap"/>
-      <TextBox Grid.Row="3" Watermark="Calendrier Google" Text="{Binding DedicatedGoogleCalendar}"/>
-      <TextBox Grid.Row="4" Watermark="Détails bancaires" Text="{Binding BankInfoSummary}" AcceptsReturn="True" TextWrapping="Wrap"/>
-      <Button Grid.Row="5" Content="Enregistrer" Command="{Binding SaveProfileCommand}" IsEnabled="{Binding !IsBusy}"/>
-    </Grid>
+          <Grid ColumnDefinitions="150,*"
+                RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                RowSpacing="12">
+            <TextBlock Grid.Row="0"
+                       Text="Nom d’utilisateur"
+                       VerticalAlignment="Center"/>
+            <TextBox Grid.Row="0"
+                     Grid.Column="1"
+                     Text="{Binding UserName, Mode=TwoWay}"/>
 
-    <TextBlock Text="{Binding UserName, StringFormat='Nom d’utilisateur : {0}'}"/>
-    <TextBlock Text="{Binding Email, StringFormat='Email : {0}'}"/>
-    <TextBlock Text="{Binding Roles, StringFormat='Rôles : {0}'}"/>
-    <TextBlock Text="{Binding DedicatedGoogleCalendar, StringFormat='Calendrier dédié : {0}'}"/>
-    <TextBlock Text="{Binding BankInfoSummary, StringFormat='Informations bancaires : {0}'}" TextWrapping="Wrap"/>
-    <TextBlock Text="{Binding Avatar, StringFormat='Avatar : {0}'}" TextWrapping="Wrap"/>
-    <TextBlock Text="{Binding StatusMessage}" Foreground="#4B5563" TextWrapping="Wrap"/>
-  </StackPanel>
+            <TextBlock Grid.Row="1"
+                       Text="Adresse e-mail"
+                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="1"
+                       Grid.Column="1"
+                       Text="{Binding Email}"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"/>
+
+            <TextBlock Grid.Row="2"
+                       Text="Nom complet"
+                       VerticalAlignment="Center"/>
+            <TextBox Grid.Row="2"
+                     Grid.Column="1"
+                     Text="{Binding FullName, Mode=TwoWay}"/>
+
+            <TextBlock Grid.Row="3"
+                       Text="Rôles"
+                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="3"
+                       Grid.Column="1"
+                       Text="{Binding Roles}"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"/>
+
+            <TextBlock Grid.Row="4"
+                       Text="Adresse"
+                       VerticalAlignment="Top"/>
+            <TextBox Grid.Row="4"
+                     Grid.Column="1"
+                     Text="{Binding Address, Mode=TwoWay}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     MinHeight="64"/>
+
+            <TextBlock Grid.Row="5"
+                       Text="Avatar"
+                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="5"
+                       Grid.Column="1"
+                       Text="{Binding Avatar}"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"/>
+
+            <TextBlock Grid.Row="6"
+                       Text="Calendrier Google"
+                       VerticalAlignment="Center"/>
+            <TextBox Grid.Row="6"
+                     Grid.Column="1"
+                     Text="{Binding DedicatedGoogleCalendar, Mode=TwoWay}"/>
+
+            <TextBlock Grid.Row="7"
+                       Text="Courriel mensuel"
+                       VerticalAlignment="Center"/>
+            <StackPanel Grid.Row="7"
+                        Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="8">
+              <CheckBox Content="Recevoir les nouvelles mensuelles"
+                        IsChecked="{Binding AllowMonthlyEmail, Mode=TwoWay}"/>
+              <Button Content="Enregistrer"
+                      Command="{Binding SetMonthlyEmailPreferenceCommand}"
+                      IsEnabled="{Binding !IsBusy}"/>
+            </StackPanel>
+
+            <TextBlock Grid.Row="8"
+                       Text="E-mail confirmé"
+                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="8"
+                       Grid.Column="1"
+                       Text="{Binding EmailConfirmed}"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"/>
+          </Grid>
+
+          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+            <Button x:Name="ChooseAvatarButton"
+                    Content="Choisir un avatar"
+                    Click="ChooseAvatar_Click"
+                    IsEnabled="{Binding !IsBusy}"/>
+            <Button Content="Enregistrer le profil"
+                    Command="{Binding SaveProfileCommand}"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <Border Padding="16"
+              BorderBrush="#D0D7DE"
+              BorderThickness="1"
+              CornerRadius="6">
+        <StackPanel Spacing="10">
+          <TextBlock Text="Sécurité et connexions"
+                     FontSize="18"
+                     FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding Email, StringFormat='E-mail : {0}'}"/>
+          <TextBlock Text="{Binding EmailConfirmed, StringFormat='Adresse confirmée : {0}'}"/>
+          <Button Content="Renvoyer le courriel de confirmation"
+                  Command="{Binding SendEmailConfirmationCommand}"
+                  IsVisible="{Binding !EmailConfirmed}"/>
+          <TextBlock Text="{Binding ExternalLoginCount, StringFormat='Connexions externes : {0}'}"/>
+
+          <ItemsControl ItemsSource="{Binding ExternalLogins}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="identity:LinkedExternalLogin">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,4">
+                  <TextBlock Text="{Binding DisplayName}"
+                             VerticalAlignment="Center"/>
+                  <Button Grid.Column="1"
+                          Content="Dissocier"
+                          Command="{Binding $parent[ContentPage].((vm:UserProfilePageViewModel)DataContext).RemoveExternalLoginCommand}"
+                          CommandParameter="{Binding}"/>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <CheckBox Content="Activer l’authentification à deux facteurs"
+                    IsChecked="{Binding TwoFactorEnabled, Mode=TwoWay}"/>
+          <Button Content="Enregistrer le réglage de sécurité"
+                  Command="{Binding SetTwoFactorCommand}"
+                  IsEnabled="{Binding !IsBusy}"
+                  HorizontalAlignment="Right"/>
+          <TextBlock Text="{Binding HasPassword, StringFormat='Mot de passe local configuré : {0}'}"/>
+          <TextBox PlaceholderText="Mot de passe actuel"
+                   PasswordChar="●"
+                   Text="{Binding CurrentPassword, Mode=TwoWay}"
+                   IsVisible="{Binding HasPassword}"/>
+          <TextBox PlaceholderText="Nouveau mot de passe"
+                   PasswordChar="●"
+                   Text="{Binding NewPassword, Mode=TwoWay}"/>
+          <TextBox PlaceholderText="Confirmer le nouveau mot de passe"
+                   PasswordChar="●"
+                   Text="{Binding ConfirmPassword, Mode=TwoWay}"/>
+          <Button Content="Modifier le mot de passe"
+                  Command="{Binding ChangePasswordCommand}"
+                  IsEnabled="{Binding !IsBusy}"
+                  HorizontalAlignment="Right"/>
+        </StackPanel>
+      </Border>
+
+      <Border Padding="16"
+              BorderBrush="#D0D7DE"
+              BorderThickness="1"
+              CornerRadius="6">
+        <StackPanel Spacing="10">
+          <TextBlock Text="Informations bancaires"
+                     FontSize="18"
+                     FontWeight="SemiBold"/>
+          <ItemsControl ItemsSource="{Binding BankAccounts}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="identity:BankAccountInfo">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,4">
+                  <StackPanel Spacing="2">
+                    <TextBlock Text="{Binding IBAN, StringFormat='IBAN : {0}'}"/>
+                    <TextBlock Text="{Binding BIC, StringFormat='BIC : {0}'}"/>
+                  </StackPanel>
+                  <Button Grid.Column="1"
+                          Content="Supprimer"
+                          Command="{Binding $parent[ContentPage].((vm:UserProfilePageViewModel)DataContext).DeleteBankAccountCommand}"
+                          CommandParameter="{Binding}"/>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Text="Ajouter un compte bancaire"
+                     FontWeight="SemiBold"/>
+          <TextBox PlaceholderText="IBAN" Text="{Binding BankIban, Mode=TwoWay}"/>
+          <TextBox PlaceholderText="BIC" Text="{Binding BankBic, Mode=TwoWay}"/>
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+            <TextBox PlaceholderText="Code banque" Text="{Binding BankCode, Mode=TwoWay}"/>
+            <TextBox Grid.Column="1" PlaceholderText="Code guichet" Text="{Binding BankWicketCode, Mode=TwoWay}"/>
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <TextBox PlaceholderText="Numéro de compte" Text="{Binding BankAccountNumber, Mode=TwoWay}"/>
+            <NumericUpDown Grid.Column="1"
+                           Width="120"
+                           Minimum="0"
+                           Maximum="99"
+                           Value="{Binding BankedKey, Mode=TwoWay}"/>
+          </Grid>
+          <Button Content="Ajouter les informations bancaires"
+                  Command="{Binding AddBankAccountCommand}"
+                  IsEnabled="{Binding !IsBusy}"
+                  HorizontalAlignment="Right"/>
+        </StackPanel>
+      </Border>
+
+      <Border Padding="16"
+              BorderBrush="#D0D7DE"
+              BorderThickness="1"
+              CornerRadius="6">
+        <StackPanel Spacing="10">
+          <TextBlock Text="Autres paramètres du compte"
+                     FontSize="18"
+                     FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding PostsCounter, StringFormat='Articles publiés : {0}'}"/>
+          <TextBlock Text="{Binding DiskUsage, StringFormat='Espace utilisé (octets) : {0}'}"/>
+          <TextBlock Text="{Binding DiskQuota, StringFormat='Quota disque (octets) : {0}'}"/>
+          <TextBlock Text="{Binding Credits, StringFormat='Crédits : {0}'}"/>
+          <TextBlock Text="{Binding UserId, StringFormat='Identifiant utilisateur : {0}'}"/>
+          <TextBlock Text="Calendrier Google"/>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="Charger les calendriers"
+                    Command="{Binding LoadCalendarsCommand}"/>
+            <Button Content="Désactiver le calendrier"
+                    Command="{Binding ChooseCalendarCommand}"
+                    CommandParameter="{x:Null}"/>
+          </StackPanel>
+          <ItemsControl ItemsSource="{Binding Calendars}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="identity:CalendarOption">
+                <Button Content="{Binding Name}"
+                        Command="{Binding $parent[ContentPage].((vm:UserProfilePageViewModel)DataContext).ChooseCalendarCommand}"
+                        CommandParameter="{Binding}"
+                        HorizontalAlignment="Left"/>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Content="Gérer mes cercles" Click="OpenCircles_Click"/>
+            <Button Content="Gérer mon activité professionnelle" Click="OpenPerformerConfiguration_Click"/>
+            <Button Content="Mes publications" Click="OpenBlogs_Click"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <Border Padding="16"
+              BorderBrush="#D0D7DE"
+              BorderThickness="1"
+              CornerRadius="6">
+        <StackPanel Spacing="8">
+          <TextBlock Text="Supprimer le compte"
+                     FontSize="18"
+                     FontWeight="SemiBold"/>
+          <TextBlock Text="Cette action est définitive. Saisissez votre nom d’utilisateur actuel pour confirmer."
+                     TextWrapping="Wrap"/>
+          <TextBox PlaceholderText="{Binding CurrentUserName, StringFormat='Saisir {0} pour confirmer'}"
+                   Text="{Binding UsernameConfirmation, Mode=TwoWay}"/>
+          <Button Content="Supprimer définitivement mon compte"
+                  Command="{Binding DeleteAccountCommand}"
+                  HorizontalAlignment="Right"/>
+        </StackPanel>
+      </Border>
+
+      <TextBlock Text="{Binding StatusMessage}"
+                 Foreground="#4B5563"
+                 TextWrapping="Wrap"/>
+    </StackPanel>
+  </ScrollViewer>
 </ContentPage>

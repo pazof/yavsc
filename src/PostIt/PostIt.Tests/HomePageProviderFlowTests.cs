@@ -104,7 +104,7 @@ public class HomePageProviderFlowTests
         };
 
         Assert.NotNull(vm.SaveProfileCommand);
-        Assert.True(vm.SaveProfileCommand.CanExecute(null));
+        Assert.False(vm.SaveProfileCommand.CanExecute(null));
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class HomePageProviderFlowTests
 
         Assert.Equal("alice.new", payload.UserName);
         Assert.Equal("calendar-123", payload.GoogleCalendarId);
-        Assert.Equal("FR14 2004 1010 0505 0001 3M02 606", payload.BankInfoSummary);
+        Assert.Null(payload.BankInfoSummary);
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class HomePageProviderFlowTests
         var payload = vm.BuildProfileUpdateRequest();
 
         Assert.Equal(string.Empty, payload.GoogleCalendarId);
-        Assert.Equal(string.Empty, payload.BankInfoSummary);
+        Assert.Null(payload.BankInfoSummary);
     }
 
     [Fact]

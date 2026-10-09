@@ -21,11 +21,11 @@
 
       <TextBlock Text="{Binding UserName, StringFormat='Nom d’utilisateur : {0}'}"/>
       <TextBox Text="{Binding ExerciseCountryCode, Mode=TwoWay}"
-               Watermark="Code pays (fr, en...)"/>
+               PlaceholderText="Code pays (fr, en...)"/>
       <TextBox Text="{Binding SIREN, Mode=TwoWay}"
-               Watermark="SIREN"/>
+               PlaceholderText="SIREN"/>
       <TextBox Text="{Binding Website, Mode=TwoWay}"
-               Watermark="Site web"/>
+               PlaceholderText="Site web"/>
 
       <CheckBox Content="Disponible / actif"
                 IsChecked="{Binding Active, Mode=TwoWay}"/>

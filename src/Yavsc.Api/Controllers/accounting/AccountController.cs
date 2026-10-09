@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿#nullable enable
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,8 @@ using System.Diagnostics;
 using Microsoft.Extensions.Options;
 using Yavsc.Abstract.Identity;
 using Yavsc.Abstract.Workflow;
+using Yavsc.Interface;
+using Yavsc.Services;
 
 namespace Yavsc.WebApi.Controllers
 {
@@ -33,40 +37,99 @@ namespace Yavsc.WebApi.Controllers
         private readonly SiteSettings siteSettings;
         private readonly ILogger _logger;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITrueEmailSender _emailSender;
+        private readonly ICalendarManager _calendarManager;
 
         public ApiAccountController(
         ILoggerFactory loggerFactory, ApplicationDbContext dbContext,
-        IOptions<SiteSettings> siteSettings, UserManager<ApplicationUser> userManager)
+        IOptions<SiteSettings> siteSettings, UserManager<ApplicationUser> userManager,
+        ITrueEmailSender emailSender, ICalendarManager calendarManager)
         {
             _logger = loggerFactory.CreateLogger(nameof(ApiAccountController));
             _dbContext = dbContext;
             this.siteSettings = siteSettings.Value;
             _userManager = userManager;
+            _emailSender = emailSender;
+            _calendarManager = calendarManager;
         }
 
         [HttpGet("me")]
         public async Task<IActionResult> Me()
         {
-            if (User == null)
-                return new BadRequestObjectResult(
-                        new { error = "user not found" });
+            if (User?.Identity?.IsAuthenticated != true)
+            {
+                return Challenge();
+            }
+
             var uid = User.GetUserId();
-            Debug.Assert(uid != null, "uid is null");
-            var userData = await GetUserData(uid);
-            Debug.Assert(userData != null, "userData is null");
-            var user = new Yavsc.Models.Auth.Me(userData.Id, userData.UserName, userData.Email,
-            userData.Avatar,
-            userData.PostalAddress, userData.DedicatedGoogleCalendar, userData.FullName);
-            user.Address = userData.PostalAddress?.Address ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var userData = await _dbContext.Users
+                .Include(u => u.PostalAddress)
+                .Include(u => u.AccountBalance)
+                .Include(u => u.BankInfo)
+                .FirstOrDefaultAsync(u => u.Id == uid);
+
+            if (userData is null)
+            {
+                return NotFound(new { error = "user not found" });
+            }
+
+            var user = new Yavsc.Abstract.Identity.Me
+            {
+                UserId = userData.Id,
+                UserName = userData.UserName,
+                Email = userData.Email,
+                Avatar = userData.Avatar,
+                FullName = userData.FullName,
+                Address = userData.PostalAddress?.Address ?? string.Empty,
+                DedicatedGoogleCalendar = userData.DedicatedGoogleCalendar
+            };
             user.BankInfoSummary = userData.BankInfo is { Count: > 0 }
                 ? string.Join(" | ", userData.BankInfo.Select(b => string.IsNullOrWhiteSpace(b.IBAN) ? b.BIC : $"{b.IBAN} / {b.BIC}"))
                 : string.Empty;
 
-            var userRoles = _dbContext.UserRoles.Where(u => u.UserId == uid).Select(r => r.RoleId).ToArray();
+            var userRoles = await _dbContext.UserRoles
+                .Where(u => u.UserId == uid)
+                .Select(r => r.RoleId)
+                .ToArrayAsync();
 
-            IdentityRole[] roles = _dbContext.Roles.Where(r => userRoles.Contains(r.Id)).ToArray();
+            var roles = await _dbContext.Roles
+                .Where(r => userRoles.Contains(r.Id))
+                .ToArrayAsync();
 
-            user.Roles = roles.Select(r => r.Name).ToArray();
+            user.Roles = roles.Select(r => r.Name).OfType<string>().ToArray();
+            user.EmailConfirmed = await _userManager.IsEmailConfirmedAsync(userData);
+            user.AllowMonthlyEmail = userData.AllowMonthlyEmail;
+            user.HasPassword = await _userManager.HasPasswordAsync(userData);
+            user.TwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(userData);
+            var externalLogins = await _userManager.GetLoginsAsync(userData);
+            user.ExternalLoginCount = externalLogins.Count;
+            user.ExternalLogins = externalLogins.Select(login => new LinkedExternalLogin
+            {
+                Provider = login.LoginProvider,
+                ProviderKey = login.ProviderKey,
+                DisplayName = login.ProviderDisplayName ?? login.LoginProvider
+            }).ToArray();
+            user.PostsCounter = await _dbContext.BlogSpot.LongCountAsync(x => x.AuthorId == uid);
+            user.DiskUsage = userData.DiskUsage;
+            user.DiskQuota = userData.DiskQuota;
+            user.Credits = userData.AccountBalance?.Credits ?? 0;
+            user.BankAccounts = (userData.BankInfo ?? [])
+                .Select(bank => new BankAccountInfo
+                {
+                    Id = bank.Id,
+                    IBAN = bank.IBAN,
+                    BIC = bank.BIC,
+                    BankCode = bank.BankCode,
+                    WicketCode = bank.WicketCode,
+                    AccountNumber = bank.AccountNumber,
+                    BankedKey = bank.BankedKey
+                })
+                .ToArray();
 
             return Ok(user);
         }
@@ -76,6 +139,7 @@ namespace Yavsc.WebApi.Controllers
             return await _dbContext.Users
                             .Include(u => u.PostalAddress)
                             .Include(u => u.AccountBalance)
+                            .Include(u => u.BankInfo)
                             .FirstAsync(u => u.Id == uid);
         }
 
@@ -85,6 +149,11 @@ namespace Yavsc.WebApi.Controllers
             if (request is null)
             {
                 return BadRequest(new { error = "Payload is required." });
+            }
+
+            if (request.BankInfoSummary is not null)
+            {
+                return BadRequest(new { error = "Bank information must be managed through the bank-info endpoint." });
             }
 
             var uid = User.GetUserId();
@@ -143,46 +212,346 @@ namespace Yavsc.WebApi.Controllers
                 user.DedicatedGoogleCalendar = request.GoogleCalendarId.Trim();
             }
 
-            if (request.BankInfoSummary is not null)
-            {
-                var bankSummary = request.BankInfoSummary.Trim();
-                if (string.IsNullOrWhiteSpace(bankSummary))
-                {
-                    if (user.BankInfo is not null)
-                    {
-                        user.BankInfo.Clear();
-                    }
-                }
-                else if (user.BankInfo is null || user.BankInfo.Count == 0)
-                {
-                    var bank = new Yavsc.Models.Bank.BankIdentity
-                    {
-                        UserId = uid,
-                        User = user,
-                        IBAN = bankSummary,
-                        BIC = string.Empty,
-                        AccountNumber = string.Empty,
-                        BankCode = string.Empty,
-                        WicketCode = string.Empty,
-                        BankedKey = 0
-                    };
-
-                    user.BankInfo ??= [];
-                    user.BankInfo.Add(bank);
-                }
-                else
-                {
-                    var firstBank = user.BankInfo.First();
-                    firstBank.IBAN = bankSummary;
-                    firstBank.BIC = string.Empty;
-                    firstBank.AccountNumber = string.Empty;
-                    firstBank.BankCode = string.Empty;
-                    firstBank.WicketCode = string.Empty;
-                }
-            }
-
             await _dbContext.SaveChangesAsync(uid);
             return Ok(new { status = "saved", fullName = user.FullName, address = user.PostalAddress?.Address, googleCalendarId = user.DedicatedGoogleCalendar });
+        }
+
+        [HttpPut("preferences/monthly-email")]
+        public async Task<IActionResult> UpdateMonthlyEmailPreference([FromBody] MonthlyEmailPreferenceRequest request)
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var user = await _userManager.FindByIdAsync(uid);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            user.AllowMonthlyEmail = request.Enabled;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { error = "Unable to update email preferences.", details = result.Errors.Select(e => e.Description) });
+            }
+
+            return Ok(new { enabled = user.AllowMonthlyEmail });
+        }
+
+        [HttpPut("security/two-factor")]
+        public async Task<IActionResult> UpdateTwoFactor([FromBody] TwoFactorRequest request)
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var user = await _userManager.FindByIdAsync(uid);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userManager.SetTwoFactorEnabledAsync(user, request.Enabled);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { error = "Unable to update two-factor authentication.", details = result.Errors.Select(e => e.Description) });
+            }
+
+            return Ok(new { enabled = user.TwoFactorEnabled });
+        }
+
+        [HttpPut("security/password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            if (request is null
+                || string.IsNullOrWhiteSpace(request.NewPassword)
+                || !string.Equals(request.NewPassword, request.ConfirmPassword, StringComparison.Ordinal))
+            {
+                return BadRequest(new { error = "A matching new password and confirmation are required." });
+            }
+
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var user = await _userManager.FindByIdAsync(uid);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userManager.HasPasswordAsync(user)
+                ? await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword)
+                : await _userManager.AddPasswordAsync(user, request.NewPassword);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { error = "Unable to change the password.", details = result.Errors.Select(e => e.Description) });
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("security/external-logins")]
+        public async Task<IActionResult> RemoveExternalLogin([FromQuery] string provider, [FromQuery] string providerKey)
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            if (string.IsNullOrWhiteSpace(provider) || string.IsNullOrWhiteSpace(providerKey))
+            {
+                return BadRequest(new { error = "A provider and provider key are required." });
+            }
+
+            var user = await _userManager.FindByIdAsync(uid);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            if (await _userManager.GetLoginsAsync(user) is { Count: <= 1 }
+                && !await _userManager.HasPasswordAsync(user))
+            {
+                return Conflict(new { error = "Add a password before removing the only sign-in method." });
+            }
+
+            var result = await _userManager.RemoveLoginAsync(user, provider, providerKey);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { error = "Unable to remove the external login.", details = result.Errors.Select(e => e.Description) });
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("me")]
+        public async Task<IActionResult> DeleteMyAccount([FromBody] DeleteAccountRequest request)
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var user = await _userManager.FindByIdAsync(uid);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            if (!string.Equals(request?.UsernameConfirmation, user.UserName, StringComparison.Ordinal))
+            {
+                return BadRequest(new { error = "Type your exact username to confirm account deletion." });
+            }
+
+            _dbContext.DeviceDeclaration.RemoveRange(
+                _dbContext.DeviceDeclaration.Where(device => device.DeviceOwnerId == uid));
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new { error = "Unable to delete this account.", details = result.Errors.Select(e => e.Description) });
+            }
+
+            return NoContent();
+        }
+
+        [HttpPost("email/confirmation")]
+        public async Task<IActionResult> SendEmailConfirmation()
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var user = await _userManager.FindByIdAsync(uid);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            if (user.EmailConfirmed)
+            {
+                return Conflict(new { error = "This email address is already confirmed." });
+            }
+
+            if (string.IsNullOrWhiteSpace(user.Email))
+            {
+                return BadRequest(new { error = "No email address is associated with this account." });
+            }
+
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationUrl = new Uri(
+                new Uri(siteSettings.ExternalUrl.TrimEnd('/') + "/", UriKind.Absolute),
+                "Account/ConfirmEmail").ToString();
+            confirmationUrl = Microsoft.AspNetCore.WebUtilities.QueryHelpers.AddQueryString(
+                confirmationUrl,
+                new Dictionary<string, string?> { ["userId"] = user.Id, ["code"] = code });
+
+            await _emailSender.SendEmailAsync(
+                user.UserName ?? user.Email,
+                user.Email,
+                $"[{siteSettings.Title}] Confirmation de votre adresse e-mail",
+                $"<p>Confirmez votre adresse e-mail en suivant ce lien :</p><p><a href=\"{System.Text.Encodings.Web.HtmlEncoder.Default.Encode(confirmationUrl)}\">Confirmer mon adresse</a></p>");
+
+            return Ok(new { message = "Un e-mail de confirmation a été envoyé." });
+        }
+
+        [HttpGet("calendars")]
+        public async Task<IActionResult> GetCalendars([FromQuery] string? pageToken = null)
+        {
+            var calendars = await _calendarManager.GetCalendarsAsync(pageToken ?? string.Empty);
+            var options = (calendars.Items ?? [])
+                .Where(calendar => string.Equals(calendar.AccessRole, "owner", StringComparison.OrdinalIgnoreCase))
+                .Select(calendar => new CalendarOption
+                {
+                    Id = calendar.Id,
+                    Name = calendar.Summary ?? calendar.Id
+                })
+                .ToArray();
+            return Ok(options);
+        }
+
+        [HttpGet("bank-info")]
+        public async Task<IActionResult> GetBankInfo()
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var accounts = await _dbContext.BankIdentity
+                .AsNoTracking()
+                .Where(bank => bank.UserId == uid)
+                .Select(bank => new BankAccountInfo
+                {
+                    Id = bank.Id,
+                    IBAN = bank.IBAN,
+                    BIC = bank.BIC,
+                    BankCode = bank.BankCode,
+                    WicketCode = bank.WicketCode,
+                    AccountNumber = bank.AccountNumber,
+                    BankedKey = bank.BankedKey
+                })
+                .ToArrayAsync();
+            return Ok(accounts);
+        }
+
+        [HttpPost("bank-info")]
+        public async Task<IActionResult> AddBankInfo([FromBody] BankAccountInfoRequest request)
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            if (!IsValidBankAccountRequest(request))
+            {
+                return BadRequest(new { error = "Provide an IBAN or BIC and ensure each bank field fits its allowed length." });
+            }
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == uid);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            var bank = new Yavsc.Models.Bank.BankIdentity
+            {
+                UserId = uid,
+                User = user,
+                IBAN = request.IBAN?.Trim() ?? string.Empty,
+                BIC = request.BIC?.Trim() ?? string.Empty,
+                BankCode = request.BankCode?.Trim() ?? string.Empty,
+                WicketCode = request.WicketCode?.Trim() ?? string.Empty,
+                AccountNumber = request.AccountNumber?.Trim() ?? string.Empty,
+                BankedKey = request.BankedKey
+            };
+            _dbContext.BankIdentity.Add(bank);
+            await _dbContext.SaveChangesAsync(uid);
+            return Ok(new BankAccountInfo
+            {
+                Id = bank.Id,
+                IBAN = bank.IBAN,
+                BIC = bank.BIC,
+                BankCode = bank.BankCode,
+                WicketCode = bank.WicketCode,
+                AccountNumber = bank.AccountNumber,
+                BankedKey = bank.BankedKey
+            });
+        }
+
+        [HttpPut("bank-info/{id:long}")]
+        public async Task<IActionResult> UpdateBankInfo(long id, [FromBody] BankAccountInfoRequest request)
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            if (!IsValidBankAccountRequest(request))
+            {
+                return BadRequest(new { error = "Provide an IBAN or BIC and ensure each bank field fits its allowed length." });
+            }
+
+            var bank = await _dbContext.BankIdentity
+                .FirstOrDefaultAsync(item => item.Id == id && item.UserId == uid);
+            if (bank is null)
+            {
+                return NotFound();
+            }
+
+            bank.IBAN = request.IBAN?.Trim() ?? string.Empty;
+            bank.BIC = request.BIC?.Trim() ?? string.Empty;
+            bank.BankCode = request.BankCode?.Trim() ?? string.Empty;
+            bank.WicketCode = request.WicketCode?.Trim() ?? string.Empty;
+            bank.AccountNumber = request.AccountNumber?.Trim() ?? string.Empty;
+            bank.BankedKey = request.BankedKey;
+            await _dbContext.SaveChangesAsync(uid);
+            return NoContent();
+        }
+
+        private static bool IsValidBankAccountRequest(BankAccountInfoRequest? request) =>
+            request is not null
+            && (!string.IsNullOrWhiteSpace(request.IBAN) || !string.IsNullOrWhiteSpace(request.BIC))
+            && (request.IBAN?.Length ?? 0) <= 33
+            && (request.BIC?.Length ?? 0) <= 15
+            && (request.BankCode?.Length ?? 0) <= 5
+            && (request.WicketCode?.Length ?? 0) <= 5
+            && (request.AccountNumber?.Length ?? 0) <= 15
+            && request.BankedKey >= 0;
+
+        [HttpDelete("bank-info/{id:long}")]
+        public async Task<IActionResult> DeleteBankInfo(long id)
+        {
+            var uid = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return Challenge();
+            }
+
+            var bank = await _dbContext.BankIdentity
+                .FirstOrDefaultAsync(item => item.Id == id && item.UserId == uid);
+            if (bank is null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.BankIdentity.Remove(bank);
+            await _dbContext.SaveChangesAsync(uid);
+            return NoContent();
         }
 
         [HttpGet("performer-profile")]
