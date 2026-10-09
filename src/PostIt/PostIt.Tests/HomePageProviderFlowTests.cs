@@ -69,6 +69,19 @@ public class HomePageProviderFlowTests
     }
 
     [Fact]
+    public void Administration_page_tracks_selected_user()
+    {
+        var vm = new AdministrationPageViewModel();
+        var user = new Yavsc.Abstract.Identity.UserInfo { UserId = "1", UserName = "alice", FullName = "Alice Example", Email = "alice@example.com", DedicatedGoogleCalendar = "calendar-123" };
+
+        vm.Users.Add(user);
+        vm.SelectedUser = user;
+
+        Assert.Same(user, vm.SelectedUser);
+        Assert.Equal("alice", vm.SelectedUser?.UserName);
+    }
+
+    [Fact]
     public void UserProfilePage_exposes_full_name_and_address_fields()
     {
         var vm = new UserProfilePageViewModel();

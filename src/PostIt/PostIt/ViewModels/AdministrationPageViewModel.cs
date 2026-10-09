@@ -27,6 +27,9 @@ public partial class AdministrationPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Chargement…";
 
+    [ObservableProperty]
+    public partial UserInfo? SelectedUser { get; set; }
+
     public IReadOnlyList<UserInfo> FilteredUsers =>
         string.IsNullOrWhiteSpace(SearchText)
             ? Users.ToList()
