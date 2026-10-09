@@ -232,7 +232,7 @@ L'impact de l'usage d'un nouveau nom d’environnement d'execution, à l'heure d
   * ~/Views/Home/Index.cshtml
   * ~/Views/Home/About.cshtml
 
-# 👥 Crédits & Co-autoraClaudt
+# 👥 Crédits & Co-auteurs
 
 Ce projet a été développé de manière hybride :
 - **Conception, architecture et revue de code :** Paul Schneider
