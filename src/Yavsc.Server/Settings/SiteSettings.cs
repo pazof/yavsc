@@ -49,7 +49,7 @@ namespace Yavsc
         public string DataDir { get; set; }
         public string Avatars { get; set; }
         public long Quota { get; set; }
-        public string Blog { get; set; }
+        public string UserFilesRoot { get; set; }
         public string Bills { get; set; }
         public string GitRepository { get; set; }
 

@@ -36,7 +36,7 @@ public class BlogSpotService
         _context = context;
         this.fileSystemAuthManager = fileSystemAuthManager;
         this.siteSettings = siteSettings.Value;
-        if (siteSettings.Value.Blog == null)
+        if (siteSettings.Value.UserFilesRoot == null)
         {
             throw new InvalidOperationException("SiteSettings.Blog is not configured.");
         }
@@ -56,7 +56,7 @@ public class BlogSpotService
             {
                 string blogFilesSubdir = $"blogs/{postId}";
                 string destDir = Path.Combine(
-                    siteSettings.Blog,
+                    siteSettings.UserFilesRoot,
                     user.UserName,
                     blogFilesSubdir);
                 var di = new DirectoryInfo(destDir);

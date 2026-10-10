@@ -23,10 +23,10 @@ public  class Startup
             ResourcesHelpers.GlobalLocalizer = localizer;
             Config.SmtpSetup = smtpSettings.Value;
             Config.Authority = siteSettings.Value.Authority;
-            string blogsDir = siteSettings.Value.Blog ?? throw new Exception("blogsDir is not set.");
+            string blogsDir = siteSettings.Value.UserFilesRoot ?? throw new Exception("blogsDir is not set.");
             string billsDir = siteSettings.Value.Bills ?? throw new Exception("billsDir is not set.");
             string tempDir = siteSettings.Value.TempDir ?? throw new Exception("tempDir is not set.");
-           
+
             Config.PayPalSettings = payPalSettings.Value;
 
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

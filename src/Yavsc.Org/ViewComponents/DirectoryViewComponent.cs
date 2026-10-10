@@ -28,7 +28,7 @@ namespace Yavsc.ViewComponents
         {
             string uid = ViewContext.HttpContext.User.GetUserId();
             return View(new UserDirectoryInfo(
-                siteSettings.Blog, 
+                siteSettings.UserFilesRoot,
                 uid, dirname));
         }
     }

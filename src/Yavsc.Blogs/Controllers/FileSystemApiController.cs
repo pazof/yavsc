@@ -200,7 +200,7 @@ namespace Yavsc.Blogs.Controllers
             if (string.IsNullOrEmpty(ownerUserName))
                 return NotFound(new { error = "owner not found" });
 
-            var physicalPath = Path.Combine(siteSettings.Blog, ownerUserName, file.Path ?? "");
+            var physicalPath = Path.Combine(siteSettings.UserFilesRoot, ownerUserName, file.Path ?? "");
             var fi = new FileInfo(physicalPath);
             if (!fi.Exists) return NotFound(new { error = "file not on disk" });
 

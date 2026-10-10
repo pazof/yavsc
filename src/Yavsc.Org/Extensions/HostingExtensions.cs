@@ -1267,7 +1267,7 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
         {
             throw new InvalidOperationException("GitRepository path is not configured in SiteSettings.");
         }
-        if (settings.Blog == null)
+        if (settings.UserFilesRoot == null)
         {
             throw new InvalidOperationException("Blog path is not configured in SiteSettings.");
         }
@@ -1284,7 +1284,7 @@ ADD COLUMN IF NOT EXISTS ""Moderated"" boolean NOT NULL DEFAULT FALSE;");
             throw new InvalidOperationException("TempDir path is not configured in SiteSettings.");
         }
 
-        var userFilesDirInfo = new DirectoryInfo(settings.Blog);
+        var userFilesDirInfo = new DirectoryInfo(settings.UserFilesRoot);
 
         if (!userFilesDirInfo.Exists) userFilesDirInfo.Create();
 

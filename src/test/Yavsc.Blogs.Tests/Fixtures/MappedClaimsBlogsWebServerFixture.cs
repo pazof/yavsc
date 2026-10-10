@@ -49,7 +49,7 @@ public sealed class MappedClaimsBlogsWebServerFixture : IDisposable, IBackendFix
         // BlogsWebServerFixture.
         builder.Services.Configure<SiteSettings>(s =>
         {
-            s.Blog = Path.Combine(Path.GetTempPath(), "postit-blogs-mappedclaims-" + Guid.NewGuid().ToString("N"));
+            s.UserFilesRoot = Path.Combine(Path.GetTempPath(), "postit-blogs-mappedclaims-" + Guid.NewGuid().ToString("N"));
         });
         builder.Services.AddScoped<BlogSpotService>();
         builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();

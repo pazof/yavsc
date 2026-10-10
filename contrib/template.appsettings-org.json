@@ -30,7 +30,7 @@
       "EMail": "paul@pschneider.fr"
     },
     "Quota": 200000000,
-    "Blog": "blog",
+    "UserFilesRoot": "files",
     "Avatars": "avatars",
     "Bills": "bills",
     "TempDir": "temp",

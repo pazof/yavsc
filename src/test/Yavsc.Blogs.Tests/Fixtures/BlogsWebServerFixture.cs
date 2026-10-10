@@ -131,7 +131,7 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         // on real files.
         builder.Services.Configure<SiteSettings>(s =>
         {
-            s.Blog = BlogFilesRoot;
+            s.UserFilesRoot = BlogFilesRoot;
         });
 
         // Real BlogSpotService — same instance the production host

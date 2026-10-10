@@ -9,7 +9,6 @@ using Yavsc.Models;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 namespace Yavsc.Blogs;
 
 internal class Program
@@ -85,9 +84,9 @@ internal class Program
         })
         .Configure<SiteSettings>(settings =>
         {
-            if (settings.Blog == null)
+            if (settings.UserFilesRoot == null)
             {
-                settings.Blog = "blog";
+                settings.UserFilesRoot = "blog";
             }
         });
 

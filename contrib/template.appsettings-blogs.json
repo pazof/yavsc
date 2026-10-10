@@ -8,7 +8,7 @@
     "CorsAllowedOrigins": [
       "https://preprod-api.$DOMAIN"
     ],
-    "Blog": "blog"
+    "UserFilesRoot": "files"
   },
   "ConnectionStrings": {
     "YavscConnection": "Server=localhost;Port=5432;Database=lame-db-name;Username=lame-user-name;Password=lame-password;"

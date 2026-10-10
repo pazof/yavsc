@@ -115,7 +115,7 @@ public sealed class ServerServicesFixture : IDisposable
         // Details itself doesn't read it, but the service constructor
         // throws if SiteSettings.Blog is null, so configure a temp
         // value to keep construction alive.
-        services.Configure<SiteSettings>(s => s.Blog = "server-tests-files-root");
+        services.Configure<SiteSettings>(s => s.UserFilesRoot = "server-tests-files-root");
 
         // Trivial file-system auth: Details never calls into it, but
         // the DI container needs an instance to construct the service.

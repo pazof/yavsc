@@ -44,7 +44,7 @@ namespace Yavsc.Server.Helpers
             this ClaimsPrincipal user,
             string subpath, SiteSettings siteSettings)
         {
-            var root = Path.Combine(siteSettings.Blog, user.GetUserName());
+            var root = Path.Combine(siteSettings.UserFilesRoot, user.GetUserName());
             if (!string.IsNullOrWhiteSpace(subpath))
             {
                 if (!subpath.IsValidYavscPath())
@@ -67,7 +67,7 @@ namespace Yavsc.Server.Helpers
 
         public static void DeleteUserFile(this ApplicationUser user, string fileName, SiteSettings siteSettings)
         {
-            var root = Path.Combine(siteSettings.Blog, user.UserName);
+            var root = Path.Combine(siteSettings.UserFilesRoot, user.UserName);
             var fi = new FileInfo(Path.Combine(root, fileName));
             if (!fi.Exists) return;
             // Capture the length BEFORE deleting: FileInfo.Length throws
@@ -80,7 +80,7 @@ namespace Yavsc.Server.Helpers
 
         public static FsOperationInfo DeleteUserDirOrFile(this ApplicationUser user, string dirName, SiteSettings siteSettings)
         {
-            var root = Path.Combine(siteSettings.Blog, user.UserName);
+            var root = Path.Combine(siteSettings.UserFilesRoot, user.UserName);
             if (string.IsNullOrEmpty(dirName))
                 return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.InvalidRequest, ErrorMessage = "specify a directory or file name" };
 
@@ -110,7 +110,7 @@ namespace Yavsc.Server.Helpers
 
         public static FsOperationInfo MoveUserDir(this ApplicationUser user, string fromDirName, string toDirName, SiteSettings siteSettings)
         {
-            var root = Path.Combine(siteSettings.Blog, user.UserName);
+            var root = Path.Combine(siteSettings.UserFilesRoot, user.UserName);
             if (string.IsNullOrEmpty(fromDirName))
                 return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.InvalidRequest, ErrorMessage = "specify a dir name " };
 
@@ -136,7 +136,7 @@ namespace Yavsc.Server.Helpers
         }
         public static FsOperationInfo MoveUserFileToDir(this ApplicationUser user, string fileNameFrom, string fileNameDest, SiteSettings siteSettings)
         {
-            var root = Path.Combine(siteSettings.Blog, user.UserName);
+            var root = Path.Combine(siteSettings.UserFilesRoot, user.UserName);
             var fi = new FileInfo(Path.Combine(root, fileNameFrom));
             if (!fi.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.NotFound, ErrorMessage = "no file to move" };
             string dest;
@@ -151,7 +151,7 @@ namespace Yavsc.Server.Helpers
         }
         public static FsOperationInfo MoveUserFile(this ApplicationUser user, string fileNameFrom, string fileNameDest, SiteSettings siteSettings)
         {
-            var root = Path.Combine(siteSettings.Blog, user.UserName);
+            var root = Path.Combine(siteSettings.UserFilesRoot, user.UserName);
             var fi = new FileInfo(Path.Combine(root, fileNameFrom));
             if (!fi.Exists) return new FsOperationInfo { Done = false, ErrorCode = ErrorCode.NotFound, ErrorMessage = "no file to move" };
             var fo = new FileInfo(Path.Combine(root, fileNameDest));
@@ -318,7 +318,7 @@ namespace Yavsc.Server.Helpers
 
         public static UserDirectoryInfo GetUserFiles(SiteSettings settings, string userId, string subdir)
         {
-            UserDirectoryInfo di = new UserDirectoryInfo(settings.Blog, userId, subdir);
+            UserDirectoryInfo di = new UserDirectoryInfo(settings.UserFilesRoot, userId, subdir);
             return di;
         }
 

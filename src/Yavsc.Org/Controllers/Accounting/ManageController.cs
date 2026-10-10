@@ -421,9 +421,9 @@ namespace Yavsc.Controllers
                 {
                     // Renames the blog files
                     var userdirinfo = new DirectoryInfo(
-                       Path.Combine(_siteSettings.Blog,
+                       Path.Combine(_siteSettings.UserFilesRoot,
                         oldUserName));
-                    var newdir = Path.Combine(_siteSettings.Blog,
+                    var newdir = Path.Combine(_siteSettings.UserFilesRoot,
                        model.UserName);
                     if (userdirinfo.Exists)
                         userdirinfo.MoveTo(newdir);
