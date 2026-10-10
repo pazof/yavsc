@@ -5,6 +5,9 @@ using Yavsc;
 using Yavsc.Api.Test.Fixtures;
 using Yavsc.Models.Workflow;
 using Yavsc.Tests.Shared;
+using Microsoft.Extensions.DependencyInjection;
+using Yavsc.Models;
+using Yavsc.Services;
 
 namespace Yavsc.Api.Test;
 
@@ -32,6 +35,72 @@ public sealed class RdvQueryApiControllerTests : IClassFixture<ApiWebServerFixtu
         http.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", TestTokenIssuer.Issue(subject, scope));
         return http;
+    }
+
+    [Fact]
+    public async Task PostQuery_notifies_performer_by_database_email_and_signalr()
+    {
+        _fixture.ResetAndSeedRdvQueryGraph();
+        var manager = _fixture.Services.GetRequiredService<IConnexionManager>();
+        manager.OnConnected("rdv-alice", "alice", false);
+        try
+        {
+            using var http = NewClient("bob");
+            var response = await http.PostAsJsonAsync("/api/v1/billing/Rdv", new
+            {
+                ActivityCode = "dev", PerformerId = "alice", ClientId = "spoofed",
+                Consent = true, EventDate = DateTime.UtcNow.AddDays(1),
+                Location = new { Address = "Notification test", Latitude = 48.0, Longitude = 2.0 },
+                Reason = "Demande notifiée", Status = QueryStatus.Inserted
+            }, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            var query = await response.Content.ReadFromJsonAsync<RdvQuery>(TestContext.Current.CancellationToken);
+            using var scope = _fixture.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var notification = Assert.Single(db.Notification);
+            Assert.Equal("user/alice", notification.Target);
+            Assert.Equal($"rdv/{query!.Id}", notification.tag);
+            Assert.Contains("bob", notification.title);
+            var delivery = _fixture.Services.GetRequiredService<RecordingMessageDelivery>();
+            Assert.Equal("alice@example.test", Assert.Single(delivery.Emails).Recipient);
+            var push = Assert.Single(delivery.Pushes);
+            Assert.Equal("rdv-alice", push.ConnectionId);
+            Assert.Equal("push", push.Method);
+            Assert.Equal("/topic/RdvQuery", push.Arguments[0]);
+        }
+        finally
+        {
+            manager.OnDisconnected("rdv-alice");
+        }
+    }
+
+    [Theory]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public async Task PostQuery_respects_performer_contact_preferences(bool acceptsNotifications, bool acceptsPublicContact)
+    {
+        _fixture.ResetAndSeedRdvQueryGraph();
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var performer = db.Performers.Single(p => p.PerformerId == "alice");
+            performer.AcceptNotifications = acceptsNotifications;
+            performer.AcceptPublicContact = acceptsPublicContact;
+            await db.SaveChangesAsync(TestContext.Current.CancellationToken);
+        }
+        using var http = NewClient("bob");
+        var response = await http.PostAsJsonAsync("/api/v1/billing/Rdv", new
+        {
+            ActivityCode = "dev", PerformerId = "alice", Consent = true,
+            EventDate = DateTime.UtcNow.AddDays(1),
+            Location = new { Address = "Contact refused", Latitude = 48.0, Longitude = 2.0 },
+            Reason = "Demande", Status = QueryStatus.Inserted
+        }, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        using var assertScope = _fixture.Services.CreateScope();
+        var assertDb = assertScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        Assert.Empty(assertDb.Notification);
+        Assert.Empty(_fixture.Services.GetRequiredService<RecordingMessageDelivery>().Emails);
     }
 
     [Fact]

@@ -322,6 +322,8 @@ namespace Yavsc.ApiControllers
             await User.ReceiveProSignatureAsync(billingCode,id,Request.Form.Files[0],"cli", siteSettings);
             estimate.ClientValidationDate = DateTime.UtcNow;
             dbContext.SaveChanges(User.GetUserId());
+            var signedEvent = new ClientEstimateSignedEvent(estimate, estimate.Client.UserName);
+            await _GCMSender.NotifyAsync(new[] { signedEvent.PerformerId }, signedEvent);
             return Ok (new { ClientValidationDate = estimate.ClientValidationDate });
         }
 
@@ -382,12 +384,9 @@ namespace Yavsc.ApiControllers
                 .FirstOrDefaultAsync(e => e.Id == id, token);
             if (estimate is null) return NotFound(new { Error = "estimate not found" });
 
-            // The signer is identified by userId in the body, not
-            // by the bearer token, because the OAuth scope we
-            // carry is for the API client (PostIt), not the end
-            // user. We trust the body's userId to match either
-            // Owner or Client, and reject everything else.
             var userId = body.SignerUserId;
+            if (userId != User.GetUserId())
+                return Forbid();
             if (userId != estimate.OwnerId && userId != estimate.ClientId)
                 return Forbid();
 
@@ -414,6 +413,9 @@ namespace Yavsc.ApiControllers
             var signature = await EstimateSignaturePersister.StageAsync(
                 dbContext, id, type, userId, payload, token);
 
+            if (type == SignatureType.Client)
+                estimate.ClientValidationDate = DateTime.UtcNow;
+
             try
             {
                 await dbContext.SaveChangesAsync(token);
@@ -422,6 +424,12 @@ namespace Yavsc.ApiControllers
             {
                 logger.LogError(ex, "estimate {Id}: signature db write failed", id);
                 return BadRequest(new { Error = "db write failed", Detail = ex.Message });
+            }
+
+            if (type == SignatureType.Client)
+            {
+                var signedEvent = new ClientEstimateSignedEvent(estimate, estimate.Client.UserName);
+                await _GCMSender.NotifyAsync(new[] { signedEvent.PerformerId }, signedEvent);
             }
 
             var location = Url.Action(nameof(Sign), new { id })
@@ -441,9 +449,8 @@ namespace Yavsc.ApiControllers
 /// <summary>
 /// JSON body of <c>POST /api/bill/estimate/{id}/sign</c>. The
 /// shape mirrors what PostIt sends; the <c>signerUserId</c>
-/// field disambiguates which side of the estimate signed
-/// because the bearer token belongs to the PostIt OAuth
-/// client, not the end user.
+/// field must match the authenticated caller and identifies
+/// which party of the estimate signed.
 /// </summary>
 public class SignatureSubmission
 {

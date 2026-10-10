@@ -16,6 +16,9 @@ using Yavsc.Models.Relationship;
 using Yavsc.Models.Workflow;
 using Yavsc.Services;
 using Yavsc.Tests.Shared;
+using Microsoft.AspNetCore.SignalR;
+using Yavsc.Interface;
+using Yavsc.Server.Hubs;
 
 namespace Yavsc.Api.Test.Fixtures;
 
@@ -64,8 +67,13 @@ public sealed class ApiWebServerFixture : WebHostFixture
 
         builder.Services.AddLocalization();
         builder.Services.Configure<GoogleAuthSettings>(_ => { });
+        builder.Services.Configure<SiteSettings>(settings => settings.Authority = "example.test");
         builder.Services.AddTransient<IBillingService, BillingService>();
-        builder.Services.AddTransient<IYavscMessageSender, NoopMessageSender>();
+        builder.Services.AddSingleton<RecordingMessageDelivery>();
+        builder.Services.AddSingleton<ITrueEmailSender>(sp => sp.GetRequiredService<RecordingMessageDelivery>());
+        builder.Services.AddSingleton<IHubContext<ChatHub>>(sp => sp.GetRequiredService<RecordingMessageDelivery>());
+        builder.Services.AddSingleton<IConnexionManager, HubConnectionManager>();
+        builder.Services.AddTransient<IYavscMessageSender, YavscMessageSender>();
         builder.Services.AddAuthorization(options =>
         {
             options.AddPolicy("AdministratorOnly", policy =>
@@ -204,23 +212,9 @@ public sealed class ApiWebServerFixture : WebHostFixture
         return builder.ToString();
     }
 
-    private sealed class NoopMessageSender : IYavscMessageSender
-    {
-        public Task<MessageWithPayloadResponse> NotifyBookQueryAsync(IEnumerable<string> connectionIds, RdvQueryEvent ev)
-            => Task.FromResult(new MessageWithPayloadResponse());
-
-        public Task<MessageWithPayloadResponse> NotifyEstimateAsync(IEnumerable<string> connectionIds, EstimationEvent ev)
-            => Task.FromResult(new MessageWithPayloadResponse());
-
-        public Task<MessageWithPayloadResponse> NotifyHairCutQueryAsync(IEnumerable<string> connectionIds, HairCutQueryEvent ev)
-            => Task.FromResult(new MessageWithPayloadResponse());
-
-        public Task<MessageWithPayloadResponse> NotifyAsync(IEnumerable<string> connectionIds, IEvent yaev)
-            => Task.FromResult(new MessageWithPayloadResponse());
-    }
-
     public void ResetAndSeedActivityGraph()
     {
+        Services.GetRequiredService<RecordingMessageDelivery>().Clear();
         using var scope = Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
@@ -334,6 +328,8 @@ public sealed class ApiWebServerFixture : WebHostFixture
             // CommandLine reference NominativeServiceCommand (CommandId) and
             // must be deleted before the Rdv/HairCut/HairMultiCut queries.
             db.Set<CommandLine>().RemoveRange(db.Set<CommandLine>());
+            db.DismissClicked.RemoveRange(db.DismissClicked);
+            db.Notification.RemoveRange(db.Notification);
             db.Set<Estimate>().RemoveRange(db.Set<Estimate>());
             db.Set<RdvQuery>().RemoveRange(db.Set<RdvQuery>());
             db.Set<HairCutQuery>().RemoveRange(db.Set<HairCutQuery>());

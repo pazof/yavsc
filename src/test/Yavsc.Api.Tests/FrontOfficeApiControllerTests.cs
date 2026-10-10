@@ -10,6 +10,7 @@ using Yavsc.Models;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Workflow;
 using Yavsc.Tests.Shared;
+using Yavsc.Services;
 
 namespace Yavsc.Api.Test;
 
@@ -138,6 +139,8 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
 
         // Default caller is "alice" (the provider) → ProAccepted.
         Assert.Equal(QueryStatus.ProAccepted, updated.Status);
+        Assert.Empty(assertDb.Notification);
+        Assert.Empty(_fixture.Services.GetRequiredService<RecordingMessageDelivery>().Emails);
     }
 
     [Fact]
@@ -165,6 +168,8 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
         var signature = assertDb.Signatures.Single(s => s.EstimateId == estimateId);
         Assert.Equal(SignatureType.Pro, signature.Type);
         Assert.Equal("alice", signature.SignerId);
+        Assert.Empty(assertDb.Notification);
+        Assert.Empty(_fixture.Services.GetRequiredService<RecordingMessageDelivery>().Emails);
     }
 
     [Fact]
@@ -192,6 +197,48 @@ public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFi
         var signature = assertDb.Signatures.Single(s => s.EstimateId == estimateId);
         Assert.Equal(SignatureType.Client, signature.Type);
         Assert.Equal("bob", signature.SignerId);
+        var notification = Assert.Single(assertDb.Notification);
+        Assert.Equal("user/alice", notification.Target);
+        Assert.Equal($"estimate/{estimateId}/client-signed", notification.tag);
+        Assert.Contains("bob", notification.body);
+        Assert.Contains("Devis prestation", notification.body);
+        var email = Assert.Single(_fixture.Services.GetRequiredService<RecordingMessageDelivery>().Emails);
+        Assert.Equal("alice@example.test", email.Recipient);
+        Assert.Equal("Devis signé par le client", email.Subject);
+    }
+
+    [Fact]
+    public async Task Client_signature_pushes_to_the_performer_even_without_confirmed_email()
+    {
+        var (queryId, estimateId) = SeedQuery(withEstimate: true);
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.Users.Single(u => u.Id == "alice").EmailConfirmed = false;
+            await db.SaveChangesAsync(TestContext.Current.CancellationToken);
+        }
+        var manager = _fixture.Services.GetRequiredService<IConnexionManager>();
+        manager.OnConnected("signed-alice", "alice", false);
+        try
+        {
+            using var http = NewClient("bob");
+            var response = await http.PostAsync(
+                $"/api/v1/front/query/accept?billingCode=Rdv&queryId={queryId}",
+                WithSignature(), TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var delivery = _fixture.Services.GetRequiredService<RecordingMessageDelivery>();
+            Assert.Empty(delivery.Emails);
+            var push = Assert.Single(delivery.Pushes);
+            Assert.Equal("signed-alice", push.ConnectionId);
+            Assert.Equal("ClientEstimateSigned", push.Arguments[0]);
+            using var scope = _fixture.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            Assert.Equal($"estimate/{estimateId}/client-signed", Assert.Single(db.Notification).tag);
+        }
+        finally
+        {
+            manager.OnDisconnected("signed-alice");
+        }
     }
 
     [Fact]

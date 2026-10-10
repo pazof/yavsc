@@ -9,6 +9,7 @@ using Yavsc.Models.Google.Messaging;
 using Yavsc.Models.Haircut;
 using Yavsc.Models.Messaging;
 using Yavsc.Server.Hubs;
+using Yavsc.Abstract.Models.Messaging;
 
 namespace Yavsc.Services
 {
@@ -30,7 +31,7 @@ namespace Yavsc.Services
             IHubContext<ChatHub> hubContext
         )
         {
-            _logger = loggerFactory.CreateLogger<MailSender>();
+            _logger = loggerFactory.CreateLogger<YavscMessageSender>();
             _emailSender = emailSender;
             siteSettings = sitesOptions?.Value;
             this.hubContext = hubContext;
@@ -70,34 +71,51 @@ namespace Yavsc.Services
                     };
 
                     var user = _dbContext.Users.FirstOrDefault(u => u.Id == userId);
+                    results.Add(result);
                     if (user == null)
                     {
                         response.failure++;
                         result.error = "no such user.";
                         continue;
                     }
-                    if (!user.EmailConfirmed)
-                    {
-                        response.failure++;
-                        result.error = "user has not confirmed his email address.";
-                        continue;
-                    }
-                    if (user.Email == null)
-                    {
-                        response.failure++;
-                        result.error = "user has no legacy email address.";
-                        continue;
-                    }
-
                     var body = ev.CreateBody();
+                    var subject = ev is ClientEstimateSignedEvent signed
+                        ? signed.Title
+                        : $"{ev.Sender} (un client) vous demande un rendez-vous";
 
+                    if (ev is RdvQueryEvent || ev is ClientEstimateSignedEvent)
+                    {
+                        _dbContext.Notification.Add(new Notification
+                        {
+                            title = subject.Length > 1024 ? subject[..1024] : subject,
+                            body = body.Length > 512 ? body[..512] : body,
+                            Target = $"user/{userId}",
+                            tag = ev switch
+                            {
+                                ClientEstimateSignedEvent estimateEvent => $"estimate/{estimateEvent.EstimateId}/client-signed",
+                                RdvQueryEvent rdvEvent => $"rdv/{rdvEvent.Id}",
+                                _ => throw new InvalidOperationException("Unsupported persistent notification event.")
+                            },
+                            click_action = "Fermer"
+                        });
+                        await _dbContext.SaveChangesAsync(ev.Sender);
+                    }
 
-                    _logger.LogDebug($"Sending to {user.UserName} <{user.Email}> : {body}");
-
+                    if (!user.EmailConfirmed || string.IsNullOrWhiteSpace(user.Email))
+                    {
+                        response.failure++;
+                        result.error = !user.EmailConfirmed
+                            ? "user has not confirmed his email address."
+                            : "user has no legacy email address.";
+                        _logger.LogWarning("Email notification not sent to {UserId}: {Reason}", userId, result.error);
+                    }
+                    else
+                    {
                         result.message_id = await _emailSender.SendEmailAsync(user.UserName, user.Email,
-                        $"{ev.Sender} (un client) vous demande un rendez-vous",
+                        subject,
                     body + Environment.NewLine);
                         response.success++;
+                    }
 
                     var cxIds = _cxManager.GetConnexionIds(user.UserName);
                     if (cxIds == null)
@@ -125,7 +143,6 @@ namespace Yavsc.Services
 
                         response.success++;
                     }
-                    results.Add(result);
                 }
                 response.results = results.ToArray();
                 return response;

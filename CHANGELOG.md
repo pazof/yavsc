@@ -4,6 +4,11 @@
 
 ### Added
 
+* [Yavsc.Api] Notification du performer à la création d'un rendez-vous
+  depuis PostIt, selon ses préférences de contact, sans supprimer l'envoi Org.
+* [Yavsc.Api][Yavsc.Server] Notification du performer à la signature
+  client d'un devis (JSON ou image), enregistrée pour l'accueil PostIt
+  et transmise par e-mail et SignalR.
 * [Yavsc.Api] Nouveau point d'entrée `GET /api/v1/notifications/me`
   pour exposer les notifications publiques et ciblées à PostIt sur la
   Home page ; les notifications d'administration restent filtrées.

@@ -1,3 +1,5 @@
+#nullable enable annotations
+
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,7 @@ using Yavsc.Helpers;
 using Yavsc.Models;
 using Yavsc.Models.Billing;
 using Yavsc.Models.Blog;
+using Yavsc.Models.Messaging;
 using Yavsc.Services;
 using Yavsc.Server.Helpers;
 using Yavsc.ViewModels.FrontOffice;
@@ -26,6 +29,7 @@ namespace Yavsc.ApiControllers
         private readonly ILogger logger;
         private readonly SiteSettings siteSettings;
         private readonly IRazorViewEngine viewEngine;
+        private readonly IYavscMessageSender messageSender;
 
         // The view-rendering dependencies (siteSettings, viewEngine) are
         // optional: only EstimateTex/EstimatePdf use them, and those run in
@@ -45,11 +49,13 @@ namespace Yavsc.ApiControllers
         public FrontOfficeApiController(
             ApplicationDbContext context,
             ILoggerFactory loggerFactory,
+            IYavscMessageSender messageSender,
             IOptions<SiteSettings> siteSettings = null,
             IRazorViewEngine viewEngine = null,
             IBillingService billing = null)
         {
             dbContext = context;
+            this.messageSender = messageSender;
             this.billing = billing ?? new BillingService(context);
             logger = loggerFactory.CreateLogger<FrontOfficeApiController>();
             this.siteSettings = siteSettings?.Value;
@@ -233,6 +239,7 @@ namespace Yavsc.ApiControllers
             if (query is null) return BadRequest(new { Error = "query not found" });
 
             Signature? signature = null;
+            ClientEstimateSignedEvent? signedEvent = null;
             // actingRole is the role the caller is signing / accepting
             // as. It defaults to the role inferred from the caller's
             // identity, but when a signature is submitted the caller
@@ -299,7 +306,11 @@ namespace Yavsc.ApiControllers
                 if (actingRole == ActorRole.Provider)
                     estimate.ProviderValidationDate = DateTime.UtcNow;
                 else
+                {
                     estimate.ClientValidationDate = DateTime.UtcNow;
+                    var signer = await dbContext.Users.SingleAsync(u => u.Id == uid, token);
+                    signedEvent = new ClientEstimateSignedEvent(estimate, signer.UserName);
+                }
             }
 
             // The party-specific status records who accepted: the
@@ -322,6 +333,9 @@ namespace Yavsc.ApiControllers
                 logger.LogError(ex, "query {QueryId}: accept db write failed", queryId);
                 return BadRequest(new { Error = "db write failed", Detail = ex.Message });
             }
+
+            if (signedEvent is not null)
+                await messageSender.NotifyAsync(new[] { signedEvent.PerformerId }, signedEvent);
 
             return Ok(new
             {

@@ -11,28 +11,6 @@ namespace Yavsc.Helpers
 
     public static class EventHelpers
     {
-        public static RdvQueryEvent CreateEvent(this RdvQuery query, string subtopic)
-        {
-            var yaev = new RdvQueryEvent(subtopic)
-            {
-                Sender = query.ClientId,
-                Reason = query.Reason,
-                Client =  new ClientProviderInfo {
-                    UserName = query.Client.UserName ,
-                    UserId = query.ClientId,
-                    Avatar = query.Client.Avatar }  ,
-                Previsional = query.Provisional,
-                EventDate = query.EventDate,
-                Location = query.Location,
-                Id = query.Id,
-                ActivityCode = query.ActivityCode,
-                BillingCode = BillingCodes.Rdv
-            };
-
-            return yaev;
-        }
-
-
         public static HairCutQueryEvent CreateNewHairCutQueryEvent(this HairCutQuery query,
         IStringLocalizer<HairCutQuery> SR)
         {

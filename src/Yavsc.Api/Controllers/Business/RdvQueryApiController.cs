@@ -10,6 +10,8 @@ using Yavsc.Models.Billing;
 using Yavsc.Models.Relationship;
 using Yavsc.Models.Workflow;
 using Yavsc.Server.Helpers;
+using Yavsc.Helpers;
+using Yavsc.Services;
 
 namespace Yavsc.Controllers;
 
@@ -19,10 +21,12 @@ namespace Yavsc.Controllers;
 public class RdvQueryApiController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IYavscMessageSender _messageSender;
 
-    public RdvQueryApiController(ApplicationDbContext context)
+    public RdvQueryApiController(ApplicationDbContext context, IYavscMessageSender messageSender)
     {
         _context = context;
+        _messageSender = messageSender;
     }
 
     [HttpGet]
@@ -93,6 +97,16 @@ public class RdvQueryApiController : Controller
             return BadRequest(new { Error = "location is required" });
         }
 
+        var performer = await _context.Performers
+            .AsNoTracking()
+            .SingleOrDefaultAsync(p => p.PerformerId == query.PerformerId, cancellationToken);
+        if (performer is null)
+            return BadRequest(new { Error = "performer not found" });
+        var client = await _context.Users.SingleOrDefaultAsync(u => u.Id == uid, cancellationToken);
+        if (client is null)
+            return Unauthorized();
+        query.Client = client;
+
         var resolvedLocation = await ResolveLocationAsync(query.Location, cancellationToken);
         if (resolvedLocation is null)
         {
@@ -123,6 +137,9 @@ public class RdvQueryApiController : Controller
 
             throw;
         }
+
+        if (performer.AcceptNotifications && performer.AcceptPublicContact)
+            await _messageSender.NotifyBookQueryAsync(new[] { performer.PerformerId }, query.CreateEvent("NewCommand"));
 
         return CreatedAtRoute("GetRdvQuery", new { id = query.Id }, query);
     }
