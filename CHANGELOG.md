@@ -1,6 +1,18 @@
 # Changelog
 
+## [1.0.8-rc25] - unstable
 
+### Added
+
+### Changed
+
+### Fixed
+
+* [Yavsc.Api][Yavsc.Blogs] Les appels API et la bande passante sont
+  désormais enregistrés côté serveur pour les requêtes authentifiées :
+  le middleware de télémétrie est maintenant branché après
+  l'authentification, ce qui permet de comptabiliser `ApiCalls` et
+  `BandwidthMb` au lieu d'enregistrer des zéros.
 
 ## [1.0.8-rc24] - unstable
 

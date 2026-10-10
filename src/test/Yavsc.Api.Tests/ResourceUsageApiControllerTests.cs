@@ -99,6 +99,23 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
     }
 
     [Fact]
+    public async Task GetCurrentUserUsage_records_telemetry_values_from_authenticated_requests()
+    {
+        using var http = NewClient(_fixture, "telemetry-user");
+
+        var response = await http.GetAsync("/api/v1/resource-usage/me", TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        using var scope = _fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<Yavsc.Models.ApplicationDbContext>();
+        var record = await db.ResourceUsageRecords
+            .SingleAsync(r => r.UserId == "telemetry-user");
+
+        Assert.True(record.ApiCalls >= 1m);
+        Assert.True(record.BandwidthMb > 0m);
+    }
+
+    [Fact]
     public async Task GetAdminOverview_returns_latest_usage_snapshot_for_each_user()
     {
         using var http = NewClient(_fixture, "alice");

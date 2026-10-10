@@ -134,11 +134,11 @@ internal class Program
             if (app.Environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
-            app.UseMiddleware<ResourceUsageTelemetryMiddleware>();
             app
                 .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
+                .UseMiddleware<ResourceUsageTelemetryMiddleware>()
                 .UseCors("default");
             app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope");
             app.MapDefaultControllerRoute();

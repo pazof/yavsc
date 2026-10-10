@@ -98,11 +98,11 @@ internal class Program
         {
             if (app.Environment.IsDevelopment())
                 app.UseDeveloperExceptionPage();
-            app.UseMiddleware<ResourceUsageTelemetryMiddleware>();
             app
                 .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
+                .UseMiddleware<ResourceUsageTelemetryMiddleware>()
                 .UseCors("default")
                 ;
             app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Program")
