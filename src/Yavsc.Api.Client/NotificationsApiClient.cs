@@ -45,6 +45,9 @@ public sealed class NotificationsApiClient
             ct: ct);
     }
 
+    public Task<List<Notification>> GetPublicAsync(CancellationToken ct = default)
+        => _api.GetAnonymousAsync<List<Notification>>(Absolute(PathPrefix), ct);
+
     private string Absolute(string relativePath) => new Uri(ResolveBusinessBaseAddress(), relativePath).ToString();
 
     private Uri ResolveBusinessBaseAddress()

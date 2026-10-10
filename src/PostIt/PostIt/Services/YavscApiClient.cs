@@ -39,6 +39,16 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
     private readonly SemaphoreSlim _refreshGate = new(1, 1);
 
     private RefreshTokenRecord? _tokens;
+    private static readonly HttpRequestOptionsKey<bool> AnonymousRequest = new("PostIt.AnonymousRequest");
+
+    public virtual async Task<T> GetAnonymousAsync<T>(string path, CancellationToken ct = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, path);
+        request.Options.Set(AnonymousRequest, true);
+        using var response = await Http.SendAsync(request, ct).ConfigureAwait(false);
+        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
+        return await ReadJsonAsync<T>(response, ct).ConfigureAwait(false);
+    }
 
     public YavscApiClient(Settings settings, TokenStore store, OidcClient? oidc = null)
     {
@@ -614,7 +624,8 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (_owner._tokens is not null)
+            if (_owner._tokens is not null
+                && !(request.Options.TryGetValue(AnonymousRequest, out var anonymous) && anonymous))
                 request.Headers.Authorization = new AuthenticationHeaderValue(
                     "Bearer", _owner._tokens.AccessToken);
             return base.SendAsync(request, cancellationToken);

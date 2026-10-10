@@ -17,6 +17,56 @@ namespace PostIt.Tests;
 /// </summary>
 public class YavscApiClientTests
 {
+    [Fact]
+    public async Task GetAnonymousAsync_surfaces_http_errors_without_attempting_login_or_retry()
+    {
+        using var apiServer = new StubApiServer(forceFirstRequest: true);
+        await apiServer.StartAsync();
+        var tokensPath = TokensPath();
+        try
+        {
+            await using var client = new YavscApiClient(new Settings(), new TokenStore(tokensPath));
+            await Assert.ThrowsAsync<HttpRequestException>(() =>
+                client.GetAnonymousAsync<List<StubApiServer.Post>>(
+                    apiServer.BaseUrl + "/posts", TestContext.Current.CancellationToken));
+            Assert.Equal(1, apiServer.RequestCount);
+            Assert.Empty(apiServer.SeenBearers);
+        }
+        finally
+        {
+            File.Delete(tokensPath);
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task GetAnonymousAsync_does_not_require_or_send_session_credentials(bool hasSession)
+    {
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+        var tokensPath = TokensPath();
+        try
+        {
+            var store = new TokenStore(tokensPath);
+            if (hasSession)
+                store.Save(new RefreshTokenRecord("test-access-token", "test-refresh-token",
+                    DateTimeOffset.UtcNow.AddHours(1), null));
+            await using var client = new YavscApiClient(new Settings(), store);
+
+            var posts = await client.GetAnonymousAsync<List<StubApiServer.Post>>(
+                apiServer.BaseUrl + "/posts", TestContext.Current.CancellationToken);
+
+            Assert.Equal(2, posts.Count);
+            Assert.Equal(1, apiServer.RequestCount);
+            Assert.Empty(apiServer.SeenBearers);
+        }
+        finally
+        {
+            File.Delete(tokensPath);
+        }
+    }
+
     private static int GetFreePort()
     {
         var l = new TcpListener(IPAddress.Loopback, 0);

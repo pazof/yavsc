@@ -42,6 +42,10 @@ public interface IYavscApiClient : IAsyncDisposable
     /// </summary>
     HttpClient Http { get; }
 
+    /// <summary>Read a public JSON endpoint without attaching session credentials.</summary>
+    Task<T> GetAnonymousAsync<T>(string path, CancellationToken ct = default)
+        => throw new NotSupportedException("Anonymous requests are not supported by this transport.");
+
     /// <summary>Call a JSON endpoint with a typed return value.</summary>
     /// <param name="method">HTTP verb.</param>
     /// <param name="path">Path relative to <see cref="HttpClient.BaseAddress"/>.</param>

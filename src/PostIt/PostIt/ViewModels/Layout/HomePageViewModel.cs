@@ -1,11 +1,16 @@
 using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels.Chat;
+using Yavsc.Abstract.Models.Messaging;
 using Yavsc.Api.Client;
+
 namespace PostIt.ViewModels;
 
 public class HomePageViewModel : ViewModelBase
@@ -13,6 +18,26 @@ public class HomePageViewModel : ViewModelBase
     public YavscApiClient Api { get; }
     public Settings Settings { get; }
     public SessionStatusViewModel SessionStatus { get; }
+    public ObservableCollection<Notification> Notifications { get; } = new();
+    private readonly NotificationsApiClient? _notificationsClient;
+    private int _notificationsLoadVersion;
+    private bool _isLoadingNotifications;
+    private string? _notificationsError;
+    private bool _notificationsLoaded;
+
+    public bool IsLoadingNotifications
+    {
+        get => _isLoadingNotifications;
+        private set => SetProperty(ref _isLoadingNotifications, value);
+    }
+
+    public string? NotificationsError
+    {
+        get => _notificationsError;
+        private set => SetProperty(ref _notificationsError, value);
+    }
+
+    public bool HasNoNotifications => _notificationsLoaded && Notifications.Count == 0;
 
     private string _welcomeText = "Welcome to PostIt!";
     public string WelcomeText
@@ -24,11 +49,16 @@ public class HomePageViewModel : ViewModelBase
     public override bool CanNavigateNext { get => true; protected set => throw new System.NotImplementedException(); }
     public override bool CanNavigatePrevious { get => false; protected set => throw new System.NotImplementedException(); }
 
-    public HomePageViewModel(YavscApiClient api, Settings settings, SessionStatusViewModel sessionStatus)
+    public HomePageViewModel(YavscApiClient api, Settings settings, SessionStatusViewModel sessionStatus,
+        NotificationsApiClient notificationsClient)
     {
         Api = api;
         Settings = settings;
         SessionStatus = sessionStatus;
+        _notificationsClient = notificationsClient;
+        SessionStatus.PropertyChanged += OnSessionStatusChanged;
+        RefreshNotificationsCommand = new AsyncRelayCommand(RefreshNotificationsAsync,
+            () => _notificationsClient is not null);
 
         OpenActivities = new AsyncRelayCommand(OpenActivitiesAsync);
         OpenProviderRequests = new AsyncRelayCommand(OpenProviderRequestsAsync);
@@ -55,6 +85,59 @@ public class HomePageViewModel : ViewModelBase
     public IAsyncRelayCommand OpenClientEstimates { get; }
     public IAsyncRelayCommand OpenProviderEstimates { get; }
     public IAsyncRelayCommand OpenMyFiles { get; }
+    public IAsyncRelayCommand RefreshNotificationsCommand { get; }
+
+    public async Task RefreshNotificationsAsync()
+    {
+        if (_notificationsClient is null)
+            throw new InvalidOperationException("Notifications client is not available.");
+
+        var version = ++_notificationsLoadVersion;
+        Notifications.Clear();
+        NotificationsError = null;
+        _notificationsLoaded = false;
+        OnPropertyChanged(nameof(HasNoNotifications));
+        IsLoadingNotifications = true;
+        try
+        {
+            var notifications = SessionStatus.IsLoggedIn
+                ? await _notificationsClient.GetCurrentAsync()
+                : await _notificationsClient.GetPublicAsync();
+            if (version != _notificationsLoadVersion)
+                return;
+            if (notifications is null)
+                throw new InvalidOperationException("The notifications response is empty.");
+
+            foreach (var notification in notifications)
+                Notifications.Add(notification);
+            _notificationsLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            if (version == _notificationsLoadVersion)
+                NotificationsError = $"Impossible de charger les notifications : {ex.Message}";
+        }
+        finally
+        {
+            if (version == _notificationsLoadVersion)
+            {
+                IsLoadingNotifications = false;
+                OnPropertyChanged(nameof(HasNoNotifications));
+            }
+        }
+    }
+
+    private void OnSessionStatusChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(SessionStatusViewModel.IsLoggedIn) || _notificationsClient is null)
+            return;
+
+        // Logout can complete on a worker thread; collections and bindings belong to the UI thread.
+        if (Dispatcher.UIThread.CheckAccess())
+            _ = RefreshNotificationsAsync();
+        else
+            Dispatcher.UIThread.Post(() => _ = RefreshNotificationsAsync());
+    }
 
     private async Task OpenActivitiesAsync()
     {
@@ -228,7 +311,7 @@ public class HomePageViewModel : ViewModelBase
     /// (thread-safe dispatcher marshalling on PropertyChanged) — a
     /// designer-only duplicate instance is therefore harmless.
     /// </summary>
-    public HomePageViewModel() : this(null!, new Settings(), new SessionStatusViewModel())
+    public HomePageViewModel() : this(null!, new Settings(), new SessionStatusViewModel(), null!)
     {
 
     }
