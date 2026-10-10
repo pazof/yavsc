@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Yavsc.Abstract.Models.Messaging;
 using Yavsc.Abstract.Resources;
 using Yavsc.Api.Test.Fixtures;
 using Yavsc.Server.Helpers;
@@ -113,6 +114,49 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
 
         Assert.True(record.ApiCalls >= 1m);
         Assert.True(record.BandwidthMb > 0m);
+    }
+
+    [Fact]
+    public async Task GetCurrentUserNotifications_returns_public_and_targeted_notifications()
+    {
+        using var scope = _fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<Yavsc.Models.ApplicationDbContext>();
+
+        db.Notification.RemoveRange(db.Notification);
+        await db.Notification.AddRangeAsync(
+            new Notification
+            {
+                title = "Public",
+                body = "Seen by everyone",
+                click_action = "/public",
+                Target = null,
+            },
+            new Notification
+            {
+                title = "User",
+                body = "Private to current user",
+                click_action = "/profile",
+                Target = "user/telemetry-user",
+            },
+            new Notification
+            {
+                title = "Admin",
+                body = "Restricted to administrators",
+                click_action = "/admin",
+                Target = "administration",
+            });
+        await db.SaveChangesAsync();
+
+        using var http = NewClient(_fixture, "telemetry-user");
+
+        var response = await http.GetAsync("/api/v1/notifications/me", TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var notifications = await response.Content.ReadFromJsonAsync<List<Notification>>(TestContext.Current.CancellationToken);
+        Assert.NotNull(notifications);
+        Assert.Contains(notifications!, n => n.title == "Public");
+        Assert.Contains(notifications!, n => n.title == "User");
+        Assert.DoesNotContain(notifications!, n => n.title == "Admin");
     }
 
     [Fact]

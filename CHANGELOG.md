@@ -4,6 +4,10 @@
 
 ### Added
 
+* [Yavsc.Api] Nouveau point d'entrée `GET /api/v1/notifications/me`
+  pour exposer les notifications publiques et ciblées à PostIt sur la
+  Home page ; les notifications d'administration restent filtrées.
+
 ### Changed
 
 ### Fixed
