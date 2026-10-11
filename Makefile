@@ -5,8 +5,6 @@ DESTDIR=/tmp/yavsc
 APP_PATH=srv/www/yavsc
 APP_FULL_PATH=$(DESTDIR)/$(APP_PATH)
 
-include .env
-
 all:
 	dotnet build --nologo
 
