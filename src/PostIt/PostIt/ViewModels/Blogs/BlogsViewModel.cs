@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using Yavsc.Abstract.Files;
+using Yavsc.Server.Helpers;
 using AvaloniaEdit.Document;
 
 namespace PostIt.ViewModels;
@@ -611,7 +612,8 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
         foreach (var attachment in attachments)
         {
-            var relativePath = $"{EscapePathSegment(ownerSegment)}/blogs/{post.Id}/{EscapePathSegment(attachment.FileName)}";
+            var storedName = AbstractFileSystemHelpers.FilterFileName(attachment.FileName);
+            var relativePath = $"{EscapePathSegment(ownerSegment)}/blogs/{post.Id}/{EscapePathSegment(storedName)}";
             var fileUrl = ResolveUserFileUrl(relativePath);
             var markdownLine = $"- [{attachment.FileName}]({fileUrl})";
 
@@ -636,7 +638,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         if (!string.IsNullOrWhiteSpace(authority)
             && Uri.TryCreate(authority, UriKind.Absolute, out var baseUri))
         {
-            return FileServerUrlHelpers.GetUserFilesUri(baseUri, relativePath).ToString();
+            return FileServerUrlHelpers.GetUserFilesUri(baseUri, relativePath).AbsoluteUri;
         }
 
         return $"{Yavsc.Constants.UserFilesPath}/{relativePath}";

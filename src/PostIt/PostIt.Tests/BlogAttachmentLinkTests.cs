@@ -20,8 +20,13 @@ namespace PostIt.Tests;
 /// </summary>
 public class BlogAttachmentLinkTests
 {
-    [Fact]
-    public async Task Save_with_attachment_appends_absolute_link_derived_from_the_oidc_authority()
+    [Theory]
+    [InlineData("note.txt", "note.txt")]
+    [InlineData("INSC_E03686381_SCHNEIDER_000113378AA__Troisi\u00e8me__.PDF",
+        "INSC_E03686381_SCHNEIDER_000113378AA__Troisi_232me__.PDF")]
+    [InlineData("rapport final.pdf", "rapport%20final.pdf")]
+    public async Task Save_with_attachment_appends_absolute_link_derived_from_the_oidc_authority(
+        string originalName, string urlName)
     {
         const string authority = "https://idp.example.test";
 
@@ -53,7 +58,7 @@ public class BlogAttachmentLinkTests
         vm.DraftTitle = "Après";
         vm.DraftArticle = "Contenu modifié.";
         vm.DraftAttachments.Add(new BlogUploadFile(
-            "note.txt",
+            originalName,
             System.Text.Encoding.UTF8.GetBytes("payload test"),
             "text/plain"));
 
@@ -68,12 +73,14 @@ public class BlogAttachmentLinkTests
         var sent = Assert.IsType<System.Func<HttpContent>>(linkPut.body);
         var multipartContent = Assert.IsType<MultipartFormDataContent>(sent());
 
-        var expectedUrl = $"{authority}/files/tester/blogs/42/note.txt";
-        var sentStringContent =  multipartContent.First() as StringContent ;
+        var expectedUrl = $"{authority}/files/tester/blogs/42/{urlName}";
+        var sentStringContent = Assert.IsType<StringContent>(multipartContent.First());
 
         var sentString = await sentStringContent.ReadAsStringAsync(TestContext.Current.CancellationToken);
-        Assert.Contains($"- [note.txt]({expectedUrl})", sentString);
+        using var document = System.Text.Json.JsonDocument.Parse(sentString);
+        var article = document.RootElement.GetProperty("article").GetString();
+        Assert.Contains($"- [{originalName}]({expectedUrl})", article);
         // The regression shape: a relative, authority-less link.
-        Assert.DoesNotContain("](/files/", sentString);
+        Assert.DoesNotContain("](/files/", article);
     }
 }

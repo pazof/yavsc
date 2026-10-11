@@ -24,6 +24,10 @@
 
 ### Fixed
 
+* [PostIt] Les liens Markdown des pièces jointes utilisent désormais
+  le même filtre de nom que l'upload serveur, avant l'encodage URL.
+  Le libellé conserve le nom original, notamment ses accents.
+
 * [Yavsc.Abstract][Yavsc.Blogs] Encodage des caractères non supportés
   dans les noms de fichiers téléversés avec `_` au lieu de `#`, pour
   éviter les fragments d'URL et permettre le téléchargement via les
