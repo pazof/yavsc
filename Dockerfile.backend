@@ -1,36 +1,12 @@
 # Utilisation de l'image globale pour le build et l'exécution
-FROM pazof/yavsc-build-env:debian12-dotnet10-android36-v1 AS build-env
+FROM pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v4 AS build-env
 WORKDIR /src
 
-
 # 1. Copie de la solution
-COPY *.sln ./
-COPY Directory.*.props ./
-
-# 2. Copie de l'intégralité des fichiers de projets (.csproj) pour la restauration
-COPY src/Yavsc.Org/*.csproj ./src/Yavsc.Org/
-COPY src/Yavsc.Abstract/*.csproj ./src/Yavsc.Abstract/
-COPY src/Yavsc.Server/*.csproj ./src/Yavsc.Server/
-COPY src/Yavsc.Api/*.csproj ./src/Yavsc.Api/
-COPY src/Yavsc.Blogs/*.csproj ./src/Yavsc.Blogs/
-COPY src/cli/*.csproj ./src/cli/
-COPY src/Yavsc.Org.Tests/*.csproj ./src/Yavsc.Org.Tests/
-
-# Projets associés à PostIt
-COPY src/PostIt/PostIt/*.csproj ./src/PostIt/PostIt/
-COPY src/PostIt/PostIt.Android/*.csproj ./src/PostIt/PostIt.Android/
-COPY src/PostIt/PostIt.Browser/*.csproj ./src/PostIt/PostIt.Browser/
-COPY src/PostIt/PostIt.Desktop/*.csproj ./src/PostIt/PostIt.Desktop/
-
-# 4. Copie de l'intégralité du code source
 COPY . .
-
+RUN dotnet workload restore
 # 4. Restauration des dépendances pour tous les projets
 RUN dotnet restore
-
-# 5. Copie de la totalité du code source (filtrée par votre .dockerignore)
-COPY . .
-
 # 6. Compilation du serveur Web principal
 RUN dotnet build src/Yavsc.Org/Yavsc.Org.csproj -c Release --no-restore -clp:ErrorsOnly
 
