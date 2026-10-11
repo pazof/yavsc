@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Yavsc.Abstract.Identity;
 using Yavsc.Models;
 using Yavsc.Server.Helpers;
@@ -19,14 +20,20 @@ namespace Yavsc.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
 
         private readonly ApplicationDbContext _dbContext;
+        private readonly SiteSettings _siteSettings;
+        private readonly ILogger<AdministrationController> _logger;
 
         public AdministrationController(UserManager<ApplicationUser> userManager,
          RoleManager<IdentityRole> roleManager,
-         ApplicationDbContext context)
+         ApplicationDbContext context,
+         IOptions<SiteSettings> siteSettings,
+         ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             this._dbContext = context;
+            this._siteSettings = siteSettings.Value;
+            this._logger = loggerFactory.CreateLogger<AdministrationController>();
         }
 
 
@@ -92,6 +99,16 @@ namespace Yavsc.Controllers
             }
 
             var user = await _userManager.FindByIdAsync(User.GetUserId());
+
+            var email = user.Email;
+            var isOk = email == _siteSettings.Owner?.EMail || _siteSettings.Admin?.EMail == email;
+            if (!isOk)
+            {
+                if (_siteSettings.Owner==null && _siteSettings.Admin==null)
+                    _logger.LogError("No owner or admin is set in the site settings.");
+                return Forbid();
+            }
+
             // check all user groups exist
             if (!await EnsureRoleList())
             {
