@@ -8,7 +8,7 @@ on:
 
 jobs:
   production-deploy:
-    runs-on: ubuntu-latest
+    runs-on: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v4
 
     steps:
       # 1. Récupération du code
