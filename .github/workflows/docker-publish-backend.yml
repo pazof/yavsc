@@ -32,7 +32,7 @@ jobs:
       - name: Workloads restore
         run: dotnet workload restore
       - name: Test
-        run: dotnet test --report-xunit --report-xunit-html --results-directory "test-reports"
+        run: make test >/dev/null
       # 4. Build et Push de l'image de production finale
       - name: Build and push production image
         uses: docker/build-push-action@v7
