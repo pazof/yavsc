@@ -73,6 +73,14 @@ internal sealed class RecordingYavscApiClient : YavscApiClient
     public override Task<T> CallAsync<T>(HttpMethod method, string path, Func<HttpContent> contentFactory, CancellationToken ct = default)
     {
         _recorder.Calls.Add((method, path, contentFactory));
+        if (typeof(T) == typeof(BlogPostDto))
+            return Task.FromResult((T)(object)new BlogPostDto
+            {
+                Id = 42,
+                Title = "Mon premier billet",
+                AuthorId = "tester",
+                Article = "Contenu du billet de test.",
+            });
         return Task.FromResult(default(T)!);
     }
 }

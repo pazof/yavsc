@@ -17,6 +17,13 @@
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
+  <ContentPage.Styles>
+    <Style Selector="CommandBarButton.modified">
+      <Setter Property="Background" Value="#FFF0C2" />
+      <Setter Property="Foreground" Value="#663C00" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+  </ContentPage.Styles>
   <Grid
     RowDefinitions="Auto,Auto,*"
     Margin="5,5,10,5"
@@ -46,7 +53,9 @@
           </CommandBarButton>
           <CommandBarButton
             x:Name="SaveButton"
-            Command="{Binding SaveAsync}"
+            Command="{Binding SaveCommand}"
+            Classes.modified="{Binding IsDraftModified}"
+            IsEnabled="{Binding !IsBusy}"
             Label="Save">
             <CommandBarButton.Icon>
               <PathIcon Data="{StaticResource SaveIcon}" />
@@ -60,6 +69,7 @@
           <CommandBarButton
             x:Name="AddAttachmentButton"
             Click="AddAttachment_Click"
+            IsEnabled="{Binding !IsBusy}"
             Label="Ajouter fichiers">
             <CommandBarButton.Icon>
               <PathIcon Data="{StaticResource AddIcon}" />
@@ -118,6 +128,7 @@
           BorderThickness="1">
           <ListBox
           x:Name="PostsListBox"
+          IsEnabled="{Binding !IsBusy}"
           ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}">
             <ListBox.ItemTemplate>
               <DataTemplate x:DataType="models:BlogPostDto">

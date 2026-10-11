@@ -19,6 +19,11 @@
 
 ### Changed
 
+* [PostIt] Insertion des liens de fichiers dès leur ajout au brouillon ;
+  les liens provisoires des nouveaux billets sont résolus au premier
+  enregistrement. Save conserve l'édition ouverte et est mis en valeur
+  lorsque le titre, le corps ou les pièces jointes sont modifiés.
+
 * [Projet] Instructions Copilot persistantes : mise à jour du changelog
   par défaut à chaque commit, avec justification explicite des exceptions.
 

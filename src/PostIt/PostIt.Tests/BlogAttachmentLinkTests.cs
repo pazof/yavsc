@@ -62,18 +62,18 @@ public class BlogAttachmentLinkTests
             System.Text.Encoding.UTF8.GetBytes("payload test"),
             "text/plain"));
 
+        var expectedUrl = $"{authority}/files/tester/blogs/42/{urlName}";
+        Assert.Contains($"- [{originalName}]({expectedUrl})", vm.DraftArticle);
+        Assert.Empty(recorder.Calls);
+        var draftBeforeSave = vm.DraftArticle;
+
         await vm.SaveAsync();
 
-        // The update branch issues two PUTs: the multipart one
-        // carrying the file, then — because TryAppendAttachmentLinks
-        // appended a link — a JSON one carrying the final article.
-        var linkPut = recorder.Calls.LastOrDefault(
-            c => c.method == HttpMethod.Put);
+        var linkPut = Assert.Single(recorder.Calls, c => c.method == HttpMethod.Put);
         Assert.NotEqual(default, linkPut);
         var sent = Assert.IsType<System.Func<HttpContent>>(linkPut.body);
         var multipartContent = Assert.IsType<MultipartFormDataContent>(sent());
 
-        var expectedUrl = $"{authority}/files/tester/blogs/42/{urlName}";
         var sentStringContent = Assert.IsType<StringContent>(multipartContent.First());
 
         var sentString = await sentStringContent.ReadAsStringAsync(TestContext.Current.CancellationToken);
@@ -82,5 +82,35 @@ public class BlogAttachmentLinkTests
         Assert.Contains($"- [{originalName}]({expectedUrl})", article);
         // The regression shape: a relative, authority-less link.
         Assert.DoesNotContain("](/files/", article);
+        Assert.Equal(draftBeforeSave, vm.DraftArticle);
+        Assert.NotNull(vm.SelectedPost);
+        Assert.False(vm.IsDraftModified);
+    }
+
+    [Fact]
+    public async Task New_post_resolves_only_the_provisional_link_at_first_save()
+    {
+        var recorder = new CallRecorder();
+        var api = new RecordingYavscApiClient(recorder);
+        var vm = new BlogsViewModel(new BlogApiClient(api, "https://blogs.example.test/api/v1/"),
+            new Settings { Authentication = new AuthenticationSettings { Authority = "https://idp.example.test" } });
+        vm.DraftTitle = "Nouveau billet";
+        vm.DraftArticle = "Texte conservé.";
+        vm.DraftAttachments.Add(new BlogUploadFile("Troisi\u00e8me.PDF", new byte[] { 1 }));
+
+        Assert.Contains("postit-attachment:", vm.DraftArticle);
+        Assert.Empty(recorder.Calls);
+        await vm.SaveAsync();
+
+        Assert.Equal("Nouveau billet", vm.DraftTitle);
+        Assert.Contains("Texte conservé.", vm.DraftArticle);
+        Assert.Contains("- [Troisi\u00e8me.PDF](https://idp.example.test/files/tester/blogs/42/Troisi_232me.PDF)",
+            vm.DraftArticle);
+        Assert.DoesNotContain("postit-attachment:", vm.DraftArticle);
+        Assert.Equal(42, vm.SelectedPost?.Id);
+        Assert.Empty(vm.DraftAttachments);
+        Assert.False(vm.IsDraftModified);
+        Assert.Single(recorder.Calls, c => c.method == HttpMethod.Post);
+        Assert.Single(recorder.Calls, c => c.method == HttpMethod.Put);
     }
 }

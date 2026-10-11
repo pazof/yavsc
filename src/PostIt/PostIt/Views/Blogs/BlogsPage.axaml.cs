@@ -50,7 +50,6 @@ public partial class BlogsPage : ContentPage
             uploads.Add(new Yavsc.Api.Client.BlogUploadFile(file.Name, memory.ToArray(), GetMimeType(file.Name)));
         }
 
-        vm.DraftAttachments.Clear();
         foreach (var upload in uploads)
             vm.DraftAttachments.Add(upload);
     }

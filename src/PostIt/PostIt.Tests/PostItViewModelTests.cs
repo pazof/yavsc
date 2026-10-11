@@ -12,6 +12,91 @@ namespace PostIt.Tests;
 
 public class PostItViewModelTests
 {
+    [Fact]
+    public void Draft_modified_tracks_title_body_and_attachments_not_publication()
+    {
+        var vm = new BlogsViewModel(new BlogApiClient(new ThrowingYavscApiClient(), "http://localhost/"));
+        vm.SelectedPost = new BlogPostDto { Id = 42, AuthorId = "tester", Title = "Titre", Article = "Corps" };
+        Assert.False(vm.IsDraftModified);
+        vm.DraftIsPublished = true;
+        Assert.False(vm.IsDraftModified);
+        vm.DraftTitle = "Autre";
+        Assert.True(vm.IsDraftModified);
+        vm.DraftTitle = "Titre";
+        Assert.False(vm.IsDraftModified);
+        vm.DraftArticleDocument!.Insert(0, "Edit ");
+        Assert.True(vm.IsDraftModified);
+        vm.DraftArticle = "Corps";
+        Assert.False(vm.IsDraftModified);
+        vm.DraftAttachments.Add(new BlogUploadFile("note.txt", new byte[] { 1 }));
+        Assert.True(vm.IsDraftModified);
+    }
+
+    [AvaloniaFact]
+    public async Task Save_keeps_selection_and_editor_open_and_resets_highlight()
+    {
+        var recorder = new CallRecorder();
+        var vm = new BlogsViewModel(new BlogApiClient(new RecordingYavscApiClient(recorder),
+            "https://blogs.example.test/api/v1/"));
+        var selected = new BlogPostDto { Id = 42, AuthorId = "tester", Title = "Titre", Article = "Corps" };
+        vm.Posts.Add(selected);
+        vm.SearchText = "";
+        vm.SelectedPost = selected;
+        var page = new BlogsPage { DataContext = vm };
+        var navigation = new NavigationPage();
+        await navigation.PushAsync(page);
+        var window = new Window { Content = navigation };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            selected = Assert.Single(vm.FilteredPosts);
+            selected.AuthorId = "tester";
+            selected.Title = "Titre";
+            selected.Article = "Corps";
+            page.PostsListBox.SelectedItem = selected;
+            Dispatcher.UIThread.RunJobs();
+            Assert.Same(selected, page.PostsListBox.SelectedItem);
+            Assert.Same(selected, vm.SelectedPost);
+            Assert.DoesNotContain("modified", page.SaveButton.Classes);
+            vm.DraftTitle = "Titre modifié";
+            Dispatcher.UIThread.RunJobs();
+            Assert.Contains("modified", page.SaveButton.Classes);
+            Assert.Equal(Avalonia.Media.FontWeight.Bold, page.SaveButton.FontWeight);
+            Assert.Same(vm.SaveCommand, page.SaveButton.Command);
+            await vm.SaveAsync();
+            Dispatcher.UIThread.RunJobs();
+            Assert.Same(page, navigation.NavigationStack.Last());
+            Assert.Same(selected, vm.SelectedPost);
+            Assert.Same(selected, page.PostsListBox.SelectedItem);
+            Assert.Equal("Titre modifié", vm.DraftTitle);
+            Assert.Equal("Corps", vm.DraftArticle);
+            Assert.DoesNotContain("modified", page.SaveButton.Classes);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    [Fact]
+    public async Task Failed_save_preserves_draft_attachments_and_modified_state()
+    {
+        var vm = new BlogsViewModel(new BlogApiClient(new ThrowingYavscApiClient(), "http://localhost/"));
+        var post = new BlogPostDto { Id = 42, AuthorId = "tester", Title = "Titre", Article = "Corps" };
+        vm.SelectedPost = post;
+        vm.DraftTitle = "Titre modifié";
+        vm.DraftAttachments.Add(new BlogUploadFile("note.txt", new byte[] { 1 }));
+        var article = vm.DraftArticle;
+        await vm.SaveAsync();
+        Assert.Same(post, vm.SelectedPost);
+        Assert.Equal("Titre modifié", vm.DraftTitle);
+        Assert.Equal(article, vm.DraftArticle);
+        Assert.Single(vm.DraftAttachments);
+        Assert.True(vm.IsDraftModified);
+        Assert.False(vm.IsBusy);
+    }
+
     [AvaloniaFact]
     public void Published_badge_tracks_post_publication_state()
     {

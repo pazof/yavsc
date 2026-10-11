@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -89,12 +90,14 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
             }
 
             OnPropertyChanged(nameof(DraftArticleDocument));
+            UpdateDraftModified();
         }
     }
 
     private void DraftArticleDocument_TextChanged(object? sender, EventArgs e)
     {
         OnPropertyChanged(nameof(DraftArticle));
+        UpdateDraftModified();
     }
 
     /// <summary>Editor buffer for the post's publication state.
@@ -108,6 +111,14 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     /// mutable field. Toggling is its own action.</summary>
     [ObservableProperty]
     public partial bool DraftIsPublished { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsDraftModified { get; private set; }
+
+    private bool _preserveDraft;
+    private string _savedTitle = string.Empty;
+    private string _savedArticle = string.Empty;
+    private readonly Dictionary<string, string> _pendingAttachmentLinks = new();
     public bool IsLoaded { get; private set; }
     public Settings SettingsModel { get; }
 
@@ -157,7 +168,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         });
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanSave))]
     internal async Task SaveAsync()
     {
         // The button is already disabled when the title is empty
@@ -175,16 +186,6 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         {
             var attachments = DraftAttachments.ToArray();
 
-            // Build a fresh BlogPostDto from the editor buffer on
-            // every Save — we no longer mutate SelectedPost in
-            // place. The previous behavior copied the buffer
-            // (which was a no-op when SelectedPost was null)
-            // back onto the model and relied on a
-            // [Required] violation to surface the missing
-            // input; the new shape keeps the editor buffer as
-            // the single source of truth for outgoing payloads
-            // and the selected post as a read-only hint for
-            // the update path.
             if (SelectedPost is null || SelectedPost.Id == 0)
             {
                 var draft = new BlogPostDto
@@ -195,12 +196,22 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
                     DateModified = DateTime.UtcNow,
                     IsPublished = DraftIsPublished
                 };
+                var savedTitle = draft.Title;
+                var savedArticle = draft.Article;
                 var created = await BlogClient!.CreatePostAsync(draft, attachments);
                 if (created is not null)
                 {
-                    SelectedPost = created;
+                    _preserveDraft = true;
+                    try
+                    {
+                        SelectedPost = created;
+                    }
+                    finally
+                    {
+                        _preserveDraft = false;
+                    }
 
-                    if (TryAppendAttachmentLinks(created, attachments))
+                    if (ResolvePendingAttachmentLinks(created))
                     {
                         var linkUpdate = new BlogPostDto
                         {
@@ -212,16 +223,22 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
                             DateCreated = created.DateCreated,
                             DateModified = DateTime.UtcNow,
                         };
+                        savedTitle = linkUpdate.Title;
+                        savedArticle = linkUpdate.Article;
                         await BlogClient.UpdatePostAsync(created.Id, linkUpdate);
                     }
 
+                    created.Title = savedTitle;
+                    created.Article = savedArticle;
                     this.SetInfoStatus($"Billet {created.Id} créé.");
                     DraftAttachments.Clear();
+                    MarkDraftSaved(savedTitle, savedArticle);
                 }
+                else
+                    throw new InvalidOperationException("Le serveur n'a pas retourné le billet créé.");
             }
             else
             {
-                TryAppendAttachmentLinks(SelectedPost, attachments);
                 var update = new BlogPostDto
                 {
                     Id = SelectedPost.Id,
@@ -233,8 +250,11 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
                     DateModified = DateTime.UtcNow,
                 };
                 await BlogClient!.UpdatePostAsync(SelectedPost.Id, update, attachments);
+                SelectedPost.Title = update.Title;
+                SelectedPost.Article = update.Article;
                 this.SetInfoStatus($"Billet {SelectedPost.Id} enregistré.");
                 DraftAttachments.Clear();
+                MarkDraftSaved(update.Title, update.Article);
             }
 
             await RefreshPostsAsync();
@@ -430,6 +450,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         Posts = new ObservableCollection<BlogPostDto>();
         FilteredPosts = new ObservableCollection<BlogPostDto>();
         DraftAttachments = new ObservableCollection<BlogUploadFile>();
+        DraftAttachments.CollectionChanged += DraftAttachments_CollectionChanged;
         SelectedPost = null;
         IsBusy = false;
         this.SetInfoStatus("Prêt.");
@@ -441,6 +462,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         DraftArticle = string.Empty;
 
         DraftIsPublished = false;
+        MarkDraftSaved();
         IsLoaded = false;
         // Production path: DI injects the canonical Settings singleton
         // and we use it as-is. Test path: tests call this constructor
@@ -501,6 +523,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
     partial void OnSelectedPostChanged(BlogPostDto? value)
     {
+        if (_preserveDraft) return;
         // Mirror the selection into the editor buffer so the
         // XAML-bound TextBox/TextEditor show the right content
         // when the user clicks a post in the list. When the
@@ -514,6 +537,8 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         // null selection so a fresh draft starts unpublished.
         DraftIsPublished = value?.IsPublished ?? false;
         DraftAttachments.Clear();
+        _pendingAttachmentLinks.Clear();
+        MarkDraftSaved();
         UpdateCommandStates();
     }
 
@@ -522,7 +547,28 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     // Save's CanExecute depends on the buffer: the button must
     // enable as soon as the user has typed a non-whitespace
     // title, regardless of whether a post is selected.
-    partial void OnDraftTitleChanged(string value) => SaveCommand.NotifyCanExecuteChanged();
+    partial void OnDraftTitleChanged(string value)
+    {
+        SaveCommand.NotifyCanExecuteChanged();
+        UpdateDraftModified();
+    }
+
+    private void UpdateDraftModified()
+    {
+        IsDraftModified = !string.Equals(DraftTitle ?? string.Empty, _savedTitle, StringComparison.Ordinal)
+            || !string.Equals(DraftArticle ?? string.Empty, _savedArticle, StringComparison.Ordinal)
+            || (DraftAttachments?.Count ?? 0) > 0;
+    }
+
+    private void MarkDraftSaved()
+        => MarkDraftSaved(DraftTitle, DraftArticle);
+
+    private void MarkDraftSaved(string? title, string? article)
+    {
+        _savedTitle = title ?? string.Empty;
+        _savedArticle = article ?? string.Empty;
+        UpdateDraftModified();
+    }
 
 
     private async Task RefreshPostsAsync()
@@ -535,10 +581,6 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         }
         ApplyFilter();
 
-        if (SelectedPost is not null)
-        {
-            SelectedPost = Posts.FirstOrDefault(post => post.Id == SelectedPost.Id) ?? SelectedPost;
-        }
     }
 
     private void ApplyFilter()
@@ -553,10 +595,29 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
                 || p.AuthorId?.Contains(query, StringComparison.OrdinalIgnoreCase) == true)
                 .OrderByDescending(p => p.DateModified);
 
-        FilteredPosts.Clear();
-        foreach (var post in filtered)
+        var selection = SelectedPost;
+        var visiblePosts = filtered.Select(post => post.Id == selection?.Id ? selection : post).ToArray();
+        _preserveDraft = true;
+        try
         {
-            FilteredPosts.Add(post);
+            for (var i = FilteredPosts.Count - 1; i >= 0; i--)
+            {
+                if (!visiblePosts.Contains(FilteredPosts[i]))
+                    FilteredPosts.RemoveAt(i);
+            }
+            for (var i = 0; i < visiblePosts.Length; i++)
+            {
+                var previousIndex = FilteredPosts.IndexOf(visiblePosts[i]);
+                if (previousIndex < 0)
+                    FilteredPosts.Insert(i, visiblePosts[i]);
+                else if (previousIndex != i)
+                    FilteredPosts.Move(previousIndex, i);
+            }
+            SelectedPost = selection;
+        }
+        finally
+        {
+            _preserveDraft = false;
         }
     }
 
@@ -595,41 +656,53 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         }
     }
 
-    private bool TryAppendAttachmentLinks(BlogPostDto post, IReadOnlyCollection<BlogUploadFile> attachments)
+    private void DraftAttachments_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (attachments.Count == 0)
-            return false;
-
-        var ownerSegment = post.Author?.UserName;
-        if (string.IsNullOrWhiteSpace(ownerSegment))
-            ownerSegment = post.AuthorId;
-
-        if (string.IsNullOrWhiteSpace(ownerSegment))
-            return false;
-
-        var article = DraftArticle ?? string.Empty;
-        var links = new List<string>();
-
-        foreach (var attachment in attachments)
+        if (e.NewItems is not null)
         {
-            var storedName = AbstractFileSystemHelpers.FilterFileName(attachment.FileName);
-            var relativePath = $"{EscapePathSegment(ownerSegment)}/blogs/{post.Id}/{EscapePathSegment(storedName)}";
-            var fileUrl = ResolveUserFileUrl(relativePath);
-            var markdownLine = $"- [{attachment.FileName}]({fileUrl})";
-
-            if (!article.Contains(markdownLine, StringComparison.Ordinal))
-                links.Add(markdownLine);
+            foreach (BlogUploadFile attachment in e.NewItems)
+            {
+                var storedName = AbstractFileSystemHelpers.FilterFileName(attachment.FileName);
+                string fileUrl;
+                if (SelectedPost is { Id: > 0 } post)
+                    fileUrl = AttachmentUrl(post, storedName);
+                else
+                {
+                    fileUrl = $"postit-attachment:{Guid.NewGuid():N}";
+                    _pendingAttachmentLinks.Add(fileUrl, storedName);
+                }
+                var article = DraftArticle ?? string.Empty;
+                var markdownLine = $"- [{attachment.FileName}]({fileUrl})";
+                if (!article.Contains(markdownLine, StringComparison.Ordinal))
+                {
+                    var prefix = article.Length == 0 ? ""
+                        : (article.EndsWith("\n", StringComparison.Ordinal) ? "\n" : "\n\n");
+                    DraftArticle = article + prefix + markdownLine;
+                }
+            }
         }
+        UpdateDraftModified();
+    }
 
-        if (links.Count == 0)
-            return false;
+    private string AttachmentUrl(BlogPostDto post, string storedName)
+    {
+        var owner = post.Author?.UserName ?? post.AuthorId;
+        if (string.IsNullOrWhiteSpace(owner))
+            throw new InvalidOperationException("Le propriétaire du billet est nécessaire au lien du fichier.");
+        return ResolveUserFileUrl(
+            $"{EscapePathSegment(owner)}/blogs/{post.Id}/{EscapePathSegment(storedName)}");
+    }
 
-        var prefix = article.Length == 0
-            ? ""
-            : (article.EndsWith("\n", StringComparison.Ordinal) ? "\n" : "\n\n");
-
-        DraftArticle = article + prefix + string.Join("\n", links);
-        return true;
+    private bool ResolvePendingAttachmentLinks(BlogPostDto post)
+    {
+        var article = DraftArticle ?? string.Empty;
+        foreach (var link in _pendingAttachmentLinks)
+            article = article.Replace($"({link.Key})", $"({AttachmentUrl(post, link.Value)})",
+                StringComparison.Ordinal);
+        var changed = article != DraftArticle;
+        if (changed) DraftArticle = article;
+        _pendingAttachmentLinks.Clear();
+        return changed;
     }
 
     private string ResolveUserFileUrl(string relativePath)
