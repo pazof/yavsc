@@ -91,8 +91,12 @@ public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
         return file.Id;
     }
 
-    [Fact]
-    public async Task Post_fs_creates_an_UploadedFile_row_owned_by_the_caller()
+    [Theory]
+    [InlineData("note.txt", "note.txt")]
+    [InlineData("INSC_E03686381_SCHNEIDER_000113378AA__Troisi\u00e8me__.PDF",
+        "INSC_E03686381_SCHNEIDER_000113378AA__Troisi_232me__.PDF")]
+    public async Task Post_fs_creates_an_UploadedFile_row_owned_by_the_caller(
+        string originalName, string storedName)
     {
         _fixture.ResetDatabase();
         // DiskQuota must be non-zero: ReceiveUserFile flags QuotaOffense
@@ -105,7 +109,7 @@ public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
         using var form = new MultipartFormDataContent();
         var fileContent = new ByteArrayContent(payload);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
-        form.Add(fileContent, "file", "note.txt");
+        form.Add(fileContent, "file", originalName);
 
         using var http = NewClient("alice");
         var response = await http.PostAsync("/api/v1/fs", form, TestContext.Current.CancellationToken);
@@ -117,18 +121,17 @@ public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
         var item = Assert.Single(doc.RootElement.EnumerateArray());
         var fileId = item.GetProperty("fileId").GetInt64();
         Assert.True(fileId > 0, $"Expected a positive fileId, got {fileId}. Body: {body}");
-        Assert.Equal("note.txt", item.GetProperty("fileName").GetString());
+        Assert.Equal(storedName, item.GetProperty("fileName").GetString());
         Assert.False(item.GetProperty("quotaOffense").GetBoolean());
 
         using var scope = _fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var row = Assert.Single(db.UploadedFiles.Where(u => u.OwnerId == "alice"));
-        Assert.Equal("note.txt", row.Path);
+        Assert.Equal(storedName, row.Path);
         Assert.Equal("text/plain", row.ContentType);
         Assert.Equal(payload.Length, row.Length);
 
-        // The file physically landed under {BlogFilesRoot}/alice/note.txt.
-        Assert.True(File.Exists(PhysicalFile(_fixture, "alice", "note.txt")),
+        Assert.True(File.Exists(PhysicalFile(_fixture, "alice", storedName)),
             "Expected the uploaded file on disk under the owner's personal root");
     }
 

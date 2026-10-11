@@ -49,6 +49,7 @@ namespace Yavsc.Server.Helpers
         // Ensure this path is canonical,
         // No "dirto/./this", neither "dirt/to/that/"
         // no .. and each char must be listed as valid in constants
+        // Encode unsupported chars with '_' rather than the URL fragment marker '#'.
         public static string FilterFileName(string fileName)
         {
             if (fileName==null) return null;
@@ -57,7 +58,7 @@ namespace Yavsc.Server.Helpers
             {
                 if (ValidFileNameChars.Contains(c))
                     sb.Append(c);
-                else sb.Append("#" + ((int)c).ToString("D3"));
+                else sb.Append("_" + ((int)c).ToString("D3"));
             }
             return sb.ToString();
         }
