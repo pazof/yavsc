@@ -9,7 +9,6 @@ on:
 jobs:
   production-deploy:
     runs-on: ubuntu-26.04
-
     steps:
       # 1. Récupération du code
       - name: Check out the repo
@@ -32,7 +31,17 @@ jobs:
       - name: Workloads restore
         run: dotnet workload restore
       - name: Test
-        run: make test >/dev/null
+        env:
+          TEST_FAILED: ""
+        run: make test || export TEST_FAILED=$?
+      - uses: actions/upload-artifact@v7
+        with:
+          name: my-artifact
+          path: test-reports/**/*
+      - name: Fail if tests failed
+        if: ${{ env.TEST_FAILED != '' && env.TEST_FAILED != '0' }}
+        run: exit $TEST_FAILED
+
       # 4. Build et Push de l'image de production finale
       - name: Build and push production image
         uses: docker/build-push-action@v7
