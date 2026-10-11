@@ -8,7 +8,9 @@ on:
 
 jobs:
   production-deploy:
-    runs-on: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v4
+    runs-on: ubuntu-26.04
+    container:
+      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v4
 
     steps:
       # 1. Récupération du code
@@ -25,6 +27,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 10.0.x
+      - name: Workloads restore
+        run: dotnet workload restore
       - name: Test
         run: dotnet test --report-xunit --report-xunit-html --results-directory "test-reports"
       # 4. Build et Push de l'image de production finale
