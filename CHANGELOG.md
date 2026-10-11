@@ -29,6 +29,11 @@
 
 ### Fixed
 
+* [PostIt.Tests] Les tests du bandeau de session utilisent le bandeau
+  réellement monté dans la fenêtre headless, au lieu d'un contrôle détaché.
+  Les fenêtres sont fermées après chaque test et les quatre boutons
+  de navigation sont vérifiés.
+
 * [PostIt] Les liens Markdown des pièces jointes utilisent désormais
   le même filtre de nom que l'upload serveur, avant l'encodage URL.
   Le libellé conserve le nom original, notamment ses accents.

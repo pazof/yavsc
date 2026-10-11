@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
-using Avalonia.Styling;
 using Avalonia.VisualTree;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -23,41 +22,36 @@ namespace PostIt.Tests;
 /// <c>new Window().Show()</c> throws because the harness has not
 /// been initialised for that thread.</para>
 ///
-/// <para>The session banner's <c>DataContext</c> is not wired in
-/// these tests: <c>App.OnFrameworkInitializationCompleted</c> is
-/// not called in a unit test, so we set the DataContext on the
-/// banner directly. The production code path is exercised
+/// <para>These tests set the DataContext directly on the banner
+/// mounted in the window. The production code path is exercised
 /// end-to-end by the manual launch, not here.</para>
 /// </summary>
-public class SessionStatusBannerTests
+public class SessionStatusBannerTests : IDisposable
 {
-    [AvaloniaFact]
-    public void Banner_renders_three_buttons_in_the_visual_tree()
-    {
-        MainWindow window = new MainWindow();
-        window.Show();
+    private MainWindow? _window;
 
-        var buttons = window.GetVisualDescendants()
+    [AvaloniaFact]
+    public void Banner_renders_four_buttons_in_the_visual_tree()
+    {
+        SessionStatusBanner banner = CreateBanner();
+
+        var buttons = banner.GetVisualDescendants()
             .OfType<Button>()
             .ToList();
 
-        // Three buttons, named by their content text: Se
-        // déconnecter, Se connecter, Paramètres. If any one is
-        // missing, the user has no way to trigger the
-        // corresponding navigation event.
-        Assert.True(buttons.Count>=4);
+        Assert.Equal(4, buttons.Count);
         Assert.Contains(buttons, b => b.Content as string == "Se déconnecter");
         Assert.Contains(buttons, b => b.Content as string == "Se connecter");
         Assert.Contains(buttons, b => b.Content as string == "Paramètres");
+        Assert.Contains(buttons, b => b.Content as string == "À propos");
     }
 
     [AvaloniaFact]
     public void Banner_login_button_is_visible_when_logged_out()
     {
-        MainWindow window = new MainWindow();
-        window.Show();
+        SessionStatusBanner banner = CreateBanner();
 
-        var login = window.GetVisualDescendants()
+        var login = banner.GetVisualDescendants()
             .OfType<Button>()
             .Single(b => b.Content as string == "Se connecter");
 
@@ -69,12 +63,9 @@ public class SessionStatusBannerTests
     [AvaloniaFact]
     public void Banner_logout_button_is_hidden_when_logged_out()
     {
-       SessionStatusBanner banner = CreateBanner();
+        SessionStatusBanner banner = CreateBanner();
 
-        Assert.False((banner.DataContext as SessionStatusViewModel)!
-        .IsLoggedIn);  // VM default
-
-
+        Assert.False(Assert.IsType<SessionStatusViewModel>(banner.DataContext).IsLoggedIn);
         var logout = banner.GetVisualDescendants()
             .OfType<Button>()
             .Single(b => b.Content as string == "Se déconnecter");
@@ -91,21 +82,22 @@ public class SessionStatusBannerTests
             .OfType<Button>()
             .Single(b => b.Content as string == "Paramètres");
 
-        // Paramètres is the only button with no IsVisible
-        // binding — always shown. The user's only path to the
-        // settings page goes through this button.
+        // Paramètres has no IsVisible binding and is always shown.
         Assert.True(settings.IsVisible);
     }
 
-    private static SessionStatusBanner CreateBanner()
+    private SessionStatusBanner CreateBanner()
     {
-        MainWindow window = new MainWindow();
-        window.Show();
-        var banner = new SessionStatusBanner();
-        var status = new SessionStatusViewModel();
-        banner.DataContext = status;
+        _window = new MainWindow();
+        _window.Show();
+        var banner = _window.GetVisualDescendants()
+            .OfType<SessionStatusBanner>()
+            .Single();
+        banner.DataContext = new SessionStatusViewModel();
         return banner;
     }
+
+    public void Dispose() => _window?.Close();
 
     [AvaloniaFact]
     public void Banner_session_label_reflects_DataContext()
