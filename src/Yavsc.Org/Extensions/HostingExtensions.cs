@@ -1046,7 +1046,6 @@ public static class HostingExtensions
 
         app.UseSwagger();
         app.UseSwaggerUI();
-        app.UseStaticFiles();
         app.UseRouting();
         app.UseAuthentication();
         app.UseIdentityServer();
