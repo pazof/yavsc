@@ -19,7 +19,15 @@
 
 ### Changed
 
+* [Projet] Instructions Copilot persistantes : mise à jour du changelog
+  par défaut à chaque commit, avec justification explicite des exceptions.
+
 ### Fixed
+
+* [Yavsc.Abstract][Yavsc.Blogs] Encodage des caractères non supportés
+  dans les noms de fichiers téléversés avec `_` au lieu de `#`, pour
+  éviter les fragments d'URL et permettre le téléchargement via les
+  fichiers statiques, notamment pour les noms accentués.
 
 * [Yavsc.Api][Yavsc.Blogs] Les appels API et la bande passante sont
   désormais enregistrés côté serveur pour les requêtes authentifiées :
