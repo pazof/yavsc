@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.8-rc26] - unstable
+
+### Added
+
+### Changed
+
+* L'administration est maintenant restreinte aux emails configurés dans les paramétres applicatifs de Yavsc.Org (`appsettings-org.json`)
+
+### Fixed
+
 ## [1.0.8-rc25] - unstable
 
 ### Added
