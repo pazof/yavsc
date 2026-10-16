@@ -40,6 +40,49 @@ spécifiques (IntentFilter Android, `app.manifest` Desktop).
 Toute la logique (VM, services, navigation, settings, OIDC) est
 dans le code-base partagé.
 
+## Lecture des billets et fichiers utilisateur
+
+La page des blogs affiche par défaut une vue de lecture : titre, login
+de l'auteur, date de modification et contenu Markdown dans une zone
+défilante de largeur limitée. **Modifier** ouvre l'éditeur existant et
+**Nouveau billet** initialise explicitement un brouillon. **Lire** affiche
+le contenu enregistré sans effacer les modifications non enregistrées ;
+un nouveau billet ne peut pas remplacer un brouillon modifié non sauvé.
+
+La base des ressources est dérivée de `Settings.Authentication.Authority`
+(le déploiement Yavsc.Org), jamais de `BlogsApiUrl` :
+`https://<hôte Org>/files/<Author.UserName>/`. Le repli sur `AuthorId`
+conserve la compatibilité avec les anciens DTO dépourvus d'auteur détaillé.
+Un lien `photo.jpg` ou `blogs/42/video.mp4` est relatif à ce répertoire ;
+un lien `/files/paul/photo.jpg` conserve son chemin depuis la racine Org.
+Les liens absolus ne sont pas réécrits. Les images Markdown `![texte](url)`
+sont affichées dans le billet et leur résolveur n'accepte que HTTP(S),
+sans accès aux fichiers locaux du poste.
+
+Le lecteur utilise `Markdown.Avalonia.Tight` 12.0.0-a3 (version compatible
+Avalonia 12) pour déléguer les hyperliens à une commande PostIt. L'éditeur
+conserve `MarkdownViewer.Core` : son gestionnaire intégré ouvre le navigateur
+avant d'émettre l'événement de lien et ne permet donc pas ce routage.
+
+Au clic sur un fichier sous `/files/<login>/...` de la même origine Org
+(schéma, hôte et port), `BlogResourceService` sonde `Content-Type` avec
+`HEAD`, puis un `GET` limité par `Range: bytes=0-0` si le serveur refuse
+`HEAD` (405/501). Le corps n'est pas téléchargé pour la détection. Une
+extension connue sert de repli uniquement en l'absence de type exploitable
+(type absent ou `application/octet-stream`). Les erreurs HTTP/réseau sont
+affichées dans la barre de statut, sans les masquer par une déduction MIME.
+
+Les types `video/*` ouvrent `VideoPage` via `App.PushPageAsync` sur desktop.
+Cette page contient un `LibVLCSharp.Avalonia.VideoView`, lecture/pause et
+une action d'ouverture externe. Le lecteur et ses ressources natives sont
+arrêtés et libérés à la sortie de la page. **LibVLC doit être installé**
+sur le poste (par exemple `libvlc5` et les plugins VLC sur Linux ; les
+bibliothèques natives adaptées sont nécessaires sous Windows/macOS).
+Une absence de LibVLC ou une erreur de décodage est signalée dans la page.
+Sur Android et Browser, où ce contrôle natif desktop n'est pas disponible,
+les vidéos sont ouvertes dans le navigateur, comme les autres fichiers
+(images liées, PDF, téléchargements) et les liens externes.
+
 ## ViewLocator custo
 
 Le `ViewLocator` (cf. `src/PostIt/PostIt/ViewLocator.cs`) est un

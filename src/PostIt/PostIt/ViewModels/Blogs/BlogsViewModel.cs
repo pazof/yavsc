@@ -13,6 +13,8 @@ using Yavsc.Api.Client;
 using Yavsc.Abstract.Files;
 using Yavsc.Server.Helpers;
 using AvaloniaEdit.Document;
+using Avalonia.Controls;
+using PostIt.Services;
 
 namespace PostIt.ViewModels;
 
@@ -141,7 +143,84 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     public partial ObservableCollection<BlogUploadFile> DraftAttachments { get; set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ReaderArticle))]
+    [NotifyPropertyChangedFor(nameof(ReaderAuthor))]
     public partial BlogPostDto? SelectedPost { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsEditing { get; set; }
+
+    [ObservableProperty]
+    public partial string? ReaderBaseUrl { get; private set; }
+
+    public string ReaderArticle => ReaderBaseUrl is not null ? SelectedPost?.Article ?? string.Empty : string.Empty;
+    public string ReaderAuthor => SelectedPost?.Author?.UserName ?? SelectedPost?.AuthorId ?? string.Empty;
+
+    private readonly BlogResourceService _resources = new();
+
+    [RelayCommand]
+    private void NewPost()
+    {
+        if (IsDraftModified)
+        {
+            this.SetWarningStatus("Enregistrez vos modifications avant de créer un autre billet.");
+            return;
+        }
+        SelectedPost = null;
+        DraftTitle = string.Empty;
+        DraftArticle = string.Empty;
+        DraftAttachments.Clear();
+        _pendingAttachmentLinks.Clear();
+        DraftIsPublished = false;
+        MarkDraftSaved();
+        IsEditing = true;
+    }
+
+    [RelayCommand]
+    private void EditPost() => IsEditing = true;
+
+    [RelayCommand]
+    private void ReadPost()
+    {
+        IsEditing = false;
+        UpdateReader();
+    }
+
+    [RelayCommand]
+    private async Task OpenResourceAsync(string? link)
+    {
+        try
+        {
+            IsBusy = true;
+            var uri = BlogResourceService.Resolve(link ?? string.Empty,
+                Settings.Authentication.Authority, ReaderAuthor);
+            if (BlogResourceService.IsUserResource(uri, Settings.Authentication.Authority))
+            {
+                this.SetInfoStatus("Détection du type de fichier...");
+                var mime = await _resources.GetMimeTypeAsync(uri);
+                if (mime.StartsWith("video/", StringComparison.OrdinalIgnoreCase)
+                    && !OperatingSystem.IsBrowser() && !OperatingSystem.IsAndroid() && !OperatingSystem.IsIOS())
+                {
+                    await ((App)Application.Current!).PushPageAsync(new VideoPageViewModel(uri, mime));
+                    this.SetInfoStatus($"Vidéo : {mime}");
+                    return;
+                }
+                this.SetInfoStatus($"Ouverture dans le navigateur ({mime}).");
+            }
+            var topLevel = TopLevel.GetTopLevel(((App)Application.Current!).View!)
+                ?? throw new InvalidOperationException("La fenêtre de l'application est indisponible.");
+            if (!await topLevel.Launcher.LaunchUriAsync(uri))
+                throw new InvalidOperationException("Le système n'a pas pu ouvrir ce lien.");
+        }
+        catch (Exception ex)
+        {
+            this.SetErrorStatus($"Impossible d'ouvrir le lien : {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }
@@ -258,6 +337,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
             }
 
             await RefreshPostsAsync();
+            UpdateReader();
         });
     }
 
@@ -503,12 +583,14 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     /// <see cref="BlogApiClient"/>. Production code uses the
     /// (Settings, BlogApiClient) overload below.
     /// </summary>
-    public BlogsViewModel(BlogApiClient blogClient, Settings? settings = null, IServiceProvider? services = null)
+    public BlogsViewModel(BlogApiClient blogClient, Settings? settings = null, IServiceProvider? services = null,
+        BlogResourceService? resources = null)
     {
         WindowTitle = "Blog";
         SettingsModel = new Settings();
         BlogClient = blogClient ?? throw new ArgumentNullException(nameof(blogClient)); ;
         Services = services;
+        _resources = resources ?? new BlogResourceService();
         Init(settings);
     }
 
@@ -523,6 +605,9 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
     partial void OnSelectedPostChanged(BlogPostDto? value)
     {
+        UpdateReader();
+        if (!_preserveDraft)
+            IsEditing = false;
         if (_preserveDraft) return;
         // Mirror the selection into the editor buffer so the
         // XAML-bound TextBox/TextEditor show the right content
@@ -540,6 +625,25 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         _pendingAttachmentLinks.Clear();
         MarkDraftSaved();
         UpdateCommandStates();
+    }
+
+    private void UpdateReader()
+    {
+        string? baseUrl = null;
+        try
+        {
+            if (SelectedPost is not null)
+                baseUrl = BlogResourceService.GetUserBaseUri(
+                    Settings.Authentication.Authority, ReaderAuthor).AbsoluteUri;
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or UriFormatException)
+        {
+            this.SetErrorStatus($"Impossible de résoudre les ressources du billet : {ex.Message}");
+        }
+        ReaderBaseUrl = baseUrl;
+        OnPropertyChanged(nameof(SelectedPost));
+        OnPropertyChanged(nameof(ReaderArticle));
+        OnPropertyChanged(nameof(ReaderAuthor));
     }
 
     partial void OnIsBusyChanged(bool value) => UpdateCommandStates();
