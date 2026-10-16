@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Headless.XUnit;
+using Avalonia.Logging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Markdown.Avalonia;
@@ -14,6 +15,7 @@ using PostIt.Views;
 using PostIt.Views.Blogs;
 using Yavsc.Api.Client;
 using Yavsc.Blogspot;
+using SkiaSharp;
 
 namespace PostIt.Tests;
 
@@ -112,6 +114,87 @@ public class BlogReaderTests
     }
 
     [AvaloniaFact]
+    public async Task Reader_initialization_and_empty_selection_do_not_report_binding_errors()
+    {
+        var vm = CreateViewModel();
+        await vm.InitializeAsync();
+        var post = Post();
+        vm.Posts.Add(post);
+        vm.FilteredPosts.Add(post);
+        var previousSink = Logger.Sink;
+        var sink = new RecordingLogSink();
+        Logger.Sink = sink;
+        Window? window = null;
+        try
+        {
+            var page = new BlogsPage();
+            var reader = page.FindControl<MarkdownScrollViewer>("ArticleReader")!;
+            var engine = Assert.IsAssignableFrom<IMarkdownEngine2>(reader.Engine);
+            Assert.Null(engine.HyperlinkCommand);
+            page.DataContext = vm;
+            var nav = new NavigationPage();
+            await nav.PushAsync(page);
+            window = new Window { Width = 800, Height = 700, Content = nav };
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.Empty(vm.ReaderTitle);
+            Assert.Null(vm.ReaderDateModified);
+            Assert.Same(vm.OpenResourceCommand, engine.HyperlinkCommand);
+            Assert.IsType<BlogImageResolver>(reader.Plugins.PathResolver);
+
+            vm.SelectedPost = post;
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(post.Title, vm.ReaderTitle);
+            Assert.Equal(post.DateModified, vm.ReaderDateModified);
+
+            vm.SelectedPost = null;
+            page.DataContext = null;
+            Dispatcher.UIThread.RunJobs();
+            Assert.Empty(vm.ReaderTitle);
+            Assert.Null(vm.ReaderDateModified);
+            Assert.Null(engine.HyperlinkCommand);
+            Assert.DoesNotContain(sink.Entries, entry => entry.Area == LogArea.Binding);
+        }
+        finally
+        {
+            window?.Close();
+            Logger.Sink = previousSink;
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task Image_http_failure_is_logged_with_its_url_and_is_not_swallowed()
+    {
+        const string url = "https://org.example.test/files/paul/absent.jpg";
+        using var client = new HttpClient(new BlogResourceServiceTests.StubHandler(
+            _ => new HttpResponseMessage(HttpStatusCode.NotFound)));
+        var resolver = new BlogImageResolver(client);
+        var previousSink = Logger.Sink;
+        var sink = new RecordingLogSink();
+        Logger.Sink = sink;
+        try
+        {
+            await Assert.ThrowsAsync<HttpRequestException>(() => resolver.ResolveImageResource(url));
+            var error = Assert.Single(sink.Entries, entry => entry.Area == "BlogImages");
+            Assert.Contains(url, error.Values);
+        }
+        finally
+        {
+            Logger.Sink = previousSink;
+        }
+    }
+
+    private sealed class RecordingLogSink : ILogSink
+    {
+        public List<(string Area, object?[] Values)> Entries { get; } = [];
+        public bool IsEnabled(LogEventLevel level, string area) => level >= LogEventLevel.Warning;
+        public void Log(LogEventLevel level, string area, object? source, string messageTemplate)
+            => Entries.Add((area, []));
+        public void Log(LogEventLevel level, string area, object? source, string messageTemplate, params object?[] values)
+            => Entries.Add((area, values));
+    }
+
+    [AvaloniaFact]
     public async Task Long_reading_content_scrolls_and_clears_when_selection_is_removed()
     {
         var vm = CreateViewModel();
@@ -139,6 +222,66 @@ public class BlogReaderTests
         finally
         {
             window.Close();
+        }
+    }
+
+    [Theory]
+    [InlineData("https://yavsc.pschneider.fr/files/paul/blogs/14/IMG-20260923-WA0001.jpg")]
+    [InlineData("/files/paul/blogs/14/IMG-20260923-WA0001.jpg")]
+    [InlineData("blogs/14/IMG-20260923-WA0001.jpg")]
+    public async Task Embedded_jpeg_stream_is_seekable_at_the_start_for_markdown_decoding(string url)
+    {
+        using var source = new SKBitmap(32, 24);
+        source.Erase(SKColors.CornflowerBlue);
+        using var encoded = source.Encode(SKEncodedImageFormat.Jpeg, 90);
+        var jpeg = encoded.ToArray();
+        using var client = new HttpClient(new BlogResourceServiceTests.StubHandler(request =>
+        {
+            Assert.Equal("https://yavsc.pschneider.fr/files/paul/blogs/14/IMG-20260923-WA0001.jpg",
+                request.RequestUri!.AbsoluteUri);
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StreamContent(new NonSeekableStream(jpeg))
+            };
+        }));
+        var resolver = new BlogImageResolver(client)
+        {
+            AssetPathRoot = "https://yavsc.pschneider.fr/files/paul/"
+        };
+        await using var stream = await resolver.ResolveImageResource(url);
+        Assert.NotNull(stream);
+        Assert.True(stream.CanSeek);
+        Assert.Equal(0, stream.Position);
+        using var decoded = SKBitmap.Decode(stream);
+        Assert.NotNull(decoded);
+        Assert.Equal(32, decoded.Width);
+        Assert.Equal(24, decoded.Height);
+    }
+
+    private sealed class NonSeekableStream(byte[] bytes) : Stream
+    {
+        private readonly MemoryStream _inner = new(bytes, writable: false);
+        public override bool CanRead => _inner.CanRead;
+        public override bool CanSeek => false;
+        public override bool CanWrite => false;
+        public override long Length => throw new NotSupportedException();
+        public override long Position
+        {
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
+        }
+        public override int Read(byte[] buffer, int offset, int count) => _inner.Read(buffer, offset, count);
+        public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+            => _inner.ReadAsync(buffer, cancellationToken);
+        public override void Flush() => throw new NotSupportedException();
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+        public override void SetLength(long value) => throw new NotSupportedException();
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                _inner.Dispose();
+            base.Dispose(disposing);
         }
     }
 

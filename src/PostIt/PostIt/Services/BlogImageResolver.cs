@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Markdown.Avalonia.Utils;
+using Avalonia.Logging;
 
 namespace PostIt.Services;
 
@@ -28,6 +29,16 @@ public sealed class BlogImageResolver : IPathResolver
                 "La base des fichiers de l'auteur est indisponible.")), relativeOrAbsolutePath);
         if (uri.Scheme != Uri.UriSchemeHttps && uri.Scheme != Uri.UriSchemeHttp)
             throw new InvalidOperationException("Les images du billet doivent utiliser HTTP ou HTTPS.");
-        return await _client.GetStreamAsync(uri);
+        try
+        {
+            // The Markdown decoder needs a seekable stream positioned at the start.
+            return new MemoryStream(await _client.GetByteArrayAsync(uri), writable: false);
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+        {
+            Logger.TryGet(LogEventLevel.Error, "BlogImages")?.Log(this,
+                "Unable to load blog image {Url}: {Error}", uri.AbsoluteUri, ex.Message);
+            throw;
+        }
     }
 }

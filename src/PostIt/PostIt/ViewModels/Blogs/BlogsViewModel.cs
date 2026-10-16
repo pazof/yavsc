@@ -155,6 +155,8 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
     public string ReaderArticle => ReaderBaseUrl is not null ? SelectedPost?.Article ?? string.Empty : string.Empty;
     public string ReaderAuthor => SelectedPost?.Author?.UserName ?? SelectedPost?.AuthorId ?? string.Empty;
+    public string ReaderTitle => SelectedPost?.Title ?? string.Empty;
+    public DateTime? ReaderDateModified => SelectedPost?.DateModified;
 
     private readonly BlogResourceService _resources = new();
 
@@ -644,6 +646,8 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         OnPropertyChanged(nameof(SelectedPost));
         OnPropertyChanged(nameof(ReaderArticle));
         OnPropertyChanged(nameof(ReaderAuthor));
+        OnPropertyChanged(nameof(ReaderTitle));
+        OnPropertyChanged(nameof(ReaderDateModified));
     }
 
     partial void OnIsBusyChanged(bool value) => UpdateCommandStates();
