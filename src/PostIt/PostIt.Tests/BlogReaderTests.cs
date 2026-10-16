@@ -130,7 +130,8 @@ public class BlogReaderTests
             var page = new BlogsPage();
             var reader = page.FindControl<MarkdownScrollViewer>("ArticleReader")!;
             var engine = Assert.IsAssignableFrom<IMarkdownEngine2>(reader.Engine);
-            Assert.Null(engine.HyperlinkCommand);
+            Assert.NotNull(engine.HyperlinkCommand);
+            Assert.False(engine.HyperlinkCommand.CanExecute("https://example.test/"));
             page.DataContext = vm;
             var nav = new NavigationPage();
             await nav.PushAsync(page);
@@ -152,7 +153,8 @@ public class BlogReaderTests
             Dispatcher.UIThread.RunJobs();
             Assert.Empty(vm.ReaderTitle);
             Assert.Null(vm.ReaderDateModified);
-            Assert.Null(engine.HyperlinkCommand);
+            Assert.NotNull(engine.HyperlinkCommand);
+            Assert.False(engine.HyperlinkCommand.CanExecute("https://example.test/"));
             Assert.DoesNotContain(sink.Entries, entry => entry.Area == LogArea.Binding);
         }
         finally

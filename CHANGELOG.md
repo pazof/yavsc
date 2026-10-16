@@ -20,16 +20,6 @@
 
 * L'administration est maintenant restreinte aux emails configurés dans les paramétres applicatifs de Yavsc.Org (`appsettings-org.json`)
 
-### Fixed
-
-* [PostIt] Correction du rendu des images incorporées dans les billets :
-  le résolveur fournit désormais un flux mémoire repositionnable, à son
-  début, pour éviter l'échec du décodage des images issues d'un flux HTTP.
-* [PostIt] Suppression des erreurs de binding au démarrage du lecteur
-  lorsqu'aucun billet n'est sélectionné ; la commande des liens est
-  raccordée lors du changement de contexte. Les échecs HTTP des images
-  sont désormais journalisés avec leur URL dans la catégorie `BlogImages`.
-
 ## [1.0.8-rc25] - unstable
 
 ### Added
