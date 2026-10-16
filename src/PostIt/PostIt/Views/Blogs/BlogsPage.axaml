@@ -239,12 +239,12 @@
         </Grid>
         <Grid x:Name="PostReader" Grid.Row="2" IsVisible="{Binding !IsEditing}"
               RowDefinitions="Auto,Auto,*" MaxWidth="900" HorizontalAlignment="Stretch" RowSpacing="12">
-          <TextBlock Text="{Binding SelectedPost.Title}" FontSize="28" FontWeight="SemiBold"
+          <TextBlock Text="{Binding ReaderTitle}" FontSize="28" FontWeight="SemiBold"
                      TextWrapping="Wrap" />
           <WrapPanel Grid.Row="1" Orientation="Horizontal"
                      IsVisible="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNotNull}}">
             <TextBlock Text="{Binding ReaderAuthor}" Margin="0,0,16,0" />
-            <TextBlock Text="{Binding SelectedPost.DateModified, StringFormat='Mis à jour le {0:dd/MM/yyyy HH:mm}'}"
+            <TextBlock Text="{Binding ReaderDateModified, StringFormat='Mis à jour le {0:dd/MM/yyyy HH:mm}'}"
                        Opacity="0.65" />
           </WrapPanel>
           <reader:MarkdownScrollViewer x:Name="ArticleReader" Grid.Row="2"
@@ -258,9 +258,6 @@
                 </reader:MdAvPlugins.PathResolver>
               </reader:MdAvPlugins>
             </reader:MarkdownScrollViewer.Plugins>
-            <reader:MarkdownScrollViewer.Engine>
-              <reader:Markdown HyperlinkCommand="{Binding ((vm:BlogsViewModel)DataContext).OpenResourceCommand, ElementName=ArticleReader}" />
-            </reader:MarkdownScrollViewer.Engine>
           </reader:MarkdownScrollViewer>
           <TextBlock Grid.RowSpan="3" IsVisible="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNull}}"
                      Text="Choisissez un billet dans la liste pour le lire."

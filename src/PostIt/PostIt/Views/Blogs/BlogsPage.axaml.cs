@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Markdown.Avalonia;
 
 namespace PostIt.Views.Blogs;
 
@@ -12,6 +13,11 @@ public partial class BlogsPage : ContentPage
     public BlogsPage()
     {
         InitializeComponent();
+        DataContextChanged += (_, _) =>
+        {
+            if (ArticleReader.Engine is IMarkdownEngine2 engine)
+                engine.HyperlinkCommand = (DataContext as ViewModels.BlogsViewModel)?.OpenResourceCommand;
+        };
     }
 
     protected override async void OnApplyTemplate(TemplateAppliedEventArgs e)

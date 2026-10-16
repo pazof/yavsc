@@ -58,6 +58,8 @@ un lien `/files/paul/photo.jpg` conserve son chemin depuis la racine Org.
 Les liens absolus ne sont pas réécrits. Les images Markdown `![texte](url)`
 sont affichées dans le billet et leur résolveur n'accepte que HTTP(S),
 sans accès aux fichiers locaux du poste.
+Le résolveur charge chaque image dans un flux mémoire repositionnable
+initialement à la position zéro, nécessaire au décodage du lecteur Markdown.
 
 Le lecteur utilise `Markdown.Avalonia.Tight` 12.0.0-a3 (version compatible
 Avalonia 12) pour déléguer les hyperliens à une commande PostIt. L'éditeur
