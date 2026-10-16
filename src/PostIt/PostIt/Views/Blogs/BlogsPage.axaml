@@ -2,13 +2,12 @@
   x:Class="PostIt.Views.Blogs.BlogsPage"
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:AvaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  xmlns:md="using:MarkdownViewer.Core.Controls"
+  xmlns:reader="clr-namespace:Markdown.Avalonia;assembly=Markdown.Avalonia"
+  xmlns:services="using:PostIt.Services"
   xmlns:models="using:Yavsc.Blogspot"
   xmlns:postitControls="using:PostIt.Controls"
-  xmlns:views="using:PostIt.Views.Blogs"
   xmlns:vm="using:PostIt.ViewModels"
   HorizontalAlignment="Stretch"
   VerticalAlignment="Stretch"
@@ -25,7 +24,7 @@
     </Style>
   </ContentPage.Styles>
   <Grid
-    RowDefinitions="Auto,Auto,*"
+    RowDefinitions="Auto,Auto,*,Auto"
     Margin="5,5,10,5"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
@@ -36,23 +35,30 @@
         <TextBlock
           FontSize="20"
           FontWeight="SemiBold"
-          Text="Blog Posts" />
+          Text="Billets de blog" />
         <TextBox
           HorizontalAlignment="Right"
-          PlaceholderText="Filter by title or author..."
+          PlaceholderText="Rechercher un titre ou un auteur..."
           Text="{Binding SearchText, Mode=TwoWay}" />
       </WrapPanel>
       <CommandBar x:Name="BlogsCommandBar"
        Grid.Row="1"
        HorizontalAlignment="Right" IsDynamicOverflowEnabled="True">
         <CommandBar.PrimaryCommands>
-          <CommandBarButton Command="{Binding RefreshAsync}" Label="Refresh">
+          <CommandBarButton Command="{Binding RefreshCommand}" Label="Actualiser">
             <CommandBarButton.Icon>
               <PathIcon Data="{StaticResource RefreshIcon}" />
             </CommandBarButton.Icon>
           </CommandBarButton>
+          <CommandBarButton x:Name="NewPostButton" Command="{Binding NewPostCommand}" Label="Nouveau billet" />
+          <CommandBarButton x:Name="ReadPostButton" Command="{Binding ReadPostCommand}"
+                            IsVisible="{Binding IsEditing}" Label="Lire" />
+          <CommandBarButton x:Name="EditPostButton" Command="{Binding EditPostCommand}"
+                            IsEnabled="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            IsVisible="{Binding !IsEditing}" Label="Modifier" />
           <CommandBarButton
             x:Name="SaveButton"
+            IsVisible="{Binding IsEditing}"
             Command="{Binding SaveCommand}"
             Classes.modified="{Binding IsDraftModified}"
             IsEnabled="{Binding !IsBusy}"
@@ -61,13 +67,14 @@
               <PathIcon Data="{StaticResource SaveIcon}" />
             </CommandBarButton.Icon>
           </CommandBarButton>
-          <CommandBarButton Command="{Binding DeleteAsync}" Label="Delete">
+          <CommandBarButton Command="{Binding DeleteCommand}" IsVisible="{Binding IsEditing}" Label="Supprimer">
             <CommandBarButton.Icon>
               <PathIcon Data="{StaticResource DeleteIcon}" />
             </CommandBarButton.Icon>
           </CommandBarButton>
           <CommandBarButton
             x:Name="AddAttachmentButton"
+            IsVisible="{Binding IsEditing}"
             Click="AddAttachment_Click"
             IsEnabled="{Binding !IsBusy}"
             Label="Ajouter fichiers">
@@ -77,6 +84,7 @@
           </CommandBarButton>
           <CommandBarButton
             x:Name="ManageAclButton"
+            IsVisible="{Binding IsEditing}"
             Command="{Binding ManageAclAsync}"
             Label="ACL">
             <CommandBarButton.Icon>
@@ -92,6 +100,7 @@
             </CommandBarButton.Icon>
           </CommandBarButton>
           <CommandBarToggleButton
+            IsVisible="{Binding IsEditing}"
             Command="{Binding TogglePublishCommand}"
             IsChecked="{Binding DraftIsPublished, Mode=TwoWay}"
             Label="Publié">
@@ -99,13 +108,14 @@
               <PathIcon Data="{StaticResource PublishedIcon}" />
             </CommandBarToggleButton.Icon>
           </CommandBarToggleButton>
-          <CommandBarToggleButton IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}" Label="Aperçu">
+          <CommandBarToggleButton IsVisible="{Binding IsEditing}" IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}" Label="Aperçu">
             <CommandBarToggleButton.Icon>
               <PathIcon Data="{StaticResource MarkdownIcon}" />
             </CommandBarToggleButton.Icon>
           </CommandBarToggleButton>
           <CommandBarButton
             x:Name="OpenSignatureDevButton"
+            IsVisible="{Binding IsEditing}"
             Command="{Binding OpenSignatureDevAsync}"
             Label="[DEV] Signature">
             <CommandBarButton.Icon>
@@ -173,7 +183,8 @@
           HorizontalAlignment="Stretch"
           ResizeDirection="Rows" />
 
-        <Grid
+        <Grid x:Name="PostEditor"
+          IsVisible="{Binding IsEditing}"
           Grid.Row="2"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
@@ -182,7 +193,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
           <Grid.ColumnDefinitions>
@@ -226,9 +236,37 @@
             </StackPanel>
           </Border>
 
-          <postitControls:StatusBar Grid.Row="4" DataContext="{Binding ActionStatus}" x:Name="StatusBar" />
-
+        </Grid>
+        <Grid x:Name="PostReader" Grid.Row="2" IsVisible="{Binding !IsEditing}"
+              RowDefinitions="Auto,Auto,*" MaxWidth="900" HorizontalAlignment="Stretch" RowSpacing="12">
+          <TextBlock Text="{Binding SelectedPost.Title}" FontSize="28" FontWeight="SemiBold"
+                     TextWrapping="Wrap" />
+          <WrapPanel Grid.Row="1" Orientation="Horizontal"
+                     IsVisible="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNotNull}}">
+            <TextBlock Text="{Binding ReaderAuthor}" Margin="0,0,16,0" />
+            <TextBlock Text="{Binding SelectedPost.DateModified, StringFormat='Mis à jour le {0:dd/MM/yyyy HH:mm}'}"
+                       Opacity="0.65" />
+          </WrapPanel>
+          <reader:MarkdownScrollViewer x:Name="ArticleReader" Grid.Row="2"
+                                       AssetPathRoot="{Binding ReaderBaseUrl}"
+                                       Markdown="{Binding ReaderArticle}"
+                                       SaveScrollValueWhenContentUpdated="False">
+            <reader:MarkdownScrollViewer.Plugins>
+              <reader:MdAvPlugins>
+                <reader:MdAvPlugins.PathResolver>
+                  <services:BlogImageResolver />
+                </reader:MdAvPlugins.PathResolver>
+              </reader:MdAvPlugins>
+            </reader:MarkdownScrollViewer.Plugins>
+            <reader:MarkdownScrollViewer.Engine>
+              <reader:Markdown HyperlinkCommand="{Binding ((vm:BlogsViewModel)DataContext).OpenResourceCommand, ElementName=ArticleReader}" />
+            </reader:MarkdownScrollViewer.Engine>
+          </reader:MarkdownScrollViewer>
+          <TextBlock Grid.RowSpan="3" IsVisible="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNull}}"
+                     Text="Choisissez un billet dans la liste pour le lire."
+                     HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" />
         </Grid>
       </Grid>
+      <postitControls:StatusBar Grid.Row="3" DataContext="{Binding ActionStatus}" x:Name="StatusBar" />
   </Grid>
 </ContentPage>

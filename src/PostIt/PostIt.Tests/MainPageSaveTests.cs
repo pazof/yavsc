@@ -42,6 +42,7 @@ public class MainPageSaveTests
         var api = new RecordingYavscApiClient(recorder);
         var blog = new BlogApiClient(api, "http://localhost/");
         var viewModel = new BlogsViewModel(blog);
+        viewModel.NewPostCommand.Execute(null);
 
         var page = new BlogsPage { DataContext = viewModel };
         // MainPage is a ContentPage (a Page, not a Control), so it

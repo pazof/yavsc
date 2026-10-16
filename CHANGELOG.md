@@ -4,6 +4,18 @@
 
 ### Added
 
+* [PostIt] Vue de lecture des billets par défaut, avec titre, auteur,
+  date et contenu Markdown défilant ; l'édition et la création restent
+  accessibles par des actions explicites, sans perdre le brouillon en
+  passant de la lecture à l'édition.
+* [PostIt] Résolution des liens et images relatifs depuis
+  `<autorité Yavsc.Org>/files/<login auteur>/`, reconnaissance des fichiers
+  utilisateur sur cette origine et détection du type MIME par HTTP.
+* [PostIt] Page vidéo dédiée utilisant LibVLCSharp.Avalonia sur desktop,
+  avec lecture/pause, libération du lecteur à la fermeture et accès au
+  navigateur en cas d'indisponibilité de LibVLC. Les autres fichiers et
+  les vidéos sur mobile/navigateur s'ouvrent dans le navigateur système.
+
 ### Changed
 
 * L'administration est maintenant restreinte aux emails configurés dans les paramétres applicatifs de Yavsc.Org (`appsettings-org.json`)

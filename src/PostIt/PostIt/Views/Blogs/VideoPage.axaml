@@ -1,0 +1,19 @@
+<ContentPage
+    x:Class="PostIt.Views.Blogs.VideoPage"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vlc="clr-namespace:LibVLCSharp.Avalonia;assembly=LibVLCSharp.Avalonia"
+    xmlns:vm="using:PostIt.ViewModels"
+    x:DataType="vm:VideoPageViewModel">
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="16" RowSpacing="12">
+        <TextBlock Text="{Binding Title}" FontSize="22" TextWrapping="Wrap" />
+        <Border Grid.Row="1" Background="Black">
+            <vlc:VideoView x:Name="Video" />
+        </Border>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12">
+            <Button x:Name="PlayButton" Content="Lire / Pause" Click="PlayPause_Click" />
+            <Button Content="Ouvrir dans le navigateur" Click="OpenExternal_Click" />
+        </StackPanel>
+        <TextBlock x:Name="PlaybackStatus" Grid.Row="3" TextWrapping="Wrap" />
+    </Grid>
+</ContentPage>

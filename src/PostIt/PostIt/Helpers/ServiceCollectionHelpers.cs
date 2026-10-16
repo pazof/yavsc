@@ -44,6 +44,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<MainWindow>();
         services.AddTransient<MainView>();
         services.AddTransient<BlogsPage>();
+        services.AddTransient<VideoPage>();
 
 
         // Models

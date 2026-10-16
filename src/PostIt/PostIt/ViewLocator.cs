@@ -42,6 +42,7 @@ public class ViewLocator : IDataTemplate
         return data switch
         {
             BlogsViewModel => services.GetRequiredService<BlogsPage>(),
+            VideoPageViewModel => services.GetRequiredService<VideoPage>(),
             Settings => services.GetRequiredService<SettingsPage>(),
             AboutPageViewModel => services.GetRequiredService<AboutPage>(),
             HomePageViewModel => services.GetRequiredService<HomePage>(),

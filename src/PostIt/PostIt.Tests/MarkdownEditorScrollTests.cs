@@ -55,7 +55,7 @@ public class MarkdownEditorScrollTests
     [InlineData(true)]
     public void Blog_page_bounds_the_article_viewport(bool preview)
     {
-        var page = new BlogsPage();
+        var page = new BlogsPage { DataContext = new PostIt.ViewModels.BlogsViewModel { IsEditing = true } };
         var editor = page.GetLogicalDescendants().OfType<MarkdownEditorControl>().Single();
         editor.MarkdownText = LongArticle;
         editor.IsPreviewVisible = preview;

@@ -14,15 +14,12 @@ public partial class BlogsPage : ContentPage
         InitializeComponent();
     }
 
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    protected override async void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
         if (DataContext is ViewModels.BlogsViewModel vm)
         {
-            if (!vm.IsLoaded)
-            {
-                vm.RefreshAsync().Wait();
-            }
+            await vm.InitializeAsync();
         }
     }
 
