@@ -4,20 +4,32 @@ using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using CommunityToolkit.Mvvm.Input;
 using Markdown.Avalonia;
 
 namespace PostIt.Views.Blogs;
 
 public partial class BlogsPage : ContentPage
 {
+    private static readonly RelayCommand<string?> DisabledLinkCommand =
+        new(static _ => { }, static _ => false);
+
     public BlogsPage()
     {
         InitializeComponent();
-        DataContextChanged += (_, _) =>
+        DataContextChanged += (_, _) => UpdateHyperlinkCommand();
+        UpdateHyperlinkCommand();
+    }
+
+    private void UpdateHyperlinkCommand()
+    {
+        if (ArticleReader.Engine is IMarkdownEngine2 engine)
         {
-            if (ArticleReader.Engine is IMarkdownEngine2 engine)
-                engine.HyperlinkCommand = (DataContext as ViewModels.BlogsViewModel)?.OpenResourceCommand;
-        };
+            if (DataContext is ViewModels.BlogsViewModel vm)
+                engine.HyperlinkCommand = vm.OpenResourceCommand;
+            else
+                engine.HyperlinkCommand = DisabledLinkCommand;
+        }
     }
 
     protected override async void OnApplyTemplate(TemplateAppliedEventArgs e)
