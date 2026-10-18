@@ -40,7 +40,7 @@ public partial class SessionStatusViewModel : ViewModelBase
     public partial bool IsLoggedIn { get; private set; }
 
     [ObservableProperty]
-    public partial bool IsModerator { get; private set; }
+    public partial bool IsAdministrator { get; private set; }
 
     private int _accessVersion;
 
@@ -81,7 +81,7 @@ public partial class SessionStatusViewModel : ViewModelBase
     public void Refresh()
     {
         ++_accessVersion;
-        IsModerator = false;
+        IsAdministrator = false;
         var has = Api?.HasValidSession ?? false;
         IsLoggedIn = has;
         IsLoggedOut = !has;
@@ -103,7 +103,7 @@ public partial class SessionStatusViewModel : ViewModelBase
             if (profile is null)
                 throw new InvalidOperationException("Le serveur a renvoyé un profil vide.");
             if (version == _accessVersion)
-                IsModerator = profile.Roles.Contains(Yavsc.Constants.BlogModeratorGroupName, StringComparer.Ordinal);
+                IsAdministrator = profile.Roles.Contains(Yavsc.Constants.AdminGroupName, StringComparer.Ordinal);
         }
         catch (Exception ex)
         {
@@ -122,7 +122,7 @@ public partial class SessionStatusViewModel : ViewModelBase
     public void SetError(string message)
     {
         ++_accessVersion;
-        IsModerator = false;
+        IsAdministrator = false;
         IsLoggedIn = false;
         IsLoggedOut = true;
         SessionLabel = message;

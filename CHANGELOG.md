@@ -4,6 +4,20 @@
 
 ### Added
 
+* [PostIt, Yavsc.Api] Portage des outils des contrôleurs web
+  d’administration : tableau de bord, rôles et affectations, clients OIDC
+  (paramètres, collections et secrets), scopes API et modèles de courriels.
+  Le dernier administrateur ne peut pas être exclu ; les suppressions et
+  rotations de secrets demandent une confirmation dans PostIt.
+* [Yavsc.Api] Routes `api/v1/administration`, DTO dédiés, client
+  `AdministrationApiClient` et documentation OpenAPI protégée en développement.
+  Les secrets OIDC sont hachés en SHA-256 et seule leur création restitue
+  la valeur en clair, sans cache.
+* [PostIt, Yavsc.Api] Export et import JSON transactionnel des données
+  métier des comptes, billets et activités. Les comptes sont transférés
+  sans mots de passe, jetons, confirmations ou rôles ; les contrôles
+  d’accès des billets sont conservés et leurs références sont validées.
+
 * [PostIt] Service `CameraStreamer` (préliminaire) : détection des
   périphériques de capture vidéo (DirectShow sous Windows via le paquet
   `DirectShowLib`, `/dev/video*` sous Linux) et création d'un média
@@ -13,12 +27,11 @@
 
 * [PostIt] Une seule page Administration regroupe les utilisateurs et
   leurs usages, avec le détail d’usage de l’utilisateur sélectionné.
-  L’accès depuis l’accueil et sa commande sont réservés au rôle `Moderator`,
+  L’accès depuis l’accueil et sa commande sont désormais réservés au rôle `Administrator`,
   vérifié via le profil du backend. « Mon profil » conserve la gestion
   du compte et accueille l’usage personnel, sans consulter les usages globaux.
-* [Yavsc.Api] Le rôle `Moderator` peut lire les listes d’utilisateurs et
-  d’usages ; les administrateurs conservent leurs droits existants et
-  les autres opérations sur les utilisateurs restent administrateur uniquement.
+* [Yavsc.Api] Les listes d’utilisateurs et d’usages globaux sont désormais
+  réservées au rôle `Administrator`, comme les autres outils d’administration.
 
 * [PostIt] La page des blogs passe en deux colonnes lorsque la largeur de
   la fenêtre atteint sa hauteur : billet à gauche, recherche, commandes et

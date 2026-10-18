@@ -36,6 +36,7 @@ public static class ServiceCollectionHelpers
         var estimateClient = new EstimateApiClient(api, () => settings.ApiUrl);
         var frontClient = new FrontOfficeApiClient(api, () => settings.ApiUrl);
         var resourceUsageClient = new ResourceUsageApiClient(api, () => settings.ApiUrl);
+        var administrationClient = new AdministrationApiClient(api, () => settings.ApiUrl);
         var notificationsClient = new NotificationsApiClient(api, () => settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
         var reverseGeocoding = new NominatimReverseGeocodingService();
@@ -103,6 +104,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(estimateClient);
         services.AddSingleton(frontClient);
         services.AddSingleton(resourceUsageClient);
+        services.AddSingleton(administrationClient);
         services.AddSingleton(notificationsClient);
         services.AddSingleton(userFilesClient);
         services.AddSingleton<IReverseGeocodingService>(reverseGeocoding);

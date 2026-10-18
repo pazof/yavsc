@@ -72,7 +72,7 @@ public class HomePageViewModel : ViewModelBase
         OpenMyFiles = new AsyncRelayCommand(OpenMyFilesAsync);
         OpenProfile = new AsyncRelayCommand(OpenProfileAsync);
         OpenPerformerConfiguration = new AsyncRelayCommand(OpenPerformerConfigurationAsync);
-        OpenAdministration = new AsyncRelayCommand(OpenAdministrationAsync, () => SessionStatus.IsModerator);
+        OpenAdministration = new AsyncRelayCommand(OpenAdministrationAsync, () => SessionStatus.IsAdministrator);
         OpenChat = new AsyncRelayCommand(OpenChatAsync);
     }
 
@@ -156,7 +156,7 @@ public class HomePageViewModel : ViewModelBase
 
     private void OnSessionStatusChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(SessionStatusViewModel.IsModerator))
+        if (e.PropertyName == nameof(SessionStatusViewModel.IsAdministrator))
         {
             if (Dispatcher.UIThread.CheckAccess())
                 OpenAdministration.NotifyCanExecuteChanged();
@@ -307,8 +307,8 @@ public class HomePageViewModel : ViewModelBase
 
     private async Task OpenAdministrationAsync()
     {
-        if (!SessionStatus.IsModerator)
-            throw new UnauthorizedAccessException("Le rôle Moderator est requis.");
+        if (!SessionStatus.IsAdministrator)
+            throw new UnauthorizedAccessException("Le rôle Administrator est requis.");
 
         var app = (App?)Application.Current;
         if (app is null)

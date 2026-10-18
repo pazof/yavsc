@@ -1,0 +1,169 @@
+@baseUrl = https://localhost:5104
+@token = REPLACE_WITH_ADMINISTRATOR_ACCESS_TOKEN
+@root = {{baseUrl}}/api/v1/administration
+@roleId = REPLACE_WITH_ROLE_ID
+@userId = REPLACE_WITH_USER_ID
+@clientId = 1
+@rowId = 1
+@scopeId = 1
+@templateId = REPLACE_WITH_MAILING_CRITERION
+
+### Protected OpenAPI document (development only)
+GET {{baseUrl}}/openapi/administration.json
+Authorization: Bearer {{token}}
+
+### Summary
+GET {{root}}/summary
+Authorization: Bearer {{token}}
+
+### Roles
+GET {{root}}/roles
+Authorization: Bearer {{token}}
+
+### Initialize standard roles
+POST {{root}}/roles/ensure
+Authorization: Bearer {{token}}
+
+### Members
+GET {{root}}/roles/{{roleId}}/members
+Authorization: Bearer {{token}}
+
+### Enroll
+PUT {{root}}/roles/{{roleId}}/members/{{userId}}
+Authorization: Bearer {{token}}
+
+### Remove membership (409 for last administrator)
+DELETE {{root}}/roles/{{roleId}}/members/{{userId}}
+Authorization: Bearer {{token}}
+
+### Clients
+GET {{root}}/clients
+Authorization: Bearer {{token}}
+
+### Client detail (metadata only for secrets)
+GET {{root}}/clients/{{clientId}}
+Authorization: Bearer {{token}}
+
+### Create client
+POST {{root}}/clients
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"clientId":"example-postit","clientName":"Example PostIt","requireClientSecret":false,"requirePkce":true}
+
+### Update client: send all scalar settings from GET, retaining unedited values
+PUT {{root}}/clients/{{clientId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"clientId":"example-postit","clientName":"Example PostIt","requireClientSecret":false,"requirePkce":true}
+
+### Add a collection row
+# Collections: RedirectUris, PostLogoutRedirectUris, Scopes, GrantTypes,
+# CorsOrigins, IdentityProviders, Claims, Properties.
+# Claims and Properties also require a "key".
+POST {{root}}/clients/{{clientId}}/collections/RedirectUris
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"value":"postit://callback"}
+
+### Remove collection row
+DELETE {{root}}/clients/{{clientId}}/collections/RedirectUris/{{rowId}}
+Authorization: Bearer {{token}}
+
+### Generate an additional secret (plaintext returned once; stored as SHA-256)
+POST {{root}}/clients/{{clientId}}/secrets
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"description":"Example generated secret"}
+
+### Generate a replacement, removing all previous secrets
+POST {{root}}/clients/{{clientId}}/secrets/regenerate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"description":"Example rotation"}
+
+### Remove a secret
+DELETE {{root}}/clients/{{clientId}}/secrets/{{rowId}}
+Authorization: Bearer {{token}}
+
+### Delete client
+DELETE {{root}}/clients/{{clientId}}
+Authorization: Bearer {{token}}
+
+### Scopes
+GET {{root}}/scopes
+Authorization: Bearer {{token}}
+
+### Scope detail
+GET {{root}}/scopes/{{scopeId}}
+Authorization: Bearer {{token}}
+
+### Create scope
+POST {{root}}/scopes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"name":"example-api","displayName":"Example API","enabled":true}
+
+### Update scope
+PUT {{root}}/scopes/{{scopeId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"name":"example-api","displayName":"Example API","description":"Updated description","enabled":true}
+
+### Delete scope
+DELETE {{root}}/scopes/{{scopeId}}
+Authorization: Bearer {{token}}
+
+### Mailing criteria
+GET {{root}}/mailing-criteria
+Authorization: Bearer {{token}}
+
+### Mailing templates
+GET {{root}}/mailing-templates
+Authorization: Bearer {{token}}
+
+### Template detail
+GET {{root}}/mailing-templates/{{templateId}}
+Authorization: Bearer {{token}}
+
+### Create template (use an ID returned by mailing-criteria)
+POST {{root}}/mailing-templates
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"id":"{{templateId}}","topic":"Example topic","body":"Example body","replyToAddress":"reply@example.invalid","toSend":"OnDemand"}
+
+### Update template
+PUT {{root}}/mailing-templates/{{templateId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"id":"{{templateId}}","topic":"Updated topic","body":"Updated body","replyToAddress":"reply@example.invalid","toSend":"Monthly"}
+
+### Delete template
+DELETE {{root}}/mailing-templates/{{templateId}}
+Authorization: Bearer {{token}}
+
+### Export business data, never account authentication material
+GET {{root}}/transfer
+Authorization: Bearer {{token}}
+
+### Atomic import/upsert (16 MiB maximum; an empty transfer changes nothing)
+POST {{root}}/transfer
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"version":1,"users":[],"blogs":[],"activities":[]}
+
+### Missing resource
+GET {{root}}/clients/2147483647
+Authorization: Bearer {{token}}
+
+### Anonymous access must be rejected (401)
+GET {{root}}/summary

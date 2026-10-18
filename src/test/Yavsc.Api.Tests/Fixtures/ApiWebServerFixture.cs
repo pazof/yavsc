@@ -19,6 +19,8 @@ using Yavsc.Tests.Shared;
 using Microsoft.AspNetCore.SignalR;
 using Yavsc.Interface;
 using Yavsc.Server.Hubs;
+using Microsoft.AspNetCore.Identity;
+using Yavsc.Api.Services;
 
 namespace Yavsc.Api.Test.Fixtures;
 
@@ -66,6 +68,10 @@ public sealed class ApiWebServerFixture : WebHostFixture
             .AddApplicationPart(typeof(ActivityApiController).Assembly);
 
         builder.Services.AddLocalization();
+        builder.Services.AddIdentityCore<ApplicationUser>(options =>
+            options.ClaimsIdentity.RoleClaimType = Yavsc.Constants.RoleClaimType)
+            .AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+        builder.Services.AddSiteAdministration();
         builder.Services.Configure<GoogleAuthSettings>(_ => { });
         builder.Services.Configure<SiteSettings>(settings => settings.Authority = "example.test");
         builder.Services.AddTransient<IBillingService, BillingService>();
@@ -111,6 +117,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+        app.MapOpenApi().RequireAuthorization("AdministratorOnly");
 
         using (var scope = app.Services.CreateScope())
         {

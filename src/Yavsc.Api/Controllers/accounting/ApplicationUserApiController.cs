@@ -7,7 +7,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
-    [Produces("application/json"), Authorize]
+    [Produces("application/json"), Authorize("AdministratorOnly")]
     [Route(Constants.APIPrefix + "/users")]
     public class ApplicationUserApiController : Controller
     {
@@ -19,7 +19,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: api/ApplicationUserApi
-        [HttpGet, Authorize(Roles = Constants.AdminGroupName + "," + Constants.BlogModeratorGroupName)]
+        [HttpGet]
         public IEnumerable<UserInfo> GetApplicationUser(int skip=0, int take = 25)
         {
             return _context.Users
@@ -41,7 +41,7 @@ namespace Yavsc.Controllers
                 });
         }
 
-        [HttpGet("search/{pattern}"), Authorize(Roles = Constants.AdminGroupName + "," + Constants.BlogModeratorGroupName)]
+        [HttpGet("search/{pattern}")]
         public IEnumerable<UserInfo> SearchApplicationUser(string pattern, int skip=0, int take = 25)
         {
             var normalizedPattern = pattern ?? string.Empty;

@@ -13,6 +13,7 @@ using Yavsc;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
 using Yavsc.Server.Hubs;
+using Yavsc.Api.Services;
 
 internal class Program
 {
@@ -25,6 +26,7 @@ internal class Program
         builder.AddConfiguration("api");
 
         var services = builder.Services;
+        services.AddSiteAdministration();
 
         // Anthropic client
         builder.Services.AddSingleton<AnthropicClient>(_ =>
@@ -132,7 +134,10 @@ internal class Program
         using (var app = builder.Build())
         {
             if (app.Environment.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+                app.MapOpenApi().RequireAuthorization("AdministratorOnly");
+            }
 
             app
                 .UseRouting()

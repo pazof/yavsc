@@ -10,6 +10,7 @@ using PostIt.Services;
 using Yavsc.Abstract.Identity;
 using Yavsc.Abstract.Resources;
 using Yavsc.Api.Client;
+using Yavsc.Abstract.Administration;
 
 namespace PostIt.ViewModels;
 
@@ -18,6 +19,7 @@ public partial class AdministrationPageViewModel : ViewModelBase
     private readonly YavscApiClient? _api;
     private readonly ResourceUsageApiClient? _usageClient;
     private readonly SessionStatusViewModel? _session;
+    private readonly AdministrationApiClient? _administrationClient;
 
     public ObservableCollection<ResourceUsageSummary> UsageOverview { get; } = new();
 
@@ -53,11 +55,16 @@ public partial class AdministrationPageViewModel : ViewModelBase
     public override bool CanNavigatePrevious { get => true; protected set { _ = value; } }
 
     public AdministrationPageViewModel(YavscApiClient? api,
-        ResourceUsageApiClient? usageClient = null, SessionStatusViewModel? session = null)
+        ResourceUsageApiClient? usageClient = null, SessionStatusViewModel? session = null,
+        AdministrationApiClient? administrationClient = null)
     {
         _api = api;
         _usageClient = usageClient;
         _session = session;
+        _administrationClient = administrationClient;
+        NewClient();
+        NewScope();
+        NewMailingTemplate();
     }
 
     public AdministrationPageViewModel() : this(null) { }
@@ -74,14 +81,10 @@ public partial class AdministrationPageViewModel : ViewModelBase
     [RelayCommand]
     public async Task RefreshAsync()
     {
-        Users.Clear();
-        UsageOverview.Clear();
-        SelectedUser = null;
-        OnPropertyChanged(nameof(FilteredUsers));
-        OnPropertyChanged(nameof(SelectedUsage));
-        if (_session?.IsModerator != true)
+        ClearAdministrationData();
+        if (_session?.IsAdministrator != true)
         {
-            StatusMessage = "Le rôle Moderator est requis.";
+            StatusMessage = "Le rôle Administrator est requis.";
             return;
         }
         if (_api is null || _usageClient is null)
@@ -103,9 +106,9 @@ public partial class AdministrationPageViewModel : ViewModelBase
             var usage = await _usageClient.GetAdminOverviewAsync().ConfigureAwait(true)
                 ?? throw new InvalidOperationException("Le serveur a renvoyé une liste d’usages vide.");
 
-            if (!_session.IsModerator)
+            if (!_session.IsAdministrator)
             {
-                StatusMessage = "Le rôle Moderator est requis.";
+                StatusMessage = "Le rôle Administrator est requis.";
                 return;
             }
 
@@ -118,17 +121,47 @@ public partial class AdministrationPageViewModel : ViewModelBase
 
             OnPropertyChanged(nameof(FilteredUsers));
             OnPropertyChanged(nameof(SelectedUsage));
+            if (_administrationClient is not null)
+                await LoadToolsAsync();
             StatusMessage = Users.Count > 0 ? $"{Users.Count} utilisateur(s) chargé(s)." : "Aucun utilisateur trouvé.";
         }
         catch (Exception ex)
         {
-            Users.Clear();
-            OnPropertyChanged(nameof(FilteredUsers));
+            ClearAdministrationData();
             StatusMessage = $"Accès administration refusé ou indisponible : {ex.Message}";
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    private void ClearAdministrationData()
+    {
+        Users.Clear();
+        UsageOverview.Clear();
+        SelectedUser = null;
+        Summary = null;
+        Roles.Clear();
+        RoleMembers.Clear();
+        Clients.Clear();
+        Scopes.Clear();
+        MailingTemplates.Clear();
+        MailingCriteria.Clear();
+        SelectedRole = null;
+        SelectedMember = null;
+        NewClient();
+        NewScope();
+        NewMailingTemplate();
+        NewSecretValue = null;
+        SecretInput = "";
+        SecretDescription = "";
+        SecretExpiration = "";
+        EntryKey = "";
+        EntryValue = "";
+        EnrollUserId = "";
+        ConfirmDestructiveAction = false;
+        OnPropertyChanged(nameof(FilteredUsers));
+        OnPropertyChanged(nameof(SelectedUsage));
     }
 }

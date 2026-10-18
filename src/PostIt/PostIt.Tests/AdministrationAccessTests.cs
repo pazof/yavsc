@@ -16,12 +16,13 @@ namespace PostIt.Tests;
 public class AdministrationAccessTests
 {
     [AvaloniaTheory]
-    [InlineData("Moderator", true)]
-    [InlineData("Administrator", false)]
+    [InlineData("Moderator", false)]
+    [InlineData("Administrator", true)]
+    [InlineData("administrator", false)]
     [InlineData("Performer", false)]
     [InlineData("moderator", false)]
     [InlineData("", false)]
-    public async Task Home_administration_visibility_and_command_follow_the_moderator_role(string role, bool allowed)
+    public async Task Home_administration_visibility_and_command_follow_the_administrator_role(string role, bool allowed)
     {
         await using var api = new ProfileTransport(role);
         var session = new SessionStatusViewModel { Api = api };
@@ -35,7 +36,7 @@ public class AdministrationAccessTests
                 button => Equals(button.Content, "Administration"));
             Assert.False(button.IsVisible);
             await session.RefreshAsync();
-            Assert.Equal(allowed, session.IsModerator);
+            Assert.Equal(allowed, session.IsAdministrator);
             Assert.Equal(allowed, button.IsVisible);
             Assert.Equal(allowed, vm.OpenAdministration.CanExecute(null));
             Assert.DoesNotContain(page.GetVisualDescendants().OfType<Button>(),
@@ -55,32 +56,32 @@ public class AdministrationAccessTests
     [Fact]
     public async Task Late_role_response_cannot_restore_access_after_logout()
     {
-        await using var api = new ProfileTransport("Moderator");
+        await using var api = new ProfileTransport("Administrator");
         var pending = new TaskCompletionSource<Me>();
         api.PendingProfile = pending.Task;
         var session = new SessionStatusViewModel { Api = api };
         var refresh = session.RefreshAsync();
         session.Api = null;
         session.Refresh();
-        pending.SetResult(new Me { Roles = ["Moderator"] });
+        pending.SetResult(new Me { Roles = ["Administrator"] });
         await refresh;
-        Assert.False(session.IsModerator);
+        Assert.False(session.IsAdministrator);
     }
 
     [Fact]
     public async Task Role_lookup_failure_denies_access_and_reports_the_error()
     {
-        await using var api = new ProfileTransport("Moderator") { FailProfile = true };
+        await using var api = new ProfileTransport("Administrator") { FailProfile = true };
         var session = new SessionStatusViewModel { Api = api };
         await session.RefreshAsync();
-        Assert.False(session.IsModerator);
+        Assert.False(session.IsAdministrator);
         Assert.Contains("Impossible de vérifier les droits", session.SessionLabel);
     }
 
     [Fact]
     public async Task Administration_loads_users_and_usage_and_matches_by_id()
     {
-        await using var api = new ProfileTransport("Moderator");
+        await using var api = new ProfileTransport("Administrator");
         var session = new SessionStatusViewModel { Api = api };
         await session.RefreshAsync();
         var vm = new AdministrationPageViewModel(api, api.UsageClient, session);
@@ -96,7 +97,7 @@ public class AdministrationAccessTests
     [AvaloniaFact]
     public async Task Administration_displays_both_tabs_and_selected_user_usage()
     {
-        await using var api = new ProfileTransport("Moderator");
+        await using var api = new ProfileTransport("Administrator");
         var session = new SessionStatusViewModel { Api = api };
         await session.RefreshAsync();
         var vm = new AdministrationPageViewModel(api, api.UsageClient, session);
@@ -109,7 +110,7 @@ public class AdministrationAccessTests
             window.Show();
             Dispatcher.UIThread.RunJobs();
             var tabs = Assert.Single(page.GetVisualDescendants().OfType<TabControl>());
-            Assert.Equal(2, tabs.Items.Count);
+            Assert.Equal(7, tabs.Items.Count);
             Assert.Contains(page.GetVisualDescendants().OfType<TextBlock>(),
                 text => text.Text == "Appels API : 12");
             tabs.SelectedIndex = 1;
@@ -126,9 +127,9 @@ public class AdministrationAccessTests
     }
 
     [Fact]
-    public async Task Administration_denies_non_moderators_without_requesting_private_data()
+    public async Task Administration_denies_moderators_without_requesting_private_data()
     {
-        await using var api = new ProfileTransport("Administrator");
+        await using var api = new ProfileTransport("Moderator");
         var session = new SessionStatusViewModel { Api = api };
         await session.RefreshAsync();
         api.Requests.Clear();
@@ -136,13 +137,13 @@ public class AdministrationAccessTests
         await vm.RefreshAsync();
         Assert.Empty(api.Requests);
         Assert.Empty(vm.Users);
-        Assert.Contains("Moderator", vm.StatusMessage);
+        Assert.Contains("Administrator", vm.StatusMessage);
     }
 
     [Fact]
     public async Task Administration_failure_reports_error_without_falling_back_to_personal_usage()
     {
-        await using var api = new ProfileTransport("Moderator") { FailUsage = true };
+        await using var api = new ProfileTransport("Administrator") { FailUsage = true };
         var session = new SessionStatusViewModel { Api = api };
         await session.RefreshAsync();
         var vm = new AdministrationPageViewModel(api, api.UsageClient, session);
@@ -179,7 +180,7 @@ public class AdministrationAccessTests
         Assert.Contains("Impossible de charger mon usage", vm.UsageError);
     }
 
-    private sealed class ProfileTransport : YavscApiClient
+    internal sealed class ProfileTransport : YavscApiClient
     {
         private readonly string _tokenPath;
         private readonly string _role;

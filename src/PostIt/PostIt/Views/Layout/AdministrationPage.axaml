@@ -2,9 +2,59 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PostIt.ViewModels"
              xmlns:resources="using:Yavsc.Abstract.Resources"
+             xmlns:admin="using:Yavsc.Abstract.Administration"
              x:Class="PostIt.Views.AdministrationPage"
              x:DataType="vm:AdministrationPageViewModel"
              Header="Administration">
+
+  <ContentPage.DataTemplates>
+    <DataTemplate DataType="{x:Type vm:AdministrationFieldViewModel}" x:DataType="vm:AdministrationFieldViewModel">
+      <StackPanel Spacing="4" Margin="0,0,0,10">
+        <TextBlock Text="{Binding Name}" TextWrapping="Wrap"/>
+        <TextBox Text="{Binding Text, Mode=TwoWay}" IsVisible="{Binding IsText}"
+                 AcceptsReturn="{Binding IsMultiline}" TextWrapping="Wrap"/>
+        <CheckBox IsChecked="{Binding Checked, Mode=TwoWay}" IsVisible="{Binding IsBoolean}"/>
+        <ComboBox ItemsSource="{Binding Choices}" SelectedItem="{Binding Text, Mode=TwoWay}"
+                  IsVisible="{Binding IsChoice}" HorizontalAlignment="Stretch"/>
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type admin:AdministrationRole}" x:DataType="admin:AdministrationRole">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Text="{Binding Name}"/>
+        <TextBlock Text="{Binding UserCount, StringFormat='({0} membres)'}"/>
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type admin:RoleMember}" x:DataType="admin:RoleMember">
+      <StackPanel Spacing="4">
+        <TextBlock Text="{Binding UserName}" FontWeight="Bold"/>
+        <TextBlock Text="{Binding Id}"/>
+        <TextBlock Text="{Binding Email}"/>
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type admin:AdministrationClient}" x:DataType="admin:AdministrationClient">
+      <TextBlock Text="{Binding Settings.ClientId}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type admin:AdministrationScope}" x:DataType="admin:AdministrationScope">
+      <TextBlock Text="{Binding Settings.Name}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type admin:MailingTemplateSettings}" x:DataType="admin:MailingTemplateSettings">
+      <TextBlock Text="{Binding Id}"/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type admin:ClientEntryResponse}" x:DataType="admin:ClientEntryResponse">
+      <StackPanel Spacing="4">
+        <TextBlock Text="{Binding Collection}" FontWeight="Bold"/>
+        <TextBlock Text="{Binding Key}"/>
+        <TextBlock Text="{Binding Value}" TextWrapping="Wrap"/>
+      </StackPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type admin:ClientSecretInfo}" x:DataType="admin:ClientSecretInfo">
+      <StackPanel Spacing="4">
+        <TextBlock Text="{Binding Description}"/>
+        <TextBlock Text="{Binding Created, StringFormat='Création : {0:u}'}"/>
+        <TextBlock Text="{Binding Expiration, StringFormat='Expiration : {0:u}'}"/>
+      </StackPanel>
+    </DataTemplate>
+  </ContentPage.DataTemplates>
 
   <Grid RowDefinitions="Auto,Auto,*" Margin="16" RowSpacing="12">
     <TextBlock Grid.Row="0"
@@ -13,6 +63,8 @@
                FontWeight="SemiBold"/>
 
     <StackPanel Grid.Row="1" Spacing="8">
+      <TextBlock Text="{Binding Summary.UserCount, StringFormat='Utilisateurs enregistrés : {0}'}"/>
+      <TextBlock Text="{Binding Summary.AdministratorCount, StringFormat='Administrateurs : {0}'}"/>
       <TextBox Text="{Binding SearchText, Mode=TwoWay}"
                PlaceholderText="Rechercher un utilisateur..."/>
       <Button Content="Actualiser"
@@ -23,9 +75,16 @@
                    Height="8"/>
       <TextBlock Text="{Binding StatusMessage}"
                  TextWrapping="Wrap"/>
+      <CheckBox Content="Je confirme la prochaine suppression, exclusion, régénération ou import."
+                IsChecked="{Binding ConfirmDestructiveAction, Mode=TwoWay}"/>
     </StackPanel>
 
-    <TabControl Grid.Row="2">
+    <TabControl Grid.Row="2" IsEnabled="{Binding !IsBusy}">
+      <TabControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel/>
+        </ItemsPanelTemplate>
+      </TabControl.ItemsPanel>
       <TabItem Header="Utilisateurs">
         <Grid ColumnDefinitions="1.3*,0.7*" ColumnSpacing="12">
           <ListBox ItemsSource="{Binding FilteredUsers}"
@@ -91,6 +150,108 @@
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Rôles">
+        <ScrollViewer>
+          <StackPanel Spacing="12">
+            <TextBlock Text="Rôles et affectations" FontSize="18" FontWeight="Bold"/>
+            <Button Content="Initialiser les rôles standards" Command="{Binding EnsureRolesCommand}"/>
+            <ComboBox ItemsSource="{Binding Roles}" SelectedItem="{Binding SelectedRole, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch"/>
+            <Button Content="Afficher les membres" Command="{Binding LoadRoleMembersCommand}"/>
+            <ListBox ItemsSource="{Binding RoleMembers}" SelectedItem="{Binding SelectedMember, Mode=TwoWay}" Height="200"/>
+            <TextBlock Text="Identifiant à inscrire (ou utilisateur sélectionné dans l’onglet Utilisateurs)" TextWrapping="Wrap"/>
+            <TextBox Text="{Binding EnrollUserId, Mode=TwoWay}" PlaceholderText="Identifiant utilisateur"/>
+            <WrapPanel>
+              <Button Content="Inscrire" Command="{Binding EnrollCommand}" Margin="0,0,8,8"/>
+              <Button Content="Retirer le membre sélectionné" Command="{Binding FireCommand}" Margin="0,0,8,8"/>
+            </WrapPanel>
+            <TextBlock Text="{Binding Summary.Assembly}" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding Summary.Runtime}" TextWrapping="Wrap"/>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Clients OIDC">
+        <ScrollViewer>
+          <StackPanel Spacing="12">
+            <ComboBox ItemsSource="{Binding Clients}" SelectedItem="{Binding SelectedClient, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch" PlaceholderText="Choisir un client"/>
+            <WrapPanel>
+              <Button Content="Nouveau" Command="{Binding NewClientCommand}" Margin="0,0,8,8"/>
+              <Button Content="Enregistrer" Command="{Binding SaveClientCommand}" Margin="0,0,8,8"/>
+              <Button Content="Supprimer" Command="{Binding DeleteClientCommand}" Margin="0,0,8,8"/>
+            </WrapPanel>
+            <Expander Header="Paramètres du client" IsExpanded="True" HorizontalAlignment="Stretch">
+              <ItemsControl ItemsSource="{Binding ClientFields}"/>
+            </Expander>
+            <TextBlock Text="Collections" FontSize="18" FontWeight="Bold"/>
+            <ListBox ItemsSource="{Binding SelectedClient.Entries}" SelectedItem="{Binding SelectedEntry, Mode=TwoWay}" Height="200"/>
+            <ComboBox ItemsSource="{Binding Collections}" SelectedItem="{Binding SelectedCollection, Mode=TwoWay}"/>
+            <TextBox Text="{Binding EntryKey, Mode=TwoWay}" PlaceholderText="Clé (claims et propriétés)"/>
+            <TextBox Text="{Binding EntryValue, Mode=TwoWay}" PlaceholderText="Valeur"/>
+            <WrapPanel>
+              <Button Content="Ajouter l’entrée" Command="{Binding AddEntryCommand}" Margin="0,0,8,8"/>
+              <Button Content="Supprimer l’entrée sélectionnée" Command="{Binding DeleteEntryCommand}" Margin="0,0,8,8"/>
+            </WrapPanel>
+            <TextBlock Text="Secrets" FontSize="18" FontWeight="Bold"/>
+            <ListBox ItemsSource="{Binding SelectedClient.Secrets}" SelectedItem="{Binding SelectedSecret, Mode=TwoWay}" Height="150"/>
+            <TextBox Text="{Binding SecretInput, Mode=TwoWay}" PasswordChar="●"
+                     PlaceholderText="Secret fourni (vide : générer un secret)"/>
+            <TextBox Text="{Binding SecretDescription, Mode=TwoWay}" PlaceholderText="Description"/>
+            <TextBox Text="{Binding SecretExpiration, Mode=TwoWay}" PlaceholderText="Expiration ISO 8601 (facultative)"/>
+            <WrapPanel>
+              <Button Content="Ajouter un secret" Command="{Binding AddSecretCommand}" Margin="0,0,8,8"/>
+              <Button Content="Régénérer et remplacer tous les secrets" Command="{Binding RegenerateSecretCommand}" Margin="0,0,8,8"/>
+              <Button Content="Supprimer le secret sélectionné" Command="{Binding DeleteSecretCommand}" Margin="0,0,8,8"/>
+            </WrapPanel>
+            <TextBlock Text="Nouveau secret : copiez-le maintenant. Il ne sera plus consultable ensuite." TextWrapping="Wrap"/>
+            <TextBox Text="{Binding NewSecretValue}" IsReadOnly="True"/>
+            <Button Content="Masquer le nouveau secret" Command="{Binding ClearSecretCommand}"/>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Scopes API">
+        <ScrollViewer>
+          <StackPanel Spacing="12">
+            <ComboBox ItemsSource="{Binding Scopes}" SelectedItem="{Binding SelectedScope, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch" PlaceholderText="Choisir un scope"/>
+            <WrapPanel>
+              <Button Content="Nouveau" Command="{Binding NewScopeCommand}" Margin="0,0,8,8"/>
+              <Button Content="Enregistrer" Command="{Binding SaveScopeCommand}" Margin="0,0,8,8"/>
+              <Button Content="Supprimer" Command="{Binding DeleteScopeCommand}" Margin="0,0,8,8"/>
+            </WrapPanel>
+            <ItemsControl ItemsSource="{Binding ScopeFields}"/>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Courriels">
+        <ScrollViewer>
+          <StackPanel Spacing="12">
+            <ComboBox ItemsSource="{Binding MailingTemplates}" SelectedItem="{Binding SelectedMailingTemplate, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch" PlaceholderText="Choisir un modèle"/>
+            <WrapPanel>
+              <Button Content="Nouveau" Command="{Binding NewMailingTemplateCommand}" Margin="0,0,8,8"/>
+              <Button Content="Enregistrer" Command="{Binding SaveMailingTemplateCommand}" Margin="0,0,8,8"/>
+              <Button Content="Supprimer" Command="{Binding DeleteMailingTemplateCommand}" Margin="0,0,8,8"/>
+            </WrapPanel>
+            <TextBlock Text="Critères de diffusion disponibles (champ Id du modèle)" TextWrapping="Wrap"/>
+            <ItemsControl ItemsSource="{Binding MailingCriteria}"/>
+            <ItemsControl ItemsSource="{Binding MailingFields}"/>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Données">
+        <ScrollViewer>
+          <StackPanel Spacing="12">
+            <TextBlock Text="Transferts de données métier" FontSize="18" FontWeight="Bold"/>
+            <TextBlock Text="Comptes (données métier uniquement), billets et activités. Aucun mot de passe, jeton, rôle ou secret d’authentification n’est transféré."
+                       TextWrapping="Wrap"/>
+            <TextBlock Text="L’import met à jour les identifiants existants et crée les nouvelles lignes, en une transaction. Les cercles référencés doivent déjà exister. Les nouveaux comptes n’ont pas de mot de passe."
+                       TextWrapping="Wrap"/>
+            <Button Content="Exporter vers un fichier JSON" Click="Export_Click"/>
+            <Button Content="Importer un fichier JSON (16 Mo maximum)" Click="Import_Click"/>
+          </StackPanel>
         </ScrollViewer>
       </TabItem>
     </TabControl>

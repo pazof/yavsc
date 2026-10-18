@@ -56,23 +56,87 @@ pas la destruction du processus par Android.
 ## Administration et profil personnel
 
 L'accueil présente un seul accès **Administration**, visible et exécutable
-uniquement pour le rôle exact `Moderator`. `SessionStatusViewModel.RefreshAsync`
+uniquement pour le rôle exact `Administrator`. `SessionStatusViewModel.RefreshAsync`
 lit les rôles dans `GET account/me` après le rafraîchissement de session ;
 une erreur de lecture masque l'accès et affiche une erreur dans la bannière.
 La déconnexion invalide aussi les vérifications de droits encore en vol.
 
-`AdministrationPage` regroupe deux onglets : utilisateurs et usages globaux.
+`AdministrationPage` regroupe sept onglets : utilisateurs, usages globaux,
+rôles, clients OIDC, scopes API, courriels et données. Les en-têtes se
+répartissent sur plusieurs lignes sur les écrans étroits.
 Le détail d'un utilisateur associe son usage par `UserId`, sans dépendre
 du nom affiché. Les erreurs ne déclenchent pas de repli sur l'usage personnel.
-Le backend autorise la lecture des listes aux rôles `Moderator` et
-`Administrator`, mais garde les autres opérations utilisateurs sous la
-politique `AdministratorOnly`. L'autorisation serveur reste indispensable,
+Le backend réserve aussi les listes aux administrateurs, sous la
+politique `AdministratorOnly`. Le rôle `Moderator` seul n'ouvre plus
+l'administration de PostIt. L'autorisation serveur reste indispensable,
 indépendamment de la visibilité du bouton dans PostIt.
 
 **Mon profil** réutilise la page de gestion du compte existante et les
 endpoints `account/me` pour lire et enregistrer les informations personnelles.
 Elle affiche aussi `resource-usage/me`, sans appeler la liste des usages
 globaux. Une indisponibilité de l'usage n'empêche pas la gestion du profil.
+
+### Outils d'administration du site
+
+Les outils portés correspondent aux contrôleurs de
+`Yavsc.Org/Controllers/Administration` ; le site web existant est conservé.
+Les nouvelles routes vivent dans Yavsc.Api sous `api/v1/administration`.
+Les données passent par des records dédiés de Yavsc.Abstract et par
+`AdministrationApiClient`, jamais par les entités EF.
+
+| Routes | Fonction |
+| --- | --- |
+| `summary`, `roles`, `roles/ensure` | Statistiques, informations du runtime, rôles standards |
+| `roles/{id}/members[/{userId}]` | Membres, inscription et exclusion |
+| `clients[/{id}]` | Paramètres scalaires des clients OAuth/OIDC |
+| `clients/{id}/collections/{collection}[/{rowId}]` | Redirect URIs, post-logout URIs, scopes, grant types, CORS, restrictions IdP, claims et propriétés |
+| `clients/{id}/secrets[/regenerate]`, `clients/{id}/secrets/{secretId}` | Ajout, rotation et suppression des secrets |
+| `scopes[/{id}]` | Création, consultation, modification et suppression des scopes API |
+| `mailing-criteria`, `mailing-templates[/{id}]` | Critères de diffusion et modèles de courriels |
+| `transfer` | Export par GET, import transactionnel par POST |
+
+Les formulaires de clients, scopes et modèles sont construits à partir
+des propriétés de leurs DTO typés, afin de conserver tous les champs de
+l'interface web. Les booléens et énumérations disposent de contrôles dédiés ;
+les valeurs numériques et annotations de validation sont vérifiées avant
+l'envoi puis à nouveau côté serveur.
+
+Un nouveau client démarre avec `authorization_code`, PKCE et les scopes
+`openid` et `profile`. Les autres types d'autorisation restent configurables
+dans ses collections. Une rotation remplace tous les secrets précédents et
+expire par défaut après 90 jours. Le serveur conserve uniquement le SHA-256
+du secret partagé ; les lectures ne rendent que les métadonnées.
+PostIt efface la valeur nouvellement créée au changement de client, à la
+prochaine opération et au détachement de la page. Une réponse de création
+de secret reçue après déconnexion est ignorée ; un rafraîchissement sans
+droits efface les données d'administration précédemment chargées. Supprimer un objet,
+exclure un membre, remplacer les secrets ou importer demande une confirmation
+explicite. Le serveur refuse l'exclusion du dernier administrateur.
+
+Le transfert JSON version 1 comprend les informations métier des comptes
+(identifiant, nom, e-mail, nom complet, avatar, calendrier et limites de
+stockage), les billets (contenu, auteur, publication, cercles et étiquettes)
+et les paramètres des activités. Ce n'est pas une sauvegarde complète de
+la base : fichiers, sessions, mots de passe, jetons, rôles, moyens de paiement,
+adresses et historique d'audit ne sont pas transférés. L'e-mail d'un compte
+existant, clé alternative du modèle actuel, ne peut pas être changé par import.
+Les nouveaux comptes n'ont ni mot de passe ni e-mail confirmé.
+
+Les identifiants des billets sont préservés et la séquence PostgreSQL est
+réajustée après l'import. Tous les auteurs et cercles doivent exister et
+les parents d'activités doivent former un graphe sans cycle. Une erreur
+annule l'ensemble de l'import ; aucun repli n'élargit les permissions d'un
+billet. Les fichiers importés et requêtes sont limités à 16 Mio ; les gros
+exports doivent être répartis en plusieurs transferts de même schéma.
+Si plusieurs étiquettes portent déjà le même nom, l'import réutilise celle
+ayant le plus petit identifiant sans supprimer les autres.
+
+L'initialisation du premier administrateur reste le mécanisme web existant,
+et n'est pas proposée aux utilisateurs non administrateurs par PostIt.
+En développement, `/openapi/administration.json` décrit uniquement ces outils,
+avec accès `AdministratorOnly`. Les requêtes de référence sont dans
+[Administration.http](../../src/Yavsc.Api/Administration.http) ; l'adresse
+locale d'exemple est celle du serveur de tests, à adapter au déploiement.
 
 ## Lecture des billets et fichiers utilisateur
 

@@ -92,7 +92,7 @@
           <Button Content="Administration"
               Command="{Binding OpenAdministration}"
               HorizontalAlignment="Center"
-              IsVisible="{Binding SessionStatus.IsModerator}"/>
+              IsVisible="{Binding SessionStatus.IsAdministrator}"/>
         </StackPanel>
         </ScrollViewer>
 </ContentPage>

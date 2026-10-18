@@ -184,7 +184,7 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
     }
 
     [Theory]
-    [InlineData("Moderator", HttpStatusCode.OK)]
+    [InlineData("Moderator", HttpStatusCode.Forbidden)]
     [InlineData("Administrator", HttpStatusCode.OK)]
     [InlineData("Performer", HttpStatusCode.Forbidden)]
     [InlineData("moderator", HttpStatusCode.Forbidden)]
