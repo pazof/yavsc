@@ -11,6 +11,15 @@
 
 ### Changed
 
+* [PostIt] Une seule page Administration regroupe les utilisateurs et
+  leurs usages, avec le détail d’usage de l’utilisateur sélectionné.
+  L’accès depuis l’accueil et sa commande sont réservés au rôle `Moderator`,
+  vérifié via le profil du backend. « Mon profil » conserve la gestion
+  du compte et accueille l’usage personnel, sans consulter les usages globaux.
+* [Yavsc.Api] Le rôle `Moderator` peut lire les listes d’utilisateurs et
+  d’usages ; les administrateurs conservent leurs droits existants et
+  les autres opérations sur les utilisateurs restent administrateur uniquement.
+
 * [PostIt] La page des blogs passe en deux colonnes lorsque la largeur de
   la fenêtre atteint sa hauteur : billet à gauche, recherche, commandes et
   liste à droite, avec séparateur vertical redimensionnable. La disposition
@@ -19,6 +28,9 @@
 
 ### Fixed
 
+* [PostIt.Android] Restauration de la pile de navigation lors de la
+  recréation de l'activité après suspension : nouvelles pages liées aux
+  mêmes modèles de vue, sans plus de procès.
 * [PostIt] Le changement de disposition de la page des blogs est différé
   sur le thread UI, évitant l'exception « Visual was invalidated during
   the render pass » au redimensionnement.

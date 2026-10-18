@@ -72,8 +72,7 @@ public class HomePageViewModel : ViewModelBase
         OpenMyFiles = new AsyncRelayCommand(OpenMyFilesAsync);
         OpenProfile = new AsyncRelayCommand(OpenProfileAsync);
         OpenPerformerConfiguration = new AsyncRelayCommand(OpenPerformerConfigurationAsync);
-        OpenAdministration = new AsyncRelayCommand(OpenAdministrationAsync);
-        OpenResourceUsage = new AsyncRelayCommand(OpenResourceUsageAsync);
+        OpenAdministration = new AsyncRelayCommand(OpenAdministrationAsync, () => SessionStatus.IsModerator);
         OpenChat = new AsyncRelayCommand(OpenChatAsync);
     }
 
@@ -83,7 +82,6 @@ public class HomePageViewModel : ViewModelBase
     public IAsyncRelayCommand OpenProfile { get; }
     public IAsyncRelayCommand OpenPerformerConfiguration { get; }
     public IAsyncRelayCommand OpenAdministration { get; }
-    public IAsyncRelayCommand OpenResourceUsage { get; }
     public IAsyncRelayCommand OpenActivities { get; }
     public IAsyncRelayCommand OpenProviderRequests { get; }
     public IAsyncRelayCommand OpenClientEstimates { get; }
@@ -158,6 +156,13 @@ public class HomePageViewModel : ViewModelBase
 
     private void OnSessionStatusChanged(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName == nameof(SessionStatusViewModel.IsModerator))
+        {
+            if (Dispatcher.UIThread.CheckAccess())
+                OpenAdministration.NotifyCanExecuteChanged();
+            else
+                Dispatcher.UIThread.Post(OpenAdministration.NotifyCanExecuteChanged);
+        }
         if (e.PropertyName != nameof(SessionStatusViewModel.IsLoggedIn) || _notificationsClient is null)
             return;
 
@@ -302,6 +307,9 @@ public class HomePageViewModel : ViewModelBase
 
     private async Task OpenAdministrationAsync()
     {
+        if (!SessionStatus.IsModerator)
+            throw new UnauthorizedAccessException("Le rôle Moderator est requis.");
+
         var app = (App?)Application.Current;
         if (app is null)
         {
@@ -314,25 +322,6 @@ public class HomePageViewModel : ViewModelBase
             throw new InvalidOperationException("Page administration indisponible.");
         }
 
-        await vm.InitializeAsync();
-        await app.PushPageAsync(vm);
-    }
-
-    private async Task OpenResourceUsageAsync()
-    {
-        var app = (App?)Application.Current;
-        if (app is null)
-        {
-            throw new InvalidOperationException("Application PostIt indisponible.");
-        }
-
-        var resourceUsageClient = app.ServiceProvider?.GetRequiredService<ResourceUsageApiClient>();
-        if (resourceUsageClient is null)
-        {
-            throw new InvalidOperationException("Client usage indisponible.");
-        }
-
-        var vm = new ResourceUsagePageViewModel(resourceUsageClient);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

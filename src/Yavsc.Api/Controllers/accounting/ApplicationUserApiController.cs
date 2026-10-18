@@ -7,7 +7,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Controllers
 {
-    [Produces("application/json"),Authorize("AdministratorOnly")]
+    [Produces("application/json"), Authorize]
     [Route(Constants.APIPrefix + "/users")]
     public class ApplicationUserApiController : Controller
     {
@@ -19,7 +19,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: api/ApplicationUserApi
-        [HttpGet]
+        [HttpGet, Authorize(Roles = Constants.AdminGroupName + "," + Constants.BlogModeratorGroupName)]
         public IEnumerable<UserInfo> GetApplicationUser(int skip=0, int take = 25)
         {
             return _context.Users
@@ -41,7 +41,7 @@ namespace Yavsc.Controllers
                 });
         }
 
-        [HttpGet("search/{pattern}")]
+        [HttpGet("search/{pattern}"), Authorize(Roles = Constants.AdminGroupName + "," + Constants.BlogModeratorGroupName)]
         public IEnumerable<UserInfo> SearchApplicationUser(string pattern, int skip=0, int take = 25)
         {
             var normalizedPattern = pattern ?? string.Empty;
@@ -68,7 +68,7 @@ namespace Yavsc.Controllers
         }
 
         // GET: api/ApplicationUserApi/5
-        [HttpGet("{id}", Name = "GetApplicationUser")]
+        [HttpGet("{id}", Name = "GetApplicationUser"), Authorize("AdministratorOnly")]
         public IActionResult GetApplicationUser([FromRoute] string id)
         {
             if (!ModelState.IsValid)
@@ -87,7 +87,7 @@ namespace Yavsc.Controllers
         }
 
         // PUT: api/ApplicationUserApi/5
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize("AdministratorOnly")]
         public IActionResult PutApplicationUser(string id, [FromBody] ApplicationUser applicationUser)
         {
             if (!ModelState.IsValid)
@@ -122,7 +122,7 @@ namespace Yavsc.Controllers
         }
 
         // POST: api/ApplicationUserApi
-        [HttpPost]
+        [HttpPost, Authorize("AdministratorOnly")]
         public IActionResult PostApplicationUser([FromBody] ApplicationUser applicationUser)
         {
             if (!ModelState.IsValid)
@@ -151,7 +151,7 @@ namespace Yavsc.Controllers
         }
 
         // DELETE: api/ApplicationUserApi/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize("AdministratorOnly")]
         public IActionResult DeleteApplicationUser(string id)
         {
             if (!ModelState.IsValid)

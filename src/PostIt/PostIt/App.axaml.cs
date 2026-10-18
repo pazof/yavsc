@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -24,7 +23,8 @@ namespace PostIt;
 public partial class App : Application, ILiveView, IVMPusherApp
 {
     public static bool LiveMode { get; private set; }
-    private int _bootStarted;
+    private Task? _bootTask;
+    private bool _sessionNavigationConfigured;
     public static string? CliConfigFileSpecification { get; private set; }
 
     /// <summary>
@@ -125,6 +125,14 @@ public partial class App : Application, ILiveView, IVMPusherApp
 
     public async Task<Page> PushPageAsync(ViewModelBase viewModel)
     {
+        var mainView = View ?? throw new InvalidOperationException("The navigation root is not initialized.");
+        if (OperatingSystem.IsAndroid() &&
+            mainView.NavRoot.NavigationStack.LastOrDefault() is { } currentPage &&
+            ReferenceEquals(currentPage.DataContext, viewModel))
+        {
+            return currentPage;
+        }
+
         var template = DataTemplates.FirstOrDefault(t => t.Match(viewModel));
         if (template is null)
         {
@@ -148,8 +156,6 @@ public partial class App : Application, ILiveView, IVMPusherApp
 
         page.DataContext = viewModel;
 
-        MainView? mainView = (Current as App).View;
-
         // Avoid stacking the same singleton page twice (e.g. SettingsPage).
         var stack = mainView.NavRoot.NavigationStack;
         if (stack.Count > 0 && ReferenceEquals(stack[stack.Count - 1], page))
@@ -171,12 +177,25 @@ public partial class App : Application, ILiveView, IVMPusherApp
     public void InitializeActivityLifetime(Settings settings, IActivityApplicationLifetime singleViewFactoryApplicationLifetime)
     {
         singleViewFactoryApplicationLifetime.MainViewFactory =
-                        () =>
-                        {
-                            this.ConfigureRootView(ServiceProvider!.GetRequiredService<MainView>());
-                            ApplyStettings(settings);
-                            return View!;
-                        };
+            () => CreateActivityView(settings);
+    }
+
+    internal MainView CreateActivityView(Settings settings)
+    {
+        var pages = View?.NavRoot.NavigationStack
+            .Select(page => (PageType: page.GetType(), page.DataContext))
+            .ToArray();
+        var rootView = ServiceProvider!.GetRequiredService<MainView>();
+        var restoredPages = pages?.Select(state =>
+        {
+            // Do not reuse controls belonging to a destroyed Android activity.
+            var page = (Page)ActivatorUtilities.CreateInstance(ServiceProvider, state.PageType);
+            page.DataContext = state.DataContext;
+            return page;
+        }).ToArray();
+        ConfigureRootView(rootView, restoredPages);
+        ApplyStettings(settings);
+        return rootView;
     }
 
     public void InitializeClassicDesktopLifetime(Settings settings, IClassicDesktopStyleApplicationLifetime desktop)
@@ -196,16 +215,42 @@ public partial class App : Application, ILiveView, IVMPusherApp
     }
 
     public void ConfigureRootView(MainView rootView)
+        => ConfigureRootView(rootView, null);
+
+    private void ConfigureRootView(MainView rootView, Page[]? restoredPages)
     {
+        var initialized = false;
         rootView.AttachedToVisualTree += (_, _) =>
-            Dispatcher.UIThread.Post(() => _ = BootOnceAsync());
+            Dispatcher.UIThread.Post(async () =>
+            {
+                if (initialized)
+                    return;
+                initialized = true;
+                if (restoredPages is { Length: > 0 })
+                {
+                    foreach (var page in restoredPages)
+                        await rootView.NavRoot.PushAsync(page, null);
+                }
+                else
+                {
+                    await BootOnceAsync();
+                    if (rootView.NavRoot.NavigationStack.Count == 0)
+                    {
+                        var home = new HomePage
+                        {
+                            DataContext = ServiceProvider!.GetRequiredService<HomePageViewModel>()
+                        };
+                        await rootView.NavRoot.PushAsync(home, null);
+                    }
+                }
+            });
 
         var sessionStatus = ServiceProvider!.GetRequiredService<SessionStatusViewModel>();
-        sessionStatus.LogoutCompleted += () =>
+        if (!_sessionNavigationConfigured)
         {
-            // Remplacer Window.NavRoot par rootView.NavRoot
-            rootView.NavRoot.PopToRootAsync();
-        };
+            sessionStatus.LogoutCompleted += () => View!.NavRoot.PopToRootAsync();
+            _sessionNavigationConfigured = true;
+        }
         if (rootView.DataContext==null)
             rootView.DataContext = ServiceProvider!.GetRequiredService<HomePageViewModel>();
 
@@ -233,44 +278,29 @@ public partial class App : Application, ILiveView, IVMPusherApp
     }
 
 
-    private async Task BootOnceAsync()
+    private Task BootOnceAsync()
     {
-        if (Interlocked.Exchange(ref _bootStarted, 1) == 1)
-        {
-            return;
-        }
-
         var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
-        await BootAsync(this.ServiceProvider!, api);
+        return _bootTask ??= BootAsync(ServiceProvider!, api);
     }
 
     /// <summary>
-    /// Run once after the main window is shown: try to refresh the
-    /// cached OIDC tokens silently; on success, push MainPage on top
-    /// of HomePage so the user lands on the blog editor already
-    /// authenticated. On failure (refresh token rejected, no bundle
-    /// on disk), leave them on HomePage and the Login button is the
-    /// next step.
+    /// Refresh cached OIDC tokens once per application process.
+    /// Each root view initializes or restores its own navigation stack separately.
     /// </summary>
     private static async Task BootAsync(
         IServiceProvider provider,
         YavscApiClient api)
     {
-        var refreshed = await api.TrySilentLoginAsync().ConfigureAwait(true);
+        await api.TrySilentLoginAsync().ConfigureAwait(true);
         var sessionStatus = provider.GetRequiredService<SessionStatusViewModel>();
-        sessionStatus.Refresh();
-        var homePageVm = provider.GetRequiredService<HomePageViewModel>();
-        var app = (App)Current!;
-        await app.PushPageAsync(homePageVm);
+        await sessionStatus.RefreshAsync();
     }
 
     /// <summary>
     /// Resolve a fresh <c>MainPageViewModel</c> from DI and push its
     /// mapped page (via <see cref="ViewLocator"/>) on top
-    /// of the current navigation stack. Used both by <see cref="BootAsync"/>
-    /// (silent refresh at boot) and by <c>SessionStatusViewModel.LoginSucceeded</c>
-    /// (interactive login from the banner). Pulled out as a helper so
-    /// the two callers can't drift apart.
+    /// of the current navigation stack.
     /// </summary>
     public static async Task PushBlogsPageAsync()
     {

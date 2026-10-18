@@ -50,7 +50,16 @@ public static class ServiceCollectionHelpers
         // Models
         services.AddSingleton<ChatViewModel>();
 
-        // SettingsPage is a singleton: there must be one and only one
+        // Android activities need fresh controls; retain state in singleton VMs.
+        void AddReusablePage<TPage>() where TPage : class
+        {
+            if (OperatingSystem.IsAndroid())
+                services.AddTransient<TPage>();
+            else
+                services.AddSingleton<TPage>();
+        }
+
+        // On other platforms SettingsPage is a singleton: one and only one
         // instance of the settings UI for the lifetime of the app.
         // This guarantees that (a) the bindings always reflect the
         // current in-memory Settings state, (b) the page already has
@@ -61,12 +70,12 @@ public static class ServiceCollectionHelpers
         // let the user accumulate stale SettingsPage instances on
         // the navigation stack, each bound to a fresh
         // SettingsViewModel and missing any in-flight edits.
-        services.AddSingleton<SettingsPage>();
-        services.AddSingleton<AboutPage>();
-        services.AddSingleton<HomePage>();
-        services.AddSingleton<SignaturePage>();
-        services.AddSingleton<CirclesPage>();
-        services.AddSingleton<ActivitiesPage>();
+        AddReusablePage<SettingsPage>();
+        AddReusablePage<AboutPage>();
+        AddReusablePage<HomePage>();
+        AddReusablePage<SignaturePage>();
+        AddReusablePage<CirclesPage>();
+        AddReusablePage<ActivitiesPage>();
         services.AddTransient<CommandFormsPage>();
         services.AddTransient<ChatPage>();
         services.AddTransient<RdvPage>();
@@ -81,7 +90,6 @@ public static class ServiceCollectionHelpers
         services.AddTransient<UserProfilePage>();
         services.AddTransient<PerformerConfigurationPage>();
         services.AddTransient<AdministrationPage>();
-        services.AddTransient<ResourceUsagePage>();
 
         // ViewModels
         services.AddSingleton(settings);

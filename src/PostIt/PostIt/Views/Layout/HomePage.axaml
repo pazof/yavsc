@@ -92,11 +92,7 @@
           <Button Content="Administration"
               Command="{Binding OpenAdministration}"
               HorizontalAlignment="Center"
-              IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
-          <Button Content="Mon usage / administration"
-              Command="{Binding OpenResourceUsage}"
-              HorizontalAlignment="Center"
-              IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
+              IsVisible="{Binding SessionStatus.IsModerator}"/>
         </StackPanel>
         </ScrollViewer>
 </ContentPage>

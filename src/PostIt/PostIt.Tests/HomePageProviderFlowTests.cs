@@ -38,7 +38,7 @@ public class HomePageProviderFlowTests
         var vm = new HomePageViewModel();
 
         Assert.NotNull(vm.OpenAdministration);
-        Assert.True(vm.OpenAdministration.CanExecute(null));
+        Assert.False(vm.OpenAdministration.CanExecute(null));
     }
 
     [Fact]

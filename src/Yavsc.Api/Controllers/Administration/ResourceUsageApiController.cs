@@ -78,7 +78,7 @@ public sealed class ResourceUsageApiController : Controller
     [HttpGet(Constants.ResourceUsageAdminRoute)]
     public async Task<ActionResult<List<ResourceUsageSummary>>> GetAdminOverview()
     {
-        if (!User.IsInRole(Constants.AdminGroupName))
+        if (!User.IsInRole(Constants.AdminGroupName) && !User.IsInRole(Constants.BlogModeratorGroupName))
         {
             return Forbid();
         }

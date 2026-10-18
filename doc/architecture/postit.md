@@ -40,6 +40,40 @@ spécifiques (IntentFilter Android, `app.manifest` Desktop).
 Toute la logique (VM, services, navigation, settings, OIDC) est
 dans le code-base partagé.
 
+## Reprise Android
+
+`IActivityApplicationLifetime.MainViewFactory` crée une nouvelle `MainView`
+pour chaque activité Android. Avant de remplacer la racine, PostIt relève
+les types et les modèles de vue des pages de la pile précédente, puis
+recrée ces pages dans le même ordre, sans animation. Les contrôles de
+l'ancienne activité ne sont pas réutilisés ; les modèles de vue conservent
+les sélections et brouillons en mémoire. Une nouvelle racine sans historique
+reçoit la page d'accueil, même si l'initialisation de session a déjà eu lieu.
+Le rafraîchissement silencieux de session reste unique par processus.
+Cette restauration couvre la recréation d'activité dans le même processus,
+pas la destruction du processus par Android.
+
+## Administration et profil personnel
+
+L'accueil présente un seul accès **Administration**, visible et exécutable
+uniquement pour le rôle exact `Moderator`. `SessionStatusViewModel.RefreshAsync`
+lit les rôles dans `GET account/me` après le rafraîchissement de session ;
+une erreur de lecture masque l'accès et affiche une erreur dans la bannière.
+La déconnexion invalide aussi les vérifications de droits encore en vol.
+
+`AdministrationPage` regroupe deux onglets : utilisateurs et usages globaux.
+Le détail d'un utilisateur associe son usage par `UserId`, sans dépendre
+du nom affiché. Les erreurs ne déclenchent pas de repli sur l'usage personnel.
+Le backend autorise la lecture des listes aux rôles `Moderator` et
+`Administrator`, mais garde les autres opérations utilisateurs sous la
+politique `AdministratorOnly`. L'autorisation serveur reste indispensable,
+indépendamment de la visibilité du bouton dans PostIt.
+
+**Mon profil** réutilise la page de gestion du compte existante et les
+endpoints `account/me` pour lire et enregistrer les informations personnelles.
+Elle affiche aussi `resource-usage/me`, sans appeler la liste des usages
+globaux. Une indisponibilité de l'usage n'empêche pas la gestion du profil.
+
 ## Lecture des billets et fichiers utilisateur
 
 La page des blogs affiche par défaut une vue de lecture : titre, login

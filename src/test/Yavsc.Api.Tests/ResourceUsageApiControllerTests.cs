@@ -182,4 +182,47 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
         Assert.NotNull(payload);
         Assert.Contains(payload!, item => item.UserId == "alice");
     }
+
+    [Theory]
+    [InlineData("Moderator", HttpStatusCode.OK)]
+    [InlineData("Administrator", HttpStatusCode.OK)]
+    [InlineData("Performer", HttpStatusCode.Forbidden)]
+    [InlineData("moderator", HttpStatusCode.Forbidden)]
+    [InlineData("", HttpStatusCode.Forbidden)]
+    public async Task Administration_read_endpoints_enforce_roles(string role, HttpStatusCode expected)
+    {
+        using var http = NewClient(_fixture, "reader", extraClaims:
+            [new Claim(Yavsc.Constants.RoleClaimType, role)]);
+        foreach (var path in new[] { "/api/v1/users", "/api/v1/users/search/alice", "/api/v1/resource-usage/admin" })
+        {
+            var response = await http.GetAsync(path, TestContext.Current.CancellationToken);
+            Assert.Equal(expected, response.StatusCode);
+        }
+    }
+
+    [Fact]
+    public async Task Moderator_cannot_access_administrator_only_user_operations()
+    {
+        using var http = NewClient(_fixture, "moderator", extraClaims:
+            [new Claim(Yavsc.Constants.RoleClaimType, Yavsc.Constants.BlogModeratorGroupName)]);
+        foreach (var method in new[] { HttpMethod.Get, HttpMethod.Put, HttpMethod.Delete, HttpMethod.Post })
+        {
+            using var request = new HttpRequestMessage(method,
+                method == HttpMethod.Post ? "/api/v1/users" : "/api/v1/users/alice");
+            using var response = await http.SendAsync(request, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+    }
+
+    [Fact]
+    public async Task Anonymous_user_cannot_read_administration_data()
+    {
+        using var http = NewClient(_fixture);
+        http.DefaultRequestHeaders.Authorization = null;
+        foreach (var path in new[] { "/api/v1/users", "/api/v1/users/search/alice", "/api/v1/resource-usage/admin" })
+        {
+            using var response = await http.GetAsync(path, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+    }
 }

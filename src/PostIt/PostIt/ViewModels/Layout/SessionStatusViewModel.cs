@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -37,6 +39,11 @@ public partial class SessionStatusViewModel : ViewModelBase
     [ObservableProperty]
     public partial bool IsLoggedIn { get; private set; }
 
+    [ObservableProperty]
+    public partial bool IsModerator { get; private set; }
+
+    private int _accessVersion;
+
     /// <summary>Inverse of <see cref="IsLoggedIn"/>, for XAML bindings
     /// (the banner shows the Login button when the user is logged out).
     /// Updated from <see cref="Refresh"/>.</summary>
@@ -73,10 +80,36 @@ public partial class SessionStatusViewModel : ViewModelBase
 
     public void Refresh()
     {
+        ++_accessVersion;
+        IsModerator = false;
         var has = Api?.HasValidSession ?? false;
         IsLoggedIn = has;
         IsLoggedOut = !has;
         SessionLabel = has ? "Connecté" : "Déconnecté";
+    }
+
+    public async Task RefreshAsync()
+    {
+        Refresh();
+        var version = _accessVersion;
+        var api = Api;
+        if (!IsLoggedIn || api is null)
+            return;
+
+        try
+        {
+            var endpoint = new Uri(new Uri(api.Settings.ApiUrl.TrimEnd('/') + "/"), "account/me");
+            var profile = await api.CallAsync<Yavsc.Abstract.Identity.Me>(HttpMethod.Get, endpoint.ToString());
+            if (profile is null)
+                throw new InvalidOperationException("Le serveur a renvoyé un profil vide.");
+            if (version == _accessVersion)
+                IsModerator = profile.Roles.Contains(Yavsc.Constants.BlogModeratorGroupName, StringComparer.Ordinal);
+        }
+        catch (Exception ex)
+        {
+            if (version == _accessVersion)
+                SessionLabel = $"Impossible de vérifier les droits : {ex.Message}";
+        }
     }
 
     /// <summary>
@@ -88,6 +121,8 @@ public partial class SessionStatusViewModel : ViewModelBase
     /// </summary>
     public void SetError(string message)
     {
+        ++_accessVersion;
+        IsModerator = false;
         IsLoggedIn = false;
         IsLoggedOut = true;
         SessionLabel = message;
@@ -118,7 +153,7 @@ public partial class SessionStatusViewModel : ViewModelBase
             IsBusy = false;
         }
 
-        Refresh();
+        await RefreshAsync();
         if (Api.HasValidSession)
             LoginSucceeded?.Invoke();
     }

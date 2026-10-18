@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PostIt.Services;
 using Yavsc.Abstract.Identity;
+using Yavsc.Abstract.Resources;
+using Yavsc.Api.Client;
 
 namespace PostIt.ViewModels;
 
@@ -14,6 +16,13 @@ public partial class UserProfilePageViewModel : ViewModelBase
 {
     private readonly YavscApiClient? _api;
     private readonly SessionStatusViewModel? _sessionStatus;
+    private readonly ResourceUsageApiClient? _usageClient;
+
+    [ObservableProperty]
+    public partial ResourceUsageSummary? ResourceUsage { get; set; }
+
+    [ObservableProperty]
+    public partial string? UsageError { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveProfileCommand))]
@@ -140,10 +149,12 @@ public partial class UserProfilePageViewModel : ViewModelBase
     public override bool CanNavigateNext { get => false; protected set { _ = value; } }
     public override bool CanNavigatePrevious { get => true; protected set { _ = value; } }
 
-    public UserProfilePageViewModel(YavscApiClient? api, SessionStatusViewModel? sessionStatus = null)
+    public UserProfilePageViewModel(YavscApiClient? api, SessionStatusViewModel? sessionStatus = null,
+        ResourceUsageApiClient? usageClient = null)
     {
         _api = api;
         _sessionStatus = sessionStatus;
+        _usageClient = usageClient;
     }
 
     public UserProfilePageViewModel() : this(null, null) { }
@@ -162,6 +173,8 @@ public partial class UserProfilePageViewModel : ViewModelBase
 
         IsBusy = true;
         IsProfileLoaded = false;
+        ResourceUsage = null;
+        UsageError = null;
         try
         {
             var me = await _api.CallAsync<Me>(HttpMethod.Get, new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "account/me").ToString()).ConfigureAwait(true);
@@ -201,6 +214,18 @@ public partial class UserProfilePageViewModel : ViewModelBase
             }
             IsProfileLoaded = true;
             StatusMessage = "Profil chargé.";
+            if (_usageClient is not null)
+            {
+                try
+                {
+                    ResourceUsage = await _usageClient.GetCurrentAsync()
+                        ?? throw new InvalidOperationException("Le serveur a renvoyé un usage vide.");
+                }
+                catch (Exception ex)
+                {
+                    UsageError = $"Impossible de charger mon usage : {ex.Message}";
+                }
+            }
         }
         catch (Exception ex)
         {
