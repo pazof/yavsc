@@ -4,6 +4,11 @@
 
 ### Added
 
+* [PostIt.Desktop] Installeur NSIS Windows x64 par utilisateur, sans
+  elevation : publication autonome, raccourci du menu Demarrer,
+  protocole `postit://` pour la connexion et desinstallation via Windows.
+  Instructions de generation ajoutees dans `INSTALL.md`.
+
 * [PostIt, Yavsc.Api] Portage des outils des contrôleurs web
   d’administration : tableau de bord, rôles et affectations, clients OIDC
   (paramètres, collections et secrets), scopes API et modèles de courriels.

@@ -29,6 +29,53 @@ dotnet publish -c Release
 and then, install the app, from the `src/PostIt/PostIt.Android/bin/Release/net10.0/PostIt.apk`
 
 
+## PostIt.Desktop on Windows (per-user installer)
+
+Build prerequisites: the .NET 10 SDK and NSIS 3 (with its standard
+Modern UI 2 includes). From the repository root, publish a self-contained
+Windows x64 application, then package the **entire** publish directory:
+
+```powershell
+dotnet publish src/PostIt/PostIt.Desktop/PostIt.Desktop.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false
+makensis /DAPP_VERSION=1.1.0-estimate.1 contrib/Windows/postit.nsi
+```
+
+Set `APP_VERSION` to the version of the published application (the
+`Version` property in `PostIt.Desktop.csproj`). NSIS requires this value;
+it is used in the installer filename and Windows' installed-apps list.
+On Linux, use `makensis -DAPP_VERSION=1.1.0-estimate.1 contrib/Windows/postit.nsi`
+instead. Cross-publishing uses the same `dotnet publish` command.
+If `makensis` is not on `PATH` on Windows, invoke the executable from
+the NSIS installation directory.
+
+The result is `contrib/Windows/PostIt-<version>-win-x64-Setup.exe`.
+NSIS also accepts `PUBLISH_DIR` (an absolute path to a different
+**win-x64** publish directory) and `OUTPUT_FILE` (the output executable
+path), with the same `/DNAME=value` or `-DNAME=value` syntax. Quote an
+entire define argument when its value contains spaces.
+
+The installer does not request elevation or install a shared .NET runtime.
+It installs in `%LOCALAPPDATA%\Yavsc\PostIt.Desktop`, creates a Start menu
+shortcut for the current user and registers `postit://` in
+`HKCU\Software\Classes` so browser-based sign-in returns to PostIt.
+Windows' installed-apps list provides the uninstaller. Close PostIt before
+installing an update or uninstalling it.
+
+The `app` subdirectory is reserved for published application files and is
+removed recursively on uninstall. User settings and tokens stored outside
+this directory are preserved. Reinstalling uses the recorded installation
+directory and overwrites the packaged files.
+
+The self-contained publication includes .NET, but does **not** add native
+LibVLC libraries: video playback still requires a compatible Windows x64
+LibVLC installation. PostIt reports an unavailable video player and offers
+the system browser as an alternative.
+
+Before distributing a release, test installation, startup, the `postit://`
+login callback, updating and uninstallation on Windows with a standard
+(non-administrator) account. Installer compilation alone does not validate
+these Windows runtime behaviours.
+
 ## Resources
 
 System resources needed to install.

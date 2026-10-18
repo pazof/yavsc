@@ -34,6 +34,7 @@ appsettings-*.*.json
 !src/Yavsc.Org/appsettings-org.Testing.json
 
 generated/
+/contrib/Windows/PostIt-*-Setup.exe
 *.tmp
 tmp/
 DataDir/
