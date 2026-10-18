@@ -37,8 +37,15 @@
                         BorderThickness="1"
                         BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
                   <StackPanel Spacing="6">
-                    <TextBlock Text="{Binding title}" FontWeight="SemiBold"
-                               TextWrapping="Wrap"/>
+                    <Grid ColumnDefinitions="*,Auto">
+                      <TextBlock Text="{Binding title}" FontWeight="SemiBold"
+                                 TextWrapping="Wrap" VerticalAlignment="Center"/>
+                      <Button Grid.Column="1" Margin="8,0,0,0"
+                              Content="{Binding click_action, TargetNullValue=Fermer}"
+                              ToolTip.Tip="Masquer cette notification"
+                              Command="{Binding $parent[ItemsControl].((vm:HomePageViewModel)DataContext).DismissNotificationCommand}"
+                              CommandParameter="{Binding}"/>
+                    </Grid>
                     <TextBlock Text="{Binding body}" TextWrapping="Wrap"/>
                   </StackPanel>
                 </Border>

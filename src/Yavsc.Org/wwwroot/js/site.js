@@ -2,8 +2,8 @@
 var notifClick =
     function(nid) {
         if (nid > 0) {
-            $.get({
-                url: '/api/v1/dimiss/click/' + nid,
+            $.post({
+                url: '/Home/DismissNotification/' + nid,
                 success: $('div[data-nid='+nid+']').remove()
             });
         }

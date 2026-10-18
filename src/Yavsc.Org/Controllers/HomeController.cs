@@ -95,6 +95,36 @@ namespace Yavsc.Controllers
             }
             return View(toShow);
         }
+
+        /// <summary>
+        /// Web-site dismissal of a notification: persisted for signed-in users,
+        /// kept in the session for anonymous visitors.
+        /// API clients use <c>POST api/v1/dismiss/click/{id}</c> on Yavsc.Api.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> DismissNotification(long id)
+        {
+            if (!await _dbContext.Notification.AnyAsync(n => n.Id == id))
+                return NotFound();
+
+            var uid = User.GetUserId();
+            if (uid != null)
+            {
+                if (!await _dbContext.DismissClicked.AnyAsync(d => d.UserId == uid && d.NotificationId == id))
+                {
+                    _dbContext.DismissClicked.Add(new Yavsc.Models.Messaging.DismissClicked { UserId = uid, NotificationId = id });
+                    await _dbContext.SaveChangesAsync(uid);
+                }
+                return NoContent();
+            }
+
+            await HttpContext.Session.LoadAsync();
+            var clicked = HttpContext.Session.GetString("clicked");
+            HttpContext.Session.SetString("clicked", clicked == null ? id.ToString() : $"{clicked}:{id}");
+            await HttpContext.Session.CommitAsync();
+            return NoContent();
+        }
+
         public async Task<IActionResult> About()
         {
             return View("About");

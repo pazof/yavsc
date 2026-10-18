@@ -90,6 +90,22 @@ public class HomePageNotificationsTests
             session.Refresh();
             Assert.False(transport.WasAnonymous);
             Assert.EndsWith("/notifications/me", transport.LastPath);
+
+            var note = Note(3, "Dismiss me");
+            vm.Notifications.Add(note);
+            Assert.True(vm.DismissNotificationCommand.CanExecute(note));
+            transport.DismissResponse = Task.FromException(new HttpRequestException("Server unavailable"));
+            await vm.DismissNotificationCommand.ExecuteAsync(note);
+            Assert.Contains(note, vm.Notifications);
+            Assert.Contains("Server unavailable", vm.NotificationsError);
+
+            transport.DismissResponse = Task.CompletedTask;
+            await vm.DismissNotificationCommand.ExecuteAsync(note);
+            Assert.Equal(HttpMethod.Post, transport.LastMethod);
+            Assert.Equal("https://business.example/api/v1/dismiss/click/3", transport.LastPath);
+            Assert.DoesNotContain(note, vm.Notifications);
+            Assert.Null(vm.NotificationsError);
+
             var privateResponse = new TaskCompletionSource<List<Notification>>();
             transport.Response = privateResponse.Task;
             var privateLoad = vm.RefreshNotificationsAsync();
@@ -110,6 +126,42 @@ public class HomePageNotificationsTests
         {
             File.Delete(tokenPath);
         }
+    }
+
+    [Fact]
+    public async Task Anonymous_dismiss_removes_the_notification_without_an_api_call()
+    {
+        var transport = new NotificationTransport();
+        var vm = CreateViewModel(transport);
+        vm.Notifications.Add(Note(1, "Keep"));
+        vm.Notifications.Add(Note(2, "Dismiss me"));
+
+        Assert.True(vm.DismissNotificationCommand.CanExecute(vm.Notifications[1]));
+        Assert.False(vm.DismissNotificationCommand.CanExecute(null));
+
+        await vm.DismissNotificationCommand.ExecuteAsync(vm.Notifications[1]);
+
+        Assert.Null(transport.LastMethod);
+        Assert.Null(transport.LastPath);
+        Assert.Equal(1, Assert.Single(vm.Notifications).Id);
+        Assert.Null(vm.NotificationsError);
+    }
+
+    [Fact]
+    public async Task Anonymous_dismiss_of_the_last_notification_updates_the_empty_state()
+    {
+        var transport = new NotificationTransport();
+        var vm = CreateViewModel(transport);
+        transport.Response = Task.FromResult(new List<Notification> { Note(3, "Public") });
+        await vm.RefreshNotificationsAsync();
+        Assert.False(vm.HasNoNotifications);
+
+        await vm.DismissNotificationCommand.ExecuteAsync(vm.Notifications[0]);
+
+        Assert.Empty(vm.Notifications);
+        Assert.True(vm.HasNoNotifications);
+        Assert.Null(vm.NotificationsError);
+        Assert.Null(transport.LastMethod);
     }
 
     [AvaloniaFact]
@@ -138,6 +190,12 @@ public class HomePageNotificationsTests
             var refresh = Assert.Single(page.GetVisualDescendants().OfType<Button>(),
                 b => b.Command == vm.RefreshNotificationsCommand);
             Assert.True(refresh.IsEnabled);
+            var dismiss = Assert.Single(page.GetVisualDescendants().OfType<Button>(),
+                b => b.Command == vm.DismissNotificationCommand);
+            Assert.Same(vm.Notifications[0], dismiss.CommandParameter);
+            Assert.Equal("Close", dismiss.Content);
+            Assert.True(dismiss.IsVisible);
+            Assert.True(dismiss.IsEnabled);
             Assert.Contains(page.GetVisualDescendants().OfType<ScrollViewer>(),
                 s => s.Extent.Height > s.Viewport.Height);
 
@@ -145,6 +203,10 @@ public class HomePageNotificationsTests
             transport.Response = Task.FromResult(new List<Notification> { Note(2, "Updated title") });
             await nav.PopAsync();
             Assert.Equal(2, Assert.Single(vm.Notifications).Id);
+            await vm.DismissNotificationCommand.ExecuteAsync(vm.Notifications[0]);
+            window.UpdateLayout();
+            Assert.Empty(vm.Notifications);
+            Assert.Null(transport.LastMethod);
         }
         finally
         {
@@ -173,9 +235,28 @@ public class HomePageNotificationsTests
         public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null,
             CancellationToken ct = default)
         {
+            LastMethod = method;
+            if (method == HttpMethod.Post)
+            {
+                LastPath = path;
+                WasAnonymous = false;
+                return DismissAsync<T>(path);
+            }
             Assert.Equal(HttpMethod.Get, method);
             return ReadAsync<T>(path, false);
         }
+
+        private async Task<T> DismissAsync<T>(string path)
+        {
+            await DismissResponse;
+            return (T)(object)new DismissedNotification
+            {
+                NotificationId = long.Parse(path[(path.LastIndexOf('/') + 1)..])
+            };
+        }
+
+        public HttpMethod? LastMethod { get; private set; }
+        public Task DismissResponse { get; set; } = Task.CompletedTask;
 
         private async Task<T> ReadAsync<T>(string path, bool anonymous)
         {

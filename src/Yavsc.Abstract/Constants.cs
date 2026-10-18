@@ -35,6 +35,8 @@ namespace Yavsc
         public const string ResourceUsageAdminRoute = "admin";
         public const string NotificationsPath = "notifications";
         public const string NotificationsCurrentUserRoute = "me";
+        public const string NotificationsDismissPath = "dismiss";
+        public const string NotificationsDismissClickRoute = "click";
         public const string ResourceUsageDefaultCurrency = "EUR";
         public const string ResourceUsageCurrentUserDisplayName = "current-user";
         public const string ResourceUsageAdminDisplayName = "administrator";

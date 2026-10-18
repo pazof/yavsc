@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Threading;
@@ -59,6 +60,9 @@ public class HomePageViewModel : ViewModelBase
         SessionStatus.PropertyChanged += OnSessionStatusChanged;
         RefreshNotificationsCommand = new AsyncRelayCommand(RefreshNotificationsAsync,
             () => _notificationsClient is not null);
+        DismissNotificationCommand = new AsyncRelayCommand<Notification?>(DismissNotificationAsync,
+            n => n is not null,
+            AsyncRelayCommandOptions.AllowConcurrentExecutions);
 
         OpenActivities = new AsyncRelayCommand(OpenActivitiesAsync);
         OpenProviderRequests = new AsyncRelayCommand(OpenProviderRequestsAsync);
@@ -86,6 +90,31 @@ public class HomePageViewModel : ViewModelBase
     public IAsyncRelayCommand OpenProviderEstimates { get; }
     public IAsyncRelayCommand OpenMyFiles { get; }
     public IAsyncRelayCommand RefreshNotificationsCommand { get; }
+    public IAsyncRelayCommand<Notification?> DismissNotificationCommand { get; }
+
+    public async Task DismissNotificationAsync(Notification? notification)
+    {
+        if (notification is null)
+            return;
+        NotificationsError = null;
+        try
+        {
+            if (SessionStatus.IsLoggedIn)
+            {
+                if (_notificationsClient is null)
+                    throw new InvalidOperationException("Notifications client is not available.");
+                await _notificationsClient.DismissAsync(notification.Id);
+            }
+            var shown = Notifications.FirstOrDefault(n => n.Id == notification.Id);
+            if (shown is not null)
+                Notifications.Remove(shown);
+            OnPropertyChanged(nameof(HasNoNotifications));
+        }
+        catch (Exception ex)
+        {
+            NotificationsError = $"Impossible de masquer la notification : {ex.Message}";
+        }
+    }
 
     public async Task RefreshNotificationsAsync()
     {
@@ -134,9 +163,15 @@ public class HomePageViewModel : ViewModelBase
 
         // Logout can complete on a worker thread; collections and bindings belong to the UI thread.
         if (Dispatcher.UIThread.CheckAccess())
-            _ = RefreshNotificationsAsync();
+            OnLoginChanged();
         else
-            Dispatcher.UIThread.Post(() => _ = RefreshNotificationsAsync());
+            Dispatcher.UIThread.Post(OnLoginChanged);
+    }
+
+    private void OnLoginChanged()
+    {
+        DismissNotificationCommand.NotifyCanExecuteChanged();
+        _ = RefreshNotificationsAsync();
     }
 
     private async Task OpenActivitiesAsync()

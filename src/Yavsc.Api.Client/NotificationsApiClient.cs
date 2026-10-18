@@ -8,7 +8,8 @@ using Yavsc.Abstract.Models.Messaging;
 namespace Yavsc.Api.Client;
 
 /// <summary>
-/// Thin HTTP client for the notifications exposed to PostIt on the home page.
+/// Thin HTTP client for the notifications exposed to PostIt on the home page,
+/// and for their dismissal by the current user.
 /// </summary>
 public sealed class NotificationsApiClient
 {
@@ -47,6 +48,33 @@ public sealed class NotificationsApiClient
 
     public Task<List<Notification>> GetPublicAsync(CancellationToken ct = default)
         => _api.GetAnonymousAsync<List<Notification>>(Absolute(PathPrefix), ct);
+
+    public Task<List<DismissedNotification>> GetDismissedAsync(CancellationToken ct = default)
+    {
+        return _api.CallAsync<List<DismissedNotification>>(
+            HttpMethod.Get,
+            Absolute(Constants.NotificationsDismissPath),
+            ct: ct);
+    }
+
+    public Task<DismissedNotification> DismissAsync(long notificationId, CancellationToken ct = default)
+    {
+        return _api.CallAsync<DismissedNotification>(
+            HttpMethod.Post,
+            Absolute(DismissClickPath(notificationId)),
+            ct: ct);
+    }
+
+    public Task RestoreAsync(long notificationId, CancellationToken ct = default)
+    {
+        return _api.CallAsync(
+            HttpMethod.Delete,
+            Absolute(DismissClickPath(notificationId)),
+            ct: ct);
+    }
+
+    private static string DismissClickPath(long notificationId)
+        => $"{Constants.NotificationsDismissPath}/{Constants.NotificationsDismissClickRoute}/{notificationId}";
 
     private string Absolute(string relativePath) => new Uri(ResolveBusinessBaseAddress(), relativePath).ToString();
 

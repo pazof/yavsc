@@ -15,10 +15,24 @@
   avec lecture/pause, libération du lecteur à la fermeture et accès au
   navigateur en cas d'indisponibilité de LibVLC. Les autres fichiers et
   les vidéos sur mobile/navigateur s'ouvrent dans le navigateur système.
+* [Yavsc.Api] Contrôleur `DismissClicksApiController` (déplacé depuis
+  Yavsc.Org) exposant des DTO `DismissedNotification` :
+  `GET api/v1/dismiss`, `POST api/v1/dismiss/click/{notificationId}`
+  (idempotent, 404 si la notification n'existe pas) et
+  `DELETE api/v1/dismiss/click/{notificationId}` ; authentification requise.
+* [Yavsc.Api.Client] `NotificationsApiClient.DismissAsync`,
+  `GetDismissedAsync` et `RestoreAsync`.
+* [PostIt] Bouton de fermeture sur chaque notification de l'accueil
+  qui la démet auprès de Yavsc.Api pour un utilisateur connecté, ou la
+  masque localement sans appel API pour un visiteur non connecté
+  (jusqu'au prochain rechargement des notifications).
 
 ### Changed
 
 * L'administration est maintenant restreinte aux emails configurés dans les paramétres applicatifs de Yavsc.Org (`appsettings-org.json`)
+* [Yavsc.Org] L'API `api/v1/dimiss` est supprimée ; le site web démet ses
+  notifications via `POST /Home/DismissNotification/{id}` (base pour un
+  utilisateur connecté, session pour un visiteur anonyme).
 
 ## [1.0.8-rc25] - unstable
 
