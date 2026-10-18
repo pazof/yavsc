@@ -47,6 +47,9 @@
 * [PostIt] Le changement de disposition de la page des blogs est différé
   sur le thread UI, évitant l'exception « Visual was invalidated during
   the render pass » au redimensionnement.
+* [PostIt] Le bouton d'enregistrement des billets reflète les modifications
+  non sauvegardées et réinitialise son surlignage après sauvegarde, sans
+  fermer l'éditeur ni perdre la sélection.
 
 ## [1.0.8-rc26] - unstable
 

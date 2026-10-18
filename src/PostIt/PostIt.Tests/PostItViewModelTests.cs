@@ -58,6 +58,7 @@ public class PostItViewModelTests
             Dispatcher.UIThread.RunJobs();
             Assert.Same(selected, page.PostsListBox.SelectedItem);
             Assert.Same(selected, vm.SelectedPost);
+            vm.IsEditing = true;
             Assert.DoesNotContain("modified", page.SaveButton.Classes);
             vm.DraftTitle = "Titre modifié";
             Dispatcher.UIThread.RunJobs();
@@ -67,11 +68,13 @@ public class PostItViewModelTests
             await vm.SaveAsync();
             Dispatcher.UIThread.RunJobs();
             Assert.Same(page, navigation.NavigationStack.Last());
+            Assert.True(vm.IsEditing);
             Assert.Same(selected, vm.SelectedPost);
             Assert.Same(selected, page.PostsListBox.SelectedItem);
             Assert.Equal("Titre modifié", vm.DraftTitle);
             Assert.Equal("Corps", vm.DraftArticle);
             Assert.DoesNotContain("modified", page.SaveButton.Classes);
+            Assert.Equal(Avalonia.Media.FontWeight.Normal, page.SaveButton.FontWeight);
         }
         finally
         {

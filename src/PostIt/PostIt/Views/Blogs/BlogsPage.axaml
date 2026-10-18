@@ -17,13 +17,6 @@
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
-  <ContentPage.Styles>
-    <Style Selector="CommandBarButton.modified">
-      <Setter Property="Background" Value="#FFF0C2" />
-      <Setter Property="Foreground" Value="#663C00" />
-      <Setter Property="FontWeight" Value="Bold" />
-    </Style>
-  </ContentPage.Styles>
   <Grid x:Name="MainGrid"
     RowDefinitions="Auto,Auto,*,4,2*,Auto"
     Margin="5,5,10,5"

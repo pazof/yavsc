@@ -1,11 +1,13 @@
 
 using System.IO;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Platform.Storage;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.Input;
 using Markdown.Avalonia;
 
@@ -16,6 +18,7 @@ public partial class BlogsPage : ContentPage
     private static readonly RelayCommand<string?> DisabledLinkCommand =
         new(static _ => { }, static _ => false);
     private bool? _isWideLayout;
+    private ViewModels.BlogsViewModel? _observedViewModel;
 
     public BlogsPage()
     {
@@ -26,6 +29,13 @@ public partial class BlogsPage : ContentPage
             UpdateResponsiveLayout();
         });
         DataContextChanged += (_, _) => UpdateHyperlinkCommand();
+        AttachedToVisualTree += (_, _) => UpdateHyperlinkCommand();
+        DetachedFromVisualTree += (_, _) =>
+        {
+            if (_observedViewModel is not null)
+                _observedViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            _observedViewModel = null;
+        };
         UpdateHyperlinkCommand();
     }
 
@@ -68,12 +78,46 @@ public partial class BlogsPage : ContentPage
 
     private void UpdateHyperlinkCommand()
     {
+        if (_observedViewModel is not null)
+            _observedViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+
+        _observedViewModel = DataContext as ViewModels.BlogsViewModel;
+        if (_observedViewModel is not null)
+            _observedViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
         if (ArticleReader.Engine is IMarkdownEngine2 engine)
         {
-            if (DataContext is ViewModels.BlogsViewModel vm)
-                engine.HyperlinkCommand = vm.OpenResourceCommand;
+            if (_observedViewModel is not null)
+                engine.HyperlinkCommand = _observedViewModel.OpenResourceCommand;
             else
                 engine.HyperlinkCommand = DisabledLinkCommand;
+        }
+
+        UpdateSaveButtonHighlight();
+    }
+
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ViewModels.BlogsViewModel.IsDraftModified))
+            UpdateSaveButtonHighlight();
+    }
+
+    private void UpdateSaveButtonHighlight()
+    {
+        if (SaveButton is null)
+            return;
+
+        if (_observedViewModel?.IsDraftModified == true)
+        {
+            SaveButton.FontWeight = FontWeight.Bold;
+            SaveButton.Background = new SolidColorBrush(Color.Parse("#FFF0C2"));
+            SaveButton.Foreground = new SolidColorBrush(Color.Parse("#663C00"));
+        }
+        else
+        {
+            SaveButton.FontWeight = FontWeight.Normal;
+            SaveButton.ClearValue(TemplatedControl.BackgroundProperty);
+            SaveButton.ClearValue(TemplatedControl.ForegroundProperty);
         }
     }
 
