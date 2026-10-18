@@ -2,7 +2,9 @@ using System.Net;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
+using Avalonia.Input;
 using Avalonia.Logging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -95,6 +97,7 @@ public class BlogReaderTests
             window.Show();
             Dispatcher.UIThread.RunJobs();
             window.UpdateLayout();
+            AvaloniaHeadlessPlatform.ForceRenderTimerTick();
             Assert.True(page.FindControl<Grid>("PostReader")!.IsVisible);
             Assert.False(page.FindControl<Grid>("PostEditor")!.IsVisible);
             Assert.False(page.SaveButton.IsVisible);
@@ -161,6 +164,141 @@ public class BlogReaderTests
         {
             window?.Close();
             Logger.Sink = previousSink;
+        }
+    }
+
+    [AvaloniaTheory]
+    [InlineData(360, 800, false)]
+    [InlineData(1000, 420, true)]
+    [InlineData(1000, 280, true)]
+    [InlineData(600, 600, true)]
+    [InlineData(599, 600, false)]
+    [InlineData(601, 600, true)]
+    public async Task Blog_layout_uses_columns_from_the_square_window_threshold(int width, int height, bool wide)
+    {
+        var vm = CreateViewModel();
+        await vm.InitializeAsync();
+        for (var i = 0; i < 40; i++)
+            vm.FilteredPosts.Add(Post($"Billet {i}"));
+        vm.SelectedPost = Post(string.Join("\n\n", Enumerable.Range(0, 100).Select(i => $"Paragraphe {i}.")));
+        var page = new BlogsPage { DataContext = vm };
+        var main = new MainView();
+        var nav = main.FindControl<NavigationPage>("NavRoot")!;
+        await nav.PushAsync(new ContentPage());
+        await nav.PushAsync(page);
+        var window = new Window { Width = width, Height = height, Content = main };
+        try
+        {
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            window.UpdateLayout();
+
+            var reader = page.FindControl<Grid>("PostReader")!;
+            var list = page.FindControl<Border>("PostsListBorder")!;
+            var splitter = page.FindControl<GridSplitter>("PostsSplitter")!;
+            Assert.Equal(wide ? GridResizeDirection.Columns : GridResizeDirection.Rows, splitter.ResizeDirection);
+            Assert.Equal(wide ? 36d : (double?)null, NavigationPage.GetBarHeightOverride(page));
+            Assert.True(nav.IsBackButtonEffectivelyVisible);
+            Assert.True(reader.Bounds.Width > 0 && reader.Bounds.Height > 0);
+            Assert.True(list.Bounds.Width > 0 && list.Bounds.Height > 0);
+            if (wide)
+            {
+                Assert.True(reader.Bounds.Right <= list.Bounds.Left);
+                Assert.Equal(2, Grid.GetColumn(page.BlogsHeaderPanel));
+                Assert.Equal(2, Grid.GetColumn(page.BlogsCommandBar));
+                Assert.Equal(reader.Margin.Top, reader.Bounds.Top);
+                Assert.Equal(page.StatusBar.Bounds.Top - reader.Margin.Bottom, reader.Bounds.Bottom);
+                Assert.Equal(36, page.TranslatePoint(new Point(), nav)!.Value.Y);
+            }
+            else
+            {
+                Assert.True(list.Bounds.Bottom <= reader.Bounds.Top);
+                Assert.Equal(0, Grid.GetColumn(page.BlogsHeaderPanel));
+                Assert.Equal(0, Grid.GetColumn(page.BlogsCommandBar));
+            }
+
+            var articleScroll = page.FindControl<MarkdownScrollViewer>("ArticleReader")!
+                .GetVisualDescendants().OfType<ScrollViewer>().Single();
+            Assert.InRange(articleScroll.Viewport.Height, 1, window.ClientSize.Height);
+            Assert.True(articleScroll.Extent.Height > articleScroll.Viewport.Height);
+            var listScroll = page.PostsListBox.GetVisualDescendants().OfType<ScrollViewer>().Single();
+            Assert.InRange(listScroll.Viewport.Height, 1, window.ClientSize.Height);
+            Assert.True(listScroll.Extent.Height > listScroll.Viewport.Height);
+
+            var originalReaderSize = reader.Bounds.Size;
+            splitter.Focus();
+            splitter.RaiseEvent(new KeyEventArgs
+            {
+                RoutedEvent = InputElement.KeyDownEvent,
+                Key = wide ? Key.Right : Key.Down
+            });
+            window.UpdateLayout();
+            if (wide)
+                Assert.True(reader.Bounds.Width > originalReaderSize.Width);
+            else
+                Assert.True(reader.Bounds.Height < originalReaderSize.Height);
+
+            page.BlogsCommandBar.IsOpen = true;
+            Dispatcher.UIThread.RunJobs();
+            AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+            Assert.Same(vm, page.SaveButton.DataContext);
+            Assert.False(page.SaveButton.IsVisible);
+            Assert.True(page.EditPostButton.IsVisible);
+            vm.EditPostCommand.Execute(null);
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(page.SaveButton.IsVisible);
+            Assert.Same(vm.SaveCommand, page.SaveButton.Command);
+            Assert.False(page.EditPostButton.IsVisible);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public async Task Resizing_between_portrait_and_landscape_preserves_the_editor_and_draft()
+    {
+        var vm = CreateViewModel();
+        await vm.InitializeAsync();
+        vm.SelectedPost = Post();
+        vm.EditPostCommand.Execute(null);
+        vm.DraftArticle = "Brouillon conservé pendant le redimensionnement.";
+        var document = vm.DraftArticleDocument;
+        var page = new BlogsPage { DataContext = vm };
+        var editor = page.FindControl<Grid>("PostEditor")!;
+        var nav = new NavigationPage();
+        await nav.PushAsync(page);
+        var window = new Window { Width = 360, Height = 800, Content = nav };
+        try
+        {
+            window.Show();
+            foreach (var size in new[] { new Size(360, 800), new Size(1000, 420), new Size(600, 600), new Size(599, 600), new Size(360, 800) })
+            {
+                window.Width = size.Width;
+                window.Height = size.Height;
+                Dispatcher.UIThread.RunJobs();
+                window.UpdateLayout();
+                AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+
+                var wide = size.Width >= size.Height;
+                Assert.Equal(wide ? 0 : 4, Grid.GetRow(editor));
+                Assert.Equal(wide ? 3 : 1, Grid.GetRowSpan(editor));
+                Assert.Equal(wide ? 36d : (double?)null, NavigationPage.GetBarHeightOverride(page));
+                Assert.Same(editor, page.FindControl<Grid>("PostEditor"));
+                Assert.True(editor.IsVisible);
+                Assert.False(page.FindControl<Grid>("PostReader")!.IsVisible);
+                Assert.True(vm.IsEditing);
+                Assert.True(vm.IsDraftModified);
+                Assert.Equal("Brouillon conservé pendant le redimensionnement.", vm.DraftArticle);
+                Assert.Same(document, vm.DraftArticleDocument);
+                Assert.Equal(42, vm.SelectedPost!.Id);
+                Assert.True(editor.Bounds.Width > 0 && editor.Bounds.Height > 0);
+            }
+        }
+        finally
+        {
+            window.Close();
         }
     }
 

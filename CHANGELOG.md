@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.0.8-rc27] - unstable
+
+### Added
+
+* [PostIt] Service `CameraStreamer` (préliminaire) : détection des
+  périphériques de capture vidéo (DirectShow sous Windows via le paquet
+  `DirectShowLib`, `/dev/video*` sous Linux) et création d'un média
+  LibVLC de capture pour le périphérique choisi.
+
+### Changed
+
+* [PostIt] La page des blogs passe en deux colonnes lorsque la largeur de
+  la fenêtre atteint sa hauteur : billet à gauche, recherche, commandes et
+  liste à droite, avec séparateur vertical redimensionnable. La disposition
+  verticale revient en portrait sans perdre le brouillon ; la barre de
+  navigation est plus compacte en mode large et conserve le bouton Retour.
+
+### Fixed
+
+* [PostIt] Le changement de disposition de la page des blogs est différé
+  sur le thread UI, évitant l'exception « Visual was invalidated during
+  the render pass » au redimensionnement.
+
 ## [1.0.8-rc26] - unstable
 
 ### Added

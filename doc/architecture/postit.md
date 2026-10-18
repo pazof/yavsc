@@ -178,6 +178,20 @@ et les commandes restent visibles, tandis que la liste des billets et
 l'éditeur se partagent l'espace disponible. Un `GridSplitter` permet
 de modifier cette répartition. La liste et l'article défilent séparément.
 
+Lorsque la largeur de la fenêtre atteint ou dépasse sa hauteur, le lecteur
+ou l'éditeur passe à gauche (deux tiers de la largeur par défaut), et
+l'en-tête, la recherche, les commandes et la liste passent à droite.
+Le séparateur devient vertical. En portrait, la disposition verticale
+revient sans recréer les contrôles ni perdre le brouillon.
+Le seuil utilise les dimensions clientes de la fenêtre, indépendamment
+de la hauteur occupée par la navigation et la bannière de session.
+
+La page applique `NavigationPage.BarHeightOverride` à 36 en mode large ;
+le `NavRoot` de `MainView` conserve ainsi le bouton Retour, sans changer
+les autres pages. En portrait, la hauteur de navigation par défaut revient.
+Les commandes ont un contexte de données explicite pour conserver leurs
+liaisons, y compris lorsqu'elles passent dans le menu de débordement.
+
 Dans `MarkdownEditorControl`, AvaloniaEdit gère son propre défilement ;
 l'aperçu Markdown est placé dans un `ScrollViewer`. Ne pas limiter
 la hauteur du `MarkdownViewer` lui-même : son contenu doit pouvoir

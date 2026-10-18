@@ -1,5 +1,6 @@
 <ContentPage
   x:Class="PostIt.Views.Blogs.BlogsPage"
+  x:Name="BlogsPageRoot"
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -23,8 +24,8 @@
       <Setter Property="FontWeight" Value="Bold" />
     </Style>
   </ContentPage.Styles>
-  <Grid
-    RowDefinitions="Auto,Auto,*,Auto"
+  <Grid x:Name="MainGrid"
+    RowDefinitions="Auto,Auto,*,4,2*,Auto"
     Margin="5,5,10,5"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
@@ -45,18 +46,19 @@
        Grid.Row="1"
        HorizontalAlignment="Right" IsDynamicOverflowEnabled="True">
         <CommandBar.PrimaryCommands>
-          <CommandBarButton Command="{Binding RefreshCommand}" Label="Actualiser">
+          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" Command="{Binding RefreshCommand}" Label="Actualiser">
             <CommandBarButton.Icon>
               <PathIcon Data="{StaticResource RefreshIcon}" />
             </CommandBarButton.Icon>
           </CommandBarButton>
-          <CommandBarButton x:Name="NewPostButton" Command="{Binding NewPostCommand}" Label="Nouveau billet" />
-          <CommandBarButton x:Name="ReadPostButton" Command="{Binding ReadPostCommand}"
+          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" x:Name="NewPostButton" Command="{Binding NewPostCommand}" Label="Nouveau billet" />
+          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" x:Name="ReadPostButton" Command="{Binding ReadPostCommand}"
                             IsVisible="{Binding IsEditing}" Label="Lire" />
-          <CommandBarButton x:Name="EditPostButton" Command="{Binding EditPostCommand}"
+          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" x:Name="EditPostButton" Command="{Binding EditPostCommand}"
                             IsEnabled="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNotNull}}"
                             IsVisible="{Binding !IsEditing}" Label="Modifier" />
           <CommandBarButton
+            DataContext="{Binding #BlogsPageRoot.DataContext}"
             x:Name="SaveButton"
             IsVisible="{Binding IsEditing}"
             Command="{Binding SaveCommand}"
@@ -67,12 +69,13 @@
               <PathIcon Data="{StaticResource SaveIcon}" />
             </CommandBarButton.Icon>
           </CommandBarButton>
-          <CommandBarButton Command="{Binding DeleteCommand}" IsVisible="{Binding IsEditing}" Label="Supprimer">
+          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" Command="{Binding DeleteCommand}" IsVisible="{Binding IsEditing}" Label="Supprimer">
             <CommandBarButton.Icon>
               <PathIcon Data="{StaticResource DeleteIcon}" />
             </CommandBarButton.Icon>
           </CommandBarButton>
           <CommandBarButton
+            DataContext="{Binding #BlogsPageRoot.DataContext}"
             x:Name="AddAttachmentButton"
             IsVisible="{Binding IsEditing}"
             Click="AddAttachment_Click"
@@ -83,6 +86,7 @@
             </CommandBarButton.Icon>
           </CommandBarButton>
           <CommandBarButton
+            DataContext="{Binding #BlogsPageRoot.DataContext}"
             x:Name="ManageAclButton"
             IsVisible="{Binding IsEditing}"
             Command="{Binding ManageAclAsync}"
@@ -92,6 +96,7 @@
             </CommandBarButton.Icon>
           </CommandBarButton>
           <CommandBarButton
+            DataContext="{Binding #BlogsPageRoot.DataContext}"
             x:Name="OpenCirclesButton"
             Command="{Binding OpenCirclesAsync}"
             Label="Mes cercles">
@@ -100,6 +105,7 @@
             </CommandBarButton.Icon>
           </CommandBarButton>
           <CommandBarToggleButton
+            DataContext="{Binding #BlogsPageRoot.DataContext}"
             IsVisible="{Binding IsEditing}"
             Command="{Binding TogglePublishCommand}"
             IsChecked="{Binding DraftIsPublished, Mode=TwoWay}"
@@ -108,12 +114,13 @@
               <PathIcon Data="{StaticResource PublishedIcon}" />
             </CommandBarToggleButton.Icon>
           </CommandBarToggleButton>
-          <CommandBarToggleButton IsVisible="{Binding IsEditing}" IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}" Label="Aperçu">
+          <CommandBarToggleButton DataContext="{Binding #BlogsPageRoot.DataContext}" IsVisible="{Binding IsEditing}" IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}" Label="Aperçu">
             <CommandBarToggleButton.Icon>
               <PathIcon Data="{StaticResource MarkdownIcon}" />
             </CommandBarToggleButton.Icon>
           </CommandBarToggleButton>
           <CommandBarButton
+            DataContext="{Binding #BlogsPageRoot.DataContext}"
             x:Name="OpenSignatureDevButton"
             IsVisible="{Binding IsEditing}"
             Command="{Binding OpenSignatureDevAsync}"
@@ -125,14 +132,9 @@
         </CommandBar.PrimaryCommands>
       </CommandBar>
 
-      <Grid Grid.Row="2" Margin="12" RowSpacing="12" x:Name="MainGrid">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="*" />
-          <RowDefinition Height="4" />
-          <RowDefinition Height="2*" />
-        </Grid.RowDefinitions>
-        <Border
-          Grid.Row="0"
+        <Border x:Name="PostsListBorder"
+          Grid.Row="2"
+          Margin="12"
           Padding="8"
           BorderBrush="Gray"
           BorderThickness="1">
@@ -178,14 +180,16 @@
           </ListBox>
         </Border>
 
-        <GridSplitter
-          Grid.Row="1"
+        <GridSplitter x:Name="PostsSplitter"
+          Grid.Row="3"
+          Margin="12,0"
           HorizontalAlignment="Stretch"
           ResizeDirection="Rows" />
 
         <Grid x:Name="PostEditor"
           IsVisible="{Binding IsEditing}"
-          Grid.Row="2"
+          Grid.Row="4"
+          Margin="12"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
           RowSpacing="10">
@@ -237,7 +241,7 @@
           </Border>
 
         </Grid>
-        <Grid x:Name="PostReader" Grid.Row="2" IsVisible="{Binding !IsEditing}"
+        <Grid x:Name="PostReader" Grid.Row="4" Margin="12" IsVisible="{Binding !IsEditing}"
               RowDefinitions="Auto,Auto,*" MaxWidth="900" HorizontalAlignment="Stretch" RowSpacing="12">
           <TextBlock Text="{Binding ReaderTitle}" FontSize="28" FontWeight="SemiBold"
                      TextWrapping="Wrap" />
@@ -263,7 +267,6 @@
                      Text="Choisissez un billet dans la liste pour le lire."
                      HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" />
         </Grid>
-      </Grid>
-      <postitControls:StatusBar Grid.Row="3" DataContext="{Binding ActionStatus}" x:Name="StatusBar" />
+      <postitControls:StatusBar Grid.Row="5" DataContext="{Binding ActionStatus}" x:Name="StatusBar" />
   </Grid>
 </ContentPage>
