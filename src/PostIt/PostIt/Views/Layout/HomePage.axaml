@@ -57,6 +57,11 @@
                   Command="{Binding OpenChat}"
                   HorizontalAlignment="Center"
                   IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
+          <Button Content="Podcasts : directs et replays"
+                  Command="{Binding OpenPodcasts}"
+                  HorizontalAlignment="Center"
+                  IsVisible="{Binding SupportsPodcasts}"
+                  IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
           <Button Content="Open Blog Interface"
                   Command="{Binding OpenBlogs}"
                   HorizontalAlignment="Center"

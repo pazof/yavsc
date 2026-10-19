@@ -75,7 +75,8 @@ namespace Yavsc.Blogs.Controllers
             }, $"{userName} is starting a stream!");
 
             await liveProcessor.AcceptStream(HttpContext, user, destDir, shortFileName);
-            return Ok();
+            // The processor has already upgraded or rejected the HTTP response.
+            return new EmptyResult();
         }
     }
 }

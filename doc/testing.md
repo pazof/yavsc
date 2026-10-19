@@ -73,6 +73,30 @@ HTTP, on stub `IAuthorizationService` directement (cf.
 `BlogspotController` dans `Yavsc.Org.Tests/NonRegression/`)
 pour éviter de monter un host complet.
 
+## Tests cibles des podcasts
+
+Avec le runner Microsoft.Testing.Platform du depot (.NET 10, xUnit v3) :
+
+```bash
+dotnet test --project src/test/Yavsc.Api.Tests/Yavsc.Api.Tests.csproj \
+  --filter-class '*LiveProcessorTests' --filter-class '*PodcastControllerTests'
+dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
+  --filter-class '*PodcastTests' --filter-class '*PodcastNativeCaptureTests'
+```
+
+Les tests serveur couvrent HTTP/authentification, proprietaire, sequences,
+reprises idempotentes, limites exactes, concurrence et persistance des replays
+apres interruption/redemarrage, dans des dossiers temporaires isoles.
+
+Les tests natifs sont explicitement ignores sans `POSTIT_TEST_MEDIA`.
+Pour les activer, installer LibVLC avec ses encodeurs H.264/AAC et definir
+cette variable sur un fichier video local d'environ huit secondes contenant
+une piste audio. Ils exercent la segmentation LibVLC reelle, l'envoi et la
+reprise apres acquittement perdu, le dernier segment apres arret et le
+decodage authentifie du replay. Aucun FFmpeg n'est requis par ces tests ni
+par l'application (le fichier d'entree peut provenir de n'importe quelle source).
+Les tests materiels camera/microphone Windows/Linux restent manuels.
+
 ## Quand ne PAS écrire de test
 
 Un test qui ne détecte rien n'est pas un test. Si l'invariant

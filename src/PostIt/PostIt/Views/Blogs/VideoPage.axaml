@@ -7,12 +7,12 @@
     x:DataType="vm:VideoPageViewModel">
     <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="16" RowSpacing="12">
         <TextBlock Text="{Binding Title}" FontSize="22" TextWrapping="Wrap" />
-        <Border Grid.Row="1" Background="Black">
+        <Border Grid.Row="1" Background="Black" BorderThickness="1" BorderBrush="Green">
             <vlc:VideoView x:Name="Video" />
         </Border>
         <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12">
             <Button x:Name="PlayButton" Content="Lire / Pause" Click="PlayPause_Click" />
-            <Button Content="Ouvrir dans le navigateur" Click="OpenExternal_Click" />
+            <Button Content="Ouvrir dans le navigateur" Click="OpenExternal_Click" IsVisible="{Binding CanOpenExternal}" />
         </StackPanel>
         <TextBlock x:Name="PlaybackStatus" Grid.Row="3" TextWrapping="Wrap" />
     </Grid>

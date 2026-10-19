@@ -540,8 +540,11 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             response = await sendOnce().ConfigureAwait(false);
         }
 
-        await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
-        return await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
+        using (response)
+        {
+            await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
+            return await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
+        }
     }
 
     public async Task LogoutAsync()

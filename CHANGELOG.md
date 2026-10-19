@@ -1,6 +1,7 @@
 # Changelog
 
-## [1.0.8-rc27] - unstable
+## [1.0.8-rc28] - unstable
+
 
 ### Added
 
@@ -9,6 +10,14 @@
   envoi ordonne et idempotent, catalogue et lecture authentifiee dans PostIt.
   L'auteur peut terminer ou supprimer ses emissions ; stockage prive sur
   disque, quotas dedies et conservation des segments recus apres interruption.
+
+### Changed
+
+### Fixed
+
+## [1.0.8-rc27] - unstable
+
+### Added
 
 * [PostIt.Desktop] Installeur NSIS Windows x64 par utilisateur, sans
   elevation : publication autonome, raccourci du menu Demarrer,
@@ -51,12 +60,6 @@
   navigation est plus compacte en mode large et conserve le bouton Retour.
 
 ### Fixed
-
-* [PostIt] Le playback Linux revient sur un chemin logiciel sûr quand
-  VAAPI/VDPAU n'est pas validé, sans bloquer la lecture si le flux reste
-  lisible. Le fallback navigateur reste actif pour les médias impossibles
-  à lire dans le contrôle VLC, sans se baser sur l'absence de `vainfo`
-  ou de pilotes VAAPI.
 
 * [Yavsc.Server] Reception WebSocket historique : correction du tampon
   reutilise, suppression de la file non synchronisee et liberation des

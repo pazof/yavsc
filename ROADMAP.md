@@ -109,14 +109,14 @@ Sous-jalons du `TODO.fr.md.archive` repris ici :
 
 Repris du `TODO.fr.md.archive`, jalon 1 (sélection) + jalon 2 (interface) :
 
-- ☐ **Gestion du profil utilisateur** Simple & Prestataire, sur **Android** (Web ✔)
-- ☐ **Gestion de l'espace de stockage personnel** (Web, API web, Mobile)
-- ☐ **Création d'une annonce**
+- ✔ **Gestion du profil utilisateur** Simple & Prestataire, sur **Android** (Web ✔)
+- ✔ **Gestion de l'espace de stockage personnel** (Web, API web, Mobile)
+- ◐ **Création d'une annonce**
 - ☐ **Transformation annonce ↔ demande nominative**
-- ☐ **Sélection d'une star** depuis le **mobile** (Web ✔)
+- ◐ **Sélection d'une star** depuis le **mobile** (Web ✔)
 - ☐ **Sélection DJ / chanteur / formation** (recherche par critères : date, lieu, tendance, taille, répertoire) depuis le **mobile**
 - ☐ **Géocodeur de lieu** côté mobile
-- ☐ **Géocodeur d'adresse postale** (Web + Mobile)
+- ◐ **Géocodeur d'adresse postale** (Web + Mobile)
 - ☐ **Évaluation des trajets**
 - ☐ **Interface de gestion des collaborateurs** (sous-traitance — déjà amorcée dans `doc/Architecture.md`)
 - ☐ **Migration de l'identifiant utilisateur** : `string` GUID → `long` auto-incrémenté (Npgsql)
@@ -163,7 +163,7 @@ Repris du `TODO.fr.md.archive`, jalon 1 (sélection) + jalon 2 (interface) :
 - ☐ **Aide à la rencontre physique** : carte interactive, geofencing, alertes
 - ☐ **Activités secondaires** : spécialisation d'une activité, activités filles, *activité principale* (code APE)
 - ☐ **Streaming vidéo pair-à-pair**
-- ☐ **Streaming vidéo public**
+- ✔ **Streaming vidéo public**
 
 **Critère de sortie** : un événement géolocalisé notifie ses participants confirmés à l'approche du point de rendez-vous.
 

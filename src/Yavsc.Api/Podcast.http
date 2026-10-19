@@ -1,0 +1,49 @@
+@baseUrl = https://localhost:5005
+@token = REPLACE_WITH_ACCESS_TOKEN
+@id = REPLACE_WITH_PODCAST_ID
+
+### Create a live broadcast
+POST {{baseUrl}}/api/v1/podcasts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"title":"Concert en direct"}
+
+### List live broadcasts and replays
+GET {{baseUrl}}/api/v1/podcasts
+Authorization: Bearer {{token}}
+
+### Read committed metadata
+GET {{baseUrl}}/api/v1/podcasts/{{id}}
+Authorization: Bearer {{token}}
+
+### Upload the first complete MPEG-TS segment (file produced by LibVLC)
+PUT {{baseUrl}}/api/v1/podcasts/{{id}}/segments/0?duration=4
+Authorization: Bearer {{token}}
+Content-Type: video/mp2t
+
+< ./segment.ts
+
+### Play the HLS event playlist (send Authorization on segment requests too)
+GET {{baseUrl}}/api/v1/podcasts/{{id}}/index.m3u8
+Authorization: Bearer {{token}}
+
+### Read a committed segment
+GET {{baseUrl}}/api/v1/podcasts/{{id}}/segments/0.ts
+Authorization: Bearer {{token}}
+
+### Finish and retain the replay
+POST {{baseUrl}}/api/v1/podcasts/{{id}}/complete
+Authorization: Bearer {{token}}
+
+### Delete an ended podcast (owner only)
+DELETE {{baseUrl}}/api/v1/podcasts/{{id}}
+Authorization: Bearer {{token}}
+
+### Unknown podcast: 404
+GET {{baseUrl}}/api/v1/podcasts/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### OpenAPI in development (requires an Administrator token)
+GET {{baseUrl}}/openapi/podcasts.json
+Authorization: Bearer {{token}}

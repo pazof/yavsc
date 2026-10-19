@@ -1,0 +1,55 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             xmlns:streaming="clr-namespace:Yavsc.Abstract.Streaming;assembly=Yavsc.Abstract"
+             x:Class="PostIt.Views.PodcastsPage"
+             x:DataType="vm:PodcastsPageViewModel"
+             Header="Podcasts">
+    <ScrollViewer>
+        <StackPanel Margin="16" Spacing="12" MaxWidth="900">
+            <TextBlock Text="Podcasts : directs et replays" FontSize="22" />
+            <TextBlock Text="Lecture et emission reservees aux utilisateurs connectes. Quitter cette page arrete la capture." TextWrapping="Wrap" />
+            <StackPanel Spacing="8" IsVisible="{Binding IsDesktop}" IsEnabled="{Binding !IsBroadcasting}">
+                <TextBox Text="{Binding Title}" PlaceholderText="Titre du direct" MaxLength="160" />
+                <Button Content="Detecter cameras et microphones" Command="{Binding DetectDevicesCommand}" />
+                <ComboBox ItemsSource="{Binding Cameras}" SelectedItem="{Binding SelectedCamera}" PlaceholderText="Camera">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:CaptureDevice"><TextBlock Text="{Binding Name}" /></DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <ComboBox ItemsSource="{Binding Microphones}" SelectedItem="{Binding SelectedMicrophone}" PlaceholderText="Microphone">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:CaptureDevice"><TextBlock Text="{Binding Name}" /></DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Content="Demarrer le direct" Command="{Binding StartCommand}" />
+            </StackPanel>
+            <Button Content="Arreter et publier le replay" Command="{Binding StopCommand}" />
+            <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
+            <Button Content="Actualiser les directs et replays" Command="{Binding RefreshCommand}" />
+            <ListBox ItemsSource="{Binding Podcasts}" SelectedItem="{Binding SelectedPodcast}" MinHeight="160" MaxHeight="420"
+                     SelectionChanged="PodcastSelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="streaming:PodcastResponse">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="{Binding OwnerName}" />
+                                <TextBlock Text="{Binding State}" />
+                                <TextBlock Text="{Binding DurationSeconds, StringFormat='{}{0:0} s'}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <WrapPanel>
+                <Button Content="Regarder le direct / replay" Command="{Binding PlayCommand}" Margin="0,0,8,8" />
+                <Button Content="Terminer mon direct selectionne" Command="{Binding FinishCommand}" Margin="0,0,8,8" />
+            </WrapPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <CheckBox x:Name="ConfirmDelete" Content="Confirmer la suppression du replay selectionne" />
+                <Button Content="Supprimer mon replay" Command="{Binding DeleteCommand}" IsEnabled="{Binding #ConfirmDelete.IsChecked}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</ContentPage>

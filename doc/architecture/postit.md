@@ -175,10 +175,19 @@ affichées dans la barre de statut, sans les masquer par une déduction MIME.
 Les types `video/*` ouvrent `VideoPage` via `App.PushPageAsync` sur desktop.
 Cette page contient un `LibVLCSharp.Avalonia.VideoView`, lecture/pause et
 une action d'ouverture externe. Le lecteur et ses ressources natives sont
-arrêtés et libérés à la sortie de la page. **LibVLC doit être installé**
+arrêtés et libérés à la sortie de la page. La lecture utilise directement
+`new LibVLC()`, `new MediaPlayer(libVlc)` et `Play(media)`, sans options
+spécifiques à Linux ni détection VAAPI/VDPAU. Le média est libéré après
+`Play` comme dans l'exemple officiel ; le lecteur conserve sa référence native.
+**LibVLC doit être installé**
 sur le poste (par exemple `libvlc5` et les plugins VLC sur Linux ; les
 bibliothèques natives adaptées sont nécessaires sous Windows/macOS).
 Une absence de LibVLC ou une erreur de décodage est signalée dans la page.
+Le navigateur ne s'ouvre que sur demande explicite, jamais en repli automatique.
+Après la navigation, `TryUpdateNativeControlPosition()` synchronise la surface
+native à la priorité `Loaded`, une fois la mise en page effectuée :
+les transformations de transition ne déclenchent pas de changement de `Bounds`.
+Le rappel est ignoré si le lecteur a été libéré ou remplacé entre-temps.
 Sur Android et Browser, où ce contrôle natif desktop n'est pas disponible,
 les vidéos sont ouvertes dans le navigateur, comme les autres fichiers
 (images liées, PDF, téléchargements) et les liens externes.
@@ -230,6 +239,58 @@ faut *deux* enregistrements : la page en `AddTransient` (ou
 `AddSingleton`) dans le DI, **et** une case dans le `switch`
 de `ViewLocator.Build`. Si l'un manque, l'app affiche
 "No view for X" sans crash.
+
+## Podcasts : capture, direct et replay
+
+`PodcastsPageViewModel` est accessible depuis l'accueil Desktop Windows/Linux.
+`CameraStreamer` detecte les cameras DirectShow/V4L2 et les microphones
+(DirectShow sous Windows, source PulseAudio par defaut sous Linux).
+`PodcastBroadcaster` utilise uniquement LibVLC : encodage H.264/AAC, sortie
+`livehttp`, segments MPEG-TS d'environ deux secondes. Un segment n'est
+envoye que lorsque l'index local LibVLC le declare complet.
+
+`PodcastApiClient` reutilise le transport bearer et son rafraichissement
+des jetons. Les PUT sont numerotes a partir de zero ; une nouvelle tentative
+doit avoir exactement les memes octets et la meme duree. Le client supprime
+un segment local seulement apres acquittement, et envoie le dernier segment
+ferme par LibVLC avant de terminer le direct. La navigation et la deconnexion
+arretent la camera. Les erreurs restent visibles ; les fichiers non envoyes
+restent disponibles localement pour recuperation manuelle.
+
+`ILiveProcessor` est un singleton dans Yavsc.Api. Il stocke les metadonnees
+et empreintes SHA-256 dans un index JSON remplace atomiquement, avec des
+segments immuables accessibles uniquement via les endpoints authentifies.
+Deux receptions au plus sont tamponnees en parallele ; les validations de
+sequence, de proprietaire et de quota sont serialisees avant commit.
+Un index ne reference jamais un segment en cours d'ecriture.
+
+| Route sous `api/v1/podcasts` | Role |
+| --- | --- |
+| `GET /`, `POST /` | Catalogue ou creation d'une emission |
+| `GET /{id}` | Metadonnees et segments ordonnes |
+| `PUT /{id}/segments/{sequence}?duration=...` | Ingestion `video/mp2t`, auteur uniquement |
+| `POST /{id}/complete` | Finalisation idempotente du replay |
+| `GET /{id}/index.m3u8` | Playlist HLS EVENT, ENDLIST apres fin/interruption |
+| `GET /{id}/segments/{sequence}.ts` | Segment engage, lecture authentifiee |
+| `DELETE /{id}` | Suppression d'une emission terminee, auteur uniquement |
+
+Toutes les routes requierent la politique `ApiScope`. La lecture est ouverte
+a tous les utilisateurs authentifies avec ce scope, pas seulement a l'auteur.
+`PodcastMediaInput` alimente LibVLC en octets MPEG-TS via les requetes
+authentifiees existantes, sans transmettre de jeton dans une URL ou un
+processus externe. Les rappels natifs ne laissent echapper aucune exception :
+l'erreur est remontee a la page de lecture.
+
+Un direct inactif devient `Interrupted` lors de la prochaine lecture de
+l'index ; au redemarrage, tous les anciens directs sont interrompus.
+Les segments engages constituent le replay, sans transcodage serveur.
+Le stockage exige un seul processus par racine et les quotas podcast sont
+independants de ceux des fichiers utilisateur. Voir
+[INSTALL.md](../../INSTALL.md#podcast-live-broadcasts-and-replays) pour
+les limites et le deploiement ; [Podcast.http](../../src/Yavsc.Api/Podcast.http)
+pour les requetes.
+Le document OpenAPI dedie est `/openapi/podcasts.json`, accessible en
+developpement aux administrateurs comme les autres documents de l'API.
 
 ## Composition root (`App.axaml.cs`)
 

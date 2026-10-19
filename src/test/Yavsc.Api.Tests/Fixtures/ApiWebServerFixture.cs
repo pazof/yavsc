@@ -72,6 +72,9 @@ public sealed class ApiWebServerFixture : WebHostFixture
             options.ClaimsIdentity.RoleClaimType = Yavsc.Constants.RoleClaimType)
             .AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
         builder.Services.AddSiteAdministration();
+        var podcastRoot = Path.Combine(Path.GetTempPath(), $"yavsc-api-podcasts-{Guid.NewGuid():N}");
+        builder.Services.AddPodcasts(builder.Configuration);
+        builder.Services.Configure<PodcastOptions>(options => options.RootPath = podcastRoot);
         builder.Services.Configure<GoogleAuthSettings>(_ => { });
         builder.Services.Configure<SiteSettings>(settings => settings.Authority = "example.test");
         builder.Services.AddTransient<IBillingService, BillingService>();
@@ -82,6 +85,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
         builder.Services.AddTransient<IYavscMessageSender, YavscMessageSender>();
         builder.Services.AddAuthorization(options =>
         {
+            options.AddPolicy("ApiScope", policy => policy.RequireAuthenticatedUser().RequireClaim("scope", "api"));
             options.AddPolicy("AdministratorOnly", policy =>
             {
                 policy.RequireAuthenticatedUser();
@@ -107,7 +111,12 @@ public sealed class ApiWebServerFixture : WebHostFixture
                 };
             });
 
-        return builder.Build();
+        var app = builder.Build();
+        app.Lifetime.ApplicationStopped.Register(() =>
+        {
+            if (Directory.Exists(podcastRoot)) Directory.Delete(podcastRoot, recursive: true);
+        });
+        return app;
     }
 
     protected override async Task<WebApplication> ConfigurePipelineAsync(WebApplication app)

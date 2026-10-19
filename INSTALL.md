@@ -76,6 +76,70 @@ login callback, updating and uninstallation on Windows with a standard
 (non-administrator) account. Installer compilation alone does not validate
 these Windows runtime behaviours.
 
+## Podcast live broadcasts and replays
+
+PostIt Desktop's home page provides **Podcasts : directs et replays**.
+Install LibVLC 3 with the `livehttp`, MPEG-TS, x264 and AAC plugins on the
+Desktop machine. Windows capture uses DirectShow; Linux uses V4L2 and the
+default PulseAudio microphone. FFmpeg is **not** a runtime dependency.
+Select a camera and optionally a microphone, enter a title, then start.
+Stopping publishes the retained replay; navigating away or logging out
+stops capture too. A second signed-in PostIt instance can watch the live
+broadcast while it is being captured.
+
+Both upload and playback require a bearer token with the `api` scope.
+All authenticated API users can watch the catalogue, live broadcasts and
+replays; only the broadcaster can upload, complete or delete their podcast.
+Media is not anonymous and no access token is included in a playback URL.
+
+Configure Yavsc.Api's `Podcast` section (or environment variables such as
+`Podcast__RootPath`). No database migration or server-side encoder is needed:
+
+```json
+{
+  "Podcast": {
+    "RootPath": "/srv/yavsc-private/podcasts",
+    "MaxSegmentBytes": 8388608,
+    "MaxOwnerBytes": 1073741824,
+    "MaxSegments": 7200,
+    "MaxOwnerPodcasts": 100,
+    "IdleTimeoutSeconds": 60
+  }
+}
+```
+
+`RootPath` must be absolute, writable by Yavsc.Api and **outside any static
+file directory**. The default is `DataDir/podcasts` under the API application
+base directory. Use a persistent volume and back up this entire directory
+(indexes and segments together). This implementation supports **one API
+process per storage root**, not multiple writers or replicas.
+
+Defaults allow 8 MiB per segment (also the HTTP endpoint's hard limit),
+1 GiB retained per owner, 7,200 segments per episode and 100 episodes per
+owner. At the target two-second segment duration, this is roughly four hours
+per episode; the byte quota can be reached earlier. Podcast quotas are
+separate from the legacy user-files `DiskQuota`. Deleting an ended podcast
+releases its podcast quota. Reverse proxies must allow an 8 MiB PUT body
+and forward Authorization on every API request.
+
+A broadcast without a new committed segment for 60 seconds, or present
+when the API restarts, becomes an interrupted replay on the next catalogue,
+manifest or upload request. Already committed media remains playable.
+The broadcaster retries transient upload errors twice using the same
+sequence and content; it stops if capture fails or the pending local media
+exceeds 64 MiB. Unacknowledged media is retained under
+`%LOCALAPPDATA%\PostIt\podcast-capture` (Linux: the corresponding local
+application data directory), with `podcast.json` and the capture playlist
+for manual recovery. There is no automatic resumption after an application
+restart; these private local recordings may be removed manually when no
+longer needed.
+
+The replay is **HLS/MPEG-TS**, not an MP4 download. PostIt's authenticated
+player joins a live broadcast up to three segments behind the edge and
+reads a replay from its beginning; seeking is not implemented. Native
+camera/microphone permissions, drivers and codecs must still be verified
+on each target Windows/Linux machine.
+
 ## Resources
 
 System resources needed to install.

@@ -38,6 +38,7 @@ public static class ServiceCollectionHelpers
         var resourceUsageClient = new ResourceUsageApiClient(api, () => settings.ApiUrl);
         var administrationClient = new AdministrationApiClient(api, () => settings.ApiUrl);
         var notificationsClient = new NotificationsApiClient(api, () => settings.ApiUrl);
+        var podcastClient = new PodcastApiClient(api, () => settings.ApiUrl);
         var userDirectory = new UserDirectory(userSearchClient);
         var reverseGeocoding = new NominatimReverseGeocodingService();
 
@@ -46,6 +47,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<MainView>();
         services.AddTransient<BlogsPage>();
         services.AddTransient<VideoPage>();
+        services.AddTransient<PodcastsPage>();
 
 
         // Models
@@ -106,6 +108,8 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(resourceUsageClient);
         services.AddSingleton(administrationClient);
         services.AddSingleton(notificationsClient);
+        services.AddSingleton(podcastClient);
+        services.AddTransient<PodcastsPageViewModel>();
         services.AddSingleton(userFilesClient);
         services.AddSingleton<IReverseGeocodingService>(reverseGeocoding);
         services.AddSingleton<IUserDirectory>(userDirectory);

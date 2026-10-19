@@ -20,26 +20,13 @@ public class CameraStreamer
             "--aout=dummy",
             "--intf=dummy");
 
-    public static LibVLC CreatePlaybackLibVlc()
-    {
-        if (!OperatingSystem.IsLinux())
-            return new LibVLC();
-
-        var preferHardware = string.Equals(Environment.GetEnvironmentVariable("POSTIT_LIBVLC_ENABLE_HW"), "1",
-            StringComparison.OrdinalIgnoreCase);
-
-        if (preferHardware && IsVaapiUsable())
-            return new LibVLC();
-
-        // On Linux, a non-hardware display path is still valid for in-app playback as long as
-        // the platform is not explicitly forced into a broken VAAPI/VDPAU stack.
-        return new LibVLC("--avcodec-hw=none");
-    }
-
     public static LibVLC CreatePreferredLibVlc()
     {
         if (!OperatingSystem.IsLinux())
             return new LibVLC();
+
+        if (ShouldDisableHardwareAcceleration())
+            return CreateHeadlessLibVlc();
 
         var preferHardware = string.Equals(Environment.GetEnvironmentVariable("POSTIT_LIBVLC_ENABLE_HW"), "1",
             StringComparison.OrdinalIgnoreCase);
@@ -49,6 +36,10 @@ public class CameraStreamer
 
         return CreateHeadlessLibVlc();
     }
+
+    private static bool ShouldDisableHardwareAcceleration()
+        => string.Equals(Environment.GetEnvironmentVariable("POSTIT_LIBVLC_DISABLE_HW"), "1",
+            StringComparison.OrdinalIgnoreCase);
 
     private static bool IsVaapiUsable()
     {

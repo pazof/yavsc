@@ -74,10 +74,19 @@ public class HomePageViewModel : ViewModelBase
         OpenPerformerConfiguration = new AsyncRelayCommand(OpenPerformerConfigurationAsync);
         OpenAdministration = new AsyncRelayCommand(OpenAdministrationAsync, () => SessionStatus.IsAdministrator);
         OpenChat = new AsyncRelayCommand(OpenChatAsync);
+        OpenPodcasts = new AsyncRelayCommand(async () =>
+        {
+            var app = Application.Current as App ?? throw new InvalidOperationException("Application indisponible.");
+            var vm = app.ServiceProvider?.GetRequiredService<PodcastsPageViewModel>()
+                ?? throw new InvalidOperationException("Page podcasts indisponible.");
+            await app.PushPageAsync(vm);
+        });
     }
 
 
     public IAsyncRelayCommand OpenChat { get; }
+    public IAsyncRelayCommand OpenPodcasts { get; }
+    public bool SupportsPodcasts => OperatingSystem.IsWindows() || OperatingSystem.IsLinux();
     public IAsyncRelayCommand OpenBlogs { get; }
     public IAsyncRelayCommand OpenProfile { get; }
     public IAsyncRelayCommand OpenPerformerConfiguration { get; }

@@ -12,6 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <InternalsVisibleTo Include="PostIt.Tests" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="postit-settings.json">
