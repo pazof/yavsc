@@ -17,7 +17,7 @@ namespace Yavsc.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -1453,6 +1453,14 @@ namespace Yavsc.Migrations
                     b.Property<string>("ActivityCode")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<decimal?>("AmountDue")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("AmountPaid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric")
+                        .HasDefaultValue(0m);
 
                     b.Property<string>("ClientId")
                         .IsRequired()

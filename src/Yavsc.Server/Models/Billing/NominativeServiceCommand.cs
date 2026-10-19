@@ -80,9 +80,29 @@ namespace Yavsc.Models.Billing
 
         public abstract System.Collections.Generic.List<IBillItem> GetBillItems();
 
+        /// <summary>
+        /// Null until an invoice total has been established; never inferred
+        /// from a provisional price or a payment gateway acknowledgement.
+        /// </summary>
+        public decimal? AmountDue { get; private set; }
+
+        public decimal AmountPaid { get; private set; }
+
+        [NotMapped]
+        public PaymentSummary? PaymentSummary => AmountDue.HasValue
+            ? new PaymentSummary(AmountDue.Value, AmountPaid)
+            : null;
+
+        public void SetPaymentAmounts(decimal amountDue, decimal amountPaid)
+        {
+            var summary = new PaymentSummary(amountDue, amountPaid);
+            AmountDue = summary.AmountDue;
+            AmountPaid = summary.AmountPaid;
+        }
+
         public bool GetIsAcquitted()
         {
-            return Regularization?.IsOk() ?? false;
+            return PaymentSummary?.IsAcquitted ?? false;
         }
 
         public string GetFileBaseName(IBillingService billingService)

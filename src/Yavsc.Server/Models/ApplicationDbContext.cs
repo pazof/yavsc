@@ -58,6 +58,10 @@ namespace Yavsc.Models
             }
             builder.UseIdentityByDefaultColumns();
 
+            builder.Entity<NominativeServiceCommand>()
+                .Property(command => command.AmountPaid)
+                .HasDefaultValue(0m);
+
             builder.Entity<ResourceUsageRecord>(entity =>
             {
                 entity.HasKey(r => r.Id);

@@ -89,6 +89,8 @@ namespace Yavsc.ApiControllers
             }
 
             _context.Entry(hairCutQuery).State = EntityState.Modified;
+            _context.Entry(hairCutQuery).Property(q => q.AmountDue).IsModified = false;
+            _context.Entry(hairCutQuery).Property(q => q.AmountPaid).IsModified = false;
 
             try
             {

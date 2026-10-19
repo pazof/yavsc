@@ -5,6 +5,11 @@
 
 ### Added
 
+* [Yavsc.Abstract, Yavsc.Server] Modele de solde des commandes facturables :
+  montants dus et payes persistants, reste a payer et etats non paye,
+  partiellement paye ou acquitte. L'acquittement depend des montants,
+  et non du seul statut PayPal ; migration sans montant historique invente.
+
 * [PostIt.Desktop, Yavsc.Api] Podcasts en direct avec replay HLS conserve :
   capture camera et microphone par LibVLC (H.264/AAC, segments MPEG-TS),
   envoi ordonne et idempotent, catalogue et lecture authentifiee dans PostIt.

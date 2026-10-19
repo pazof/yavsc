@@ -1,8 +1,11 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
+using Yavsc.ApiControllers;
 using Yavsc.Api.Test.Fixtures;
 using Yavsc.Models;
 using Yavsc.Models.Haircut;
@@ -75,6 +78,14 @@ public sealed class HairCutQueryApiControllerTests : IClassFixture<ApiWebServerF
         Assert.NotEqual(0, created!.Id);
         Assert.Equal("alice", created.ClientId);
 
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var command = await db.HairCutQueries.SingleAsync(q => q.Id == created.Id, TestContext.Current.CancellationToken);
+            command.SetPaymentAmounts(100m, 30m);
+            await db.SaveChangesAsync("alice", TestContext.Current.CancellationToken);
+        }
+
         var getResponse = await http.GetAsync($"/api/v1/billing/Brush/{created.Id}", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
 
@@ -86,6 +97,15 @@ public sealed class HairCutQueryApiControllerTests : IClassFixture<ApiWebServerF
         fetched.AdditionalInfo = "Brushing modifié";
         var putResponse = await http.PutAsJsonAsync($"/api/v1/billing/Brush/{fetched.Id}", fetched, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.NoContent, putResponse.StatusCode);
+
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var command = await db.HairCutQueries.SingleAsync(q => q.Id == created.Id, TestContext.Current.CancellationToken);
+            Assert.Equal(100m, command.AmountDue);
+            Assert.Equal(30m, command.AmountPaid);
+            Assert.False(command.GetIsAcquitted());
+        }
 
         var deleteResponse = await http.DeleteAsync($"/api/v1/billing/Brush/{fetched.Id}", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, deleteResponse.StatusCode);
@@ -109,6 +129,44 @@ public sealed class HairCutQueryApiControllerTests : IClassFixture<ApiWebServerF
         Assert.All(catalog!, item => Assert.False(string.IsNullOrWhiteSpace(item.Title)));
         Assert.Contains(catalog!, item => item.Title == "Femme · Cheveux mi-longs"
             && item.Details == "Coupe · Brushing · Aucune technique spécifique · Shampoing · Sans soins");
+    }
+
+    [Fact]
+    public async Task Legacy_haircut_update_preserves_persisted_payment_amounts()
+    {
+        _fixture.ResetAndSeedHaircutGraph();
+        HairCutQuery payload;
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var command = await db.HairCutQueries.SingleAsync(TestContext.Current.CancellationToken);
+            command.SetPaymentAmounts(100m, 30m);
+            await db.SaveChangesAsync("alice", TestContext.Current.CancellationToken);
+            payload = Newtonsoft.Json.JsonConvert.DeserializeObject<HairCutQuery>(
+                Newtonsoft.Json.JsonConvert.SerializeObject(command))!;
+        }
+
+        Assert.Null(payload.AmountDue);
+        Assert.Equal(0m, payload.AmountPaid);
+        payload.AdditionalInfo = "Updated without payment amounts";
+
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var controller = new HairCutController(db, NullLoggerFactory.Instance);
+            var response = await controller.PutHairCutQuery(payload.Id, payload);
+            Assert.Equal(204, Assert.IsType<StatusCodeResult>(response).StatusCode);
+        }
+
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var command = await db.HairCutQueries.SingleAsync(q => q.Id == payload.Id, TestContext.Current.CancellationToken);
+            Assert.Equal(payload.AdditionalInfo, command.AdditionalInfo);
+            Assert.Equal(100m, command.AmountDue);
+            Assert.Equal(30m, command.AmountPaid);
+            Assert.False(command.GetIsAcquitted());
+        }
     }
 
     private async Task<long> GetPrestationIdAsync()

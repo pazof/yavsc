@@ -20,6 +20,8 @@ namespace Yavsc.Billing
 
         DateTime? ValidationDate { get; }
 
+        PaymentSummary? PaymentSummary { get; }
+
         bool GetIsAcquitted ();
 
         string GetFileBaseName (IBillingService service);
