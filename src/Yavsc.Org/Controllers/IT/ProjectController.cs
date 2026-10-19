@@ -158,6 +158,8 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             Project project = await _context.Project.SingleAsync(m => m.Id == id);
+            if (project.InvoiceEstimateId.HasValue)
+                return Conflict(new { Error = "An invoiced command cannot be deleted." });
             _context.Project.Remove(project);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");

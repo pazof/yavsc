@@ -147,6 +147,8 @@ namespace Yavsc.Controllers
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (query.ClientId != uid)
                 return new ChallengeResult();
+            if (query.InvoiceEstimateId.HasValue)
+                return Conflict(new { Error = "An invoiced command cannot be deleted." });
             _context.HairCutQueries.Remove(query);
             await _context.SaveChangesAsync();
             return await Index();

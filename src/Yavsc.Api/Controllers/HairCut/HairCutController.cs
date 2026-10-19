@@ -88,9 +88,22 @@ namespace Yavsc.ApiControllers
                 return BadRequest();
             }
 
+            var persisted = await _context.HairCutQueries.AsNoTracking().SingleOrDefaultAsync(q => q.Id == id);
+            if (persisted is null) return NotFound();
+            if (persisted.InvoiceEstimateId.HasValue
+                && (persisted.ClientId != hairCutQuery.ClientId || persisted.PerformerId != hairCutQuery.PerformerId))
+                return Conflict(new { Error = "An invoiced command cannot change parties." });
             _context.Entry(hairCutQuery).State = EntityState.Modified;
+            _context.Entry(hairCutQuery).Property(q => q.PaymentRevision).OriginalValue = persisted.PaymentRevision;
             _context.Entry(hairCutQuery).Property(q => q.AmountDue).IsModified = false;
             _context.Entry(hairCutQuery).Property(q => q.AmountPaid).IsModified = false;
+            _context.Entry(hairCutQuery).Property(q => q.InvoiceEstimateId).IsModified = false;
+            _context.Entry(hairCutQuery).Property(q => q.InvoicedAtUtc).IsModified = false;
+            _context.Entry(hairCutQuery).Property(q => q.InvoiceCurrency).IsModified = false;
+            _context.Entry(hairCutQuery).Property(q => q.InvoiceClientId).IsModified = false;
+            _context.Entry(hairCutQuery).Property(q => q.InvoicePerformerId).IsModified = false;
+            _context.Entry(hairCutQuery).Property(q => q.InvoiceLinesJson).IsModified = false;
+            _context.Entry(hairCutQuery).Property(q => q.PaymentRevision).IsModified = false;
 
             try
             {
@@ -206,6 +219,8 @@ namespace Yavsc.ApiControllers
                 return NotFound();
             }
 
+            if (hairCutQuery.InvoiceEstimateId.HasValue)
+                return Conflict(new { Error = "An invoiced command cannot be deleted." });
             _context.HairCutQueries.Remove(hairCutQuery);
             await _context.SaveChangesAsync();
 

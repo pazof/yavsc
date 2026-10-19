@@ -34,6 +34,7 @@ public static class ServiceCollectionHelpers
             () => settings.Authentication?.Authority);
         var billingClient = new BillingApiClient(api, () => settings.ApiUrl);
         var estimateClient = new EstimateApiClient(api, () => settings.ApiUrl);
+        var invoicesClient = new InvoicesApiClient(api, () => settings.ApiUrl);
         var frontClient = new FrontOfficeApiClient(api, () => settings.ApiUrl);
         var resourceUsageClient = new ResourceUsageApiClient(api, () => settings.ApiUrl);
         var administrationClient = new AdministrationApiClient(api, () => settings.ApiUrl);
@@ -104,6 +105,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(activityClient);
         services.AddSingleton(billingClient);
         services.AddSingleton(estimateClient);
+        services.AddSingleton(invoicesClient);
         services.AddSingleton(frontClient);
         services.AddSingleton(resourceUsageClient);
         services.AddSingleton(administrationClient);

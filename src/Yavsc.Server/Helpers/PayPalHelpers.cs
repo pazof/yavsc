@@ -10,6 +10,7 @@ using Yavsc.ViewModels.PayPal;
 using Yavsc.Models;
 using Yavsc.Models.Payment;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace Yavsc.Helpers
 {
@@ -72,7 +73,7 @@ namespace Yavsc.Helpers
         public static SetExpressCheckoutResponseType CreatePayment(this HttpRequest request, string controllerName, NominativeServiceCommand query, string intent = "sale", ILogger logger = null)
         {
             var items = query.GetBillItems();
-            var total = items.Addition().ToString("F2");
+            var total = items.Addition().ToString("F2", CultureInfo.InvariantCulture);
             var coreq = new SetExpressCheckoutReq {};
             var urls = request.GetPaymentUrls(controllerName, query.Id.ToString());
 
@@ -89,7 +90,7 @@ namespace Yavsc.Helpers
                     },
                     PaymentDetailsItem = new List <PaymentDetailsItemType> (
                         items.Select(i =>  new PaymentDetailsItemType {
-                            Amount = new BasicAmountType { currencyID = CurrencyCodeType.EUR, value = i.UnitaryCost.ToString("F2") },
+                            Amount = new BasicAmountType { currencyID = CurrencyCodeType.EUR, value = i.UnitaryCost.ToString("F2", CultureInfo.InvariantCulture) },
                             Name = i.Name,
                             Quantity = i.Count,
                             Description = i.Description

@@ -193,6 +193,8 @@ namespace Yavsc.Controllers
                     return BadRequest(ModelState);
                 }
             }
+            if (_context.NominativeServiceCommands.Any(command => command.InvoiceEstimateId == id))
+                return Conflict(new { Error = "An invoiced estimate cannot be deleted." });
             _context.Estimates.Remove(estimate);
             _context.SaveChanges(User.GetUserId());
 

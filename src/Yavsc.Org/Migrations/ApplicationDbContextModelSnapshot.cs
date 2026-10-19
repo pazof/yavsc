@@ -1442,6 +1442,61 @@ namespace Yavsc.Migrations
                     b.ToTable("ExceptionsSIREN");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Billing.InvoicePayment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<long>("CommandId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<DateTimeOffset>("ReceivedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("RecordedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RecordedBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("ReferenceScope")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommandId");
+
+                    b.HasIndex("Source", "ReferenceScope", "Reference")
+                        .IsUnique();
+
+                    b.ToTable("InvoicePayments");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Billing.NominativeServiceCommand", b =>
                 {
                     b.Property<long>("Id")
@@ -1484,8 +1539,33 @@ namespace Yavsc.Migrations
                         .HasMaxLength(34)
                         .HasColumnType("character varying(34)");
 
+                    b.Property<string>("InvoiceClientId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InvoiceCurrency")
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<long?>("InvoiceEstimateId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("InvoiceLinesJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InvoicePerformerId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("InvoicedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("PaymentId")
                         .HasColumnType("text");
+
+                    b.Property<Guid>("PaymentRevision")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
                     b.Property<string>("PerformerId")
                         .IsRequired()
@@ -1513,6 +1593,9 @@ namespace Yavsc.Migrations
                     b.HasIndex("ActivityCode");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("InvoiceEstimateId")
+                        .IsUnique();
 
                     b.HasIndex("PaymentId");
 
@@ -3953,6 +4036,17 @@ namespace Yavsc.Migrations
                     b.Navigation("File");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Billing.InvoicePayment", b =>
+                {
+                    b.HasOne("Yavsc.Models.Billing.NominativeServiceCommand", "Command")
+                        .WithMany()
+                        .HasForeignKey("CommandId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Command");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Billing.NominativeServiceCommand", b =>
                 {
                     b.HasOne("Yavsc.Models.Workflow.Activity", "Context")
@@ -3966,6 +4060,11 @@ namespace Yavsc.Migrations
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Yavsc.Models.Billing.Estimate", null)
+                        .WithMany()
+                        .HasForeignKey("InvoiceEstimateId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Yavsc.Models.Payment.PayPalPayment", "Regularization")
                         .WithMany()

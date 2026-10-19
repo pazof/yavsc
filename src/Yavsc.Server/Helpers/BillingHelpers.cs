@@ -18,6 +18,12 @@ namespace Yavsc.Helpers
             string total = query.GetBillItems().Addition().ToString("C", CultureInfo.CurrentUICulture);
             string bill = string.Join("\n", query.GetBillItems().Select(l=> $"{l.Name} {l.Description} : {l.UnitaryCost} € " + ((l.Count != 1) ? "*"+l.Count.ToString() : ""))) +
                 $"\n\nTotal: {total}";
+            if (query.PaymentSummary is { } payment)
+            {
+                bill += $"\nPaid: {payment.AmountPaid.ToString("C", CultureInfo.CurrentUICulture)}"
+                    + $"\nRemaining: {payment.AmountRemaining.ToString("C", CultureInfo.CurrentUICulture)}"
+                    + $"\nStatus: {payment.Status}";
+            }
             return bill;
          }
 

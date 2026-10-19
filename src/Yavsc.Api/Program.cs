@@ -72,6 +72,7 @@ internal class Program
         // the document-generation flow and BillingController.
         services.Configure<SiteSettings>(builder.Configuration.GetSection("Site"));
         services.AddPodcasts(builder.Configuration);
+        services.AddInvoicing(builder.Configuration);
 
         // accepts any access token issued by identity server
         services.AddAuthentication("Bearer")

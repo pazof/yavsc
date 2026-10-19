@@ -61,6 +61,22 @@ namespace Yavsc.Models
             builder.Entity<NominativeServiceCommand>()
                 .Property(command => command.AmountPaid)
                 .HasDefaultValue(0m);
+            builder.Entity<NominativeServiceCommand>()
+                .Property(command => command.PaymentRevision)
+                .HasDefaultValue(Guid.Empty);
+            builder.Entity<NominativeServiceCommand>()
+                .HasOne<Estimate>().WithMany()
+                .HasForeignKey(command => command.InvoiceEstimateId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<NominativeServiceCommand>()
+                .HasIndex(command => command.InvoiceEstimateId).IsUnique();
+            builder.Entity<InvoicePayment>()
+                .HasIndex(payment => new { payment.Source, payment.ReferenceScope, payment.Reference })
+                .IsUnique();
+            builder.Entity<InvoicePayment>()
+                .HasOne(payment => payment.Command).WithMany()
+                .HasForeignKey(payment => payment.CommandId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<ResourceUsageRecord>(entity =>
             {
@@ -358,6 +374,7 @@ namespace Yavsc.Models
         public DbSet<BlogTag> TagsDomain { get; set; }
 
         public DbSet<EstimateTemplate> EstimateTemplates { get; set; }
+        public DbSet<InvoicePayment> InvoicePayments { get; set; }
 
         public DbSet<Contact> Contact { get; set; }
 

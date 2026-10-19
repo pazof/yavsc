@@ -88,6 +88,50 @@ namespace Yavsc.Models.Billing
 
         public decimal AmountPaid { get; private set; }
 
+        public long? InvoiceEstimateId { get; private set; }
+        public DateTimeOffset? InvoicedAtUtc { get; private set; }
+        [MaxLength(3)]
+        public string? InvoiceCurrency { get; private set; }
+        public string? InvoiceClientId { get; private set; }
+        public string? InvoicePerformerId { get; private set; }
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
+        public string? InvoiceLinesJson { get; private set; }
+        [ConcurrencyCheck]
+        public Guid PaymentRevision { get; private set; }
+
+        public void EstablishInvoice(long estimateId, string currency, IReadOnlyList<InvoiceLineResponse> lines)
+        {
+            ArgumentNullException.ThrowIfNull(lines);
+            if (InvoiceEstimateId.HasValue || AmountDue.HasValue || AmountPaid != 0m)
+                throw new InvalidOperationException("A balance or invoice already exists for this command.");
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(estimateId);
+            if (currency != "EUR" || lines.Count == 0
+                || lines.Any(line => line.Count <= 0 || decimal.Round(line.UnitaryCost, 2) != line.UnitaryCost))
+                throw new ArgumentException("An invoice requires EUR lines with positive quantities.");
+            var due = lines.Sum(line => checked(line.Count * line.UnitaryCost));
+            SetPaymentAmounts(due, 0m);
+            InvoiceEstimateId = estimateId;
+            InvoiceCurrency = currency;
+            InvoiceClientId = ClientId;
+            InvoicePerformerId = PerformerId;
+            var now = DateTimeOffset.UtcNow;
+            InvoicedAtUtc = new DateTimeOffset(now.UtcTicks - now.UtcTicks % 10, TimeSpan.Zero);
+            InvoiceLinesJson = System.Text.Json.JsonSerializer.Serialize(lines);
+        }
+
+        public List<IBillItem> GetInvoiceBillItems()
+        {
+            if (InvoiceLinesJson is null || InvoiceCurrency is null)
+                throw new InvalidOperationException("The invoice has no frozen lines.");
+            var lines = System.Text.Json.JsonSerializer.Deserialize<List<InvoiceLineResponse>>(InvoiceLinesJson)
+                ?? throw new InvalidOperationException("The invoice lines are invalid.");
+            return lines.Select(line => (IBillItem)new CommandLine
+            {
+                Name = line.Name, Description = line.Description,
+                Count = line.Count, UnitaryCost = line.UnitaryCost, Currency = InvoiceCurrency
+            }).ToList();
+        }
+
         [NotMapped]
         public PaymentSummary? PaymentSummary => AmountDue.HasValue
             ? new PaymentSummary(AmountDue.Value, AmountPaid)
@@ -95,9 +139,12 @@ namespace Yavsc.Models.Billing
 
         public void SetPaymentAmounts(decimal amountDue, decimal amountPaid)
         {
+            if (InvoiceEstimateId.HasValue && AmountDue != amountDue)
+                throw new InvalidOperationException("An established invoice total cannot be changed.");
             var summary = new PaymentSummary(amountDue, amountPaid);
             AmountDue = summary.AmountDue;
             AmountPaid = summary.AmountPaid;
+            PaymentRevision = Guid.NewGuid();
         }
 
         public bool GetIsAcquitted()

@@ -162,6 +162,9 @@ public class RdvQueryApiController : Controller
             return Forbid();
         }
 
+        if (existing.InvoiceEstimateId.HasValue && existing.PerformerId != query.PerformerId)
+            return Conflict(new { Error = "An invoiced command cannot change performer." });
+
         existing.ActivityCode = query.ActivityCode;
         existing.PerformerId = query.PerformerId;
         existing.Consent = query.Consent;
@@ -224,6 +227,8 @@ public class RdvQueryApiController : Controller
             return Forbid();
         }
 
+        if (query.InvoiceEstimateId.HasValue)
+            return Conflict(new { Error = "An invoiced command cannot be deleted." });
         _context.RdvQueries.Remove(query);
         await _context.SaveChangesAsync(User.GetUserId(), cancellationToken);
 

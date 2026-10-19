@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Yavsc.ApiControllers;
+using Yavsc.Billing;
 using Yavsc.Api.Test.Fixtures;
 using Yavsc.Models;
 using Yavsc.Models.Haircut;
@@ -140,6 +141,15 @@ public sealed class HairCutQueryApiControllerTests : IClassFixture<ApiWebServerF
         {
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var command = await db.HairCutQueries.SingleAsync(TestContext.Current.CancellationToken);
+            var estimate = new Yavsc.Models.Billing.Estimate
+            {
+                CommandId = command.Id, ClientId = command.ClientId, OwnerId = command.PerformerId,
+                CommandType = "Brush", Title = "Invoice test", Description = "Invoice test",
+                Bill = [], AttachedFiles = [], AttachedGraphics = []
+            };
+            db.Estimates.Add(estimate);
+            await db.SaveChangesAsync("alice", TestContext.Current.CancellationToken);
+            command.EstablishInvoice(estimate.Id, "EUR", [new InvoiceLineResponse("Service", "Service", 1, 100m)]);
             command.SetPaymentAmounts(100m, 30m);
             await db.SaveChangesAsync("alice", TestContext.Current.CancellationToken);
             payload = Newtonsoft.Json.JsonConvert.DeserializeObject<HairCutQuery>(
@@ -166,6 +176,11 @@ public sealed class HairCutQueryApiControllerTests : IClassFixture<ApiWebServerF
             Assert.Equal(100m, command.AmountDue);
             Assert.Equal(30m, command.AmountPaid);
             Assert.False(command.GetIsAcquitted());
+            Assert.NotNull(command.InvoiceEstimateId);
+            Assert.Equal("EUR", command.InvoiceCurrency);
+            Assert.Equal("alice", command.InvoiceClientId);
+            Assert.Equal("alice", command.InvoicePerformerId);
+            Assert.Equal(100m, command.GetBillItems().Sum(item => item.Count * item.UnitaryCost));
         }
     }
 

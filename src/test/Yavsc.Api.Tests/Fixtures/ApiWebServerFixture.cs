@@ -78,6 +78,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
         builder.Services.Configure<GoogleAuthSettings>(_ => { });
         builder.Services.Configure<SiteSettings>(settings => settings.Authority = "example.test");
         builder.Services.AddTransient<IBillingService, BillingService>();
+        builder.Services.AddInvoicing(builder.Configuration);
         builder.Services.AddSingleton<RecordingMessageDelivery>();
         builder.Services.AddSingleton<ITrueEmailSender>(sp => sp.GetRequiredService<RecordingMessageDelivery>());
         builder.Services.AddSingleton<IHubContext<ChatHub>>(sp => sp.GetRequiredService<RecordingMessageDelivery>());

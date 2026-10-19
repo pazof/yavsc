@@ -5,6 +5,13 @@
 
 ### Added
 
+* [Yavsc.Api, Yavsc.Server, Yavsc.Api.Client] Creation explicite et
+  idempotente d'une facture depuis un devis doublement signe, avec lignes,
+  total et parties figes. Historique des encaissements hors ligne attestes
+  par le prestataire et des transactions PayPal verifiees cote serveur ;
+  references uniques, cumul atomique et protection contre les ecritures
+  concurrentes. Routes documentees, client HTTP et migration associes.
+
 * [Yavsc.Abstract, Yavsc.Server] Modele de solde des commandes facturables :
   montants dus et payes persistants, reste a payer et etats non paye,
   partiellement paye ou acquitte. L'acquittement depend des montants,
@@ -19,6 +26,11 @@
 ### Changed
 
 ### Fixed
+
+* [Facturation] Les commandes facturees et leur devis ne peuvent plus etre
+  supprimes via les routes de commande usuelles. Les additions distinguent
+  montant verse, solde restant et acquittement ; les anciennes routes de
+  generation exigent une facture etablie depuis un devis signe.
 
 ## [1.0.8-rc27] - unstable
 

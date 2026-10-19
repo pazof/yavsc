@@ -60,6 +60,7 @@ namespace Yavsc.Models.Haircut
 
         public override List<IBillItem> GetBillItems()
         {
+            if (InvoiceEstimateId.HasValue) return GetInvoiceBillItems();
             string longhairsuffix = " (cheveux longs)";
             string halflonghairsuffix = " (cheveux mi-longs)";
             string shorthairsuffix = " (cheveux courts)";

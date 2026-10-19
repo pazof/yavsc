@@ -1,0 +1,51 @@
+@baseUrl = https://localhost:5001/api/v1
+@providerToken = replace-with-provider-access-token
+@clientToken = replace-with-client-access-token
+@estimateId = 1
+@commandId = 1
+@paypalTransactionId = replace-with-completed-paypal-transaction-id
+
+### Create an invoice from an estimate with both persisted signatures (performer)
+POST {{baseUrl}}/invoices/from-estimate/{{estimateId}}
+Authorization: Bearer {{providerToken}}
+
+### Read its frozen lines, balance and receipt history (either party)
+GET {{baseUrl}}/invoices/{{commandId}}
+Authorization: Bearer {{clientToken}}
+
+### Record an offline receipt (performer); replay the exact body to test idempotence
+POST {{baseUrl}}/invoices/{{commandId}}/payments/offline
+Authorization: Bearer {{providerToken}}
+Content-Type: application/json
+
+{
+  "reference": "bank-transfer-2026-001",
+  "amount": 30.00,
+  "currency": "EUR",
+  "receivedAtUtc": "2026-10-19T12:00:00Z"
+}
+
+### Verify an already captured PayPal transaction (either party); not a checkout token
+POST {{baseUrl}}/invoices/{{commandId}}/payments/paypal
+Authorization: Bearer {{clientToken}}
+Content-Type: application/json
+
+{
+  "transactionId": "{{paypalTransactionId}}"
+}
+
+### Missing invoice -> 404
+GET {{baseUrl}}/invoices/999999999
+Authorization: Bearer {{providerToken}}
+
+### A client cannot attest an offline receipt -> 403
+POST {{baseUrl}}/invoices/{{commandId}}/payments/offline
+Authorization: Bearer {{clientToken}}
+Content-Type: application/json
+
+{
+  "reference": "not-authorized",
+  "amount": 30.00,
+  "currency": "EUR",
+  "receivedAtUtc": "2026-10-19T12:00:00Z"
+}

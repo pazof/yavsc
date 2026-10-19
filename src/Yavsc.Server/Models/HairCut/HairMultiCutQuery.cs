@@ -39,6 +39,7 @@ namespace Yavsc.Models.Haircut
 
         public override List<IBillItem> GetBillItems()
         {
+            if (InvoiceEstimateId.HasValue) return GetInvoiceBillItems();
             throw new NotImplementedException();
         }
     }

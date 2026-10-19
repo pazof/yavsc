@@ -127,8 +127,8 @@ Implémentée sur le point d'entrée existant `IBillable` /
 La migration ajoute les montants sans reconstituer de paiements historiques :
 les anciennes commandes ont un dû inconnu et un payé nul. Un rapprochement
 explicite est nécessaire avant de les considérer comme acquittées.
-La génération depuis le devis, la fixation du dû et l'alimentation du payé
-par des transactions confirmées restent à brancher aux étapes suivantes.
+La génération depuis le devis et l'alimentation du payé sont désormais
+branchées par le service `InvoicingService` (étapes 2 et 4 ci-dessous).
 L'appel `SetPaymentAmounts` remplace un total cumulé ; il n'enregistre pas
 une transaction et ne doit pas être utilisé pour additionner un retour PayPal
 sans contrôle d'idempotence.
@@ -142,9 +142,33 @@ Objectifs couverts :
 
 ### Étape 2 — brancher la génération de facture sur le devis signé
 
-- vérifier que le devis est bien doublement validé,
-- déclencher la facture depuis le contexte du devis,
-- rattacher la facture au bon client / prestataire.
+Implémentée par `POST /api/v1/invoices/from-estimate/{estimateId}` :
+
+- réservée au prestataire du devis (ou à un administrateur) ;
+- exige les deux dates de validation **et** les deux signatures persistées,
+  non vides, associées aux bons signataires ; une date seule ne suffit pas ;
+- exige une commande existante, dont le client et le prestataire correspondent
+  au devis ; les devis sans commande restent des devis, non des factures ;
+- copie les lignes du devis, sa devise EUR, son total et ses parties dans
+  un instantané de facture sur la commande, daté côté serveur ;
+- accepte les remises mais refuse un total négatif, les quantités non positives,
+  les prix infra-centime et les devis multidevises ;
+- initialise le payé à zéro, sans assimiler un ancien checkout à un encaissement ;
+- renvoie la même facture lors d'un nouvel appel pour le même devis, sans
+  changer le total ou effacer les paiements ; une autre facture ou un solde
+  historique préexistant sur la commande provoque un conflit de rapprochement.
+
+`GET /api/v1/invoices/{commandId}` expose l'instantané et l'historique aux
+parties de la facture et aux administrateurs. Les statuts sont des chaînes
+`Unpaid`, `PartiallyPaid` et `Paid`. Les lignes utilisées par `GetBillItems()`
+sont celles de la facture figée, même si le devis est modifié ensuite.
+Les commandes facturées et leurs devis ne sont plus supprimables par les
+routes de commande concernées. Le changement de prestataire est bloqué sur
+les routes usuelles de modification ; l'instantané reste la référence des parties.
+
+Cette création établit la facture métier et ses montants, **pas un PDF** :
+le moteur historique de rendu documentaire reste distinct. Ses routes de
+génération exigent désormais une facture établie.
 
 ### Étape 3 — intégrer le mode de contrat du prestataire
 
@@ -154,9 +178,71 @@ Objectifs couverts :
 
 ### Étape 4 — enregistrer les paiements sans surinterpréter le statut
 
-- enregister le paiement effectué,
-- alimenter les montants payés et restants,
-- ne pas considérer la facture comme totalement acquittée tant que le total n'est pas atteint.
+Implémentée par deux sources d'encaissement, sans débit déclenché par ces routes :
+
+| Route POST sous `/api/v1/invoices/{commandId}` | Source de vérité | Accès |
+| --- | --- | --- |
+| `/payments/offline` | Attestation du prestataire : référence, montant, devise, date de réception | Prestataire ou administrateur |
+| `/payments/paypal` | Réponse serveur PayPal `GetTransactionDetails` pour un identifiant de transaction | Parties ou administrateur |
+
+Le reçu hors ligne doit être strictement positif, en centimes EUR, avec une
+référence non vide et une date non future. Il est attesté, pas vérifié auprès
+de la banque. La référence est unique par prestataire ; le client ne peut
+pas s'auto-déclarer acquitté.
+
+Pour PayPal, seul l'identifiant est accepté du client. Le serveur vérifie :
+
+- statut `Completed`, et non un simple `ACK=Success` ou un statut `Pending` ;
+- identifiant exact, référence de facture `TypeCommande/Id` (`INVNUM`),
+  devise de la facture et compte marchand destinataire (`RECEIVERID`) ;
+- montant brut reçu strictement positif et date retournés par PayPal.
+
+Le token de checkout historique n'est **pas** un identifiant de transaction.
+Le retour historique `ConfirmPayment` ne constitue toujours pas une preuve
+d'encaissement et n'alimente pas le solde. Cette intégration vérifie des
+transactions déjà encaissées ; elle n'ajoute ni capture, ni webhook, ni
+automatisation du retour navigateur. Le protocole NVP reprend le système
+Classic déjà utilisé par le dépôt ; il est déprécié par PayPal et réservé
+aux marchands existants compatibles.
+
+Chaque encaissement conserve sa référence, son origine, son montant, sa
+devise, ses dates de réception/enregistrement et l'identifiant de l'acteur.
+La référence PayPal est unique globalement : une même transaction ne peut
+pas solder deux factures. Rejouer un reçu identique ne l'ajoute pas deux fois ;
+réutiliser sa référence avec d'autres détails renvoie `409`.
+
+L'ajout au journal et la mise à jour du total payé sont sauvegardés dans la
+même transaction EF relationnelle. Un jeton de concurrence sur la commande
+empêche les pertes de mise à jour. En cas de conflit concurrent, la route
+renvoie `409` : rejouer **la même référence et le même corps** permet de
+réessayer sans double comptage. Un solde ne correspondant pas au journal
+requiert un rapprochement, sans réinitialisation silencieuse.
+
+Le solde est calculé à partir des reçus cumulés. Un paiement partiel garde
+la facture non acquittée ; un trop-perçu est conservé avec un restant nul.
+Le texte de l'addition affiche payé, restant et statut.
+
+#### Configuration et utilisation
+
+Appliquer la migration `SignedEstimateInvoicing` avant déploiement.
+Elle ajoute l'instantané, le jeton de concurrence et le journal `InvoicePayments`,
+sans créer de facture ni de reçu pour les données historiques.
+
+La vérification PayPal utilise la section `Authentication:PayPal` :
+`Mode` (`sandbox` ou `production`), `MerchantAccountId` et
+`MerchantAccountUserName`. Une entrée de `Accounts` doit correspondre à ce
+dernier via `ApiUsername`, avec `ApiPassword` et `Signature`.
+Conserver les identifiants dans les secrets ou l'environnement, jamais dans
+un fichier versionné. Sans configuration exploitable, la route renvoie `503`
+sans enregistrer de paiement ; une panne ou une réponse invalide PayPal
+renvoie `502`/`504`, sans modifier le solde.
+
+Le client partagé `InvoicesApiClient` expose les quatre opérations.
+Le document `/openapi/invoicing.json` est réservé aux administrateurs en
+développement, comme les autres documents OpenAPI du serveur.
+Des exemples de requêtes sont fournis dans `src/Yavsc.Api/Invoicing.http` ;
+adapter l'adresse du serveur et les jetons. Aucun écran PostIt n'est ajouté
+dans ce lot.
 
 ### Étape 5 — finaliser l'état acquitté
 
@@ -164,7 +250,31 @@ Objectifs couverts :
 - si `totalPaye >= totalDu`, alors passer la facture en état acquittée,
 - envoyer les notifications / documents associés au cas échéant.
 
+Le calcul du statut est branché aux encaissements. Les notifications finales,
+le rendu documentaire, les remboursements/annulations de reçus et les
+rapprochements historiques restent hors de ce lot, tout comme l'étape 3.
+Un remboursement ou litige ultérieur n'est pas synchronisé automatiquement :
+ne pas utiliser ce journal d'encaissements comme gestion complète des
+remboursements PayPal.
+
 ## Tests à couvrir
+
+Les tests implémentés du backend s'exécutent avec le runner MTP du dépôt :
+
+```bash
+dotnet test --project src/test/Yavsc.Api.Tests/Yavsc.Api.Tests.csproj \
+  --filter-class '*InvoiceApiTests' --filter-class '*HairCutQueryApiControllerTests'
+dotnet test --project src/test/Yavsc.Server.Tests/Yavsc.Server.Tests.csproj \
+  --filter-class '*PaymentSummaryTests' --filter-class '*PayPalTransactionVerifierTests'
+dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
+  --filter-class '*InvoicesApiClientTests'
+```
+
+Les tests HTTP utilisent la base relationnelle isolée de la fixture.
+Ils vérifient notamment qu'un ajout concurrent perdant est entièrement
+annulé (journal et total), puis rejouable. Les tests PayPal utilisent des
+réponses HTTP simulées, sans identifiants réels ni appel au prestataire.
+Ils ne remplacent pas une recette sandbox sur un compte Classic compatible.
 
 Le flux doit être validé par des tests ciblés sur :
 

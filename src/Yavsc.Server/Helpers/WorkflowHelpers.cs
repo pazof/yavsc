@@ -117,7 +117,8 @@ namespace Yavsc.Helpers
                 ((db, id) =>
                 {
                     var query = db.HairCutQueries.Include(q => q.Prestation).Include(q => q.Regularization).Single(q => q.Id == id);
-                    query.SelectedProfile = db.BrusherProfile.Single(b => b.UserId == query.PerformerId);
+                    if (!query.InvoiceEstimateId.HasValue)
+                        query.SelectedProfile = db.BrusherProfile.Single(b => b.UserId == query.PerformerId);
                     return query;
                 }));
 

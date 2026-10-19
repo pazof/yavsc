@@ -89,6 +89,8 @@ namespace Yavsc.ApiControllers
             {
                 return new ChallengeResult();
             }
+            if (bill is not NominativeServiceCommand { InvoiceEstimateId: not null })
+                return Conflict(new { Error = "Create the invoice from a signed estimate first." });
             Response.ContentType = "text/x-tex";
             return ViewComponent("Bill",new object[] {  billingCode, bill , OutputFormat.LaTeX, true });
         }
@@ -103,6 +105,10 @@ namespace Yavsc.ApiControllers
                return this.NotFound();
             }
              logger.LogWarning("Got bill ack:"+bill.GetIsAcquitted().ToString());
+            if (bill is not NominativeServiceCommand { InvoiceEstimateId: not null } invoice)
+                return Conflict(new { Error = "Create the invoice from a signed estimate first." });
+            if (User.GetUserId() != invoice.InvoicePerformerId && !User.IsInRole(Constants.AdminGroupName))
+                return Forbid();
             return ViewComponent("Bill",new object[] { billingCode, bill, OutputFormat.Pdf, true } );
         }
 

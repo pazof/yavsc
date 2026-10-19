@@ -44,6 +44,7 @@ namespace Yavsc.Server.Models.IT
         }
         public override List<IBillItem> GetBillItems()
         {
+            if (InvoiceEstimateId.HasValue) return GetInvoiceBillItems();
             return bill;
         }
 
@@ -61,5 +62,4 @@ namespace Yavsc.Server.Models.IT
 
     }
 }
-
 
