@@ -1,17 +1,104 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using LibVLCSharp.Shared;
 
-// Note : Si vous compilez sous Linux, DirectShowLib n'est pas disponible.
-// Pour un projet multiplateforme propre, vous pouvez utiliser des directives de précompilation (#if WINDOWS)
-// ou charger la détection DirectShow dans une assembly séparée.
 using DirectShowLib;
 
 public class CameraStreamer
 {
     private readonly LibVLC _libVLC;
+
+    public static LibVLC CreateHeadlessLibVlc()
+        => new(
+            "--no-xlib",
+            "--avcodec-hw=none",
+            "--vout=dummy",
+            "--aout=dummy",
+            "--intf=dummy");
+
+    public static LibVLC CreatePlaybackLibVlc()
+    {
+        if (!OperatingSystem.IsLinux())
+            return new LibVLC();
+
+        var preferHardware = string.Equals(Environment.GetEnvironmentVariable("POSTIT_LIBVLC_ENABLE_HW"), "1",
+            StringComparison.OrdinalIgnoreCase);
+
+        if (preferHardware && IsVaapiUsable())
+            return new LibVLC();
+
+        // On Linux, a non-hardware display path is still valid for in-app playback as long as
+        // the platform is not explicitly forced into a broken VAAPI/VDPAU stack.
+        return new LibVLC("--avcodec-hw=none");
+    }
+
+    public static LibVLC CreatePreferredLibVlc()
+    {
+        if (!OperatingSystem.IsLinux())
+            return new LibVLC();
+
+        var preferHardware = string.Equals(Environment.GetEnvironmentVariable("POSTIT_LIBVLC_ENABLE_HW"), "1",
+            StringComparison.OrdinalIgnoreCase);
+
+        if (preferHardware && IsVaapiUsable())
+            return new LibVLC();
+
+        return CreateHeadlessLibVlc();
+    }
+
+    private static bool IsVaapiUsable()
+    {
+        var vaapiDrivers = new[]
+        {
+            "/usr/lib/x86_64-linux-gnu/dri/nvidia_drv_video.so",
+            "/usr/lib/x86_64-linux-gnu/dri/i965_drv_video.so",
+            "/usr/lib/x86_64-linux-gnu/dri/i915_drv_video.so",
+            "/usr/lib/x86_64-linux-gnu/dri/radeonsi_dri.so",
+            "/usr/lib/x86_64-linux-gnu/dri/iris_dri.so",
+            "/usr/lib64/dri/nvidia_drv_video.so",
+            "/usr/lib64/dri/i965_drv_video.so",
+            "/usr/lib64/dri/i915_drv_video.so",
+            "/usr/lib64/dri/radeonsi_dri.so",
+            "/usr/lib64/dri/iris_dri.so"
+        };
+
+        if (!vaapiDrivers.Any(File.Exists))
+            return false;
+
+        try
+        {
+            var processInfo = new ProcessStartInfo("vainfo")
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+            };
+
+            using var process = Process.Start(processInfo);
+            if (process is null)
+                return false;
+
+            var output = process.StandardOutput.ReadToEnd();
+            var error = process.StandardError.ReadToEnd();
+            process.WaitForExit(2000);
+
+            var combined = (output + Environment.NewLine + error).Trim();
+            return process.ExitCode == 0
+                && !string.IsNullOrWhiteSpace(combined)
+                && combined.Contains("VA-API version", StringComparison.OrdinalIgnoreCase)
+                && !combined.Contains("failed", StringComparison.OrdinalIgnoreCase)
+                && !combined.Contains("unknown libva error", StringComparison.OrdinalIgnoreCase)
+                && !combined.Contains("va_openDriver() returns -1", StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
     public CameraStreamer(LibVLC libVLC)
     {
@@ -32,8 +119,8 @@ public class CameraStreamer
             DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
             foreach (var device in capDevices)
             {
-                // Pour Windows, VLC utilise le nom de l'appareil
-                devices.Add(device.Name, device.Name);
+                using (device)
+                    devices.TryAdd(device.Name, device.Name);
             }
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -57,17 +144,41 @@ public class CameraStreamer
         return devices;
     }
 
+    public Dictionary<string, string> GetAudioCaptureDevices()
+    {
+        var devices = new Dictionary<string, string>();
+        if (OperatingSystem.IsWindows())
+        {
+            foreach (var device in DsDevice.GetDevicesOfCat(FilterCategory.AudioInputDevice))
+            {
+                using (device)
+                    devices.TryAdd(device.Name, device.Name);
+            }
+        }
+        else if (OperatingSystem.IsLinux())
+            devices.Add("Microphone par defaut (PulseAudio)", "default");
+        else
+            throw new PlatformNotSupportedException("La capture est disponible sous Windows et Linux.");
+        return devices;
+    }
+
     /// <summary>
     /// Crée un objet Media configuré pour le périphérique sélectionné.
     /// </summary>
     /// <param name="deviceValue">Le nom de la caméra (Windows) ou le chemin /dev/videoX (Linux)</param>
-    public Media CreateCaptureMedia(string deviceValue)
+    public Media CreateCaptureMedia(string deviceValue, string? audioDevice = null)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(deviceValue);
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             // Configuration pour DirectShow (Windows)
             var media = new Media(_libVLC, "dshow://", FromType.FromLocation);
             media.AddOption($":dshow-vdev={deviceValue}");
+            media.AddOption($":dshow-adev={audioDevice ?? "none"}");
+            media.AddOption(":live-caching=200");
+            media.AddOption(":thread-cout=0");
+            media.AddOption(":avcodec-hw=none");
+            media.AddOption(":vcodec=h264");
 
             // Options optionnelles (Exemple : Forcer la résolution ou le framerate)
             // media.AddOption(":dshow-size=1280x720");
@@ -79,7 +190,13 @@ public class CameraStreamer
         {
             // Configuration pour V4L2 (Linux)
             var media = new Media(_libVLC, "v4l2://", FromType.FromLocation);
-            media.AddOption($":v4l2-vdev={deviceValue}");
+            media.AddOption($":v4l2-dev={deviceValue}");
+            media.AddOption(":live-caching=200");
+            media.AddOption(":thread-cout=0");
+            media.AddOption(":avcodec-hw=none");
+            media.AddOption(":vcodec=h264");
+            if (!string.IsNullOrWhiteSpace(audioDevice))
+                media.AddOption($":input-slave=pulse://{audioDevice}");
 
             // Options optionnelles pour Linux
             // media.AddOption(":v4l2-width=1280");
