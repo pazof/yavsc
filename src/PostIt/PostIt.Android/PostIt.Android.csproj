@@ -9,10 +9,10 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
-    <InformationalVersion>1.1.0-estimate.1+364.Branch.feature-estimate.Sha.3d6ab6e72f9ba4ccfa250a1cce154b550281405e</InformationalVersion>
-    <Version>1.1.0-estimate.1</Version>
+    <AssemblyVersion>1.0.8.0</AssemblyVersion>
+    <FileVersion>1.0.8.0</FileVersion>
+    <InformationalVersion>1.0.8-458+Branch.main.Sha.ad92744a94c829947994ffef5e8a6598f62868f8</InformationalVersion>
+    <Version>1.0.8-458</Version>
   </PropertyGroup>
   <ItemGroup>
     <AndroidResource Include="Icon.png">
@@ -36,8 +36,7 @@
        extension's injected HotReload agent (references Microsoft.Maui.*).
        The agent file is added via CustomAfterMicrosoftCommonTargets, i.e. after
        this file's item groups, so the removal must run in a target. -->
-  <Target Name="ExcludeMauiDeployHotReloadAgent" BeforeTargets="CoreCompile"
-          Condition="'$(MauiDeployHotReloadAgentSource)' != ''">
+  <Target Name="ExcludeMauiDeployHotReloadAgent" BeforeTargets="CoreCompile" Condition="'$(MauiDeployHotReloadAgentSource)' != ''">
     <ItemGroup>
       <Compile Remove="$(MauiDeployHotReloadAgentSource)" />
     </ItemGroup>
