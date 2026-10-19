@@ -16,14 +16,11 @@ namespace PostIt.Services;
 public sealed class PodcastBroadcaster : IAsyncDisposable
 {
     private readonly PodcastApiClient _api;
-    private readonly LibVLC _vlc;
-    private readonly MediaPlayer _player;
-    private readonly Media _media;
+    private readonly IPodcastCapture _capture;
     private readonly string _directory;
     private readonly CancellationTokenSource _cancellation = new();
     private readonly SemaphoreSlim _stopGate = new(1);
     private volatile bool _stopped;
-    private volatile bool _encoderFailed;
     private bool _disposed;
 
     public PodcastResponse Podcast { get; private set; }
@@ -31,15 +28,12 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
     public event Action<PodcastResponse>? Progress;
 
     private PodcastBroadcaster(PodcastApiClient api, PodcastResponse podcast,
-        LibVLC vlc, MediaPlayer player, Media media, string directory)
+        IPodcastCapture capture, string directory)
     {
         _api = api;
         Podcast = podcast;
-        _vlc = vlc;
-        _player = player;
-        _media = media;
+        _capture = capture;
         _directory = directory;
-        _player.EncounteredError += OnEncoderError;
     }
 
     public static void ConfigureOutput(Media media, string directory)
@@ -57,11 +51,13 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
 
     internal static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
         Func<LibVLC, Media> createMedia, CancellationToken ct)
+        => await StartAsync(api, title,
+            (directory, _) => Task.FromResult<IPodcastCapture>(new LibVlcPodcastCapture(createMedia, directory)), ct);
+
+    public static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
+        Func<string, CancellationToken, Task<IPodcastCapture>> createCapture, CancellationToken ct)
     {
-        Core.Initialize();
-        var vlc = CameraStreamer.CreatePreferredLibVlc();
-        Media? media = null;
-        MediaPlayer? player = null;
+        IPodcastCapture? capture = null;
         PodcastBroadcaster? broadcaster = null;
         var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "PostIt", "podcast-capture", Guid.NewGuid().ToString("N"));
@@ -69,15 +65,12 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         try
         {
             Directory.CreateDirectory(directory);
-            media = createMedia(vlc);
-            ConfigureOutput(media, directory);
-            player = new MediaPlayer(vlc);
             podcast = await api.CreateAsync(title, ct);
             await File.WriteAllTextAsync(Path.Combine(directory, "podcast.json"), JsonSerializer.Serialize(podcast), ct);
             ct.ThrowIfCancellationRequested();
-            broadcaster = new PodcastBroadcaster(api, podcast, vlc, player, media, directory);
-            if (!player.Play(media))
-                throw new InvalidOperationException("LibVLC ne peut pas demarrer la capture. Verifiez la camera et les encodeurs H.264/AAC.");
+            capture = await createCapture(directory, ct);
+            ct.ThrowIfCancellationRequested();
+            broadcaster = new PodcastBroadcaster(api, podcast, capture, directory);
             broadcaster.Completion = broadcaster.UploadAsync(broadcaster._cancellation.Token);
             return broadcaster;
         }
@@ -85,13 +78,10 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         {
             if (broadcaster is not null)
             {
-                broadcaster._player.EncounteredError -= broadcaster.OnEncoderError;
                 broadcaster._cancellation.Dispose();
                 broadcaster._stopGate.Dispose();
             }
-            player?.Dispose();
-            media?.Dispose();
-            vlc.Dispose();
+            if (capture is not null) await capture.DisposeAsync();
             if (Directory.Exists(directory)) Directory.Delete(directory, recursive: true);
             if (podcast is not null)
             {
@@ -122,7 +112,7 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         {
             if (!_stopped)
             {
-                await Task.Run(_player.Stop);
+                await _capture.StopAsync();
                 _stopped = true;
             }
         }
@@ -138,9 +128,9 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
             while (true)
             {
                 ct.ThrowIfCancellationRequested();
-                var finalPass = _stopped;
-                if (_encoderFailed)
-                    throw new InvalidOperationException("La capture LibVLC a echoue. Verifiez camera, microphone et encodeurs H.264/AAC.");
+                var finalPass = _stopped || _capture.Completion.IsCompleted;
+                if (_capture.Completion.IsCompleted)
+                    await _capture.Completion;
                 var pendingBytes = Directory.EnumerateFiles(_directory, "*.ts").Sum(path => new FileInfo(path).Length);
                 if (pendingBytes > 64L * 1024 * 1024)
                     throw new IOException("Le reseau est trop lent : la capture depasse 64 Mio de segments en attente.");
@@ -174,7 +164,7 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
                     return;
                 }
                 if (lastSegment.Elapsed > TimeSpan.FromSeconds(25))
-                    throw new IOException("Aucun segment produit depuis 25 secondes. Verifiez la capture et les encodeurs LibVLC.");
+                    throw new IOException("Aucun segment produit depuis 25 secondes. Verifiez la camera et les encodeurs H.264/AAC.");
                 await Task.Delay(400, ct);
             }
         }
@@ -207,8 +197,6 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         }
     }
 
-    private void OnEncoderError(object? sender, EventArgs e) => _encoderFailed = true;
-
     public async ValueTask DisposeAsync()
     {
         if (_disposed) return;
@@ -217,10 +205,7 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         try { await Completion; }
         finally
         {
-            _player.EncounteredError -= OnEncoderError;
-            _player.Dispose();
-            _media.Dispose();
-            _vlc.Dispose();
+            await _capture.DisposeAsync();
             _cancellation.Dispose();
             _stopGate.Dispose();
             // Keep failed, unacknowledged segments for manual recovery.

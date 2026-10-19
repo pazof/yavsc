@@ -1,6 +1,7 @@
 <ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PostIt.ViewModels"
+             xmlns:services="using:PostIt.Services"
              xmlns:streaming="clr-namespace:Yavsc.Abstract.Streaming;assembly=Yavsc.Abstract"
              x:Class="PostIt.Views.PodcastsPage"
              x:DataType="vm:PodcastsPageViewModel"
@@ -9,17 +10,17 @@
         <StackPanel Margin="16" Spacing="12" MaxWidth="900">
             <TextBlock Text="Podcasts : directs et replays" FontSize="22" />
             <TextBlock Text="Lecture et emission reservees aux utilisateurs connectes. Quitter cette page arrete la capture." TextWrapping="Wrap" />
-            <StackPanel Spacing="8" IsVisible="{Binding IsDesktop}" IsEnabled="{Binding !IsBroadcasting}">
+            <StackPanel Spacing="8" IsVisible="{Binding CanBroadcast}" IsEnabled="{Binding !IsBroadcasting}">
                 <TextBox Text="{Binding Title}" PlaceholderText="Titre du direct" MaxLength="160" />
                 <Button Content="Detecter cameras et microphones" Command="{Binding DetectDevicesCommand}" />
                 <ComboBox ItemsSource="{Binding Cameras}" SelectedItem="{Binding SelectedCamera}" PlaceholderText="Camera">
                     <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:CaptureDevice"><TextBlock Text="{Binding Name}" /></DataTemplate>
+                        <DataTemplate x:DataType="services:CaptureDevice"><TextBlock Text="{Binding Name}" /></DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
                 <ComboBox ItemsSource="{Binding Microphones}" SelectedItem="{Binding SelectedMicrophone}" PlaceholderText="Microphone">
                     <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:CaptureDevice"><TextBlock Text="{Binding Name}" /></DataTemplate>
+                        <DataTemplate x:DataType="services:CaptureDevice"><TextBlock Text="{Binding Name}" /></DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
                 <Button Content="Demarrer le direct" Command="{Binding StartCommand}" />

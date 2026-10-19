@@ -15,8 +15,6 @@ using Yavsc.Api.Client;
 
 namespace PostIt.ViewModels;
 
-public sealed record CaptureDevice(string Name, string Value);
-
 public partial class PodcastsPageViewModel : ViewModelBase
 {
     private readonly PodcastApiClient _client;
@@ -36,7 +34,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public ObservableCollection<PodcastResponse> Podcasts { get; } = new();
     public ObservableCollection<CaptureDevice> Cameras { get; } = new();
     public ObservableCollection<CaptureDevice> Microphones { get; } = new();
-    public bool IsDesktop => OperatingSystem.IsWindows() || OperatingSystem.IsLinux();
+    public bool CanBroadcast => Platform.CreatePodcastCaptureAsync is not null
+        || (!OperatingSystem.IsAndroid() && (OperatingSystem.IsWindows() || OperatingSystem.IsLinux()));
 
 
     public string Title { get => _title; set { if (SetProperty(ref _title, value)) UpdateCommands(); } }
@@ -89,9 +88,9 @@ public partial class PodcastsPageViewModel : ViewModelBase
         _api = api;
         _session = session;
         RefreshCommand = new AsyncRelayCommand(RefreshAsync, () => !IsBusy);
-        DetectDevicesCommand = new RelayCommand(DetectDevices, () => IsDesktop && !IsBroadcasting && !IsBusy);
+        DetectDevicesCommand = new RelayCommand(DetectDevices, () => CanBroadcast && !IsBroadcasting && !IsBusy);
         StartCommand = new AsyncRelayCommand(StartAsync,
-            () => IsDesktop && !IsBroadcasting && !IsBusy && _session.IsLoggedIn
+            () => CanBroadcast && !IsBroadcasting && !IsBusy && _session.IsLoggedIn
                 && SelectedCamera is not null && !string.IsNullOrWhiteSpace(Title));
         StopCommand = new AsyncRelayCommand(StopAsync, () => IsBroadcasting && !IsBusy);
         PlayCommand = new AsyncRelayCommand(PlayAsync, () => SelectedPodcast is { SegmentCount: > 0 } && !IsBroadcasting && !IsBusy);
@@ -151,14 +150,23 @@ public partial class PodcastsPageViewModel : ViewModelBase
     {
         try
         {
-            Core.Initialize();
-            using var vlc = CameraStreamer.CreatePreferredLibVlc();
-            var capture = new CameraStreamer(vlc);
             Cameras.Clear();
-            foreach (var item in capture.GetCaptureDevices()) Cameras.Add(new(item.Key, item.Value));
             Microphones.Clear();
-            Microphones.Add(new("Sans microphone", ""));
-            foreach (var item in capture.GetAudioCaptureDevices()) Microphones.Add(new(item.Key, item.Value));
+            if (Platform.GetPodcastCaptureDevices is { } getDevices)
+            {
+                var devices = getDevices();
+                foreach (var item in devices.Cameras) Cameras.Add(item);
+                foreach (var item in devices.Microphones) Microphones.Add(item);
+            }
+            else
+            {
+                Core.Initialize();
+                using var vlc = CameraStreamer.CreatePreferredLibVlc();
+                var capture = new CameraStreamer(vlc);
+                foreach (var item in capture.GetCaptureDevices()) Cameras.Add(new(item.Key, item.Value));
+                Microphones.Add(new("Sans microphone", ""));
+                foreach (var item in capture.GetAudioCaptureDevices()) Microphones.Add(new(item.Key, item.Value));
+            }
             SelectedCamera = Cameras.Count == 0 ? null : Cameras[0];
             SelectedMicrophone = Microphones.Count > 1 ? Microphones[1] : Microphones[0];
             Status = Cameras.Count == 0 ? "Aucune camera detectee." : "Choisissez camera et microphone avant de demarrer.";
@@ -172,8 +180,14 @@ public partial class PodcastsPageViewModel : ViewModelBase
         try
         {
             if (SelectedCamera is null) throw new InvalidOperationException("Choisissez une camera.");
-            _broadcaster = await PodcastBroadcaster.StartAsync(_client, Title, SelectedCamera.Value,
-                string.IsNullOrWhiteSpace(SelectedMicrophone?.Value) ? null : SelectedMicrophone.Value, _pageCancellation.Token);
+            var camera = SelectedCamera.Value;
+            var microphone = string.IsNullOrWhiteSpace(SelectedMicrophone?.Value) ? null : SelectedMicrophone.Value;
+            if (Platform.RequestPodcastPermissionsAsync is { } requestPermissions)
+                await requestPermissions(microphone, _pageCancellation.Token);
+            _broadcaster = Platform.CreatePodcastCaptureAsync is { } createCapture
+                ? await PodcastBroadcaster.StartAsync(_client, Title,
+                    (directory, ct) => createCapture(camera, microphone, directory, ct), _pageCancellation.Token)
+                : await PodcastBroadcaster.StartAsync(_client, Title, camera, microphone, _pageCancellation.Token);
             _broadcaster.Progress += OnProgress;
             _session.LogoutCompleted += OnLogout;
             IsBroadcasting = true;

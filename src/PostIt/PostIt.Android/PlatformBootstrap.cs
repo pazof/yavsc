@@ -21,5 +21,12 @@ internal static class PlatformBootstrap
         };
 
         Platform.TryGetCurrentLocationAsync = AndroidCurrentLocationProvider.TryGetCurrentLocationAsync;
+        Platform.CreateVideoSurface = player => new AndroidVideoSurface(player);
+        if (System.OperatingSystem.IsAndroidVersionAtLeast(26))
+        {
+            Platform.GetPodcastCaptureDevices = AndroidPodcastCapture.GetDevices;
+            Platform.RequestPodcastPermissionsAsync = AndroidPodcastCapture.RequestPermissionsAsync;
+            Platform.CreatePodcastCaptureAsync = AndroidPodcastCapture.StartAsync;
+        }
     }
 }

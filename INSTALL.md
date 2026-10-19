@@ -140,6 +140,87 @@ reads a replay from its beginning; seeking is not implemented. Native
 camera/microphone permissions, drivers and codecs must still be verified
 on each target Windows/Linux machine.
 
+### Android podcasts
+
+The Android APK bundles LibVLC and uses a native Android video surface inside
+the same Avalonia video page as desktop. Catalogue, playback controls and
+authenticated segment downloads are shared; no external browser, public media
+URL or camera/microphone permissions are needed to watch a podcast.
+
+Leaving the app stops playback and cancels downloads. Returning recreates the
+player: a replay starts from the beginning, and a live stream rejoins near the
+live edge. Seeking and background audio are not supported.
+
+Broadcasting requires **Android 8 (API 26) or newer**. In the shared podcast
+page, detect devices, select front/rear camera and optionally the microphone,
+then start the live broadcast while PostIt is visible. Camera permission,
+microphone permission when selected, and notification permission on Android 13+
+must be granted. A permission denial is reported in the page without starting
+capture or creating a server broadcast. Permissions are requested before the
+server session is created so a long permission dialog cannot expire it.
+Watching does not request these permissions.
+
+Android uses Camera2 and its native MediaRecorder H.264/AAC encoder, up to 480p at 30 fps,
+not the desktop LibVLC camera inputs or software encoders. MPEG-TS is segmented
+at IDR frames, with timestamps used for segment durations. Closed segments
+enter the same ordered upload/retry/quota/replay pipeline as desktop.
+Devices without a supported camera/encoder report a startup error.
+
+A camera/microphone foreground service and a partial wake lock maintain the
+broadcast when PostIt is backgrounded or the screen locks. Its ongoing
+notification returns to the app and offers **Arreter et publier**. Stopping
+flushes the final segment before completing the replay. Leaving the podcast
+page or logging out still stops capture. Android's explicit service stop,
+process termination or application restart does not automatically restart a
+camera; segments already received by the server remain available under the
+interrupted-replay rules above. Device power policies can impose additional
+restrictions and must be tested on the intended physical devices.
+
+**Native library limitation:** bundled `VideoLAN.LibVLC.Android` 3.6.5 emits
+`XA0141`: its native libraries are not aligned for 16 KiB memory pages.
+Playback on 16 KiB-page devices and store distribution requiring this alignment
+are not validated/supported by this package choice. A compatible native LibVLC
+release is required before claiming that support; a successful APK build or
+a test on a 4 KiB-page emulator does not establish it.
+
+Build with the Android workload and SDK configured:
+
+```bash
+dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj
+```
+
+On an Android device, verify replay video/audio, live playback, pause/resume,
+rotation, Back navigation and returning after backgrounding the app. Also
+verify an expired session or interrupted network reports a playback error.
+For broadcasting, test front/rear cameras, microphone enabled/disabled,
+permission denial, screen lock, background capture, notification stop and the
+final replay. No automatic retry of a denied permission or a killed camera
+service is performed.
+
+The Debug APK includes a local native-capture test activity (excluded from
+Release); it does not create a server podcast. On a dedicated emulator, grant
+camera, audio and notification permissions, then run:
+
+```bash
+adb shell am start -W -f 0x18000000 -n fr.pschneider.postit/fr.pschneider.postit.PodcastCaptureTestActivity
+# Wait about 20 seconds for foreground/background recording and final flush.
+adb shell run-as fr.pschneider.postit cat files/podcast-capture-test-result.txt
+# Repeat with the second camera, no audio, and the notification stop action:
+adb shell am start -W -f 0x18000000 -n fr.pschneider.postit/fr.pschneider.postit.PodcastCaptureTestActivity --es microphone false --es camera front --es notificationStop true
+```
+
+The result reports the segment count, the background progress and the private
+recording directory under `files/podcast-capture-tests`. Recordings remain
+there for local decoder inspection and can be removed after the test.
+
+The implementation was checked on an Android 16 x64 emulator with 4 KiB
+pages: camera/microphone capture produced five independently decodable
+H.264/AAC segments across foreground/background operation; the second camera
+without audio produced six decodable H.264 segments, including screen-off
+operation and stop through the notification action. The foreground service
+was gone after both tests. These local tests do not replace an authenticated
+Android-to-server broadcast/replay test or validation on physical devices.
+
 ## Resources
 
 System resources needed to install.

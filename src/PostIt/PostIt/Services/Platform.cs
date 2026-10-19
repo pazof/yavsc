@@ -2,19 +2,28 @@ using System;
 using IdentityModel.OidcClient.Browser;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using LibVLCSharp.Shared;
 
 namespace PostIt.Services;
 
 /// <summary>
-/// Per-platform access to native integration points used by the OIDC
-/// Authorization Code + PKCE flow. The shared <c>PostIt</c> library does
-/// not reference any UI framework; platform projects (PostIt.Android,
-/// PostIt.Desktop, PostIt.Browser) populate this class once at startup so
-/// the shared OIDC login path can drive a native browser without taking
-/// a hard dependency on any specific UI toolkit.
+/// Native integration points populated by platform projects at startup.
 /// </summary>
 public static class Platform
 {
+    public static Func<PodcastCaptureDevices>? GetPodcastCaptureDevices { get; set; }
+    public static Func<string?, CancellationToken, Task>? RequestPodcastPermissionsAsync { get; set; }
+    public static Func<string, string?, string, CancellationToken, Task<IPodcastCapture>>? CreatePodcastCaptureAsync { get; set; }
+
+    /// <summary>Platform-specific video surface inside the shared video page.</summary>
+    public static Func<MediaPlayer, Control>? CreateVideoSurface { get; set; }
+
+    public static event Action? PlaybackSuspending;
+    public static event Action? PlaybackResuming;
+    public static void SuspendPlayback() => PlaybackSuspending?.Invoke();
+    public static void ResumePlayback() => PlaybackResuming?.Invoke();
+
     /// <summary>
     /// Default redirect URI for the running platform. The shared
     /// default uses a custom URI scheme (<c>postit://callback</c>)

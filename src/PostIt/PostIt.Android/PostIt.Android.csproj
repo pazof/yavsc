@@ -21,11 +21,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Android" />
+    <PackageReference Include="LibVLCSharp" />
+    <PackageReference Include="VideoLAN.LibVLC.Android" />
     <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" />
     <PackageReference Include="Xamarin.AndroidX.Browser" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PostIt\PostIt.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <Compile Include="..\PostIt.Tests\AndroidPodcastCaptureTestActivity.cs" Link="Tests\AndroidPodcastCaptureTestActivity.cs" />
   </ItemGroup>
   <!-- This is an Avalonia app, not a MAUI app: exclude the .NET MAUI VS Code
        extension's injected HotReload agent (references Microsoft.Maui.*).

@@ -21,6 +21,13 @@ public partial class VideoPage : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs e)
     {
         base.OnNavigatedTo(e);
+        Platform.PlaybackSuspending += SuspendPlayback;
+        Platform.PlaybackResuming += ResumePlayback;
+        InitializePlayer();
+    }
+
+    private void InitializePlayer()
+    {
         ReleasePlayer();
         if (Design.IsDesignMode || DataContext is not VideoPageViewModel vm)
             return;
@@ -39,13 +46,15 @@ public partial class VideoPage : ContentPage
                 : new Media(_libVlc, _podcastInput);
             if (_podcastInput is not null)
                 media.AddOption(":demux=ts");
-            Video.MediaPlayer = _player;
+            var surface = Platform.CreateVideoSurface?.Invoke(_player)
+                ?? new LibVLCSharp.Avalonia.VideoView { MediaPlayer = _player };
+            VideoSurface.Content = surface;
             var player = _player;
             // Navigation transforms do not change Bounds, so refresh the native surface after layout.
             Dispatcher.UIThread.Post(() =>
             {
-                if (ReferenceEquals(_player, player))
-                    Video.TryUpdateNativeControlPosition();
+                if (ReferenceEquals(_player, player) && surface is LibVLCSharp.Avalonia.VideoView desktopVideo)
+                    desktopVideo.TryUpdateNativeControlPosition();
             }, DispatcherPriority.Loaded);
             PlayButton.IsEnabled = true;
             PlaybackStatus.Text = vm.MimeType;
@@ -63,12 +72,16 @@ public partial class VideoPage : ContentPage
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs e)
     {
+        Platform.PlaybackSuspending -= SuspendPlayback;
+        Platform.PlaybackResuming -= ResumePlayback;
         ReleasePlayer();
         base.OnNavigatedFrom(e);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
+        Platform.PlaybackSuspending -= SuspendPlayback;
+        Platform.PlaybackResuming -= ResumePlayback;
         ReleasePlayer();
         base.OnDetachedFromVisualTree(e);
     }
@@ -76,8 +89,12 @@ public partial class VideoPage : ContentPage
     private void ReleasePlayer()
     {
         PlayButton.IsEnabled = false;
-        Video.MediaPlayer = null;
         _podcastInput?.Cancel();
+        if (VideoSurface.Content is LibVLCSharp.Avalonia.VideoView desktopVideo)
+            desktopVideo.MediaPlayer = null;
+        if (VideoSurface.Content is IDisposable nativeSurface)
+            nativeSurface.Dispose();
+        VideoSurface.Content = null;
         if (_player is not null)
         {
             _player.EncounteredError -= Player_EncounteredError;
@@ -94,6 +111,14 @@ public partial class VideoPage : ContentPage
         _libVlc?.Dispose();
         _libVlc = null;
     }
+
+    private void SuspendPlayback()
+    {
+        ReleasePlayer();
+        PlaybackStatus.Text = "Lecture suspendue.";
+    }
+
+    private void ResumePlayback() => InitializePlayer();
 
     private void PodcastFailed(string message) => Dispatcher.UIThread.Post(() => PlaybackStatus.Text = message);
 

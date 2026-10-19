@@ -25,6 +25,7 @@ public class MainActivity : AvaloniaMainActivity
     /// The current MainActivity instance.
     /// </summary>
     public static MainActivity? Current { get; private set; }
+    internal static bool IsForeground { get; private set; }
 
     protected override void OnCreate(global::Android.OS.Bundle? savedInstanceState)
     {
@@ -36,8 +37,8 @@ public class MainActivity : AvaloniaMainActivity
         EmojiCompat.Config config = new FontRequestEmojiCompatConfig(this, fontRequest);
         EmojiCompat.Init(config);
         PlatformBootstrap.InitPlatform();
-        base.OnCreate(savedInstanceState);
         Current = this;
+        base.OnCreate(savedInstanceState);
     }
      /// <summary>
     /// Receives the deep-link Intent fired by the system browser after the
@@ -60,9 +61,34 @@ public class MainActivity : AvaloniaMainActivity
 
     }
 
-    public override void OnRequestPermissionsResult(int requestCode, string[]? permissions, Permission[]? grantResults)
+    protected override void OnStop()
     {
-        if (PostIt.Android.Services.AndroidCurrentLocationProvider
+        PostIt.Services.Platform.SuspendPlayback();
+        base.OnStop();
+    }
+
+    protected override void OnResume()
+    {
+        base.OnResume();
+        IsForeground = true;
+    }
+
+    protected override void OnPause()
+    {
+        IsForeground = false;
+        base.OnPause();
+    }
+
+    protected override void OnRestart()
+    {
+        base.OnRestart();
+        PostIt.Services.Platform.ResumePlayback();
+    }
+
+    public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+    {
+        if (PostIt.Android.Services.PodcastPermissions.HandleResult(requestCode, permissions, grantResults)
+            || PostIt.Android.Services.AndroidCurrentLocationProvider
             .HandlePermissionResult(requestCode, grantResults))
         {
             return;

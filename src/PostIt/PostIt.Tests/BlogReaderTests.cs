@@ -464,11 +464,31 @@ public class BlogReaderTests
     }
 
     [AvaloniaFact]
-    public void Video_viewmodel_resolves_to_a_page_with_a_vlc_control()
+    public void Video_viewmodel_resolves_to_the_shared_page_with_a_platform_video_surface_slot()
     {
         var vm = new VideoPageViewModel(new Uri("https://org.example.test/files/paul/clip.mp4"), "video/mp4");
         var page = Assert.IsType<VideoPage>(new ViewLocator().Build(vm));
-        Assert.NotNull(page.FindControl<LibVLCSharp.Avalonia.VideoView>("Video"));
+        Assert.NotNull(page.FindControl<ContentControl>("VideoSurface"));
+        Assert.NotNull(page.FindControl<Button>("PlayButton"));
+    }
+
+    [AvaloniaFact]
+    public async Task Video_page_observes_platform_lifecycle_only_while_navigated()
+    {
+        var nav = new NavigationPage();
+        await nav.PushAsync(new ContentPage());
+        var page = new VideoPage();
+        await nav.PushAsync(page);
+        var status = page.FindControl<TextBlock>("PlaybackStatus")!;
+        Platform.SuspendPlayback();
+        Assert.Equal("Lecture suspendue.", status.Text);
+        Assert.False(page.FindControl<Button>("PlayButton")!.IsEnabled);
+        Platform.ResumePlayback();
+        Assert.Null(page.FindControl<ContentControl>("VideoSurface")!.Content);
+        await nav.PopAsync();
+        status.Text = "No longer active";
+        Platform.SuspendPlayback();
+        Assert.Equal("No longer active", status.Text);
     }
 
     [Fact]

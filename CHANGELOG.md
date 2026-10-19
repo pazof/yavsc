@@ -1,7 +1,26 @@
 # Changelog
 
-## [1.0.8-rc28] - unstable
+## [1.0.8-rc29] - unstable
 
+### Added
+
+* [PostIt.Android] Lecture des podcasts directs et replays dans la page
+  video partagee avec le desktop : surface LibVLC native Android et moteur
+  embarque, transport authentifie commun et controles uniques. Liberation
+  du lecteur en arriere-plan ; reouverture du flux au retour dans l'application.
+
+* [PostIt.Android] Emission depuis la camera et le microphone Android
+  (Android 8 minimum), encodage H.264/AAC natif et segmentation MPEG-TS
+  sur images cles. Interface, envoi authentifie, retries et finalisation
+  du replay partages avec le desktop. Service de premier plan avec
+  notification d'arret et maintien de la capture en arriere-plan.
+
+### Changed
+
+* [PostIt] Mise a jour d'Avalonia vers 12.1.4.
+
+
+## [1.0.8-rc28] - unstable
 
 ### Added
 
