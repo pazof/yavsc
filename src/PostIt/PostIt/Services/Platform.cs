@@ -57,4 +57,6 @@ public static class Platform
     /// </summary>
     public static Func<CancellationToken, Task<CurrentLocationResult>> TryGetCurrentLocationAsync { get; set; } =
         _ => Task.FromResult(CurrentLocationResult.Unavailable());
+
+    public static bool IsPodcastSupported { get; set; } = false;
 }

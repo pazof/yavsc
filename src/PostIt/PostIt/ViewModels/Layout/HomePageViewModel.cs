@@ -12,6 +12,7 @@ using PostIt.ViewModels.Chat;
 using Yavsc.Abstract.Models.Messaging;
 using Yavsc.Api.Client;
 
+
 namespace PostIt.ViewModels;
 
 public class HomePageViewModel : ViewModelBase
@@ -86,7 +87,7 @@ public class HomePageViewModel : ViewModelBase
 
     public IAsyncRelayCommand OpenChat { get; }
     public IAsyncRelayCommand OpenPodcasts { get; }
-    public bool SupportsPodcasts => OperatingSystem.IsWindows() || OperatingSystem.IsLinux();
+    public bool SupportsPodcasts => Platform.IsPodcastSupported;
     public IAsyncRelayCommand OpenBlogs { get; }
     public IAsyncRelayCommand OpenProfile { get; }
     public IAsyncRelayCommand OpenPerformerConfiguration { get; }

@@ -8,6 +8,9 @@
 
 ### Fixed
 
+* Podcast availability from Android
+* avoid NRE in MailSender on rdv query notifications
+
 ## [1.0.8-rc29] - unstable
 
 ### Added

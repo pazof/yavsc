@@ -13,6 +13,7 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        Platform.IsPodcastSupported = true;
         CLIOptionHandler.HandleArgs(args);
 
         // Short-circuit 2nd-instance launches (OS handing us the
