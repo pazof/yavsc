@@ -65,6 +65,20 @@ Rituels recommandes:
 - Mensuel: mise a jour du present guide et du playbook.
 - A chaque incident: ajouter un anti-pattern dans le playbook.
 
+### Reseau de versionnement / git flow pour le CHANGELOG
+
+Regle obligatoire:
+- La section courante du CHANGELOG représente la prochaine version a publier, pas un tag deja créé.
+- Un tag deja publie bloque définitivement la section correspondante du CHANGELOG.
+- Au commit suivant, si la modification impacte le CHANGELOG, il faut incrémenter la version exposée dans le changelog (version du prochain tag attendu), par exemple: `1.0.8-rc30 -> 1.0.8-rc31`.
+
+Ordre a respecter a chaque commit qui modifie le produit:
+1. Verifier si le dernier tag du CHANGELOG existe deja; si oui, incrémenter la version de la section suivante au lieu de re-écrire la dernière section bloquée.
+2. Ouvrir une nouvelle section du CHANGELOG avec ce numero de version incrémenté.
+3. Apres seulement, alimenter cette section avec la description du changement.
+
+En pratique: la version du CHANGELOG est la version "future" a tagger, et elle est incrémentée avant l'écriture de la description; le tag n'est pas créé avant la section, il est seulement établi ensuite lors de la publication effective.
+
 ## Check-list de validation
 
 - Le changement indique son impact architecture.

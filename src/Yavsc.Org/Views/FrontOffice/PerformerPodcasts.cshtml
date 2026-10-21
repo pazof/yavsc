@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = $"Podcasts de {ViewBag.PerformerName}";
     var performerName = ViewBag.PerformerName ?? "ce performer";
+    var permalinkExpiry = ViewBag.PermalinkExpiry is DateTimeOffset expiry ? expiry : DateTimeOffset.MinValue;
 }
 
 <div class="container py-4">
@@ -9,10 +10,11 @@
         <div>
             <h1 class="h3 mb-1">Découvrez les podcasts de @performerName</h1>
             <p class="mb-0 text-muted">
-                Ce lien public est valable jusqu'au @(((DateTimeOffset)ViewBag.PermalinkExpiry).ToLocalTime().ToString("g")).
+                Ce lien public est valable jusqu'au @permalinkExpiry.ToLocalTime().ToString("g").
             </p>
         </div>
         <div class="d-flex gap-2">
+            <button type="button" class="btn btn-primary" onclick="copyPermalink()">Copier le permalien</button>
             <a class="btn btn-primary" href="https://www.yavsc.fr/" target="_blank" rel="noreferrer">S'inscrire</a>
             <a class="btn btn-outline-primary" href="https://postit.yavsc.fr/" target="_blank" rel="noreferrer">Installer PostIt</a>
         </div>
@@ -57,3 +59,29 @@
         </div>
     }
 </div>
+
+<script>
+    function copyPermalink() {
+        const url = '@(ViewBag.Permalink ?? string.Empty)';
+        if (!url) return;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).catch(() => fallbackCopy(url));
+            return;
+        }
+
+        fallbackCopy(url);
+    }
+
+    function fallbackCopy(value) {
+        const temp = document.createElement('textarea');
+        temp.value = value;
+        temp.setAttribute('readonly', '');
+        temp.style.position = 'fixed';
+        temp.style.left = '-9999px';
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+    }
+</script>
