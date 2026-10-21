@@ -121,6 +121,22 @@ namespace Yavsc.Org.Tests
             Assert.Equal(string.Empty, result);
         }
 
+        [Fact]
+        public async Task SendEmailAsync_skips_when_owner_is_not_configured()
+        {
+            var factory = new RejectingSmtpClientFactory();
+            var sender = new MailSender(
+                Options.Create(new SiteSettings { Authority = "example.com" }),
+                Options.Create(new SmtpSettings()),
+                NullLoggerFactory.Instance,
+                new TestStringLocalizer(),
+                factory);
+
+            var result = await sender.SendEmailAsync("Alice", "alice@example.com", "Rdv", "hello");
+
+            Assert.Equal(string.Empty, result);
+        }
+
         private sealed class RejectingSmtpClientFactory : ISmtpClientFactory
         {
             public Yavsc.Interfaces.ISmtpClient CreateClient() => new RejectingSmtpClient();

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.8-rc30] - unstable
+
+### Added
+
+### Changed
+
+### Fixed
+
 ## [1.0.8-rc29] - unstable
 
 ### Added
@@ -18,6 +26,14 @@
 ### Changed
 
 * [PostIt] Mise a jour d'Avalonia vers 12.1.4.
+
+### Fixed
+
+* [Yavsc.Api, Yavsc.Server] Une demande de rendez-vous ne provoque plus
+  d'erreur 500 (NullReferenceException dans MailSender) : l'API lie
+  desormais la section Smtp, le modele appsettings-api fournit Site.Owner
+  et Smtp, et un envoi sans configuration mail complete est journalise
+  puis ignore.
 
 
 ## [1.0.8-rc28] - unstable

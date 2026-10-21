@@ -12,6 +12,7 @@ using Yavsc.Models;
 using Yavsc;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
+using Yavsc.Settings;
 using Yavsc.Server.Hubs;
 using Yavsc.Api.Services;
 
@@ -71,6 +72,7 @@ internal class Program
         // Binds the "Site" section (Bills, TempDir, Avatars, …) used by
         // the document-generation flow and BillingController.
         services.Configure<SiteSettings>(builder.Configuration.GetSection("Site"));
+        services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
         services.AddPodcasts(builder.Configuration);
         services.AddInvoicing(builder.Configuration);
 

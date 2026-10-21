@@ -6,7 +6,17 @@
       "https://preprod-blogs.$DOMAIN"
     ],
     "Bills": "bills",
-    "TempDir": "temp"
+    "TempDir": "temp",
+    "Owner": {
+      "Name": "Paul Schneider",
+      "EMail": "paul@pschneider.fr"
+    }
+  },
+  "Smtp": {
+    "Host": "mercure.pschneider.fr",
+    "Port": 465,
+    "UserName": "paul",
+    "Password": "$SMTP_PASSWORD"
   },
   "Logging": {
     "LogLevel": {

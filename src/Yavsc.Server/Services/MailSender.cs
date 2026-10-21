@@ -104,6 +104,12 @@ namespace Yavsc.Services
             try
             {
                 logger.LogInformation($"SendEmail for {email} : {subject}");
+                if (string.IsNullOrWhiteSpace(siteSettings?.Owner?.EMail)
+                    || string.IsNullOrWhiteSpace(smtpSettings?.Host))
+                {
+                    logger.LogError("Email not sent: mail configuration is incomplete (Site:Owner:EMail and Smtp:Host are required). To={To}, Subject={Subject}", email, subject);
+                    return string.Empty;
+                }
                 MimeMessage msg = new();
                 msg.From.Add(BuildMailboxAddress(siteSettings.Owner.Name, siteSettings.Owner.EMail));
                 msg.To.Add(BuildMailboxAddress(name, email));
@@ -139,7 +145,7 @@ namespace Yavsc.Services
             }
             catch (FormatException ex)
             {
-                logger.LogError(ex, "Refusing to send email because the recipient or sender address is malformed. To={To}, From={From}", email, siteSettings.Owner.EMail);
+                logger.LogError(ex, "Refusing to send email because the recipient or sender address is malformed. To={To}, From={From}", email, siteSettings?.Owner?.EMail);
                 logger.LogError(ex.Message);
                 if (ex.InnerException!=null)
                     logger.LogError(ex.InnerException.Message);
