@@ -10,6 +10,7 @@
 
 * Podcast availability from Android
 * avoid NRE in MailSender on rdv query notifications
+* Android emulator smoke test skipped in CI because Calabash instrumentation signature mismatches the target APK on hosted runners
 
 ## [1.0.8-rc29] - unstable
 
