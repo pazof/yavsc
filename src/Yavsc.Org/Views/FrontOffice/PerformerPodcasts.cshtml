@@ -1,0 +1,59 @@
+@model IReadOnlyList<Yavsc.Abstract.Streaming.PodcastResponse>
+@{
+    ViewBag.Title = $"Podcasts de {ViewBag.PerformerName}";
+    var performerName = ViewBag.PerformerName ?? "ce performer";
+}
+
+<div class="container py-4">
+    <div class="alert alert-info d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" role="alert">
+        <div>
+            <h1 class="h3 mb-1">Découvrez les podcasts de @performerName</h1>
+            <p class="mb-0 text-muted">
+                Ce lien public est valable jusqu'au @(((DateTimeOffset)ViewBag.PermalinkExpiry).ToLocalTime().ToString("g")).
+            </p>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-primary" href="https://www.yavsc.fr/" target="_blank" rel="noreferrer">S'inscrire</a>
+            <a class="btn btn-outline-primary" href="https://postit.yavsc.fr/" target="_blank" rel="noreferrer">Installer PostIt</a>
+        </div>
+    </div>
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="alert alert-light border">
+            Aucun podcast public n'est encore disponible pour @performerName.
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var podcast in Model)
+            {
+                <div class="col-12 col-lg-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div>
+                                    <h2 class="h5 mb-1">@podcast.Title</h2>
+                                    <small class="text-muted">
+                                        @podcast.CreatedAt.ToLocalTime().ToString("g")
+                                    </small>
+                                </div>
+                                <span class="badge bg-secondary">@podcast.State</span>
+                            </div>
+
+                            <p class="mt-3 mb-2 text-muted">
+                                @podcast.DurationSeconds.ToString("0.##") s · @podcast.SegmentCount segments · @((podcast.Bytes / 1024.0 / 1024.0).ToString("0.##")) Mo
+                            </p>
+
+                            <audio controls class="w-100 mt-2" preload="metadata">
+                                <source src="@Url.Action("Playlist", "Podcast", new { id = podcast.Id })" type="application/vnd.apple.mpegurl" />
+                                Votre navigateur ne prend pas en charge la lecture audio.
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,7 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Yavsc.Controllers
 {
@@ -10,6 +12,7 @@ namespace Yavsc.Controllers
     using Microsoft.Extensions.Localization;
     using Models;
     using ViewModels.FrontOffice;
+    using Yavsc.Abstract.Streaming;
     using Yavsc.Server.Helpers;
     using Yavsc.Services;
 
@@ -20,18 +23,24 @@ namespace Yavsc.Controllers
         readonly ILogger _logger;
         readonly IStringLocalizer _SR;
         private readonly IBillingService _billing;
+        private readonly IDataProtectionProvider _dataProtectionProvider;
+        private readonly ILiveProcessor _liveProcessor;
 
         public FrontOfficeController(ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             IBillingService billing,
             ILoggerFactory loggerFactory,
-        IStringLocalizer<FrontOfficeController> SR)
+            IDataProtectionProvider dataProtectionProvider,
+            ILiveProcessor liveProcessor,
+            IStringLocalizer<FrontOfficeController> SR)
         {
             _context = context;
             _userManager = userManager;
             _logger = loggerFactory.CreateLogger<FrontOfficeController>();
             _SR = SR;
             _billing = billing;
+            _dataProtectionProvider = dataProtectionProvider;
+            _liveProcessor = liveProcessor;
         }
 
         public ActionResult Index()
@@ -77,5 +86,77 @@ namespace Yavsc.Controllers
             return View(result);
         }
 
+        [AllowAnonymous]
+        public async Task<ActionResult> PerformerPodcasts(string id, string? token)
+        {
+            if (string.IsNullOrWhiteSpace(id)) return NotFound();
+
+            if (!TryValidateToken(id, token, out var expireAt))
+                return BadRequest("Ce lien public de podcast a expire ou est invalide.");
+
+            var performer = await _context.Performers
+                .Include(p => p.Performer)
+                .FirstOrDefaultAsync(p => p.PerformerId == id);
+
+            if (performer == null) return NotFound();
+
+            var podcasts = (await _liveProcessor.ListAsync(HttpContext.RequestAborted))
+                .Where(p => string.Equals(p.OwnerId, id, StringComparison.Ordinal))
+                .OrderByDescending(p => p.CreatedAt)
+                .ToArray();
+
+            ViewBag.PerformerName = performer.Performer?.UserName ?? performer.PerformerId;
+            ViewBag.PerformerId = id;
+            ViewBag.PermalinkExpiry = expireAt;
+            ViewBag.Permalink = Url.Action(nameof(PerformerPodcasts), "FrontOffice", new { id, token = CreateToken(id) }, Request.Scheme, Request.Host.Value);
+
+            return View(podcasts);
+        }
+
+        [Authorize]
+        public IActionResult GeneratePerformerPodcastPermalink(string id)
+        {
+            var currentUserId = User.GetUserId();
+            if (string.IsNullOrWhiteSpace(currentUserId) || !string.Equals(currentUserId, id, StringComparison.Ordinal))
+                return Forbid();
+
+            var token = CreateToken(id);
+            return RedirectToAction(nameof(PerformerPodcasts), new { id, token });
+        }
+
+        private string CreateToken(string performerId)
+        {
+            var expiresAt = DateTimeOffset.UtcNow.AddHours(24);
+            var protector = _dataProtectionProvider.CreateProtector("Yavsc.Org.PerformerPodcastLink");
+            var payload = new
+            {
+                performerId,
+                exp = expiresAt.ToUnixTimeSeconds(),
+            };
+            return protector.Protect(JsonSerializer.Serialize(payload));
+        }
+
+        private bool TryValidateToken(string performerId, string? token, out DateTimeOffset validUntil)
+        {
+            validUntil = DateTimeOffset.MinValue;
+            if (string.IsNullOrWhiteSpace(token)) return false;
+
+            try
+            {
+                var protector = _dataProtectionProvider.CreateProtector("Yavsc.Org.PerformerPodcastLink");
+                var payload = JsonDocument.Parse(protector.Unprotect(token));
+                var ownerId = payload.RootElement.GetProperty("performerId").GetString();
+                var expiry = payload.RootElement.GetProperty("exp").GetInt64();
+
+                if (!string.Equals(ownerId, performerId, StringComparison.Ordinal)) return false;
+
+                validUntil = DateTimeOffset.FromUnixTimeSeconds(expiry);
+                return validUntil > DateTimeOffset.UtcNow;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

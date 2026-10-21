@@ -4,6 +4,10 @@
 
 ### Added
 
+* [Yavsc.Org] Permalien public de podcasts performer avec jeton a duree
+  limitee, page Razor de presentation et bandeau de prospection vers
+  l'inscription Yavsc et le telechargement de PostIt.
+
 ### Changed
 
 ### Fixed
