@@ -176,12 +176,13 @@ camera; segments already received by the server remain available under the
 interrupted-replay rules above. Device power policies can impose additional
 restrictions and must be tested on the intended physical devices.
 
-**Native library limitation:** bundled `VideoLAN.LibVLC.Android` 3.6.5 emits
-`XA0141`: its native libraries are not aligned for 16 KiB memory pages.
-Playback on 16 KiB-page devices and store distribution requiring this alignment
-are not validated/supported by this package choice. A compatible native LibVLC
-release is required before claiming that support; a successful APK build or
-a test on a 4 KiB-page emulator does not establish it.
+**Native library compatibility:** the Android app now uses
+`VideoLAN.LibVLC.Android` 3.7.0-beta, which is the minimum compatible package
+for 16 KiB-page devices. Older 3.6.5 binaries can fail at runtime with
+`failed to load libc++_shared.so` or the linker error `XA0141` because the
+native libraries are not aligned for 16 KiB memory pages. A successful APK
+build or a test on a 4 KiB-page emulator does not establish compatibility
+for 16 KiB-page devices or Play distribution requiring that alignment.
 
 Build with the Android workload and SDK configured:
 

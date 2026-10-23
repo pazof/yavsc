@@ -9,6 +9,7 @@
 
 ### Fixed
 
+* [PostIt.Android] Upgrade `VideoLAN.LibVLC.Android` to 3.7.0-beta to resolve the runtime `failed to load libc++_shared.so` problem on 16 KiB-page Android devices and document the native-library compatibility requirement.
 * Performer notification audience
 
 ## [1.0.8-rc31] - unstable
