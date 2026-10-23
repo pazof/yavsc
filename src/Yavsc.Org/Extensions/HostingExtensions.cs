@@ -263,14 +263,14 @@ public static class HostingExtensions
                 policy
                     .RequireAuthenticatedUser()
                     .RequireClaim(Constants.RoleClaimType,
-                    new string[] { Constants.PerformerGroupName, Constants.AdminGroupName })
+                    new string[] { Constants.PerformerGroupName, Constants.AdminName })
                     ;
             });
             options.AddPolicy("AdministratorOnly", policy =>
             {
                 _ = policy
                     .RequireAuthenticatedUser()
-                    .RequireClaim(Constants.RoleClaimType, Constants.AdminGroupName);
+                    .RequireClaim(Constants.RoleClaimType, Constants.AdminName);
             });
 
             options.AddPolicy("FrontOffice", policy => policy.RequireRole(Constants.FrontOfficeGroupName));

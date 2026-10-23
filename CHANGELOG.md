@@ -1,4 +1,15 @@
+
 # Changelog
+
+## [1.0.8-rc32] - unstable
+
+### Added
+
+### Changed
+
+### Fixed
+
+* Performer notification audience
 
 ## [1.0.8-rc31] - unstable
 
@@ -15,7 +26,6 @@
 * Podcast availability from Android
 * avoid NRE in MailSender on rdv query notifications
 * Android emulator smoke test skipped in CI because Calabash instrumentation signature mismatches the target APK on hosted runners
-
 
 ## [1.0.8-rc30] - unstable
 

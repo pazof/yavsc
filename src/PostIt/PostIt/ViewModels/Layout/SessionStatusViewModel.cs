@@ -103,7 +103,7 @@ public partial class SessionStatusViewModel : ViewModelBase
             if (profile is null)
                 throw new InvalidOperationException("Le serveur a renvoyé un profil vide.");
             if (version == _accessVersion)
-                IsAdministrator = profile.Roles.Contains(Yavsc.Constants.AdminGroupName, StringComparer.Ordinal);
+                IsAdministrator = profile.Roles.Contains(Yavsc.Constants.AdminName, StringComparer.Ordinal);
         }
         catch (Exception ex)
         {

@@ -50,9 +50,14 @@ namespace Yavsc.Controllers
                 if (clicked == null) clicked = new long[0];
             }
             else clicked = _dbContext.DismissClicked.Where(d => d.UserId == uid).Select(d => d.NotificationId).ToArray();
+            var isAdmin = User.IsInRole(Constants.AdminName);
             var notes = _dbContext.Notification.Where(
                 n => !clicked.Contains(n.Id)
-            );
+            ).Where(n =>
+                string.IsNullOrWhiteSpace(n.Target)
+                || (n.Target != null && n.Target.StartsWith("pub/"))
+                || (!string.IsNullOrWhiteSpace(uid) && n.Target == $"user/{uid}")
+                || (isAdmin && n.Target == Constants.Administration));
             if (notes.Any()) this.Notify(notes);
 
             var toShow = _dbContext.Activities

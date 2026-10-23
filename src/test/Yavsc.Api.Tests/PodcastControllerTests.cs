@@ -89,7 +89,7 @@ public sealed class PodcastControllerTests(ApiWebServerFixture fixture) : IClass
         using var admin = Client("podcast-admin");
         admin.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
             TestTokenIssuer.Issue("podcast-admin", "api",
-                extraClaims: new[] { new Claim(Constants.RoleClaimType, Constants.AdminGroupName) }));
+                extraClaims: new[] { new Claim(Constants.RoleClaimType, Constants.AdminName) }));
         using var response = await admin.GetAsync("/openapi/podcasts.json", _ct);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync(_ct));

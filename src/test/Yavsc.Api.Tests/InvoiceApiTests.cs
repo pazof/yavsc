@@ -414,7 +414,7 @@ public sealed class InvoiceApiTests(ApiWebServerFixture fixture) : IClassFixture
         using var admin = Client();
         admin.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
             TestTokenIssuer.Issue("alice", "api", extraClaims:
-            [new System.Security.Claims.Claim(Constants.RoleClaimType, Constants.AdminGroupName)]));
+            [new System.Security.Claims.Claim(Constants.RoleClaimType, Constants.AdminName)]));
         var response = await admin.GetAsync("/openapi/invoicing.json", Ct);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var json = await response.Content.ReadAsStringAsync(Ct);

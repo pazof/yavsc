@@ -24,12 +24,12 @@ namespace Yavsc.Controllers
         }
         bool UserIsAdminOrThis(string uid)
         {
-            if (User.IsInRole(Constants.AdminGroupName)) return true;
+            if (User.IsInRole(Constants.AdminName)) return true;
             return uid == User.GetUserId();
         }
         bool UserIsAdminOrInThese(string oid, string uid)
         {
-            if (User.IsInRole(Constants.AdminGroupName)) return true;
+            if (User.IsInRole(Constants.AdminName)) return true;
             var cuid = User.GetUserId();
             return cuid == uid || cuid == oid;
         }
@@ -79,7 +79,7 @@ namespace Yavsc.Controllers
                 return BadRequest();
             }
             var uid = User.GetUserId();
-            if (!User.IsInRole(Constants.AdminGroupName))
+            if (!User.IsInRole(Constants.AdminName))
             {
                 if (uid != estimate.OwnerId)
                 {
@@ -115,7 +115,7 @@ namespace Yavsc.Controllers
             var uid = User.GetUserId();
             if (estimate.OwnerId == null) estimate.OwnerId = uid;
 
-            if (!User.IsInRole(Constants.AdminGroupName))
+            if (!User.IsInRole(Constants.AdminName))
             {
                 if (uid != estimate.OwnerId)
                 {
@@ -185,7 +185,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
             var uid = User.GetUserId();
-            if (!User.IsInRole(Constants.AdminGroupName))
+            if (!User.IsInRole(Constants.AdminName))
             {
                 if (uid != estimate.OwnerId)
                 {
@@ -285,7 +285,7 @@ namespace Yavsc.Controllers
             if (estimate == null) return NotFound();
 
             var uid = User.GetUserId();
-            if (!User.IsInRole(Constants.AdminGroupName) && uid != estimate.OwnerId)
+            if (!User.IsInRole(Constants.AdminName) && uid != estimate.OwnerId)
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             if (body == null || body.FileId <= 0)
@@ -319,7 +319,7 @@ namespace Yavsc.Controllers
             if (estimate == null) return NotFound();
 
             var uid = User.GetUserId();
-            if (!User.IsInRole(Constants.AdminGroupName) && uid != estimate.OwnerId)
+            if (!User.IsInRole(Constants.AdminName) && uid != estimate.OwnerId)
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             var link = _context.EstimateAttachedFiles

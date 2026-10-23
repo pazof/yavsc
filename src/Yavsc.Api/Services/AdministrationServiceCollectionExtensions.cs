@@ -9,8 +9,8 @@ public static class AdministrationServiceCollectionExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IAdministrationService, AdministrationService>();
         services.AddScoped<AdministrationExceptionFilter>();
-        services.AddOpenApi("administration", options =>
-            options.ShouldInclude = description => description.GroupName == "administration");
+        services.AddOpenApi(Constants.Administration, options =>
+            options.ShouldInclude = description => description.GroupName == Constants.Administration);
         return services;
     }
 }

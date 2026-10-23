@@ -143,7 +143,7 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
                 title = "Admin",
                 body = "Restricted to administrators",
                 click_action = "/admin",
-                Target = "administration",
+                Target = Constants.Administration,
             });
         await db.SaveChangesAsync();
 
@@ -172,7 +172,7 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
             "api",
             new[]
             {
-                new Claim(Yavsc.Constants.RoleClaimType, Yavsc.Constants.AdminGroupName)
+                new Claim(Yavsc.Constants.RoleClaimType, Yavsc.Constants.AdminName)
             });
 
         var response = await adminHttp.GetAsync("/api/v1/resource-usage/admin", TestContext.Current.CancellationToken);

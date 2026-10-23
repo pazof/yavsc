@@ -57,7 +57,7 @@ namespace Yavsc.Controllers
         }
         private async Task SetupView(Announce announce)
         {
-            ViewBag.IsAdmin = User.IsInMsRole(Constants.AdminGroupName);
+            ViewBag.IsAdmin = User.IsInMsRole(Constants.AdminName);
             ViewBag.IsPerformer = User.IsInMsRole(Constants.PerformerGroupName);
             ViewBag.AllowEdit = announce==null || announce.Id<=0 || !_authorizationService.AuthorizeAsync(User,announce,new EditPermission()).IsFaulted;
             List<SelectListItem> dl = new List<SelectListItem>();
@@ -80,7 +80,7 @@ namespace Yavsc.Controllers
             if (ModelState.IsValid)
             {
                 // Only allow admin to create corporate annonces
-                if (announce.For == Reason.Corporate && ! User.IsInMsRole(Constants.AdminGroupName))
+                if (announce.For == Reason.Corporate && ! User.IsInMsRole(Constants.AdminName))
                 {
                     ModelState.AddModelError("For", _localizer["YourNotAdmin"]);
                     return View(announce);

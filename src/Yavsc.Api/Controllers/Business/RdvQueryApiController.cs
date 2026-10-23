@@ -62,7 +62,7 @@ public class RdvQueryApiController : Controller
             return NotFound();
         }
 
-        if (query.ClientId != uid && query.PerformerId != uid && !User.IsInRole(Constants.AdminGroupName))
+        if (query.ClientId != uid && query.PerformerId != uid && !User.IsInRole(Constants.AdminName))
         {
             return Forbid();
         }
@@ -157,7 +157,7 @@ public class RdvQueryApiController : Controller
             return NotFound();
         }
 
-        if (existing.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
+        if (existing.ClientId != uid && !User.IsInRole(Constants.AdminName))
         {
             return Forbid();
         }
@@ -222,7 +222,7 @@ public class RdvQueryApiController : Controller
             return NotFound();
         }
 
-        if (query.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
+        if (query.ClientId != uid && !User.IsInRole(Constants.AdminName))
         {
             return Forbid();
         }

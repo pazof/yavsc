@@ -7,7 +7,7 @@ using Yavsc.Api.Services;
 namespace Yavsc.ApiControllers.Administration;
 
 [ApiController]
-[ApiExplorerSettings(GroupName = "administration")]
+[ApiExplorerSettings(GroupName = Constants.Administration)]
 [Authorize("AdministratorOnly")]
 [Route(Constants.APIPrefix + "/administration")]
 [Produces("application/json")]

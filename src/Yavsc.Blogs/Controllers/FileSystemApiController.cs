@@ -216,7 +216,7 @@ namespace Yavsc.Blogs.Controllers
         // autorisés comme pour le reste du workflow.
         bool CanReadFile(UploadedFile file, string uid)
         {
-            if (User.IsInRole(Constants.AdminGroupName)) return true;
+            if (User.IsInRole(Constants.AdminName)) return true;
             if (file.OwnerId == uid) return true;
 
             if (dbContext.EstimateAttachedFiles.Any(a =>

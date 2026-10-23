@@ -63,7 +63,7 @@ internal class Program
                 {
                     policy
                         .RequireAuthenticatedUser()
-                        .RequireClaim(Constants.RoleClaimType, Constants.AdminGroupName);
+                        .RequireClaim(Constants.RoleClaimType, Constants.AdminName);
                 });
             })
             .AddYavscCors(builder.Configuration)

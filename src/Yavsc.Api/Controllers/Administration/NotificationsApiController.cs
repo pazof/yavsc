@@ -24,7 +24,7 @@ public sealed class NotificationsApiController : Controller
     public async Task<ActionResult<List<Notification>>> GetCurrentUserNotifications()
     {
         var currentUserId = User.GetUserId();
-        var isAdmin = User.IsInRole(Constants.AdminGroupName);
+        var isAdmin = User.IsInRole(Constants.AdminName);
 
         var dismissedIds = string.IsNullOrWhiteSpace(currentUserId)
             ? new HashSet<long>()

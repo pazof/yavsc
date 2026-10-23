@@ -63,7 +63,7 @@ namespace Yavsc.Controllers
             }
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (estimateTemplate.OwnerId!=uid)
-            if (!User.IsInRole(Constants.AdminGroupName))
+            if (!User.IsInRole(Constants.AdminName))
             return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             _context.Entry(estimateTemplate).State = EntityState.Modified;
@@ -133,7 +133,7 @@ namespace Yavsc.Controllers
             }
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (estimateTemplate.OwnerId!=uid)
-            if (!User.IsInRole(Constants.AdminGroupName))
+            if (!User.IsInRole(Constants.AdminName))
             return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             _context.EstimateTemplates.Remove(estimateTemplate);

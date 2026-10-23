@@ -14,6 +14,7 @@ namespace Yavsc
         public const string CirclePath = "circle";
         public const string CommentsPath = "blogcomments";
         public const string ChatHubPath = "chathub";
+        public const string Administration = "administration";
 
         public static readonly Scope[] SiteScopes = {
             new Scope { Id = "profile", Description = "Your profile informations" },
@@ -52,7 +53,7 @@ namespace Yavsc
         public const string DefaultFactor = "Default";
         public const string MobileAppFactor = "Mobile Application";
         public const string SMSFactor = "SMS";
-        public const string AdminGroupName = "Administrator";
+        public const string AdminName = "Administrator";
         public const string PerformerGroupName = "Performer";
         public const string StarGroupName = "Star";
         public const string StarHunterGroupName = "StarHunter";

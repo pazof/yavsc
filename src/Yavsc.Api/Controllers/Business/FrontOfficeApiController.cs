@@ -86,7 +86,7 @@ namespace Yavsc.ApiControllers
             if (estimate is null) return NotFound(new { Error = "no estimate linked to this query" });
 
             var uid = User.GetUserId();
-            if (!User.IsInRole(Constants.AdminGroupName)
+            if (!User.IsInRole(Constants.AdminName)
                 && uid != estimate.ClientId && uid != estimate.OwnerId)
                 return Forbid();
 
@@ -117,7 +117,7 @@ namespace Yavsc.ApiControllers
             if (estimate is null) return NotFound(new { Error = "no estimate linked to this query" });
 
             var uid = User.GetUserId();
-            if (!User.IsInRole(Constants.AdminGroupName)
+            if (!User.IsInRole(Constants.AdminName)
                 && uid != estimate.ClientId && uid != estimate.OwnerId)
                 return Forbid();
 
@@ -403,7 +403,7 @@ namespace Yavsc.ApiControllers
             if (isProvider) return (query, ActorRole.Provider, null);
             if (isClient) return (query, ActorRole.Client, null);
 
-            if (User.IsInRole(Constants.AdminGroupName))
+            if (User.IsInRole(Constants.AdminName))
                 return (query, ActorRole.Admin, null);
 
             return (null, ActorRole.None, Forbid());
@@ -453,7 +453,7 @@ namespace Yavsc.ApiControllers
             if (error is not null) return error;
             if (query is null) return BadRequest(new { Error = "query not found" });
 
-            if (role != ActorRole.Client && !User.IsInRole(Constants.AdminGroupName))
+            if (role != ActorRole.Client && !User.IsInRole(Constants.AdminName))
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             if (body == null || body.FileId <= 0)
@@ -463,7 +463,7 @@ namespace Yavsc.ApiControllers
             var file = await dbContext.UploadedFiles
                 .FirstOrDefaultAsync(f => f.Id == body.FileId, token);
             if (file == null) return BadRequest(new { error = "file not found" });
-            if (file.OwnerId != uid && !User.IsInRole(Constants.AdminGroupName))
+            if (file.OwnerId != uid && !User.IsInRole(Constants.AdminName))
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             var existing = await dbContext.QueryAttachedFiles
@@ -490,7 +490,7 @@ namespace Yavsc.ApiControllers
             if (error is not null) return error;
             if (query is null) return BadRequest(new { Error = "query not found" });
 
-            if (role != ActorRole.Client && !User.IsInRole(Constants.AdminGroupName))
+            if (role != ActorRole.Client && !User.IsInRole(Constants.AdminName))
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             var link = await dbContext.QueryAttachedFiles

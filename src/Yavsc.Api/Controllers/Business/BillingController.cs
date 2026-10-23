@@ -107,7 +107,7 @@ namespace Yavsc.ApiControllers
              logger.LogWarning("Got bill ack:"+bill.GetIsAcquitted().ToString());
             if (bill is not NominativeServiceCommand { InvoiceEstimateId: not null } invoice)
                 return Conflict(new { Error = "Create the invoice from a signed estimate first." });
-            if (User.GetUserId() != invoice.InvoicePerformerId && !User.IsInRole(Constants.AdminGroupName))
+            if (User.GetUserId() != invoice.InvoicePerformerId && !User.IsInRole(Constants.AdminName))
                 return Forbid();
             return ViewComponent("Bill",new object[] { billingCode, bill, OutputFormat.Pdf, true } );
         }

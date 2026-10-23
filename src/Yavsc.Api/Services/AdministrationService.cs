@@ -32,7 +32,7 @@ public sealed partial class AdministrationService(
 
     public async Task<AdministrationSummary> GetSummaryAsync(CancellationToken ct)
         => new(await db.Users.CountAsync(ct),
-            (await users.GetUsersInRoleAsync(Constants.AdminGroupName)).Count,
+            (await users.GetUsersInRoleAsync(Constants.AdminName)).Count,
             typeof(AdministrationService).Assembly.GetName().ToString(), System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
 
     public async Task<IReadOnlyList<AdministrationRole>> GetRolesAsync(CancellationToken ct)
@@ -46,7 +46,7 @@ public sealed partial class AdministrationService(
 
     public async Task EnsureRolesAsync(CancellationToken ct)
     {
-        foreach (var name in new[] { Constants.AdminGroupName, Constants.StarGroupName, Constants.PerformerGroupName,
+        foreach (var name in new[] { Constants.AdminName, Constants.StarGroupName, Constants.PerformerGroupName,
                      Constants.FrontOfficeGroupName, Constants.StarHunterGroupName, Constants.BlogModeratorGroupName })
         {
             ct.ThrowIfCancellationRequested();
@@ -73,7 +73,7 @@ public sealed partial class AdministrationService(
             CheckIdentity(await users.AddToRoleAsync(user, role.Name!));
         else if (!member && alreadyMember)
         {
-            if (role.Name == Constants.AdminGroupName &&
+            if (role.Name == Constants.AdminName &&
                 (await users.GetUsersInRoleAsync(role.Name)).Count <= 1)
                 throw Conflict("Impossible de retirer le dernier administrateur.");
             CheckIdentity(await users.RemoveFromRoleAsync(user, role.Name!));

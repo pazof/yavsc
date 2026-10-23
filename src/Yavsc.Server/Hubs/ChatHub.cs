@@ -80,7 +80,7 @@ namespace Yavsc.Server.Hubs
             var userId = _dbContext.Users.First(u => u.UserName == userName).Id;
 
             await Clients.Group(ChatHubConstants.HubGroupFollowingPrefix + userId).SendAsync("notifyUser", NotificationTypes.Connected, userName, null);
-            isCop = Context.User.IsInMsRole(Constants.AdminGroupName);
+            isCop = Context.User.IsInMsRole(Constants.AdminName);
             if (isCop)
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, ChatHubConstants.HubGroupCops);
@@ -232,7 +232,7 @@ namespace Yavsc.Server.Hubs
             throw new NotImplementedException();
         }
 
-        [Authorize(Constants.AdminGroupName)]
+        [Authorize(Constants.AdminName)]
         public void GLine(string userName, string reason)
         {
             if (!InputValidator.ValidateUserName(userName)) return;
@@ -330,7 +330,7 @@ namespace Yavsc.Server.Hubs
             var identityUserName = Context.User.GetUserName();
 
             if (userName[0] != '?' && Context.User != null)
-                if (!Context.User.IsInMsRole(Constants.AdminGroupName))
+                if (!Context.User.IsInMsRole(Constants.AdminName))
                 {
 
                     var bl = _dbContext.BlackListed

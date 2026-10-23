@@ -90,7 +90,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
             options.AddPolicy("AdministratorOnly", policy =>
             {
                 policy.RequireAuthenticatedUser();
-                policy.RequireClaim(Yavsc.Constants.RoleClaimType, Yavsc.Constants.AdminGroupName);
+                policy.RequireClaim(Yavsc.Constants.RoleClaimType, Yavsc.Constants.AdminName);
             });
         });
 

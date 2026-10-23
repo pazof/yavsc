@@ -39,7 +39,7 @@ public sealed class InvoicesController(IInvoicingService invoices, ILogger<Invoi
     public Task<ActionResult<InvoiceResponse>> VerifyPayPal(long commandId, VerifyInvoicePayPalRequest request, CancellationToken ct)
         => ExecuteAsync(() => invoices.VerifyPayPalAsync(commandId, request.TransactionId, User.GetUserId(), IsAdmin, ct));
 
-    private bool IsAdmin => User.IsInRole(Constants.AdminGroupName);
+    private bool IsAdmin => User.IsInRole(Constants.AdminName);
 
     private async Task<ActionResult<InvoiceResponse>> ExecuteAsync(Func<Task<InvoiceResponse>> action, bool created = false)
     {

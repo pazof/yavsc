@@ -77,7 +77,7 @@ public class HairMultiCutQueryApiController : Controller
             return NotFound();
         }
 
-        if (query.ClientId != uid && query.PerformerId != uid && !User.IsInRole(Constants.AdminGroupName))
+        if (query.ClientId != uid && query.PerformerId != uid && !User.IsInRole(Constants.AdminName))
         {
             return Forbid();
         }
@@ -152,7 +152,7 @@ public class HairMultiCutQueryApiController : Controller
         }
 
         var uid = User.GetUserId();
-        if (existing.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
+        if (existing.ClientId != uid && !User.IsInRole(Constants.AdminName))
         {
             return Forbid();
         }
@@ -200,7 +200,7 @@ public class HairMultiCutQueryApiController : Controller
             return NotFound();
         }
 
-        if (query.ClientId != uid && !User.IsInRole(Constants.AdminGroupName))
+        if (query.ClientId != uid && !User.IsInRole(Constants.AdminName))
         {
             return Forbid();
         }

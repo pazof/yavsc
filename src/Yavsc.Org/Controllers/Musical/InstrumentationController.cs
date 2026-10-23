@@ -63,7 +63,7 @@ namespace Yavsc.Controllers
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (ModelState.IsValid)
             {
-                if (model.UserId != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
+                if (model.UserId != uid) if (!User.IsInMsRole(Constants.AdminName))
                     return new ChallengeResult();
 
                 _context.Instrumentation.Add(model);
@@ -81,7 +81,7 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
-            if (id != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
+            if (id != uid) if (!User.IsInMsRole(Constants.AdminName))
                     return new ChallengeResult();
             Instrumentation musicianSettings = await _context.Instrumentation.SingleAsync(m => m.UserId == id);
             if (musicianSettings == null)
@@ -97,7 +97,7 @@ namespace Yavsc.Controllers
         public async Task<IActionResult> Edit(Instrumentation musicianSettings)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
+            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(Constants.AdminName))
                     return new ChallengeResult();
             if (ModelState.IsValid)
             {
@@ -123,7 +123,7 @@ namespace Yavsc.Controllers
                 return NotFound();
             }
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
+            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(Constants.AdminName))
                     return new ChallengeResult();
             return View(musicianSettings);
         }
@@ -136,7 +136,7 @@ namespace Yavsc.Controllers
             Instrumentation musicianSettings = await _context.Instrumentation.SingleAsync(m => m.UserId == id);
 
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(Constants.AdminGroupName))
+            if (musicianSettings.UserId != uid) if (!User.IsInMsRole(Constants.AdminName))
                     return new ChallengeResult();
 
 
