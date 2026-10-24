@@ -1,11 +1,13 @@
 #if ANDROID
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Media;
 using Android.OS;
 using Avalonia.Threading;
 using PostIt.Android;
@@ -34,7 +36,7 @@ public sealed class AndroidPodcastCaptureTestActivity : Activity
         try
         {
             await RunAsync(result);
-            File.WriteAllText(resultPath, $"PASS\nsegments={result.GetInt("segments")}\ndirectory={result.GetString("directory")}\nbackground={result.GetString("background")}");
+            File.WriteAllText(resultPath, $"PASS\nsegments={result.GetInt("segments")}\ndurationSeconds={result.GetDouble("durationSeconds")}\naudio={result.GetBoolean("audio")}\ndirectory={result.GetString("directory")}\nbackground={result.GetString("background")}\norientation={result.GetString("orientation")}\ntextureTransform={result.GetString("textureTransform")}");
         }
         catch (Exception ex)
         {
@@ -68,6 +70,11 @@ public sealed class AndroidPodcastCaptureTestActivity : Activity
             await Task.Delay(9000);
             var after = SegmentCount(directory);
             if (capture.Completion.IsFaulted) await capture.Completion;
+            if (capture is AndroidPodcastCapture androidCapture)
+            {
+                result.PutString("orientation", androidCapture.OrientationDiagnostics);
+                result.PutString("textureTransform", androidCapture.TextureTransform);
+            }
             if (after <= before) throw new InvalidOperationException($"Capture did not continue in background: {before} -> {after} segments.");
             if (_notificationStop)
             {
@@ -81,7 +88,25 @@ public sealed class AndroidPodcastCaptureTestActivity : Activity
             await capture.Completion.WaitAsync(TimeSpan.FromSeconds(15));
             var segments = HlsCapturePlaylist.Parse(await File.ReadAllTextAsync(Path.Combine(directory, "index.m3u8")));
             if (segments.Count < 3) throw new InvalidOperationException("Insufficient capture segments.");
+            var duration = segments.Sum(segment => segment.DurationSeconds);
+            if (duration < 8 || duration > 16)
+                throw new InvalidOperationException($"Expected 8-16 seconds of capture, got {duration}.");
+            using var extractor = new MediaExtractor();
+            extractor.SetDataSource(Path.Combine(directory, segments[0].FileName));
+            var video = false;
+            var audio = false;
+            for (var track = 0; track < extractor.TrackCount; track++)
+            {
+                using var format = extractor.GetTrackFormat(track);
+                var mime = format.GetString(MediaFormat.KeyMime);
+                video |= mime == "video/avc";
+                audio |= mime == "audio/mp4a-latm";
+            }
+            if (!video || (_microphone && !audio))
+                throw new InvalidOperationException($"Missing capture tracks: H.264={video}, AAC={audio}.");
             result.PutInt("segments", segments.Count);
+            result.PutDouble("durationSeconds", duration);
+            result.PutBoolean("audio", audio);
             result.PutString("directory", directory);
             result.PutString("background", $"segments {before} -> {after}");
         }

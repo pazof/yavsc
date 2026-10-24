@@ -1,6 +1,19 @@
 
 # Changelog
 
+## [1.0.8-rc33] - unstable
+
+### Added
+
+### Changed
+
+### Fixed
+
+* [PostIt.Android] Avoid applying camera sensor rotation twice: account for the rotation already included in Camera2's SurfaceTexture matrix before rotating encoder input, while retaining portrait output dimensions.
+* [PostIt.Android] Fix zero-second camera captures after adding OpenGL rotation: align Camera2 timestamps with the recorder's monotonic clock, preserve frame intervals, ignore duplicate frames and start camera requests only after the encoder is ready. Add a real Camera2/microphone regression check for segment duration and H.264/AAC tracks.
+* [PostIt.Android] Keep the `VideoLAN.LibVLC.Android` JNI/native bindings alive in Release builds with a ProGuard rule set so the bundled `libvlc`/`libc++_shared` libraries are not stripped.
+* [PostIt.Android] Rotate camera frames before H.264 encoding using an OpenGL surface, based on sensor orientation, lens facing and display rotation at capture start. Portrait captures swap the encoded dimensions; live MPEG-TS/HLS and replays no longer depend on an ineffective MP4-only orientation hint. Restore compilation by reading display orientation from the activity rather than the capture service.
+
 ## [1.0.8-rc32] - unstable
 
 ### Added
@@ -9,8 +22,8 @@
 
 ### Fixed
 
-* [PostIt.Android] Upgrade `VideoLAN.LibVLC.Android` to 3.7.0-beta to resolve the runtime `failed to load libc++_shared.so` problem on 16 KiB-page Android devices and document the native-library compatibility requirement.
 * Performer notification audience
+* [PostIt.Android] Upgrade `VideoLAN.LibVLC.Android` to 3.7.0-beta to resolve the runtime `failed to load libc++_shared.so` problem on 16 KiB-page Android devices and document the native-library compatibility requirement.
 
 ## [1.0.8-rc31] - unstable
 

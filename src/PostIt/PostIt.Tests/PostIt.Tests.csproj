@@ -25,5 +25,8 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
-  <ItemGroup></ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\PostIt.Android\Services\CameraFrameOrientation.cs" Link="Android\CameraFrameOrientation.cs" />
+    <Compile Include="..\PostIt.Android\Services\CameraFrameClock.cs" Link="Android\CameraFrameClock.cs" />
+  </ItemGroup>
 </Project>

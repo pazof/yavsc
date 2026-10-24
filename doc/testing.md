@@ -97,6 +97,59 @@ decodage authentifie du replay. Aucun FFmpeg n'est requis par ces tests ni
 par l'application (le fichier d'entree peut provenir de n'importe quelle source).
 Les tests materiels camera/microphone Windows/Linux restent manuels.
 
+### Rotation de la capture Android
+
+Le calcul capteur/ecran/camera avant et les quatre transformations de texture
+sont couverts sans appareil :
+
+```bash
+dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
+  --filter-class '*CameraFrameOrientationTests' --filter-class '*CameraFrameClockTests'
+```
+
+Un test Android supplementaire verifie le chemin OpenGL et l'encodeur reels,
+sans ouvrir la camera, sans microphone et sans contacter l'API :
+
+```bash
+dotnet build src/PostIt/PostIt.Android/PostIt.Android.csproj -c Debug \
+  -p:EmbedAssembliesIntoApk=true
+adb install -r -t src/PostIt/PostIt.Android/bin/Debug/net10.0-android/fr.pschneider.postit-Signed.apk
+adb shell am start -n fr.pschneider.postit/fr.pschneider.postit.CameraFrameRotationTestActivity
+adb shell run-as fr.pschneider.postit cat files/camera-rotation-test-result.txt
+```
+
+Attendre la fin du test : `RUNNING` doit devenir `PASS`. Il encode quatre
+quadrants colores en MPEG-TS pour 0, 90, 180 et 270 degres, decode une image et
+verifie les dimensions (640x480 ou 480x640) et les couleurs aux quatre positions.
+La tolerance de chaque composante RGB est de 40 pour tenir compte de H.264.
+Une erreur de rendu, d'encodage, de decodage ou de comparaison produit `FAIL`
+avec l'exception. Cette activite est exclue des builds Release.
+
+Le test synthetique ne couvre pas l'horloge Camera2 ni sa synchronisation avec
+le microphone. Avec l'accord de la personne utilisant le telephone, lancer
+aussi le test local reel (camera et microphone actifs, aucun envoi a l'API) :
+
+```bash
+adb shell am start -n fr.pschneider.postit/fr.pschneider.postit.PodcastCaptureTestActivity --es microphone true
+adb shell run-as fr.pschneider.postit cat files/podcast-capture-test-result.txt
+```
+
+Attendre `PASS` : au moins trois segments, 8 a 16 secondes capturees,
+pistes H.264 et AAC presentes, et progression des segments en arriere-plan.
+Ce test detecte notamment les captures de zero seconde dues au decalage entre
+l'horloge Camera2 et celle de MediaRecorder. Les fichiers restent dans le
+repertoire prive indique par le resultat pour verification locale.
+Le resultat inclut les angles capteur/ecran et la premiere matrice
+SurfaceTexture recue. Les tests unitaires couvrent notamment la matrice
+reelle `[0,-1,0,0,-1,0,0,0,0,0,1,0,1,1,0,1]` : pour un capteur a 90 degres
+et un ecran a 0, elle porte deja la rotation et ne doit pas recevoir 90 degres
+supplementaires. Le test synthetique seul ne detecte pas cette double rotation.
+
+Verifier aussi manuellement les cameras avant/arriere en portrait et paysage,
+le son, le direct et le replay, et la poursuite de l'emission en arriere-plan.
+L'orientation est fixee au demarrage d'une emission ; tourner le telephone
+pendant l'emission ne reconfigure pas le format encode.
+
 ## Quand ne PAS écrire de test
 
 Un test qui ne détecte rien n'est pas un test. Si l'invariant

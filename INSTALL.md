@@ -166,6 +166,15 @@ at IDR frames, with timestamps used for segment durations. Closed segments
 enter the same ordered upload/retry/quota/replay pipeline as desktop.
 Devices without a supported camera/encoder report a startup error.
 
+Camera frames are rotated through an OpenGL surface before encoding, so both
+live playback and replays have upright pixels without relying on rotation
+metadata (not supported by the MPEG-TS recorder). The sensor, front/rear lens
+and display orientation are sampled when capture starts; portrait output swaps
+width and height. Camera2 may already include sensor rotation in the
+SurfaceTexture transform; only the remaining rotation is applied by OpenGL.
+Keep that device orientation during a broadcast, or stop and
+start a new broadcast after turning the device.
+
 A camera/microphone foreground service and a partial wake lock maintain the
 broadcast when PostIt is backgrounded or the screen locks. Its ongoing
 notification returns to the app and offers **Arreter et publier**. Stopping
