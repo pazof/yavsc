@@ -36,6 +36,19 @@ Authorization: Bearer {{token}}
 POST {{baseUrl}}/api/v1/podcasts/{{id}}/complete
 Authorization: Bearer {{token}}
 
+### Ready MP4: authenticated seek range (206; 409 until replay.state is Ready)
+GET {{baseUrl}}/api/v1/podcasts/{{id}}/replay.mp4
+Authorization: Bearer {{token}}
+Range: bytes=0-65535
+
+### MP4 size and range support without downloading the body
+HEAD {{baseUrl}}/api/v1/podcasts/{{id}}/replay.mp4
+Authorization: Bearer {{token}}
+
+### Retry failed MP4 preparation (owner only; 202)
+POST {{baseUrl}}/api/v1/podcasts/{{id}}/replay/retry
+Authorization: Bearer {{token}}
+
 ### Delete an ended podcast (owner only)
 DELETE {{baseUrl}}/api/v1/podcasts/{{id}}
 Authorization: Bearer {{token}}

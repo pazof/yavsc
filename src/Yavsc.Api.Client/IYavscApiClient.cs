@@ -42,6 +42,11 @@ public interface IYavscApiClient : IAsyncDisposable
     /// </summary>
     HttpClient Http { get; }
 
+    /// <summary>Authenticated streaming request with token refresh and one 401 retry.
+    /// The caller owns the returned response; the factory must return a fresh request.</summary>
+    Task<HttpResponseMessage> SendAuthenticatedAsync(Func<HttpRequestMessage> requestFactory, CancellationToken ct = default)
+        => throw new NotSupportedException("Authenticated streaming is not supported by this transport.");
+
     /// <summary>Read a public JSON endpoint without attaching session credentials.</summary>
     Task<T> GetAnonymousAsync<T>(string path, CancellationToken ct = default)
         => throw new NotSupportedException("Anonymous requests are not supported by this transport.");

@@ -79,22 +79,37 @@ Avec le runner Microsoft.Testing.Platform du depot (.NET 10, xUnit v3) :
 
 ```bash
 dotnet test --project src/test/Yavsc.Api.Tests/Yavsc.Api.Tests.csproj \
-  --filter-class '*LiveProcessorTests' --filter-class '*PodcastControllerTests'
+  --filter-class '*LiveProcessorTests' --filter-class '*PodcastControllerTests' \
+  --filter-class '*PodcastReplayTests'
 dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
-  --filter-class '*PodcastTests' --filter-class '*PodcastNativeCaptureTests'
+  --filter-class '*PodcastTests' --filter-class '*PodcastReplayTests' \
+  --filter-class '*YavscApiClientTests' --filter-class '*PodcastNativeCaptureTests'
 ```
 
 Les tests serveur couvrent HTTP/authentification, proprietaire, sequences,
 reprises idempotentes, limites exactes, concurrence et persistance des replays
 apres interruption/redemarrage, dans des dossiers temporaires isoles.
+Installer FFmpeg 5+ et ffprobe pour ces tests serveur : ils generent une
+source H.264/AAC synthetique de quatre secondes, verifient le remuxage reel
+(pistes, duree, faststart, decodage et seek a deux secondes), puis les reponses
+HTTP authentifiees GET/HEAD/206/416 du worker. Aucune camera ni microphone
+n'est utilise. Les tests client couvrent les plages exactes et bornees,
+les seeks avant/arriere/EOF, l'annulation, le renouvellement des jetons
+et le seuil exact d'auto-hide de trois secondes.
+Pour tester aussi le decodage MP4 et les seeks avant/arriere dans LibVLC,
+definir `POSTIT_TEST_REPLAY` sur un MP4 H.264/AAC local de 8 a 30 secondes
+(LibVLC installe sur la machine de test). Le test natif est ignore sinon.
+Verifier manuellement les overlays sur Desktop et Android : pause/reprise,
+glissement de la barre, masquage apres trois secondes, reapparition au
+toucher/survol et nettoyage apres navigation ou mise en arriere-plan.
 
 Les tests natifs sont explicitement ignores sans `POSTIT_TEST_MEDIA`.
 Pour les activer, installer LibVLC avec ses encodeurs H.264/AAC et definir
 cette variable sur un fichier video local d'environ huit secondes contenant
 une piste audio. Ils exercent la segmentation LibVLC reelle, l'envoi et la
 reprise apres acquittement perdu, le dernier segment apres arret et le
-decodage authentifie du replay. Aucun FFmpeg n'est requis par ces tests ni
-par l'application (le fichier d'entree peut provenir de n'importe quelle source).
+decodage authentifie du replay MPEG-TS. Aucun FFmpeg n'est requis par ces tests
+natifs client ni par PostIt (le serveur MP4, lui, en a besoin).
 Les tests materiels camera/microphone Windows/Linux restent manuels.
 
 ### Rotation de la capture Android

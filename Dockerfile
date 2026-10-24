@@ -93,6 +93,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
 ENTRYPOINT ["dotnet", "Yavsc.Org.dll"]
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS api-runtime
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && apt-get clean
 WORKDIR /app
 COPY --from=publish-api /publish/ ./
 RUN --mount=type=secret,id=yavsc_appsettings,dst=/run/secrets/yavsc_appsettings \

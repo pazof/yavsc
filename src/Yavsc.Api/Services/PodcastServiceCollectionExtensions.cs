@@ -8,6 +8,8 @@ public static class PodcastServiceCollectionExtensions
     {
         services.Configure<PodcastOptions>(configuration.GetSection("Podcast"));
         services.AddSingleton<ILiveProcessor, LiveProcessor>();
+        services.AddSingleton<IPodcastReplayRemuxer, FfmpegPodcastReplayRemuxer>();
+        services.AddHostedService<PodcastReplayWorker>();
         services.AddOpenApi("podcasts", options => options.ShouldInclude = description => description.GroupName == "podcasts");
         return services;
     }

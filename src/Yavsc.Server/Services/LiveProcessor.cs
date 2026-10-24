@@ -21,6 +21,8 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
     private readonly TimeProvider _clock;
     private readonly SemaphoreSlim _gate = new(1);
     private readonly SemaphoreSlim _uploads = new(2);
+    private readonly SemaphoreSlim _replays = new(1);
+    private Guid? _preparingReplay;
     private readonly Dictionary<Guid, Document> _documents = new();
     private bool _loaded;
 
@@ -34,7 +36,8 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         if (!Path.IsPathFullyQualified(_options.RootPath) || _options.MaxSegmentBytes < 188
             || _options.MaxSegmentBytes > 8 * 1024 * 1024
             || _options.MaxOwnerBytes < _options.MaxSegmentBytes || _options.MaxSegments < 1
-            || _options.IdleTimeoutSeconds < 15 || _options.MaxOwnerPodcasts < 1)
+            || _options.IdleTimeoutSeconds < 15 || _options.MaxOwnerPodcasts < 1
+            || _options.ReplayTimeoutSeconds < 1 || string.IsNullOrWhiteSpace(_options.FfmpegPath))
             throw new InvalidOperationException("Invalid Podcast storage options.");
     }
 
@@ -184,13 +187,130 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             var podcast = document.Manifest.Podcast;
             if (podcast.State == PodcastState.Completed)
                 return podcast;
-            var updated = podcast with { State = PodcastState.Completed, UpdatedAt = _clock.GetUtcNow() };
+            var updated = podcast with
+            {
+                State = PodcastState.Completed, UpdatedAt = _clock.GetUtcNow(),
+                Replay = new(PodcastReplayState.Pending)
+            };
             await SaveAsync(document with { Manifest = document.Manifest with { Podcast = updated } }, ct);
             _logger.LogInformation("Podcast {PodcastId} completed with {Segments} segments", id, updated.SegmentCount);
             return updated;
         }
         finally { _gate.Release(); }
     }
+
+    public async Task<Stream> OpenReplayAsync(Guid id, CancellationToken ct)
+    {
+        await _gate.WaitAsync(ct);
+        try
+        {
+            await LoadAsync(ct);
+            var podcast = Find(id).Manifest.Podcast;
+            if (podcast.State != PodcastState.Completed || podcast.Replay?.State != PodcastReplayState.Ready)
+                throw new PodcastException(409, "Le replay MP4 n'est pas disponible.");
+            return new FileStream(Path.Combine(DirectoryFor(id), "replay.mp4"), FileMode.Open, FileAccess.Read,
+                FileShare.Read | FileShare.Delete, 64 * 1024, FileOptions.Asynchronous | FileOptions.RandomAccess);
+        }
+        finally { _gate.Release(); }
+    }
+
+    public async Task RetryReplayAsync(Guid id, string ownerId, CancellationToken ct)
+    {
+        await _gate.WaitAsync(ct);
+        try
+        {
+            await LoadAsync(ct);
+            var document = Owned(id, ownerId);
+            if (document.Manifest.Podcast.Replay?.State != PodcastReplayState.Failed)
+                throw new PodcastException(409, "Seul un replay en echec peut etre relance.");
+            await SetReplayAsync(document, new(PodcastReplayState.Pending), ct);
+        }
+        finally { _gate.Release(); }
+    }
+
+    public async Task<bool> PrepareNextReplayAsync(IPodcastReplayRemuxer remuxer, CancellationToken ct)
+    {
+        await _replays.WaitAsync(ct);
+        try { return await PrepareReplayAsync(remuxer, ct); }
+        finally { _replays.Release(); }
+    }
+
+    private async Task<bool> PrepareReplayAsync(IPodcastReplayRemuxer remuxer, CancellationToken ct)
+    {
+        Document document;
+        long allowance;
+        await _gate.WaitAsync(ct);
+        try
+        {
+            await LoadAsync(ct);
+            var next = _documents.Values.Where(d => d.Manifest.Podcast.State == PodcastState.Completed
+                && d.Manifest.Podcast.Replay?.State == PodcastReplayState.Pending)
+                .OrderBy(d => d.Manifest.Podcast.CreatedAt).FirstOrDefault();
+            if (next is null) return false;
+            document = next;
+            allowance = _options.MaxOwnerBytes - OwnerBytes(document.Manifest.Podcast.OwnerId);
+            await SetReplayAsync(document, new(PodcastReplayState.Processing), ct);
+            _preparingReplay = document.Manifest.Podcast.Id;
+        }
+        finally { _gate.Release(); }
+
+        var id = document.Manifest.Podcast.Id;
+        var directory = DirectoryFor(id);
+        var temporary = Path.Combine(directory, "replay.tmp.mp4");
+        try
+        {
+            if (allowance <= 1) throw new IOException("Quota de stockage des podcasts atteint.");
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            timeout.CancelAfter(TimeSpan.FromSeconds(_options.ReplayTimeoutSeconds));
+            await remuxer.RemuxAsync(directory, document.Manifest.Segments.Count, temporary, allowance, timeout.Token);
+            var bytes = new FileInfo(temporary).Length;
+            if (bytes <= 0 || bytes > allowance) throw new IOException("Taille du MP4 invalide ou quota atteint.");
+            await _gate.WaitAsync(ct);
+            try
+            {
+                var current = Find(id);
+                var podcast = current.Manifest.Podcast;
+                if (OwnerBytes(podcast.OwnerId) + bytes > _options.MaxOwnerBytes)
+                    throw new IOException("Quota de stockage des podcasts atteint.");
+                File.Move(temporary, Path.Combine(directory, "replay.mp4"), overwrite: true);
+                var updated = podcast with { Bytes = podcast.Bytes + bytes, Replay = new(PodcastReplayState.Ready, bytes) };
+                await SaveAsync(current with { Manifest = current.Manifest with { Podcast = updated } }, ct);
+                _logger.LogInformation("Podcast {PodcastId} MP4 ready ({Bytes} bytes)", id, bytes);
+            }
+            finally { _gate.Release(); }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Podcast {PodcastId} MP4 preparation failed", id);
+            File.Delete(temporary);
+            File.Delete(Path.Combine(directory, "replay.mp4"));
+            await _gate.WaitAsync(CancellationToken.None);
+            try
+            {
+                var current = Find(id);
+                var replay = ct.IsCancellationRequested
+                    ? new PodcastReplayResponse(PodcastReplayState.Pending)
+                    : new PodcastReplayResponse(PodcastReplayState.Failed, Error:
+                        "Preparation du MP4 impossible. L'auteur peut relancer la preparation.");
+                await SetReplayAsync(current, replay, CancellationToken.None);
+            }
+            finally { _gate.Release(); }
+            if (ct.IsCancellationRequested) throw;
+        }
+        finally
+        {
+            await _gate.WaitAsync(CancellationToken.None);
+            try { _preparingReplay = null; }
+            finally { _gate.Release(); }
+        }
+        return true;
+    }
+
+    private Task SetReplayAsync(Document document, PodcastReplayResponse replay, CancellationToken ct)
+        => SaveAsync(document with
+        {
+            Manifest = document.Manifest with { Podcast = document.Manifest.Podcast with { Replay = replay } }
+        }, ct);
 
     public async Task<Stream> OpenSegmentAsync(Guid id, int sequence, CancellationToken ct)
     {
@@ -216,6 +336,8 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             var document = Owned(id, ownerId);
             if (document.Manifest.Podcast.State == PodcastState.Live)
                 throw new PodcastException(409, "Terminez le direct avant de le supprimer.");
+            if (_preparingReplay == id)
+                throw new PodcastException(409, "Preparation du MP4 en cours. Reessayez apres sa finalisation.");
             Directory.Delete(DirectoryFor(id), recursive: true);
             _documents.Remove(id);
             _logger.LogInformation("Podcast {PodcastId} deleted by {OwnerId}", id, ownerId);
@@ -242,6 +364,9 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         // A restarted process cannot know whether its old encoder is still running.
         foreach (var document in _documents.Values.Where(d => d.Manifest.Podcast.State == PodcastState.Live).ToArray())
             await InterruptAsync(document, ct);
+        foreach (var document in _documents.Values.Where(d => d.Manifest.Podcast.State == PodcastState.Completed
+            && (d.Manifest.Podcast.Replay is null || d.Manifest.Podcast.Replay.State == PodcastReplayState.Processing)).ToArray())
+            await SetReplayAsync(document, new(PodcastReplayState.Pending), ct);
         _loaded = true;
     }
 
@@ -356,5 +481,6 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         foreach (var handler in Casters.Values) handler.Dispose();
         _gate.Dispose();
         _uploads.Dispose();
+        _replays.Dispose();
     }
 }

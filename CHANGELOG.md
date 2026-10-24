@@ -1,6 +1,13 @@
 
 # Changelog
 
+## [1.0.8-rc34] - unstable
+
+### Added
+
+* [Podcasts] Prepare authenticated, seekable MP4 replays for new and existing Completed broadcasts using server-side FFmpeg stream copy and faststart. Retain MPEG-TS, account for both copies in the owner quota, recover preparation after restarts, and expose owner-only retries plus GET/HEAD byte-range playback.
+* [PostIt] Add Android/Desktop native video overlays for MP4 replay position, duration, seeking and play/pause, with three-second auto-hide. Use bounded authenticated range input with token refresh; preserve MPEG-TS live/interrupted playback.
+
 ## [1.0.8-rc33] - unstable
 
 ### Added

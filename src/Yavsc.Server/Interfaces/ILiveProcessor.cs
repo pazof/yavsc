@@ -27,6 +27,9 @@ namespace Yavsc.Services
             double durationSeconds, Stream input, CancellationToken ct);
         Task<PodcastResponse> CompleteAsync(Guid id, string ownerId, CancellationToken ct);
         Task<Stream> OpenSegmentAsync(Guid id, int sequence, CancellationToken ct);
+        Task<Stream> OpenReplayAsync(Guid id, CancellationToken ct);
+        Task<bool> PrepareNextReplayAsync(IPodcastReplayRemuxer remuxer, CancellationToken ct);
+        Task RetryReplayAsync(Guid id, string ownerId, CancellationToken ct);
         Task DeleteAsync(Guid id, string ownerId, CancellationToken ct);
     }
 

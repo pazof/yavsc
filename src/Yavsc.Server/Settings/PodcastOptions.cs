@@ -8,4 +8,6 @@ public sealed class PodcastOptions
     public int MaxSegments { get; set; } = 7200;
     public int MaxOwnerPodcasts { get; set; } = 100;
     public int IdleTimeoutSeconds { get; set; } = 60;
+    public string FfmpegPath { get; set; } = "ffmpeg";
+    public int ReplayTimeoutSeconds { get; set; } = 600;
 }

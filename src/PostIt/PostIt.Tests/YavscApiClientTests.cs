@@ -17,6 +17,38 @@ namespace PostIt.Tests;
 /// </summary>
 public class YavscApiClientTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Authenticated_streaming_refreshes_tokens_and_recreates_range_requests(bool expired)
+    {
+        using var authority = await OIDCStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer(forceFirstRequest: !expired);
+        await apiServer.StartAsync();
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        try
+        {
+            await using var original = await LoginAndPersistAsync(settings, authority, tokensPath);
+            if (expired) ExpireCachedAccessToken(tokensPath);
+            await using var client = new YavscApiClient(settings, new TokenStore(tokensPath));
+            var requests = new List<HttpRequestMessage>();
+            using var response = await client.SendAuthenticatedAsync(() =>
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, apiServer.BaseUrl + "/posts");
+                request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(10, 20);
+                requests.Add(request);
+                return request;
+            }, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(expired ? 1 : 2, requests.Count);
+            Assert.All(requests, request => Assert.Equal("bytes=10-20", request.Headers.Range?.ToString()));
+            Assert.Equal(1, authority.RefreshRequestCount);
+            Assert.NotEmpty(apiServer.SeenBearers);
+        }
+        finally { File.Delete(tokensPath); }
+    }
+
     [Fact]
     public async Task GetAnonymousAsync_surfaces_http_errors_without_attempting_login_or_retry()
     {

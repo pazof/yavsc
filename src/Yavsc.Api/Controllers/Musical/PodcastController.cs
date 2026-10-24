@@ -58,7 +58,7 @@ public sealed class PodcastController(ILiveProcessor processor) : ControllerBase
         return Ok(await processor.AppendAsync(id, ownerId, sequence, duration, Request.Body, ct));
     }
 
-    /// <summary>Ends the broadcast and publishes its retained HLS replay.</summary>
+    /// <summary>Ends the broadcast and schedules preparation of its MP4 replay.</summary>
     [HttpPost("{id:guid}/complete")]
     [ProducesResponseType<PodcastResponse>(StatusCodes.Status200OK)]
     public async Task<ActionResult<PodcastResponse>> Complete(Guid id, CancellationToken ct)
@@ -66,6 +66,30 @@ public sealed class PodcastController(ILiveProcessor processor) : ControllerBase
         var ownerId = User.GetUserId();
         if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
         return Ok(await processor.CompleteAsync(id, ownerId, ct));
+    }
+
+    /// <summary>Serves a completed MP4 replay with authenticated byte-range support.</summary>
+    [HttpGet("{id:guid}/replay.mp4")]
+    [HttpHead("{id:guid}/replay.mp4")]
+    [Produces("video/mp4")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status206PartialContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Replay(Guid id, CancellationToken ct)
+    {
+        Response.Headers.CacheControl = "private, no-store";
+        return File(await processor.OpenReplayAsync(id, ct), "video/mp4", enableRangeProcessing: true);
+    }
+
+    /// <summary>Retries failed MP4 preparation. Only the broadcast owner can retry.</summary>
+    [HttpPost("{id:guid}/replay/retry")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> RetryReplay(Guid id, CancellationToken ct)
+    {
+        var ownerId = User.GetUserId();
+        if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
+        await processor.RetryReplayAsync(id, ownerId, ct);
+        return AcceptedAtAction(nameof(Get), new { id }, value: null);
     }
 
     /// <summary>Serves the authenticated event playlist, terminated for completed or interrupted replays.</summary>

@@ -30,13 +30,16 @@ public sealed class PodcastControllerTests(ApiWebServerFixture fixture) : IClass
     [InlineData("/api/v1/podcasts/00000000-0000-0000-0000-000000000000")]
     [InlineData("/api/v1/podcasts/00000000-0000-0000-0000-000000000000/index.m3u8")]
     [InlineData("/api/v1/podcasts/00000000-0000-0000-0000-000000000000/segments/0.ts")]
+    [InlineData("/api/v1/podcasts/00000000-0000-0000-0000-000000000000/replay.mp4")]
+    [InlineData("/api/v1/podcasts/00000000-0000-0000-0000-000000000000/replay/retry")]
     public async Task Metadata_playlists_and_segments_are_never_anonymous(string path)
     {
         using var anonymous = Client(null);
-        using var response = await anonymous.GetAsync(path, _ct);
+        var method = path.EndsWith("/retry", StringComparison.Ordinal) ? HttpMethod.Post : HttpMethod.Get;
+        using var response = await anonymous.SendAsync(new HttpRequestMessage(method, path), _ct);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         using var wrongScope = Client("bob", "profile");
-        using var forbidden = await wrongScope.GetAsync(path, _ct);
+        using var forbidden = await wrongScope.SendAsync(new HttpRequestMessage(method, path), _ct);
         Assert.Equal(HttpStatusCode.Forbidden, forbidden.StatusCode);
     }
 
@@ -64,6 +67,13 @@ public sealed class PodcastControllerTests(ApiWebServerFixture fixture) : IClass
         Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
         using var completed = await owner.PostAsync($"{path}/complete", null, _ct);
         Assert.Equal(HttpStatusCode.OK, completed.StatusCode);
+        await WaitReplayAsync(owner, path, PodcastReplayState.Failed);
+        using var retryDenied = await listener.PostAsync($"{path}/replay/retry", null, _ct);
+        Assert.Equal(HttpStatusCode.Forbidden, retryDenied.StatusCode);
+        using var retry = await owner.PostAsync($"{path}/replay/retry", null, _ct);
+        Assert.Equal(HttpStatusCode.Accepted, retry.StatusCode);
+        Assert.NotNull(retry.Headers.Location);
+        await WaitReplayAsync(owner, path, PodcastReplayState.Failed);
         var replay = await listener.GetStringAsync($"{path}/index.m3u8", _ct);
         Assert.Contains("#EXT-X-ENDLIST", replay);
         using var deleteDenied = await listener.DeleteAsync(path, _ct);
@@ -72,6 +82,77 @@ public sealed class PodcastControllerTests(ApiWebServerFixture fixture) : IClass
         Assert.Equal(HttpStatusCode.NoContent, deleted.StatusCode);
         using var missing = await listener.GetAsync(path, _ct);
         Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+    }
+
+    [Fact]
+    public async Task Worker_publishes_authenticated_seekable_MP4_with_GET_HEAD_and_416_ranges()
+    {
+        using var owner = Client($"mp4-owner-{Guid.NewGuid():N}");
+        using var listener = Client("mp4-listener");
+        var directory = Path.Combine(Path.GetTempPath(), $"yavsc-http-replay-{Guid.NewGuid():N}");
+        string? path = null;
+        try
+        {
+            var files = await PodcastMediaFixture.CreateAsync(directory, _ct);
+            using var created = await owner.PostAsJsonAsync("/api/v1/podcasts", new CreatePodcastRequest { Title = "Synthetic MP4" }, _ct);
+            var podcast = await created.Content.ReadFromJsonAsync<PodcastResponse>(_ct);
+            Assert.NotNull(podcast);
+            path = $"/api/v1/podcasts/{podcast.Id}";
+            using var unavailable = await listener.GetAsync($"{path}/replay.mp4", _ct);
+            Assert.Equal(HttpStatusCode.Conflict, unavailable.StatusCode);
+            for (var i = 0; i < files.Length; i++)
+            {
+                using var content = new ByteArrayContent(await File.ReadAllBytesAsync(files[i], _ct));
+                content.Headers.ContentType = new MediaTypeHeaderValue("video/mp2t");
+                using var appended = await owner.PutAsync($"{path}/segments/{i}?duration=1", content, _ct);
+                appended.EnsureSuccessStatusCode();
+            }
+            using var completed = await owner.PostAsync($"{path}/complete", null, _ct);
+            completed.EnsureSuccessStatusCode();
+            var ready = await WaitReplayAsync(owner, path, PodcastReplayState.Ready);
+            using var full = await listener.GetAsync($"{path}/replay.mp4", _ct);
+            Assert.Equal(HttpStatusCode.OK, full.StatusCode);
+            Assert.Equal("video/mp4", full.Content.Headers.ContentType?.MediaType);
+            Assert.True(full.Headers.CacheControl?.NoStore);
+            Assert.Contains("bytes", full.Headers.AcceptRanges);
+            var bytes = await full.Content.ReadAsByteArrayAsync(_ct);
+            Assert.Equal(ready.Replay!.Bytes, bytes.LongLength);
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"{path}/replay.mp4");
+            request.Headers.Range = new RangeHeaderValue(7, 25);
+            using var range = await listener.SendAsync(request, _ct);
+            Assert.Equal(HttpStatusCode.PartialContent, range.StatusCode);
+            Assert.Equal($"bytes 7-25/{bytes.Length}", range.Content.Headers.ContentRange?.ToString());
+            Assert.Equal(bytes[7..26], await range.Content.ReadAsByteArrayAsync(_ct));
+            using var head = await listener.SendAsync(new HttpRequestMessage(HttpMethod.Head, $"{path}/replay.mp4"), _ct);
+            Assert.Equal(HttpStatusCode.OK, head.StatusCode);
+            Assert.Equal(bytes.Length, head.Content.Headers.ContentLength);
+            Assert.Empty(await head.Content.ReadAsByteArrayAsync(_ct));
+            using var beyond = new HttpRequestMessage(HttpMethod.Get, $"{path}/replay.mp4");
+            beyond.Headers.Range = new RangeHeaderValue(bytes.Length, null);
+            using var invalid = await listener.SendAsync(beyond, _ct);
+            Assert.Equal(HttpStatusCode.RequestedRangeNotSatisfiable, invalid.StatusCode);
+            Assert.Equal(bytes.Length, invalid.Content.Headers.ContentRange?.Length);
+        }
+        finally
+        {
+            if (path is not null) using (await owner.DeleteAsync(path, _ct)) { }
+            if (Directory.Exists(directory)) Directory.Delete(directory, true);
+        }
+    }
+
+    private async Task<PodcastResponse> WaitReplayAsync(HttpClient client, string path, PodcastReplayState expected)
+    {
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(_ct);
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
+        while (true)
+        {
+            var manifest = await client.GetFromJsonAsync<PodcastManifestResponse>(path, timeout.Token);
+            Assert.NotNull(manifest);
+            if (manifest.Podcast.Replay?.State == expected) return manifest.Podcast;
+            if (expected == PodcastReplayState.Ready)
+                Assert.NotEqual(PodcastReplayState.Failed, manifest.Podcast.Replay?.State);
+            await Task.Delay(100, timeout.Token);
+        }
     }
 
     [Fact]
@@ -97,5 +178,9 @@ public sealed class PodcastControllerTests(ApiWebServerFixture fixture) : IClass
         Assert.True(paths.TryGetProperty("/api/v1/podcasts", out _));
         Assert.True(paths.TryGetProperty("/api/v1/podcasts/{id}/segments/{sequence}", out _));
         Assert.True(paths.TryGetProperty("/api/v1/podcasts/{id}/index.m3u8", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/podcasts/{id}/replay.mp4", out var replay));
+        Assert.True(replay.TryGetProperty("get", out _));
+        Assert.True(replay.TryGetProperty("head", out _));
+        Assert.True(paths.TryGetProperty("/api/v1/podcasts/{id}/replay/retry", out _));
     }
 }

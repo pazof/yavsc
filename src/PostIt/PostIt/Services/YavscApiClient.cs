@@ -520,6 +520,14 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         string path,
         CancellationToken ct = default)
     {
+        using var response = await SendAuthenticatedAsync(() => new HttpRequestMessage(method, path), ct)
+            .ConfigureAwait(false);
+        return await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
+    }
+
+    public virtual async Task<HttpResponseMessage> SendAuthenticatedAsync(
+        Func<HttpRequestMessage> requestFactory, CancellationToken ct = default)
+    {
         if (_tokens is null)
             throw new InvalidOperationException("Not logged in. Call LoginInteractiveAsync first.");
 
@@ -527,8 +535,8 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
 
         var sendOnce = async () =>
         {
-            using var request = new HttpRequestMessage(method, path);
-            return await Http.SendAsync(request, ct).ConfigureAwait(false);
+            using var request = requestFactory();
+            return await Http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
         };
 
         var response = await sendOnce().ConfigureAwait(false);
@@ -540,10 +548,15 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             response = await sendOnce().ConfigureAwait(false);
         }
 
-        using (response)
+        try
         {
             await EnsureSuccessOrThrowAsync(response, ct).ConfigureAwait(false);
-            return await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
+            return response;
+        }
+        catch
+        {
+            response.Dispose();
+            throw;
         }
     }
 

@@ -21,7 +21,7 @@ internal static class PlatformBootstrap
         };
 
         Platform.TryGetCurrentLocationAsync = AndroidCurrentLocationProvider.TryGetCurrentLocationAsync;
-        Platform.CreateVideoSurface = player => new AndroidVideoSurface(player);
+        Platform.CreateVideoSurface = (player, replay) => new AndroidVideoSurface(player, replay);
         if (System.OperatingSystem.IsAndroidVersionAtLeast(26))
         {
             Platform.GetPodcastCaptureDevices = AndroidPodcastCapture.GetDevices;

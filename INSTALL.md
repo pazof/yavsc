@@ -81,7 +81,7 @@ these Windows runtime behaviours.
 PostIt Desktop's home page provides **Podcasts : directs et replays**.
 Install LibVLC 3 with the `livehttp`, MPEG-TS, x264 and AAC plugins on the
 Desktop machine. Windows capture uses DirectShow; Linux uses V4L2 and the
-default PulseAudio microphone. FFmpeg is **not** a runtime dependency.
+default PulseAudio microphone. FFmpeg is **not** a client dependency.
 Select a camera and optionally a microphone, enter a title, then start.
 Stopping publishes the retained replay; navigating away or logging out
 stops capture too. A second signed-in PostIt instance can watch the live
@@ -93,7 +93,11 @@ replays; only the broadcaster can upload, complete or delete their podcast.
 Media is not anonymous and no access token is included in a playback URL.
 
 Configure Yavsc.Api's `Podcast` section (or environment variables such as
-`Podcast__RootPath`). No database migration or server-side encoder is needed:
+`Podcast__RootPath`). No database migration is needed. Install **FFmpeg 5+
+on the API server** (with `concatf`, MPEG-TS, MP4 and AAC bitstream-filter
+support; for Debian/Ubuntu: `apt-get install ffmpeg`). The API runtime stage
+in the main Dockerfile includes it. Only stream-copy remuxing is performed,
+not video/audio re-encoding:
 
 ```json
 {
@@ -103,7 +107,9 @@ Configure Yavsc.Api's `Podcast` section (or environment variables such as
     "MaxOwnerBytes": 1073741824,
     "MaxSegments": 7200,
     "MaxOwnerPodcasts": 100,
-    "IdleTimeoutSeconds": 60
+    "IdleTimeoutSeconds": 60,
+    "FfmpegPath": "ffmpeg",
+    "ReplayTimeoutSeconds": 600
   }
 }
 ```
@@ -120,7 +126,10 @@ owner. At the target two-second segment duration, this is roughly four hours
 per episode; the byte quota can be reached earlier. Podcast quotas are
 separate from the legacy user-files `DiskQuota`. Deleting an ended podcast
 releases its podcast quota. Reverse proxies must allow an 8 MiB PUT body
-and forward Authorization on every API request.
+and forward Authorization, Range and Content-Range on every API request/response.
+The retained MPEG-TS **and** the additional MP4 count toward `MaxOwnerBytes`.
+Allow enough free quota and disk space for both copies and the temporary MP4;
+deletion removes all copies.
 
 A broadcast without a new committed segment for 60 seconds, or present
 when the API restarts, becomes an interrupted replay on the next catalogue,
@@ -134,9 +143,26 @@ for manual recovery. There is no automatic resumption after an application
 restart; these private local recordings may be removed manually when no
 longer needed.
 
-The replay is **HLS/MPEG-TS**, not an MP4 download. PostIt's authenticated
-player joins a live broadcast up to three segments behind the edge and
-reads a replay from its beginning; seeking is not implemented. Native
+On completion, the API queues a private, seekable **MP4** (`-c copy`,
+`+faststart`). The persisted `replay.state` moves through `Pending`,
+`Processing`, `Ready` or `Failed`; completion itself does not wait for FFmpeg.
+The single API worker also queues older Completed indexes automatically,
+recovers interrupted preparation after a restart, and scans every five seconds.
+Interrupted broadcasts keep MPEG-TS playback unless the owner explicitly
+completes them. Source segments and existing HLS routes remain available.
+Preparation failure keeps all source media and reports an error; after checking
+server logs, FFmpeg installation, timeout and quota, the owner can use PostIt's
+**Relancer la preparation MP4** action, or `POST /api/v1/podcasts/{id}/replay/retry`.
+The MP4 is exposed only when ready, at authenticated
+`GET /api/v1/podcasts/{id}/replay.mp4` (also HEAD; byte ranges supported).
+
+PostIt's Android and Desktop player waits for MP4 preparation, then fetches
+bounded authenticated ranges with token refresh rather than giving LibVLC
+a bearer URL. Replay controls overlay the native video: play/pause, position,
+duration and draggable seek bar. They hide after three seconds without
+interaction while playing, stay visible during seeking/pause/keyboard focus,
+and reappear on pointer movement or touch.
+The live player still joins up to three segments behind the edge. Native
 camera/microphone permissions, drivers and codecs must still be verified
 on each target Windows/Linux machine.
 

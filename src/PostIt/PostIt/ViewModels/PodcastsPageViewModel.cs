@@ -79,6 +79,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public IAsyncRelayCommand PlayCommand { get; }
     public IAsyncRelayCommand FinishCommand { get; }
     public IAsyncRelayCommand DeleteCommand { get; }
+    public IAsyncRelayCommand RetryReplayCommand { get; }
     public override bool CanNavigateNext { get => false; protected set { } }
     public override bool CanNavigatePrevious { get => !IsBroadcasting; protected set { } }
 
@@ -100,6 +101,9 @@ public partial class PodcastsPageViewModel : ViewModelBase
         DeleteCommand = new AsyncRelayCommand(DeleteAsync,
             () => SelectedPodcast is { State: not PodcastState.Live } p
                 && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
+        RetryReplayCommand = new AsyncRelayCommand(RetryReplayAsync,
+            () => SelectedPodcast is { State: PodcastState.Completed, Replay.State: PodcastReplayState.Failed } p
+                && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
     }
 
     private void UpdateCommands()
@@ -111,6 +115,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
         PlayCommand.NotifyCanExecuteChanged();
         FinishCommand.NotifyCanExecuteChanged();
         DeleteCommand.NotifyCanExecuteChanged();
+        RetryReplayCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(CanNavigatePrevious));
     }
 
@@ -285,6 +290,19 @@ public partial class PodcastsPageViewModel : ViewModelBase
             await RefreshAsync();
         }
         catch (Exception ex) { Status = $"Suppression impossible : {ex.Message}"; }
+        finally { IsBusy = false; }
+    }
+
+    private async Task RetryReplayAsync()
+    {
+        IsBusy = true;
+        try
+        {
+            var podcast = SelectedPodcast ?? throw new InvalidOperationException("Selectionnez un podcast.");
+            await _client.RetryReplayAsync(podcast.Id);
+            await RefreshAsync();
+        }
+        catch (Exception ex) { Status = $"Relance du MP4 impossible : {ex.Message}"; }
         finally { IsBusy = false; }
     }
 }
