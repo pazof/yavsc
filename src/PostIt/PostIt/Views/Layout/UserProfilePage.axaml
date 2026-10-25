@@ -136,6 +136,16 @@
                        TextWrapping="Wrap"/>
           </Grid>
 
+          <StackPanel Spacing="4" IsEnabled="{Binding IsProfileLoaded}">
+            <TextBlock Text="Confidentialité des futurs appels audio-vidéo"
+                       FontWeight="SemiBold"/>
+            <CheckBox Content="Masquer mon adresse IP aux autres participants"
+                      IsChecked="{Binding HideIpAddressInCalls, Mode=TwoWay}"
+                      IsEnabled="{Binding !IsBusy}"/>
+            <TextBlock Text="Préférence enregistrée avec le profil et partagée entre vos appareils. Les appels ne sont pas encore disponibles. Lors de leur mise en service, cette option imposera un relais TURN, avec une latence potentiellement accrue ; les serveurs contactés pourront toujours connaître votre adresse IP."
+                       TextWrapping="Wrap"/>
+          </StackPanel>
+
           <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
             <Button x:Name="ChooseAvatarButton"
                     Content="Choisir un avatar"

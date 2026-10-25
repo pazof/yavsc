@@ -86,7 +86,8 @@ namespace Yavsc.WebApi.Controllers
                 Avatar = userData.Avatar,
                 FullName = userData.FullName,
                 Address = userData.PostalAddress?.Address ?? string.Empty,
-                DedicatedGoogleCalendar = userData.DedicatedGoogleCalendar
+                DedicatedGoogleCalendar = userData.DedicatedGoogleCalendar,
+                HideIpAddressInCalls = userData.HideIpAddressInCalls
             };
             user.BankInfoSummary = userData.BankInfo is { Count: > 0 }
                 ? string.Join(" | ", userData.BankInfo.Select(b => string.IsNullOrWhiteSpace(b.IBAN) ? b.BIC : $"{b.IBAN} / {b.BIC}"))
@@ -151,6 +152,11 @@ namespace Yavsc.WebApi.Controllers
                 return BadRequest(new { error = "Payload is required." });
             }
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (request.BankInfoSummary is not null)
             {
                 return BadRequest(new { error = "Bank information must be managed through the bank-info endpoint." });
@@ -212,8 +218,13 @@ namespace Yavsc.WebApi.Controllers
                 user.DedicatedGoogleCalendar = request.GoogleCalendarId.Trim();
             }
 
+            if (request.HideIpAddressInCalls is bool hideIpAddressInCalls)
+            {
+                user.HideIpAddressInCalls = hideIpAddressInCalls;
+            }
+
             await _dbContext.SaveChangesAsync(uid);
-            return Ok(new { status = "saved", fullName = user.FullName, address = user.PostalAddress?.Address, googleCalendarId = user.DedicatedGoogleCalendar });
+            return Ok(new { status = "saved", fullName = user.FullName, address = user.PostalAddress?.Address, googleCalendarId = user.DedicatedGoogleCalendar, hideIpAddressInCalls = user.HideIpAddressInCalls });
         }
 
         [HttpPut("preferences/monthly-email")]

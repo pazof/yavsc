@@ -9,4 +9,5 @@ public class ProfileUpdateRequest
     public string? Address { get; set; }
     public string? GoogleCalendarId { get; set; }
     public string? BankInfoSummary { get; set; }
+    public bool? HideIpAddressInCalls { get; set; }
 }

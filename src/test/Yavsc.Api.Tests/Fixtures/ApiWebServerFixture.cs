@@ -81,6 +81,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
         builder.Services.AddInvoicing(builder.Configuration);
         builder.Services.AddSingleton<RecordingMessageDelivery>();
         builder.Services.AddSingleton<ITrueEmailSender>(sp => sp.GetRequiredService<RecordingMessageDelivery>());
+        builder.Services.AddTransient<ICalendarManager, CalendarManager>();
         builder.Services.AddSingleton<IHubContext<ChatHub>>(sp => sp.GetRequiredService<RecordingMessageDelivery>());
         builder.Services.AddSingleton<IConnexionManager, HubConnectionManager>();
         builder.Services.AddTransient<IYavscMessageSender, YavscMessageSender>();

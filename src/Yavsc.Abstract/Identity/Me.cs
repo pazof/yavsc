@@ -5,6 +5,7 @@ namespace Yavsc.Abstract.Identity {
   {
       public bool EmailConfirmed { get; set; }
       public bool AllowMonthlyEmail { get; set; }
+      public bool HideIpAddressInCalls { get; set; }
       public bool HasPassword { get; set; }
       public bool TwoFactorEnabled { get; set; }
       public int ExternalLoginCount { get; set; }

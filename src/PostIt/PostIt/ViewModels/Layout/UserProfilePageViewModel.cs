@@ -92,6 +92,9 @@ public partial class UserProfilePageViewModel : ViewModelBase
     public partial bool AllowMonthlyEmail { get; set; }
 
     [ObservableProperty]
+    public partial bool HideIpAddressInCalls { get; set; }
+
+    [ObservableProperty]
     public partial bool HasPassword { get; set; }
 
     [ObservableProperty]
@@ -195,6 +198,7 @@ public partial class UserProfilePageViewModel : ViewModelBase
             BankInfoSummary = string.IsNullOrWhiteSpace(me.BankInfoSummary) ? "Aucune information bancaire" : me.BankInfoSummary;
             EmailConfirmed = me.EmailConfirmed;
             AllowMonthlyEmail = me.AllowMonthlyEmail;
+            HideIpAddressInCalls = me.HideIpAddressInCalls;
             HasPassword = me.HasPassword;
             TwoFactorEnabled = me.TwoFactorEnabled;
             ExternalLoginCount = me.ExternalLoginCount;
@@ -280,7 +284,8 @@ public partial class UserProfilePageViewModel : ViewModelBase
             UserName = NormalizeField(UserName, "—"),
             FullName = NormalizeField(FullName, "—"),
             Address = NormalizeField(Address, "—"),
-            GoogleCalendarId = NormalizeField(DedicatedGoogleCalendar, "Non configuré")
+            GoogleCalendarId = NormalizeField(DedicatedGoogleCalendar, "Non configuré"),
+            HideIpAddressInCalls = HideIpAddressInCalls
         };
     }
 

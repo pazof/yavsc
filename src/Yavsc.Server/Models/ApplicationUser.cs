@@ -105,6 +105,9 @@ namespace Yavsc.Models
         public bool AllowMonthlyEmail { get; set; } = false;
 
         [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
+        public bool HideIpAddressInCalls { get; set; }
+
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         [InverseProperty("Owner")]
         public virtual List<ChatRoom>? Rooms { get; set; }
 

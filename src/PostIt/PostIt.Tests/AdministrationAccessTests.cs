@@ -180,6 +180,60 @@ public class AdministrationAccessTests
         Assert.Contains("Impossible de charger mon usage", vm.UsageError);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task My_profile_loads_and_includes_the_call_privacy_preference_in_the_save_payload(bool initial)
+    {
+        await using var api = new ProfileTransport("Performer") { HideIpAddressInCalls = initial };
+        var vm = new UserProfilePageViewModel(api);
+        await vm.RefreshAsync();
+        Assert.Equal(initial, vm.HideIpAddressInCalls);
+        vm.HideIpAddressInCalls = !initial;
+        Assert.Equal(!initial, vm.BuildProfileUpdateRequest().HideIpAddressInCalls);
+        Assert.True(vm.SaveProfileCommand.CanExecute(null));
+        Assert.True(vm.IsProfileLoaded);
+    }
+
+    [AvaloniaFact]
+    public async Task My_profile_privacy_checkbox_is_two_way_and_disabled_before_loading()
+    {
+        await using var api = new ProfileTransport("Performer") { HideIpAddressInCalls = true };
+        var vm = new UserProfilePageViewModel(api);
+        var page = new UserProfilePage { DataContext = vm };
+        var window = new Window { Content = page };
+        try
+        {
+            window.Show();
+            var checkbox = Assert.Single(page.GetVisualDescendants().OfType<CheckBox>(),
+                control => Equals(control.Content, "Masquer mon adresse IP aux autres participants"));
+            Assert.False(checkbox.IsEffectivelyEnabled);
+            await vm.RefreshAsync();
+            Assert.True(checkbox.IsEffectivelyEnabled);
+            Assert.True(checkbox.IsChecked);
+            checkbox.IsChecked = false;
+            Assert.False(vm.HideIpAddressInCalls);
+            Assert.Equal(false, vm.BuildProfileUpdateRequest().HideIpAddressInCalls);
+            vm.IsBusy = true;
+            Assert.False(checkbox.IsEffectivelyEnabled);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    [Fact]
+    public async Task Profile_read_failure_prevents_saving_a_default_call_privacy_preference()
+    {
+        await using var api = new ProfileTransport("Performer") { FailProfile = true };
+        var vm = new UserProfilePageViewModel(api);
+        await vm.RefreshAsync();
+        Assert.False(vm.IsProfileLoaded);
+        Assert.False(vm.SaveProfileCommand.CanExecute(null));
+        Assert.Contains("Impossible de charger le profil", vm.StatusMessage);
+    }
+
     internal sealed class ProfileTransport : YavscApiClient
     {
         private readonly string _tokenPath;
@@ -188,6 +242,7 @@ public class AdministrationAccessTests
         public Task<Me>? PendingProfile { get; set; }
         public bool FailProfile { get; set; }
         public bool FailUsage { get; set; }
+        public bool HideIpAddressInCalls { get; set; }
         public ResourceUsageApiClient UsageClient => new(this, Settings.ApiUrl);
 
         public ProfileTransport(string role)
@@ -216,7 +271,7 @@ public class AdministrationAccessTests
                 if (FailProfile)
                     throw new HttpRequestException("Profile unavailable");
                 result = PendingProfile is not null ? await PendingProfile
-                    : new Me { UserId = "alice-id", UserName = "alice", Roles = [_role] };
+                    : new Me { UserId = "alice-id", UserName = "alice", Roles = [_role], HideIpAddressInCalls = HideIpAddressInCalls };
             }
             else if (path.Contains("/resource-usage/"))
             {

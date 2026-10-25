@@ -2,8 +2,10 @@
 
 ## Statut et périmètre
 
-Ce document décrit un **plan d'implémentation**, pas une fonctionnalité déjà
-disponible. Il complète la [topologie de PostIt](postit.md) et les
+Ce document décrit un **plan d'implémentation** : les appels ne sont pas encore
+disponibles. La préférence de confidentialité est persistée et éditable dans
+le profil, mais ne pilote aucun transport média à ce stade.
+Il complète la [topologie de PostIt](postit.md) et les
 [mécanismes de notification existants](notifications.md).
 
 La cible couvre :
@@ -82,12 +84,17 @@ simplicité d'exploitation prime sur le coût serveur.
 
 ### Contrat fonctionnel
 
-Prévoir un booléen de compte, nommé provisoirement `HideIpAddressInCalls`,
-persisté côté serveur et accessible en lecture/écriture uniquement par
-l'utilisateur concerné via la gestion de son profil. Le réglage est partagé
-entre ses appareils ; une préférence locale seule ne suffit pas.
+Le booléen de compte `HideIpAddressInCalls` est persisté côté serveur et
+accessible en lecture/écriture uniquement par
+l'utilisateur concerné via `GET /api/v1/account/me` et
+`PUT /api/v1/account/me`, ainsi que dans « Mon profil » de PostIt.
+Le réglage est partagé entre ses appareils ; une préférence locale seule
+ne suffit pas.
 
-Valeur initiale proposée : `false`, à confirmer avant implémentation.
+Valeur initiale : `false`, pour les nouveaux comptes et les comptes existants
+après migration. Le champ de mise à jour est nullable : son absence ou `null`
+conserve la valeur existante, notamment pour les anciens clients ; `false`
+explicite désactive la préférence.
 `false` autorise le chemin direct mais n'interdit pas TURN lorsqu'il est
 nécessaire à la connectivité. `true` impose un transport relayé.
 
@@ -95,6 +102,12 @@ Présenter le réglage comme « Masquer mon adresse IP aux autres participants �
 en précisant le surcoût potentiel en latence et en bande passante serveur.
 Il ne procure pas l'anonymat : les services contactés, notamment l'API, le
 serveur de signalisation et TURN, peuvent toujours connaître l'adresse IP.
+
+La migration EF Core `HideIpAddressInCalls`, dans le projet Yavsc.Org, ajoute
+la colonne booléenne non nullable à `AspNetUsers`. Elle doit être déployée
+avant de servir les nouvelles lectures et écritures de profil. Cette étape
+n'installe ni TURN ni SFU et n'implémente pas encore les règles de négociation
+décrites ci-dessous.
 
 ### Application à la négociation
 
