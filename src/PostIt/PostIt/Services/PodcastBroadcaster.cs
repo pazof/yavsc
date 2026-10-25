@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json;
 using LibVLCSharp.Shared;
+using Avalonia.Controls;
 using Yavsc.Abstract.Streaming;
 using Yavsc.Api.Client;
 
@@ -24,6 +25,7 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
     private bool _disposed;
 
     public PodcastResponse Podcast { get; private set; }
+    public Control? Preview => _capture.Preview;
     public Task Completion { get; private set; } = Task.CompletedTask;
     public event Action<PodcastResponse>? Progress;
 
@@ -36,18 +38,24 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         _directory = directory;
     }
 
-    public static void ConfigureOutput(Media media, string directory)
+    public static void ConfigureOutput(Media media, string directory, bool preview = false)
     {
         var path = directory.Replace('\\', '/').Replace("\"", "\\\"");
-        media.AddOption(":sout=#transcode{vcodec=h264,venc=x264{preset=ultrafast,tune=zerolatency,keyint=60},vb=1200,fps=30,"
-            + "acodec=mp4a,ab=128,channels=2,samplerate=48000}:std{"
+        var recording = "std{"
             + $"access=livehttp{{seglen=2,delsegs=false,numsegs=0,initial-segment-number=0,index=\"{path}/index.m3u8\","
-            + $"index-url=segment-########.ts}},mux=ts{{use-key-frames}},dst=\"{path}/segment-########.ts\"}}");
+            + $"index-url=segment-########.ts}},mux=ts{{use-key-frames}},dst=\"{path}/segment-########.ts\"}}";
+        var encoding = "transcode{vcodec=h264,venc=x264{preset=ultrafast,tune=zerolatency,keyint=60},vb=1200,fps=30,"
+            + "acodec=mp4a,ab=128,channels=2,samplerate=48000}:"
+            + recording;
+        var destination = encoding.Replace("\\", "\\\\").Replace("\"", "\\\"");
+        media.AddOption(":sout=#" + (preview ? $"duplicate{{dst=display{{noaudio}},dst=\"{destination}\"}}" : encoding));
     }
 
     public static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
         string camera, string? microphone, CancellationToken ct)
-        => await StartAsync(api, title, vlc => new CameraStreamer(vlc).CreateCaptureMedia(camera, microphone), ct);
+        => await StartAsync(api, title,
+            (directory, _) => Task.FromResult<IPodcastCapture>(new LibVlcPodcastCapture(
+                vlc => new CameraStreamer(vlc).CreateCaptureMedia(camera, microphone), directory, preview: true)), ct);
 
     internal static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
         Func<LibVLC, Media> createMedia, CancellationToken ct)

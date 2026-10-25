@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -30,6 +31,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
     private CaptureDevice? _camera;
     private CaptureDevice? _microphone;
     private PodcastResponse? _selected;
+    private Control? _capturePreview;
+    public Control? CapturePreview { get => _capturePreview; private set => SetProperty(ref _capturePreview, value); }
 
     public ObservableCollection<PodcastResponse> Podcasts { get; } = new();
     public ObservableCollection<CaptureDevice> Cameras { get; } = new();
@@ -194,6 +197,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
                     (directory, ct) => createCapture(camera, microphone, directory, ct), _pageCancellation.Token)
                 : await PodcastBroadcaster.StartAsync(_client, Title, camera, microphone, _pageCancellation.Token);
             _broadcaster.Progress += OnProgress;
+            CapturePreview = _broadcaster.Preview;
             _session.LogoutCompleted += OnLogout;
             IsBroadcasting = true;
             Status = "Capture en cours ; attente du premier segment HLS.";
@@ -225,6 +229,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
         }
         finally
         {
+            CapturePreview = null;
             broadcaster.Progress -= OnProgress;
             _session.LogoutCompleted -= OnLogout;
             try { await broadcaster.DisposeAsync(); }

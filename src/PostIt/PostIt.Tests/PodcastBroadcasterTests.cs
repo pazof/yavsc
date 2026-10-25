@@ -1,7 +1,10 @@
 using System.Net;
 using Avalonia.Headless.XUnit;
+using Avalonia.Headless;
+using Avalonia.Controls;
 using PostIt.Services;
 using PostIt.ViewModels;
+using PostIt.Views;
 using Yavsc.Abstract.Streaming;
 using Yavsc.Api.Client;
 
@@ -9,6 +12,69 @@ namespace PostIt.Tests;
 
 public sealed class PodcastBroadcasterTests
 {
+    [Fact]
+    public Task Shared_page_exposes_running_capture_preview_and_clears_it_before_disposal()
+        => HeadlessUnitTestSession.GetOrStartForAssembly(typeof(PodcastBroadcasterTests).Assembly).Dispatch(async () =>
+        {
+            var tokenPath = Path.Combine(Path.GetTempPath(), $"postit-preview-{Guid.NewGuid():N}.json");
+            var devices = Platform.GetPodcastCaptureDevices;
+            var permissions = Platform.RequestPodcastPermissionsAsync;
+            var factory = Platform.CreatePodcastCaptureAsync;
+            var store = new TokenStore(tokenPath);
+            store.Save(new RefreshTokenRecord("test-access-token", "test-refresh-token", DateTimeOffset.UtcNow.AddHours(1), null));
+            await using var api = new YavscApiClient(new Settings(), store);
+            await using var transport = new Transport();
+            FakeCapture? capture = null;
+            PodcastsPageViewModel? vm = null;
+            try
+            {
+                var preview = new Border();
+                var disposed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                Platform.GetPodcastCaptureDevices = () => new([new("Camera", "camera")], [new("None", "")]);
+                Platform.RequestPodcastPermissionsAsync = (_, _) => Task.CompletedTask;
+                Platform.CreatePodcastCaptureAsync = (_, _, directory, _) =>
+                {
+                    capture = new FakeCapture(directory, preview)
+                    {
+                        OnDispose = () =>
+                        {
+                            Assert.Null(vm!.CapturePreview);
+                            disposed.TrySetResult();
+                        }
+                    };
+                    return Task.FromResult<IPodcastCapture>(capture);
+                };
+                var session = new SessionStatusViewModel { Api = api };
+                session.Refresh();
+                vm = new PodcastsPageViewModel(new PodcastApiClient(transport, () => "https://api.example/"), api, session)
+                {
+                    Title = "Preview"
+                };
+                vm.DetectDevicesCommand.Execute(null);
+                await vm.StartCommand.ExecuteAsync(null);
+                Assert.Same(preview, vm.CapturePreview);
+                Assert.True(vm.IsBroadcasting);
+                var page = new PodcastsPage { DataContext = vm };
+                var host = page.FindControl<ContentControl>("CapturePreviewHost");
+                Assert.NotNull(host);
+                Assert.Same(preview, host.Content);
+                await vm.DeactivateAsync();
+                await disposed.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+                Assert.Null(vm.CapturePreview);
+                Assert.Null(host.Content);
+                Assert.True(capture!.Stopped);
+                return true;
+            }
+            finally
+            {
+                if (vm?.IsBroadcasting == true) await vm.StopAsync();
+                Platform.GetPodcastCaptureDevices = devices;
+                Platform.RequestPodcastPermissionsAsync = permissions;
+                Platform.CreatePodcastCaptureAsync = factory;
+                File.Delete(tokenPath);
+            }
+        }, TestContext.Current.CancellationToken);
+
     [AvaloniaFact]
     public async Task Shared_page_uses_platform_devices_and_requests_permissions_before_creating_server_broadcast()
     {
@@ -120,9 +186,12 @@ public sealed class PodcastBroadcasterTests
         public string Directory { get; }
         public bool Stopped { get; private set; }
         public bool Disposed { get; private set; }
+        public Control? Preview { get; }
+        public Action? OnDispose { get; init; }
         public Task Completion => _completion.Task;
-        public FakeCapture(string directory)
+        public FakeCapture(string directory, Control? preview = null)
         {
+            Preview = preview;
             Directory = directory;
             File.WriteAllBytes(Path.Combine(directory, "segment-00000000.ts"), [0x47, 1]);
             File.WriteAllText(Path.Combine(directory, "index.m3u8"), "#EXTM3U\n#EXTINF:2,\nsegment-00000000.ts\n");
@@ -136,7 +205,7 @@ public sealed class PodcastBroadcasterTests
             _completion.TrySetResult();
             return Task.CompletedTask;
         }
-        public ValueTask DisposeAsync() { Disposed = true; return ValueTask.CompletedTask; }
+        public ValueTask DisposeAsync() { Disposed = true; OnDispose?.Invoke(); return ValueTask.CompletedTask; }
     }
 
     private sealed class Transport : IYavscApiClient

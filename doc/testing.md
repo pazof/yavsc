@@ -84,6 +84,8 @@ dotnet test --project src/test/Yavsc.Api.Tests/Yavsc.Api.Tests.csproj \
 dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
   --filter-class '*PodcastTests' --filter-class '*PodcastReplayTests' \
   --filter-class '*YavscApiClientTests' --filter-class '*PodcastNativeCaptureTests'
+dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
+  --filter-method '*Shared_page_exposes_running_capture_preview_and_clears_it_before_disposal'
 ```
 
 Les tests serveur couvrent HTTP/authentification, proprietaire, sequences,
@@ -108,9 +110,15 @@ Pour les activer, installer LibVLC avec ses encodeurs H.264/AAC et definir
 cette variable sur un fichier video local d'environ huit secondes contenant
 une piste audio. Ils exercent la segmentation LibVLC reelle, l'envoi et la
 reprise apres acquittement perdu, le dernier segment apres arret et le
-decodage authentifie du replay MPEG-TS. Aucun FFmpeg n'est requis par ces tests
-natifs client ni par PostIt (le serveur MP4, lui, en a besoin).
+decodage authentifie du replay MPEG-TS. FFmpeg n'est pas une dependance
+d'execution de PostIt (le serveur MP4, lui, en a besoin).
 Les tests materiels camera/microphone Windows/Linux restent manuels.
+Les deux variantes du test d'encodage HLS (avec/sans apercu) necessitent
+egalement `ffprobe` pour verifier independamment les pistes H.264 et AAC
+du premier segment. La variante avec apercu attend une image decodee
+par LibVLC dans un tampon memoire, sans ouvrir de camera ni diffuser le son
+sur les haut-parleurs. Le test de page headless verifie aussi le binding
+du controle d'apercu et son retrait avant liberation de la capture.
 
 ### Rotation de la capture Android
 
@@ -137,6 +145,9 @@ Attendre la fin du test : `RUNNING` doit devenir `PASS`. Il encode quatre
 quadrants colores en MPEG-TS pour 0, 90, 180 et 270 degres, decode une image et
 verifie les dimensions (640x480 ou 480x640) et les couleurs aux quatre positions.
 La tolerance de chaque composante RGB est de 40 pour tenir compte de H.264.
+Il verifie aussi les couleurs RGBA de l'apercu OpenGL (tolerance 5), les
+bandes noires sans deformation et le detachement/rattachement de sa surface
+pendant l'encodage, toujours pour les quatre rotations.
 Une erreur de rendu, d'encodage, de decodage ou de comparaison produit `FAIL`
 avec l'exception. Cette activite est exclue des builds Release.
 

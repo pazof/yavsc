@@ -27,7 +27,7 @@ public sealed class AndroidCameraFrameRotationTestActivity : Activity
         {
             foreach (var rotation in new[] { 0, 90, 180, 270 })
                 await VerifyRotationAsync(rotation);
-            File.WriteAllText(resultPath, "PASS\nrotations=0,90,180,270\nformat=MPEG-TS\nsource=synthetic");
+            File.WriteAllText(resultPath, "PASS\nrotations=0,90,180,270\nformat=MPEG-TS\npreview=RGBA,detach,reattach,letterbox\nsource=synthetic");
         }
         catch (Exception ex)
         {
@@ -60,6 +60,10 @@ public sealed class AndroidCameraFrameRotationTestActivity : Activity
         recorder.Prepare();
         using var encoderSurface = recorder.Surface
             ?? throw new InvalidOperationException("Encoder surface unavailable.");
+        using var preview = ImageReader.NewInstance(outputWidth + 160, outputHeight + 80,
+            (ImageFormatType)Format.Rgba8888, 3)
+            ?? throw new InvalidOperationException("Preview reader unavailable.");
+        var previewFrames = 0;
         Exception? failure = null;
         var stopping = 0;
         Stage("initialize EGL");
@@ -71,6 +75,8 @@ public sealed class AndroidCameraFrameRotationTestActivity : Activity
                 File.WriteAllText(Path.Combine(FilesDir.AbsolutePath, "camera-rotation-test-result.txt"), $"FAIL\n{error}");
             }))
         {
+            await rotator.SetPreviewAsync(preview.Surface, preview.Width, preview.Height,
+                error => failure = error);
             Stage("start recorder");
             recorder.Start();
             Task? stop = null;
@@ -83,6 +89,10 @@ public sealed class AndroidCameraFrameRotationTestActivity : Activity
                 for (var frame = 0; frame < 90; frame++)
                 {
                     if (failure is not null) throw failure;
+                    if (frame == 10) await rotator.SetPreviewAsync(null);
+                    if (frame == 15)
+                        await rotator.SetPreviewAsync(preview.Surface, preview.Width, preview.Height,
+                            error => failure = error);
                     if (frame == 45)
                     {
                         Volatile.Write(ref stopping, 1);
@@ -107,11 +117,24 @@ public sealed class AndroidCameraFrameRotationTestActivity : Activity
                         canvas.Dispose();
                     }
                     await Task.Delay(34);
+                    using var image = preview.AcquireLatestImage();
+                    if (image is not null)
+                    {
+                        try
+                        {
+                            VerifyPreview(image, rotation, outputWidth, outputHeight);
+                            previewFrames++;
+                        }
+                        finally { image.Close(); }
+                    }
                 }
                 if (failure is not null) throw failure;
                 Stage("wait for recorder stop");
                 await (stop ?? throw new InvalidOperationException("Recorder stop was not requested."))
                     .WaitAsync(TimeSpan.FromSeconds(10));
+                if (previewFrames < 8)
+                    throw new InvalidOperationException($"Too few preview frames: {previewFrames}.");
+                await rotator.SetPreviewAsync(null);
             }
             finally
             {
@@ -142,6 +165,34 @@ public sealed class AndroidCameraFrameRotationTestActivity : Activity
                 throw new InvalidOperationException($"Rotation {rotation}, quadrant {i}: {actual}, expected {target}.");
         }
         File.Delete(path);
+    }
+
+    private static void VerifyPreview(Image image, int rotation, int outputWidth, int outputHeight)
+    {
+        var plane = image.GetPlanes()![0];
+        var buffer = plane.Buffer!;
+        var scale = Math.Min((double)image.Width / outputWidth, (double)image.Height / outputHeight);
+        var width = (int)(outputWidth * scale);
+        var height = (int)(outputHeight * scale);
+        Color[] expected = rotation switch
+        {
+            90 => [Color.Blue, Color.Red, Color.Yellow, Color.Green],
+            180 => [Color.Yellow, Color.Blue, Color.Green, Color.Red],
+            270 => [Color.Green, Color.Yellow, Color.Red, Color.Blue],
+            _ => [Color.Red, Color.Green, Color.Blue, Color.Yellow]
+        };
+        for (var i = 0; i < expected.Length; i++)
+        {
+            var x = (image.Width - width) / 2 + (i % 2 * 2 + 1) * width / 4;
+            var y = (image.Height - height) / 2 + (i / 2 * 2 + 1) * height / 4;
+            var offset = y * plane.RowStride + x * plane.PixelStride;
+            var actual = new Color(buffer.Get(offset) & 255, buffer.Get(offset + 1) & 255, buffer.Get(offset + 2) & 255);
+            var target = expected[i];
+            if (Math.Abs(actual.R - target.R) > 5 || Math.Abs(actual.G - target.G) > 5 || Math.Abs(actual.B - target.B) > 5)
+                throw new InvalidOperationException($"Preview rotation {rotation}, quadrant {i}: {actual}, expected {target}.");
+        }
+        if (buffer.Get(0) != 0 || buffer.Get(1) != 0 || buffer.Get(2) != 0)
+            throw new InvalidOperationException("Preview letterbox is not black.");
     }
 }
 #endif

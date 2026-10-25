@@ -1,5 +1,8 @@
 using System.Net;
 using System.Net.Http;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text.Json;
 using LibVLCSharp.Shared;
 using PostIt.Services;
 using Yavsc.Abstract.Streaming;
@@ -7,28 +10,47 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
-public sealed class PodcastNativeCaptureTests
+public sealed class PodcastNativeCaptureTests(ITestOutputHelper output)
 {
     public static bool HasFixture => File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_MEDIA"));
 
-    [Fact(Skip = "Set POSTIT_TEST_MEDIA to a local video with audio and install LibVLC with H.264/AAC encoders.", SkipUnless = nameof(HasFixture))]
-    public async Task LibVLC_produces_complete_H264_AAC_HLS_segments_without_external_encoder()
+    [Theory(Skip = "Set POSTIT_TEST_MEDIA to a local video with audio and install LibVLC with H.264/AAC encoders.", SkipUnless = nameof(HasFixture))]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LibVLC_produces_complete_H264_AAC_HLS_segments_without_external_encoder(bool preview)
     {
         var root = Path.Combine(Path.GetTempPath(), $"postit native's hls {Guid.NewGuid():N}");
         Directory.CreateDirectory(root);
+        var pixels = preview ? Marshal.AllocHGlobal(640 * 480 * 4) : IntPtr.Zero;
         try
         {
             Core.Initialize();
-            using var vlc = new LibVLC();
+            using var vlc = new LibVLC("--vout=dummy", "--aout=dummy", "--no-xlib",
+                "--avcodec-hw=none", "--avcodec-threads=2");
             using var media = new Media(vlc, new Uri(Path.GetFullPath(Environment.GetEnvironmentVariable("POSTIT_TEST_MEDIA")!)));
             using var player = new MediaPlayer(vlc);
-            PodcastBroadcaster.ConfigureOutput(media, root);
+            var displayed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            if (preview)
+            {
+                player.SetVideoFormat("RV32", 640, 480, 640 * 4);
+                player.SetVideoCallbacks((_, planes) =>
+                {
+                    Marshal.WriteIntPtr(planes, pixels);
+                    return IntPtr.Zero;
+                }, null, (_, _) => displayed.TrySetResult());
+            }
+            PodcastBroadcaster.ConfigureOutput(media, root, preview);
             var ended = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             player.EndReached += (_, _) => ended.TrySetResult();
             player.EncounteredError += (_, _) => ended.TrySetException(new InvalidOperationException("LibVLC encoding failed."));
             Assert.True(player.Play(media));
+            output.WriteLine($"Encoding started (preview={preview}).");
+            if (preview)
+                await displayed.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
             await ended.Task.WaitAsync(TimeSpan.FromSeconds(45), TestContext.Current.CancellationToken);
+            output.WriteLine("End reached; stopping player.");
             player.Stop();
+            output.WriteLine("Player stopped; checking segments.");
             var playlist = await File.ReadAllTextAsync(Path.Combine(root, "index.m3u8"), TestContext.Current.CancellationToken);
             var segments = HlsCapturePlaylist.Parse(playlist);
             Assert.True(segments.Count >= 2, playlist);
@@ -41,8 +63,34 @@ public sealed class PodcastNativeCaptureTests
                 Assert.InRange(segment.DurationSeconds, 0.001, 15);
                 for (var i = 0; i < bytes.Length; i += 188) Assert.Equal(0x47, bytes[i]);
             }
+            var start = new ProcessStartInfo("ffprobe") { RedirectStandardOutput = true, RedirectStandardError = true };
+            foreach (var argument in new[] { "-v", "error", "-show_streams", "-of", "json", Path.Combine(root, segments[0].FileName) })
+                start.ArgumentList.Add(argument);
+            using var probe = Process.Start(start) ?? throw new IOException("Cannot start ffprobe.");
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+            timeout.CancelAfter(TimeSpan.FromSeconds(10));
+            var stdout = probe.StandardOutput.ReadToEndAsync(timeout.Token);
+            var stderr = probe.StandardError.ReadToEndAsync(timeout.Token);
+            try
+            {
+                await probe.WaitForExitAsync(timeout.Token);
+                Assert.True(probe.ExitCode == 0, await stderr);
+                using var json = JsonDocument.Parse(await stdout);
+                var streams = json.RootElement.GetProperty("streams").EnumerateArray().ToArray();
+                Assert.Contains(streams, track => track.GetProperty("codec_name").GetString() == "h264");
+                Assert.Contains(streams, track => track.GetProperty("codec_name").GetString() == "aac");
+            }
+            finally
+            {
+                if (!probe.HasExited) probe.Kill(entireProcessTree: true);
+                await probe.WaitForExitAsync(CancellationToken.None);
+            }
         }
-        finally { Directory.Delete(root, recursive: true); }
+        finally
+        {
+            if (pixels != IntPtr.Zero) Marshal.FreeHGlobal(pixels);
+            Directory.Delete(root, recursive: true);
+        }
     }
 
     [Fact(Skip = "Set POSTIT_TEST_MEDIA to a local video with audio and install LibVLC with H.264/AAC encoders.", SkipUnless = nameof(HasFixture))]

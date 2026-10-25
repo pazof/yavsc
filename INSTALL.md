@@ -83,6 +83,13 @@ Install LibVLC 3 with the `livehttp`, MPEG-TS, x264 and AAC plugins on the
 Desktop machine. Windows capture uses DirectShow; Linux uses V4L2 and the
 default PulseAudio microphone. FFmpeg is **not** a client dependency.
 Select a camera and optionally a microphone, enter a title, then start.
+An **Apercu local de la capture** appears at the top of the Podcasts page on
+Android and Desktop. It uses the current capture, not a second camera session
+or the server replay. Android displays the same oriented frames as the encoder,
+with black bars to preserve proportions; Desktop duplicates LibVLC's video
+output. Local microphone playback is disabled to avoid acoustic feedback.
+Stopping releases the preview; hiding/recreating the Android preview surface
+does not restart the encoder or change its timestamps.
 Stopping publishes the retained replay; navigating away or logging out
 stops capture too. A second signed-in PostIt instance can watch the live
 broadcast while it is being captured.

@@ -5,6 +5,7 @@
 
 ### Added
 
+* [PostIt] Show a local live capture preview on Android and Desktop without opening a second camera or reading back uploaded segments. Share Android's oriented EGL frames with an aspect-preserving preview surface; duplicate Desktop LibVLC output without local microphone playback.
 * [Podcasts] Prepare authenticated, seekable MP4 replays for new and existing Completed broadcasts using server-side FFmpeg stream copy and faststart. Retain MPEG-TS, account for both copies in the owner quota, recover preparation after restarts, and expose owner-only retries plus GET/HEAD byte-range playback.
 * [PostIt] Add Android/Desktop native video overlays for MP4 replay position, duration, seeking and play/pause, with three-second auto-hide. Use bounded authenticated range input with token refresh; preserve MPEG-TS live/interrupted playback.
 

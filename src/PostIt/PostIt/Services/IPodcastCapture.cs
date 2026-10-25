@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 
 namespace PostIt.Services;
 
@@ -12,5 +13,6 @@ public sealed record PodcastCaptureDevices(
 public interface IPodcastCapture : IAsyncDisposable
 {
     Task Completion { get; }
+    Control? Preview => null;
     Task StopAsync();
 }

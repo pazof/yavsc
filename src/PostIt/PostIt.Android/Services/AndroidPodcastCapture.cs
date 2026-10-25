@@ -27,6 +27,8 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
     private CameraCaptureSession? _session;
     private MediaRecorder? _recorder;
     private AndroidCameraFrameRotator? _rotator;
+    private AndroidCapturePreview? _preview;
+    public Avalonia.Controls.Control? Preview => _preview;
     private Surface? _surface;
     private ParcelFileDescriptor? _readPipe;
     private ParcelFileDescriptor? _writePipe;
@@ -160,6 +162,7 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         if (_stopRequested) throw new System.OperationCanceledException("Demarrage de la capture annule.");
         _surface = _recorder.Surface ?? throw new InvalidOperationException("Surface encodeur indisponible.");
         _rotator = await AndroidCameraFrameRotator.CreateAsync(_surface, size.Width, size.Height, rotation, Fail);
+        _preview = new AndroidCapturePreview(_rotator);
         ct.ThrowIfCancellationRequested();
         if (_stopRequested) throw new System.OperationCanceledException("Demarrage de la capture annule.");
         var cameraSurface = _rotator.CameraSurface;
@@ -286,6 +289,8 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         {
             if (_stopped) return;
             _stopped = true;
+            if (_preview is not null)
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(_preview.Dispose);
             await Task.Run(StopNative);
             await _pump;
         }

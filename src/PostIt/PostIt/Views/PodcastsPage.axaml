@@ -10,6 +10,13 @@
         <StackPanel Margin="16" Spacing="12" MaxWidth="900">
             <TextBlock Text="Podcasts : directs et replays" FontSize="22" />
             <TextBlock Text="Lecture et emission reservees aux utilisateurs connectes. Quitter cette page arrete la capture." TextWrapping="Wrap" />
+            <StackPanel Spacing="8" IsVisible="{Binding IsBroadcasting}">
+                <TextBlock Text="Apercu local de la capture" FontWeight="SemiBold" />
+                <Border Background="Black" CornerRadius="4" ClipToBounds="True">
+                    <ContentControl x:Name="CapturePreviewHost" Content="{Binding CapturePreview}" Height="300"
+                                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+                </Border>
+            </StackPanel>
             <StackPanel Spacing="8" IsVisible="{Binding CanBroadcast}" IsEnabled="{Binding !IsBroadcasting}">
                 <TextBox Text="{Binding Title}" PlaceholderText="Titre du direct" MaxLength="160" />
                 <Button Content="Detecter cameras et microphones" Command="{Binding DetectDevicesCommand}" />
