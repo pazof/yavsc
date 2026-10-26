@@ -4,10 +4,15 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.SignalR;
 using Yavsc.Abstract.Identity;
+using Yavsc.Abstract.Chat.Calls;
 using Yavsc.Api.Test.Fixtures;
 using Yavsc.Models;
 using Yavsc.Tests.Shared;
+using Yavsc.Services;
+using Yavsc.Settings;
 
 namespace Yavsc.Api.Test;
 
@@ -145,5 +150,33 @@ public sealed class AccountCallPreferenceTests(ApiWebServerFixture fixture) : IC
         Assert.NotNull(profile);
         Assert.False(profile.HideIpAddressInCalls);
         Assert.NotEqual("Must not be saved", profile.FullName);
+    }
+
+    [Fact]
+    public async Task Activating_privacy_ends_an_existing_call_before_returning_success()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var id = await CreateUserAsync();
+        var other = await CreateUserAsync();
+        var options = fixture.Services.GetRequiredService<IOptions<AudioVideoCallOptions>>().Value;
+        var calls = fixture.Services.GetRequiredService<CallSignalingService>();
+        var delivery = fixture.Services.GetRequiredService<RecordingMessageDelivery>();
+        options.Enabled = true;
+        try
+        {
+            var call = await calls.InviteAsync("General", id, other, "preference-caller", ["preference-callee"], false);
+            await calls.AcceptAsync(call.Id, other, "preference-callee", false);
+            using var client = Client(id);
+            using var response = await client.PutAsJsonAsync(Endpoint, new { hideIpAddressInCalls = true }, ct);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Contains(delivery.Pushes, p => p.Method == CallHubMethods.Ended &&
+                p.Arguments[0] is CallEnded ended && ended.CallId == call.Id && ended.Reason == "profile-changed");
+            await Assert.ThrowsAsync<HubException>(() => calls.GetSessionAsync(call.Id, id, "preference-caller"));
+        }
+        finally
+        {
+            await calls.EndForUserAsync(id, "test-cleanup");
+            options.Enabled = false;
+        }
     }
 }

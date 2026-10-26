@@ -37,6 +37,8 @@ namespace PostIt.ViewModels.Chat
 
         private HubConnection? _connection;
 
+        public CallSignalingClient? Calls { get; private set; }
+
         [ObservableProperty]
         public partial string CurrentRoom { get; set; } =  "General";
 
@@ -130,6 +132,8 @@ namespace PostIt.ViewModels.Chat
 
         private async Task DisconnectAsync()
         {
+            Calls?.Dispose();
+            Calls = null;
             if (_connection != null)
             {
                 await _connection.StopAsync();
@@ -150,6 +154,13 @@ namespace PostIt.ViewModels.Chat
         {
             try
             {
+                if (_connection != null)
+                {
+                    Calls?.Dispose();
+                    Calls = null;
+                    await _connection.DisposeAsync();
+                    _connection = null;
+                }
                 Status = new StatusNotice("Connexion en cours...", StatusSeverity.Info,
                  new RelayCheckCommand("Vérifier la connexion", async () => await CheckConnectionAsync()));
 
@@ -187,6 +198,12 @@ namespace PostIt.ViewModels.Chat
                     })
                     .WithAutomaticReconnect()
                     .Build();
+
+                Calls = new CallSignalingClient(_connection);
+                Calls.Invitation += call => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    Log($"Invitation audio-vidéo de {call.Caller} dans {call.RoomName} ; moteur natif non disponible."));
+                Calls.Ended += call => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    Log($"Appel terminé : {call.Reason}."));
 
                 // 1. Ecoute des notifications globales (notifyUser)
                 _connection.On<string, string, string>("notifyUser", (type, user, msg) =>

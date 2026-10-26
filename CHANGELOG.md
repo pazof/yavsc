@@ -5,6 +5,8 @@
 
 ### Added
 
+* [PostIt/API] Begin Android/Linux call integration on the existing authenticated ChatHub: typed invitation, single-device consent, bounded SDP/ICE exchange and hangup; derive relay policy from account preferences and issue temporary coturn credentials. Attach the shared PostIt signaling client to the chat connection, end calls on disconnect/room departure/privacy activation, and add targeted regression tests. Calls remain disabled by default; native media adapters and Android/Linux end-to-end validation are not implemented yet.
+* [PostIt] Clarify reuse of the existing ChatHub for call signaling and document the inconclusive Android native WebRTC experiment; discard the isolated laboratory without changing production chat or media behavior.
 * [PostIt/API] Persist the account-level `HideIpAddressInCalls` preference (default false), expose it through the authenticated profile API and PostIt profile editor, and preserve it when older clients omit it. Prepare future TURN-only calls without enabling media transport yet.
 * [PostIt] Show a local live capture preview on Android and Desktop without opening a second camera or reading back uploaded segments. Share Android's oriented EGL frames with an aspect-preserving preview surface; duplicate Desktop LibVLC output without local microphone playback.
 * [Podcasts] Prepare authenticated, seekable MP4 replays for new and existing Completed broadcasts using server-side FFmpeg stream copy and faststart. Retain MPEG-TS, account for both copies in the owner quota, recover preparation after restarts, and expose owner-only retries plus GET/HEAD byte-range playback.

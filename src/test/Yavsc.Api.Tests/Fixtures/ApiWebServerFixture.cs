@@ -84,6 +84,9 @@ public sealed class ApiWebServerFixture : WebHostFixture
         builder.Services.AddTransient<ICalendarManager, CalendarManager>();
         builder.Services.AddSingleton<IHubContext<ChatHub>>(sp => sp.GetRequiredService<RecordingMessageDelivery>());
         builder.Services.AddSingleton<IConnexionManager, HubConnectionManager>();
+        builder.Services.Configure<Yavsc.Settings.AudioVideoCallOptions>(_ => { });
+        builder.Services.AddSingleton(TimeProvider.System);
+        builder.Services.AddSingleton<CallSignalingService>();
         builder.Services.AddTransient<IYavscMessageSender, YavscMessageSender>();
         builder.Services.AddAuthorization(options =>
         {

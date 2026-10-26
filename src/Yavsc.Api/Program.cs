@@ -87,6 +87,11 @@ internal class Program
             .AddJsonProtocol(options =>
                 options.PayloadSerializerOptions.IncludeFields = true);
         services.AddSingleton<IConnexionManager, HubConnectionManager>();
+        services.Configure<AudioVideoCallOptions>(
+            builder.Configuration.GetSection(AudioVideoCallOptions.SectionName));
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<CallSignalingService>();
+        services.AddHostedService(provider => provider.GetRequiredService<CallSignalingService>());
 
         // DbContextBuilder
         services.AddDbContext<ApplicationDbContext>(options =>

@@ -91,7 +91,13 @@ namespace Yavsc.Services
                 List<string> cxIds;
                 if (ChatCxIds.TryGetValue(uname, out cxIds))
                 {
-                    cxIds.Remove(connectionId);
+                    lock (cxIds)
+                    {
+                        cxIds.Remove(connectionId);
+                        // Room presence is account-wide while another device is connected.
+                        if (cxIds.Count > 0)
+                            return;
+                    }
                     foreach (var room in ChatRoomPresence[uname])
                     {
                         Part(connectionId, room, "connexion aborted");
@@ -250,7 +256,10 @@ namespace Yavsc.Services
 
         public IEnumerable<string> GetConnexionIds(string userName)
         {
-            return ChatCxIds.ContainsKey(userName) ? ChatCxIds[userName] : null;
+            if (!ChatCxIds.TryGetValue(userName, out var connections))
+                return Array.Empty<string>();
+            lock (connections)
+                return connections.ToArray();
         }
 
         /// <summary>

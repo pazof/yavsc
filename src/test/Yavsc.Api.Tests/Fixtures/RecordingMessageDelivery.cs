@@ -16,8 +16,8 @@ public sealed class RecordingMessageDelivery : ITrueEmailSender, IHubContext<Cha
     IGroupManager IHubContext<ChatHub>.Groups => throw new NotSupportedException();
     public IClientProxy All => throw new NotSupportedException();
     public IClientProxy AllExcept(IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
-    public IClientProxy Client(string connectionId) => new RecordingClient(this, connectionId);
-    public IClientProxy Clients(IReadOnlyList<string> connectionIds) => throw new NotSupportedException();
+    public IClientProxy Client(string connectionId) => new RecordingClient(this, [connectionId]);
+    public IClientProxy Clients(IReadOnlyList<string> connectionIds) => new RecordingClient(this, connectionIds);
     public IClientProxy Group(string groupName) => throw new NotSupportedException();
     public IClientProxy GroupExcept(string groupName, IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
     public IClientProxy Groups(IReadOnlyList<string> groupNames) => throw new NotSupportedException();
@@ -36,11 +36,12 @@ public sealed class RecordingMessageDelivery : ITrueEmailSender, IHubContext<Cha
         Pushes.Clear();
     }
 
-    private sealed class RecordingClient(RecordingMessageDelivery delivery, string connectionId) : IClientProxy
+    private sealed class RecordingClient(RecordingMessageDelivery delivery, IReadOnlyList<string> connectionIds) : IClientProxy
     {
         public Task SendCoreAsync(string method, object?[] args, CancellationToken cancellationToken = default)
         {
-            delivery.Pushes.Enqueue(new Push(connectionId, method, args));
+            foreach (var connectionId in connectionIds)
+                delivery.Pushes.Enqueue(new Push(connectionId, method, args));
             return Task.CompletedTask;
         }
     }

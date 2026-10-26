@@ -39,11 +39,12 @@ namespace Yavsc.WebApi.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ITrueEmailSender _emailSender;
         private readonly ICalendarManager _calendarManager;
+        private readonly CallSignalingService _calls;
 
         public ApiAccountController(
         ILoggerFactory loggerFactory, ApplicationDbContext dbContext,
         IOptions<SiteSettings> siteSettings, UserManager<ApplicationUser> userManager,
-        ITrueEmailSender emailSender, ICalendarManager calendarManager)
+        ITrueEmailSender emailSender, ICalendarManager calendarManager, CallSignalingService calls)
         {
             _logger = loggerFactory.CreateLogger(nameof(ApiAccountController));
             _dbContext = dbContext;
@@ -51,6 +52,7 @@ namespace Yavsc.WebApi.Controllers
             _userManager = userManager;
             _emailSender = emailSender;
             _calendarManager = calendarManager;
+            _calls = calls;
         }
 
         [HttpGet("me")]
@@ -178,6 +180,8 @@ namespace Yavsc.WebApi.Controllers
                 return NotFound();
             }
 
+            var previousUserName = user.UserName;
+            var privacyActivated = request.HideIpAddressInCalls == true && !user.HideIpAddressInCalls;
             if (!string.IsNullOrWhiteSpace(request.UserName))
             {
                 var trimmedUserName = request.UserName.Trim();
@@ -224,6 +228,9 @@ namespace Yavsc.WebApi.Controllers
             }
 
             await _dbContext.SaveChangesAsync(uid);
+            if (previousUserName != null &&
+                (privacyActivated || previousUserName != user.UserName))
+                await _calls.EndForUserAsync(previousUserName, "profile-changed");
             return Ok(new { status = "saved", fullName = user.FullName, address = user.PostalAddress?.Address, googleCalendarId = user.DedicatedGoogleCalendar, hideIpAddressInCalls = user.HideIpAddressInCalls });
         }
 

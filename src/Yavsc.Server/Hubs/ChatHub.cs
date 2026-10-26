@@ -45,15 +45,17 @@ namespace Yavsc.Server.Hubs
         private readonly IConnexionManager _cxManager;
         private readonly IStringLocalizer _localizer;
         private readonly ILogger _logger;
+        private readonly CallSignalingService _calls;
 
         public HubInputValidator InputValidator { get; }
 
         public ChatHub(ApplicationDbContext dbContext,
         ILoggerFactory loggerFactory,
         IStringLocalizerFactory stringLocalizerFactory,
-        IConnexionManager connexionManager)
+        IConnexionManager connexionManager, CallSignalingService calls)
         {
             _dbContext = dbContext;
+            _calls = calls;
             _localizer = stringLocalizerFactory.Create(typeof(ChatHub));
 
             _cxManager = connexionManager;
@@ -96,6 +98,7 @@ namespace Yavsc.Server.Hubs
 
         public override async Task OnDisconnectedAsync(Exception ex)
         {
+            await _calls.DisconnectAsync(Context.ConnectionId);
             string userName = Context.User?.GetUserName();
             if (userName != null)
             {
@@ -216,6 +219,7 @@ namespace Yavsc.Server.Hubs
                 // in case of Kick returned false, being not allowed to, or for what ever other else failure,
                 // the error handler will send an error message while handling the error.
                 if (!_cxManager.Kick(Context.ConnectionId, userName, roomName, reason)) return;
+                await _calls.EndForUserAsync(userName, "removed-from-room", roomName);
             }
             var cxIds = _cxManager.GetConnexionIds(userName);
             if (cxIds != null) foreach (var cx in cxIds)
@@ -240,7 +244,7 @@ namespace Yavsc.Server.Hubs
             throw new NotImplementedException();
         }
 
-        public void Part(string roomName, string reason)
+        public async Task Part(string roomName, string reason)
         {
             if (!InputValidator.ValidateRoomName(roomName)) return;
             if (!InputValidator.ValidateReason(reason)) return;
@@ -249,6 +253,7 @@ namespace Yavsc.Server.Hubs
                 var roomGroupName = ChatHubConstants.HubGroupRoomsPrefix + roomName;
                 var group = Clients.Group(roomGroupName);
                 var userName = _cxManager.GetUserName(Context.ConnectionId);
+                await _calls.EndForUserAsync(userName, "left-room", roomName);
                 group.SendAsync("notifyRoom", NotificationTypes.UserPart, roomName, $"{userName}: {reason}");
                 Groups.RemoveFromGroupAsync(Context.ConnectionId, roomGroupName);
             }
