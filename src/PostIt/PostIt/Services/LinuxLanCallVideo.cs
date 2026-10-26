@@ -8,19 +8,9 @@ using Yavsc.Abstract.Chat.Calls;
 
 namespace PostIt.Services;
 
-public interface ILanCallMedia : IAsyncDisposable
-{
-    Control LocalVideo { get; }
-    Control RemoteVideo { get; }
-    LanCallEndpoint Endpoint { get; }
-    Task Completion { get; }
-    bool HasRemoteMedia { get; }
-    Task StartSendingAsync(LanCallEndpoint remote, string camera, string microphone, CancellationToken ct);
-}
-
 public sealed class LinuxLanCallVideo : ILanCallMedia
 {
-    private readonly LinuxLanCallMedia _media;
+    private readonly LibVlcLanCallMedia _media;
     private readonly VideoView _local;
     private readonly VideoView _remote;
     private readonly TaskCompletionSource _localReady = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -38,7 +28,7 @@ public sealed class LinuxLanCallVideo : ILanCallMedia
 
     public LinuxLanCallVideo(string localAddress, int port)
     {
-        _media = new LinuxLanCallMedia(localAddress, port);
+        _media = new LibVlcLanCallMedia(localAddress, port);
         _local = new VideoView { MediaPlayer = _media.Sender, MinHeight = 140 };
         _remote = new VideoView { MediaPlayer = _media.Receiver, MinHeight = 260 };
         _local.LayoutUpdated += OnLocalLayout;

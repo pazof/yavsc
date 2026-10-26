@@ -103,12 +103,13 @@
         Content="Envoyer" />
     </Grid>
 
-    <Expander Grid.Row="3" Header="Appel Linux direct (LAN/VPN)" IsVisible="{Binding SupportsLanCalls}" IsExpanded="True"
+    <Expander Grid.Row="3" Header="Appel direct (LAN/VPN)" IsVisible="{Binding SupportsLanCalls}" IsExpanded="True"
               IsEnabled="{Binding IsConnected}" Margin="0,0,0,8">
+      <ScrollViewer MaxHeight="520">
       <StackPanel DataContext="{Binding LanCall}" x:DataType="vm:LanCallViewModel" Spacing="8">
-        <TextBlock Text="Deux Desktop Linux sur LAN/VPN. SRTP chiffre les medias ; le pair connait votre IP. Sans TURN ni traversee NAT. Casque recommande (pas d'annulation d'echo)."
+        <TextBlock Text="Android et Desktop Linux sur LAN/VPN. SRTP chiffre les medias ; le pair connait votre IP. Ouvrir le port UDP choisi et le suivant. Sans TURN ni traversee NAT. Casque recommande (pas d'annulation d'echo)."
                    TextWrapping="Wrap" />
-        <WrapPanel IsEnabled="{Binding !Busy}">
+        <WrapPanel IsEnabled="{Binding CanConfigure}" IsVisible="{Binding !RemoteVideo}">
           <Button Content="Actualiser les peripheriques" Command="{Binding RefreshDevicesCommand}" Margin="0,0,8,4" />
           <ComboBox Width="160" ItemsSource="{Binding Addresses}" SelectedItem="{Binding Address}"
                     PlaceholderText="Adresse locale LAN/VPN" Margin="0,0,8,4" />
@@ -132,18 +133,20 @@
           <TextBox Width="170" Text="{Binding Target}" PlaceholderText="Pseudo du pair" Margin="0,0,8,4" />
         </WrapPanel>
         <CheckBox Content="Je consens a partager mon adresse LAN/VPN avec le pair."
-                  IsChecked="{Binding AllowAddressDisclosure}" />
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <Button Content="Appeler dans la salle active" Command="{Binding InviteCommand}" IsEnabled="{Binding !Busy}" />
-          <Button Content="Accepter" Command="{Binding AcceptCommand}" IsEnabled="{Binding Incoming}" />
-          <Button Content="Refuser / Raccrocher" Command="{Binding HangupCommand}" IsEnabled="{Binding Busy}" />
-        </StackPanel>
+                  IsChecked="{Binding AllowAddressDisclosure}" IsEnabled="{Binding CanConfigure}"
+                  IsVisible="{Binding !RemoteVideo}" />
+        <WrapPanel>
+          <Button Content="Appeler dans la salle active" Command="{Binding InviteCommand}" IsEnabled="{Binding !Busy}" Margin="0,0,8,4" />
+          <Button Content="Accepter" Command="{Binding AcceptCommand}" IsEnabled="{Binding Incoming}" Margin="0,0,8,4" />
+          <Button Content="Refuser / Raccrocher" Command="{Binding HangupCommand}" IsEnabled="{Binding Busy}" Margin="0,0,8,4" />
+        </WrapPanel>
         <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
         <Grid ColumnDefinitions="*,2*" Height="280" IsVisible="{Binding !!RemoteVideo}">
           <ContentControl Content="{Binding LocalVideo}" Margin="0,0,8,0" />
           <ContentControl Grid.Column="1" Content="{Binding RemoteVideo}" />
         </Grid>
       </StackPanel>
+      </ScrollViewer>
     </Expander>
 
     <postitControls:StatusBar

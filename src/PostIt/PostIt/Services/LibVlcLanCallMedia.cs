@@ -9,7 +9,7 @@ using Yavsc.Abstract.Chat.Calls;
 
 namespace PostIt.Services;
 
-public sealed class LinuxLanCallMedia : IAsyncDisposable
+public sealed class LibVlcLanCallMedia : IAsyncDisposable
 {
     private readonly LibVLC _senderVlc;
     private readonly LibVLC _receiverVlc;
@@ -28,16 +28,20 @@ public sealed class LinuxLanCallMedia : IAsyncDisposable
     public MediaStats Statistics => _receiverMedia.Statistics;
     public bool HasRemoteMedia => !_disposed && Statistics.DecodedAudio > 0 && Statistics.DecodedVideo > 0;
 
-    public LinuxLanCallMedia(string localAddress, int port, bool headless = false)
+    public LibVlcLanCallMedia(string localAddress, int port, bool headless = false)
     {
-        if (!OperatingSystem.IsLinux())
-            throw new PlatformNotSupportedException("Les appels SRTP LAN sont disponibles sur Desktop Linux.");
+        if (!OperatingSystem.IsLinux() && !OperatingSystem.IsAndroidVersionAtLeast(26))
+            throw new PlatformNotSupportedException("Les appels SRTP LAN requierent Linux ou Android 8+.");
         Endpoint = new(localAddress, port, Convert.ToHexString(RandomNumberGenerator.GetBytes(16)),
             Convert.ToHexString(RandomNumberGenerator.GetBytes(14)));
         if (!Endpoint.IsValid())
             throw new ArgumentException("Adresse IPv4 privee et port UDP pair (1024-65534) requis.");
         using (var reservation = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+        using (var rtcp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+        {
             reservation.Bind(new IPEndPoint(IPAddress.Parse(localAddress), port));
+            rtcp.Bind(new IPEndPoint(IPAddress.Parse(localAddress), port + 1));
+        }
         Core.Initialize();
         _senderVlc = headless ? CameraStreamer.CreateHeadlessLibVlc()
             : new LibVLC("--avcodec-hw=none", "--aout=dummy", "--intf=dummy");
@@ -49,7 +53,7 @@ public sealed class LinuxLanCallMedia : IAsyncDisposable
             {
                 _receiverMedia = new Media(_receiverVlc, $"rtp://@{localAddress}:{port}", FromType.FromLocation);
                 _receiverMedia.AddOption(":network-caching=150");
-                _receiverMedia.AddOption(":rtcp-port=0");
+                _receiverMedia.AddOption(":rtcp-port=" + (port + 1));
                 _receiverMedia.AddOption(":srtp-key=" + Endpoint.Key);
                 _receiverMedia.AddOption(":srtp-salt=" + Endpoint.Salt);
                 Receiver = new MediaPlayer(_receiverVlc);
@@ -94,7 +98,7 @@ public sealed class LinuxLanCallMedia : IAsyncDisposable
         StartSendingAsync(remote, vlc => new CameraStreamer(vlc).CreateCaptureMedia(camera, microphone), true, ct);
 
     internal async Task StartSendingAsync(LanCallEndpoint remote, Func<LibVLC, Media> source,
-        bool preview, CancellationToken ct)
+        bool preview, CancellationToken ct, bool transcode = true)
     {
         if (!remote.IsValid())
             throw new ArgumentException("Destination SRTP LAN invalide.", nameof(remote));
@@ -107,7 +111,7 @@ public sealed class LinuxLanCallMedia : IAsyncDisposable
             if (_stop != null || _senderMedia != null)
                 throw new InvalidOperationException("La capture de cet appel est deja demarree ou arretee.");
             _senderMedia = source(_senderVlc);
-            ConfigureOutput(_senderMedia, remote, preview);
+            ConfigureOutput(_senderMedia, remote, preview, transcode);
             ct.ThrowIfCancellationRequested();
             if (!Sender.Play(_senderMedia))
                 throw new InvalidOperationException("Capture SRTP impossible. Verifiez camera, microphone et encodeurs H.264/AAC.");
@@ -115,13 +119,27 @@ public sealed class LinuxLanCallMedia : IAsyncDisposable
         finally { _gate.Release(); }
     }
 
-    internal static void ConfigureOutput(Media media, LanCallEndpoint remote, bool preview)
+    public Task StartEncodedSendingAsync(LanCallEndpoint remote, int fileDescriptor, CancellationToken ct)
+    {
+        if (fileDescriptor < 0) throw new ArgumentOutOfRangeException(nameof(fileDescriptor));
+        return StartSendingAsync(remote, vlc =>
+        {
+            var media = new Media(vlc, $"fd://{fileDescriptor}", FromType.FromLocation);
+            media.AddOption(":demux=ts");
+            media.AddOption(":live-caching=100");
+            media.AddOption(":clock-jitter=0");
+            return media;
+        }, false, ct, transcode: false);
+    }
+
+    internal static void ConfigureOutput(Media media, LanCallEndpoint remote, bool preview, bool transcode = true)
     {
         if (!remote.IsValid()) throw new ArgumentException("Destination SRTP invalide.");
         // Same capture/encoders as Podcasts, but no HLS files, segmentation or upload.
-        var encoding = "transcode{vcodec=h264,venc=x264{preset=ultrafast,tune=zerolatency,keyint=30,bframes=0},"
-            + "vb=1200,fps=30,acodec=mp4a,ab=96,channels=1,samplerate=48000}:"
-            + $"rtp{{dst={remote.Address},port={remote.Port},mux=ts,rtcp-mux,"
+        var encoding = (transcode ? "transcode{vcodec=h264,venc=x264{preset=ultrafast,tune=zerolatency,keyint=30,bframes=0},"
+            + "vb=1200,fps=30,acodec=mp4a,ab=96,channels=1,samplerate=48000}:" : "")
+            // Android LibVLC 3 crashes formatting the valueless rtcp-mux SDP attribute.
+            + $"rtp{{dst={remote.Address},port={remote.Port},mux=ts,"
             + $"key={remote.Key},salt={remote.Salt},caching=50}}";
         media.AddOption(":sout=#" + (preview
             ? $"duplicate{{dst=display{{noaudio}},dst=\"{encoding}\"}}" : encoding));
@@ -142,7 +160,7 @@ public sealed class LinuxLanCallMedia : IAsyncDisposable
         finally { Receiver.Stop(); }
     });
 
-    internal async Task StopAsync()
+    public async Task StopAsync()
     {
         await _gate.WaitAsync();
         try

@@ -24,6 +24,11 @@ internal static class PlatformBootstrap
         Platform.CreateVideoSurface = (player, replay) => new AndroidVideoSurface(player, replay);
         if (System.OperatingSystem.IsAndroidVersionAtLeast(26))
         {
+            Platform.GetLanCallDevices = AndroidLanCallMedia.GetDevices;
+            Platform.CreateLanCallMedia = (address, port) =>
+                System.OperatingSystem.IsAndroidVersionAtLeast(26)
+                    ? new AndroidLanCallMedia(address, port)
+                    : throw new System.PlatformNotSupportedException("Android 8 requis pour les appels LAN.");
             Platform.GetPodcastCaptureDevices = AndroidPodcastCapture.GetDevices;
             Platform.RequestPodcastPermissionsAsync = AndroidPodcastCapture.RequestPermissionsAsync;
             Platform.CreatePodcastCaptureAsync = AndroidPodcastCapture.StartAsync;

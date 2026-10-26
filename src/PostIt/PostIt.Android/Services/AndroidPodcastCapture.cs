@@ -13,6 +13,7 @@ using Android.OS;
 using Android.Views;
 using Microsoft.Win32.SafeHandles;
 using PostIt.Services;
+using Stream = System.IO.Stream;
 
 namespace PostIt.Android.Services;
 
@@ -33,6 +34,7 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
     private ParcelFileDescriptor? _readPipe;
     private ParcelFileDescriptor? _writePipe;
     private Task _pump = Task.CompletedTask;
+    private Func<Task>? _stopOutput;
     private Exception? _failure;
     private bool _stopped;
     private bool _stopRequested;
@@ -71,16 +73,26 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
     }
 
     public static async Task<IPodcastCapture> StartAsync(string camera, string? microphone, string directory, CancellationToken ct)
+        => await StartCoreAsync(camera, microphone,
+            (stream, token) => new TransportStreamCapture(directory).RunAsync(stream, token), null, null, ct);
+
+    internal static Task<IPodcastCapture> StartCallAsync(string camera, string microphone,
+        Func<int, CancellationToken, Task> output, Func<Task> stopOutput, CancellationToken ct) =>
+        StartCoreAsync(camera, microphone, null, output, stopOutput, ct);
+
+    private static async Task<IPodcastCapture> StartCoreAsync(string camera, string? microphone,
+        Func<Stream, CancellationToken, Task>? output,
+        Func<int, CancellationToken, Task>? pipeOutput, Func<Task>? stopOutput, CancellationToken ct)
     {
         await RequestPermissionsAsync(microphone, ct);
         var activity = MainActivity.Current ?? throw new InvalidOperationException("Activite Android indisponible.");
-        var service = await PodcastCaptureService.StartAsync(activity, microphone is not null, ct);
-        var capture = new AndroidPodcastCapture(service);
+        var service = await PodcastCaptureService.StartAsync(activity, microphone is not null, ct, pipeOutput != null);
+        var capture = new AndroidPodcastCapture(service) { _stopOutput = stopOutput };
         service.Capture = capture;
         try
         {
             ct.ThrowIfCancellationRequested();
-            await capture.StartNativeAsync(camera, microphone is not null, directory, ct);
+            await capture.StartNativeAsync(camera, microphone is not null, output, pipeOutput, ct);
             return capture;
         }
         catch
@@ -90,14 +102,18 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         }
     }
 
-    private async Task StartNativeAsync(string cameraId, bool microphone, string directory, CancellationToken ct)
+    private async Task StartNativeAsync(string cameraId, bool microphone,
+        Func<Stream, CancellationToken, Task>? output,
+        Func<int, CancellationToken, Task>? pipeOutput, CancellationToken ct)
     {
         await _stopGate.WaitAsync(ct);
-        try { await ConfigureNativeAsync(cameraId, microphone, directory, ct); }
+        try { await ConfigureNativeAsync(cameraId, microphone, output, pipeOutput, ct); }
         finally { _stopGate.Release(); }
     }
 
-    private async Task ConfigureNativeAsync(string cameraId, bool microphone, string directory, CancellationToken ct)
+    private async Task ConfigureNativeAsync(string cameraId, bool microphone,
+        Func<Stream, CancellationToken, Task>? output,
+        Func<int, CancellationToken, Task>? pipeOutput, CancellationToken ct)
     {
         var manager = GetManager(_service);
         using var characteristics = manager.GetCameraCharacteristics(cameraId);
@@ -179,28 +195,34 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         using var request = _camera.CreateCaptureRequest(CameraTemplate.Record);
         request.AddTarget(cameraSurface);
         using var built = request.Build();
-        var handle = new SafeFileHandle((IntPtr)_readPipe.Fd, ownsHandle: false);
-        var stream = new FileStream(handle, FileAccess.Read);
-        _pump = Task.Run(async () =>
+        if (pipeOutput != null)
+            await pipeOutput(_readPipe.Fd, ct);
+        else
         {
-            using (handle)
-            using (stream)
+            var consume = output ?? throw new InvalidOperationException("Destination de capture absente.");
+            var handle = new SafeFileHandle((IntPtr)_readPipe.Fd, ownsHandle: false);
+            var stream = new FileStream(handle, FileAccess.Read);
+            _pump = Task.Run(async () =>
             {
-                try
+                using (handle)
+                using (stream)
                 {
-                    await new TransportStreamCapture(directory).RunAsync(stream, CancellationToken.None);
-                    if (_failure is not null) throw new IOException("Capture Android interrompue.", _failure);
-                    if (!_stopped) throw new IOException("Le flux de capture Android s'est ferme prematurement.");
-                    _completion.TrySetResult();
+                    try
+                    {
+                        await consume(stream, CancellationToken.None);
+                        if (_failure is not null) throw new IOException("Capture Android interrompue.", _failure);
+                        if (!_stopped) throw new IOException("Le flux de capture Android s'est ferme prematurement.");
+                        _completion.TrySetResult();
+                    }
+                    catch (Exception ex)
+                    {
+                        _completion.TrySetException(ex);
+                        // Drain until MediaRecorder stops, so its writer cannot block Stop().
+                        await stream.CopyToAsync(Stream.Null);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    _completion.TrySetException(ex);
-                    // Drain until MediaRecorder stops, so its writer cannot block Stop().
-                    await stream.CopyToAsync(System.IO.Stream.Null);
-                }
-            }
-        });
+            });
+        }
         await Task.Run(_recorder.Start, ct);
         _started = true;
         await _rotator.StartAsync();
@@ -289,12 +311,46 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         {
             if (_stopped) return;
             _stopped = true;
-            if (_preview is not null)
-                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(_preview.Dispose);
-            await Task.Run(StopNative);
-            await _pump;
+            try
+            {
+                if (_preview is not null)
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(_preview.Dispose);
+            }
+            finally
+            {
+                try { await StopOutputAsync(); }
+                finally
+                {
+                    await Task.Run(StopNative);
+                    await _pump;
+                }
+            }
+            _completion.TrySetResult();
+        }
+        catch (Exception error)
+        {
+            _completion.TrySetException(error);
+            throw;
         }
         finally { _stopGate.Release(); }
+    }
+
+    private async Task StopOutputAsync()
+    {
+        if (_stopOutput == null || _readPipe == null) return;
+        try { await _stopOutput(); }
+        finally
+        {
+            // The native sender has released its reader. Drain so the recorder can always stop.
+            var handle = new SafeFileHandle((IntPtr)_readPipe.Fd, ownsHandle: false);
+            var stream = new FileStream(handle, FileAccess.Read);
+            _pump = Task.Run(async () =>
+            {
+                using (handle)
+                using (stream)
+                    await stream.CopyToAsync(Stream.Null);
+            });
+        }
     }
 
     private void StopNative()

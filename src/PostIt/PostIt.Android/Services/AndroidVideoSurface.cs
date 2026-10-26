@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia.Android;
 using Avalonia.Controls;
 using Avalonia.Platform;
@@ -18,6 +19,8 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
     private VideoView? _video;
     private ReplayLayout? _layout;
     private bool _disposed;
+    private readonly TaskCompletionSource _ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    internal Task Ready => _ready.Task;
 
     protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
     {
@@ -25,6 +28,10 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
             ?? throw new InvalidOperationException("L'activite Android est indisponible.");
         var video = new VideoView(activity) { MediaPlayer = _disposed ? null : player };
         _video = video;
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            if (!_disposed) _ready.TrySetResult();
+        }, Avalonia.Threading.DispatcherPriority.Loaded);
         if (replay && !_disposed)
         {
             _layout = new ReplayLayout(activity, video, player);
@@ -45,6 +52,7 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
     public void Dispose()
     {
         _disposed = true;
+        _ready.TrySetCanceled();
         _layout?.Stop();
         if (_video is not null) _video.MediaPlayer = null;
     }

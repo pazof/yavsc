@@ -21,14 +21,16 @@ public sealed class PodcastCaptureService : Service
     private PowerManager.WakeLock? _wakeLock;
     internal AndroidPodcastCapture? Capture { get; set; }
 
-    public static async Task<PodcastCaptureService> StartAsync(Activity activity, bool microphone, CancellationToken ct)
+    public static async Task<PodcastCaptureService> StartAsync(Activity activity, bool microphone,
+        CancellationToken ct, bool call = false)
     {
         if (_pending is not null) throw new InvalidOperationException("Un direct Android est deja en cours.");
         var pending = new TaskCompletionSource<PodcastCaptureService>(TaskCreationOptions.RunContinuationsAsynchronously);
         _pending = pending;
         try
         {
-            var intent = new Intent(activity, typeof(PodcastCaptureService)).PutExtra("microphone", microphone);
+            var intent = new Intent(activity, typeof(PodcastCaptureService))
+                .PutExtra("microphone", microphone).PutExtra("call", call);
             activity.StartForegroundService(intent);
             return await pending.Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
         }
@@ -65,11 +67,13 @@ public sealed class PodcastCaptureService : Service
                 PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
             var builder = new NotificationCompat.Builder(this, Channel);
             builder.SetSmallIcon(global::Android.Resource.Drawable.IcMenuCamera);
-            builder.SetContentTitle("Podcast en direct");
-            builder.SetContentText("Camera active. Toucher pour revenir au direct.");
+            var call = intent?.GetBooleanExtra("call", false) == true;
+            builder.SetContentTitle(call ? "Appel audio-video LAN/VPN" : "Podcast en direct");
+            builder.SetContentText(call ? "Camera et microphone actifs. Toucher pour revenir a l'appel."
+                : "Camera active. Toucher pour revenir au direct.");
             builder.SetContentIntent(open);
             builder.SetOngoing(true);
-            builder.AddAction(global::Android.Resource.Drawable.IcMediaPause, "Arreter et publier", stop);
+            builder.AddAction(global::Android.Resource.Drawable.IcMediaPause, call ? "Raccrocher" : "Arreter et publier", stop);
             var notification = builder.Build();
             var type = (ForegroundService)0;
             if (OperatingSystem.IsAndroidVersionAtLeast(30))

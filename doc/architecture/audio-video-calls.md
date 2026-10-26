@@ -5,9 +5,9 @@
 Ce document décrit l'architecture cible et l'implémentation commencée.
 La préférence de confidentialité est persistée et éditable dans le profil.
 La signalisation est intégrée au chat, désactivée par défaut. Un premier
-transport natif **Desktop Linux vers Desktop Linux sur LAN/VPN** est
-raccordé : capture LibVLC existante et SRTP direct, sans libwebrtc ni JNI
-Android. Il ne réalise pas encore la cible Internet, TURN ou groupe.
+transport natif **Android et Desktop Linux sur LAN/VPN** est raccordé :
+captures Podcast existantes et SRTP direct, sans libwebrtc ni nouvelle
+couche JNI WebRTC. Il ne réalise pas encore la cible Internet, TURN ou groupe.
 Il complète la [topologie de PostIt](postit.md) et les
 [mécanismes de notification existants](notifications.md).
 La cible couvre :
@@ -18,24 +18,27 @@ La cible couvre :
 - les appels de groupe ;
 - les clients Browser, Android et Desktop.
 
-## Première implémentation Desktop Linux : SRTP sur LAN/VPN
+## Première implémentation Android et Desktop Linux : SRTP sur LAN/VPN
 
 Cette tranche réutilise la capture caméra/microphone et les encodeurs des
 Podcasts, mais **pas leur segmentation HLS ni leurs envois de fichiers** :
 
 ```text
-PostIt Linux A ----- ChatHub authentifié / HTTPS ----- PostIt Linux B
+PostIt A ----------- ChatHub authentifié / HTTPS ----------- PostIt B
                      invitation, consentement,
                      adresses et clés, fin
 
-PostIt Linux A ===== H.264/AAC, MPEG-TS sur SRTP/UDP ===== PostIt Linux B
+PostIt A ========== H.264/AAC, MPEG-TS sur SRTP/UDP ========== PostIt B
                          dans les deux sens
 ```
 
 L'implémentation est dans
-[LinuxLanCallMedia](../../src/PostIt/PostIt/Services/LinuxLanCallMedia.cs),
+[LibVlcLanCallMedia](../../src/PostIt/PostIt/Services/LibVlcLanCallMedia.cs),
 [LinuxLanCallVideo](../../src/PostIt/PostIt/Services/LinuxLanCallVideo.cs) et
 [LanCallViewModel](../../src/PostIt/PostIt/ViewModels/Chat/LanCallViewModel.cs).
+Android utilise
+[AndroidLanCallMedia](../../src/PostIt/PostIt.Android/Services/AndroidLanCallMedia.cs)
+avec les mêmes contrats et clés SRTP.
 Les contrôles et les deux surfaces vidéo sont intégrés à la page du chat.
 Il n'y a pas de service de salles supplémentaire, d'enregistrement,
 de fichier média temporaire ou de moteur WebRTC Android ajouté.
@@ -58,19 +61,23 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
    invitation, acceptation et échange de clés LAN sont refusés en HTTP.
    Derrière un proxy TLS, configurer correctement le schéma HTTPS transmis
    à ASP.NET Core, uniquement depuis les proxys de confiance.
-2. Utiliser deux Desktop Linux avec LibVLC et ses modules V4L2, PulseAudio,
-   x264, AAC et RTP/SRTP installés. La version Debian 13 a été utilisée
-   pour les essais natifs. Les deux comptes doivent être présents dans
+2. Utiliser deux clients Android 8+ ou Desktop Linux. Linux nécessite LibVLC
+   avec V4L2, PulseAudio, x264, AAC et RTP/SRTP installés. Android réutilise
+   la bibliothèque VLC embarquée pour les Podcasts et MediaRecorder pour
+   H.264/AAC. La version Debian 13 a été utilisée pour les essais Linux.
+   Les deux comptes doivent être présents dans
    la même salle existante et ne pas se bloquer mutuellement.
-3. Dans « Appel Linux direct (LAN/VPN) », actualiser les périphériques,
+3. Dans « Appel direct (LAN/VPN) », actualiser les périphériques,
    sélectionner la caméra, le microphone et une IPv4 privée locale
    accessible depuis le pair. Les adresses RFC1918 et de bouclage sont
    acceptées ; pas de DNS, IPv6 ou adresse publique. Le bouclage sert aux
    essais sur un même hôte, pas à joindre un second poste.
 4. Choisir un port UDP **pair entre 1024 et 65534**, par défaut 5004.
-   Autoriser l'entrée UDP sur ce port depuis le pair dans le pare-feu.
-   RTP/RTCP partagent ce port. Deux clients sur la même adresse doivent
-   utiliser des ports distincts. Aucun pare-feu n'est modifié automatiquement.
+   Autoriser l'entrée UDP sur ce port **et le suivant** depuis le pair dans
+   le pare-feu : RTP sur le port pair, RTCP sur le port impair suivant.
+   Les deux ports doivent être disponibles. Deux clients sur la même
+   adresse doivent utiliser des paires distinctes.
+   Aucun pare-feu n'est modifié automatiquement.
 5. Saisir le pseudo exact du destinataire, confirmer la divulgation de
    l'adresse LAN/VPN, puis appeler. Le destinataire choisit ses propres
    périphériques et son adresse, confirme et accepte explicitement.
@@ -80,6 +87,43 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
    « Refuser / Raccrocher », la sortie de page et la perte de SignalR
    arrêtent et libèrent les médias. Il n'y a pas de reprise automatique
    de capture après reconnexion.
+
+### Capture et cycle de vie Android
+
+- La caméra avant est sélectionnée en priorité dans la liste ; une autre
+  caméra reste sélectionnable explicitement. Le microphone est obligatoire.
+- Les permissions caméra, microphone et notifications sont demandées
+  après acceptation et réception de l'endpoint distant, avant la capture.
+  Un refus termine explicitement l'appel, sans tentative de capture de repli.
+- Camera2, MediaRecorder et la rotation EGL sont ceux des Podcasts.
+  Le descripteur du pipe MPEG-TS est lu directement par LibVLC (`fd://`)
+  puis remultiplexé vers SRTP, **sans réencodage**, HLS ou fichier média.
+  Le pipe système assure une mémoire bornée ; il n'y a pas de file de
+  segments ni de lecture de capture par callbacks managés.
+- La prévisualisation réutilise la surface EGL existante. Le retour
+  distant utilise la surface Android LibVLC déjà employée pour les Podcasts.
+- Le service de capture partagé affiche une notification d'appel avec
+  l'action « Raccrocher » ; cette action ne publie aucun Podcast.
+  Un Podcast et un appel ne peuvent pas posséder la capture simultanément.
+- Le passage de PostIt en arrière-plan termine cet appel vidéo ; revenir
+  dans l'application ne le redémarre pas. La sortie de page et la perte
+  SignalR conservent la même règle d'arrêt.
+- À l'arrêt, le lecteur natif libère d'abord son entrée. Le pipe restant
+  est drainé pendant la finalisation de MediaRecorder, pour ne pas bloquer
+  son écrivain, puis caméra, microphone, lecteurs et service sont libérés.
+
+#### Particularité VLC Android : RTCP séparé
+
+L'essai matériel initial a identifié un SIGSEGV dans `libc.__vfprintf`,
+appelé par `vlc_memstream_vprintf` puis `sdp_AddAttribute` pendant la
+création de la sortie RTP. Le code VLC 3 génère l'attribut sans valeur
+`rtcp-mux` avec un format nul ; cette combinaison échoue avec le binaire
+Android embarqué. Ce crash est distinct du précédent essai libwebrtc/JNI.
+
+Les appels utilisent donc une paire RTP/RTCP standard, sans `rtcp-mux`,
+sur Android **et** Linux. Les médias conservent les mêmes codecs, clés et
+port RTP : c'est un changement de configuration du transport, pas
+l'ajout d'un moteur WebRTC ou d'une cryptographie propre au projet.
 
 ### Confidentialité et limites
 
@@ -95,7 +139,7 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
   **refusé**, y compris si la préférence change avant l'acceptation.
   Il n'y a aucun repli direct contournant cette préférence.
 - Pas d'ICE, de STUN, de TURN, de traversée NAT automatique, de groupe,
-  d'interopérabilité Browser/Android, de négociation de codecs ni
+  d'interopérabilité Browser, de négociation de codecs ni
   d'adaptation de débit. Ce mode exige un LAN/VPN routable entre les pairs.
 - H.264 à 30 images/s, cible 1 200 kbit/s ; AAC mono 48 kHz, 96 kbit/s.
   Ces réglages ne constituent pas une garantie de latence ni de débit.
@@ -116,12 +160,15 @@ synthétique fourni explicitement et de vrais sockets UDP de bouclage :
 - refus de décodage avec une mauvaise clé, sans casser l'autre direction ;
 - même échange avec la branche de prévisualisation locale activée
   (sortie factice dans ce test sans fenêtre).
+- entrée MPEG-TS déjà encodée à travers un pipe, sans transcodage.
 
 Les tests de signalisation couvrent consentement, sélection d'un seul
 appareil, confidentialité, HTTPS, validation des endpoints et arrêt.
 Les tests Avalonia sans fenêtre couvrent l'ordre invitation/acceptation/
 capture, le refus, les événements tardifs, l'interruption, les erreurs média
-et l'annulation d'un démarrage natif en attente.
+et l'annulation d'un démarrage natif en attente. Ils vérifient aussi les
+hooks Android, le choix initial de caméra avant, la configuration lors
+d'une invitation entrante et l'arrêt lors du passage en arrière-plan.
 
 Pour exécuter les tests média, définir `POSTIT_TEST_MEDIA` avec le chemin
 d'un MP4 H.264/AAC de test (640 × 480), puis :
@@ -133,10 +180,45 @@ dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
 
 Sans cette entrée explicite, ces tests sont ignorés, pas remplacés par un
 succès fictif. Les tests de contrôle s'exécutent sans caméra.
+Le test de pipe utilise `POSTIT_TEST_TS`, un MPEG-TS H.264/AAC explicite.
+
+Une activité **Debug uniquement**,
+[AndroidLanCallTestActivity](../../src/PostIt/PostIt.Tests/AndroidLanCallTestActivity.cs),
+teste l'adaptateur réel sur téléphone : caméra avant/microphone, surfaces
+de retour et prévisualisation attachées, deux moteurs SRTP en UDP de
+bouclage, retour synthétique et rejet d'une mauvaise clé. Elle n'utilise
+ni compte ni API ; elle ne valide donc pas à elle seule un appel SignalR
+entre deux comptes. L'activité n'est pas compilée dans l'APK Release.
+
+Pour la lancer sur un appareil de développement dont les permissions
+ont été accordées, installer l'APK Debug et ses assemblies via
+`dotnet build -t:Install`, puis copier un MPEG-TS synthétique de 40 secondes,
+640 × 480 avec audio AAC, sous `files/lan-call-fixture.ts` dans les données
+privées de l'application. Exécuter :
+
+```sh
+adb shell am start -S -n fr.pschneider.postit/fr.pschneider.postit.LanCallTestActivity
+adb shell run-as fr.pschneider.postit cat files/lan-call-test-result.txt
+# Variante : ajouter --es wrongKey true à la commande am start.
+```
+
+Le résultat ne devient `PASS` qu'après vérification des médias et nettoyage
+complet. Le test ne produit aucun enregistrement de caméra.
+Sur le téléphone Android 15 arm64 connecté, l'essai positif a décodé
+158 trames caméra et 399 360 échantillons audio en environ dix secondes,
+avec un retour audio/vidéo décodé simultanément. L'essai avec mauvaise clé
+a produit zéro trame et zéro échantillon dans la direction concernée,
+tout en conservant le retour. Les deux essais ont terminé leur nettoyage,
+sans service de capture restant. La capture Podcast antérieure a également
+été retestée sur caméra avant : quatre segments, environ 11,8 secondes,
+audio AAC présent, capture en arrière-plan puis arrêt par notification.
+
 **La caméra physique, le rendu natif visible dans deux applications, le
-son audible et un appel entre deux machines restent à valider** : aucune
-caméra n'était disponible sur l'hôte de développement. Les essais de
-bouclage ne prouvent ni ces points ni une latence conversationnelle.
+son audible et un appel entre deux machines restent à valider côté Linux** :
+aucune caméra n'était disponible sur cet hôte. La capture matérielle Android
+est testée, mais un appel Android ↔ Linux ou entre deux téléphones distincts
+sur LAN/VPN et la qualité acoustique restent à valider. Les essais de
+bouclage ne prouvent pas une latence conversationnelle.
 
 ## Choix des protocoles
 
@@ -424,8 +506,9 @@ automatique.
 ### Travail restant pour la cible Internet multi-plateforme
 
 - Android : l'approche Java/JNI libwebrtc a été écartée à la demande du
-  projet ; aucun adaptateur expérimental n'est conservé. Le transport
-  compatible avec la capture Podcast et la cible Internet reste à choisir.
+  projet ; aucun adaptateur libwebrtc expérimental n'est conservé.
+  L'adaptateur SRTP LAN réutilise désormais la capture Podcast ; la solution
+  compatible avec la cible Internet reste à choisir.
 - Desktop Linux : le transport SRTP LAN est raccordé, mais ne remplace pas
   les validations matérielles ni une solution de connectivité Internet.
 - Côté partagé : relier consentement, états réels du moteur, mise en

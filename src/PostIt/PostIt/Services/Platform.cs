@@ -12,6 +12,8 @@ namespace PostIt.Services;
 /// </summary>
 public static class Platform
 {
+    public static Func<PodcastCaptureDevices>? GetLanCallDevices { get; set; }
+    public static Func<string, int, ILanCallMedia>? CreateLanCallMedia { get; set; }
     public static Func<PodcastCaptureDevices>? GetPodcastCaptureDevices { get; set; }
     public static Func<string?, CancellationToken, Task>? RequestPodcastPermissionsAsync { get; set; }
     public static Func<string, string?, string, CancellationToken, Task<IPodcastCapture>>? CreatePodcastCaptureAsync { get; set; }

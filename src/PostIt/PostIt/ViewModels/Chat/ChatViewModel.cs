@@ -39,7 +39,8 @@ namespace PostIt.ViewModels.Chat
 
         public CallSignalingClient? Calls { get; private set; }
 
-        public bool SupportsLanCalls => OperatingSystem.IsLinux() && !OperatingSystem.IsAndroid();
+        public bool SupportsLanCalls => Platform.CreateLanCallMedia != null ||
+            (OperatingSystem.IsLinux() && !OperatingSystem.IsAndroid());
 
         [ObservableProperty]
         public partial LanCallViewModel? LanCall { get; set; }

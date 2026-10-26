@@ -32,6 +32,7 @@
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <Compile Include="..\PostIt.Tests\AndroidPodcastCaptureTestActivity.cs" Link="Tests\AndroidPodcastCaptureTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidCameraFrameRotationTestActivity.cs" Link="Tests\AndroidCameraFrameRotationTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\AndroidLanCallTestActivity.cs" Link="Tests\AndroidLanCallTestActivity.cs" />
   </ItemGroup>
   <!-- This is an Avalonia app, not a MAUI app: exclude the .NET MAUI VS Code
        extension's injected HotReload agent (references Microsoft.Maui.*).

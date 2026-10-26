@@ -106,6 +106,57 @@ public sealed class LanCallViewModelTests
     }
 
     [AvaloniaFact]
+    public async Task Platform_devices_and_factory_are_used_and_backgrounding_ends_capture()
+    {
+        var previousDevices = Platform.GetLanCallDevices;
+        var previousFactory = Platform.CreateLanCallMedia;
+        var signaling = new Signaling();
+        var media = new FakeMedia();
+        var creations = 0;
+        try
+        {
+            Platform.GetLanCallDevices = () => new(
+                [new("Camera avant", "front"), new("Camera arriere", "rear")],
+                [new("Sans microphone", ""), new("Microphone Android", "microphone")]);
+            Platform.CreateLanCallMedia = (_, _) => { creations++; return media; };
+            await using var vm = new LanCallViewModel(signaling);
+            vm.RefreshDevicesCommand.Execute(null);
+            Assert.Equal("front", vm.Camera?.Value);
+            Assert.Equal("microphone", vm.Microphone?.Value);
+            Assert.Single(vm.Microphones);
+            Assert.Equal(0, creations);
+            signaling.Invite(vm, signaling.Call);
+            await WaitAsync(() => vm.Incoming);
+            Assert.True(vm.CanConfigure);
+            vm.RefreshDevicesCommand.Execute(null);
+            Assert.Equal("front", vm.Camera?.Value);
+            vm.Address = "127.0.0.1";
+            if (!vm.Addresses.Contains(vm.Address)) vm.Addresses.Add(vm.Address);
+            vm.AllowAddressDisclosure = true;
+            vm.Room = "General";
+            vm.Target = "bob";
+            await vm.AcceptCommand.ExecuteAsync(null);
+            await WaitAsync(() => vm.LocalVideo != null);
+            Assert.Equal(1, creations);
+            Assert.False(vm.CanConfigure);
+            signaling.RemoteEndpoint(signaling.Call.Id);
+            await WaitAsync(() => media.Sending);
+            Platform.SuspendPlayback();
+            await WaitAsync(() => media.Disposed);
+            Assert.False(vm.Busy);
+            Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
+            Platform.ResumePlayback();
+            await Task.Delay(30, TestContext.Current.CancellationToken);
+            Assert.Equal(1, creations);
+        }
+        finally
+        {
+            Platform.GetLanCallDevices = previousDevices;
+            Platform.CreateLanCallMedia = previousFactory;
+        }
+    }
+
+    [AvaloniaFact]
     public async Task Hangup_cancels_pending_native_start_without_waiting_for_startup_timeout()
     {
         var signaling = new Signaling();

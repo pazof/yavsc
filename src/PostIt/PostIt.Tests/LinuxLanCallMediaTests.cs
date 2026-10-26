@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using LibVLCSharp.Shared;
 using PostIt.Services;
@@ -11,6 +12,76 @@ public sealed class LinuxLanCallMediaTests(ITestOutputHelper output)
 {
     public static bool HasFixture => OperatingSystem.IsLinux() &&
         File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_MEDIA"));
+    public static bool HasTsFixture => OperatingSystem.IsLinux() &&
+        File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_TS"));
+
+    [Fact(Skip = "Requires Linux LibVLC.", SkipUnless = nameof(HasFixture))]
+    public async Task Ports_are_released_and_credentials_regenerated_after_disposal()
+    {
+        var port = FreePort();
+        var first = new LibVlcLanCallMedia("127.0.0.1", port, headless: true);
+        var endpoint = first.Endpoint;
+        await first.StartReceivingAsync(TestContext.Current.CancellationToken);
+        await first.DisposeAsync();
+        await first.DisposeAsync();
+        await using var next = new LibVlcLanCallMedia("127.0.0.1", port, headless: true);
+        Assert.NotEqual(endpoint.Key, next.Endpoint.Key);
+        Assert.NotEqual(endpoint.Salt, next.Endpoint.Salt);
+        await next.StartReceivingAsync(TestContext.Current.CancellationToken);
+    }
+
+    [Fact(Skip = "Requires Linux LibVLC.", SkipUnless = nameof(HasFixture))]
+    public void Occupied_rtcp_port_is_rejected_before_capture_starts()
+    {
+        var port = FreePort();
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket.Bind(new IPEndPoint(IPAddress.Loopback, port + 1));
+        var error = Assert.Throws<SocketException>(() => new LibVlcLanCallMedia("127.0.0.1", port, headless: true));
+        Assert.Equal(SocketError.AddressAlreadyInUse, error.SocketErrorCode);
+    }
+
+    [Fact(Skip = "Set POSTIT_TEST_TS to an H.264/AAC MPEG-TS file.", SkipUnless = nameof(HasTsFixture))]
+    public async Task Already_encoded_capture_is_sent_over_srtp_without_transcoding()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var firstPort = FreePort();
+        await using var sender = new LibVlcLanCallMedia("127.0.0.1", firstPort, headless: true);
+        await using var receiver = new LibVlcLanCallMedia("127.0.0.1", FreePort(firstPort), headless: true);
+        using var decoded = new DecodedVideo(receiver.Receiver);
+        using var pipe = new AnonymousPipeServerStream(PipeDirection.Out);
+        await using var source = File.OpenRead(Environment.GetEnvironmentVariable("POSTIT_TEST_TS")!);
+        await receiver.StartReceivingAsync(ct);
+        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        var pump = Task.Run(async () =>
+        {
+            var buffer = new byte[1316];
+            while (await source.ReadAsync(buffer, lifetime.Token) is var count && count > 0)
+            {
+                await pipe.WriteAsync(buffer.AsMemory(0, count), lifetime.Token);
+                await Task.Delay(4, lifetime.Token);
+            }
+        }, ct);
+        try
+        {
+            await sender.StartEncodedSendingAsync(receiver.Endpoint,
+                pipe.ClientSafePipeHandle.DangerousGetHandle().ToInt32(), ct);
+            var elapsed = Stopwatch.StartNew();
+            while (!HasMedia(receiver, decoded) && elapsed.Elapsed < TimeSpan.FromSeconds(20))
+            {
+                if (sender.Completion.IsCompleted) await sender.Completion;
+                if (receiver.Completion.IsCompleted) await receiver.Completion;
+                await Task.Delay(100, ct);
+            }
+            Assert.True(HasMedia(receiver, decoded));
+        }
+        finally
+        {
+            lifetime.Cancel();
+            try { await pump; }
+            catch (OperationCanceledException) when (lifetime.IsCancellationRequested) { }
+            await sender.StopAsync();
+        }
+    }
 
     [Theory(Skip = "Set POSTIT_TEST_MEDIA to an audio/video file; requires Linux LibVLC SRTP and H.264/AAC encoders.",
         SkipUnless = nameof(HasFixture))]
@@ -22,8 +93,8 @@ public sealed class LinuxLanCallMediaTests(ITestOutputHelper output)
         var ct = TestContext.Current.CancellationToken;
         var firstPort = FreePort();
         var secondPort = FreePort(firstPort);
-        await using var first = new LinuxLanCallMedia("127.0.0.1", firstPort, headless: true);
-        await using var second = new LinuxLanCallMedia("127.0.0.1", secondPort, headless: true);
+        await using var first = new LibVlcLanCallMedia("127.0.0.1", firstPort, headless: true);
+        await using var second = new LibVlcLanCallMedia("127.0.0.1", secondPort, headless: true);
         using var firstVideo = new DecodedVideo(first.Receiver);
         using var secondVideo = new DecodedVideo(second.Receiver);
         await first.StartReceivingAsync(ct);
@@ -68,7 +139,7 @@ public sealed class LinuxLanCallMediaTests(ITestOutputHelper output)
         }
     }
 
-    private static bool HasMedia(LinuxLanCallMedia peer, DecodedVideo video) =>
+    private static bool HasMedia(LibVlcLanCallMedia peer, DecodedVideo video) =>
         peer.Statistics.DecodedAudio > 0 && video.AudioSamples > 4800 && video.Frames >= 10;
 
     private static int FreePort(int except = 0)
@@ -77,7 +148,13 @@ public sealed class LinuxLanCallMediaTests(ITestOutputHelper output)
         {
             if (port == except) continue;
             using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            try { socket.Bind(new IPEndPoint(IPAddress.Loopback, port)); return port; }
+            using var rtcp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            try
+            {
+                socket.Bind(new IPEndPoint(IPAddress.Loopback, port));
+                rtcp.Bind(new IPEndPoint(IPAddress.Loopback, port + 1));
+                return port;
+            }
             catch (SocketException ex) when (ex.SocketErrorCode == SocketError.AddressAlreadyInUse) { }
         }
         throw new IOException("No free RTP port available.");

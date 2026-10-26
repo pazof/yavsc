@@ -43,22 +43,27 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
     [ObservableProperty] public partial bool AllowAddressDisclosure { get; set; }
     [ObservableProperty] public partial string Target { get; set; } = "";
     [ObservableProperty] public partial string Room { get; set; } = "";
-    [ObservableProperty] public partial string Status { get; set; } = "Appel Linux LAN/VPN : aucun appel.";
-    [ObservableProperty] public partial bool Incoming { get; set; }
-    [ObservableProperty] public partial bool Busy { get; set; }
+    [ObservableProperty] public partial string Status { get; set; } = "Appel LAN/VPN : aucun appel.";
+    [ObservableProperty, NotifyPropertyChangedFor(nameof(CanConfigure))]
+    public partial bool Incoming { get; set; }
+    [ObservableProperty, NotifyPropertyChangedFor(nameof(CanConfigure))]
+    public partial bool Busy { get; set; }
     [ObservableProperty] public partial bool Preparing { get; set; }
     [ObservableProperty] public partial Control? LocalVideo { get; set; }
     [ObservableProperty] public partial Control? RemoteVideo { get; set; }
+    public bool CanConfigure => !Busy || Incoming;
 
     public LanCallViewModel(ILanCallSignaling signaling, Func<string, int, ILanCallMedia>? createMedia = null)
     {
         _signaling = signaling;
-        _createMedia = createMedia ?? ((address, port) => new LinuxLanCallVideo(address, port));
+        _createMedia = createMedia ?? Platform.CreateLanCallMedia ??
+            ((address, port) => new LinuxLanCallVideo(address, port));
         signaling.Invitation += OnInvitation;
         signaling.Accepted += OnAccepted;
         signaling.Signal += OnSignal;
         signaling.Ended += OnEnded;
         signaling.Interrupted += OnInterrupted;
+        Platform.PlaybackSuspending += OnSuspending;
     }
 
     [RelayCommand]
@@ -66,7 +71,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
     {
         try
         {
-            if (Busy) throw new InvalidOperationException("Terminez l'appel avant de changer les peripheriques.");
+            if (!CanConfigure) throw new InvalidOperationException("Terminez l'appel avant de changer les peripheriques.");
             Addresses.Clear();
             foreach (var address in NetworkInterface.GetAllNetworkInterfaces()
                 .Where(n => n.OperationalStatus == OperationalStatus.Up)
@@ -77,14 +82,26 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
             Address = Addresses.FirstOrDefault();
             Cameras.Clear();
             Microphones.Clear();
-            LibVLCSharp.Shared.Core.Initialize();
-            using var vlc = CameraStreamer.CreatePreferredLibVlc();
-            var streamer = new CameraStreamer(vlc);
-            foreach (var device in streamer.GetCaptureDevices()) Cameras.Add(new(device.Key, device.Value));
-            foreach (var device in streamer.GetAudioCaptureDevices()) Microphones.Add(new(device.Key, device.Value));
+            if (Platform.GetLanCallDevices is { } getDevices)
+            {
+                var devices = getDevices();
+                foreach (var device in devices.Cameras) Cameras.Add(device);
+                foreach (var device in devices.Microphones.Where(d => !string.IsNullOrEmpty(d.Value)))
+                    Microphones.Add(device);
+            }
+            else
+            {
+                LibVLCSharp.Shared.Core.Initialize();
+                using var vlc = CameraStreamer.CreatePreferredLibVlc();
+                var streamer = new CameraStreamer(vlc);
+                foreach (var device in streamer.GetCaptureDevices()) Cameras.Add(new(device.Key, device.Value));
+                foreach (var device in streamer.GetAudioCaptureDevices()) Microphones.Add(new(device.Key, device.Value));
+            }
             Camera = Cameras.FirstOrDefault();
             Microphone = Microphones.FirstOrDefault();
-            Status = Cameras.Count == 0 ? "Aucune camera Linux detectee. Branchez une camera puis actualisez."
+            Status = Cameras.Count == 0 ? "Aucune camera detectee. Verifiez les peripheriques puis actualisez."
+                : Incoming && _call != null
+                    ? $"{_call.Caller} propose un appel dans {_call.RoomName}. Selectionnez vos peripheriques puis acceptez ou refusez."
                 : "Selectionnez le pair, l'adresse LAN/VPN et les peripheriques. Utilisez un casque.";
         }
         catch (Exception error) { Status = "Peripheriques indisponibles : " + error.Message; }
@@ -141,7 +158,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         if (call.Transport != CallTransports.LanSrtp)
         {
             await _signaling.EndAsync(call.Id, _lifetime.Token);
-            Status = "Invitation WebRTC non prise en charge par le mode Linux LAN.";
+            Status = "Invitation WebRTC non prise en charge par le mode LAN.";
             return;
         }
         if (_call != null) throw new InvalidOperationException("Invitation concurrente inattendue.");
@@ -191,6 +208,9 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
 
     private void OnInterrupted() => QueueStop(null,
         () => StopAsync("Connexion SignalR interrompue ; medias arretes.", false));
+
+    private void OnSuspending() => QueueStop(null,
+        () => StopAsync("Application en arriere-plan ; appel termine.", true));
 
     private void QueueStop(Guid? id, Func<Task> action) => Dispatcher.UIThread.Post(async () =>
     {
@@ -303,6 +323,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
             _signaling.Signal -= OnSignal;
             _signaling.Ended -= OnEnded;
             _signaling.Interrupted -= OnInterrupted;
+            Platform.PlaybackSuspending -= OnSuspending;
             try { await StopAsync("Appel arrete.", true); }
             finally { _lifetime.Dispose(); }
         }
