@@ -6,7 +6,7 @@ using Yavsc.Abstract.Chat.Calls;
 
 namespace PostIt.Services;
 
-public sealed class CallSignalingClient : IDisposable
+public sealed class CallSignalingClient : ILanCallSignaling, IDisposable
 {
     private readonly HubConnection _connection;
     private readonly IDisposable[] _subscriptions;
@@ -37,6 +37,12 @@ public sealed class CallSignalingClient : IDisposable
     {
         EnsureConnected();
         return _connection.InvokeAsync<CallSession>(CallHubMethods.Invite, room, user, ct);
+    }
+
+    public Task<CallSession> InviteLanAsync(string room, string user, CancellationToken ct = default)
+    {
+        EnsureConnected();
+        return _connection.InvokeAsync<CallSession>(CallHubMethods.InviteLan, room, user, ct);
     }
 
     public Task AcceptAsync(Guid callId, CancellationToken ct = default)

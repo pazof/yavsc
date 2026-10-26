@@ -12,6 +12,8 @@ public static class CallSignalValidator
     {
         if (signal is null)
             throw new HubException("A call signal is required.");
+        if (signal.Endpoint != null)
+            throw new HubException("WebRTC signaling cannot carry a LAN endpoint.");
         if (signal.Kind is "offer" or "answer")
         {
             if (string.IsNullOrWhiteSpace(signal.Sdp) || Encoding.UTF8.GetByteCount(signal.Sdp) > 24000 ||

@@ -1,0 +1,311 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using PostIt.Services;
+using Yavsc.Abstract.Chat.Calls;
+
+namespace PostIt.ViewModels.Chat;
+
+public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
+{
+    private readonly ILanCallSignaling _signaling;
+    private readonly Func<string, int, ILanCallMedia> _createMedia;
+    private readonly SemaphoreSlim _events = new(1);
+    private readonly CancellationTokenSource _lifetime = new();
+    private CancellationTokenSource? _callLifetime;
+    private ILanCallMedia? _media;
+    private CallSession? _call;
+    private bool _disposed;
+    private bool _accepting;
+    private bool _endpointReceived;
+    private string? _activeCamera;
+    private string? _activeMicrophone;
+    private string? _activeAddress;
+    private int _activePort;
+
+    public ObservableCollection<string> Addresses { get; } = [];
+    public ObservableCollection<CaptureDevice> Cameras { get; } = [];
+    public ObservableCollection<CaptureDevice> Microphones { get; } = [];
+
+    [ObservableProperty] public partial string? Address { get; set; }
+    [ObservableProperty] public partial string Port { get; set; } = "5004";
+    [ObservableProperty] public partial CaptureDevice? Camera { get; set; }
+    [ObservableProperty] public partial CaptureDevice? Microphone { get; set; }
+    [ObservableProperty] public partial bool AllowAddressDisclosure { get; set; }
+    [ObservableProperty] public partial string Target { get; set; } = "";
+    [ObservableProperty] public partial string Room { get; set; } = "";
+    [ObservableProperty] public partial string Status { get; set; } = "Appel Linux LAN/VPN : aucun appel.";
+    [ObservableProperty] public partial bool Incoming { get; set; }
+    [ObservableProperty] public partial bool Busy { get; set; }
+    [ObservableProperty] public partial bool Preparing { get; set; }
+    [ObservableProperty] public partial Control? LocalVideo { get; set; }
+    [ObservableProperty] public partial Control? RemoteVideo { get; set; }
+
+    public LanCallViewModel(ILanCallSignaling signaling, Func<string, int, ILanCallMedia>? createMedia = null)
+    {
+        _signaling = signaling;
+        _createMedia = createMedia ?? ((address, port) => new LinuxLanCallVideo(address, port));
+        signaling.Invitation += OnInvitation;
+        signaling.Accepted += OnAccepted;
+        signaling.Signal += OnSignal;
+        signaling.Ended += OnEnded;
+        signaling.Interrupted += OnInterrupted;
+    }
+
+    [RelayCommand]
+    private void RefreshDevices()
+    {
+        try
+        {
+            if (Busy) throw new InvalidOperationException("Terminez l'appel avant de changer les peripheriques.");
+            Addresses.Clear();
+            foreach (var address in NetworkInterface.GetAllNetworkInterfaces()
+                .Where(n => n.OperationalStatus == OperationalStatus.Up)
+                .SelectMany(n => n.GetIPProperties().UnicastAddresses)
+                .Select(a => a.Address.ToString()).Where(LanCallNetwork.IsPrivateIPv4)
+                .Distinct().OrderBy(a => IPAddress.IsLoopback(IPAddress.Parse(a))))
+                Addresses.Add(address);
+            Address = Addresses.FirstOrDefault();
+            Cameras.Clear();
+            Microphones.Clear();
+            LibVLCSharp.Shared.Core.Initialize();
+            using var vlc = CameraStreamer.CreatePreferredLibVlc();
+            var streamer = new CameraStreamer(vlc);
+            foreach (var device in streamer.GetCaptureDevices()) Cameras.Add(new(device.Key, device.Value));
+            foreach (var device in streamer.GetAudioCaptureDevices()) Microphones.Add(new(device.Key, device.Value));
+            Camera = Cameras.FirstOrDefault();
+            Microphone = Microphones.FirstOrDefault();
+            Status = Cameras.Count == 0 ? "Aucune camera Linux detectee. Branchez une camera puis actualisez."
+                : "Selectionnez le pair, l'adresse LAN/VPN et les peripheriques. Utilisez un casque.";
+        }
+        catch (Exception error) { Status = "Peripheriques indisponibles : " + error.Message; }
+    }
+
+    private void ValidateSelection()
+    {
+        if (!AllowAddressDisclosure)
+            throw new InvalidOperationException("Confirmez le partage de votre adresse LAN/VPN avec le pair.");
+        if (Camera == null || Microphone == null)
+            throw new InvalidOperationException("Une camera et un microphone sont requis.");
+        if (Address == null || !Addresses.Contains(Address) || !LanCallNetwork.IsPrivateIPv4(Address) ||
+            !int.TryParse(Port, out var port) || port is < 1024 or > 65534 || port % 2 != 0)
+            throw new InvalidOperationException("Selectionnez une adresse locale et un port UDP pair (1024-65534).");
+        _activeCamera = Camera.Value;
+        _activeMicrophone = Microphone.Value;
+        _activeAddress = Address;
+        _activePort = port;
+    }
+
+    [RelayCommand]
+    private Task InviteAsync() => RunAsync(async () =>
+    {
+        if (Busy) throw new InvalidOperationException("Un appel est deja en cours.");
+        ValidateSelection();
+        if (string.IsNullOrWhiteSpace(Target) || string.IsNullOrWhiteSpace(Room))
+            throw new InvalidOperationException("Selectionnez une salle jointe et un autre utilisateur.");
+        Busy = true;
+        _call = await _signaling.InviteLanAsync(Room, Target.Trim(), _lifetime.Token);
+        Status = $"Invitation envoyee a {_call.Callee} ; attente du consentement.";
+    });
+
+    [RelayCommand]
+    private Task AcceptAsync() => RunAsync(async () =>
+    {
+        if (_call == null || !Incoming)
+            throw new InvalidOperationException("Aucune invitation a accepter.");
+        ValidateSelection();
+        Incoming = false;
+        _accepting = true;
+        await _signaling.AcceptAsync(_call.Id, _lifetime.Token);
+        Status = "Invitation acceptee ; preparation des medias.";
+    });
+
+    [RelayCommand]
+    public Task HangupAsync()
+    {
+        _callLifetime?.Cancel();
+        return RunAsync(() => StopAsync("Appel termine.", true));
+    }
+
+    private void OnInvitation(CallSession call) => Queue(async () =>
+    {
+        if (call.Transport != CallTransports.LanSrtp)
+        {
+            await _signaling.EndAsync(call.Id, _lifetime.Token);
+            Status = "Invitation WebRTC non prise en charge par le mode Linux LAN.";
+            return;
+        }
+        if (_call != null) throw new InvalidOperationException("Invitation concurrente inattendue.");
+        if (call.RelayOnly) throw new InvalidOperationException("Le mode LAN ne peut pas masquer les adresses IP.");
+        _call = call;
+        Busy = true;
+        Incoming = true;
+        Status = $"{call.Caller} propose un appel SRTP dans {call.RoomName}. Acceptez ou refusez.";
+        await Task.CompletedTask;
+    });
+
+    private void OnAccepted(CallAccepted accepted) => Queue(async () =>
+    {
+        if (_call?.Id != accepted.Session.Id) return;
+        if (_media != null) throw new InvalidOperationException("Acceptation repetee.");
+        if (accepted.Session.Transport != CallTransports.LanSrtp || accepted.Session.RelayOnly ||
+            (Incoming && !_accepting))
+            throw new InvalidOperationException("Acceptation ou politique de transport inattendue.");
+        _call = accepted.Session;
+        Incoming = false;
+        _accepting = false;
+        _callLifetime = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        _media = _createMedia(_activeAddress!, _activePort);
+        LocalVideo = _media.LocalVideo;
+        RemoteVideo = _media.RemoteVideo;
+        Status = "Connexion SRTP : attente du pair (30 secondes maximum).";
+        await _signaling.SendAsync(_call.Id, new("rtp-endpoint", Endpoint: _media.Endpoint), _callLifetime.Token);
+        _ = MonitorAsync(_call.Id, _media, _callLifetime.Token);
+    });
+
+    private void OnSignal(Guid id, CallSignal signal) => Queue(async () =>
+    {
+        if (_call?.Id != id) return;
+        if (_media == null || _callLifetime == null || signal.Kind != "rtp-endpoint" ||
+            signal.Endpoint?.IsValid() != true || _endpointReceived)
+            throw new InvalidOperationException("Destination SRTP manquante, invalide ou repetee.");
+        _endpointReceived = true;
+        await _media.StartSendingAsync(signal.Endpoint, _activeCamera!, _activeMicrophone!, _callLifetime.Token);
+        Status = "Emission SRTP demarree ; verification de la reception audio-video.";
+    });
+
+    private void OnEnded(CallEnded ended) => QueueStop(ended.CallId, async () =>
+    {
+        if (_call?.Id == ended.CallId)
+            await StopAsync("Appel termine : " + ended.Reason, false);
+    });
+
+    private void OnInterrupted() => QueueStop(null,
+        () => StopAsync("Connexion SignalR interrompue ; medias arretes.", false));
+
+    private void QueueStop(Guid? id, Func<Task> action) => Dispatcher.UIThread.Post(async () =>
+    {
+        if (id == null || _call?.Id == id) _callLifetime?.Cancel();
+        await RunAsync(action);
+    });
+
+    private async Task MonitorAsync(Guid id, ILanCallMedia media, CancellationToken ct)
+    {
+        var start = Stopwatch.StartNew();
+        var received = false;
+        try
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                if (media.Completion.IsCompleted) await media.Completion;
+                if (!received && media.HasRemoteMedia)
+                {
+                    received = true;
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        if (_call?.Id == id) Status = "Reception audio-video SRTP etablie (LAN/VPN).";
+                    });
+                }
+                if (!received && start.Elapsed > TimeSpan.FromSeconds(30))
+                    throw new TimeoutException("Aucun media distant : verifiez adresses, port UDP et pare-feu LAN/VPN.");
+                await Task.Delay(500, ct);
+            }
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
+        catch (Exception error)
+        {
+            Queue(() => _call?.Id == id && ReferenceEquals(_media, media)
+                ? FailAsync(error) : Task.CompletedTask);
+        }
+    }
+
+    private void Queue(Func<Task> action) =>
+        Dispatcher.UIThread.Post(async () => await RunAsync(action));
+
+    private async Task RunAsync(Func<Task> action)
+    {
+        await _events.WaitAsync();
+        try
+        {
+            if (_disposed) return;
+            Preparing = true;
+            await action();
+        }
+        catch (OperationCanceledException) when (
+            _lifetime.IsCancellationRequested || _callLifetime?.IsCancellationRequested == true) { }
+        catch (Exception error) { await FailAsync(error); }
+        finally
+        {
+            Preparing = false;
+            _events.Release();
+        }
+    }
+
+    private async Task FailAsync(Exception error)
+    {
+        try { await StopAsync("Echec de l'appel : " + error.Message, true); }
+        catch (Exception cleanupError)
+        {
+            Status = $"Echec de l'appel : {error.Message}. Nettoyage/signalisation : {cleanupError.Message}";
+        }
+    }
+
+    private async Task StopAsync(string status, bool notify)
+    {
+        var call = _call;
+        _call = null;
+        Incoming = false;
+        Busy = false;
+        _accepting = false;
+        _endpointReceived = false;
+        _callLifetime?.Cancel();
+        var media = _media;
+        _media = null;
+        try
+        {
+            if (media != null) await media.DisposeAsync();
+        }
+        finally
+        {
+            LocalVideo = null;
+            RemoteVideo = null;
+            _callLifetime?.Dispose();
+            _callLifetime = null;
+            Status = status;
+        }
+        if (notify && call != null)
+        {
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            await _signaling.EndAsync(call.Id, timeout.Token);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed) return;
+        _lifetime.Cancel();
+        await _events.WaitAsync();
+        try
+        {
+            if (_disposed) return;
+            _disposed = true;
+            _signaling.Invitation -= OnInvitation;
+            _signaling.Accepted -= OnAccepted;
+            _signaling.Signal -= OnSignal;
+            _signaling.Ended -= OnEnded;
+            _signaling.Interrupted -= OnInterrupted;
+            try { await StopAsync("Appel arrete.", true); }
+            finally { _lifetime.Dispose(); }
+        }
+        finally { _events.Release(); }
+    }
+}

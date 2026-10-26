@@ -39,6 +39,11 @@ namespace PostIt.ViewModels.Chat
 
         public CallSignalingClient? Calls { get; private set; }
 
+        public bool SupportsLanCalls => OperatingSystem.IsLinux() && !OperatingSystem.IsAndroid();
+
+        [ObservableProperty]
+        public partial LanCallViewModel? LanCall { get; set; }
+
         [ObservableProperty]
         public partial string CurrentRoom { get; set; } =  "General";
 
@@ -83,6 +88,7 @@ namespace PostIt.ViewModels.Chat
 
         partial void OnSelectedRoomChanged(string? value)
         {
+            if (LanCall != null) LanCall.Room = value ?? "";
             FocusedMessages = value != null && _messagesByRoom.TryGetValue(value, out var msgs)
                 ? msgs : _systemMessages;
             FocusedUsers = value != null && _usersByRoom.TryGetValue(value, out var users)
@@ -132,6 +138,13 @@ namespace PostIt.ViewModels.Chat
 
         private async Task DisconnectAsync()
         {
+            Exception? callError = null;
+            if (LanCall != null)
+            {
+                try { await LanCall.DisposeAsync(); }
+                catch (Exception error) { callError = error; }
+                finally { LanCall = null; }
+            }
             Calls?.Dispose();
             Calls = null;
             if (_connection != null)
@@ -146,7 +159,9 @@ namespace PostIt.ViewModels.Chat
             _messagesByRoom.Clear();
             _usersByRoom.Clear();
             _systemMessages.Clear();
-            Status = new StatusNotice("Déconnecté", StatusSeverity.Info,
+            Status = new StatusNotice(callError == null ? "Déconnecté" :
+                "Déconnecté ; erreur de fermeture de l'appel : " + callError.Message,
+                callError == null ? StatusSeverity.Info : StatusSeverity.Error,
              new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
         }
 
@@ -156,6 +171,11 @@ namespace PostIt.ViewModels.Chat
             {
                 if (_connection != null)
                 {
+                    if (LanCall != null)
+                    {
+                        await LanCall.DisposeAsync();
+                        LanCall = null;
+                    }
                     Calls?.Dispose();
                     Calls = null;
                     await _connection.DisposeAsync();
@@ -200,8 +220,11 @@ namespace PostIt.ViewModels.Chat
                     .Build();
 
                 Calls = new CallSignalingClient(_connection);
-                Calls.Invitation += call => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                    Log($"Invitation audio-vidéo de {call.Caller} dans {call.RoomName} ; moteur natif non disponible."));
+                if (SupportsLanCalls)
+                    LanCall = new LanCallViewModel(Calls) { Room = SelectedRoom ?? "" };
+                else
+                    Calls.Invitation += call => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                        Log($"Invitation audio-vidéo de {call.Caller} dans {call.RoomName} ; transport non disponible sur cette plateforme."));
                 Calls.Ended += call => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                     Log($"Appel terminé : {call.Reason}."));
 

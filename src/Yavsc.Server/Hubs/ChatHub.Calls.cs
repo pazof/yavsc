@@ -9,22 +9,30 @@ namespace Yavsc.Server.Hubs;
 
 public partial class ChatHub
 {
-    public async Task<CallSession> InviteCall(string roomName, string callee)
+    public Task<CallSession> InviteCall(string roomName, string callee) =>
+        InviteCoreAsync(roomName, callee, CallTransports.WebRtc);
+
+    public Task<CallSession> InviteLanCall(string roomName, string callee) =>
+        InviteCoreAsync(roomName, callee, CallTransports.LanSrtp);
+
+    private async Task<CallSession> InviteCoreAsync(string roomName, string callee, string transport)
     {
         var caller = CallUser();
+        RequireSecureLanControl(transport);
         if (string.IsNullOrWhiteSpace(roomName) || !InputValidator.ValidateRoomName(roomName) ||
             string.IsNullOrWhiteSpace(callee) || !InputValidator.ValidateUserName(callee))
             throw new HubException("Invalid call participant or room.");
         RequireCallPresence(roomName, caller, callee);
         var relayOnly = await RequiresRelayAsync(caller, callee);
         return await _calls.InviteAsync(roomName, caller, callee, Context.ConnectionId,
-            _cxManager.GetConnexionIds(callee)?.Distinct().ToArray() ?? [], relayOnly);
+            _cxManager.GetConnexionIds(callee)?.Distinct().ToArray() ?? [], relayOnly, transport);
     }
 
     public async Task AcceptCall(Guid callId)
     {
         var user = CallUser();
         var session = await _calls.GetSessionAsync(callId, user, Context.ConnectionId);
+        RequireSecureLanControl(session.Transport);
         RequireCallPresence(session.RoomName, session.Caller, session.Callee);
         await _calls.AcceptAsync(callId, user, Context.ConnectionId,
             await RequiresRelayAsync(session.Caller, session.Callee));
@@ -36,6 +44,7 @@ public partial class ChatHub
     {
         var user = CallUser();
         var session = await _calls.GetSessionAsync(callId, user, Context.ConnectionId);
+        RequireSecureLanControl(session.Transport);
         RequireCallPresence(session.RoomName, session.Caller, session.Callee);
         if (!session.RelayOnly && await RequiresRelayAsync(session.Caller, session.Callee))
         {
@@ -51,6 +60,12 @@ public partial class ChatHub
         if (string.IsNullOrWhiteSpace(user) || _cxManager.GetUserName(Context.ConnectionId) != user)
             throw new HubException("An authenticated chat connection is required.");
         return user;
+    }
+
+    private void RequireSecureLanControl(string transport)
+    {
+        if (transport == CallTransports.LanSrtp && Context.GetHttpContext()?.Request.IsHttps != true)
+            throw new HubException("LAN calls require HTTPS signaling to protect SRTP keys.");
     }
 
     private void RequireCallPresence(string room, string caller, string callee)

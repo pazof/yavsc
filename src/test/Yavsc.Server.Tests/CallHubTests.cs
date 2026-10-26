@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Connections.Features;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +34,8 @@ public sealed class CallHubTests
             _services = new ServiceCollection().AddLogging().AddLocalization().BuildServiceProvider();
             Calls = new(Delivery, Options.Create(new AudioVideoCallOptions
             {
-                Enabled = true, TurnUrls = ["turn:turn.example.test:3478"], TurnSharedSecret = "test-only"
+                Enabled = true, EnableLanCalls = true,
+                TurnUrls = ["turn:turn.example.test:3478"], TurnSharedSecret = "test-only"
             }), TimeProvider.System, NullLogger<CallSignalingService>.Instance);
             Db.Users.AddRange(
                 new ApplicationUser { Id = "alice-id", UserName = "alice", Email = "alice@example.test" },
@@ -53,6 +56,36 @@ public sealed class CallHubTests
             Db.Dispose();
             _services.Dispose();
         }
+    }
+
+    [Fact]
+    public async Task Lan_requires_https_at_invitation_acceptance_and_key_exchange()
+    {
+        using var f = new Fixture();
+        using var caller = f.Hub("alice", "alice-1");
+        using var callee = f.Hub("bob", "bob-1");
+        await Assert.ThrowsAsync<HubException>(() => caller.InviteLanCall("General", "bob"));
+        Assert.Empty(f.Delivery.Messages);
+        var http = new DefaultHttpContext();
+        http.Request.Scheme = "https";
+        caller.Context.Features.Set<IHttpContextFeature>(new HttpFeature(http));
+        var call = await caller.InviteLanCall("General", "bob");
+        await Assert.ThrowsAsync<HubException>(() => callee.AcceptCall(call.Id));
+        callee.Context.Features.Set<IHttpContextFeature>(new HttpFeature(http));
+        await callee.AcceptCall(call.Id);
+        var endpoint = new CallSignal("rtp-endpoint",
+            Endpoint: new("192.168.1.2", 5004, new string('a', 32), new string('b', 28)));
+        http.Request.Scheme = "http";
+        await Assert.ThrowsAsync<HubException>(() => caller.SendCallSignal(call.Id, endpoint));
+        Assert.DoesNotContain(f.Delivery.Messages, m => m.Method == CallHubMethods.SignalReceived);
+        http.Request.Scheme = "https";
+        await caller.SendCallSignal(call.Id, endpoint);
+        Assert.Single(f.Delivery.Messages, m => m.Method == CallHubMethods.SignalReceived);
+    }
+
+    private sealed class HttpFeature(HttpContext context) : IHttpContextFeature
+    {
+        public HttpContext? HttpContext { get; set; } = context;
     }
 
     [Fact]

@@ -15,6 +15,7 @@ public sealed class CallSignalingClientTests
         var id = Guid.NewGuid();
         var ct = TestContext.Current.CancellationToken;
         await Assert.ThrowsAsync<InvalidOperationException>(() => client.InviteAsync("General", "bob", ct));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => client.InviteLanAsync("General", "bob", ct));
         await Assert.ThrowsAsync<InvalidOperationException>(() => client.AcceptAsync(id, ct));
         await Assert.ThrowsAsync<InvalidOperationException>(() => client.EndAsync(id, ct));
         await Assert.ThrowsAsync<InvalidOperationException>(() => client.SendAsync(id, new("offer", "sdp"), ct));
@@ -50,5 +51,10 @@ public sealed class CallSignalingClientTests
         var signal = new CallSignal("candidate", Candidate: "candidate:1 1 udp 100 192.0.2.1 5000 typ relay",
             SdpMid: "video", SdpMLineIndex: 1);
         Assert.Equal(signal, JsonSerializer.Deserialize<CallSignal>(JsonSerializer.Serialize(signal, options), options));
+        var lan = call with { RelayOnly = false, Transport = CallTransports.LanSrtp };
+        Assert.Equal(lan, JsonSerializer.Deserialize<CallSession>(JsonSerializer.Serialize(lan, options), options));
+        var endpoint = new CallSignal("rtp-endpoint",
+            Endpoint: new("192.168.1.2", 5004, new string('a', 32), new string('b', 28)));
+        Assert.Equal(endpoint, JsonSerializer.Deserialize<CallSignal>(JsonSerializer.Serialize(endpoint, options), options));
     }
 }

@@ -27,6 +27,7 @@ public sealed class CallSignalingService(
         public bool Offered { get; set; }
         public bool Answered { get; set; }
         public int CandidateCount { get; set; }
+        public HashSet<string> EndpointConnections { get; } = [];
         public string[] Connections => [CallerConnection, .. CalleeConnections];
     }
 
@@ -36,13 +37,13 @@ public sealed class CallSignalingService(
 
     public async Task<CallSession> InviteAsync(
         string room, string caller, string callee, string callerConnection,
-        string[] calleeConnections, bool relayOnly)
+        string[] calleeConnections, bool relayOnly, string transport = CallTransports.WebRtc)
     {
         EnsureEnabled();
         if (caller == callee || calleeConnections.Length == 0 ||
             calleeConnections.Contains(callerConnection))
             throw new HubException("Call participants are unavailable.");
-        ValidateIceConfiguration(relayOnly);
+        ValidateTransport(transport, relayOnly);
         await _gate.WaitAsync();
         try
         {
@@ -52,7 +53,7 @@ public sealed class CallSignalingService(
                 c.Session.Caller == callee || c.Session.Callee == callee))
                 throw new HubException("A participant is already in a call.");
             var session = new CallSession(Guid.NewGuid(), room, caller, callee, relayOnly,
-                clock.GetUtcNow().AddSeconds(45));
+                clock.GetUtcNow().AddSeconds(45), transport);
             var call = new PendingCall(session, callerConnection, calleeConnections);
             _calls.Add(session.Id, call);
             try
@@ -83,7 +84,7 @@ public sealed class CallSignalingService(
             if (call.AcceptedConnection != null)
                 throw new HubException("This call was already accepted.");
             var requireRelay = call.Session.RelayOnly || relayOnly;
-            ValidateIceConfiguration(requireRelay);
+            ValidateTransport(call.Session.Transport, requireRelay);
             call.AcceptedConnection = connection;
             call.Session = call.Session with
             {
@@ -92,7 +93,8 @@ public sealed class CallSignalingService(
             };
             var otherDevices = call.CalleeConnections.Where(c => c != connection).ToArray();
             call.CalleeConnections.IntersectWith([connection]);
-            var accepted = new CallAccepted(call.Session, CreateIceServers(call.Session));
+            var accepted = new CallAccepted(call.Session, call.Session.Transport == CallTransports.LanSrtp
+                ? [] : CreateIceServers(call.Session));
             try
             {
                 if (otherDevices.Length > 0)
@@ -122,6 +124,18 @@ public sealed class CallSignalingService(
             var callee = call.AcceptedConnection == connection && call.Session.Callee == user;
             if ((!caller && !callee) || call.AcceptedConnection == null)
                 throw new HubException("Media signaling requires acceptance on this device.");
+            if (call.Session.Transport == CallTransports.LanSrtp)
+            {
+                ValidateTransport(call.Session.Transport, call.Session.RelayOnly);
+                if (signal is null || signal.Kind != "rtp-endpoint" || signal.Endpoint?.IsValid() != true ||
+                    signal.Sdp != null || signal.Candidate != null || signal.SdpMid != null ||
+                    signal.SdpMLineIndex != null || call.EndpointConnections.Contains(connection))
+                    throw new HubException("A LAN call requires one valid SRTP endpoint per accepted device.");
+                var endpointTarget = caller ? call.AcceptedConnection : call.CallerConnection;
+                await hub.Clients.Client(endpointTarget).SendAsync(CallHubMethods.SignalReceived, id, signal);
+                call.EndpointConnections.Add(connection);
+                return;
+            }
             CallSignalValidator.Validate(signal, call.Session.RelayOnly);
             switch (signal.Kind)
             {
@@ -250,6 +264,19 @@ public sealed class CallSignalingService(
             (_options.TurnUrls.Length > 0 && string.IsNullOrWhiteSpace(_options.TurnSharedSecret)) ||
             (relayOnly && _options.TurnUrls.Length == 0))
             throw new HubException("ICE/TURN configuration is unavailable. No direct fallback is allowed.");
+    }
+
+    private void ValidateTransport(string transport, bool relayOnly)
+    {
+        if (transport == CallTransports.LanSrtp)
+        {
+            if (!_options.EnableLanCalls || relayOnly)
+                throw new HubException("LAN calls must be enabled and cannot hide participant IP addresses.");
+        }
+        else if (transport == CallTransports.WebRtc)
+            ValidateIceConfiguration(relayOnly);
+        else
+            throw new HubException("Unsupported call transport.");
     }
 
     private static bool ValidUrl(string url, params string[] schemes)
