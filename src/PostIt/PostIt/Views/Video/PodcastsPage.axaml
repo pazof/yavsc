@@ -6,6 +6,46 @@
              x:Class="PostIt.Views.PodcastsPage"
              x:DataType="vm:PodcastsPageViewModel"
              Header="Podcasts">
+              <ContentPage.Styles>
+        <Style Selector="Border.warning-danger">
+            <Setter Property="Background" Value="#862C05"/>
+            <Setter Property="BorderBrush" Value="#A5EDC2"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12"/>
+        </Style>
+        <Style Selector="TextBlock.warning-danger">
+            <Setter Property="Background" Value="#862C05"/>
+            <Setter Property="Foreground" Value="#AAFF00"/>
+        </Style>
+
+        <Style Selector="TextBlock.warning-title">
+            <Setter Property="Background" Value="#862C05"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style Selector="CheckBox.warning-check">
+            <Setter Property="Background" Value="#862C05"/>
+            <Setter Property="Foreground" Value="#FFF7F4"/>
+        </Style>
+
+        <Style Selector="Button.delete-danger">
+            <Setter Property="Background" Value="#862C05"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10,8"/>
+        </Style>
+
+        <Style Selector="Button.delete-danger:pointerover">
+            <Setter Property="Background" Value="#FFCB64"/>
+            <Setter Property="Foreground" Value="#03963E"/>
+        </Style>
+
+        <Style Selector="Button.delete-danger:disabled">
+            <Setter Property="Opacity" Value="0.55"/>
+        </Style>
+    </ContentPage.Styles>
     <ScrollViewer>
         <StackPanel Margin="16" Spacing="12" MaxWidth="900">
             <TextBlock Text="Podcasts : directs et replays" FontSize="22" />
@@ -57,10 +97,20 @@
                 <Button Content="Terminer mon direct selectionne" Command="{Binding FinishCommand}" Margin="0,0,8,8" />
                 <Button Content="Relancer la preparation MP4" Command="{Binding RetryReplayCommand}" Margin="0,0,8,8" />
             </WrapPanel>
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <CheckBox x:Name="ConfirmDelete" Content="Confirmer la suppression du replay selectionne" />
-                <Button Content="Supprimer mon replay" Command="{Binding DeleteCommand}" IsEnabled="{Binding #ConfirmDelete.IsChecked}" />
-            </StackPanel>
+             <Border Classes="warning-danger">
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="warning-title" Text="⚠ Suppression du replay" />
+                    <TextBlock Text="Cette action supprime définitivement le replay sélectionné. Cette opération est irréversible."
+                               TextWrapping="Wrap"  />
+                    <CheckBox x:Name="ConfirmDelete"
+                              Classes="warning-check"
+                              Content="Je confirme la suppression du replay sélectionné" />
+                    <Button Classes="delete-danger"
+                            Content="Supprimer mon replay"
+                            Command="{Binding DeleteCommand}"
+                            IsEnabled="{Binding #ConfirmDelete.IsChecked}" />
+                </StackPanel>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </ContentPage>
