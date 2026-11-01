@@ -82,6 +82,15 @@ public class BlogReaderTests
         Assert.Equal(StatusSeverity.Warning, vm.ActionStatus.Severity);
     }
 
+    [Theory]
+    [InlineData("https://org.example.test/files/paul/clip.mp4", true)]
+    [InlineData("https://localhost/files/paul/clip.mp4", false)]
+    public void Video_links_only_open_externally_when_the_source_is_a_real_external_resource(string source, bool expected)
+    {
+        var vm = new VideoPageViewModel(new Uri(source), "video/mp4");
+        Assert.Equal(expected, vm.CanOpenExternal);
+    }
+
     [AvaloniaFact]
     public async Task Reader_hides_editor_and_wires_hyperlinks_to_the_application()
     {

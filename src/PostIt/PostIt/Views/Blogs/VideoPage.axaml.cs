@@ -172,15 +172,6 @@ public partial class VideoPage : ContentPage
 
     private void PodcastFailed(string message) => Dispatcher.UIThread.Post(() => PlaybackStatus.Text = message);
 
-    private static bool CanLaunchExternally(Uri source)
-        => source is { IsAbsoluteUri: true }
-            && (string.Equals(source.Scheme, "http", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(source.Scheme, "https", StringComparison.OrdinalIgnoreCase))
-            && !string.Equals(source.Host, "localhost", StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(source.AbsolutePath, "/", StringComparison.OrdinalIgnoreCase)
-            && !source.AbsolutePath.Contains("/api/", StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(source.Scheme, "about", StringComparison.OrdinalIgnoreCase);
-
     private void Player_EncounteredError(object? sender, EventArgs e)
         => Dispatcher.UIThread.Post(() =>
         {
@@ -208,7 +199,7 @@ public partial class VideoPage : ContentPage
             return;
         try
         {
-            if (!CanLaunchExternally(vm.Source))
+            if (!vm.CanOpenExternal)
             {
                 PlaybackStatus.Text = "Ce flux interne ne peut pas être ouvert dans le navigateur.";
                 return;
