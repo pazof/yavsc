@@ -38,7 +38,8 @@ Pour une prise en main guidee avec agents IA:
 ## Construction
 
 ```bash
- dotnet build
+sudo dotnet workload restore
+dotnet build
 ```
 
 et, pour execution en environment de développement
