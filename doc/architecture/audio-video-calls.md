@@ -5,7 +5,7 @@
 Ce document décrit l'architecture cible et l'implémentation commencée.
 La préférence de confidentialité est persistée et éditable dans le profil.
 La signalisation est intégrée au chat, désactivée par défaut. Un premier
-transport natif **Android et Desktop Linux sur LAN/VPN** est raccordé :
+transport natif **Android et Desktop Linux en IPv4 directe (LAN/VPN ou IP publique)** est raccordé :
 captures Podcast existantes et SRTP direct, sans libwebrtc ni nouvelle
 couche JNI WebRTC. Il ne réalise pas encore la cible Internet, TURN ou groupe.
 Il complète la [topologie de PostIt](postit.md) et les
@@ -18,7 +18,17 @@ La cible couvre :
 - les appels de groupe ;
 - les clients Browser, Android et Desktop.
 
-## Première implémentation Android et Desktop Linux : SRTP sur LAN/VPN
+## Première implémentation Android et Desktop Linux : SRTP direct IPv4
+
+Les adresses IPv4 publiques directement assignees a une interface locale active
+sont egalement disponibles, avec la meme validation unicast cote client,
+media et signalisation serveur. Les adresses non specifiees, link-local,
+multicast, reservees (240/4), IPv6 et les formes non canoniques sont refusees.
+Il faut autoriser en entree les deux ports UDP consecutifs choisis et assurer
+la joignabilite entre les pairs. Ce support n'ajoute ni ICE/TURN ni traversee
+NAT automatique : l'adresse publique d'un routeur ne remplace pas une adresse
+assignee a la machine. Le consentement explicite au partage d'IP et le refus
+du mode direct pour les comptes masquant leur IP restent inchanges.
 
 Cette tranche réutilise la capture caméra/microphone et les encodeurs des
 Podcasts, mais **pas leur segmentation HLS ni leurs envois de fichiers** :
@@ -67,7 +77,7 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
    H.264/AAC. La version Debian 13 a été utilisée pour les essais Linux.
    Les deux comptes doivent être présents dans
    la même salle existante et ne pas se bloquer mutuellement.
-3. Dans « Appel direct (LAN/VPN) », actualiser les périphériques,
+3. Dans « Appel direct IPv4 (LAN/VPN ou IP publique) », actualiser les périphériques,
    sélectionner la caméra, le microphone et une IPv4 privée locale
    accessible depuis le pair. Les adresses RFC1918 et de bouclage sont
    acceptées ; pas de DNS, IPv6 ou adresse publique. Le bouclage sert aux
@@ -79,7 +89,7 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
    adresse doivent utiliser des paires distinctes.
    Aucun pare-feu n'est modifié automatiquement.
 5. Saisir le pseudo exact du destinataire, confirmer la divulgation de
-   l'adresse LAN/VPN, puis appeler. Le destinataire choisit ses propres
+   l'adresse IPv4 locale (LAN/VPN ou publique), puis appeler. Le destinataire choisit ses propres
    périphériques et son adresse, confirme et accepte explicitement.
    Aucun accès à la caméra/microphone ne commence avant l'acceptation ;
    l'émission attend également la destination validée du pair.
@@ -140,7 +150,8 @@ l'ajout d'un moteur WebRTC ou d'une cryptographie propre au projet.
   Il n'y a aucun repli direct contournant cette préférence.
 - Pas d'ICE, de STUN, de TURN, de traversée NAT automatique, de groupe,
   d'interopérabilité Browser, de négociation de codecs ni
-  d'adaptation de débit. Ce mode exige un LAN/VPN routable entre les pairs.
+  d'adaptation de débit. Ce mode exige une connectivite IPv4 directe entre les pairs
+  (LAN/VPN ou adresse publique assignee), avec les ports UDP ouverts.
 - H.264 à 30 images/s, cible 1 200 kbit/s ; AAC mono 48 kHz, 96 kbit/s.
   Ces réglages ne constituent pas une garantie de latence ni de débit.
   Le retour local n'émet pas le son du microphone.

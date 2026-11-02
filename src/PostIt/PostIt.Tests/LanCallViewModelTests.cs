@@ -115,6 +115,18 @@ public sealed class LanCallViewModelTests
     }
 
     [AvaloniaFact]
+    public async Task Public_ipv4_can_be_selected_for_an_explicitly_consented_direct_call()
+    {
+        var signaling = new Signaling();
+        await using var vm = Configure(signaling, (_, _) => throw new Exception("No media before acceptance"));
+        vm.Addresses.Add("8.8.8.8");
+        vm.Address = "8.8.8.8";
+        await vm.InviteCommand.ExecuteAsync(null);
+        Assert.Equal(1, signaling.Invites);
+        Assert.True(vm.Busy);
+    }
+
+    [AvaloniaFact]
     public async Task No_capture_starts_before_explicit_acceptance_and_endpoint_exchange()
     {
         var signaling = new Signaling();

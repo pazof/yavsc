@@ -40,13 +40,23 @@ public sealed record LanCallEndpoint(string Address, int Port, string Key, strin
     public override string ToString() => "SRTP endpoint (credentials redacted)";
 
     public bool IsValid() =>
-        LanCallNetwork.IsPrivateIPv4(Address) && Port is >= 1024 and <= 65534 && Port % 2 == 0 &&
+        LanCallNetwork.IsUnicastIPv4(Address) && Port is >= 1024 and <= 65534 && Port % 2 == 0 &&
         Key is { Length: 32 } && Key.All(Uri.IsHexDigit) &&
         Salt is { Length: 28 } && Salt.All(Uri.IsHexDigit);
 }
 
 public static class LanCallNetwork
 {
+    public static bool IsUnicastIPv4(string address)
+    {
+        if (!System.Net.IPAddress.TryParse(address, out var ip) ||
+            ip.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork || ip.ToString() != address)
+            return false;
+        var bytes = ip.GetAddressBytes();
+        return bytes[0] is > 0 and < 224
+            && !(bytes[0] == 169 && bytes[1] == 254);
+    }
+
     public static bool IsPrivateIPv4(string address)
     {
         if (!System.Net.IPAddress.TryParse(address, out var ip) ||

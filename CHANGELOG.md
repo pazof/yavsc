@@ -5,6 +5,7 @@
 
 ### Added
 
+* [PostIt/Calls] Allow directly assigned public IPv4 addresses for direct SRTP calls, alongside LAN/VPN and loopback addresses. Share unicast validation between interface discovery, media and server signaling; continue rejecting unspecified, link-local, multicast, reserved and IPv6 addresses. Keep explicit address-disclosure consent and no automatic NAT traversal.
 * [PostIt] Update bundled settings with the default podcast title, camera/microphone preferences and French language selection.
 
 ## [1.0.8-rc34] - unstable

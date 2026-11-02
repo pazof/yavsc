@@ -103,16 +103,16 @@
         Content="Envoyer" />
     </Grid>
 
-    <Expander Grid.Row="3" Header="Appel direct (LAN/VPN)" IsVisible="{Binding SupportsLanCalls}" IsExpanded="True"
+    <Expander Grid.Row="3" Header="Appel direct IPv4 (LAN/VPN ou IP publique)" IsVisible="{Binding SupportsLanCalls}" IsExpanded="True"
               IsEnabled="{Binding IsConnected}" Margin="0,0,0,8">
       <ScrollViewer MaxHeight="520">
       <StackPanel DataContext="{Binding LanCall}" x:DataType="vm:LanCallViewModel" Spacing="8">
-        <TextBlock Text="Android et Desktop Linux sur LAN/VPN. SRTP chiffre les medias ; le pair connait votre IP. Ouvrir le port UDP choisi et le suivant. Sans TURN ni traversee NAT. Casque recommande (pas d'annulation d'echo)."
+        <TextBlock Text="Android et Desktop Linux : IPv4 locale LAN/VPN ou publique directement assignee au PC. SRTP chiffre les medias ; le pair connait votre IP. Ouvrir le port UDP choisi et le suivant. Sans TURN ni traversee NAT. Casque recommande (pas d'annulation d'echo)."
                    TextWrapping="Wrap" />
         <WrapPanel IsEnabled="{Binding CanConfigure}" IsVisible="{Binding !RemoteVideo}">
           <Button Content="Actualiser les peripheriques" Command="{Binding RefreshDevicesCommand}" Margin="0,0,8,4" />
           <ComboBox Width="160" ItemsSource="{Binding Addresses}" SelectedItem="{Binding Address}"
-                    PlaceholderText="Adresse locale LAN/VPN" Margin="0,0,8,4" />
+                    PlaceholderText="Adresse IPv4 de cette machine" Margin="0,0,8,4" />
           <TextBox Width="80" Text="{Binding Port}" PlaceholderText="Port pair" Margin="0,0,8,4" />
           <ComboBox Width="190" ItemsSource="{Binding Cameras}" SelectedItem="{Binding Camera}"
                     PlaceholderText="Camera" Margin="0,0,8,4">
@@ -132,7 +132,7 @@
           </ComboBox>
           <TextBox Width="170" Text="{Binding Target}" PlaceholderText="Pseudo du pair" Margin="0,0,8,4" />
         </WrapPanel>
-        <CheckBox Content="Je consens a partager mon adresse LAN/VPN avec le pair."
+        <CheckBox Content="Je consens a partager mon adresse IPv4 avec le pair."
                   IsChecked="{Binding AllowAddressDisclosure}" IsEnabled="{Binding CanConfigure}"
                   IsVisible="{Binding !RemoteVideo}" />
         <WrapPanel>

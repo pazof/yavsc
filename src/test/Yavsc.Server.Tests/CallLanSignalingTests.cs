@@ -38,14 +38,16 @@ public sealed class CallLanSignalingTests
         Assert.DoesNotContain(hub.Messages, m => m.Method == CallHubMethods.Accepted);
     }
 
-    [Fact]
-    public async Task Endpoints_are_exchanged_only_once_between_consented_devices_without_ice_credentials()
+    [Theory]
+    [InlineData("192.168.1.2")]
+    [InlineData("8.8.8.8")]
+    public async Task Endpoints_are_exchanged_only_once_between_consented_devices_without_ice_credentials(string address)
     {
         var hub = new RecordingCallHub();
         using var service = Service(hub);
         var call = await service.InviteAsync("General", "alice", "bob", "a", ["b", "other"], false, CallTransports.LanSrtp);
         Assert.Equal(CallTransports.LanSrtp, call.Transport);
-        var first = new CallSignal("rtp-endpoint", Endpoint: Endpoint());
+        var first = new CallSignal("rtp-endpoint", Endpoint: Endpoint(address));
         var second = new CallSignal("rtp-endpoint", Endpoint: Endpoint("10.0.0.2"));
         await Assert.ThrowsAsync<HubException>(() => service.SignalAsync(call.Id, "alice", "a", first));
         await service.AcceptAsync(call.Id, "bob", "b", false);
@@ -76,7 +78,7 @@ public sealed class CallLanSignalingTests
             new("rtp-endpoint"), new("rtp-endpoint", Sdp: "injected", Endpoint: Endpoint()),
             new("rtp-endpoint", Endpoint: Endpoint() with { Key = new string('x', 32) }),
             new("rtp-endpoint", Endpoint: Endpoint() with { Salt = "short" }),
-            new("rtp-endpoint", Endpoint: Endpoint("8.8.8.8")),
+            new("rtp-endpoint", Endpoint: Endpoint("255.255.255.255")),
             new("rtp-endpoint", Endpoint: Endpoint(port: 5005))
         ];
         foreach (var signal in invalid)
@@ -92,16 +94,23 @@ public sealed class CallLanSignalingTests
     [InlineData("172.31.255.254", true)]
     [InlineData("192.168.1.2", true)]
     [InlineData("127.0.0.1", true)]
-    [InlineData("172.32.0.1", false)]
+    [InlineData("172.32.0.1", true)]
     [InlineData("169.254.169.254", false)]
-    [InlineData("8.8.8.8", false)]
+    [InlineData("8.8.8.8", true)]
+    [InlineData("100.64.0.1", true)]
+    [InlineData("223.255.255.254", true)]
     [InlineData("224.0.0.1", false)]
     [InlineData("0.0.0.0", false)]
+    [InlineData("0.1.2.3", false)]
+    [InlineData("240.0.0.1", false)]
+    [InlineData("255.255.255.255", false)]
+    [InlineData("169.254.1.1", false)]
+    [InlineData("::ffff:8.8.8.8", false)]
     [InlineData("::1", false)]
     [InlineData("localhost", false)]
     [InlineData("127.1", false)]
     [InlineData("192.168.1.2,port=80", false)]
-    public void Only_canonical_private_or_loopback_ipv4_endpoints_are_allowed(string address, bool expected) =>
+    public void Only_canonical_unicast_ipv4_endpoints_are_allowed(string address, bool expected) =>
         Assert.Equal(expected, Endpoint(address).IsValid());
 
     [Fact]

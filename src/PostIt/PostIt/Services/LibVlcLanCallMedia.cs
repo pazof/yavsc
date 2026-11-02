@@ -35,7 +35,7 @@ public sealed class LibVlcLanCallMedia : IAsyncDisposable
         Endpoint = new(localAddress, port, Convert.ToHexString(RandomNumberGenerator.GetBytes(16)),
             Convert.ToHexString(RandomNumberGenerator.GetBytes(14)));
         if (!Endpoint.IsValid())
-            throw new ArgumentException("Adresse IPv4 privee et port UDP pair (1024-65534) requis.");
+            throw new ArgumentException("Adresse IPv4 unicast et port UDP pair (1024-65534) requis.");
         using (var reservation = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
         using (var rtcp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
         {
