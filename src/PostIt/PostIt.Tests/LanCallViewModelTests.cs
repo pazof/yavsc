@@ -2,12 +2,103 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using PostIt.Services;
 using PostIt.ViewModels.Chat;
+using PostIt.ViewModels;
 using Yavsc.Abstract.Chat.Calls;
 
 namespace PostIt.Tests;
 
 public sealed class LanCallViewModelTests
 {
+    [AvaloniaFact]
+    public async Task Calls_restore_shared_devices_and_persist_choices_and_network_address()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"postit-call-preferences-{Guid.NewGuid():N}.json");
+        var previousDevices = Platform.GetLanCallDevices;
+        try
+        {
+            var settings = new Settings(path)
+            {
+                PodcastCameras = [new("Front", "front"), new("Rear", "rear")],
+                PodcastMicrophones = [new("None", ""), new("USB", "usb"), new("Built-in", "built-in")],
+                PodcastCameraId = "rear", PodcastMicrophoneId = "usb"
+            };
+            await using (var vm = new LanCallViewModel(new Signaling(), settings: settings))
+            {
+                Assert.Equal("rear", vm.Camera?.Value);
+                Assert.Equal("usb", vm.Microphone?.Value);
+                Assert.False(vm.AllowAddressDisclosure);
+                vm.Camera = vm.Cameras[0];
+                vm.Microphone = vm.Microphones[1];
+                Assert.Equal("front", settings.PodcastCameraId);
+                Assert.Equal("built-in", settings.PodcastMicrophoneId);
+                Assert.NotEmpty(vm.Addresses);
+                vm.Address = vm.Addresses.Last();
+                settings.Save();
+                var preferred = vm.Address;
+                Platform.GetLanCallDevices = () => new(
+                    [new("Rear", "rear"), new("Front", "front")],
+                    [new("Built-in", "built-in"), new("USB", "usb")]);
+                vm.RefreshDevicesCommand.Execute(null);
+                Assert.Equal("front", vm.Camera?.Value);
+                Assert.Equal("built-in", vm.Microphone?.Value);
+                Assert.Equal(preferred, vm.Address);
+                Assert.Contains(settings.PodcastMicrophones, d => d.Value == "");
+
+                var reloaded = new Settings(path);
+                reloaded.Authentication.Authority = "";
+                reloaded.Load();
+                await using var restored = new LanCallViewModel(new Signaling(), settings: reloaded);
+                Assert.Equal(preferred, restored.Address);
+                Assert.Equal("front", restored.Camera?.Value);
+                Assert.Equal("built-in", restored.Microphone?.Value);
+                Assert.False(restored.AllowAddressDisclosure);
+                settings.PodcastCameraId = "rear";
+                Assert.Equal("rear", vm.Camera?.Value);
+                settings.PodcastMicrophoneId = "";
+                Assert.Null(vm.Microphone);
+                vm.AllowAddressDisclosure = true;
+                vm.Room = "General";
+                vm.Target = "bob";
+                await vm.InviteCommand.ExecuteAsync(null);
+                Assert.Contains("microphone", vm.Status);
+            }
+        }
+        finally { Platform.GetLanCallDevices = previousDevices; File.Delete(path); }
+    }
+
+    [AvaloniaFact]
+    public async Task Call_preference_save_failures_are_reported_without_losing_the_choice()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"postit-call-preferences-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(path);
+        try
+        {
+            var settings = new Settings(path);
+            await using var vm = new LanCallViewModel(new Signaling(), settings: settings);
+            vm.Address = null;
+            vm.Address = "127.0.0.1";
+            Assert.Equal("127.0.0.1", settings.LanCallAddress);
+            Assert.Contains("sauvegarde impossible", vm.Status);
+            Assert.True(settings.IsDirty);
+        }
+        finally { Directory.Delete(path); }
+    }
+
+    [AvaloniaFact]
+    public async Task Missing_saved_network_address_requires_a_new_selection_and_does_not_restore_consent()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"postit-call-preferences-{Guid.NewGuid():N}.json");
+        try
+        {
+            var settings = new Settings(path) { LanCallAddress = "not-a-local-address" };
+            await using var vm = new LanCallViewModel(new Signaling(), settings: settings);
+            Assert.Null(vm.Address);
+            Assert.False(vm.AllowAddressDisclosure);
+            Assert.Equal("not-a-local-address", settings.LanCallAddress);
+        }
+        finally { File.Delete(path); }
+    }
+
     private static CallSession Session() => new(Guid.NewGuid(), "General", "alice", "bob", false,
         DateTimeOffset.UtcNow.AddMinutes(1), CallTransports.LanSrtp);
 

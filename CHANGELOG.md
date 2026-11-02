@@ -5,6 +5,7 @@
 
 ### Added
 
+* [PostIt] Share podcast camera/microphone preferences with chat-room calls and persist the selected LAN/VPN address. Restore only currently available network addresses without remembering address-disclosure consent; require an explicit microphone choice for calls when podcasts use no microphone.
 * [PostIt] Remember detected podcast cameras/microphones, selected devices (including no microphone) and the default title in user settings; restore them when reopening the page and report persistence failures.
 * [Podcasts] Reuse persisted LiveFlow entities to prepare, edit and delete emissions from PostIt with a title, scheduled start and estimated duration. Keep start/stop manual and plans private; optionally publish presentation-only announcements on Yavsc.Org without opening anonymous playback. Preserve broadcast identifiers, legacy recordings and authenticated HLS/MP4 access; add a scheduling migration and lifecycle/privacy regressions.
 * [PostIt/API/Yavsc.Org] Expose the private PayPal recipient setting in PostIt's performer editor and authenticated profile API; validate addresses, allow disabling with an empty value and preserve the setting for older clients. Make Web donation settings discoverable from the performer profile and podcast catalogue.

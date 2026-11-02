@@ -222,7 +222,7 @@ namespace PostIt.ViewModels.Chat
 
                 Calls = new CallSignalingClient(_connection);
                 if (SupportsLanCalls)
-                    LanCall = new LanCallViewModel(Calls) { Room = SelectedRoom ?? "" };
+                    LanCall = new LanCallViewModel(Calls, settings: _settings) { Room = SelectedRoom ?? "" };
                 else
                     Calls.Invitation += call => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                         Log($"Invitation audio-vidéo de {call.Caller} dans {call.RoomName} ; transport non disponible sur cette plateforme."));

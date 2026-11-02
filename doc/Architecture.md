@@ -93,6 +93,14 @@ le materiel disponible en conservant les choix encore presents. Le choix
 « sans microphone » est memorise lui aussi. Charger le titre d'une emission
 preparee ne remplace pas le titre par defaut ; une saisie explicite le modifie.
 Les erreurs de sauvegarde sont affichees dans la page.
+Les appels des salons de discussion reutilisent ces memes choix camera/micro
+et enregistrent leurs changements dans les memes parametres. La page Podcasts
+les recharge a son activation. Les appels exigent toujours un microphone :
+le choix podcast « sans microphone » laisse donc le micro d'appel non selectionne.
+L'adresse LAN/VPN choisie pour les appels est aussi memorisee, mais restauree
+uniquement si elle est encore presente sur une interface locale active.
+Sinon, une nouvelle selection est requise. Le consentement au partage
+d'adresse avec le pair n'est jamais memorise.
 
 PostIt permet de preparer, modifier et supprimer une emission avant son
 demarrage : titre, date/heure locale, duree entiere positive en minutes et

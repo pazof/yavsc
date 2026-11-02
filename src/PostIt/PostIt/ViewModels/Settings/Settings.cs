@@ -56,6 +56,8 @@ public partial class Settings : ViewModelBase
     public partial string? PodcastCameraId { get; set; }
     [ObservableProperty]
     public partial string? PodcastMicrophoneId { get; set; }
+    [ObservableProperty]
+    public partial string? LanCallAddress { get; set; }
 
     [ObservableProperty]
     [JsonIgnore]
@@ -156,6 +158,7 @@ public partial class Settings : ViewModelBase
     partial void OnPodcastMicrophonesChanged(CaptureDevice[] value) => MarkDirty();
     partial void OnPodcastCameraIdChanged(string? value) => MarkDirty();
     partial void OnPodcastMicrophoneIdChanged(string? value) => MarkDirty();
+    partial void OnLanCallAddressChanged(string? value) => MarkDirty();
 
     /// <summary>
     /// Authentication can be reassigned wholesale by
@@ -418,6 +421,7 @@ public partial class Settings : ViewModelBase
                 PodcastMicrophones = settings.PodcastMicrophones ?? [];
                 PodcastCameraId = settings.PodcastCameraId;
                 PodcastMicrophoneId = settings.PodcastMicrophoneId;
+                LanCallAddress = settings.LanCallAddress;
                 if (!(settings.Authentication is null))
                 {
                     this.Authentication = new AuthenticationSettings();

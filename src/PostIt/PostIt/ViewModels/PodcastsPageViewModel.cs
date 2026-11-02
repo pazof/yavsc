@@ -267,6 +267,16 @@ public partial class PodcastsPageViewModel : ViewModelBase
 
     public async Task ActivateAsync()
     {
+        _restoringPreferences = true;
+        try
+        {
+            Cameras.Clear();
+            Microphones.Clear();
+            foreach (var device in _api.Settings.PodcastCameras) Cameras.Add(device);
+            foreach (var device in _api.Settings.PodcastMicrophones) Microphones.Add(device);
+            RestoreDeviceSelection();
+        }
+        finally { _restoringPreferences = false; }
         if (_pageCancellation.IsCancellationRequested)
         {
             _pageCancellation.Dispose();

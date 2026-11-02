@@ -2,6 +2,8 @@ using Avalonia.Headless.XUnit;
 using PostIt.Services;
 using PostIt.ViewModels;
 using Yavsc.Api.Client;
+using Yavsc.Abstract.Identity;
+using Yavsc.Abstract.Streaming;
 
 namespace PostIt.Tests;
 
@@ -37,13 +39,18 @@ public sealed class PodcastPreferencesTests
             Assert.Equal("rear", restored.PodcastCameraId);
             Assert.Equal("", restored.PodcastMicrophoneId);
             Platform.GetPodcastCaptureDevices = () => throw new InvalidOperationException("Must use saved devices.");
-            await using var otherApi = new YavscApiClient(restored, new TokenStore(path + ".tokens"));
+            await using var otherApi = new PreferencesApi(restored, new TokenStore(path + ".tokens"));
             var other = new PodcastsPageViewModel(new PodcastApiClient(otherApi, () => restored.ApiUrl), otherApi, session);
             Assert.Equal(2, other.Cameras.Count);
             Assert.Equal(2, other.Microphones.Count);
             Assert.Equal("rear", other.SelectedCamera?.Value);
             Assert.Equal("", other.SelectedMicrophone?.Value);
             Assert.Equal(vm.Title, other.Title);
+            restored.PodcastCameraId = "front";
+            restored.PodcastMicrophoneId = "usb";
+            await other.ActivateAsync();
+            Assert.Equal("front", other.SelectedCamera?.Value);
+            Assert.Equal("usb", other.SelectedMicrophone?.Value);
 
             Platform.GetPodcastCaptureDevices = () => new([], []);
             other.DetectDevicesCommand.Execute(null);
@@ -56,6 +63,17 @@ public sealed class PodcastPreferencesTests
             Platform.GetPodcastCaptureDevices = previous;
             File.Delete(path);
             File.Delete(path + ".tokens");
+        }
+
+    }
+
+    private sealed class PreferencesApi(Settings settings, TokenStore store) : YavscApiClient(settings, store)
+    {
+        public override Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        {
+            object response = path.EndsWith("/account/me", StringComparison.Ordinal)
+                ? new Me { UserId = "owner" } : new List<PodcastResponse>();
+            return Task.FromResult((T)response);
         }
     }
 

@@ -31,6 +31,8 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
     private string? _activeMicrophone;
     private string? _activeAddress;
     private int _activePort;
+    private readonly Settings? _settings;
+    private bool _restoringPreferences;
 
     public ObservableCollection<string> Addresses { get; } = [];
     public ObservableCollection<CaptureDevice> Cameras { get; } = [];
@@ -53,9 +55,11 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
     [ObservableProperty] public partial Control? RemoteVideo { get; set; }
     public bool CanConfigure => !Busy || Incoming;
 
-    public LanCallViewModel(ILanCallSignaling signaling, Func<string, int, ILanCallMedia>? createMedia = null)
+    public LanCallViewModel(ILanCallSignaling signaling, Func<string, int, ILanCallMedia>? createMedia = null,
+        Settings? settings = null)
     {
         _signaling = signaling;
+        _settings = settings;
         _createMedia = createMedia ?? Platform.CreateLanCallMedia ??
             ((address, port) => new LinuxLanCallVideo(address, port));
         signaling.Invitation += OnInvitation;
@@ -64,22 +68,98 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         signaling.Ended += OnEnded;
         signaling.Interrupted += OnInterrupted;
         Platform.PlaybackSuspending += OnSuspending;
+        if (settings != null)
+        {
+            _restoringPreferences = true;
+            try
+            {
+                foreach (var device in settings.PodcastCameras) Cameras.Add(device);
+                foreach (var device in settings.PodcastMicrophones.Where(d => !string.IsNullOrEmpty(d.Value)))
+                    Microphones.Add(device);
+                RestoreDevices();
+                RefreshAddresses();
+            }
+            catch (NetworkInformationException ex) { Status = $"Adresses reseau indisponibles : {ex.Message}"; }
+            finally { _restoringPreferences = false; }
+            settings.PropertyChanged += OnSettingsChanged;
+        }
+    }
+
+    private void OnSettingsChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs args)
+    {
+        if (_restoringPreferences || !CanConfigure) return;
+        if (args.PropertyName is not (nameof(Settings.PodcastCameraId) or nameof(Settings.PodcastMicrophoneId)
+            or nameof(Settings.PodcastCameras) or nameof(Settings.PodcastMicrophones))) return;
+        _restoringPreferences = true;
+        try
+        {
+            Cameras.Clear();
+            Microphones.Clear();
+            foreach (var device in _settings!.PodcastCameras) Cameras.Add(device);
+            foreach (var device in _settings.PodcastMicrophones.Where(d => !string.IsNullOrEmpty(d.Value))) Microphones.Add(device);
+            RestoreDevices();
+        }
+        finally { _restoringPreferences = false; }
+    }
+
+    private void RestoreDevices()
+    {
+        Camera = Cameras.FirstOrDefault(d => d.Value == _settings?.PodcastCameraId) ?? Cameras.FirstOrDefault();
+        Microphone = _settings?.PodcastMicrophoneId == "" ? null
+            : Microphones.FirstOrDefault(d => d.Value == _settings?.PodcastMicrophoneId) ?? Microphones.FirstOrDefault();
+    }
+
+    private void RefreshAddresses()
+    {
+        var preferred = _settings?.LanCallAddress ?? Address;
+        Addresses.Clear();
+        foreach (var address in NetworkInterface.GetAllNetworkInterfaces()
+            .Where(n => n.OperationalStatus == OperationalStatus.Up)
+            .SelectMany(n => n.GetIPProperties().UnicastAddresses)
+            .Select(a => a.Address.ToString()).Where(LanCallNetwork.IsPrivateIPv4)
+            .Distinct().OrderBy(a => IPAddress.IsLoopback(IPAddress.Parse(a))))
+            Addresses.Add(address);
+        Address = preferred == null ? Addresses.FirstOrDefault() : Addresses.FirstOrDefault(a => a == preferred);
+    }
+
+    partial void OnCameraChanged(CaptureDevice? value)
+    {
+        if (_restoringPreferences || _settings == null || value == null) return;
+        _settings.PodcastCameraId = value.Value;
+        SavePreferences();
+    }
+
+    partial void OnMicrophoneChanged(CaptureDevice? value)
+    {
+        if (_restoringPreferences || _settings == null || value == null) return;
+        _settings.PodcastMicrophoneId = value.Value;
+        SavePreferences();
+    }
+
+    partial void OnAddressChanged(string? value)
+    {
+        if (_restoringPreferences || _settings == null || value == null) return;
+        _settings.LanCallAddress = value;
+        SavePreferences();
+    }
+
+    private void SavePreferences()
+    {
+        try { _settings?.Save(); }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
+        {
+            Status = $"Preferences d'appel appliquees, mais sauvegarde impossible : {ex.Message}";
+        }
     }
 
     [RelayCommand]
     private void RefreshDevices()
     {
+        _restoringPreferences = true;
         try
         {
             if (!CanConfigure) throw new InvalidOperationException("Terminez l'appel avant de changer les peripheriques.");
-            Addresses.Clear();
-            foreach (var address in NetworkInterface.GetAllNetworkInterfaces()
-                .Where(n => n.OperationalStatus == OperationalStatus.Up)
-                .SelectMany(n => n.GetIPProperties().UnicastAddresses)
-                .Select(a => a.Address.ToString()).Where(LanCallNetwork.IsPrivateIPv4)
-                .Distinct().OrderBy(a => IPAddress.IsLoopback(IPAddress.Parse(a))))
-                Addresses.Add(address);
-            Address = Addresses.FirstOrDefault();
+            RefreshAddresses();
             Cameras.Clear();
             Microphones.Clear();
             if (Platform.GetLanCallDevices is { } getDevices)
@@ -97,14 +177,24 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
                 foreach (var device in streamer.GetCaptureDevices()) Cameras.Add(new(device.Key, device.Value));
                 foreach (var device in streamer.GetAudioCaptureDevices()) Microphones.Add(new(device.Key, device.Value));
             }
-            Camera = Cameras.FirstOrDefault();
-            Microphone = Microphones.FirstOrDefault();
+            RestoreDevices();
             Status = Cameras.Count == 0 ? "Aucune camera detectee. Verifiez les peripheriques puis actualisez."
                 : Incoming && _call != null
                     ? $"{_call.Caller} propose un appel dans {_call.RoomName}. Selectionnez vos peripheriques puis acceptez ou refusez."
                 : "Selectionnez le pair, l'adresse LAN/VPN et les peripheriques. Utilisez un casque.";
+            if (_settings != null)
+            {
+                _settings.PodcastCameras = Cameras.ToArray();
+                var noMicrophone = _settings.PodcastMicrophones.Where(d => string.IsNullOrEmpty(d.Value));
+                _settings.PodcastMicrophones = noMicrophone.Concat(Microphones).ToArray();
+                if (Camera != null) _settings.PodcastCameraId = Camera.Value;
+                if (Microphone != null) _settings.PodcastMicrophoneId = Microphone.Value;
+                if (Address != null) _settings.LanCallAddress = Address;
+                SavePreferences();
+            }
         }
         catch (Exception error) { Status = "Peripheriques indisponibles : " + error.Message; }
+        finally { _restoringPreferences = false; }
     }
 
     private void ValidateSelection()
@@ -324,6 +414,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
             _signaling.Ended -= OnEnded;
             _signaling.Interrupted -= OnInterrupted;
             Platform.PlaybackSuspending -= OnSuspending;
+            if (_settings != null) _settings.PropertyChanged -= OnSettingsChanged;
             try { await StopAsync("Appel arrete.", true); }
             finally { _lifetime.Dispose(); }
         }
