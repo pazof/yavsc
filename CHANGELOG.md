@@ -1,6 +1,12 @@
 
 # Changelog
 
+## [1.0.8-rc35] - unstable
+
+### Added
+
+* [PostIt] Update bundled settings with the default podcast title, camera/microphone preferences and French language selection.
+
 ## [1.0.8-rc34] - unstable
 
 ### Added

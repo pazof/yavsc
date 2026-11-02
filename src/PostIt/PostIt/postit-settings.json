@@ -12,5 +12,27 @@
   "BlogsApiUrl": "https://blogs.pschneider.fr/api/v1/",
   "ApiUrl": "https://api.pschneider.fr/api/v1/",
   "SearchText": "",
-  "ProviderOngoingRequestsSortOption": ""
+  "IsMarkdownViewerVisible": false,
+  "ProviderOngoingRequestsSortOption": "",
+  "PodcastDefaultTitle": "Le chant des marais",
+  "PodcastCameras": [
+    {
+      "Name": "Cam\u00E9ra (/dev/video0)",
+      "Value": "/dev/video0"
+    }
+  ],
+  "PodcastMicrophones": [
+    {
+      "Name": "Sans microphone",
+      "Value": ""
+    },
+    {
+      "Name": "Microphone par defaut (PulseAudio)",
+      "Value": "default"
+    }
+  ],
+  "PodcastCameraId": "/dev/video0",
+  "PodcastMicrophoneId": "default",
+  "SelectedLanguage": "fr-FR",
+  "SaveCommand": {}
 }
