@@ -22,7 +22,7 @@ public sealed class PodcastBroadcasterTests
             var factory = Platform.CreatePodcastCaptureAsync;
             var store = new TokenStore(tokenPath);
             store.Save(new RefreshTokenRecord("test-access-token", "test-refresh-token", DateTimeOffset.UtcNow.AddHours(1), null));
-            await using var api = new YavscApiClient(new Settings(), store);
+            await using var api = new YavscApiClient(new Settings(tokenPath + ".settings"), store);
             await using var transport = new Transport();
             FakeCapture? capture = null;
             PodcastsPageViewModel? vm = null;
@@ -72,6 +72,7 @@ public sealed class PodcastBroadcasterTests
                 Platform.RequestPodcastPermissionsAsync = permissions;
                 Platform.CreatePodcastCaptureAsync = factory;
                 File.Delete(tokenPath);
+                File.Delete(tokenPath + ".settings");
             }
         }, TestContext.Current.CancellationToken);
 
@@ -84,7 +85,7 @@ public sealed class PodcastBroadcasterTests
         var factory = Platform.CreatePodcastCaptureAsync;
         var store = new TokenStore(tokenPath);
         store.Save(new RefreshTokenRecord("test-access-token", "test-refresh-token", DateTimeOffset.UtcNow.AddHours(1), null));
-        await using var api = new YavscApiClient(new Settings(), store);
+        await using var api = new YavscApiClient(new Settings(tokenPath + ".settings"), store);
         await using var transport = new Transport();
         try
         {
@@ -119,6 +120,7 @@ public sealed class PodcastBroadcasterTests
             Platform.RequestPodcastPermissionsAsync = permissions;
             Platform.CreatePodcastCaptureAsync = factory;
             File.Delete(tokenPath);
+            File.Delete(tokenPath + ".settings");
         }
     }
 

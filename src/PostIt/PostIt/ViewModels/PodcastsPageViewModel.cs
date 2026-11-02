@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,6 +33,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
     private CaptureDevice? _microphone;
     private PodcastResponse? _selected;
     private Control? _capturePreview;
+    private bool _restoringPreferences;
     public Control? CapturePreview { get => _capturePreview; private set => SetProperty(ref _capturePreview, value); }
 
     public ObservableCollection<PodcastResponse> Podcasts { get; } = new();
@@ -41,7 +43,20 @@ public partial class PodcastsPageViewModel : ViewModelBase
         || (!OperatingSystem.IsAndroid() && (OperatingSystem.IsWindows() || OperatingSystem.IsLinux()));
 
 
-    public string Title { get => _title; set { if (SetProperty(ref _title, value)) UpdateCommands(); } }
+    public string Title
+    {
+        get => _title;
+        set
+        {
+            if (!SetProperty(ref _title, value)) return;
+            UpdateCommands();
+            if (!_restoringPreferences)
+            {
+                _api.Settings.PodcastDefaultTitle = value;
+                SavePreferences();
+            }
+        }
+    }
 
     [ObservableProperty]
     public partial DateTimeOffset? ScheduledDate { get; set; } = DateTimeOffset.Now.AddDays(1);
@@ -70,13 +85,31 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public CaptureDevice? SelectedCamera
     {
         get => _camera;
-        set { if (SetProperty(ref _camera, value)) UpdateCommands(); }
+        set
+        {
+            if (!SetProperty(ref _camera, value)) return;
+            UpdateCommands();
+            if (!_restoringPreferences && value != null)
+            {
+                _api.Settings.PodcastCameraId = value.Value;
+                SavePreferences();
+            }
+        }
     }
 
     public CaptureDevice? SelectedMicrophone
     {
         get => _microphone;
-        set { if (SetProperty(ref _microphone, value)) UpdateCommands(); }
+        set
+        {
+            if (!SetProperty(ref _microphone, value)) return;
+            UpdateCommands();
+            if (!_restoringPreferences && value != null)
+            {
+                _api.Settings.PodcastMicrophoneId = value.Value;
+                SavePreferences();
+            }
+        }
     }
 
     public PodcastResponse? SelectedPodcast
@@ -87,7 +120,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
             if (!SetProperty(ref _selected, value)) return;
             if (value is { State: PodcastState.Planned } && value.OwnerId == _ownerId)
             {
-                Title = value.Title;
+                _title = value.Title;
+                OnPropertyChanged(nameof(Title));
                 ScheduledDate = value.ScheduledStartAt?.ToLocalTime();
                 ScheduledTime = value.ScheduledStartAt?.ToLocalTime().TimeOfDay;
                 PlannedDurationMinutes = value.PlannedDurationMinutes ?? 60;
@@ -127,7 +161,11 @@ public partial class PodcastsPageViewModel : ViewModelBase
             () => !IsBusy && !IsBroadcasting && _session.IsLoggedIn && !string.IsNullOrWhiteSpace(Title));
         UpdatePlanCommand = new AsyncRelayCommand(() => SavePlanAsync(true),
             () => !IsBusy && !IsBroadcasting && SelectedPodcast is { State: PodcastState.Planned } p && p.OwnerId == _ownerId);
-        NewPlanCommand = new RelayCommand(() => SelectedPodcast = null, () => !IsBusy && !IsBroadcasting);
+        NewPlanCommand = new RelayCommand(() =>
+        {
+            SelectedPodcast = null;
+            Title = _api.Settings.PodcastDefaultTitle;
+        }, () => !IsBusy && !IsBroadcasting);
         StopCommand = new AsyncRelayCommand(StopAsync, () => IsBroadcasting && !IsBusy);
         PlayCommand = new AsyncRelayCommand(PlayAsync, () => SelectedPodcast is { SegmentCount: > 0 } && !IsBroadcasting && !IsBusy);
         FinishCommand = new AsyncRelayCommand(FinishAsync,
@@ -139,6 +177,32 @@ public partial class PodcastsPageViewModel : ViewModelBase
         RetryReplayCommand = new AsyncRelayCommand(RetryReplayAsync,
             () => SelectedPodcast is { State: PodcastState.Completed, Replay.State: PodcastReplayState.Failed } p
                 && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
+        _title = _api.Settings.PodcastDefaultTitle;
+        _restoringPreferences = true;
+        try
+        {
+            foreach (var device in _api.Settings.PodcastCameras) Cameras.Add(device);
+            foreach (var device in _api.Settings.PodcastMicrophones) Microphones.Add(device);
+            RestoreDeviceSelection();
+        }
+        finally { _restoringPreferences = false; }
+    }
+
+    private void RestoreDeviceSelection()
+    {
+        SelectedCamera = Cameras.FirstOrDefault(d => d.Value == _api.Settings.PodcastCameraId)
+            ?? Cameras.FirstOrDefault();
+        SelectedMicrophone = Microphones.FirstOrDefault(d => d.Value == _api.Settings.PodcastMicrophoneId)
+            ?? (Microphones.Count > 1 ? Microphones[1] : Microphones.FirstOrDefault());
+    }
+
+    private void SavePreferences()
+    {
+        try { _api.Settings.Save(); }
+        catch (Exception ex) when (ex is System.IO.IOException or UnauthorizedAccessException)
+        {
+            Status = $"Preferences podcast appliquees, mais sauvegarde impossible : {ex.Message}";
+        }
     }
 
     private void UpdateCommands()
@@ -219,6 +283,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
 
     private void DetectDevices()
     {
+        _restoringPreferences = true;
         try
         {
             Cameras.Clear();
@@ -238,11 +303,16 @@ public partial class PodcastsPageViewModel : ViewModelBase
                 Microphones.Add(new("Sans microphone", ""));
                 foreach (var item in capture.GetAudioCaptureDevices()) Microphones.Add(new(item.Key, item.Value));
             }
-            SelectedCamera = Cameras.Count == 0 ? null : Cameras[0];
-            SelectedMicrophone = Microphones.Count > 1 ? Microphones[1] : Microphones[0];
+            RestoreDeviceSelection();
+            _api.Settings.PodcastCameras = Cameras.ToArray();
+            _api.Settings.PodcastMicrophones = Microphones.ToArray();
+            if (SelectedCamera != null) _api.Settings.PodcastCameraId = SelectedCamera.Value;
+            if (SelectedMicrophone != null) _api.Settings.PodcastMicrophoneId = SelectedMicrophone.Value;
             Status = Cameras.Count == 0 ? "Aucune camera detectee." : "Choisissez camera et microphone avant de demarrer.";
+            SavePreferences();
         }
         catch (Exception ex) { Status = $"Detection impossible : {ex.Message}. Verifiez l'installation de LibVLC."; }
+        finally { _restoringPreferences = false; }
     }
 
     private async Task StartAsync()

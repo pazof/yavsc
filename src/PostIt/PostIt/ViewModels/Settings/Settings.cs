@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Globalization;
 using PostIt.Models;
+using PostIt.Services;
 
 [assembly: InternalsVisibleTo("PostIt.Tests")]
 
@@ -17,6 +18,10 @@ namespace PostIt.ViewModels;
 
 public partial class Settings : ViewModelBase
 {
+    public Settings() { }
+
+    internal Settings(string settingsFileFullName) => SettingsFileFullName = settingsFileFullName;
+
     [JsonIgnore]
     public string? SettingsFileFullName { get; private set; }
 
@@ -40,6 +45,17 @@ public partial class Settings : ViewModelBase
 
     [ObservableProperty]
     public partial string ProviderOngoingRequestsSortOption { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string PodcastDefaultTitle { get; set; } = string.Empty;
+    [ObservableProperty]
+    public partial CaptureDevice[] PodcastCameras { get; set; } = [];
+    [ObservableProperty]
+    public partial CaptureDevice[] PodcastMicrophones { get; set; } = [];
+    [ObservableProperty]
+    public partial string? PodcastCameraId { get; set; }
+    [ObservableProperty]
+    public partial string? PodcastMicrophoneId { get; set; }
 
     [ObservableProperty]
     [JsonIgnore]
@@ -135,6 +151,11 @@ public partial class Settings : ViewModelBase
     partial void OnApiUrlChanged(string value) => MarkDirty();
     partial void OnSearchTextChanged(string value) => MarkDirty();
     partial void OnProviderOngoingRequestsSortOptionChanged(string value) => MarkDirty();
+    partial void OnPodcastDefaultTitleChanged(string value) => MarkDirty();
+    partial void OnPodcastCamerasChanged(CaptureDevice[] value) => MarkDirty();
+    partial void OnPodcastMicrophonesChanged(CaptureDevice[] value) => MarkDirty();
+    partial void OnPodcastCameraIdChanged(string? value) => MarkDirty();
+    partial void OnPodcastMicrophoneIdChanged(string? value) => MarkDirty();
 
     /// <summary>
     /// Authentication can be reassigned wholesale by
@@ -392,6 +413,11 @@ public partial class Settings : ViewModelBase
                     : this.ApiUrl;
                 this.SearchText = settings.SearchText ?? string.Empty;
                 this.ProviderOngoingRequestsSortOption = settings.ProviderOngoingRequestsSortOption ?? string.Empty;
+                PodcastDefaultTitle = settings.PodcastDefaultTitle ?? string.Empty;
+                PodcastCameras = settings.PodcastCameras ?? [];
+                PodcastMicrophones = settings.PodcastMicrophones ?? [];
+                PodcastCameraId = settings.PodcastCameraId;
+                PodcastMicrophoneId = settings.PodcastMicrophoneId;
                 if (!(settings.Authentication is null))
                 {
                     this.Authentication = new AuthenticationSettings();

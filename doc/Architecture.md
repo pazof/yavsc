@@ -86,6 +86,14 @@ une panne de l'API renvoie une erreur explicite, pas un catalogue vide.
 
 ### Emissions preparees
 
+PostIt memorise dans ses parametres utilisateur les cameras et microphones
+detectes, leurs identifiants selectionnes et le titre par defaut. La page
+les restaure sans redetection automatique ; le bouton de detection actualise
+le materiel disponible en conservant les choix encore presents. Le choix
+« sans microphone » est memorise lui aussi. Charger le titre d'une emission
+preparee ne remplace pas le titre par defaut ; une saisie explicite le modifie.
+Les erreurs de sauvegarde sont affichees dans la page.
+
 PostIt permet de preparer, modifier et supprimer une emission avant son
 demarrage : titre, date/heure locale, duree entiere positive en minutes et
 annonce publique optionnelle. Les horaires sont previsionnels : la camera,

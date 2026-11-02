@@ -17,7 +17,7 @@ public sealed class PodcastScheduleTests
         store.Save(new RefreshTokenRecord("test-access-token", "test-refresh-token", DateTimeOffset.UtcNow.AddHours(1), null));
         try
         {
-            await using var api = new ScheduleApi(store);
+            await using var api = new ScheduleApi(store, tokenPath + ".settings");
             var session = new SessionStatusViewModel { Api = api };
             session.Refresh();
             var vm = new PodcastsPageViewModel(new PodcastApiClient(api, () => "https://api.example/"), api, session)
@@ -53,11 +53,16 @@ public sealed class PodcastScheduleTests
             Assert.Null(api.Saved);
             Assert.Contains("Preparation impossible", vm.Status);
             Assert.False(vm.IsBroadcasting);
+            vm.SelectedPodcast = api.Plan with { Title = "Titre programme distinct" };
+            Assert.Equal("Titre programme distinct", vm.Title);
+            Assert.Equal("Nouveau titre", api.Settings.PodcastDefaultTitle);
+            vm.NewPlanCommand.Execute(null);
+            Assert.Equal("Nouveau titre", vm.Title);
         }
-        finally { File.Delete(tokenPath); }
+        finally { File.Delete(tokenPath); File.Delete(tokenPath + ".settings"); }
     }
 
-    private sealed class ScheduleApi(TokenStore store) : YavscApiClient(new Settings(), store)
+    private sealed class ScheduleApi(TokenStore store, string settingsPath) : YavscApiClient(new Settings(settingsPath), store)
     {
         public PodcastResponse Plan { get; private set; } = new(Guid.NewGuid(), "Concert", "owner", "Owner",
             DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, PodcastState.Planned, 0, 0, 0);
