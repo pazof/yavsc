@@ -19,6 +19,14 @@ public class SetActivityCountryValidationViewTests
     }
 
     [Fact]
+    public void Performer_profile_links_to_the_dedicated_private_donation_settings_form()
+    {
+        var content = File.ReadAllText(ResolveSetActivityViewPath());
+        Assert.Contains("asp-controller=\"Donation\" asp-action=\"Settings\"", content);
+        Assert.DoesNotContain("asp-for=\"DonationPayPalEmail\"", content);
+    }
+
+    [Fact]
     public void SetActivity_cshtml_contains_country_aware_siren_javascript_validation()
     {
         var content = File.ReadAllText(ResolveSetActivityViewPath());

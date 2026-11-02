@@ -1,0 +1,21 @@
+@model Yavsc.ViewModels.Podcast.DonationSettingsViewModel
+@{
+    ViewBag.Title = Localizer["Dons PayPal"];
+}
+<h1>@ViewBag.Title</h1>
+@if (TempData["DonationSettingsSaved"] != null)
+{
+    <p class="alert alert-success" role="status">@Localizer["Les paramètres de dons ont été enregistrés."]</p>
+}
+<p>@Localizer["Configurez votre propre compte PayPal pour recevoir directement les dons. Vérifiez soigneusement cette adresse : elle désigne le bénéficiaire du paiement."]</p>
+<p>@Localizer["Laissez le champ vide pour désactiver les nouveaux dons. Les dons déjà initiés conservent leur bénéficiaire."]</p>
+<form asp-action="Settings" method="post">
+    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+    <div class="mb-3">
+        <label asp-for="PayPalEmail" class="form-label">@Localizer["Adresse e-mail de votre compte PayPal"]</label>
+        <input asp-for="PayPalEmail" type="email" class="form-control" autocomplete="email" />
+        <span asp-validation-for="PayPalEmail" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">@Localizer["Enregistrer"]</button>
+    <a asp-controller="Manage" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Mon compte"]</a>
+</form>

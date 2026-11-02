@@ -263,7 +263,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
             var podcast = SelectedPodcast ?? throw new InvalidOperationException("Selectionnez un podcast.");
             var app = Application.Current as App ?? throw new InvalidOperationException("Application indisponible.");
             var manifestUrl = new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/"), $"podcasts/{podcast.Id}/index.m3u8");
-            await app.PushPageAsync(new VideoPageViewModel(manifestUrl, "application/vnd.apple.mpegurl")
+            var catalogueUrl = new Uri(new Uri(_api.Settings.Authentication.Authority.TrimEnd('/') + "/"), "Podcast");
+            await app.PushPageAsync(new VideoPageViewModel(manifestUrl, "application/vnd.apple.mpegurl", catalogueUrl)
             {
                 PodcastClient = _client, Podcast = podcast
             });

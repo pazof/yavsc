@@ -1,0 +1,13 @@
+@{
+    ViewBag.Title = Localizer["Paiement indisponible"];
+}
+<h1>@ViewBag.Title</h1>
+<p class="alert alert-danger" role="alert">@ViewData["PaymentError"]</p>
+<p>@Localizer["Un retour du navigateur ne prouve pas qu'un paiement a été effectué. Consultez l'état du don avant de recommencer."]</p>
+@if (ViewData["DonationId"] is Guid id)
+{
+    <a asp-action="Details" asp-route-id="@id" class="btn btn-outline-primary">@Localizer["Voir l'état du don"]</a>
+}
+<a asp-controller="Podcast" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Retour aux podcasts"]</a>
+<a asp-action="Index" class="btn btn-outline-primary">@Localizer["Mes dons"]</a>
+<a asp-controller="Manage" asp-action="SetActivity" class="btn btn-outline-secondary">@Localizer["Mon profil performer"]</a>

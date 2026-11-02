@@ -1,0 +1,105 @@
+@using Yavsc.Abstract.Streaming
+@model Yavsc.ViewModels.Podcast.PodcastCatalogueViewModel
+@{
+    ViewBag.Title = Localizer["Podcasts"];
+}
+
+<header class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h1>@Localizer["Podcasts"]</h1>
+        <p class="text-muted">@Localizer["Retrouvez les directs et les replays de la communauté Yavsc."]</p>
+        <p>@Localizer["Lecture réservée aux utilisateurs connectés. Les flux sont fournis par Yavsc.Api."]</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a asp-action="Index" class="btn btn-outline-primary">@Localizer["Actualiser"]</a>
+        <a asp-controller="Donation" asp-action="Settings" class="btn btn-outline-success">@Localizer["Configurer mes dons PayPal"]</a>
+    </div>
+</header>
+
+@if (Model.Error != null)
+{
+    <div class="alert alert-danger" role="alert">@Model.Error</div>
+}
+else if (Model.Podcasts.Count == 0)
+{
+    <div class="alert alert-info" role="status">@Localizer["Aucun podcast n'est disponible pour le moment."]</div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var podcast in Model.Podcasts)
+        {
+            var ready = podcast.State == PodcastState.Completed && podcast.Replay?.State == PodcastReplayState.Ready;
+            var stateLabel = podcast.State switch
+            {
+                PodcastState.Live => Localizer["En direct"],
+                PodcastState.Completed => Localizer["Replay"],
+                _ => Localizer["Direct interrompu"]
+            };
+            <article class="col-12 col-lg-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <h2 class="h4">@podcast.Title</h2>
+                            <span class="badge @(podcast.State == PodcastState.Live ? "bg-danger" : "bg-secondary")">@stateLabel</span>
+                        </div>
+                        <p class="text-muted">
+                            @podcast.OwnerName · <time datetime="@podcast.CreatedAt.ToString("O")">@podcast.CreatedAt.ToLocalTime().ToString("g")</time>
+                        </p>
+                        <p>@Localizer["Durée : {0} s", podcast.DurationSeconds.ToString("0.##")]</p>
+                        @if (podcast.SegmentCount > 0)
+                        {
+                            <video controls playsinline preload="none" class="w-100"
+                                   aria-label="@podcast.Title" data-podcast-player
+                                   data-hls="@(!ready ? "true" : "false")">
+                                <source src="@(ready ? Url.Action("Replay", new { id = podcast.Id }) : Url.Action("Playlist", new { id = podcast.Id }))"
+                                        type="@(ready ? "video/mp4" : "application/vnd.apple.mpegurl")" />
+                                @Localizer["Votre navigateur ne prend pas en charge la lecture vidéo."]
+                            </video>
+                            @if (!ready)
+                            {
+                                <button type="button" class="btn btn-outline-primary mt-2 d-none" data-start-playback>
+                                    @Localizer["Lire le podcast"]
+                                </button>
+                            }
+                            <p class="alert alert-warning mt-2 d-none" role="alert" data-playback-error>
+                                @Localizer["Lecture indisponible. Actualisez la page ou utilisez PostIt."]
+                            </p>
+                            @if (!ready && podcast.State == PodcastState.Completed)
+                            {
+                                <p class="text-muted">
+                                    @(podcast.Replay?.State == PodcastReplayState.Failed
+                                        ? Localizer["La préparation du replay MP4 a échoué. L'auteur peut la relancer depuis PostIt."]
+                                        : Localizer["Le replay MP4 est en préparation. La lecture HLS reste disponible."])
+                                </p>
+                            }
+                        }
+                        else
+                        {
+                            <p class="alert alert-info">@Localizer["Aucun segment n'est encore disponible. Actualisez la page pour suivre ce podcast."]</p>
+                        }
+                    </div>
+                    <div class="card-footer">
+                        <h3 class="h6">@Localizer["Soutenir l'auteur"]</h3>
+                        @if (Model.DonationPerformerIds.Contains(podcast.OwnerId))
+                        {
+                            <a asp-controller="Donation" asp-action="Create" asp-route-id="@podcast.OwnerId" class="btn btn-outline-success">
+                                @Localizer["Faire un don à {0}", podcast.OwnerName]
+                            </a>
+                            <p class="small text-muted mt-2 mb-0">@Localizer["Don facultatif géré par Yavsc, payé via PayPal directement à l'auteur."]</p>
+                        }
+                        else
+                        {
+                            <p class="small text-muted mb-0">@Localizer["Cet auteur n'a pas encore activé les dons PayPal."]</p>
+                        }
+                    </div>
+                </div>
+            </article>
+        }
+    </div>
+}
+
+@section scripts {
+    <script src="~/js/hls.light.min.js" asp-append-version="true"></script>
+    <script src="~/js/podcasts.js" asp-append-version="true"></script>
+}

@@ -115,6 +115,13 @@ Html.DisplayText("Modify");
         <dt>Bank info:</dt>
         <dd>@Html.DisplayFor(m => m.BankInfo)  [<a asp-controller="Manage" asp-action="AddBankInfo"
             >@(Model.BankInfo==null?"Set":"Modify")</a>]</dd>
+        @if (Model.HaveProfessionalSettings)
+        {
+            <dt>@Localizer["Dons PayPal"]</dt>
+            <dd><a asp-controller="Donation" asp-action="Settings">@Localizer["Configurer la réception des dons"]</a></dd>
+        }
+        <dt>@Localizer["Mes dons"]</dt>
+        <dd><a asp-controller="Donation" asp-action="Index">@Localizer["Suivre mes dons aux performers"]</a></dd>
 
         <dt><a href="/Blog/@Model.UserName">Your posts:</a></dt>
         <dd>@Model.PostsCounter</dd>

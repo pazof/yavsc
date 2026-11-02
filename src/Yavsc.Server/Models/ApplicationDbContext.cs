@@ -58,6 +58,16 @@ namespace Yavsc.Models
             }
             builder.UseIdentityByDefaultColumns();
 
+            builder.Entity<PerformerDonation>(entity =>
+            {
+                entity.HasOne<ApplicationUser>().WithMany().HasForeignKey(d => d.DonorId)
+                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne<PerformerProfile>().WithMany().HasForeignKey(d => d.PerformerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasIndex(d => d.CheckoutToken).IsUnique();
+                entity.HasIndex(d => d.TransactionId).IsUnique();
+            });
+
             builder.Entity<NominativeServiceCommand>()
                 .Property(command => command.AmountPaid)
                 .HasDefaultValue(0m);
@@ -458,6 +468,7 @@ namespace Yavsc.Models
         public DbSet<BankIdentity> BankIdentity { get; set; }
 
         public DbSet<PayPalPayment> PayPalPayment { get; set; }
+        public DbSet<PerformerDonation> PerformerDonations { get; set; }
 
         public DbSet<HyperLink> HyperLink { get; set; }
 

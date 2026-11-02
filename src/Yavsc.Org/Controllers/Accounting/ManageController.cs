@@ -664,8 +664,13 @@ namespace Yavsc.Controllers
                     if (_dbContext.Performers.Any(p=>p.PerformerId == uid))
                     {
                         _dbContext.Update(model);
+                        _dbContext.Entry(model).Property(p => p.DonationPayPalEmail).IsModified = false;
                     }
-                    else _dbContext.Performers.Add(model);
+                    else
+                    {
+                        model.DonationPayPalEmail = null;
+                        _dbContext.Performers.Add(model);
+                    }
                     _dbContext.SaveChanges(User.GetUserId());
                     // Give this user the Performer role
                     if (!User.IsInMsRole("Performer"))
@@ -716,6 +721,8 @@ namespace Yavsc.Controllers
             bool existing = _dbContext.Performers.Any(x => x.PerformerId == uid);
             if (existing)
             {
+                if (await _dbContext.PerformerDonations.AnyAsync(d => d.PerformerId == uid))
+                    return Conflict("Ce profil a recu des dons et doit etre conserve pour leur suivi. Desactivez les nouveaux dons dans les parametres PayPal.");
                 _dbContext.Performers.Remove(
                     _dbContext.Performers.First(x => x.PerformerId == uid)
                 );

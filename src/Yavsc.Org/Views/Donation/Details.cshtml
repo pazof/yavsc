@@ -1,0 +1,36 @@
+@using Yavsc.Models.Payment
+@model Yavsc.ViewModels.Podcast.DonationDetailsViewModel
+@{
+    ViewBag.Title = Localizer["Votre don"];
+    var donation = Model.Donation;
+}
+<h1>@Localizer["Votre don à {0}", Model.PerformerName]</h1>
+<p>@donation.Amount.ToString("F2") @donation.Currency</p>
+<p>@Localizer["Référence"] : @donation.Id</p>
+@switch (donation.State)
+{
+    case PerformerDonationState.AwaitingApproval:
+        <p>@Localizer["Après votre accord sur PayPal, confirmez le paiement ci-dessous. Le montant et le bénéficiaire sont vérifiés par Yavsc auprès de PayPal."]</p>
+        <form asp-action="Confirm" asp-route-id="@donation.Id" method="post">
+            <button type="submit" class="btn btn-success">@Localizer["Confirmer le paiement du don"]</button>
+        </form>
+        break;
+    case PerformerDonationState.Completed:
+        <p class="alert alert-success" role="status">@Localizer["Merci ! PayPal a confirmé le paiement de votre don au performer."]</p>
+        <p>@Localizer["Transaction PayPal"] : @donation.TransactionId</p>
+        break;
+    case PerformerDonationState.Cancelled:
+        <p class="alert alert-info" role="status">@Localizer["Ce don a été annulé avant paiement."]</p>
+        break;
+    case PerformerDonationState.Created:
+        <p class="alert alert-warning" role="status">@Localizer["Le paiement de ce don n'a pas été lancé."]</p>
+        break;
+    case PerformerDonationState.Failed:
+        <p class="alert alert-danger" role="status">@Localizer["PayPal a signalé l'échec de ce paiement. Ce don n'est pas payé."]</p>
+        break;
+    default:
+        <p class="alert alert-warning" role="status">@Localizer["Le paiement n'est pas confirmé. Il peut être en cours de traitement par PayPal. Ne créez pas de second don et actualisez cette page. Si cet état persiste, contactez Yavsc avec la référence du don."]</p>
+        break;
+}
+<a asp-action="Details" asp-route-id="@donation.Id" class="btn btn-outline-primary mt-3">@Localizer["Actualiser l'état"]</a>
+<a asp-controller="Podcast" asp-action="Index" class="btn btn-outline-secondary mt-3">@Localizer["Retour aux podcasts"]</a>

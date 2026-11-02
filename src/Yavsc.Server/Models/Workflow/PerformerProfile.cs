@@ -51,6 +51,9 @@ namespace Yavsc.Models.Workflow
         [Display(Name="Active")]
         public bool Active { get; set; }
 
+        [EmailAddress, MaxLength(127), ScaffoldColumn(false), JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
+        public string? DonationPayPalEmail { get; set; }
+
         [Obsolete("Implement and use a new specialization setting")]
         [Display(Name="Maximal Daily Cost (euro/day)"),DisplayFormat(DataFormatString="{0:C}")]
         public int? MaxDailyCost { get; set; }

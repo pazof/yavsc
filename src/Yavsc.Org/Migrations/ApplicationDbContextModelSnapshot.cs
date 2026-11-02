@@ -2738,6 +2738,71 @@ namespace Yavsc.Migrations
                     b.ToTable("PayPalPayment");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Payment.PerformerDonation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("CheckoutToken")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<string>("DonorId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("PerformerId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("RecipientEmail")
+                        .IsRequired()
+                        .HasMaxLength(127)
+                        .HasColumnType("character varying(127)");
+
+                    b.Property<Guid>("Revision")
+                        .IsConcurrencyToken()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("State")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TransactionId")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CheckoutToken")
+                        .IsUnique();
+
+                    b.HasIndex("DonorId");
+
+                    b.HasIndex("PerformerId");
+
+                    b.HasIndex("TransactionId")
+                        .IsUnique();
+
+                    b.ToTable("PerformerDonations");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Relationship.Circle", b =>
                 {
                     b.Property<long>("Id")
@@ -3265,6 +3330,10 @@ namespace Yavsc.Migrations
 
                     b.Property<bool>("Active")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("DonationPayPalEmail")
+                        .HasMaxLength(127)
+                        .HasColumnType("character varying(127)");
 
                     b.Property<string>("ExerciseCountryCode")
                         .IsRequired()
@@ -4512,6 +4581,21 @@ namespace Yavsc.Migrations
                         .IsRequired();
 
                     b.Navigation("Executor");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Payment.PerformerDonation", b =>
+                {
+                    b.HasOne("Yavsc.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("DonorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Yavsc.Models.Workflow.PerformerProfile", null)
+                        .WithMany()
+                        .HasForeignKey("PerformerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Yavsc.Models.Relationship.Circle", b =>

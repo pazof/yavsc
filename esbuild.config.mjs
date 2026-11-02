@@ -49,6 +49,10 @@ const bundleNames = [
 // toolchain).
 const staticAssets = [
   {
+    src: 'node_modules/hls.js/dist/hls.light.min.js',
+    dst: 'hls.light.min.js',
+  },
+  {
     src: 'node_modules/@aspnet/signalr/dist/browser/signalr.min.js',
     dst: 'signalr.min.js',
   },

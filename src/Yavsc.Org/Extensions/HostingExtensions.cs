@@ -92,6 +92,10 @@ public static class HostingExtensions
         // Add the system clock service
         _ = services.AddSingleton<IConnexionManager, HubConnectionManager>();
         _ = services.AddSingleton<ILiveProcessor, LiveProcessor>();
+        services.AddHttpClient<Yavsc.Web.Services.PodcastWebClient>()
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
+        services.AddHttpClient<Yavsc.Web.Services.IPayPalDonationGateway, Yavsc.Web.Services.PayPalDonationGateway>()
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
         _ = services.AddTransient<IFileSystemAuthManager, FileSystemAuthManager>();
 
         AddIdentityDBAndStores(builder)
@@ -278,6 +282,8 @@ public static class HostingExtensions
             // options.AddPolicy("EmployeeId", policy => policy.RequireClaim("EmployeeId", "123", "456"));
             // options.AddPolicy("BuildingEntry", policy => policy.Requirements.Add(new OfficeEntryRequirement()));
             options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
+            options.AddPolicy("WebUser", new AuthorizationPolicyBuilder(IdentityConstants.ApplicationScheme)
+                .RequireAuthenticatedUser().Build());
             options.AddPolicy("TheAuthor", policy => policy.Requirements.Add(new EditPermission()));
         });
 

@@ -1,0 +1,18 @@
+@model Yavsc.ViewModels.Podcast.CreateDonationViewModel
+@{
+    ViewBag.Title = Localizer["Soutenir un performer"];
+}
+<h1>@Localizer["Faire un don à {0}", Model.PerformerName]</h1>
+<p>@Localizer["Votre don sera payé directement sur le compte PayPal du performer. Yavsc ne l'encaisse pas."]</p>
+<p>@Localizer["Le don est facultatif et indépendant de l'accès aux podcasts. Aucun reçu fiscal n'est délivré."]</p>
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+    <input asp-for="PerformerId" type="hidden" />
+    <div class="mb-3">
+        <label asp-for="Amount" class="form-label">@Localizer["Montant en euros"]</label>
+        <input asp-for="Amount" type="text" inputmode="decimal" class="form-control" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+    <button class="btn btn-success" type="submit">@Localizer["Continuer avec PayPal"]</button>
+    <a asp-controller="Podcast" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Retour aux podcasts"]</a>
+</form>

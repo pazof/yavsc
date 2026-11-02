@@ -89,6 +89,20 @@ public class BlogReaderTests
     {
         var vm = new VideoPageViewModel(new Uri(source), "video/mp4");
         Assert.Equal(expected, vm.CanOpenExternal);
+        Assert.Equal(vm.Source, vm.ExternalUri);
+    }
+
+    [Theory]
+    [InlineData("https://org.example.test/Podcast", true)]
+    [InlineData("about:blank", false)]
+    public void Video_external_action_uses_the_web_resource_instead_of_the_playback_stream(string externalUrl, bool expected)
+    {
+        var source = new Uri("https://api.example.test/api/v1/podcasts/123/index.m3u8");
+        var externalUri = new Uri(externalUrl);
+        var vm = new VideoPageViewModel(source, "application/vnd.apple.mpegurl", externalUri);
+        Assert.Equal(source, vm.Source);
+        Assert.Equal(externalUri, vm.ExternalUri);
+        Assert.Equal(expected, vm.CanOpenExternal);
     }
 
     [AvaloniaFact]

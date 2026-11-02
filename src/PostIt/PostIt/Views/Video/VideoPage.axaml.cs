@@ -201,13 +201,13 @@ public partial class VideoPage : ContentPage
         {
             if (!vm.CanOpenExternal)
             {
-                PlaybackStatus.Text = "Ce flux interne ne peut pas être ouvert dans le navigateur.";
+                PlaybackStatus.Text = "Cette ressource ne peut pas être ouverte dans le navigateur.";
                 return;
             }
 
             var topLevel = TopLevel.GetTopLevel(this)
                 ?? throw new InvalidOperationException("La fenêtre de lecture est indisponible.");
-            if (!await topLevel.Launcher.LaunchUriAsync(vm.Source))
+            if (!await topLevel.Launcher.LaunchUriAsync(vm.ExternalUri))
                 PlaybackStatus.Text = "Impossible d'ouvrir le navigateur.";
         }
         catch (Exception ex)

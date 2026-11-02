@@ -27,6 +27,16 @@
       <TextBox Text="{Binding Website, Mode=TwoWay}"
                PlaceholderText="Site web"/>
 
+      <TextBlock Text="Dons PayPal" FontWeight="SemiBold"/>
+      <TextBlock Text="Adresse e-mail PayPal du bénéficiaire"/>
+      <TextBox x:Name="DonationPayPalEmailInput"
+               Text="{Binding DonationPayPalEmail, Mode=TwoWay}"
+               PlaceholderText="Adresse e-mail de votre compte PayPal"
+               MaxLength="127"
+               IsEnabled="{Binding !IsBusy}"/>
+      <TextBlock Text="Les dons sont versés directement sur ce compte PayPal. Vérifiez l’adresse. Laissez vide pour désactiver les nouveaux dons, puis enregistrez. Le profil doit être actif pour proposer les dons."
+                 TextWrapping="Wrap"/>
+
       <CheckBox Content="Disponible / actif"
                 IsChecked="{Binding Active, Mode=TwoWay}"/>
       <CheckBox Content="Accepter les notifications"

@@ -1,0 +1,10 @@
+@model Yavsc.Models.Payment.PerformerDonation
+@{
+    ViewBag.Title = Localizer["Annuler le don"];
+}
+<h1>@ViewBag.Title</h1>
+<p>@Localizer["L'annulation est possible tant que le paiement n'a pas été lancé."]</p>
+<form asp-action="CancelConfirm" asp-route-id="@Model.Id" method="post">
+    <button class="btn btn-outline-danger" type="submit">@Localizer["Confirmer l'annulation"]</button>
+</form>
+<a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary mt-3">@Localizer["Voir l'état du don"]</a>

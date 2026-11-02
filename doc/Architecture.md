@@ -57,6 +57,91 @@ sudo adduser --ingroup yavsc --add-extra-groups www-data \
  --disabled-password --system yavsc
 ```
 
+## Catalogue Web de podcasts
+
+`/Podcast` (vue `src/Yavsc.Org/Views/Podcast/Index.cshtml`) exige une
+session Identity Yavsc.Org, y compris pour chaque requête de lecture.
+Yavsc.Org interroge Yavsc.Api côté serveur ; aucun jeton n'est transmis
+au navigateur et aucun second catalogue de stockage n'est créé.
+Les replays MP4 prêts prennent en charge GET, HEAD et les plages
+d'octets. Les directs et replays non encore convertis utilisent HLS
+natif ou hls.js (servi localement, installé par `npm install` et copié par
+`npm run build:podcasts`, également inclus dans la copie d'assets de
+`npm run build:js`). Sans support vidéo compatible, la page affiche un
+avertissement et invite à utiliser PostIt. Cette page ne crée ni ne
+supprime de podcast.
+Depuis le lecteur PostIt, « Ouvrir dans le navigateur » ouvre `/Podcast`
+sur l'hôte `Authentication.Authority`, pas la playlist API authentifiée.
+La session Web reste distincte de celle de PostIt : le navigateur peut
+donc demander une connexion.
+
+Il n'y a pas de section de configuration `PodcastWeb`, ni de client OAuth
+technique à enregistrer. L'adresse API est celle de `Site:ApiUrl`, en HTTPS
+(avec ou sans suffixe `/api/v1`). Yavsc.Org est l'autorité : comme pour
+l'envoi d'avatar, `IdentityServerTools.IssueJwtAsync` utilise sa signature
+existante pour émettre un jeton de cinq minutes au nom de l'utilisateur
+connecté (`sub`, audience `api`, scope `api` attendu par Yavsc.Api).
+Ce jeton reste côté serveur. Une adresse API manquante renvoie 503 ;
+une panne de l'API renvoie une erreur explicite, pas un catalogue vide.
+
+### Dons PayPal aux performers
+
+Les dons sont gérés par Yavsc.Org, pas par un lien de paiement externe
+configuré par l'opérateur :
+
+1. Depuis **Mon compte > Dons PayPal**, le performer renseigne l'adresse
+   de son propre compte PayPal (`/Donation/Settings`). Un champ vide
+   désactive les nouveaux dons. Seuls les performers actifs ayant
+   configuré leur compte proposent un bouton de don dans le catalogue.
+   Le formulaire est aussi accessible depuis le catalogue de podcasts et
+   le profil professionnel Web. Dans PostIt : **Mon profil > Gérer mon
+   activité professionnelle > Dons PayPal**, puis **Enregistrer**.
+   L'API privée `GET/PUT /api/v1/account/performer-profile` transporte
+   `DonationPayPalEmail` uniquement pour le compte connecté ; une chaîne
+   vide désactive les dons, une propriété omise ou nulle préserve
+   l'adresse existante pour les anciens clients.
+2. Le donateur connecté choisit un montant en euros (`/Donation/Create`).
+   Yavsc conserve le don et son bénéficiaire avant de créer le checkout.
+3. Yavsc utilise les paramètres marchands existants
+   `Authentication:PayPal` (mode sandbox/production et identifiants NVP).
+   Express Checkout désigne le compte du performer par
+   `PAYMENTREQUEST_0_SELLERPAYPALACCOUNTID` : le paiement va directement
+   au performer ; Yavsc ne collecte pas les fonds et ne les reverse pas.
+4. PayPal recueille l'accord du donateur puis le renvoie dans Yavsc.
+   Une confirmation POST avec protection antiforgery déclenche le
+   paiement, après vérification côté serveur du token, du montant,
+   de la devise, de la référence et du bénéficiaire. Un simple retour
+   du navigateur n'est jamais considéré comme une preuve de paiement.
+5. Seule une réponse PayPal vérifiée permet d'afficher le don comme payé.
+   Les notifications IPN reçues sur `/Donation/Notify` sont revalidées
+   auprès de PayPal, puis rapprochées du bénéficiaire, du montant, de la
+   devise et de la transaction. Elles permettent aussi de confirmer
+   ultérieurement un paiement Pending ou une réponse de capture perdue.
+
+`Site:ExternalUrl` doit être l'URL HTTPS publique de Yavsc.Org, utilisée
+pour les retours et notifications (jamais le Host fourni par le client).
+PayPal doit pouvoir joindre `/Donation/Notify`. Le compte marchand
+doit être autorisé par PayPal pour les paiements directs à un tiers ;
+valider ce parcours en sandbox avec deux comptes distincts avant mise
+en production. Les tests locaux utilisent un serveur PayPal simulé,
+pas de véritables transactions.
+
+`PerformerDonations` conserve la référence, le donateur, le performer,
+le bénéficiaire figé à la création, le montant et l'état du paiement.
+La migration `PerformerPayPalDonations` ajoute ce suivi et l'adresse
+PayPal optionnelle du performer. Les profils ayant un historique de
+dons ne peuvent pas être supprimés. Les rééditions du profil général
+ne remplacent pas la configuration du bénéficiaire.
+
+Le paiement n'est capturé qu'une fois : contrôle de concurrence,
+référence de déduplication PayPal (`MSGSUBID`) et transaction unique.
+En cas de réponse ambiguë, le don reste en vérification sans nouvelle
+capture automatique. Le donateur retrouve son suivi dans **Mon compte >
+Mes dons** (`/Donation`). Si l'IPN ne réconcilie pas cet état, l'opérateur
+doit vérifier la transaction auprès de PayPal avant toute nouvelle
+tentative. Les dons sont facultatifs et n'ouvrent pas droit à un reçu
+fiscal émis par cette page.
+
 ## À documenter ensuite
 
 - Modèle `ProjetMusical`

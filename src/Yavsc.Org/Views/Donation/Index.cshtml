@@ -1,0 +1,24 @@
+@model IReadOnlyList<Yavsc.ViewModels.Podcast.DonationDetailsViewModel>
+@{
+    ViewBag.Title = Localizer["Mes dons"];
+}
+<h1>@ViewBag.Title</h1>
+@if (Model.Count == 0)
+{
+    <p>@Localizer["Vous n'avez pas encore initié de don."]</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var entry in Model)
+        {
+            <li class="list-group-item">
+                <a asp-action="Details" asp-route-id="@entry.Donation.Id">
+                    @entry.PerformerName · @entry.Donation.Amount.ToString("F2") @entry.Donation.Currency
+                    · @entry.Donation.CreatedAt.ToLocalTime().ToString("g")
+                </a>
+            </li>
+        }
+    </ul>
+}
+<a asp-controller="Podcast" asp-action="Index" class="btn btn-outline-secondary mt-3">@Localizer["Retour aux podcasts"]</a>

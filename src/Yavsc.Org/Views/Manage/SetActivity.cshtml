@@ -14,6 +14,11 @@
 
 @Html.DisplayFor(model => model)
 
+@if (!string.IsNullOrWhiteSpace(Model.PerformerId))
+{
+    <p><a asp-controller="Donation" asp-action="Settings" class="btn btn-outline-primary">@Localizer["Configurer mes dons PayPal"]</a></p>
+}
+
 <form id="FrmSetAct" asp-controller="Manage" asp-action="SetActivity" method="post" class="form-horizontal" role="form">
     <h4>Setup below your activity parameters:</h4>
     <hr />

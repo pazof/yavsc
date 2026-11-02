@@ -51,6 +51,9 @@ public partial class PerformerConfigurationPageViewModel : ViewModelBase
     public partial string Website { get; set; } = string.Empty;
 
     [ObservableProperty]
+    public partial string DonationPayPalEmail { get; set; } = string.Empty;
+
+    [ObservableProperty]
     public partial bool Active { get; set; }
 
     [ObservableProperty]
@@ -101,6 +104,7 @@ public partial class PerformerConfigurationPageViewModel : ViewModelBase
             ExerciseCountryCode = string.IsNullOrWhiteSpace(dto?.ExerciseCountryCode) ? "fr" : dto.ExerciseCountryCode;
             SIREN = dto?.SIREN ?? string.Empty;
             Website = dto?.WebSite ?? string.Empty;
+            DonationPayPalEmail = dto?.DonationPayPalEmail ?? string.Empty;
             Active = dto?.Active ?? false;
             AcceptNotifications = dto?.AcceptNotifications ?? false;
             AcceptPublicContact = dto?.AcceptPublicContact ?? false;
@@ -142,6 +146,7 @@ public partial class PerformerConfigurationPageViewModel : ViewModelBase
             ExerciseCountryCode = string.IsNullOrWhiteSpace(ExerciseCountryCode) ? "fr" : ExerciseCountryCode,
             SIREN = SIREN,
             WebSite = Website,
+            DonationPayPalEmail = DonationPayPalEmail.Trim(),
             Active = Active,
             AcceptNotifications = AcceptNotifications,
             AcceptPublicContact = AcceptPublicContact,

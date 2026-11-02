@@ -573,6 +573,7 @@ namespace Yavsc.WebApi.Controllers
         }
 
         [HttpGet("performer-profile")]
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public async Task<IActionResult> GetPerformerProfile()
         {
             var uid = User.GetUserId();
@@ -598,6 +599,7 @@ namespace Yavsc.WebApi.Controllers
                 ExerciseCountryCode = profile?.ExerciseCountryCode ?? "fr",
                 SIREN = profile?.SIREN ?? string.Empty,
                 WebSite = profile?.WebSite ?? string.Empty,
+                DonationPayPalEmail = profile?.DonationPayPalEmail ?? string.Empty,
                 Active = profile?.Active ?? false,
                 AcceptNotifications = profile?.AcceptNotifications ?? false,
                 AcceptPublicContact = profile?.AcceptPublicContact ?? false,
@@ -630,6 +632,20 @@ namespace Yavsc.WebApi.Controllers
                 return Forbid();
             }
 
+            if (!ModelState.IsValid)
+                return ValidationProblem(ModelState);
+            if (model.DonationPayPalEmail is { } email)
+            {
+                model.DonationPayPalEmail = email.Trim();
+                if (model.DonationPayPalEmail.Length > 0
+                    && (model.DonationPayPalEmail.Length > 127
+                        || !new System.ComponentModel.DataAnnotations.EmailAddressAttribute().IsValid(model.DonationPayPalEmail)))
+                {
+                    ModelState.AddModelError(nameof(model.DonationPayPalEmail), "Une adresse e-mail PayPal valide est requise.");
+                    return ValidationProblem(ModelState);
+                }
+            }
+
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == uid);
             if (user is null)
             {
@@ -655,7 +671,7 @@ namespace Yavsc.WebApi.Controllers
                     AcceptNotifications = model.AcceptNotifications,
                     AcceptPublicContact = model.AcceptPublicContact,
                     UseGeoLocalizationToReduceDistanceWithClients = model.UseGeoLocalizationToReduceDistanceWithClients,
-                    OrganizationAddress = new Yavsc.Models.Relationship.Location()
+                    OrganizationAddress = new Yavsc.Models.Relationship.Location { Address = string.Empty }
                 };
                 _dbContext.Performers.Add(profile);
             }
@@ -669,6 +685,9 @@ namespace Yavsc.WebApi.Controllers
                 profile.AcceptPublicContact = model.AcceptPublicContact;
                 profile.UseGeoLocalizationToReduceDistanceWithClients = model.UseGeoLocalizationToReduceDistanceWithClients;
             }
+
+            if (model.DonationPayPalEmail != null)
+                profile.DonationPayPalEmail = model.DonationPayPalEmail.Length == 0 ? null : model.DonationPayPalEmail;
 
             var desiredCodes = (model.SelectedActivityCodes ?? [])
                 .Where(code => !string.IsNullOrWhiteSpace(code))
