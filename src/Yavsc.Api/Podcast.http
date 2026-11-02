@@ -2,6 +2,27 @@
 @token = REPLACE_WITH_ACCESS_TOKEN
 @id = REPLACE_WITH_PODCAST_ID
 
+### Prepare a private emission (api scope; start/stop remain manual)
+POST {{baseUrl}}/api/v1/podcasts/planned
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"title":"Concert prepare","scheduledStartAt":"2026-12-01T20:00:00+01:00","plannedDurationMinutes":90}
+
+### Edit before start and publish a public presentation; null/empty announcement unpublishes it
+PUT {{baseUrl}}/api/v1/podcasts/{{id}}/planned
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"title":"Concert prepare","scheduledStartAt":"2026-12-01T20:00:00+01:00","plannedDurationMinutes":90,"publicAnnouncement":"Venez ecouter notre concert"}
+
+### Public presentation only (no token, no stream)
+GET {{baseUrl}}/api/v1/podcasts/announcements
+
+### Start the prepared emission manually, retaining its identifier (owner only)
+POST {{baseUrl}}/api/v1/podcasts/{{id}}/start
+Authorization: Bearer {{token}}
+
 ### Create a live broadcast
 POST {{baseUrl}}/api/v1/podcasts
 Authorization: Bearer {{token}}

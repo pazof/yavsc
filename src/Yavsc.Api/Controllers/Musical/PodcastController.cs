@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Yavsc.Abstract.Streaming;
 using Yavsc.Api.Middleware;
+using Yavsc.Api.Services;
 using Yavsc.Server.Helpers;
 using Yavsc.Services;
 
@@ -16,13 +17,40 @@ namespace Yavsc.ApiControllers;
 [Authorize(Policy = "ApiScope")]
 [Route(Constants.APIPrefix + "/podcasts")]
 [TypeFilter(typeof(PodcastExceptionFilter))]
-public sealed class PodcastController(ILiveProcessor processor) : ControllerBase
+public sealed class PodcastController(ILiveProcessor processor, IPodcastScheduleService schedule) : ControllerBase
 {
     /// <summary>Lists live broadcasts and retained replays for signed-in listeners.</summary>
     [HttpGet]
     [ProducesResponseType<IReadOnlyList<PodcastResponse>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<PodcastResponse>>> List(CancellationToken ct)
-        => Ok(await processor.ListAsync(ct));
+        => Ok(await schedule.ListAsync(User.GetUserId(), ct));
+
+    /// <summary>Public announcements contain presentation details only, never the stream.</summary>
+    [AllowAnonymous, HttpGet("announcements")]
+    [ProducesResponseType<IReadOnlyList<PodcastAnnouncementResponse>>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Announcements(CancellationToken ct)
+        => Ok(await schedule.AnnouncementsAsync(ct));
+
+    /// <summary>Prepares a private emission; a nonempty announcement publishes its presentation.</summary>
+    [HttpPost("planned")]
+    [ProducesResponseType<PodcastResponse>(StatusCodes.Status201Created)]
+    public async Task<IActionResult> Prepare(PreparePodcastRequest request, CancellationToken ct)
+    {
+        var response = await schedule.PrepareAsync(User.GetUserId(), request, null, ct);
+        return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
+    }
+
+    /// <summary>Edits an owned emission before its first start.</summary>
+    [HttpPut("{id:guid}/planned")]
+    [ProducesResponseType<PodcastResponse>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Update(Guid id, PreparePodcastRequest request, CancellationToken ct)
+        => Ok(await schedule.PrepareAsync(User.GetUserId(), request, id, ct));
+
+    /// <summary>Manually starts a prepared emission; retries retain the same broadcast identifier.</summary>
+    [HttpPost("{id:guid}/start")]
+    [ProducesResponseType<PodcastResponse>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Start(Guid id, CancellationToken ct)
+        => Ok(await schedule.StartAsync(id, User.GetUserId(), ct));
 
     /// <summary>Starts a broadcast owned by the current user.</summary>
     [HttpPost]
@@ -41,7 +69,7 @@ public sealed class PodcastController(ILiveProcessor processor) : ControllerBase
     [ProducesResponseType<PodcastManifestResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PodcastManifestResponse>> Get(Guid id, CancellationToken ct)
-        => Ok(await processor.GetAsync(id, ct));
+        => Ok(await schedule.GetAsync(id, User.GetUserId(), ct));
 
     /// <summary>Commits an MPEG-TS segment. Identical retries are idempotent.</summary>
     [HttpPut("{id:guid}/segments/{sequence:int}")]
@@ -55,7 +83,8 @@ public sealed class PodcastController(ILiveProcessor processor) : ControllerBase
     {
         var ownerId = User.GetUserId();
         if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
-        return Ok(await processor.AppendAsync(id, ownerId, sequence, duration, Request.Body, ct));
+        await processor.AppendAsync(id, ownerId, sequence, duration, Request.Body, ct);
+        return Ok((await schedule.GetAsync(id, ownerId, ct)).Podcast);
     }
 
     /// <summary>Ends the broadcast and schedules preparation of its MP4 replay.</summary>
@@ -65,7 +94,8 @@ public sealed class PodcastController(ILiveProcessor processor) : ControllerBase
     {
         var ownerId = User.GetUserId();
         if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
-        return Ok(await processor.CompleteAsync(id, ownerId, ct));
+        await processor.CompleteAsync(id, ownerId, ct);
+        return Ok((await schedule.GetAsync(id, ownerId, ct)).Podcast);
     }
 
     /// <summary>Serves a completed MP4 replay with authenticated byte-range support.</summary>
@@ -126,7 +156,7 @@ public sealed class PodcastController(ILiveProcessor processor) : ControllerBase
     {
         var ownerId = User.GetUserId();
         if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
-        await processor.DeleteAsync(id, ownerId, ct);
+        await schedule.DeleteAsync(id, ownerId, ct);
         return NoContent();
     }
 }

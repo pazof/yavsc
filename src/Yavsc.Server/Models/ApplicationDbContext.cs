@@ -48,6 +48,8 @@ namespace Yavsc.Models
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<LiveFlow>().HasIndex(f => f.PodcastId).IsUnique();
+            builder.Entity<LiveFlow>().Property(f => f.PublicAnnouncement).HasMaxLength(1023);
             if (Database.IsNpgsql())
             {
                 NOW_SQL = "LOCALTIMESTAMP";
@@ -499,7 +501,6 @@ namespace Yavsc.Models
 
         public DbSet<Project> Project { get; set; }
 
-        [Obsolete("use signaled flows")]
         public DbSet<LiveFlow> LiveFlow { get; set; }
 
         public DbSet<ChatRoomAccess> ChatRoomAccess { get; set; }

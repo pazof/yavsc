@@ -20,7 +20,7 @@ namespace Yavsc.Services
         /// <returns></returns>
         Task<bool> AcceptStream (HttpContext context, ApplicationUser user, string destDir, string fileName);
 
-        Task<PodcastResponse> CreateAsync(string ownerId, string ownerName, string title, CancellationToken ct);
+        Task<PodcastResponse> CreateAsync(string ownerId, string ownerName, string title, CancellationToken ct, Guid? id = null);
         Task<IReadOnlyList<PodcastResponse>> ListAsync(CancellationToken ct);
         Task<PodcastManifestResponse> GetAsync(Guid id, CancellationToken ct);
         Task<PodcastResponse> AppendAsync(Guid id, string ownerId, int sequence,

@@ -43,6 +43,16 @@ public partial class PodcastsPageViewModel : ViewModelBase
 
     public string Title { get => _title; set { if (SetProperty(ref _title, value)) UpdateCommands(); } }
 
+    [ObservableProperty]
+    public partial DateTimeOffset? ScheduledDate { get; set; } = DateTimeOffset.Now.AddDays(1);
+    [ObservableProperty]
+    public partial TimeSpan? ScheduledTime { get; set; } = new TimeSpan(20, 0, 0);
+    [ObservableProperty]
+    public partial decimal PlannedDurationMinutes { get; set; } = 60;
+    [ObservableProperty]
+    public partial bool PublishAnnouncement { get; set; }
+    [ObservableProperty]
+    public partial string Announcement { get; set; } = "";
 
     public string Status { get => _status; private set => SetProperty(ref _status, value); }
     public bool IsBroadcasting
@@ -72,12 +82,28 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public PodcastResponse? SelectedPodcast
     {
         get => _selected;
-        set { if (SetProperty(ref _selected, value)) UpdateCommands(); }
+        set
+        {
+            if (!SetProperty(ref _selected, value)) return;
+            if (value is { State: PodcastState.Planned } && value.OwnerId == _ownerId)
+            {
+                Title = value.Title;
+                ScheduledDate = value.ScheduledStartAt?.ToLocalTime();
+                ScheduledTime = value.ScheduledStartAt?.ToLocalTime().TimeOfDay;
+                PlannedDurationMinutes = value.PlannedDurationMinutes ?? 60;
+                Announcement = value.PublicAnnouncement ?? "";
+                PublishAnnouncement = !string.IsNullOrEmpty(Announcement);
+            }
+            UpdateCommands();
+        }
     }
 
     public IAsyncRelayCommand RefreshCommand { get; }
     public IRelayCommand DetectDevicesCommand { get; }
     public IAsyncRelayCommand StartCommand { get; }
+    public IAsyncRelayCommand PrepareCommand { get; }
+    public IAsyncRelayCommand UpdatePlanCommand { get; }
+    public IRelayCommand NewPlanCommand { get; }
     public IAsyncRelayCommand StopCommand { get; }
     public IAsyncRelayCommand PlayCommand { get; }
     public IAsyncRelayCommand FinishCommand { get; }
@@ -95,11 +121,17 @@ public partial class PodcastsPageViewModel : ViewModelBase
         DetectDevicesCommand = new RelayCommand(DetectDevices, () => CanBroadcast && !IsBroadcasting && !IsBusy);
         StartCommand = new AsyncRelayCommand(StartAsync,
             () => CanBroadcast && !IsBroadcasting && !IsBusy && _session.IsLoggedIn
-                && SelectedCamera is not null && !string.IsNullOrWhiteSpace(Title));
+                && SelectedCamera is not null && !string.IsNullOrWhiteSpace(Title)
+                && (SelectedPodcast == null || SelectedPodcast is { State: PodcastState.Planned } p && p.OwnerId == _ownerId));
+        PrepareCommand = new AsyncRelayCommand(() => SavePlanAsync(false),
+            () => !IsBusy && !IsBroadcasting && _session.IsLoggedIn && !string.IsNullOrWhiteSpace(Title));
+        UpdatePlanCommand = new AsyncRelayCommand(() => SavePlanAsync(true),
+            () => !IsBusy && !IsBroadcasting && SelectedPodcast is { State: PodcastState.Planned } p && p.OwnerId == _ownerId);
+        NewPlanCommand = new RelayCommand(() => SelectedPodcast = null, () => !IsBusy && !IsBroadcasting);
         StopCommand = new AsyncRelayCommand(StopAsync, () => IsBroadcasting && !IsBusy);
         PlayCommand = new AsyncRelayCommand(PlayAsync, () => SelectedPodcast is { SegmentCount: > 0 } && !IsBroadcasting && !IsBusy);
         FinishCommand = new AsyncRelayCommand(FinishAsync,
-            () => SelectedPodcast is { State: not PodcastState.Completed } p
+            () => SelectedPodcast is { State: PodcastState.Live or PodcastState.Interrupted } p
                 && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
         DeleteCommand = new AsyncRelayCommand(DeleteAsync,
             () => SelectedPodcast is { State: not PodcastState.Live } p
@@ -114,6 +146,9 @@ public partial class PodcastsPageViewModel : ViewModelBase
         RefreshCommand.NotifyCanExecuteChanged();
         DetectDevicesCommand.NotifyCanExecuteChanged();
         StartCommand.NotifyCanExecuteChanged();
+        PrepareCommand.NotifyCanExecuteChanged();
+        UpdatePlanCommand.NotifyCanExecuteChanged();
+        NewPlanCommand.NotifyCanExecuteChanged();
         StopCommand.NotifyCanExecuteChanged();
         PlayCommand.NotifyCanExecuteChanged();
         FinishCommand.NotifyCanExecuteChanged();
@@ -135,6 +170,34 @@ public partial class PodcastsPageViewModel : ViewModelBase
             Status = "Directs et replays reserves aux utilisateurs connectes.";
         }
         catch (Exception ex) { Status = $"Chargement impossible : {ex.Message}"; }
+        finally { IsBusy = false; }
+    }
+
+    private async Task SavePlanAsync(bool update)
+    {
+        IsBusy = true;
+        try
+        {
+            if (ScheduledDate == null || ScheduledTime == null || PlannedDurationMinutes != decimal.Truncate(PlannedDurationMinutes)
+                || PlannedDurationMinutes is < 1 or > int.MaxValue)
+                throw new InvalidOperationException("Choisissez un debut et une duree entiere positive en minutes.");
+            if (PublishAnnouncement && string.IsNullOrWhiteSpace(Announcement))
+                throw new InvalidOperationException("Saisissez le texte de l'annonce publique ou desactivez sa publication.");
+            var local = DateTime.SpecifyKind(ScheduledDate.Value.Date + ScheduledTime.Value, DateTimeKind.Unspecified);
+            if (TimeZoneInfo.Local.IsInvalidTime(local) || TimeZoneInfo.Local.IsAmbiguousTime(local))
+                throw new InvalidOperationException("Cette heure est inexistante ou ambigue lors du changement d'heure. Choisissez une autre heure.");
+            var start = new DateTimeOffset(local, TimeZoneInfo.Local.GetUtcOffset(local));
+            var plan = await _client.PrepareAsync(new PreparePodcastRequest
+            {
+                Title = Title, ScheduledStartAt = start,
+                PlannedDurationMinutes = (int)PlannedDurationMinutes,
+                PublicAnnouncement = PublishAnnouncement ? Announcement : null
+            }, update ? SelectedPodcast?.Id : null, _pageCancellation.Token);
+            await RefreshAsync();
+            SelectedPodcast = plan;
+            Status = "Emission preparee. Debut et duree previsionnels : demarrage et arret manuels.";
+        }
+        catch (Exception ex) { Status = $"Preparation impossible : {ex.Message}"; }
         finally { IsBusy = false; }
     }
 
@@ -194,8 +257,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
                 await requestPermissions(microphone, _pageCancellation.Token);
             _broadcaster = Platform.CreatePodcastCaptureAsync is { } createCapture
                 ? await PodcastBroadcaster.StartAsync(_client, Title,
-                    (directory, ct) => createCapture(camera, microphone, directory, ct), _pageCancellation.Token)
-                : await PodcastBroadcaster.StartAsync(_client, Title, camera, microphone, _pageCancellation.Token);
+                    (directory, ct) => createCapture(camera, microphone, directory, ct), _pageCancellation.Token, SelectedPodcast?.Id)
+                : await PodcastBroadcaster.StartAsync(_client, Title, camera, microphone, _pageCancellation.Token, SelectedPodcast?.Id);
             _broadcaster.Progress += OnProgress;
             CapturePreview = _broadcaster.Preview;
             _session.LogoutCompleted += OnLogout;

@@ -123,6 +123,22 @@ public sealed class PodcastBroadcasterTests
     }
 
     [Fact]
+    public async Task Prepared_broadcast_starts_the_existing_emission_instead_of_creating_another()
+    {
+        await using var transport = new Transport();
+        var client = new PodcastApiClient(transport, () => "https://api.example/");
+        FakeCapture? capture = null;
+        await using var broadcaster = await PodcastBroadcaster.StartAsync(client, "Prepared",
+            (directory, _) => Task.FromResult<IPodcastCapture>(capture = new FakeCapture(directory)),
+            TestContext.Current.CancellationToken, transport.PodcastId);
+        Assert.Equal(transport.PodcastId, broadcaster.Podcast.Id);
+        Assert.Equal(transport.PodcastId, transport.StartedId);
+        Assert.Equal(0, transport.CreateCount);
+        await capture!.StopAsync();
+        await broadcaster.Completion.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+    }
+
+    [Fact]
     public async Task Native_stop_flushes_final_segment_before_completing_server_replay()
     {
         await using var transport = new Transport();
@@ -217,10 +233,14 @@ public sealed class PodcastBroadcasterTests
         public List<string> Events { get; } = [];
         public bool FailUpload { get; init; }
         public int CreateCount { get; private set; }
+        public Guid PodcastId => _podcast.Id;
+        public Guid? StartedId { get; private set; }
         public TaskCompletionSource FirstUpload { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
         public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
         {
             if (path.EndsWith("/complete", StringComparison.Ordinal)) Events.Add("complete");
+            else if (path.EndsWith("/start", StringComparison.Ordinal))
+                StartedId = Guid.Parse(new Uri(path).Segments[^2].TrimEnd('/'));
             else CreateCount++;
             return Task.FromResult((T)(object)_podcast);
         }

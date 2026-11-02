@@ -82,13 +82,16 @@ dotnet test --project src/test/Yavsc.Org.Tests/Yavsc.Org.Tests.csproj \
   --filter-class '*PodcastWebTests' --filter-class '*PerformerDonationTests'
 dotnet test --project src/test/Yavsc.Api.Tests/Yavsc.Api.Tests.csproj \
   --filter-class '*LiveProcessorTests' --filter-class '*PodcastControllerTests' \
-  --filter-class '*PodcastReplayTests' --filter-class '*PerformerDonationSettingsTests'
+  --filter-class '*PodcastReplayTests' --filter-class '*PodcastScheduleTests' \
+  --filter-class '*PerformerDonationSettingsTests'
 dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
   --filter-class '*PodcastTests' --filter-class '*PodcastReplayTests' \
   --filter-class '*YavscApiClientTests' --filter-class '*PodcastNativeCaptureTests' \
   --filter-class '*PerformerDonationSettingsTests'
 dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
   --filter-method '*Shared_page_exposes_running_capture_preview_and_clears_it_before_disposal'
+dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
+  --filter-class '*PodcastScheduleTests'
 ```
 
 Les tests serveur couvrent HTTP/authentification, proprietaire, sequences,
@@ -97,6 +100,12 @@ apres interruption/redemarrage, dans des dossiers temporaires isoles.
 Les tests de configuration PayPal couvrent la lecture privee, la creation,
 la validation avant toute sauvegarde, l'effacement, la compatibilite des anciens
 clients, ainsi que le chargement, la liaison du champ et l'enregistrement PostIt.
+Les tests `PodcastScheduleTests` couvrent la preparation persistante dans
+`LiveFlow`, la confidentialite, l'annonce/unpublication, les controles
+proprietaire, la validation et le demarrage manuel idempotent.
+La preparation PostIt et les tests de capture headless ont ete verifies
+separement : leur selection groupee peut rester bloquee alors que chaque
+test cible reussit isole.
 Installer FFmpeg 5+ et ffprobe pour ces tests serveur : ils generent une
 source H.264/AAC synthetique de quatre secondes, verifient le remuxage reel
 (pistes, duree, faststart, decodage et seek a deux secondes), puis les reponses

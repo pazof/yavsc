@@ -3082,8 +3082,30 @@ namespace Yavsc.Migrations
                     b.Property<string>("Pitch")
                         .HasColumnType("text");
 
+                    b.Property<int?>("PlannedDurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("PodcastDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("PodcastId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("PreparedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PublicAnnouncement")
+                        .HasMaxLength(1023)
+                        .HasColumnType("character varying(1023)");
+
+                    b.Property<DateTimeOffset?>("ScheduledStartAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("SequenceNumber")
                         .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("StartedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -3091,6 +3113,9 @@ namespace Yavsc.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("PodcastId")
+                        .IsUnique();
 
                     b.ToTable("LiveFlow");
                 });

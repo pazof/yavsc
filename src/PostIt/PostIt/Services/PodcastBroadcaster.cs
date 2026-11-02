@@ -52,10 +52,10 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
     }
 
     public static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
-        string camera, string? microphone, CancellationToken ct)
+        string camera, string? microphone, CancellationToken ct, Guid? plannedId = null)
         => await StartAsync(api, title,
             (directory, _) => Task.FromResult<IPodcastCapture>(new LibVlcPodcastCapture(
-                vlc => new CameraStreamer(vlc).CreateCaptureMedia(camera, microphone), directory, preview: true)), ct);
+                vlc => new CameraStreamer(vlc).CreateCaptureMedia(camera, microphone), directory, preview: true)), ct, plannedId);
 
     internal static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
         Func<LibVLC, Media> createMedia, CancellationToken ct)
@@ -63,7 +63,7 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
             (directory, _) => Task.FromResult<IPodcastCapture>(new LibVlcPodcastCapture(createMedia, directory)), ct);
 
     public static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
-        Func<string, CancellationToken, Task<IPodcastCapture>> createCapture, CancellationToken ct)
+        Func<string, CancellationToken, Task<IPodcastCapture>> createCapture, CancellationToken ct, Guid? plannedId = null)
     {
         IPodcastCapture? capture = null;
         PodcastBroadcaster? broadcaster = null;
@@ -73,7 +73,9 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         try
         {
             Directory.CreateDirectory(directory);
-            podcast = await api.CreateAsync(title, ct);
+            podcast = plannedId.HasValue ? await api.StartAsync(plannedId.Value, ct) : await api.CreateAsync(title, ct);
+            if (podcast.State != PodcastState.Live)
+                throw new InvalidOperationException("Cette emission est deja terminee. Preparez une nouvelle emission.");
             await File.WriteAllTextAsync(Path.Combine(directory, "podcast.json"), JsonSerializer.Serialize(podcast), ct);
             ct.ThrowIfCancellationRequested();
             capture = await createCapture(directory, ct);

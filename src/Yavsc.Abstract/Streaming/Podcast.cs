@@ -5,7 +5,7 @@ namespace Yavsc.Abstract.Streaming;
 
 /// <summary>The lifecycle of a retained live broadcast.</summary>
 [JsonConverter(typeof(JsonStringEnumConverter<PodcastState>))]
-public enum PodcastState { Live, Completed, Interrupted }
+public enum PodcastState { Live, Completed, Interrupted, Planned }
 
 /// <summary>Preparation state of the seekable MP4 copy of a completed broadcast.</summary>
 [JsonConverter(typeof(JsonStringEnumConverter<PodcastReplayState>))]
@@ -21,12 +21,33 @@ public sealed record CreatePodcastRequest
     public required string Title { get; init; }
 }
 
+/// <summary>Prepares or edits an emission before its manual start.</summary>
+public sealed record PreparePodcastRequest
+{
+    [Required, StringLength(160, MinimumLength = 1)]
+    public required string Title { get; init; }
+    public required DateTimeOffset ScheduledStartAt { get; init; }
+    [Range(1, int.MaxValue)]
+    public required int PlannedDurationMinutes { get; init; }
+    [StringLength(1023)]
+    public string? PublicAnnouncement { get; init; }
+}
+
+/// <summary>Public presentation only; never includes playback addresses or private metadata.</summary>
+public sealed record PodcastAnnouncementResponse(
+    Guid Id, string Title, string OwnerName, DateTimeOffset ScheduledStartAt,
+    int PlannedDurationMinutes, string Announcement);
+
 /// <summary>A broadcast available to authenticated listeners.</summary>
 public sealed record PodcastResponse(
     Guid Id, string Title, string OwnerId, string OwnerName,
     DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt, PodcastState State,
     int SegmentCount, long Bytes, double DurationSeconds)
 {
+    public long? FlowId { get; init; }
+    public DateTimeOffset? ScheduledStartAt { get; init; }
+    public int? PlannedDurationMinutes { get; init; }
+    public string? PublicAnnouncement { get; init; }
     public PodcastReplayResponse? Replay { get; init; }
 }
 

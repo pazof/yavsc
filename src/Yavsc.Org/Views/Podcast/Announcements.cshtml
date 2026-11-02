@@ -1,0 +1,21 @@
+@model IReadOnlyList<Yavsc.Abstract.Streaming.PodcastAnnouncementResponse>
+@{ ViewBag.Title = Localizer["Emissions annoncees"]; }
+<h1>@Localizer["Emissions annoncees"]</h1>
+<p>@Localizer["Horaires previsionnels. La lecture des directs et replays necessite une connexion."]</p>
+<a asp-action="Index" class="btn btn-primary">@Localizer["Se connecter et ecouter les podcasts"]</a>
+@if (Model.Count == 0)
+{
+    <p>@Localizer["Aucune emission annoncee pour le moment."]</p>
+}
+@foreach (var announcement in Model)
+{
+    <article class="card my-3">
+        <div class="card-body">
+            <h2 class="h4">@announcement.Title</h2>
+            <p>@announcement.OwnerName</p>
+            <p><time datetime="@announcement.ScheduledStartAt.ToString("O")">@announcement.ScheduledStartAt.ToString("u")</time>
+                · @Localizer["Duree prevue : {0} min", announcement.PlannedDurationMinutes]</p>
+            <p style="white-space: pre-wrap">@announcement.Announcement</p>
+        </div>
+    </article>
+}

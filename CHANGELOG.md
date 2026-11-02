@@ -5,6 +5,7 @@
 
 ### Added
 
+* [Podcasts] Reuse persisted LiveFlow entities to prepare, edit and delete emissions from PostIt with a title, scheduled start and estimated duration. Keep start/stop manual and plans private; optionally publish presentation-only announcements on Yavsc.Org without opening anonymous playback. Preserve broadcast identifiers, legacy recordings and authenticated HLS/MP4 access; add a scheduling migration and lifecycle/privacy regressions.
 * [PostIt/API/Yavsc.Org] Expose the private PayPal recipient setting in PostIt's performer editor and authenticated profile API; validate addresses, allow disabling with an empty value and preserve the setting for older clients. Make Web donation settings discoverable from the performer profile and podcast catalogue.
 * [API] Initialize the required address field when creating a performer profile so a first configuration can be saved.
 * [Yavsc.Org] Add an authenticated Razor podcast catalogue with same-origin API-backed HLS/MP4 playback and replay byte-range support. Reuse Site.ApiUrl and the authority's signing credentials to issue short-lived user tokens, without a separate OAuth client or PodcastWeb configuration. Distinguish an empty catalogue from API/configuration failures.

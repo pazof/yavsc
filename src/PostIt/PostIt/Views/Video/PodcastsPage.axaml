@@ -50,6 +50,26 @@
         <StackPanel Margin="16" Spacing="12" MaxWidth="900">
             <TextBlock Text="Podcasts : directs et replays" FontSize="22" />
             <TextBlock Text="Lecture et emission reservees aux utilisateurs connectes. Quitter cette page arrete la capture." TextWrapping="Wrap" />
+            <StackPanel Spacing="8" IsEnabled="{Binding !IsBroadcasting}">
+                <TextBlock Text="Preparer une emission" FontWeight="SemiBold" />
+                <TextBox Text="{Binding Title, Mode=TwoWay}" PlaceholderText="Titre de l'emission" MaxLength="160" />
+                <TextBlock Text="Debut prevu (heure locale)" />
+                <DatePicker SelectedDate="{Binding ScheduledDate, Mode=TwoWay}" />
+                <TimePicker SelectedTime="{Binding ScheduledTime, Mode=TwoWay}" />
+                <TextBlock Text="Duree prevue en minutes" />
+                <NumericUpDown Value="{Binding PlannedDurationMinutes, Mode=TwoWay}" Minimum="1" Maximum="2147483647" Increment="1" />
+                <CheckBox Content="Publier une annonce visible sans connexion sur Yavsc.Org"
+                          IsChecked="{Binding PublishAnnouncement, Mode=TwoWay}" />
+                <TextBox Text="{Binding Announcement, Mode=TwoWay}" MaxLength="1023" AcceptsReturn="True"
+                         IsVisible="{Binding PublishAnnouncement}" PlaceholderText="Annonce publique (ne pas inclure d'informations privees)" />
+                <TextBlock Text="Sans annonce, la preparation est privee. Les horaires sont previsionnels : demarrage et arret manuels. L'ecoute reste reservee aux utilisateurs connectes."
+                           TextWrapping="Wrap" />
+                <WrapPanel>
+                    <Button Content="Nouvelle emission / direct immediat" Command="{Binding NewPlanCommand}" Margin="0,0,8,8" />
+                    <Button Content="Preparer une nouvelle emission" Command="{Binding PrepareCommand}" Margin="0,0,8,8" />
+                    <Button Content="Enregistrer les modifications de l'emission selectionnee" Command="{Binding UpdatePlanCommand}" />
+                </WrapPanel>
+            </StackPanel>
             <StackPanel Spacing="8" IsVisible="{Binding IsBroadcasting}">
                 <TextBlock Text="Apercu local de la capture" FontWeight="SemiBold" />
                 <Border Background="Black" CornerRadius="4" ClipToBounds="True">
@@ -58,7 +78,6 @@
                 </Border>
             </StackPanel>
             <StackPanel Spacing="8" IsVisible="{Binding CanBroadcast}" IsEnabled="{Binding !IsBroadcasting}">
-                <TextBox Text="{Binding Title}" PlaceholderText="Titre du direct" MaxLength="160" />
                 <Button Content="Detecter cameras et microphones" Command="{Binding DetectDevicesCommand}" />
                 <ComboBox ItemsSource="{Binding Cameras}" SelectedItem="{Binding SelectedCamera}" PlaceholderText="Camera">
                     <ComboBox.ItemTemplate>
@@ -88,6 +107,8 @@
                                 <TextBlock Text="{Binding Replay.State, StringFormat='MP4 : {0}'}" />
                             </StackPanel>
                             <TextBlock Text="{Binding Replay.Error}" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding ScheduledStartAt, StringFormat='Debut prevu : {0:g}'}" />
+                            <TextBlock Text="{Binding PlannedDurationMinutes, StringFormat='Duree prevue : {0} min'}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -99,14 +120,14 @@
             </WrapPanel>
              <Border Classes="warning-danger">
                 <StackPanel Spacing="8">
-                    <TextBlock Classes="warning-title" Text="⚠ Suppression du replay" />
-                    <TextBlock Text="Cette action supprime définitivement le replay sélectionné. Cette opération est irréversible."
+                    <TextBlock Classes="warning-title" Text="⚠ Suppression du podcast / emission preparee" />
+                    <TextBlock Text="Cette action supprime définitivement le podcast ou l'émission préparée sélectionnée. Cette opération est irréversible."
                                TextWrapping="Wrap"  />
                     <CheckBox x:Name="ConfirmDelete"
                               Classes="warning-check"
-                              Content="Je confirme la suppression du replay sélectionné" />
+                              Content="Je confirme la suppression du podcast sélectionné" />
                     <Button Classes="delete-danger"
-                            Content="Supprimer mon replay"
+                            Content="Supprimer mon podcast"
                             Command="{Binding DeleteCommand}"
                             IsEnabled="{Binding #ConfirmDelete.IsChecked}" />
                 </StackPanel>

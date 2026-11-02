@@ -16,6 +16,7 @@ background-attachment: fixed;">
           <li class="nav-item"><a class="nav-link @PageHelpers.ActivePage(ViewContext, "")" href="/">@Localizer["Home"]</a></li>
           <li class="nav-item"><a asp-controller="Blogspot" asp-action="Index" class="nav-link @PageHelpers.ActivePage(ViewContext, "Blogspot")">@Localizer["Blogs"]</a></li>
           <li class="nav-item"><a asp-controller="Podcast" asp-action="Index" class="nav-link @PageHelpers.ActivePage(ViewContext, "Podcast")">@Localizer["Podcasts"]</a></li>
+          <li class="nav-item"><a asp-controller="Podcast" asp-action="Announcements" class="nav-link">@Localizer["Emissions annoncees"]</a></li>
           <li class="nav-item"><a asp-controller="Home" asp-action="Contact" class="nav-link @PageHelpers.ActivePage(ViewContext, "Home", "Contact")">@Localizer["Contact"]</a></li>
           <li class="nav-item"><a asp-controller="Home" asp-action="About" class="nav-link @PageHelpers.ActivePage(ViewContext, "Home", "About")">@Localizer["About"]</a></li>
           <partial name="_LoginPartial" />

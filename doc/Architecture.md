@@ -84,6 +84,46 @@ connecté (`sub`, audience `api`, scope `api` attendu par Yavsc.Api).
 Ce jeton reste côté serveur. Une adresse API manquante renvoie 503 ;
 une panne de l'API renvoie une erreur explicite, pas un catalogue vide.
 
+### Emissions preparees
+
+PostIt permet de preparer, modifier et supprimer une emission avant son
+demarrage : titre, date/heure locale, duree entiere positive en minutes et
+annonce publique optionnelle. Les horaires sont previsionnels : la camera,
+le demarrage et l'arret restent manuels. Les heures locales inexistantes ou
+ambigues au changement d'heure sont refusees.
+
+La table existante `LiveFlow` conserve la preparation et son proprietaire ;
+`PodcastId` (GUID unique) relie cette emission au manifeste media sur disque.
+`PodcastResponse` reste un DTO, enrichi de `FlowId`, `ScheduledStartAt`,
+`PlannedDurationMinutes` et `PublicAnnouncement`. Un etat `Planned`
+precede le direct ; la date previsionnelle n'est jamais confondue avec
+`CreatedAt` du direct ni la duree previsionnelle avec les secondes enregistrees.
+Les anciens manifestes sans `LiveFlow` restent lisibles ; aucune copie ou
+migration de leurs medias n'est requise. Le demarrage immediat historique
+reste disponible sans preparation.
+
+L'API propose `POST /api/v1/podcasts/planned`,
+`PUT /api/v1/podcasts/{id}/planned` et `POST /api/v1/podcasts/{id}/start`.
+La preparation n'est visible que du proprietaire, meme avec une annonce ;
+les nouvelles routes de mutation exigent le scope `api`. Le demarrage
+conserve le GUID et les tentatives concurrentes reutilisent le meme direct.
+Une emission demarree ne peut plus etre reprogrammee ou redemarree apres
+sa fin. Les medias restent geres par `ILiveProcessor`, avec ses quotas,
+expiration, reprise et preparation MP4. Une suppression conserve un
+marqueur en base pour ne pas ressusciter une emission deja supprimee.
+Le verrou de coordination suit le deploiement mono-processus du stockage
+media actuel ; un deploiement multi-instance necessiterait un stockage et
+une coordination distribues.
+
+Seul `GET /api/v1/podcasts/announcements` est anonyme : titre, nom d'auteur,
+horaire UTC, duree et texte public, sans URL de flux ni metadonnees privees.
+`/Podcast/Announcements` affiche ces annonces avec encodage Razor et sans
+jeton utilisateur. Retirer le texte public avant le debut retire l'annonce.
+Les annonces restent disponibles apres le direct jusqu'a suppression du
+podcast. Les pages et toutes les routes de lecture restent authentifiees.
+Appliquer la migration `PodcastScheduling` au deploiement, apres celle des
+dons ; aucune migration de production n'est appliquee automatiquement ici.
+
 ### Dons PayPal aux performers
 
 Les dons sont gérés par Yavsc.Org, pas par un lien de paiement externe

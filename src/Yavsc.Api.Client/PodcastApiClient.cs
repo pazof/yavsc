@@ -21,6 +21,13 @@ public sealed class PodcastApiClient(IYavscApiClient api, Func<string> baseAddre
     public Task<PodcastResponse> CreateAsync(string title, CancellationToken ct = default)
         => api.CallAsync<PodcastResponse>(HttpMethod.Post, Absolute(Prefix), new CreatePodcastRequest { Title = title }, ct);
 
+    public Task<PodcastResponse> PrepareAsync(PreparePodcastRequest request, Guid? id = null, CancellationToken ct = default)
+        => api.CallAsync<PodcastResponse>(id.HasValue ? HttpMethod.Put : HttpMethod.Post,
+            Absolute(id.HasValue ? $"{Prefix}/{id}/planned" : $"{Prefix}/planned"), request, ct);
+
+    public Task<PodcastResponse> StartAsync(Guid id, CancellationToken ct = default)
+        => api.CallAsync<PodcastResponse>(HttpMethod.Post, Absolute($"{Prefix}/{id}/start"), ct: ct);
+
     public Task<PodcastManifestResponse> GetAsync(Guid id, CancellationToken ct = default)
         => api.CallAsync<PodcastManifestResponse>(HttpMethod.Get, Absolute($"{Prefix}/{id}"), ct: ct);
 

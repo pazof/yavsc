@@ -24,14 +24,16 @@ public sealed class PodcastWebClient(HttpClient http, IOptions<SiteSettings> opt
     }
 
     public async Task<HttpResponseMessage> SendAsync(HttpMethod method, string path,
-        RangeHeaderValue? range, CancellationToken ct)
+        RangeHeaderValue? range, CancellationToken ct, bool publicAnnouncement = false)
     {
         var settings = options.Value;
         if (!Uri.TryCreate(settings.ApiUrl, UriKind.Absolute, out var address)
             || address.Scheme != Uri.UriSchemeHttps || !string.IsNullOrEmpty(address.UserInfo))
             throw new PodcastException(503, "La connexion aux podcasts n'est pas configuree.");
 
-        if (_accessToken == null)
+        if (publicAnnouncement && (method != HttpMethod.Get || path != "announcements"))
+            throw new InvalidOperationException("Only podcast announcements may be requested anonymously.");
+        if (!publicAnnouncement && _accessToken == null)
         {
             var user = contextAccessor.HttpContext?.User;
             var userId = user?.GetUserId();
@@ -52,7 +54,8 @@ public sealed class PodcastWebClient(HttpClient http, IOptions<SiteSettings> opt
         if (!address.AbsolutePath.EndsWith("/" + Constants.APIPrefix + "/", StringComparison.Ordinal))
             address = new Uri(address, Constants.APIPrefix + "/");
         using var request = new HttpRequestMessage(method, new Uri(address, "podcasts/" + path));
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+        if (!publicAnnouncement)
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
         request.Headers.Range = range;
         var response = await http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct);
         if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.RequestedRangeNotSatisfiable)

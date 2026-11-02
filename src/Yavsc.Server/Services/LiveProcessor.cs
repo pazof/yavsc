@@ -41,7 +41,7 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             throw new InvalidOperationException("Invalid Podcast storage options.");
     }
 
-    public async Task<PodcastResponse> CreateAsync(string ownerId, string ownerName, string title, CancellationToken ct)
+    public async Task<PodcastResponse> CreateAsync(string ownerId, string ownerName, string title, CancellationToken ct, Guid? id = null)
     {
         if (string.IsNullOrWhiteSpace(ownerId) || string.IsNullOrWhiteSpace(title) || title.Trim().Length > 160)
             throw new PodcastException(400, "Un titre de 1 a 160 caracteres et un utilisateur sont requis.");
@@ -50,6 +50,12 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         {
             await LoadAsync(ct);
             await ExpireAsync(ct);
+            if (id.HasValue && _documents.TryGetValue(id.Value, out var existing))
+            {
+                if (existing.Manifest.Podcast.OwnerId != ownerId)
+                    throw new PodcastException(403, "Seul l'auteur peut demarrer ce podcast.");
+                return existing.Manifest.Podcast;
+            }
             if (_documents.Values.Any(d => d.Manifest.Podcast.OwnerId == ownerId && d.Manifest.Podcast.State == PodcastState.Live))
                 throw new PodcastException(409, "Vous avez deja un direct en cours.");
             if (OwnerBytes(ownerId) >= _options.MaxOwnerBytes)
@@ -57,7 +63,7 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             if (_documents.Values.Count(d => d.Manifest.Podcast.OwnerId == ownerId) >= _options.MaxOwnerPodcasts)
                 throw new PodcastException(413, "Nombre maximal de podcasts atteint. Supprimez un ancien replay.");
             var now = _clock.GetUtcNow();
-            var podcast = new PodcastResponse(Guid.NewGuid(), title.Trim(), ownerId, ownerName,
+            var podcast = new PodcastResponse(id ?? Guid.NewGuid(), title.Trim(), ownerId, ownerName,
                 now, now, PodcastState.Live, 0, 0, 0);
             var document = new Document(new(podcast, Array.Empty<PodcastSegmentResponse>()), Array.Empty<string>());
             Directory.CreateDirectory(DirectoryFor(podcast.Id));

@@ -69,6 +69,22 @@ public sealed class PodcastWebTests : IClassFixture<PodcastWebTests.Factory>
     }
 
     [Fact]
+    public async Task Announcements_are_public_escaped_and_requested_without_a_user_token()
+    {
+        using var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        using var response = await client.GetAsync("/Podcast/Announcements", Ct);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var html = await response.Content.ReadAsStringAsync(Ct);
+        Assert.Contains("&lt;script&gt;public&lt;/script&gt;", html);
+        Assert.DoesNotContain("<script>public</script>", html);
+        Assert.DoesNotContain("data-podcast-player", html);
+        Assert.DoesNotContain("replay.mp4", html);
+        var request = Assert.Single(_factory.Api.Requests);
+        Assert.Equal("/api/v1/podcasts/announcements", request.Path);
+        Assert.Null(request.Authorization);
+    }
+
+    [Fact]
     public async Task Catalogue_uses_the_authority_user_token_without_an_api_client_or_external_donation_link()
     {
         using var client = SignedInClient();
@@ -288,6 +304,12 @@ public sealed class PodcastWebTests : IClassFixture<PodcastWebTests.Factory>
                 request.Headers.Authorization?.ToString(), request.Headers.Range?.ToString()));
             if (Status != HttpStatusCode.OK)
                 return Task.FromResult(new HttpResponseMessage(Status));
+            if (path == "/api/v1/podcasts/announcements")
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = JsonContent.Create(new[] { new PodcastAnnouncementResponse(
+                        PodcastId, "Concert", "Author", DateTimeOffset.UtcNow.AddDays(1), 60, "<script>public</script>") })
+                });
             var podcast = new PodcastResponse(PodcastId, "<script>unsafe-title</script>",
                 Live ? "other-author" : "author", "Author", DateTimeOffset.UtcNow,
                 DateTimeOffset.UtcNow, Live ? PodcastState.Live : PodcastState.Completed, 1, 188, 2.5)

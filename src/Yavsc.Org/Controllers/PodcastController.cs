@@ -23,6 +23,15 @@ public sealed class PodcastController(
     ApplicationDbContext db,
     ILogger<PodcastController> logger) : Controller
 {
+    [AllowAnonymous, HttpGet]
+    public async Task<IActionResult> Announcements(CancellationToken ct)
+    {
+        using var response = await api.SendAsync(HttpMethod.Get, "announcements", null, ct, publicAnnouncement: true);
+        var announcements = await response.Content.ReadFromJsonAsync<List<PodcastAnnouncementResponse>>(ct)
+            ?? throw new JsonException("Empty podcast announcements response.");
+        return View(announcements);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken ct)
     {

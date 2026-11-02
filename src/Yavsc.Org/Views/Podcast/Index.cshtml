@@ -12,6 +12,7 @@
     </div>
     <div class="d-flex flex-wrap gap-2">
         <a asp-action="Index" class="btn btn-outline-primary">@Localizer["Actualiser"]</a>
+        <a asp-action="Announcements" class="btn btn-outline-primary">@Localizer["Emissions annoncees"]</a>
         <a asp-controller="Donation" asp-action="Settings" class="btn btn-outline-success">@Localizer["Configurer mes dons PayPal"]</a>
     </div>
 </header>
@@ -34,6 +35,7 @@ else
             {
                 PodcastState.Live => Localizer["En direct"],
                 PodcastState.Completed => Localizer["Replay"],
+                PodcastState.Planned => Localizer["Emission preparee"],
                 _ => Localizer["Direct interrompu"]
             };
             <article class="col-12 col-lg-6">
@@ -47,6 +49,10 @@ else
                             @podcast.OwnerName · <time datetime="@podcast.CreatedAt.ToString("O")">@podcast.CreatedAt.ToLocalTime().ToString("g")</time>
                         </p>
                         <p>@Localizer["Durée : {0} s", podcast.DurationSeconds.ToString("0.##")]</p>
+                        @if (podcast.ScheduledStartAt.HasValue)
+                        {
+                            <p>@Localizer["Debut prevu : {0} ; duree prevue : {1} min", podcast.ScheduledStartAt.Value.ToString("u"), podcast.PlannedDurationMinutes]</p>
+                        }
                         @if (podcast.SegmentCount > 0)
                         {
                             <video controls playsinline preload="none" class="w-100"

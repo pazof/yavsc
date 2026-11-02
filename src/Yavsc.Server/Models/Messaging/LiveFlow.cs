@@ -8,6 +8,14 @@ namespace Yavsc.Models.Streaming
 
     public partial class LiveFlow : ILiveFlow {
 
+      public Guid? PodcastId { get; set; }
+      public DateTimeOffset? ScheduledStartAt { get; set; }
+      public int? PlannedDurationMinutes { get; set; }
+      public string PublicAnnouncement { get; set; } = string.Empty;
+      public DateTimeOffset? PreparedAt { get; set; }
+      public DateTimeOffset? StartedAt { get; set; }
+      public bool PodcastDeleted { get; set; }
+
       [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
       [Display(Name="FlowIdLabel", ResourceType=typeof(LiveFlow))]
       // set by the server, unique
