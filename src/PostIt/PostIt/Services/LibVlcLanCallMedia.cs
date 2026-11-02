@@ -35,9 +35,10 @@ public sealed class LibVlcLanCallMedia : IAsyncDisposable
         Endpoint = new(localAddress, port, Convert.ToHexString(RandomNumberGenerator.GetBytes(16)),
             Convert.ToHexString(RandomNumberGenerator.GetBytes(14)));
         if (!Endpoint.IsValid())
-            throw new ArgumentException("Adresse IPv4 unicast et port UDP pair (1024-65534) requis.");
-        using (var reservation = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
-        using (var rtcp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+            throw new ArgumentException("Adresse IPv4/IPv6 unicast et port UDP pair (1024-65534) requis.");
+        var localIp = IPAddress.Parse(localAddress);
+        using (var reservation = new Socket(localIp.AddressFamily, SocketType.Dgram, ProtocolType.Udp))
+        using (var rtcp = new Socket(localIp.AddressFamily, SocketType.Dgram, ProtocolType.Udp))
         {
             reservation.Bind(new IPEndPoint(IPAddress.Parse(localAddress), port));
             rtcp.Bind(new IPEndPoint(IPAddress.Parse(localAddress), port + 1));
@@ -51,7 +52,8 @@ public sealed class LibVlcLanCallMedia : IAsyncDisposable
                 : new LibVLC("--avcodec-hw=none", "--intf=dummy");
             try
             {
-                _receiverMedia = new Media(_receiverVlc, $"rtp://@{localAddress}:{port}", FromType.FromLocation);
+                var host = localIp.AddressFamily == AddressFamily.InterNetworkV6 ? $"[{localAddress}]" : localAddress;
+                _receiverMedia = new Media(_receiverVlc, $"rtp://@{host}:{port}", FromType.FromLocation);
                 _receiverMedia.AddOption(":network-caching=150");
                 _receiverMedia.AddOption(":rtcp-port=" + (port + 1));
                 _receiverMedia.AddOption(":srtp-key=" + Endpoint.Key);

@@ -114,13 +114,16 @@ public sealed class LanCallViewModelTests
         return vm;
     }
 
-    [AvaloniaFact]
-    public async Task Public_ipv4_can_be_selected_for_an_explicitly_consented_direct_call()
+    [AvaloniaTheory]
+    [InlineData("8.8.8.8")]
+    [InlineData("2001:db8::1")]
+    [InlineData("fd00::1")]
+    public async Task Public_or_private_ip_can_be_selected_for_an_explicitly_consented_direct_call(string address)
     {
         var signaling = new Signaling();
         await using var vm = Configure(signaling, (_, _) => throw new Exception("No media before acceptance"));
-        vm.Addresses.Add("8.8.8.8");
-        vm.Address = "8.8.8.8";
+        vm.Addresses.Add(address);
+        vm.Address = address;
         await vm.InviteCommand.ExecuteAsync(null);
         Assert.Equal(1, signaling.Invites);
         Assert.True(vm.Busy);

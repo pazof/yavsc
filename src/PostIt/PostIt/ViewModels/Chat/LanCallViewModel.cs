@@ -116,7 +116,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         foreach (var address in NetworkInterface.GetAllNetworkInterfaces()
             .Where(n => n.OperationalStatus == OperationalStatus.Up)
             .SelectMany(n => n.GetIPProperties().UnicastAddresses)
-            .Select(a => a.Address.ToString()).Where(LanCallNetwork.IsUnicastIPv4)
+            .Select(a => a.Address.ToString()).Where(LanCallNetwork.IsUnicastAddress)
             .Distinct().OrderBy(a => IPAddress.IsLoopback(IPAddress.Parse(a))))
             Addresses.Add(address);
         Address = preferred == null ? Addresses.FirstOrDefault() : Addresses.FirstOrDefault(a => a == preferred);
@@ -181,7 +181,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
             Status = Cameras.Count == 0 ? "Aucune camera detectee. Verifiez les peripheriques puis actualisez."
                 : Incoming && _call != null
                     ? $"{_call.Caller} propose un appel dans {_call.RoomName}. Selectionnez vos peripheriques puis acceptez ou refusez."
-                : "Selectionnez le pair, l'adresse IPv4 locale ou publique et les peripheriques. Utilisez un casque.";
+                : "Selectionnez le pair, l'adresse IPv4/IPv6 locale ou publique et les peripheriques. Utilisez un casque.";
             if (_settings != null)
             {
                 _settings.PodcastCameras = Cameras.ToArray();
@@ -200,10 +200,10 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
     private void ValidateSelection()
     {
         if (!AllowAddressDisclosure)
-            throw new InvalidOperationException("Confirmez le partage de votre adresse IPv4 avec le pair.");
+            throw new InvalidOperationException("Confirmez le partage de votre adresse IP avec le pair.");
         if (Camera == null || Microphone == null)
             throw new InvalidOperationException("Une camera et un microphone sont requis.");
-        if (Address == null || !Addresses.Contains(Address) || !LanCallNetwork.IsUnicastIPv4(Address) ||
+        if (Address == null || !Addresses.Contains(Address) || !LanCallNetwork.IsUnicastAddress(Address) ||
             !int.TryParse(Port, out var port) || port is < 1024 or > 65534 || port % 2 != 0)
             throw new InvalidOperationException("Selectionnez une adresse locale et un port UDP pair (1024-65534).");
         _activeCamera = Camera.Value;

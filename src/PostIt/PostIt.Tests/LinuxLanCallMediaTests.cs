@@ -15,38 +15,45 @@ public sealed class LinuxLanCallMediaTests(ITestOutputHelper output)
     public static bool HasTsFixture => OperatingSystem.IsLinux() &&
         File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_TS"));
 
-    [Fact(Skip = "Requires Linux LibVLC.", SkipUnless = nameof(HasFixture))]
-    public async Task Ports_are_released_and_credentials_regenerated_after_disposal()
+    [Theory(Skip = "Requires Linux LibVLC.", SkipUnless = nameof(HasFixture))]
+    [InlineData("127.0.0.1")]
+    [InlineData("::1")]
+    public async Task Ports_are_released_and_credentials_regenerated_after_disposal(string address)
     {
-        var port = FreePort();
-        var first = new LibVlcLanCallMedia("127.0.0.1", port, headless: true);
+        var port = FreePort(address: address);
+        var first = new LibVlcLanCallMedia(address, port, headless: true);
         var endpoint = first.Endpoint;
         await first.StartReceivingAsync(TestContext.Current.CancellationToken);
         await first.DisposeAsync();
         await first.DisposeAsync();
-        await using var next = new LibVlcLanCallMedia("127.0.0.1", port, headless: true);
+        await using var next = new LibVlcLanCallMedia(address, port, headless: true);
         Assert.NotEqual(endpoint.Key, next.Endpoint.Key);
         Assert.NotEqual(endpoint.Salt, next.Endpoint.Salt);
         await next.StartReceivingAsync(TestContext.Current.CancellationToken);
     }
 
-    [Fact(Skip = "Requires Linux LibVLC.", SkipUnless = nameof(HasFixture))]
-    public void Occupied_rtcp_port_is_rejected_before_capture_starts()
+    [Theory(Skip = "Requires Linux LibVLC.", SkipUnless = nameof(HasFixture))]
+    [InlineData("127.0.0.1")]
+    [InlineData("::1")]
+    public void Occupied_rtcp_port_is_rejected_before_capture_starts(string address)
     {
-        var port = FreePort();
-        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        socket.Bind(new IPEndPoint(IPAddress.Loopback, port + 1));
-        var error = Assert.Throws<SocketException>(() => new LibVlcLanCallMedia("127.0.0.1", port, headless: true));
+        var port = FreePort(address: address);
+        var ip = IPAddress.Parse(address);
+        using var socket = new Socket(ip.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+        socket.Bind(new IPEndPoint(ip, port + 1));
+        var error = Assert.Throws<SocketException>(() => new LibVlcLanCallMedia(address, port, headless: true));
         Assert.Equal(SocketError.AddressAlreadyInUse, error.SocketErrorCode);
     }
 
-    [Fact(Skip = "Set POSTIT_TEST_TS to an H.264/AAC MPEG-TS file.", SkipUnless = nameof(HasTsFixture))]
-    public async Task Already_encoded_capture_is_sent_over_srtp_without_transcoding()
+    [Theory(Skip = "Set POSTIT_TEST_TS to an H.264/AAC MPEG-TS file.", SkipUnless = nameof(HasTsFixture))]
+    [InlineData("127.0.0.1")]
+    [InlineData("::1")]
+    public async Task Already_encoded_capture_is_sent_over_srtp_without_transcoding(string address)
     {
         var ct = TestContext.Current.CancellationToken;
-        var firstPort = FreePort();
-        await using var sender = new LibVlcLanCallMedia("127.0.0.1", firstPort, headless: true);
-        await using var receiver = new LibVlcLanCallMedia("127.0.0.1", FreePort(firstPort), headless: true);
+        var firstPort = FreePort(address: address);
+        await using var sender = new LibVlcLanCallMedia(address, firstPort, headless: true);
+        await using var receiver = new LibVlcLanCallMedia(address, FreePort(firstPort, address), headless: true);
         using var decoded = new DecodedVideo(receiver.Receiver);
         using var pipe = new AnonymousPipeServerStream(PipeDirection.Out);
         await using var source = File.OpenRead(Environment.GetEnvironmentVariable("POSTIT_TEST_TS")!);
@@ -88,13 +95,16 @@ public sealed class LinuxLanCallMediaTests(ITestOutputHelper output)
     [InlineData(false, false)]
     [InlineData(true, false)]
     [InlineData(false, true)]
-    public async Task Two_peers_decode_bidirectional_encrypted_audio_video_and_reject_wrong_keys(bool wrongKey, bool preview)
+    [InlineData(false, false, "::1")]
+    [InlineData(true, false, "::1")]
+    public async Task Two_peers_decode_bidirectional_encrypted_audio_video_and_reject_wrong_keys(
+        bool wrongKey, bool preview, string address = "127.0.0.1")
     {
         var ct = TestContext.Current.CancellationToken;
-        var firstPort = FreePort();
-        var secondPort = FreePort(firstPort);
-        await using var first = new LibVlcLanCallMedia("127.0.0.1", firstPort, headless: true);
-        await using var second = new LibVlcLanCallMedia("127.0.0.1", secondPort, headless: true);
+        var firstPort = FreePort(address: address);
+        var secondPort = FreePort(firstPort, address);
+        await using var first = new LibVlcLanCallMedia(address, firstPort, headless: true);
+        await using var second = new LibVlcLanCallMedia(address, secondPort, headless: true);
         using var firstVideo = new DecodedVideo(first.Receiver);
         using var secondVideo = new DecodedVideo(second.Receiver);
         await first.StartReceivingAsync(ct);
@@ -142,17 +152,18 @@ public sealed class LinuxLanCallMediaTests(ITestOutputHelper output)
     private static bool HasMedia(LibVlcLanCallMedia peer, DecodedVideo video) =>
         peer.Statistics.DecodedAudio > 0 && video.AudioSamples > 4800 && video.Frames >= 10;
 
-    private static int FreePort(int except = 0)
+    private static int FreePort(int except = 0, string address = "127.0.0.1")
     {
+        var ip = IPAddress.Parse(address);
         for (var port = 32000; port < 60000; port += 2)
         {
             if (port == except) continue;
-            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            using var rtcp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            using var socket = new Socket(ip.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+            using var rtcp = new Socket(ip.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
             try
             {
-                socket.Bind(new IPEndPoint(IPAddress.Loopback, port));
-                rtcp.Bind(new IPEndPoint(IPAddress.Loopback, port + 1));
+                socket.Bind(new IPEndPoint(ip, port));
+                rtcp.Bind(new IPEndPoint(ip, port + 1));
                 return port;
             }
             catch (SocketException ex) when (ex.SocketErrorCode == SocketError.AddressAlreadyInUse) { }

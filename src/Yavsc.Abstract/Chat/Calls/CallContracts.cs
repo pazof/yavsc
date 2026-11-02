@@ -40,13 +40,26 @@ public sealed record LanCallEndpoint(string Address, int Port, string Key, strin
     public override string ToString() => "SRTP endpoint (credentials redacted)";
 
     public bool IsValid() =>
-        LanCallNetwork.IsUnicastIPv4(Address) && Port is >= 1024 and <= 65534 && Port % 2 == 0 &&
+        LanCallNetwork.IsUnicastAddress(Address) && Port is >= 1024 and <= 65534 && Port % 2 == 0 &&
         Key is { Length: 32 } && Key.All(Uri.IsHexDigit) &&
         Salt is { Length: 28 } && Salt.All(Uri.IsHexDigit);
 }
 
 public static class LanCallNetwork
 {
+    public static bool IsUnicastAddress(string address)
+    {
+        if (IsUnicastIPv4(address)) return true;
+        if (!System.Net.IPAddress.TryParse(address, out var ip) ||
+            ip.AddressFamily != System.Net.Sockets.AddressFamily.InterNetworkV6 ||
+            ip.ToString() != address || ip.ScopeId != 0 || ip.IsIPv4MappedToIPv6)
+            return false;
+        var bytes = ip.GetAddressBytes();
+        return ip.Equals(System.Net.IPAddress.IPv6Loopback)
+            || (bytes[0] & 0xe0) == 0x20
+            || (bytes[0] & 0xfe) == 0xfc;
+    }
+
     public static bool IsUnicastIPv4(string address)
     {
         if (!System.Net.IPAddress.TryParse(address, out var ip) ||

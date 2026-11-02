@@ -41,6 +41,8 @@ public sealed class CallLanSignalingTests
     [Theory]
     [InlineData("192.168.1.2")]
     [InlineData("8.8.8.8")]
+    [InlineData("2001:db8::1")]
+    [InlineData("fd00::1")]
     public async Task Endpoints_are_exchanged_only_once_between_consented_devices_without_ice_credentials(string address)
     {
         var hub = new RecordingCallHub();
@@ -106,11 +108,24 @@ public sealed class CallLanSignalingTests
     [InlineData("255.255.255.255", false)]
     [InlineData("169.254.1.1", false)]
     [InlineData("::ffff:8.8.8.8", false)]
-    [InlineData("::1", false)]
+    [InlineData("::1", true)]
+    [InlineData("2001:db8::1", true)]
+    [InlineData("2606:4700:4700::1111", true)]
+    [InlineData("fd00::123", true)]
+    [InlineData("fc00::1", true)]
+    [InlineData("::", false)]
+    [InlineData("ff02::1", false)]
+    [InlineData("fe80::1", false)]
+    [InlineData("fe80::1%2", false)]
+    [InlineData("2001:db8::1%2", false)]
+    [InlineData("fec0::1", false)]
+    [InlineData("2001:DB8::1", false)]
+    [InlineData("[2001:db8::1]", false)]
+    [InlineData("2001:db8::1,port=80", false)]
     [InlineData("localhost", false)]
     [InlineData("127.1", false)]
     [InlineData("192.168.1.2,port=80", false)]
-    public void Only_canonical_unicast_ipv4_endpoints_are_allowed(string address, bool expected) =>
+    public void Only_canonical_supported_unicast_endpoints_are_allowed(string address, bool expected) =>
         Assert.Equal(expected, Endpoint(address).IsValid());
 
     [Fact]

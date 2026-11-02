@@ -5,7 +5,7 @@
 Ce document décrit l'architecture cible et l'implémentation commencée.
 La préférence de confidentialité est persistée et éditable dans le profil.
 La signalisation est intégrée au chat, désactivée par défaut. Un premier
-transport natif **Android et Desktop Linux en IPv4 directe (LAN/VPN ou IP publique)** est raccordé :
+transport natif **Android et Desktop Linux en IPv4/IPv6 directe (LAN/VPN ou IP publique)** est raccordé :
 captures Podcast existantes et SRTP direct, sans libwebrtc ni nouvelle
 couche JNI WebRTC. Il ne réalise pas encore la cible Internet, TURN ou groupe.
 Il complète la [topologie de PostIt](postit.md) et les
@@ -18,17 +18,28 @@ La cible couvre :
 - les appels de groupe ;
 - les clients Browser, Android et Desktop.
 
-## Première implémentation Android et Desktop Linux : SRTP direct IPv4
+## Première implémentation Android et Desktop Linux : SRTP direct IPv4/IPv6
 
 Les adresses IPv4 publiques directement assignees a une interface locale active
 sont egalement disponibles, avec la meme validation unicast cote client,
-media et signalisation serveur. Les adresses non specifiees, link-local,
-multicast, reservees (240/4), IPv6 et les formes non canoniques sont refusees.
+media et signalisation serveur. Les IPv6 globales (2000::/3), privees ULA
+(fc00::/7) et de boucle locale (::1) sont aussi acceptees. Les sockets UDP
+utilisent la famille de l'adresse locale et les URL de reception encadrent
+les IPv6 de crochets. Les adresses non specifiees, link-local, multicast,
+reservees IPv4 (240/4), IPv4-mapped IPv6 et les formes non canoniques ou
+avec identifiant de zone sont refusees. Une zone link-local du premier
+pair n'est pas reutilisable telle quelle par le second.
 Il faut autoriser en entree les deux ports UDP consecutifs choisis et assurer
 la joignabilite entre les pairs. Ce support n'ajoute ni ICE/TURN ni traversee
 NAT automatique : l'adresse publique d'un routeur ne remplace pas une adresse
 assignee a la machine. Le consentement explicite au partage d'IP et le refus
 du mode direct pour les comptes masquant leur IP restent inchanges.
+Les pairs doivent disposer de routes vers leurs adresses respectives ;
+aucune traduction automatique IPv4/IPv6 n'est fournie. Les tests natifs
+Linux verifient sur ::1 la reception audio/video bidirectionnelle chiffree,
+le rejet d'une mauvaise cle et le cycle de vie des ports RTP/RTCP.
+Un appel IPv6 entre deux machines et le transport IPv6 Android restent
+a valider en conditions reelles.
 
 Cette tranche réutilise la capture caméra/microphone et les encodeurs des
 Podcasts, mais **pas leur segmentation HLS ni leurs envois de fichiers** :
@@ -77,7 +88,7 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
    H.264/AAC. La version Debian 13 a été utilisée pour les essais Linux.
    Les deux comptes doivent être présents dans
    la même salle existante et ne pas se bloquer mutuellement.
-3. Dans « Appel direct IPv4 (LAN/VPN ou IP publique) », actualiser les périphériques,
+3. Dans « Appel direct IPv4/IPv6 (LAN/VPN ou IP publique) », actualiser les périphériques,
    sélectionner la caméra, le microphone et une IPv4 privée locale
    accessible depuis le pair. Les adresses RFC1918 et de bouclage sont
    acceptées ; pas de DNS, IPv6 ou adresse publique. Le bouclage sert aux
@@ -89,7 +100,7 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
    adresse doivent utiliser des paires distinctes.
    Aucun pare-feu n'est modifié automatiquement.
 5. Saisir le pseudo exact du destinataire, confirmer la divulgation de
-   l'adresse IPv4 locale (LAN/VPN ou publique), puis appeler. Le destinataire choisit ses propres
+   l'adresse IP locale (LAN/VPN ou publique), puis appeler. Le destinataire choisit ses propres
    périphériques et son adresse, confirme et accepte explicitement.
    Aucun accès à la caméra/microphone ne commence avant l'acceptation ;
    l'émission attend également la destination validée du pair.
@@ -150,7 +161,7 @@ l'ajout d'un moteur WebRTC ou d'une cryptographie propre au projet.
   Il n'y a aucun repli direct contournant cette préférence.
 - Pas d'ICE, de STUN, de TURN, de traversée NAT automatique, de groupe,
   d'interopérabilité Browser, de négociation de codecs ni
-  d'adaptation de débit. Ce mode exige une connectivite IPv4 directe entre les pairs
+  d'adaptation de débit. Ce mode exige une connectivite IP directe entre les pairs
   (LAN/VPN ou adresse publique assignee), avec les ports UDP ouverts.
 - H.264 à 30 images/s, cible 1 200 kbit/s ; AAC mono 48 kHz, 96 kbit/s.
   Ces réglages ne constituent pas une garantie de latence ni de débit.
