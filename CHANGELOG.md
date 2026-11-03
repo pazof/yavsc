@@ -5,6 +5,7 @@
 
 ### Added
 
+* [PostIt.Android] Add an opt-in ordinary background service for the existing SignalR ChatHub connection, without a permanent notification; show native alerts only for received messages/events and attempt restart after phone startup where Android permits it. Reuse one process-wide connection between service, pages and calls, restore locally remembered rooms per account/host and clean up on opt-out/logout. No Firebase, Google push configuration or server push migration; explain background-data/battery settings and Android execution limits.
 * [PostIt/Calls] Support direct IPv6 SRTP calls using global, ULA and loopback addresses, shared endpoint validation, IPv6 UDP sockets and bracketed reception URLs. Exclude scoped/link-local, multicast, unspecified and IPv4-mapped addresses; verify real bidirectional IPv6 audio/video, wrong-key rejection and port lifecycle with LibVLC.
 * [PostIt/Calls] Allow directly assigned public IPv4 addresses for direct SRTP calls, alongside LAN/VPN and loopback addresses. Share unicast validation between interface discovery, media and server signaling; continue rejecting unspecified, link-local, multicast, reserved and IPv6 addresses. Keep explicit address-disclosure consent and no automatic NAT traversal.
 * [PostIt] Update bundled settings with the default podcast title, camera/microphone preferences and French language selection.

@@ -48,6 +48,13 @@
         <CheckBox Grid.Row="11" x:Name="DarkModeCheckBox" IsChecked="{Binding DarkMode, Mode=TwoWay}"/>
 
         <StackPanel Grid.Row="12" Spacing="8">
+            <StackPanel IsVisible="{Binding SupportsBackgroundChatService}" Spacing="6">
+                <CheckBox x:Name="BackgroundChatCheckBox"
+                          Content="Garder la connexion au serveur active et la reprendre au demarrage du telephone"
+                          IsChecked="{Binding AndroidKeepChatConnected, Mode=TwoWay}" />
+                <TextBlock Text="SignalR uniquement, sans notification permanente. Les alertes s'affichent seulement a reception d'un message ou evenement. Autorisez les donnees en arriere-plan et, si souhaite, desactivez l'optimisation batterie pour PostIt dans Android. Ces reglages ne garantissent pas la survie du service ni sa reprise au demarrage. Sans cette option, la connexion dure pendant la vie du processus PostIt."
+                           TextWrapping="Wrap" />
+            </StackPanel>
             <TextBlock Text="Avatar: PNG, JPG/JPEG, WEBP, GIF. Taille max 2 MB."
                    Opacity="0.8"
                    TextWrapping="Wrap" />

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -22,14 +23,30 @@ namespace PostIt.ViewModels.Chat
     {
         private readonly Settings _settings;
         private readonly YavscApiClient? _api;
+        private readonly ChatHubConnection? _transport;
+        private bool _handlersRegistered;
+        private readonly SemaphoreSlim _connectionGate = new(1);
+        private int _sessionVersion;
+        private readonly object _connectOperationGate = new();
+        private CancellationTokenSource? _connectOperation;
+        private long _lastDeliverySequence;
+        public bool ConnectionRequested { get; private set; }
+        public event Action? ConnectionRequestedChanged;
 
         // Le paramètre optionnel permet l'instanciation design-time
         // (Design.DataContext dans ChatPage.axaml) sans conteneur DI.
-        public ChatViewModel(YavscApiClient? api = null)
+        public ChatViewModel(YavscApiClient? api = null, Settings? settings = null, ChatHubConnection? transport = null)
         {
             var app = App.Current as App;
-            _settings = app!.ServiceProvider!.GetRequiredService<Settings>(); // Assurez-vous que _settings est initialisé avant utilisation.
+            _settings = settings ?? app!.ServiceProvider!.GetRequiredService<Settings>();
             _api = api;
+            _transport = transport;
+            if (_transport != null)
+            {
+                _transport.RoomJoined += room => PostForCurrentSession(() => OnRoomJoined(room));
+                _transport.Error += message => PostForCurrentSession(() => Log(message));
+                _transport.MessageReceived += delivery => PostForCurrentSession(() => OnMessageReceived(delivery));
+            }
             Status = new StatusNotice("Déconnecté", StatusSeverity.Info,
             new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
             FocusedMessages = _systemMessages;
@@ -46,7 +63,7 @@ namespace PostIt.ViewModels.Chat
         public partial LanCallViewModel? LanCall { get; set; }
 
         [ObservableProperty]
-        public partial string CurrentRoom { get; set; } =  "General";
+        public partial string CurrentRoom { get; set; } = "General";
 
         [ObservableProperty]
         public partial string NickName { get; set; } = "";
@@ -105,12 +122,54 @@ namespace PostIt.ViewModels.Chat
                 FocusedMessages.Add(line);
         }
 
+        private void PostForCurrentSession(Action callback)
+        {
+            var version = Volatile.Read(ref _sessionVersion);
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                if (ConnectionRequested && version == Volatile.Read(ref _sessionVersion))
+                    callback();
+            });
+        }
+
+        private void OnMessageReceived(ChatHubConnection.ChatDelivery delivery)
+        {
+            if (delivery.Sequence <= _lastDeliverySequence) return;
+            _lastDeliverySequence = delivery.Sequence;
+            if (delivery.Room == null)
+            {
+                Log($"[Prive] {delivery.Sender} : {delivery.Text}");
+                return;
+            }
+            if (!_messagesByRoom.TryGetValue(delivery.Room, out var messages))
+                messages = _messagesByRoom[delivery.Room] = new();
+            messages.Add($"{delivery.Sender} : {delivery.Text}");
+        }
+
         // Commandes pour les boutons
         [RelayCommand]
         public async Task ConnectCommand() => await ConnectAsync();
 
         [RelayCommand]
         public async Task JoinRoomCommand() => await JoinRoomAsync();
+
+        [RelayCommand]
+        public async Task LeaveRoom()
+        {
+            var room = SelectedRoom;
+            if (_transport == null || room == null) return;
+            try
+            {
+                if (LanCall != null) await LanCall.HangupAsync();
+                await _transport.LeaveAsync(room);
+                JoinedRooms.Remove(room);
+                _messagesByRoom.Remove(room);
+                _usersByRoom.Remove(room);
+                SelectedRoom = JoinedRooms.Count > 0 ? JoinedRooms[0] : null;
+                Log($"Salon quitte : {room}");
+            }
+            catch (Exception ex) { Log($"Impossible de quitter le salon : {ex.Message}"); }
+        }
 
         // Le serveur (ChatHub.Send) refuse tout message d'un utilisateur
         // qui n'a pas joint le salon ("NoJoinNoSend") : on garde la
@@ -137,7 +196,18 @@ namespace PostIt.ViewModels.Chat
         public override bool CanNavigateNext { get; protected set; } = false;
         public override bool CanNavigatePrevious { get; protected set; } = true;
 
-        private async Task DisconnectAsync()
+        public async Task DisconnectAsync()
+        {
+            ConnectionRequested = false;
+            ConnectionRequestedChanged?.Invoke();
+            lock (_connectOperationGate) _connectOperation?.Cancel();
+            Interlocked.Increment(ref _sessionVersion);
+            await _connectionGate.WaitAsync();
+            try { await DisconnectCoreAsync(); }
+            finally { _connectionGate.Release(); }
+        }
+
+        private async Task DisconnectCoreAsync()
         {
             Exception? callError = null;
             if (LanCall != null)
@@ -148,28 +218,55 @@ namespace PostIt.ViewModels.Chat
             }
             Calls?.Dispose();
             Calls = null;
-            if (_connection != null)
+            try
             {
-                await _connection.StopAsync();
-                await _connection.DisposeAsync();
-                _connection = null;
+                if (_connection != null)
+                    await _transport!.StopAsync();
             }
-            IsConnected = false;
-            SelectedRoom = null;
-            JoinedRooms.Clear();
-            _messagesByRoom.Clear();
-            _usersByRoom.Clear();
-            _systemMessages.Clear();
-            Status = new StatusNotice(callError == null ? "Déconnecté" :
-                "Déconnecté ; erreur de fermeture de l'appel : " + callError.Message,
-                callError == null ? StatusSeverity.Info : StatusSeverity.Error,
-             new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
+            catch (Exception error) { callError = error; throw; }
+            finally
+            {
+                IsConnected = false;
+                SelectedRoom = null;
+                JoinedRooms.Clear();
+                _messagesByRoom.Clear();
+                _usersByRoom.Clear();
+                _systemMessages.Clear();
+                Status = new StatusNotice(callError == null ? "Déconnecté" :
+                    "Déconnecté ; erreur de fermeture : " + callError.Message,
+                    callError == null ? StatusSeverity.Info : StatusSeverity.Error,
+                 new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
+            }
         }
 
-        private async Task ConnectAsync()
+        public async Task ConnectAsync()
+        {
+            if (_api?.IsSigningOut == true)
+            {
+                Status = StatusNotice.Info("La deconnexion du compte est en cours.");
+                return;
+            }
+            ConnectionRequested = true;
+            ConnectionRequestedChanged?.Invoke();
+            await _connectionGate.WaitAsync();
+            try
+            {
+                if (!ConnectionRequested) return;
+                using var operation = new CancellationTokenSource();
+                lock (_connectOperationGate) _connectOperation = operation;
+                try { await ConnectCoreAsync(operation.Token); }
+                finally { lock (_connectOperationGate) _connectOperation = null; }
+            }
+            finally { _connectionGate.Release(); }
+        }
+
+        private async Task ConnectCoreAsync(CancellationToken ct)
         {
             try
             {
+                if (_transport?.IsCurrentConfiguration == true &&
+                    _connection?.State is HubConnectionState.Connected or HubConnectionState.Reconnecting)
+                    return;
                 if (_connection != null)
                 {
                     if (LanCall != null)
@@ -179,8 +276,6 @@ namespace PostIt.ViewModels.Chat
                     }
                     Calls?.Dispose();
                     Calls = null;
-                    await _connection.DisposeAsync();
-                    _connection = null;
                 }
                 Status = new StatusNotice("Connexion en cours...", StatusSeverity.Info,
                  new RelayCheckCommand("Vérifier la connexion", async () => await CheckConnectionAsync()));
@@ -192,125 +287,92 @@ namespace PostIt.ViewModels.Chat
                     return;
                 }
 
-                // Le hub est mappé à la racine du service ("/chathub"),
-                // pas sous le préfixe versionné "/api/v1" : on le retire.
-                var hubBase = _settings.ApiUrl.TrimEnd('/');
-                if (hubBase.EndsWith("/api/v1", StringComparison.OrdinalIgnoreCase))
-                    hubBase = hubBase[..^"/api/v1".Length];
-                var hubUrl = hubBase + "/" + Constants.ChatHubPath;
-
-                _connection = new HubConnectionBuilder()
-                    .WithUrl(hubUrl,
-
-                    options =>
-                    {
-                        // Le hub est [Authorize] : on attache le Bearer OIDC.
-                        // AccessTokenProvider est rappelé à chaque reconnexion,
-                        // donc on tente un refresh silencieux à chaque appel.
-                        // Un refresh mort (invalid_grant) ne doit pas faire
-                        // échouer StartAsync avec une exception interne : on
-                        // renvoie le token courant (éventuellement expiré) et
-                        // le serveur répondra un 401 propre, surfacé à l'UI.
-                        options.AccessTokenProvider = async () =>
-                        {
-                            await _api.TrySilentLoginAsync();
-                            return _api.CurrentAccessToken;
-                        };
-                    })
-                    .WithAutomaticReconnect()
-                    .Build();
+                if (_transport == null)
+                    throw new InvalidOperationException("Transport de messagerie indisponible.");
+                var connection = await _transport.GetConnectionAsync(ct);
+                if (!ReferenceEquals(_connection, connection))
+                    _handlersRegistered = false;
+                _connection = connection;
+                // Le hub est [Authorize] : on attache le Bearer OIDC.
 
                 Calls = new CallSignalingClient(_connection);
                 if (SupportsLanCalls)
                     LanCall = new LanCallViewModel(Calls, settings: _settings) { Room = SelectedRoom ?? "" };
                 else
-                    Calls.Invitation += call => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    Calls.Invitation += call => PostForCurrentSession(() =>
                         Log($"Invitation audio-vidéo de {call.Caller} dans {call.RoomName} ; transport non disponible sur cette plateforme."));
-                Calls.Ended += call => Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                Calls.Ended += call => PostForCurrentSession(() =>
                     Log($"Appel terminé : {call.Reason}."));
 
-                // 1. Ecoute des notifications globales (notifyUser)
-                _connection.On<string, string, string>("notifyUser", (type, user, msg) =>
+                if (!_handlersRegistered)
                 {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                        Log($"[{type}] {user}: {msg}"));
-                });
-
-                // 2. Ecoute des notifications de salon (notifyRoom)
-                _connection.On<string, string, string>("notifyRoom", (type, room, user) =>
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    // 1. Ecoute des notifications globales (notifyUser)
+                    _connection.On<string, string, string>("notifyUser", (type, user, msg) =>
                     {
-                        if (_messagesByRoom.TryGetValue(room, out var roomLog))
-                            roomLog.Add($"*{user} a interagi avec le salon {room} (Action: {type})");
-                        else
-                            Log($"*{user} a interagi avec le salon {room} (Action: {type})");
-                        if (type == "UserJoin" && _usersByRoom.TryGetValue(room, out var users)
-                            && !users.Contains(user))
-                            users.Add(user);
+                        PostForCurrentSession(() =>
+                        {
+                            Log($"[{type}] {user}: {msg}");
+                        });
                     });
-                });
 
-                // 3. Réception de l'état complet suite au Join réussi (joint)
-                _connection.On<ChatRoomInfo>("joint", (roomInfo) =>
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() => OnRoomJoined(roomInfo));
-                });
-
-                // 4. Réception des messages de salon (diffusés par ChatHub.Send)
-                _connection.On<ChatMessage>("ReceiveMessage", (msg) =>
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    // 2. Ecoute des notifications de salon (notifyRoom)
+                    _connection.On<string, string, string>("notifyRoom", (type, room, user) =>
                     {
-                        var room = msg.Room ?? "?";
-                        if (!_messagesByRoom.TryGetValue(room, out var roomLog))
-                            roomLog = _messagesByRoom[room] = new();
-                        roomLog.Add($"{msg.Name} : {msg.Message}");
+                        PostForCurrentSession(() =>
+                        {
+                            if (_messagesByRoom.TryGetValue(room, out var roomLog))
+                                roomLog.Add($"*{user} a interagi avec le salon {room} (Action: {type})");
+                            else
+                                Log($"*{user} a interagi avec le salon {room} (Action: {type})");
+                            if (type == "UserJoin" && _usersByRoom.TryGetValue(room, out var users)
+                                && !users.Contains(user))
+                                users.Add(user);
+                        });
                     });
-                });
 
-                await _connection.StartAsync();
+                    // WithAutomaticReconnect ne lève pas d'exception en cas de
+                    // perte réseau : l'état passe par Reconnecting/Closed. Sans
+                    // ces handlers, IsConnected resterait optimiste et Join()
+                    // échouerait avec "connection is not active".
+                    _connection.Reconnecting += error =>
+                    {
+                        PostForCurrentSession(() =>
+                        {
+                            IsConnected = false;
+                            Status = new StatusNotice($"Connexion perdue ({error?.Message ?? "réseau"}), reconnexion...", StatusSeverity.Error,
+                                new RelayCheckCommand("Déconnecter", async () => await DisconnectAsync()));
+                        });
+                        return Task.CompletedTask;
+                    };
+                    _connection.Reconnected += _ =>
+                    {
+                        PostForCurrentSession(() =>
+                        {
+                            IsConnected = true;
+                            Status = new StatusNotice("Reconnecté au Hub SignalR", StatusSeverity.Info,
+                                new RelayCheckCommand("Déconnecter", async () => await DisconnectAsync()));
+                        });
+                        return Task.CompletedTask;
+                    };
+                    _connection.Closed += error =>
+                    {
+                        PostForCurrentSession(() =>
+                        {
+                            IsConnected = false;
+                            Status = new StatusNotice($"Déconnecté ({error?.Message ?? "fin de connexion"})", StatusSeverity.Info,
+                                new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
+                        });
+                        return Task.CompletedTask;
+                    };
+                    _handlersRegistered = true;
+                }
+                await _transport.StartAsync(ct);
+                foreach (var room in _transport.JoinedRooms)
+                    OnRoomJoined(room);
+                foreach (var delivery in _transport.RecentMessages)
+                    OnMessageReceived(delivery);
                 IsConnected = true;
                 Status = new StatusNotice("Connecté au Hub SignalR", StatusSeverity.Info, new RelayCheckCommand("Déconnecter", async () => await DisconnectAsync()));
-
-                // WithAutomaticReconnect ne lève pas d'exception en cas de
-                // perte réseau : l'état passe par Reconnecting/Closed. Sans
-                // ces handlers, IsConnected resterait optimiste et Join()
-                // échouerait avec "connection is not active".
-                _connection.Reconnecting += error =>
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                    {
-                        IsConnected = false;
-                        Status = new StatusNotice($"Connexion perdue ({error?.Message ?? "réseau"}), reconnexion...", StatusSeverity.Error,
-                            new RelayCheckCommand("Déconnecter", async () => await DisconnectAsync()));
-                    });
-                    return Task.CompletedTask;
-                };
-                _connection.Reconnected += async _ =>
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                    {
-                        IsConnected = true;
-                        Status = new StatusNotice("Reconnecté au Hub SignalR", StatusSeverity.Info,
-                            new RelayCheckCommand("Déconnecter", async () => await DisconnectAsync()));
-                    });
-                    // La reconnexion crée une nouvelle ConnectionId côté
-                    // serveur : l'appartenance aux salons est perdue, il
-                    // faut rejoindre à nouveau le salon courant.
-                    if (!string.IsNullOrWhiteSpace(CurrentRoom))
-                        await JoinRoomAsync();
-                };
-                _connection.Closed += error =>
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                    {
-                        IsConnected = false;
-                        Status = new StatusNotice($"Déconnecté ({error?.Message ?? "fin de connexion"})", StatusSeverity.Info,
-                            new RelayCheckCommand("Connecter", async () => await ConnectAsync()));
-                    });
-                    return Task.CompletedTask;
-                };
             }
             catch (Exception ex)
             {
@@ -365,7 +427,7 @@ namespace PostIt.ViewModels.Chat
                 Log($"Connexion non active ({_connection.State}), tentative de reconnexion...");
                 try
                 {
-                    await _connection.StartAsync();
+                    await _transport!.StartAsync();
                 }
                 catch (Exception ex)
                 {
@@ -377,7 +439,7 @@ namespace PostIt.ViewModels.Chat
             try
             {
                 // Appel de la méthode publique 'Join' du Hub (renvoie un ChatRoomInfo)
-                var info = await _connection.InvokeAsync<ChatRoomInfo>("Join", CurrentRoom);
+                var info = await _transport!.JoinAsync(CurrentRoom);
                 if (info == null)
                 {
                     Log("Erreur lors de la validation du salon par le serveur.");

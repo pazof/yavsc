@@ -27,6 +27,9 @@ namespace PostIt.Services;
 /// </summary>
 public class YavscApiClient : IYavscApiClient, IAsyncDisposable
 {
+    public event Func<Task>? SigningOut;
+    private int _signingOut;
+    public bool IsSigningOut => Volatile.Read(ref _signingOut) != 0;
     // 60s of slack before the access_token's nominal expiry. Covers
     // network latency + JWT validation on the server side.
     private static readonly TimeSpan RefreshSkew = TimeSpan.FromSeconds(60);
@@ -562,8 +565,27 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
 
     public async Task LogoutAsync()
     {
-        _store.Clear();
-        _tokens = null;
+        Interlocked.Exchange(ref _signingOut, 1);
+        try
+        {
+            if (SigningOut is { } handlers)
+                foreach (Func<Task> handler in handlers.GetInvocationList())
+                    await handler();
+        }
+        finally
+        {
+            await _refreshGate.WaitAsync();
+            try
+            {
+                try { _store.Clear(); }
+                finally { _tokens = null; }
+            }
+            finally
+            {
+                _refreshGate.Release();
+                Interlocked.Exchange(ref _signingOut, 0);
+            }
+        }
         // Optional: clear the IdP session in the browser too.
         // await _oidc.LogoutAsync(new LogoutRequest());
         await Task.CompletedTask;

@@ -166,7 +166,14 @@ public partial class SessionStatusViewModel : ViewModelBase
     public async System.Threading.Tasks.Task LogoutAsync()
     {
         if (Api is null) return;
-        await Api.LogoutAsync().ConfigureAwait(false);
+        try { await Api.LogoutAsync().ConfigureAwait(true); }
+        catch (Exception ex)
+        {
+            Refresh();
+            SessionLabel = $"Deconnecte ; nettoyage de la messagerie incomplet : {ex.Message}";
+            LogoutCompleted?.Invoke();
+            return;
+        }
         Refresh();
         LogoutCompleted?.Invoke();
     }

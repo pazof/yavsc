@@ -79,6 +79,17 @@ public class MainActivity : AvaloniaMainActivity
         base.OnPause();
     }
 
+    protected override void OnDestroy()
+    {
+        if (ReferenceEquals(Current, this))
+        {
+            Current = null;
+            IsForeground = false;
+            PostIt.Android.Services.NotificationPermission.OnActivityDestroyed();
+        }
+        base.OnDestroy();
+    }
+
     protected override void OnRestart()
     {
         base.OnRestart();
@@ -87,7 +98,8 @@ public class MainActivity : AvaloniaMainActivity
 
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
     {
-        if (PostIt.Android.Services.PodcastPermissions.HandleResult(requestCode, permissions, grantResults)
+        if (PostIt.Android.Services.NotificationPermission.HandleResult(requestCode, permissions, grantResults)
+            || PostIt.Android.Services.PodcastPermissions.HandleResult(requestCode, permissions, grantResults)
             || PostIt.Android.Services.AndroidCurrentLocationProvider
             .HandlePermissionResult(requestCode, grantResults))
         {

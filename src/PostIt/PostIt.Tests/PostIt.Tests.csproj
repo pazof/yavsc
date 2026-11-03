@@ -20,12 +20,15 @@
     <PackageReference Include="Avalonia.Headless.XUnit" />
   </ItemGroup>
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="..\PostIt\PostIt.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\PostIt.Android\Services\ChatServiceEpoch.cs" Link="Android\ChatServiceEpoch.cs" />
+    <Compile Include="..\PostIt.Android\Tests\ChatServiceEpochTests.cs" Link="Android\ChatServiceEpochTests.cs" />
     <Compile Include="..\PostIt.Android\Services\CameraFrameOrientation.cs" Link="Android\CameraFrameOrientation.cs" />
     <Compile Include="..\PostIt.Android\Services\CameraFrameClock.cs" Link="Android\CameraFrameClock.cs" />
   </ItemGroup>

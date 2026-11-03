@@ -50,7 +50,7 @@ public partial class App : Application, ILiveView, IVMPusherApp
     {
         if (TryHandOffCustomSchemeUrl()) return;
 
-        this.ServiceProvider = new ServiceCollection().BuildPostItServices();
+        this.ServiceProvider = Platform.CreateServiceProvider?.Invoke() ?? new ServiceCollection().BuildPostItServices();
         var settings = ServiceProvider.GetRequiredService<Settings>();
 
         if (!LiveMode)
@@ -295,6 +295,7 @@ public partial class App : Application, ILiveView, IVMPusherApp
         await api.TrySilentLoginAsync().ConfigureAwait(true);
         var sessionStatus = provider.GetRequiredService<SessionStatusViewModel>();
         await sessionStatus.RefreshAsync();
+        await provider.GetRequiredService<MessagingSession>().StartAsync(connectOnLogin: OperatingSystem.IsAndroid());
     }
 
     /// <summary>

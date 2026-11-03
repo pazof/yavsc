@@ -18,6 +18,7 @@ namespace PostIt.ViewModels;
 
 public partial class Settings : ViewModelBase
 {
+    public event EventHandler? Saved;
     public Settings() { }
 
     internal Settings(string settingsFileFullName) => SettingsFileFullName = settingsFileFullName;
@@ -58,6 +59,12 @@ public partial class Settings : ViewModelBase
     public partial string? PodcastMicrophoneId { get; set; }
     [ObservableProperty]
     public partial string? LanCallAddress { get; set; }
+    [ObservableProperty]
+    public partial bool AndroidKeepChatConnected { get; set; }
+    [ObservableProperty]
+    public partial Dictionary<string, string[]> ChatRoomsByAccount { get; set; } = new();
+    [JsonIgnore]
+    public bool SupportsBackgroundChatService => OperatingSystem.IsAndroid();
 
     [ObservableProperty]
     [JsonIgnore]
@@ -159,6 +166,8 @@ public partial class Settings : ViewModelBase
     partial void OnPodcastCameraIdChanged(string? value) => MarkDirty();
     partial void OnPodcastMicrophoneIdChanged(string? value) => MarkDirty();
     partial void OnLanCallAddressChanged(string? value) => MarkDirty();
+    partial void OnAndroidKeepChatConnectedChanged(bool value) => MarkDirty();
+    partial void OnChatRoomsByAccountChanged(Dictionary<string, string[]> value) => MarkDirty();
 
     /// <summary>
     /// Authentication can be reassigned wholesale by
@@ -422,6 +431,8 @@ public partial class Settings : ViewModelBase
                 PodcastCameraId = settings.PodcastCameraId;
                 PodcastMicrophoneId = settings.PodcastMicrophoneId;
                 LanCallAddress = settings.LanCallAddress;
+                AndroidKeepChatConnected = settings.AndroidKeepChatConnected;
+                ChatRoomsByAccount = settings.ChatRoomsByAccount ?? new();
                 if (!(settings.Authentication is null))
                 {
                     this.Authentication = new AuthenticationSettings();
@@ -559,6 +570,7 @@ public partial class Settings : ViewModelBase
                 throw;
             }
         }
+        Saved?.Invoke(this, EventArgs.Empty);
     }
 
     private bool CanSave() => IsDirty;

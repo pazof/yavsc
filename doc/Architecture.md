@@ -23,6 +23,7 @@ Chaque sujet est détaillé dans sa propre page (sous
 | Dictionnaires métier (héritage en arbre)       | [dictionnaires-metier.md](architecture/dictionnaires-metier.md)   |
 | Offre fournisseur + frontmatter (`ClasseFormulaire`, `ClasseDevis`, parsing) | [offres-frontmatter.md](architecture/offres-frontmatter.md) |
 | PostIt / OIDC (client desktop, custom URI scheme, silent refresh) | [postit-oidc.md](architecture/postit-oidc.md)        |
+| Notifications Web/PostIt, ChatHub et service Android SignalR | [notifications.md](architecture/notifications.md) |
 
 ## Stack technique
 

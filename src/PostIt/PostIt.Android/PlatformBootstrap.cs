@@ -20,6 +20,8 @@ internal static class PlatformBootstrap
             return activity is null ? null : new AndroidSystemBrowser(activity);
         };
 
+        Platform.CreateServiceProvider = AndroidServiceProvider.GetOrCreate;
+        Platform.BackgroundChatService = AndroidBackgroundChatService.Instance;
         Platform.TryGetCurrentLocationAsync = AndroidCurrentLocationProvider.TryGetCurrentLocationAsync;
         Platform.CreateVideoSurface = (player, replay) => new AndroidVideoSurface(player, replay);
         if (System.OperatingSystem.IsAndroidVersionAtLeast(26))

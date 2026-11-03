@@ -12,6 +12,8 @@ namespace PostIt.Services;
 /// </summary>
 public static class Platform
 {
+    public static IBackgroundChatService? BackgroundChatService { get; set; }
+    public static Func<IServiceProvider>? CreateServiceProvider { get; set; }
     public static Func<PodcastCaptureDevices>? GetLanCallDevices { get; set; }
     public static Func<string, int, ILanCallMedia>? CreateLanCallMedia { get; set; }
     public static Func<PodcastCaptureDevices>? GetPodcastCaptureDevices { get; set; }

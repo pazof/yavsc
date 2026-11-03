@@ -53,6 +53,8 @@ public static class ServiceCollectionHelpers
 
         // Models
         services.AddSingleton<ChatViewModel>();
+        services.AddSingleton<ChatHubConnection>();
+        services.AddSingleton<MessagingSession>();
 
         // Android activities need fresh controls; retain state in singleton VMs.
         void AddReusablePage<TPage>() where TPage : class
