@@ -52,6 +52,7 @@ public partial class App : Application, ILiveView, IVMPusherApp
 
         this.ServiceProvider = Platform.CreateServiceProvider?.Invoke() ?? new ServiceCollection().BuildPostItServices();
         var settings = ServiceProvider.GetRequiredService<Settings>();
+        ServiceProvider.GetRequiredService<YavscApiClient>().StartSessionMaintenance();
 
         if (!LiveMode)
         {

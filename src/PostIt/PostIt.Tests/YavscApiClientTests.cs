@@ -18,6 +18,159 @@ namespace PostIt.Tests;
 public class YavscApiClientTests
 {
     [Theory]
+    [InlineData(600, true, false, 540)]
+    [InlineData(3600, false, true, 3540)]
+    [InlineData(40, true, false, 0)]
+    [InlineData(-5, true, false, 0)]
+    [InlineData(600, false, false, -1)]
+    public async Task Maintenance_delay_is_derived_from_the_persisted_access_token_expiry(
+        int lifetimeSeconds, bool active, bool keepConnected, int expectedDelaySeconds)
+    {
+        var path = TokensPath();
+        var now = DateTimeOffset.UtcNow;
+        try
+        {
+            var store = new TokenStore(path);
+            store.Save(new RefreshTokenRecord("access", "refresh", now.AddSeconds(lifetimeSeconds)));
+            var settings = new Settings();
+            await using var client = new YavscApiClient(settings, store);
+            settings.AndroidKeepChatConnected = keepConnected;
+            Assert.Equal(expectedDelaySeconds < 0 ? Timeout.InfiniteTimeSpan
+                : TimeSpan.FromSeconds(expectedDelaySeconds), client.GetSessionRefreshDelay(now, active));
+        }
+        finally { File.Delete(path); }
+    }
+
+    [Theory]
+    [InlineData(true, false, 40, 1)]
+    [InlineData(false, true, 40, 1)]
+    [InlineData(false, false, 40, 0)]
+    [InlineData(true, true, 180, 0)]
+    public async Task Session_maintenance_refreshes_before_expiry_only_while_active_or_opted_in(
+        bool active, bool keepConnected, int secondsUntilExpiry, int expectedRefreshes)
+    {
+        using var authority = await OIDCStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        settings.AndroidKeepChatConnected = keepConnected;
+        var tokensPath = TokensPath();
+        try
+        {
+            await using var original = await LoginAndPersistAsync(settings, authority, tokensPath);
+            var store = new TokenStore(tokensPath);
+            var previous = store.Load()!;
+            var expiry = DateTimeOffset.UtcNow.AddSeconds(secondsUntilExpiry);
+            store.Save(previous with { AccessTokenExpiresAt = expiry });
+            await using var client = new YavscApiClient(settings, store);
+            await Task.WhenAll(Enumerable.Range(0, 8).Select(_ =>
+                client.RefreshSessionIfNeededAsync(active, TestContext.Current.CancellationToken)));
+            Assert.Equal(expectedRefreshes, authority.RefreshRequestCount);
+            Assert.Equal(0, apiServer.RequestCount);
+            Assert.True(expiry > DateTimeOffset.UtcNow, "Refresh must occur before expiry, not after a 401.");
+            var persisted = store.Load()!;
+            if (expectedRefreshes > 0)
+            {
+                Assert.NotEqual(previous.RefreshToken, persisted.RefreshToken);
+                Assert.True(persisted.AccessTokenExpiresAt > expiry);
+            }
+            else Assert.Equal(previous.RefreshToken, persisted.RefreshToken);
+        }
+        finally { File.Delete(tokensPath); }
+    }
+
+    [Fact]
+    public async Task Scheduled_maintenance_runs_without_an_API_call_and_starts_only_once()
+    {
+        using var authority = await OIDCStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        settings.AndroidKeepChatConnected = true;
+        var tokensPath = TokensPath();
+        try
+        {
+            await using var original = await LoginAndPersistAsync(settings, authority, tokensPath);
+            var store = new TokenStore(tokensPath);
+            store.Save(store.Load()! with { AccessTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(62) });
+            await using var client = new YavscApiClient(settings, store);
+            var scheduledDelay = client.GetSessionRefreshDelay(DateTimeOffset.UtcNow, true);
+            Assert.InRange(scheduledDelay.TotalSeconds, 1, 2);
+            client.StartSessionMaintenance();
+            client.StartSessionMaintenance();
+            await Task.Delay(250, TestContext.Current.CancellationToken);
+            Assert.Equal(0, authority.RefreshRequestCount);
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+            timeout.CancelAfter(TimeSpan.FromSeconds(10));
+            while (store.Load()!.AccessTokenExpiresAt - DateTimeOffset.UtcNow < TimeSpan.FromMinutes(2))
+                await Task.Delay(20, timeout.Token);
+            Assert.Equal(1, authority.RefreshRequestCount);
+            Assert.Equal(0, apiServer.RequestCount);
+            Assert.InRange(client.GetSessionRefreshDelay(DateTimeOffset.UtcNow, true).TotalSeconds, 500, 600);
+        }
+        finally { File.Delete(tokensPath); }
+    }
+
+    [Fact]
+    public async Task Session_maintenance_rejects_revoked_tokens_and_does_not_retry_after_logout()
+    {
+        using var authority = await OIDCStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        try
+        {
+            await using var original = await LoginAndPersistAsync(settings, authority, tokensPath);
+            var store = new TokenStore(tokensPath);
+            store.Save(store.Load()! with
+            {
+                RefreshToken = "revoked-refresh-token",
+                AccessTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(40)
+            });
+            await using var client = new YavscApiClient(settings, store);
+            var ct = TestContext.Current.CancellationToken;
+            client.SigningOut += () => client.RefreshSessionIfNeededAsync(true, ct);
+            var error = await Assert.ThrowsAsync<RefreshFailedException>(() =>
+                client.RefreshSessionIfNeededAsync(true, ct));
+            Assert.True(error.IsPermanent);
+            Assert.Null(store.Load());
+            Assert.False(client.HasValidSession);
+            await client.LogoutAsync();
+            await client.RefreshSessionIfNeededAsync(true, ct);
+            Assert.Equal(1, authority.RefreshRequestCount);
+        }
+        finally { File.Delete(tokensPath); }
+    }
+
+    [Fact]
+    public async Task Session_maintenance_does_not_refresh_a_due_token_during_logout()
+    {
+        using var authority = await OIDCStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+        var settings = BuildSettings(authority, apiServer.BaseUrl);
+        var tokensPath = TokensPath();
+        try
+        {
+            await using var original = await LoginAndPersistAsync(settings, authority, tokensPath);
+            var store = new TokenStore(tokensPath);
+            store.Save(store.Load()! with { AccessTokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(40) });
+            await using var client = new YavscApiClient(settings, store);
+            client.SigningOut += () =>
+            {
+                Assert.True(client.HasValidSession);
+                return client.RefreshSessionIfNeededAsync(true, TestContext.Current.CancellationToken);
+            };
+            await client.LogoutAsync();
+            Assert.Equal(0, authority.RefreshRequestCount);
+            Assert.Null(store.Load());
+            Assert.False(client.HasValidSession);
+        }
+        finally { File.Delete(tokensPath); }
+    }
+
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
     public async Task Authenticated_streaming_refreshes_tokens_and_recreates_range_requests(bool expired)
@@ -474,7 +627,9 @@ public class YavscApiClientTests
                 .Select(_ => client.TrySilentLoginAsync(null, ct)).ToArray();
             var calls = Enumerable.Range(0, 8)
                 .Select(_ => client.CallAsync<List<StubApiServer.Post>>(HttpMethod.Get, "posts", ct)).ToArray();
-            await Task.WhenAll(silentLogins.Cast<Task>().Concat(calls));
+            var maintenance = Enumerable.Range(0, 8)
+                .Select(_ => client.RefreshSessionIfNeededAsync(true, ct));
+            await Task.WhenAll(silentLogins.Cast<Task>().Concat(calls).Concat(maintenance));
 
             Assert.All(silentLogins, login => Assert.True(login.Result));
             Assert.All(calls, call => Assert.NotEmpty(call.Result));

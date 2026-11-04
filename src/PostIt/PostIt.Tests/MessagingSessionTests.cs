@@ -20,6 +20,58 @@ namespace PostIt.Tests;
 
 public sealed class MessagingSessionTests
 {
+    [Fact]
+    public void Only_explicit_settings_application_raises_Applied_after_successful_save()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"postit-apply-{Guid.NewGuid():N}.json");
+        try
+        {
+            var settings = new Settings(path);
+            var saves = 0;
+            var applications = 0;
+            settings.Saved += (_, _) => saves++;
+            settings.Applied += (_, _) =>
+            {
+                Assert.False(settings.IsDirty);
+                Assert.True(File.Exists(path));
+                applications++;
+            };
+            settings.AndroidKeepChatConnected = true;
+            settings.Save();
+            Assert.Equal(0, applications);
+            settings.DarkMode = true;
+            Assert.True(settings.ApplyCommand.CanExecute(null));
+            settings.ApplyCommand.Execute(null);
+            Assert.Equal(1, applications);
+            Assert.Equal(2, saves);
+            Assert.False(settings.ApplyCommand.CanExecute(null));
+            settings.AndroidKeepChatConnected = false;
+            Assert.True(settings.ApplyCommand.CanExecute(null));
+            settings.Apply();
+            Assert.Equal(2, applications);
+        }
+        finally { File.Delete(path); }
+    }
+
+    [Fact]
+    public void Failed_settings_save_does_not_raise_Applied()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), $"postit-apply-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            var settings = new Settings(directory);
+            var applied = false;
+            settings.Applied += (_, _) => applied = true;
+            settings.AndroidKeepChatConnected = true;
+            var failure = Record.Exception(() => settings.Apply());
+            Assert.True(failure is IOException or UnauthorizedAccessException);
+            Assert.False(applied);
+            Assert.True(settings.IsDirty);
+        }
+        finally { Directory.Delete(directory); }
+    }
+
 #if DEBUG
     [Fact]
     public async Task Native_start_generations_reject_stale_requests_after_stop_and_timeout()
@@ -42,6 +94,9 @@ public sealed class MessagingSessionTests
             Assert.Contains("sans notification permanente", explanation);
             Assert.Contains("ne garantissent pas", explanation);
             Assert.False(checkbox.IsChecked);
+            var save = Assert.Single(window.GetVisualDescendants().OfType<Button>(),
+                button => Equals(button.Content, "Sauver"));
+            Assert.Same(settings.ApplyCommand, save.Command);
             checkbox.IsChecked = true;
             Assert.True(settings.AndroidKeepChatConnected);
             Assert.True(settings.IsDirty);

@@ -224,6 +224,20 @@ paramètres Android :
 « Garder la connexion au serveur active et la reprendre au démarrage du
 téléphone ». Enregistrer les paramètres pour appliquer le changement.
 
+Lorsque l'utilisateur clique sur « Sauver » avec cette option activée,
+PostIt vérifie `PowerManager.IsIgnoringBatteryOptimizations` :
+- si l'application n'est pas exemptée, ouvrir
+  `ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` avec l'URI `package:...` ;
+- si elle est déjà exemptée, ne rien ouvrir ni demander.
+
+La permission `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` est déclarée pour
+cette demande explicite. Android conserve la décision finale ; refuser
+ne désactive ni l'option ni SignalR. Les sauvegardes internes (jetons,
+salons), reconnexions et démarrages du téléphone n'ouvrent pas cet écran.
+Cette demande directe d'exemption est soumise aux règles Google Play
+applicables à l'usage de cette permission ; sa présence ne vaut pas
+approbation pour la publication.
+
 - **Désactivé** : le chat reste connecté pendant la vie du processus PostIt,
   même si l'activité est masquée, mais rien ne garantit que ce processus
   survive en arrière-plan. Les messages alimentent le journal ; les alertes
@@ -250,6 +264,35 @@ visibles. Un refus empêche les alertes, **pas la connexion SignalR**.
 Les échecs de démarrage sont signalés, sans basculer silencieusement vers
 un service de premier plan et sans répéter une permission refusée.
 
+### Renouvellement de session
+
+Une maintenance unique par client API démarre avec l'interface et aussi
+avec le service Android démarré sans interface. Elle programme une attente
+à partir de `AccessTokenExpiresAt` (échéance calculée depuis la durée fournie
+par le serveur OIDC, ou le claim JWT `exp`), moins la marge de sécurité de
+60 secondes, indépendamment des appels HTTP et des reconnexions SignalR :
+- pendant l'activité Android visible (sur desktop, pendant l'exécution
+  de l'application), même si « Garder la connexion » est désactivé ;
+- ou avec « Garder la connexion » activé, même si l'activité est masquée.
+
+Le renouvellement utilise le `refresh_token` lorsque l'**access token**
+entre dans sa marge d'expiration de 60 secondes. Les renouvellements
+concurrents partagent le même verrou ; les jetons tournants sont
+enregistrés et aucun renouvellement n'est engagé pendant la déconnexion.
+Après chaque renouvellement, l'attente est recalculée avec la nouvelle
+échéance. Connexion, déconnexion, changement d'activité ou de l'option
+réveillent aussi l'ordonnanceur. Sans session ou lorsque les deux conditions
+d'activité sont fausses, il attend un changement, sans contrôle périodique.
+Un échec transitoire est signalé et retenté après 30 secondes ; un rejet
+définitif exige une nouvelle connexion.
+
+Le serveur ne fournit pas ici d'échéance du refresh token au client :
+PostIt n'en invente pas et ne peut pas repousser sa durée de vie absolue.
+La rotation régulière ne garantit pas de prolonger une session révoquée
+ou arrivée à sa limite absolue. Un processus suspendu ou arrêté par Android
+ne peut pas exécuter ce timer ; au retour, le renouvellement reprend si la
+session reste renouvelable.
+
 ### Notifications et limites
 
 Le service écoute les messages privés, les messages des salons rejoints et
@@ -275,7 +318,7 @@ Cette solution est de type *best effort*, pas une connexion immortelle :
   en arrière-plan, ou refuser `StartService` depuis le récepteur de démarrage.
   Dans ce cas, PostIt signale le refus et attend une nouvelle ouverture de
   l'application ; aucune tentative de contournement par service de premier
-  plan, tâche périodique ou exemption automatique n'est ajoutée.
+  plan, tâche périodique ou exemption sans consentement n'est ajoutée.
 - Après un arrêt forcé par l'utilisateur, rouvrir PostIt ; le démarrage du
   téléphone n'est pas un contournement de cet arrêt.
 - Le renouvellement nécessite une session encore valide. Une session

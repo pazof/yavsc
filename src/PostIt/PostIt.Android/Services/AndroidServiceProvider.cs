@@ -16,6 +16,11 @@ internal static class AndroidServiceProvider
             if (!api.Settings.AndroidKeepChatConnected) AndroidBackgroundChatService.Invalidate();
             ChatBootState.Save(api);
         };
+        api.Settings.Applied += (_, _) =>
+        {
+            if (api.Settings.AndroidKeepChatConnected)
+                AndroidBatteryOptimization.Request(api.Settings);
+        };
         api.SigningOut += () =>
         {
             AndroidBackgroundChatService.Invalidate();

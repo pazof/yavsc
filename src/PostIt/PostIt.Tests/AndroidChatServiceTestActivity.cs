@@ -36,6 +36,18 @@ public sealed class AndroidChatServiceTestActivity : Activity
                 ui.GetRequiredService<YavscApiClient>().Settings), "settings differ");
             Require(ReferenceEquals(Platform.BackgroundChatService, AndroidBackgroundChatService.Instance),
                 "native adapter missing");
+            using (var battery = AndroidBatteryOptimization.CreateIntent(this))
+            {
+                var power = (PowerManager)GetSystemService(PowerService)!;
+                var exempt = power.IsIgnoringBatteryOptimizations(PackageName!);
+                Require(exempt ? battery is null
+                        : battery?.Action == global::Android.Provider.Settings.ActionRequestIgnoreBatteryOptimizations,
+                    "battery exemption must not prompt when already granted");
+                Require(battery?.DataString == (exempt ? null : "package:" + PackageName),
+                    "battery settings package mismatch");
+                Require(CheckSelfPermission("android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS")
+                    == Permission.Granted, "battery exemption request permission missing");
+            }
             if (OperatingSystem.IsAndroidVersionAtLeast(29))
             {
                 var name = new ComponentName(this, Java.Lang.Class.FromType(typeof(ChatConnectionService)));

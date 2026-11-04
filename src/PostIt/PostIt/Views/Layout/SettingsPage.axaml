@@ -52,7 +52,7 @@
                 <CheckBox x:Name="BackgroundChatCheckBox"
                           Content="Garder la connexion au serveur active et la reprendre au demarrage du telephone"
                           IsChecked="{Binding AndroidKeepChatConnected, Mode=TwoWay}" />
-                <TextBlock Text="SignalR uniquement, sans notification permanente. Les alertes s'affichent seulement a reception d'un message ou evenement. Autorisez les donnees en arriere-plan et, si souhaite, desactivez l'optimisation batterie pour PostIt dans Android. Ces reglages ne garantissent pas la survie du service ni sa reprise au demarrage. Sans cette option, la connexion dure pendant la vie du processus PostIt."
+                <TextBlock Text="SignalR uniquement, sans notification permanente. Les alertes s'affichent seulement a reception d'un message ou evenement. Sauver avec cette option active demande l'exemption batterie Android seulement si PostIt n'est pas deja exempte. Vous restez libre de refuser. Autorisez aussi les donnees en arriere-plan dans Android. Ces reglages ne garantissent pas la survie du service ni sa reprise au demarrage. Sans cette option, la connexion dure pendant la vie du processus PostIt."
                            TextWrapping="Wrap" />
             </StackPanel>
             <TextBlock Text="Avatar: PNG, JPG/JPEG, WEBP, GIF. Taille max 2 MB."
@@ -67,11 +67,8 @@
                     Click="ChooseAvatar_Click"
                     Margin="0,0,8,0"/>
 
-                <!-- Sauver: bind to the RelayCommand-generated property
-                 (SaveCommand). IsEnabled tracks IsDirty so the button
-                 auto-disables when there's nothing to persist. -->
             <Button Content="Sauver"
-                    Command="{Binding SaveCommand}"
+                    Command="{Binding ApplyCommand}"
                     IsEnabled="{Binding IsDirty}"/>
                 </StackPanel>
         </StackPanel>

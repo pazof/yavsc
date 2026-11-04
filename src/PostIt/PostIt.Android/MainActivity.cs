@@ -71,11 +71,13 @@ public class MainActivity : AvaloniaMainActivity
     {
         base.OnResume();
         IsForeground = true;
+        PostIt.Services.Platform.IsApplicationActive = true;
     }
 
     protected override void OnPause()
     {
         IsForeground = false;
+        PostIt.Services.Platform.IsApplicationActive = false;
         base.OnPause();
     }
 
@@ -85,6 +87,7 @@ public class MainActivity : AvaloniaMainActivity
         {
             Current = null;
             IsForeground = false;
+            PostIt.Services.Platform.IsApplicationActive = false;
             PostIt.Android.Services.NotificationPermission.OnActivityDestroyed();
         }
         base.OnDestroy();

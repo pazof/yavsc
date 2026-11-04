@@ -91,6 +91,7 @@ public sealed class ChatConnectionService : Service
             if (!ChatBootState.CanStart(_api) || identity is null || identity != ChatBootState.Identity(_api))
                 throw new BackgroundChatException(BackgroundChatFailure.SessionRequired,
                     "Connexion de fond inactive : option ou session absente.");
+            _api.StartSessionMaintenance();
             if (!AndroidBackgroundChatService.Epoch.Run(epoch, () =>
             {
                 if (_epoch == epoch && _loop is { IsCompleted: false } && !_stop.IsCancellationRequested)

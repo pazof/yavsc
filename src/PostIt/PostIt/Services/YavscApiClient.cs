@@ -40,6 +40,11 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
     public HttpClient Http { get; }
     private readonly BearerTokenHandler _bearer;
     private readonly SemaphoreSlim _refreshGate = new(1, 1);
+    private readonly CancellationTokenSource _maintenanceLifetime = new();
+    private readonly object _maintenanceGate = new();
+    private readonly SemaphoreSlim _maintenanceChanged = new(0, 1);
+    private Task? _maintenance;
+    private bool _maintenanceStopped;
 
     private RefreshTokenRecord? _tokens;
     private static readonly HttpRequestOptionsKey<bool> AnonymousRequest = new("PostIt.AnonymousRequest");
@@ -103,6 +108,81 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
     /// <summary>The current OIDC id_token, or null.</summary>
     public string? CurrentIdToken => _tokens?.IdToken;
 
+    public void StartSessionMaintenance()
+    {
+        lock (_maintenanceGate)
+        {
+            _maintenanceLifetime.Token.ThrowIfCancellationRequested();
+            if (_maintenance is not null) return;
+            Platform.ApplicationActivityChanged += WakeSessionMaintenance;
+            Settings.PropertyChanged += OnMaintenanceSettingsChanged;
+            _maintenance = Task.Run(() => MaintainSessionAsync(_maintenanceLifetime.Token));
+        }
+    }
+
+    private void OnMaintenanceSettingsChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName == nameof(Settings.AndroidKeepChatConnected)) WakeSessionMaintenance();
+    }
+
+    private void WakeSessionMaintenance()
+    {
+        lock (_maintenanceGate)
+        {
+            if (!_maintenanceStopped && _maintenanceChanged.CurrentCount == 0)
+                _maintenanceChanged.Release();
+        }
+    }
+
+    internal TimeSpan GetSessionRefreshDelay(DateTimeOffset now, bool applicationActive)
+    {
+        var tokens = _tokens;
+        if ((!applicationActive && !Settings.AndroidKeepChatConnected)
+            || IsSigningOut || string.IsNullOrEmpty(tokens?.RefreshToken))
+            return Timeout.InfiniteTimeSpan;
+        var delay = tokens.AccessTokenExpiresAt - RefreshSkew - now;
+        return delay > TimeSpan.Zero ? delay : TimeSpan.Zero;
+    }
+
+    internal async Task RefreshSessionIfNeededAsync(bool applicationActive, CancellationToken ct)
+    {
+        if ((!applicationActive && !Settings.AndroidKeepChatConnected)
+            || IsSigningOut || string.IsNullOrEmpty(_tokens?.RefreshToken)) return;
+        await ForceRefreshAsync(ct).ConfigureAwait(false);
+    }
+
+    private async Task MaintainSessionAsync(CancellationToken ct)
+    {
+        try
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                var delay = GetSessionRefreshDelay(DateTimeOffset.UtcNow, Platform.IsApplicationActive);
+                // SemaphoreSlim's timed wait accepts at most Int32.MaxValue milliseconds.
+                if (delay > TimeSpan.FromMilliseconds(int.MaxValue))
+                    delay = TimeSpan.FromMilliseconds(int.MaxValue);
+                if (delay != TimeSpan.Zero
+                    && await _maintenanceChanged.WaitAsync(delay, ct).ConfigureAwait(false))
+                    continue;
+                try
+                {
+                    using var attempt = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                    attempt.CancelAfter(TimeSpan.FromSeconds(20));
+                    await RefreshSessionIfNeededAsync(Platform.IsApplicationActive, attempt.Token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"Session maintenance failed: {ex}");
+                    Settings.SetActionStatus($"Renouvellement automatique de la session impossible : {ex.Message}",
+                        PostIt.Models.StatusSeverity.Error);
+                    await _maintenanceChanged.WaitAsync(TimeSpan.FromSeconds(30), ct).ConfigureAwait(false);
+                }
+            }
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
+    }
+
     /// <summary>Force a new interactive login (PKCE). Throws on failure.</summary>
     /// <param name="progress">Optional sink for the discrete phases of
     /// the flow; the UI uses this to render a debug-friendly status
@@ -157,6 +237,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             IdToken: result.IdentityToken);
 
         _store.Save(_tokens);
+        WakeSessionMaintenance();
         progress?.Report(OIDCLoginPhase.Success);
     }
 
@@ -400,6 +481,8 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         await _refreshGate.WaitAsync(ct).ConfigureAwait(false);
         try
         {
+            if (IsSigningOut)
+                throw new InvalidOperationException("Deconnexion en cours.");
             var tokens = _tokens;
             if (tokens is null || string.IsNullOrEmpty(tokens.RefreshToken))
                 throw new InvalidOperationException("Session expirée. Veuillez vous reconnecter.");
@@ -417,6 +500,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
                 {
                     _store.Clear();
                     _tokens = null;
+                    WakeSessionMaintenance();
                 }
                 throw new RefreshFailedException(
                     isPermanent
@@ -432,6 +516,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
                 IdToken: result.IdentityToken ?? tokens.IdToken);
 
             _store.Save(_tokens);
+            WakeSessionMaintenance();
         }
         finally
         {
@@ -566,6 +651,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
     public async Task LogoutAsync()
     {
         Interlocked.Exchange(ref _signingOut, 1);
+        WakeSessionMaintenance();
         try
         {
             if (SigningOut is { } handlers)
@@ -584,6 +670,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             {
                 _refreshGate.Release();
                 Interlocked.Exchange(ref _signingOut, 0);
+                WakeSessionMaintenance();
             }
         }
         // Optional: clear the IdP session in the browser too.
@@ -591,11 +678,22 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         await Task.CompletedTask;
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
+        Task? maintenance;
+        lock (_maintenanceGate)
+        {
+            _maintenanceStopped = true;
+            _maintenanceLifetime.Cancel();
+            Platform.ApplicationActivityChanged -= WakeSessionMaintenance;
+            Settings.PropertyChanged -= OnMaintenanceSettingsChanged;
+            maintenance = _maintenance;
+        }
+        if (maintenance is not null) await maintenance.ConfigureAwait(false);
+        _maintenanceChanged.Dispose();
+        _maintenanceLifetime.Dispose();
         Http.Dispose();
         _refreshGate.Dispose();
-        return ValueTask.CompletedTask;
     }
 
     /// <summary>

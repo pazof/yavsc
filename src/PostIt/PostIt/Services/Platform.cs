@@ -12,6 +12,18 @@ namespace PostIt.Services;
 /// </summary>
 public static class Platform
 {
+    private static bool _isApplicationActive = !OperatingSystem.IsAndroid();
+    public static event Action? ApplicationActivityChanged;
+    public static bool IsApplicationActive
+    {
+        get => Volatile.Read(ref _isApplicationActive);
+        set
+        {
+            if (value == _isApplicationActive) return;
+            Volatile.Write(ref _isApplicationActive, value);
+            ApplicationActivityChanged?.Invoke();
+        }
+    }
     public static IBackgroundChatService? BackgroundChatService { get; set; }
     public static Func<IServiceProvider>? CreateServiceProvider { get; set; }
     public static Func<PodcastCaptureDevices>? GetLanCallDevices { get; set; }
