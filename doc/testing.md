@@ -182,6 +182,17 @@ adb shell am start -n fr.pschneider.postit/fr.pschneider.postit.PodcastCaptureTe
 adb shell run-as fr.pschneider.postit cat files/podcast-capture-test-result.txt
 ```
 
+Pour verifier la transition apercu vers diffusion sans contacter le serveur :
+
+```bash
+adb shell am start -S -n fr.pschneider.postit/fr.pschneider.postit.PodcastCaptureTestActivity --es microphone false --es previewTransition true
+```
+
+Cette variante affiche puis retire deux apercus natifs avant la capture :
+nettoyage normal, puis nettoyage apres liberation du wrapper Java de la vue.
+Elle attend la destruction differee Avalonia et verifie que la capture suivante
+produit toujours des segments. Le resultat doit inclure `previewTransition=True`.
+
 Attendre `PASS` : au moins trois segments, 8 a 16 secondes capturees,
 pistes H.264 et AAC presentes, et progression des segments en arriere-plan.
 Ce test detecte notamment les captures de zero seconde dues au decalage entre

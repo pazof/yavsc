@@ -69,6 +69,9 @@ sans lancer de service de capture ni de notification de direct.
 Les Podcasts en direct conservent leur service caméra/microphone existant.
 
 Le chemin Android partage le rendu Camera2/EGL entre aperçu seul et encodage.
+L'arrêt de l'aperçu détache ses callbacks via le `SurfaceHolder` conservé,
+avant la destruction différée du contrôle natif ; le nettoyage ne relit pas
+la propriété `Holder` d'une `SurfaceView` dont le wrapper Java peut être libéré.
 La rotation physique utilise l'orientation du capteur, la caméra avant/arrière
 et la rotation de l'écran. Camera2 peut déjà inclure la rotation du capteur
 dans la matrice `SurfaceTexture`, ainsi qu'un miroir pour la caméra avant :

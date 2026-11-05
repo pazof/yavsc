@@ -9,7 +9,9 @@ using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.OS;
+using Avalonia.Controls;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PostIt.Android;
 using PostIt.Android.Services;
 using PostIt.Services;
@@ -23,12 +25,14 @@ public sealed class AndroidPodcastCaptureTestActivity : Activity
 {
     private bool _microphone = true;
     private bool _notificationStop;
+    private bool _previewTransition;
     private int _cameraIndex;
     protected override async void OnCreate(Bundle? state)
     {
         base.OnCreate(state);
         _microphone = Intent?.GetStringExtra("microphone") != "false";
         _notificationStop = Intent?.GetStringExtra("notificationStop") == "true";
+        _previewTransition = Intent?.GetStringExtra("previewTransition") == "true";
         _cameraIndex = Intent?.GetStringExtra("camera") == "front" ? 1 : 0;
         var resultPath = Path.Combine(FilesDir!.AbsolutePath, "podcast-capture-test-result.txt");
         File.WriteAllText(resultPath, "RUNNING");
@@ -36,7 +40,7 @@ public sealed class AndroidPodcastCaptureTestActivity : Activity
         try
         {
             await RunAsync(result);
-            File.WriteAllText(resultPath, $"PASS\nsegments={result.GetInt("segments")}\ndurationSeconds={result.GetDouble("durationSeconds")}\naudio={result.GetBoolean("audio")}\ndirectory={result.GetString("directory")}\nbackground={result.GetString("background")}\norientation={result.GetString("orientation")}\ntextureTransform={result.GetString("textureTransform")}");
+            File.WriteAllText(resultPath, $"PASS\nsegments={result.GetInt("segments")}\ndurationSeconds={result.GetDouble("durationSeconds")}\naudio={result.GetBoolean("audio")}\ndirectory={result.GetString("directory")}\nbackground={result.GetString("background")}\norientation={result.GetString("orientation")}\ntextureTransform={result.GetString("textureTransform")}\npreviewTransition={_previewTransition}");
         }
         catch (Exception ex)
         {
@@ -58,12 +62,26 @@ public sealed class AndroidPodcastCaptureTestActivity : Activity
         Directory.CreateDirectory(directory);
         var devices = AndroidPodcastCapture.GetDevices();
         if (devices.Cameras.Count == 0) throw new InvalidOperationException("No emulator camera.");
+        var camera = devices.Cameras[Math.Min(_cameraIndex, devices.Cameras.Count - 1)].Value;
+        NavigationPage? navigation = null;
+        ContentPage? page = null;
         IPodcastCapture? capture = null;
         try
         {
+            if (_previewTransition)
+            {
+                navigation = (Avalonia.Application.Current as App)?.View?.FindControl<NavigationPage>("NavRoot")
+                    ?? throw new InvalidOperationException("Main navigation unavailable.");
+                page = new ContentPage();
+                await Dispatcher.UIThread.InvokeAsync(async () => await navigation.PushAsync(page));
+                foreach (var disposeViewFirst in new[] { false, true })
+                    await VerifyPreviewTeardownAsync(camera, page, disposeViewFirst);
+            }
             capture = await Dispatcher.UIThread.InvokeAsync(() => AndroidPodcastCapture.StartAsync(
-                devices.Cameras[Math.Min(_cameraIndex, devices.Cameras.Count - 1)].Value,
+                camera,
                 _microphone ? "microphone" : null, directory, CancellationToken.None));
+            if (page is not null)
+                await Dispatcher.UIThread.InvokeAsync(() => { page.Content = capture.Preview; });
             await Task.Delay(3000);
             var before = SegmentCount(directory);
             context.StartActivity(new Intent(Intent.ActionMain).AddCategory(Intent.CategoryHome).AddFlags(ActivityFlags.NewTask));
@@ -112,7 +130,50 @@ public sealed class AndroidPodcastCaptureTestActivity : Activity
         }
         finally
         {
+            if (page is not null)
+                await Dispatcher.UIThread.InvokeAsync(() => { page.Content = null; });
             if (capture is not null) await capture.DisposeAsync();
+            if (navigation is not null)
+                await Dispatcher.UIThread.InvokeAsync(async () => await navigation.PopAsync());
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.SystemIdle);
+        }
+    }
+
+    private static async Task VerifyPreviewTeardownAsync(string camera, ContentPage page, bool disposeViewFirst)
+    {
+        await using var preview = await Dispatcher.UIThread.InvokeAsync(
+            () => AndroidPodcastCapture.StartPreviewAsync(camera, CancellationToken.None));
+        var control = preview.Preview ?? throw new InvalidOperationException("Camera preview unavailable.");
+        await Dispatcher.UIThread.InvokeAsync(() => { page.Content = control; });
+        try
+        {
+            // NativeControlHost does not expose its handle publicly.
+            var handleProperty = typeof(NativeControlHost).GetProperty("NativeControlHandle",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                ?? throw new InvalidOperationException("Native preview handle property unavailable.");
+            Avalonia.Android.AndroidViewControlHandle? handle = null;
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            while (handle is null)
+            {
+                handle = await Dispatcher.UIThread.InvokeAsync(() =>
+                    handleProperty.GetValue(control.GetVisualDescendants().OfType<NativeControlHost>().Single())
+                        as Avalonia.Android.AndroidViewControlHandle);
+                if (handle is null) await Task.Delay(50, timeout.Token);
+            }
+            await Task.Delay(500, timeout.Token);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                // Reproduce teardown after Avalonia has already released the Java view wrapper.
+                if (disposeViewFirst) handle.View.Dispose();
+                page.Content = null;
+            });
+            await preview.DisposeAsync();
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.SystemIdle);
+            await preview.Completion;
+        }
+        finally
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => { page.Content = null; });
         }
     }
 

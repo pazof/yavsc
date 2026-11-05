@@ -32,7 +32,7 @@ internal sealed class AndroidCapturePreview : Grid, IDisposable
     private sealed class PreviewHost(AndroidCameraFrameRotator rotator, Action<Exception> failed)
         : NativeControlHost, IDisposable
     {
-        private SurfaceView? _view;
+        private ISurfaceHolder? _holder;
         private SurfaceCallback? _callback;
         private bool _disposed;
 
@@ -40,10 +40,15 @@ internal sealed class AndroidCapturePreview : Grid, IDisposable
         {
             var activity = MainActivity.Current
                 ?? throw new InvalidOperationException("Activite Android indisponible pour l'apercu.");
-            _view = new SurfaceView(activity);
-            _callback = new SurfaceCallback(this);
-            _view.Holder!.AddCallback(_callback);
-            return new AndroidViewControlHandle(_view);
+            var view = new SurfaceView(activity);
+            if (!_disposed)
+            {
+                _holder = view.Holder
+                    ?? throw new InvalidOperationException("Surface Android indisponible pour l'apercu.");
+                _callback = new SurfaceCallback(this);
+                _holder.AddCallback(_callback);
+            }
+            return new AndroidViewControlHandle(view);
         }
 
         private void SetSurface(ISurfaceHolder holder, int width, int height)
@@ -61,22 +66,29 @@ internal sealed class AndroidCapturePreview : Grid, IDisposable
 
         protected override void DestroyNativeControlCore(IPlatformHandle control)
         {
+            ReleaseSurface();
+            base.DestroyNativeControlCore(control);
+        }
+
+        private void ReleaseSurface()
+        {
             Detach();
             if (_callback is not null)
             {
-                _view?.Holder?.RemoveCallback(_callback);
+                // The native view wrapper may already be disposed during deferred host destruction.
+                _holder?.RemoveCallback(_callback);
                 _callback.Dispose();
                 _callback = null;
             }
-            _view = null;
-            base.DestroyNativeControlCore(control);
+            _holder?.Dispose();
+            _holder = null;
         }
 
         public void Dispose()
         {
             if (_disposed) return;
             _disposed = true;
-            Detach();
+            ReleaseSurface();
         }
 
         private sealed class SurfaceCallback(PreviewHost owner) : Java.Lang.Object, ISurfaceHolderCallback
