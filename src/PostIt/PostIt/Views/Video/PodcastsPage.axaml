@@ -70,7 +70,7 @@
                     <Button Content="Enregistrer les modifications de l'emission selectionnee" Command="{Binding UpdatePlanCommand}" />
                 </WrapPanel>
             </StackPanel>
-            <StackPanel Spacing="8" IsVisible="{Binding IsBroadcasting}">
+            <StackPanel Spacing="8" IsVisible="{Binding HasCapturePreview}">
                 <TextBlock Text="Apercu local de la capture" FontWeight="SemiBold" />
                 <Border Background="Black" CornerRadius="4" ClipToBounds="True">
                     <ContentControl x:Name="CapturePreviewHost" Content="{Binding CapturePreview}" Height="300"
@@ -79,7 +79,8 @@
             </StackPanel>
             <StackPanel Spacing="8" IsVisible="{Binding CanBroadcast}" IsEnabled="{Binding !IsBroadcasting}">
                 <Button Content="Detecter cameras et microphones" Command="{Binding DetectDevicesCommand}" />
-                <ComboBox ItemsSource="{Binding Cameras}" SelectedItem="{Binding SelectedCamera}" PlaceholderText="Camera">
+                <ComboBox ItemsSource="{Binding Cameras}" SelectedItem="{Binding SelectedCamera}" PlaceholderText="Camera"
+                          IsEnabled="{Binding !IsCapturing}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="services:CaptureDevice"><TextBlock Text="{Binding Name}" /></DataTemplate>
                     </ComboBox.ItemTemplate>
@@ -89,9 +90,16 @@
                         <DataTemplate x:DataType="services:CaptureDevice"><TextBlock Text="{Binding Name}" /></DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Button Content="Demarrer le direct" Command="{Binding StartCommand}" />
+                <WrapPanel>
+                    <Button Content="Previsualiser la camera" Command="{Binding PreviewCommand}" Margin="0,0,8,8" />
+                    <Button Content="Arreter la previsualisation" Command="{Binding StopPreviewCommand}" Margin="0,0,8,8" />
+                    <Button Content="Demarrer le direct" Command="{Binding StartCommand}" />
+                </WrapPanel>
             </StackPanel>
             <Button Content="Arreter et publier le replay" Command="{Binding StopCommand}" />
+            <CheckBox Content="Garder l'ecran allume pendant l'apercu camera et le direct"
+                      IsVisible="{Binding SupportsCaptureScreenAwake}"
+                      IsChecked="{Binding KeepScreenOnDuringCapture, Mode=TwoWay}" />
             <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
             <Button Content="Actualiser les directs et replays" Command="{Binding RefreshCommand}" />
             <ListBox ItemsSource="{Binding Podcasts}" SelectedItem="{Binding SelectedPodcast}" MinHeight="160" MaxHeight="420"

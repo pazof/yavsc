@@ -123,6 +123,10 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
   segments ni de lecture de capture par callbacks managés.
 - La prévisualisation réutilise la surface EGL existante. Le retour
   distant utilise la surface Android LibVLC déjà employée pour les Podcasts.
+  La rotation capteur/écran tient compte de celle déjà portée par la matrice
+  `SurfaceTexture` (miroir de la caméra avant compris) et suit les changements
+  portrait/paysage. Les dimensions
+  encodées restent fixes pendant l'appel, avec bandes noires si nécessaire.
 - Le service de capture partagé affiche une notification d'appel avec
   l'action « Raccrocher » ; cette action ne publie aucun Podcast.
   Un Podcast et un appel ne peuvent pas posséder la capture simultanément.

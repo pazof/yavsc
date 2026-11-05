@@ -59,6 +59,8 @@ public partial class Settings : ViewModelBase
     [ObservableProperty]
     public partial string? PodcastMicrophoneId { get; set; }
     [ObservableProperty]
+    public partial bool PodcastKeepScreenOn { get; set; }
+    [ObservableProperty]
     public partial string? LanCallAddress { get; set; }
     [ObservableProperty]
     public partial bool AndroidKeepChatConnected { get; set; }
@@ -166,6 +168,7 @@ public partial class Settings : ViewModelBase
     partial void OnPodcastMicrophonesChanged(CaptureDevice[] value) => MarkDirty();
     partial void OnPodcastCameraIdChanged(string? value) => MarkDirty();
     partial void OnPodcastMicrophoneIdChanged(string? value) => MarkDirty();
+    partial void OnPodcastKeepScreenOnChanged(bool value) => MarkDirty();
     partial void OnLanCallAddressChanged(string? value) => MarkDirty();
     partial void OnAndroidKeepChatConnectedChanged(bool value) => MarkDirty();
     partial void OnChatRoomsByAccountChanged(Dictionary<string, string[]> value) => MarkDirty();
@@ -431,6 +434,7 @@ public partial class Settings : ViewModelBase
                 PodcastMicrophones = settings.PodcastMicrophones ?? [];
                 PodcastCameraId = settings.PodcastCameraId;
                 PodcastMicrophoneId = settings.PodcastMicrophoneId;
+                PodcastKeepScreenOn = settings.PodcastKeepScreenOn;
                 LanCallAddress = settings.LanCallAddress;
                 AndroidKeepChatConnected = settings.AndroidKeepChatConnected;
                 ChatRoomsByAccount = settings.ChatRoomsByAccount ?? new();

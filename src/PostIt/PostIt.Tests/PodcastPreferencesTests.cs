@@ -27,6 +27,8 @@ public sealed class PodcastPreferencesTests
             vm.SelectedCamera = vm.Cameras[1];
             vm.SelectedMicrophone = vm.Microphones[0];
             vm.Title = "Mon emission habituelle";
+            Assert.False(vm.KeepScreenOnDuringCapture);
+            vm.KeepScreenOnDuringCapture = true;
             vm.DetectDevicesCommand.Execute(null);
             Assert.Equal("rear", vm.SelectedCamera?.Value);
             Assert.Equal("", vm.SelectedMicrophone?.Value);
@@ -38,6 +40,7 @@ public sealed class PodcastPreferencesTests
             Assert.Equal("Mon emission habituelle", restored.PodcastDefaultTitle);
             Assert.Equal("rear", restored.PodcastCameraId);
             Assert.Equal("", restored.PodcastMicrophoneId);
+            Assert.True(restored.PodcastKeepScreenOn);
             Platform.GetPodcastCaptureDevices = () => throw new InvalidOperationException("Must use saved devices.");
             await using var otherApi = new PreferencesApi(restored, new TokenStore(path + ".tokens"));
             var other = new PodcastsPageViewModel(new PodcastApiClient(otherApi, () => restored.ApiUrl), otherApi, session);
@@ -46,11 +49,14 @@ public sealed class PodcastPreferencesTests
             Assert.Equal("rear", other.SelectedCamera?.Value);
             Assert.Equal("", other.SelectedMicrophone?.Value);
             Assert.Equal(vm.Title, other.Title);
+            Assert.True(other.KeepScreenOnDuringCapture);
             restored.PodcastCameraId = "front";
             restored.PodcastMicrophoneId = "usb";
+            restored.PodcastKeepScreenOn = false;
             await other.ActivateAsync();
             Assert.Equal("front", other.SelectedCamera?.Value);
             Assert.Equal("usb", other.SelectedMicrophone?.Value);
+            Assert.False(other.KeepScreenOnDuringCapture);
 
             Platform.GetPodcastCaptureDevices = () => new([], []);
             other.DetectDevicesCommand.Execute(null);

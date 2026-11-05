@@ -48,6 +48,9 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
     private int _previewHeight;
     private int _outputWidth;
     private int _outputHeight;
+    private int _inputWidth;
+    private int _inputHeight;
+    private bool _previewOnly;
     private SurfaceTexture? _texture;
     private FrameListener? _listener;
     private Surface? _cameraSurface;
@@ -59,7 +62,7 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
     private bool _rendering;
     private bool _disposed;
     private int _rotation;
-    private int? _remainingRotation;
+    private int _remainingRotation = -1;
     internal string? FirstTextureTransform { get; private set; }
 
     internal Surface CameraSurface => _cameraSurface
@@ -73,7 +76,7 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
     }
 
     internal static async Task<AndroidCameraFrameRotator> CreateAsync(
-        Surface encoderSurface, int width, int height, int rotation, Action<Exception> failed)
+        Surface? encoderSurface, int width, int height, int rotation, Action<Exception> failed)
     {
         var rotator = new AndroidCameraFrameRotator(failed);
         try
@@ -88,9 +91,12 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         }
     }
 
-    private void Initialize(Surface encoderSurface, int width, int height, int rotation)
+    private void Initialize(Surface? encoderSurface, int width, int height, int rotation)
     {
         _rotation = rotation;
+        _inputWidth = width;
+        _inputHeight = height;
+        _previewOnly = encoderSurface is null;
         _display = EGL14.EglGetDisplay(EGL14.EglDefaultDisplay);
         if (_display is null || _display.Equals(EGL14.EglNoDisplay))
             throw EglError("Obtention de l'affichage EGL");
@@ -100,7 +106,7 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         [
             EGL14.EglRedSize, 8, EGL14.EglGreenSize, 8, EGL14.EglBlueSize, 8,
             EGL14.EglRenderableType, EGL14.EglOpenglEs2Bit,
-            EGL14.EglSurfaceType, EGL14.EglWindowBit, RecordableAndroid, 1, EGL14.EglNone
+            EGL14.EglSurfaceType, EGL14.EglWindowBit | EGL14.EglPbufferBit, RecordableAndroid, 1, EGL14.EglNone
         ];
         var configs = new EGLConfig[1];
         var count = new int[1];
@@ -111,7 +117,10 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
             [EGL14.EglContextClientVersion, 2, EGL14.EglNone], 0);
         if (_context is null || _context.Equals(EGL14.EglNoContext))
             throw EglError("Creation du contexte EGL");
-        _window = EGL14.EglCreateWindowSurface(_display, configs[0], encoderSurface, [EGL14.EglNone], 0);
+        _window = encoderSurface is null
+            ? EGL14.EglCreatePbufferSurface(_display, configs[0],
+                [EGL14.EglWidth, 1, EGL14.EglHeight, 1, EGL14.EglNone], 0)
+            : EGL14.EglCreateWindowSurface(_display, configs[0], encoderSurface, [EGL14.EglNone], 0);
         if (_window is null || _window.Equals(EGL14.EglNoSurface))
             throw EglError("Creation de la surface EGL");
         if (!EGL14.EglMakeCurrent(_display, _window, _window, _context))
@@ -127,7 +136,7 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         GLES20.GlTexParameteri(ExternalTexture, GLES20.GlTextureWrapS, GLES20.GlClampToEdge);
         GLES20.GlTexParameteri(ExternalTexture, GLES20.GlTextureWrapT, GLES20.GlClampToEdge);
         _vertices = CreateBuffer([-1, -1, 1, -1, -1, 1, 1, 1]);
-        _coordinates = CreateBuffer(CameraFrameOrientation.GetTextureCoordinates(0));
+        _coordinates = CreateBuffer(CameraFrameOrientation.GetTextureCoordinates(rotation));
         GLES20.GlUseProgram(_program);
         BindAttribute("position", _vertices);
         BindAttribute("textureCoordinate", _coordinates);
@@ -146,6 +155,12 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
     }
 
     internal Task StartAsync() => InvokeAsync(() => _rendering = true);
+
+    internal Task SetRotationAsync(int rotation) => InvokeAsync(() =>
+    {
+        _rotation = rotation;
+        _remainingRotation = -1;
+    });
 
     internal Task SetPreviewAsync(Surface? surface, int width = 0, int height = 0, Action<Exception>? failed = null)
     {
@@ -173,7 +188,6 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         {
             if (!EGL14.EglMakeCurrent(_display, _window, _window, _context))
                 throw EglError("Activation de l'encodeur");
-            GLES20.GlViewport(0, 0, _outputWidth, _outputHeight);
             texture.UpdateTexImage();
             var presentationTime = _clock.GetPresentationTime(texture.Timestamp, Java.Lang.JavaSystem.NanoTime());
             if (presentationTime is null) return;
@@ -187,15 +201,19 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
                 _coordinates.Put(CameraFrameOrientation.GetTextureCoordinates(remainingRotation));
                 _coordinates.Position(0);
                 global::Android.Util.Log.Info("PostIt.Podcast",
-                    $"Camera texture transform: [{FirstTextureTransform}], remaining rotation={remainingRotation}");
+                    $"Camera texture transform: [{FirstTextureTransform}], sensor/display rotation={_rotation}, remaining rotation={remainingRotation}");
             }
             GLES20.GlUniformMatrix4fv(_matrixLocation, 1, false, _textureMatrix, 0);
-            GLES20.GlDrawArrays(GLES20.GlTriangleStrip, 0, 4);
-            CheckGl();
-            if (!EGLExt.EglPresentationTimeANDROID(_display, _window, presentationTime.Value))
-                throw EglError("Horodatage de l'image camera");
-            if (!EGL14.EglSwapBuffers(_display, _window))
-                throw EglError("Envoi de l'image a l'encodeur");
+            if (!_previewOnly)
+            {
+                SetViewport(_outputWidth, _outputHeight);
+                GLES20.GlDrawArrays(GLES20.GlTriangleStrip, 0, 4);
+                CheckGl();
+                if (!EGLExt.EglPresentationTimeANDROID(_display, _window, presentationTime.Value))
+                    throw EglError("Horodatage de l'image camera");
+                if (!EGL14.EglSwapBuffers(_display, _window))
+                    throw EglError("Envoi de l'image a l'encodeur");
+            }
             DrawPreview();
         }
         catch (Exception ex)
@@ -212,12 +230,7 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         {
             if (!EGL14.EglMakeCurrent(_display, _previewWindow, _previewWindow, _context))
                 throw EglError("Activation de l'apercu");
-            GLES20.GlClearColor(0, 0, 0, 1);
-            GLES20.GlClear(GLES20.GlColorBufferBit);
-            var scale = Math.Min((double)_previewWidth / _outputWidth, (double)_previewHeight / _outputHeight);
-            var width = Math.Max(1, (int)(_outputWidth * scale));
-            var height = Math.Max(1, (int)(_outputHeight * scale));
-            GLES20.GlViewport((_previewWidth - width) / 2, (_previewHeight - height) / 2, width, height);
+            SetViewport(_previewWidth, _previewHeight);
             GLES20.GlDrawArrays(GLES20.GlTriangleStrip, 0, 4);
             CheckGl();
             if (!EGL14.EglSwapBuffers(_display, _previewWindow))
@@ -230,6 +243,18 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
             ReleasePreview();
             failed?.Invoke(ex);
         }
+    }
+
+    private void SetViewport(int targetWidth, int targetHeight)
+    {
+        GLES20.GlClearColor(0, 0, 0, 1);
+        GLES20.GlClear(GLES20.GlColorBufferBit);
+        var contentWidth = _rotation is 90 or 270 ? _inputHeight : _inputWidth;
+        var contentHeight = _rotation is 90 or 270 ? _inputWidth : _inputHeight;
+        var scale = Math.Min((double)targetWidth / contentWidth, (double)targetHeight / contentHeight);
+        var width = Math.Max(1, (int)(contentWidth * scale));
+        var height = Math.Max(1, (int)(contentHeight * scale));
+        GLES20.GlViewport((targetWidth - width) / 2, (targetHeight - height) / 2, width, height);
     }
 
     private void ReleasePreview()

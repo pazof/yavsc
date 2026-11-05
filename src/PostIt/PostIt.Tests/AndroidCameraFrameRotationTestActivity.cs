@@ -27,13 +27,67 @@ public sealed class AndroidCameraFrameRotationTestActivity : Activity
         {
             foreach (var rotation in new[] { 0, 90, 180, 270 })
                 await VerifyRotationAsync(rotation);
-            File.WriteAllText(resultPath, "PASS\nrotations=0,90,180,270\nformat=MPEG-TS\npreview=RGBA,detach,reattach,letterbox\nsource=synthetic");
+            await VerifyPreviewOnlyAsync();
+            File.WriteAllText(resultPath, "PASS\nrotations=0,90,180,270\nformat=MPEG-TS\npreview=RGBA,detach,reattach,letterbox,without-encoder,dynamic-rotation\nsource=synthetic");
         }
         catch (Exception ex)
         {
             File.WriteAllText(resultPath, $"FAIL\n{ex}");
         }
         finally { Finish(); }
+    }
+
+    private async Task VerifyPreviewOnlyAsync()
+    {
+        const int width = 640, height = 480;
+        using var reader = ImageReader.NewInstance(640, 640, (ImageFormatType)Format.Rgba8888, 3)
+            ?? throw new InvalidOperationException("Preview reader unavailable.");
+        Exception? failure = null;
+        using var rotator = await AndroidCameraFrameRotator.CreateAsync(null, width, height, 0,
+            error => failure = error);
+        await rotator.SetPreviewAsync(reader.Surface, reader.Width, reader.Height, error => failure = error);
+        await rotator.StartAsync();
+        using var paint = new Paint();
+        Color[] colors = [Color.Red, Color.Green, Color.Blue, Color.Yellow];
+        foreach (var rotation in new[] { 0, 90, 180, 270 })
+        {
+            await rotator.SetRotationAsync(rotation);
+            var verified = 0;
+            for (var frame = 0; frame < 20; frame++)
+            {
+                if (failure is not null) throw failure;
+                var canvas = rotator.CameraSurface.LockCanvas(null)
+                    ?? throw new InvalidOperationException("Synthetic preview canvas unavailable.");
+                try
+                {
+                    for (var index = 0; index < colors.Length; index++)
+                    {
+                        paint.Color = colors[index];
+                        var x = index % 2 * width / 2;
+                        var y = index / 2 * height / 2;
+                        canvas.DrawRect(x, y, x + width / 2, y + height / 2, paint);
+                    }
+                }
+                finally
+                {
+                    rotator.CameraSurface.UnlockCanvasAndPost(canvas);
+                    canvas.Dispose();
+                }
+                await Task.Delay(34);
+                using var image = reader.AcquireLatestImage();
+                if (image is null) continue;
+                try
+                {
+                    if (frame < 3) continue;
+                    VerifyPreview(image, rotation, rotation is 90 or 270 ? height : width,
+                        rotation is 90 or 270 ? width : height);
+                    verified++;
+                }
+                finally { image.Close(); }
+            }
+            if (verified < 3) throw new InvalidOperationException($"Preview-only rotation {rotation}: insufficient frames.");
+        }
+        await rotator.SetPreviewAsync(null);
     }
 
     private async Task VerifyRotationAsync(int rotation)

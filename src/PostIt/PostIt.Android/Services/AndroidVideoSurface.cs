@@ -19,6 +19,8 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
     private VideoView? _video;
     private ReplayLayout? _layout;
     private bool _disposed;
+    private bool _playbackSubscribed;
+    private IDisposable? _screenAwake;
     private readonly TaskCompletionSource _ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
     internal Task Ready => _ready.Task;
 
@@ -28,6 +30,16 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
             ?? throw new InvalidOperationException("L'activite Android est indisponible.");
         var video = new VideoView(activity) { MediaPlayer = _disposed ? null : player };
         _video = video;
+        if (!_disposed)
+        {
+            player.Playing += OnPlaybackChanged;
+            player.Paused += OnPlaybackChanged;
+            player.Stopped += OnPlaybackChanged;
+            player.EndReached += OnPlaybackChanged;
+            player.EncounteredError += OnPlaybackChanged;
+            _playbackSubscribed = true;
+        }
+        UpdateScreenAwake();
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
             if (!_disposed) _ready.TrySetResult();
@@ -42,6 +54,7 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
 
     protected override void DestroyNativeControlCore(IPlatformHandle control)
     {
+        ReleaseScreenAwake();
         _layout?.Stop();
         _layout = null;
         if (_video is not null) _video.MediaPlayer = null;
@@ -52,9 +65,39 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
     public void Dispose()
     {
         _disposed = true;
+        ReleaseScreenAwake();
         _ready.TrySetCanceled();
         _layout?.Stop();
         if (_video is not null) _video.MediaPlayer = null;
+    }
+
+    private void OnPlaybackChanged(object? sender, EventArgs e)
+        => Avalonia.Threading.Dispatcher.UIThread.Post(UpdateScreenAwake);
+
+    private void UpdateScreenAwake()
+    {
+        if (!_disposed && _video is not null && player.IsPlaying)
+            _screenAwake ??= Platform.ScreenAwake.Acquire();
+        else
+        {
+            _screenAwake?.Dispose();
+            _screenAwake = null;
+        }
+    }
+
+    private void ReleaseScreenAwake()
+    {
+        if (_playbackSubscribed)
+        {
+            player.Playing -= OnPlaybackChanged;
+            player.Paused -= OnPlaybackChanged;
+            player.Stopped -= OnPlaybackChanged;
+            player.EndReached -= OnPlaybackChanged;
+            player.EncounteredError -= OnPlaybackChanged;
+            _playbackSubscribed = false;
+        }
+        _screenAwake?.Dispose();
+        _screenAwake = null;
     }
 
     private sealed class ReplayLayout : FrameLayout

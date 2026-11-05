@@ -9,6 +9,8 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <!-- LibVLC's native package targets inspect the plural RID property. -->
+    <RuntimeIdentifiers Condition="'$(RuntimeIdentifiers)' == '' and '$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</RuntimeIdentifiers>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>
     <InformationalVersion>1.1.0-feat-calls.1+472.Branch.feat-calls.Sha.d8200cb98ddef152313ef1f102b866c50f107cbd</InformationalVersion>
@@ -34,6 +36,7 @@
     <Compile Include="..\PostIt.Tests\AndroidPodcastCaptureTestActivity.cs" Link="Tests\AndroidPodcastCaptureTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidCameraFrameRotationTestActivity.cs" Link="Tests\AndroidCameraFrameRotationTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidLanCallTestActivity.cs" Link="Tests\AndroidLanCallTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\AndroidScreenAwakeTestActivity.cs" Link="Tests\AndroidScreenAwakeTestActivity.cs" />
   </ItemGroup>
   <!-- This is an Avalonia app, not a MAUI app: exclude the .NET MAUI VS Code
        extension's injected HotReload agent (references Microsoft.Maui.*).

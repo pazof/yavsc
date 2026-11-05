@@ -53,6 +53,40 @@ Le rafraîchissement silencieux de session reste unique par processus.
 Cette restauration couvre la recréation d'activité dans le même processus,
 pas la destruction du processus par Android.
 
+## Prévisualisation et orientation des Podcasts
+
+« Prévisualiser la caméra » ouvre un aperçu local avant « Démarrer le
+direct », sans exiger de titre. Cette phase ne crée aucune émission côté
+serveur, n'enregistre aucun segment et n'ouvre pas le microphone. Le choix
+de caméra est verrouillé pendant l'aperçu ; l'arrêter pour changer de caméra.
+Le microphone sélectionné n'est ouvert qu'au démarrage du direct.
+
+« Arrêter la prévisualisation », la sortie de page et la déconnexion libèrent
+la caméra. Le passage au direct ferme d'abord l'aperçu, puis ouvre la capture
+avec les périphériques sélectionnés : les images d'essai ne sont pas publiées.
+Sous Android, un aperçu seul s'arrête aussi au passage en arrière-plan,
+sans lancer de service de capture ni de notification de direct.
+Les Podcasts en direct conservent leur service caméra/microphone existant.
+
+Le chemin Android partage le rendu Camera2/EGL entre aperçu seul et encodage.
+La rotation physique utilise l'orientation du capteur, la caméra avant/arrière
+et la rotation de l'écran. Camera2 peut déjà inclure la rotation du capteur
+dans la matrice `SurfaceTexture`, ainsi qu'un miroir pour la caméra avant :
+seule la rotation restante est appliquée, dans le sens inverse si la matrice
+contient un miroir, afin de ne pas tourner l'image deux fois.
+Un changement de rotation d'écran recalcule ce rendu pendant la capture.
+L'aperçu conserve les proportions ; les dimensions encodées restent celles
+du démarrage du direct, avec des bandes noires si la nouvelle orientation
+l'exige, pour ne pas modifier le format HLS/SRTP en cours d'émission.
+
+Les tests partagés couvrent l'aperçu sans appel API, le passage au direct,
+les arrêts et une sortie de page pendant l'ouverture de caméra. L'activité
+Debug `CameraFrameRotationTestActivity` vérifie les quatre rotations avec
+encodage, puis l'aperçu sans encodeur et ses changements de rotation.
+Une validation physique caméra avant/arrière en portrait et paysage reste
+nécessaire : les tests synthétiques ne vérifient pas le comportement du HAL
+de chaque téléphone.
+
 ## Administration et profil personnel
 
 L'accueil présente un seul accès **Administration**, visible et exécutable

@@ -17,11 +17,11 @@ internal static class PodcastPermissions
     private static TaskCompletionSource<bool>? _pending;
     private static string[] _requested = [];
 
-    public static async Task EnsureAsync(Activity activity, bool microphone, CancellationToken ct)
+    public static async Task EnsureAsync(Activity activity, bool microphone, CancellationToken ct, bool notifications = true)
     {
         var requested = new List<string> { Manifest.Permission.Camera };
         if (microphone) requested.Add(Manifest.Permission.RecordAudio);
-        if (OperatingSystem.IsAndroidVersionAtLeast(33)) requested.Add(Manifest.Permission.PostNotifications);
+        if (notifications && OperatingSystem.IsAndroidVersionAtLeast(33)) requested.Add(Manifest.Permission.PostNotifications);
         var permissions = requested.ToArray();
         if (permissions.All(p => ContextCompat.CheckSelfPermission(activity, p) == Permission.Granted)) return;
         if (_pending is not null) throw new InvalidOperationException("Une demande de permissions est deja en cours.");
@@ -30,7 +30,9 @@ internal static class PodcastPermissions
         _pending = pending;
         ActivityCompat.RequestPermissions(activity, permissions, RequestCode);
         if (!await pending.Task.WaitAsync(ct))
-            throw new UnauthorizedAccessException("Autorisez la camera, les notifications et, si selectionne, le microphone pour diffuser.");
+            throw new UnauthorizedAccessException(notifications
+                ? "Autorisez la camera, les notifications et, si selectionne, le microphone pour diffuser."
+                : "Autorisez la camera pour la previsualisation.");
     }
 
     public static bool HandleResult(int requestCode, string[]? permissions, Permission[]? results)

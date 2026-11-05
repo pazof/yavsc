@@ -19,7 +19,7 @@ internal sealed class LibVlcPodcastCapture : IPodcastCapture
     public Task Completion => _completion.Task;
     public Control? Preview => _preview;
 
-    public LibVlcPodcastCapture(Func<LibVLC, Media> createMedia, string directory, bool preview = false)
+    public LibVlcPodcastCapture(Func<LibVLC, Media> createMedia, string? directory, bool preview = false)
     {
         Core.Initialize();
         // The usual Linux capture instance has a dummy video output; preview needs a drawable.
@@ -27,7 +27,8 @@ internal sealed class LibVlcPodcastCapture : IPodcastCapture
         try
         {
             _media = createMedia(_vlc);
-            PodcastBroadcaster.ConfigureOutput(_media, directory, preview);
+            if (directory is not null) PodcastBroadcaster.ConfigureOutput(_media, directory, preview);
+            else _media.AddOption(":no-audio");
             _player = new MediaPlayer(_vlc);
             if (preview)
             {

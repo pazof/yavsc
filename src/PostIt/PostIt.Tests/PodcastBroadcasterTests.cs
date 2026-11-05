@@ -12,6 +12,172 @@ namespace PostIt.Tests;
 
 public sealed class PodcastBroadcasterTests
 {
+    [Theory]
+    [InlineData("stop")]
+    [InlineData("leave")]
+    [InlineData("logout")]
+    [InlineData("failure")]
+    [InlineData("broadcast")]
+    public Task Camera_can_be_previewed_without_creating_a_broadcast_and_is_released_before_next_capture(string action)
+        => HeadlessUnitTestSession.GetOrStartForAssembly(typeof(PodcastBroadcasterTests).Assembly).Dispatch(async () =>
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"postit-local-preview-{Guid.NewGuid():N}");
+        var previousDevices = Platform.GetPodcastCaptureDevices;
+        var previousPreview = Platform.CreatePodcastPreviewAsync;
+        var previousCapture = Platform.CreatePodcastCaptureAsync;
+        var previousPermissions = Platform.RequestPodcastPermissionsAsync;
+        var store = new TokenStore(path);
+        store.Save(new RefreshTokenRecord("access", "refresh", DateTimeOffset.UtcNow.AddHours(1)));
+        await using var api = new YavscApiClient(new Settings(path + ".settings"), store);
+        await using var transport = new Transport();
+        var preview = new PreviewCapture();
+        PodcastsPageViewModel? vm = null;
+        try
+        {
+            Platform.GetPodcastCaptureDevices = () => new([new("Camera", "camera")], [new("Mic", "microphone")]);
+            Platform.CreatePodcastPreviewAsync = (camera, _) =>
+            {
+                Assert.Equal("camera", camera);
+                return Task.FromResult<IPodcastCapture>(preview);
+            };
+            Platform.RequestPodcastPermissionsAsync = (_, _) => Task.CompletedTask;
+            Platform.CreatePodcastCaptureAsync = (_, microphone, directory, _) =>
+            {
+                Assert.True(preview.Disposed);
+                Assert.Equal("microphone", microphone);
+                return Task.FromResult<IPodcastCapture>(new FakeCapture(directory, new Border()));
+            };
+            var session = new SessionStatusViewModel { Api = api };
+            session.Refresh();
+            vm = new PodcastsPageViewModel(new PodcastApiClient(transport, () => "https://api.example/"), api, session);
+            vm.DetectDevicesCommand.Execute(null);
+            vm.Title = "";
+            vm.KeepScreenOnDuringCapture = true;
+            Assert.False(Platform.ScreenAwake.IsRequested);
+            Assert.True(vm.PreviewCommand.CanExecute(null));
+            Assert.False(vm.StartCommand.CanExecute(null));
+            await vm.PreviewCommand.ExecuteAsync(null);
+            Assert.True(vm.IsPreviewing);
+            Assert.True(Platform.ScreenAwake.IsRequested);
+            vm.KeepScreenOnDuringCapture = false;
+            Assert.False(Platform.ScreenAwake.IsRequested);
+            vm.KeepScreenOnDuringCapture = true;
+            Assert.True(Platform.ScreenAwake.IsRequested);
+            Assert.True(vm.IsCapturing);
+            Assert.False(vm.IsBroadcasting);
+            Assert.Same(preview.Preview, vm.CapturePreview);
+            Assert.False(vm.DetectDevicesCommand.CanExecute(null));
+            Assert.True(vm.StopPreviewCommand.CanExecute(null));
+            Assert.Equal(0, transport.CreateCount);
+            Assert.Empty(transport.Uploads);
+            var page = new PodcastsPage { DataContext = vm };
+            Assert.Same(preview.Preview, page.FindControl<ContentControl>("CapturePreviewHost")!.Content);
+            preview.OnDispose = () => Assert.Null(vm.CapturePreview);
+            switch (action)
+            {
+                case "stop": await vm.StopPreviewCommand.ExecuteAsync(null); break;
+                case "leave": await vm.DeactivateAsync(); break;
+                case "logout": await session.LogoutAsync(); break;
+                case "failure": preview.Fail(); break;
+                case "broadcast":
+                    vm.Title = "Emission";
+                    Assert.True(vm.StartCommand.CanExecute(null));
+                    await vm.StartCommand.ExecuteAsync(null);
+                    Assert.True(vm.IsBroadcasting);
+                    Assert.True(Platform.ScreenAwake.IsRequested);
+                    Assert.Equal(1, transport.CreateCount);
+                    await vm.StopAsync();
+                    break;
+            }
+            await WaitForUiAsync(() => preview.Disposed && !vm.IsPreviewing && !vm.IsBroadcasting);
+            Assert.True(preview.Disposed);
+            Assert.False(vm.IsPreviewing);
+            Assert.False(Platform.ScreenAwake.IsRequested);
+            Assert.Null(vm.CapturePreview);
+            if (action == "failure") Assert.Contains("Camera disconnected", vm.Status);
+            if (action != "broadcast") Assert.Equal(0, transport.CreateCount);
+            return true;
+        }
+        finally
+        {
+            if (vm is not null) await vm.DeactivateAsync();
+            Platform.GetPodcastCaptureDevices = previousDevices;
+            Platform.CreatePodcastPreviewAsync = previousPreview;
+            Platform.CreatePodcastCaptureAsync = previousCapture;
+            Platform.RequestPodcastPermissionsAsync = previousPermissions;
+            File.Delete(path);
+            File.Delete(path + ".settings");
+        }
+    }, TestContext.Current.CancellationToken);
+
+    [Fact]
+    public Task Leaving_the_page_during_preview_start_disposes_the_late_camera_without_showing_it()
+        => HeadlessUnitTestSession.GetOrStartForAssembly(typeof(PodcastBroadcasterTests).Assembly).Dispatch(async () =>
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"postit-preview-race-{Guid.NewGuid():N}");
+        var previous = Platform.CreatePodcastPreviewAsync;
+        var previousDevices = Platform.GetPodcastCaptureDevices;
+        var store = new TokenStore(path);
+        store.Save(new RefreshTokenRecord("access", "refresh", DateTimeOffset.UtcNow.AddHours(1)));
+        await using var api = new YavscApiClient(new Settings(path + ".settings"), store);
+        var preview = new PreviewCapture();
+        var pending = new TaskCompletionSource<IPodcastCapture>(TaskCreationOptions.RunContinuationsAsynchronously);
+        try
+        {
+            Platform.GetPodcastCaptureDevices = () => new([new("Camera", "camera")], []);
+            Platform.CreatePodcastPreviewAsync = (_, _) => pending.Task;
+            var session = new SessionStatusViewModel { Api = api };
+            session.Refresh();
+            var vm = new PodcastsPageViewModel(new PodcastApiClient(api, () => "https://api.example/"), api, session);
+            vm.DetectDevicesCommand.Execute(null);
+            var start = vm.PreviewCommand.ExecuteAsync(null);
+            var leave = vm.DeactivateAsync();
+            pending.SetResult(preview);
+            await WaitForUiAsync(() => start.IsCompleted && leave.IsCompleted);
+            await start;
+            await leave;
+            Assert.True(preview.Disposed);
+            Assert.Null(vm.CapturePreview);
+            Assert.False(vm.IsPreviewing);
+            return true;
+        }
+        finally
+        {
+            Platform.CreatePodcastPreviewAsync = previous;
+            Platform.GetPodcastCaptureDevices = previousDevices;
+            File.Delete(path);
+            File.Delete(path + ".settings");
+        }
+    }, TestContext.Current.CancellationToken);
+
+    private static async Task WaitForUiAsync(Func<bool> done)
+    {
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        timeout.CancelAfter(TimeSpan.FromSeconds(5));
+        while (!done())
+        {
+            Avalonia.Threading.Dispatcher.UIThread.RunJobs();
+            await Task.Delay(10, timeout.Token);
+        }
+    }
+
+    private sealed class PreviewCapture : IPodcastCapture
+    {
+        private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public Task Completion => _completion.Task;
+        public Control? Preview { get; } = new Border();
+        public bool Disposed { get; private set; }
+        public Action? OnDispose { get; set; }
+        public void Fail() => _completion.TrySetException(new IOException("Camera disconnected"));
+        public Task StopAsync() { _completion.TrySetResult(); return Task.CompletedTask; }
+        public async ValueTask DisposeAsync()
+        {
+            OnDispose?.Invoke();
+            await StopAsync();
+            Disposed = true;
+        }
+    }
+
     [Fact]
     public Task Shared_page_exposes_running_capture_preview_and_clears_it_before_disposal()
         => HeadlessUnitTestSession.GetOrStartForAssembly(typeof(PodcastBroadcasterTests).Assembly).Dispatch(async () =>

@@ -156,6 +156,13 @@ adb shell am start -n fr.pschneider.postit/fr.pschneider.postit.CameraFrameRotat
 adb shell run-as fr.pschneider.postit cat files/camera-rotation-test-result.txt
 ```
 
+Pour un telephone ARM64, ajouter `-r android-arm64` au build et installer
+l'APK de `bin/Debug/net10.0-android/android-arm64/`. Le projet transmet ce RID
+aux targets natives LibVLC : l'APK doit contenir `libvlc.so` et
+`libc++_shared.so`. Utiliser `adb -s <serial>` si plusieurs appareils sont
+connectes. Laisser l'appareil deverrouille et les tests au premier plan ;
+ne lancer le test suivant qu'apres `PASS` ou `FAIL`.
+
 Attendre la fin du test : `RUNNING` doit devenir `PASS`. Il encode quatre
 quadrants colores en MPEG-TS pour 0, 90, 180 et 270 degres, decode une image et
 verifie les dimensions (640x480 ou 480x640) et les couleurs aux quatre positions.
@@ -184,12 +191,35 @@ Le resultat inclut les angles capteur/ecran et la premiere matrice
 SurfaceTexture recue. Les tests unitaires couvrent notamment la matrice
 reelle `[0,-1,0,0,-1,0,0,0,0,0,1,0,1,1,0,1]` : pour un capteur a 90 degres
 et un ecran a 0, elle porte deja la rotation et ne doit pas recevoir 90 degres
-supplementaires. Le test synthetique seul ne detecte pas cette double rotation.
+supplementaires. La camera avant mesuree
+`[0,-1,0,0,1,0,0,0,0,0,1,0,0,1,0,1]` (capteur a 270 degres) contient en plus
+un miroir : la rotation restante y est appliquee dans le sens inverse.
+Le test synthetique seul ne detecte pas cette double rotation.
 
 Verifier aussi manuellement les cameras avant/arriere en portrait et paysage,
 le son, le direct et le replay, et la poursuite de l'emission en arriere-plan.
 L'orientation est fixee au demarrage d'une emission ; tourner le telephone
 pendant l'emission ne reconfigure pas le format encode.
+
+### Anti-veille Android
+
+`ScreenAwakeRequestsTests`, `PodcastPreferencesTests` et les regressions
+d'apercu de `PodcastBroadcasterTests` couvrent les demandes independantes,
+leur liberation, le changement d'option pendant la capture et sa persistance.
+Le test natif Debug utilise une video MP4 H.264 locale synthetique, sans API,
+camera ni microphone :
+
+```bash
+adb push /chemin/video-test.mp4 /data/local/tmp/postit-screen-awake-fixture.mp4
+adb shell run-as fr.pschneider.postit cp /data/local/tmp/postit-screen-awake-fixture.mp4 files/screen-awake-fixture.mp4
+adb shell am start -n fr.pschneider.postit/fr.pschneider.postit.ScreenAwakeTestActivity
+adb shell run-as fr.pschneider.postit cat files/screen-awake-test-result.txt
+```
+
+Attendre `PASS` : lecture, pause/reprise, arret, fin, destruction de la surface,
+demandes simultanees, arriere-plan et retour au premier plan sont verifies
+sur le drapeau Android `KeepScreenOn`. Les changements de page et le retour
+temporaire a l'accueil pendant ce test sont automatiques.
 
 ## Quand ne PAS écrire de test
 

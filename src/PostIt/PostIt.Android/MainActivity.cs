@@ -39,6 +39,18 @@ public class MainActivity : AvaloniaMainActivity
         PlatformBootstrap.InitPlatform();
         Current = this;
         base.OnCreate(savedInstanceState);
+        PostIt.Services.Platform.ScreenAwake.Changed += OnScreenAwakeChanged;
+    }
+
+    private void OnScreenAwakeChanged() => RunOnUiThread(UpdateScreenAwake);
+
+    private void UpdateScreenAwake()
+    {
+        if (Window is not { } window) return;
+        if (ReferenceEquals(Current, this) && IsForeground && PostIt.Services.Platform.ScreenAwake.IsRequested)
+            window.AddFlags(WindowManagerFlags.KeepScreenOn);
+        else
+            window.ClearFlags(WindowManagerFlags.KeepScreenOn);
     }
      /// <summary>
     /// Receives the deep-link Intent fired by the system browser after the
@@ -72,17 +84,21 @@ public class MainActivity : AvaloniaMainActivity
         base.OnResume();
         IsForeground = true;
         PostIt.Services.Platform.IsApplicationActive = true;
+        UpdateScreenAwake();
     }
 
     protected override void OnPause()
     {
         IsForeground = false;
         PostIt.Services.Platform.IsApplicationActive = false;
+        UpdateScreenAwake();
         base.OnPause();
     }
 
     protected override void OnDestroy()
     {
+        PostIt.Services.Platform.ScreenAwake.Changed -= OnScreenAwakeChanged;
+        Window?.ClearFlags(WindowManagerFlags.KeepScreenOn);
         if (ReferenceEquals(Current, this))
         {
             Current = null;

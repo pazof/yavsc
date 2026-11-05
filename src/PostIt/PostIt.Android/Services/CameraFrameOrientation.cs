@@ -37,14 +37,21 @@ internal static class CameraFrameOrientation
             throw new ArgumentException("A SurfaceTexture transform must contain 16 elements.", nameof(textureMatrix));
         // SurfaceTexture's usual Y flip changes the sign of the first column's Y.
         // Camera2 can also put the sensor rotation in this matrix; don't apply it twice.
-        var angle = Math.Atan2(-textureMatrix[1], textureMatrix[0]) * 180 / Math.PI;
+        // Front cameras can add a mirror: with Rot(p)·Mirror·Rot(r) = Rot(p - r)·Mirror,
+        // the remaining rotation must then be applied in the opposite direction.
+        var mirrored = textureMatrix[4] * textureMatrix[1] - textureMatrix[0] * textureMatrix[5] < 0;
+        var angle = mirrored
+            ? Math.Atan2(textureMatrix[1], -textureMatrix[0]) * 180 / Math.PI
+            : Math.Atan2(-textureMatrix[1], textureMatrix[0]) * 180 / Math.PI;
         if (!double.IsFinite(angle) || (textureMatrix[0] == 0 && textureMatrix[1] == 0))
             throw new ArgumentException("Invalid SurfaceTexture orientation.", nameof(textureMatrix));
         var quarterTurns = (int)Math.Round(angle / 90);
         if (Math.Abs(angle - quarterTurns * 90) > 0.01)
             throw new ArgumentException("SurfaceTexture orientation is not a quarter turn.", nameof(textureMatrix));
         var producerRotation = (quarterTurns * 90 + 360) % 360;
-        return (clockwiseDegrees - producerRotation + 360) % 360;
+        return mirrored
+            ? (producerRotation - clockwiseDegrees + 360) % 360
+            : (clockwiseDegrees - producerRotation + 360) % 360;
     }
 
     private static void Validate(int degrees)

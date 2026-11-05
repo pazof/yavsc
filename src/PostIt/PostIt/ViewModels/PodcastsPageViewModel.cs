@@ -34,7 +34,48 @@ public partial class PodcastsPageViewModel : ViewModelBase
     private PodcastResponse? _selected;
     private Control? _capturePreview;
     private bool _restoringPreferences;
-    public Control? CapturePreview { get => _capturePreview; private set => SetProperty(ref _capturePreview, value); }
+    private bool _keepScreenOnDuringCapture;
+    private IDisposable? _screenAwake;
+    public bool SupportsCaptureScreenAwake => OperatingSystem.IsAndroid();
+    public bool KeepScreenOnDuringCapture
+    {
+        get => _keepScreenOnDuringCapture;
+        set
+        {
+            if (!SetProperty(ref _keepScreenOnDuringCapture, value)) return;
+            UpdateScreenAwake();
+            if (!_restoringPreferences)
+            {
+                _api.Settings.PodcastKeepScreenOn = value;
+                SavePreferences();
+            }
+        }
+    }
+
+    private void UpdateScreenAwake()
+    {
+        if (KeepScreenOnDuringCapture && IsCapturing)
+            _screenAwake ??= Platform.ScreenAwake.Acquire();
+        else
+        {
+            _screenAwake?.Dispose();
+            _screenAwake = null;
+        }
+    }
+
+    private readonly SemaphoreSlim _previewGate = new(1, 1);
+    private IPodcastCapture? _previewCapture;
+    public bool IsPreviewing => _previewCapture is not null;
+    public bool IsCapturing => IsPreviewing || IsBroadcasting;
+    public bool HasCapturePreview => CapturePreview is not null;
+    public Control? CapturePreview
+    {
+        get => _capturePreview;
+        private set
+        {
+            if (SetProperty(ref _capturePreview, value)) OnPropertyChanged(nameof(HasCapturePreview));
+        }
+    }
 
     public ObservableCollection<PodcastResponse> Podcasts { get; } = new();
     public ObservableCollection<CaptureDevice> Cameras { get; } = new();
@@ -73,7 +114,13 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public bool IsBroadcasting
     {
         get => _isBroadcasting;
-        private set { if (SetProperty(ref _isBroadcasting, value)) UpdateCommands(); }
+        private set
+        {
+            if (!SetProperty(ref _isBroadcasting, value)) return;
+            OnPropertyChanged(nameof(IsCapturing));
+            UpdateScreenAwake();
+            UpdateCommands();
+        }
     }
 
     public bool IsBusy
@@ -135,6 +182,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public IAsyncRelayCommand RefreshCommand { get; }
     public IRelayCommand DetectDevicesCommand { get; }
     public IAsyncRelayCommand StartCommand { get; }
+    public IAsyncRelayCommand PreviewCommand { get; }
+    public IAsyncRelayCommand StopPreviewCommand { get; }
     public IAsyncRelayCommand PrepareCommand { get; }
     public IAsyncRelayCommand UpdatePlanCommand { get; }
     public IRelayCommand NewPlanCommand { get; }
@@ -152,7 +201,10 @@ public partial class PodcastsPageViewModel : ViewModelBase
         _api = api;
         _session = session;
         RefreshCommand = new AsyncRelayCommand(RefreshAsync, () => !IsBusy);
-        DetectDevicesCommand = new RelayCommand(DetectDevices, () => CanBroadcast && !IsBroadcasting && !IsBusy);
+        DetectDevicesCommand = new RelayCommand(DetectDevices, () => CanBroadcast && !IsCapturing && !IsBusy);
+        PreviewCommand = new AsyncRelayCommand(StartPreviewAsync,
+            () => CanBroadcast && !IsCapturing && !IsBusy && _session.IsLoggedIn && SelectedCamera is not null);
+        StopPreviewCommand = new AsyncRelayCommand(() => StopPreviewAsync(), () => IsPreviewing && !IsBusy);
         StartCommand = new AsyncRelayCommand(StartAsync,
             () => CanBroadcast && !IsBroadcasting && !IsBusy && _session.IsLoggedIn
                 && SelectedCamera is not null && !string.IsNullOrWhiteSpace(Title)
@@ -178,6 +230,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
             () => SelectedPodcast is { State: PodcastState.Completed, Replay.State: PodcastReplayState.Failed } p
                 && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
         _title = _api.Settings.PodcastDefaultTitle;
+        _keepScreenOnDuringCapture = _api.Settings.PodcastKeepScreenOn;
         _restoringPreferences = true;
         try
         {
@@ -210,6 +263,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
         RefreshCommand.NotifyCanExecuteChanged();
         DetectDevicesCommand.NotifyCanExecuteChanged();
         StartCommand.NotifyCanExecuteChanged();
+        PreviewCommand.NotifyCanExecuteChanged();
+        StopPreviewCommand.NotifyCanExecuteChanged();
         PrepareCommand.NotifyCanExecuteChanged();
         UpdatePlanCommand.NotifyCanExecuteChanged();
         NewPlanCommand.NotifyCanExecuteChanged();
@@ -270,6 +325,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
         _restoringPreferences = true;
         try
         {
+            KeepScreenOnDuringCapture = _api.Settings.PodcastKeepScreenOn;
             Cameras.Clear();
             Microphones.Clear();
             foreach (var device in _api.Settings.PodcastCameras) Cameras.Add(device);
@@ -288,6 +344,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public async Task DeactivateAsync()
     {
         _pageCancellation.Cancel();
+        await StopPreviewAsync();
         if (_broadcaster is not null) await StopAsync();
     }
 
@@ -325,11 +382,88 @@ public partial class PodcastsPageViewModel : ViewModelBase
         finally { _restoringPreferences = false; }
     }
 
+    private async Task StartPreviewAsync()
+    {
+        IsBusy = true;
+        await _previewGate.WaitAsync();
+        IPodcastCapture? capture = null;
+        try
+        {
+            var ct = _pageCancellation.Token;
+            ct.ThrowIfCancellationRequested();
+            if (_previewCapture is not null) return;
+            var camera = SelectedCamera?.Value ?? throw new InvalidOperationException("Choisissez une camera.");
+            capture = Platform.CreatePodcastPreviewAsync is { } createPreview
+                ? await createPreview(camera, ct)
+                : new LibVlcPodcastCapture(
+                    vlc => new CameraStreamer(vlc).CreateCaptureMedia(camera, null), null, preview: true);
+            ct.ThrowIfCancellationRequested();
+            if (!_session.IsLoggedIn) throw new InvalidOperationException("La session a ete deconnectee.");
+            if (capture.Preview is null) throw new InvalidOperationException("Apercu camera indisponible.");
+            _previewCapture = capture;
+            CapturePreview = capture.Preview;
+            _session.LogoutCompleted += OnLogout;
+            UpdatePreviewState();
+            Status = "Previsualisation locale uniquement : aucune emission, aucun enregistrement, microphone inactif.";
+            _ = ObservePreviewAsync(capture);
+            capture = null;
+        }
+        catch (Exception ex) { Status = $"Previsualisation impossible : {ex.Message}"; }
+        finally
+        {
+            try { if (capture is not null) await capture.DisposeAsync(); }
+            catch (Exception ex) { Status += $" Nettoyage : {ex.Message}"; }
+            _previewGate.Release();
+            IsBusy = false;
+        }
+    }
+
+    private void UpdatePreviewState()
+    {
+        OnPropertyChanged(nameof(IsPreviewing));
+        OnPropertyChanged(nameof(IsCapturing));
+        UpdateScreenAwake();
+        UpdateCommands();
+    }
+
+    private async Task ObservePreviewAsync(IPodcastCapture capture)
+    {
+        string? failure = null;
+        try { await capture.Completion; }
+        catch (Exception ex) { failure = ex.Message; }
+        await StopPreviewAsync(capture, failure);
+    }
+
+    private async Task<bool> StopPreviewAsync(IPodcastCapture? expected = null, string? failure = null)
+    {
+        await _previewGate.WaitAsync();
+        try
+        {
+            if (_previewCapture is not { } capture || (expected is not null && expected != capture)) return true;
+            _previewCapture = null;
+            CapturePreview = null;
+            _session.LogoutCompleted -= OnLogout;
+            try { await capture.DisposeAsync(); }
+            finally { UpdatePreviewState(); }
+            Status = failure is null ? "Previsualisation arretee." : $"Previsualisation interrompue : {failure}";
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Status = $"Arret de la previsualisation impossible : {ex.Message}";
+            return false;
+        }
+        finally { _previewGate.Release(); }
+    }
+
     private async Task StartAsync()
     {
         IsBusy = true;
         try
         {
+            if (!await StopPreviewAsync())
+                throw new InvalidOperationException("Impossible de liberer la camera de previsualisation.");
+            _pageCancellation.Token.ThrowIfCancellationRequested();
             if (SelectedCamera is null) throw new InvalidOperationException("Choisissez une camera.");
             var camera = SelectedCamera.Value;
             var microphone = string.IsNullOrWhiteSpace(SelectedMicrophone?.Value) ? null : SelectedMicrophone.Value;
@@ -396,6 +530,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
     private async void OnLogout()
     {
         // Releasing capture is required even after the HTTP credentials have been cleared.
+        await StopPreviewAsync();
         await StopAsync();
     }
 

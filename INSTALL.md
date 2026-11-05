@@ -180,6 +180,16 @@ the same Avalonia video page as desktop. Catalogue, playback controls and
 authenticated segment downloads are shared; no external browser, public media
 URL or camera/microphone permissions are needed to watch a podcast.
 
+Video playback keeps the screen awake while PostIt is visible. Pausing,
+stopping, reaching the end, a playback error or leaving the video releases
+this request; backgrounding the app always allows the screen to sleep.
+
+The podcast page offers **Garder l'ecran allume pendant l'apercu camera et le
+direct** on Android. This preference is saved and disabled by default. It
+only keeps the screen awake during an active camera preview or broadcast
+while PostIt is visible, and can be changed during capture. Turning it off
+does not stop capture or alter the existing background broadcast service.
+
 Leaving the app stops playback and cancels downloads. Returning recreates the
 player: a replay starts from the beginning, and a live stream rejoins near the
 live edge. Seeking and background audio are not supported.

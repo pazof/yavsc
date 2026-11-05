@@ -26,26 +26,44 @@ public sealed class CameraFrameOrientationTests
     public void Maps_output_corners_to_input_for_clockwise_rotation(int rotation, float[] expected)
         => Assert.Equal(expected, CameraFrameOrientation.GetTextureCoordinates(rotation));
 
-    [Theory]
-    [InlineData(90, 0, -1, 0)]
-    [InlineData(270, 0, 1, 0)]
-    [InlineData(180, -1, 0, 0)]
-    [InlineData(90, 1, 0, 90)]
-    [InlineData(270, 1, 0, 270)]
-    [InlineData(0, 0, -1, 270)]
-    [InlineData(180, 0, -1, 90)]
-    public void Does_not_repeat_rotation_already_in_surface_texture(
-        int desired, float x, float y, int expected)
+    [Fact]
+    public void Sensor_rotation_and_display_changes_map_corners_for_all_lens_orientations()
     {
-        float[] matrix = [x, y, 0, 0, y, -x, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1];
-        Assert.Equal(expected, CameraFrameOrientation.GetRemainingRotation(desired, matrix));
+        foreach (var sensor in new[] { 0, 90, 180, 270 })
+        foreach (var display in new[] { 0, 90, 180, 270 })
+        foreach (var front in new[] { false, true })
+        {
+            var rotation = CameraFrameOrientation.GetRotation(sensor, display, front);
+            var coordinates = CameraFrameOrientation.GetTextureCoordinates(rotation);
+            float[] expected = [0, 0, 1, 0, 0, 1, 1, 1];
+            var turns = (sensor / 90 + (front ? display / 90 : -display / 90) + 4) % 4;
+            for (var turn = 0; turn < turns; turn++)
+                for (var index = 0; index < expected.Length; index += 2)
+                    (expected[index], expected[index + 1]) = (1 - expected[index + 1], expected[index]);
+            Assert.Equal(expected, coordinates);
+        }
     }
 
+    [Theory]
+    [InlineData(new float[] { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 }, 90, 90)]
+    [InlineData(new float[] { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 }, 270, 270)]
+    // Measured on a real Android 15 phone in portrait (rear sensor 90°, front sensor 270°).
+    [InlineData(new float[] { 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1 }, 90, 0)]
+    [InlineData(new float[] { 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1 }, 0, 270)]
+    [InlineData(new float[] { 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 }, 270, 0)]
+    [InlineData(new float[] { 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 }, 0, 270)]
+    [InlineData(new float[] { 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 }, 180, 90)]
+    public void Does_not_apply_the_rotation_already_in_the_texture_transform_twice(
+        float[] matrix, int rotation, int expected)
+        => Assert.Equal(expected, CameraFrameOrientation.GetRemainingRotation(rotation, matrix));
+
     [Fact]
-    public void Recognizes_the_measured_rear_camera_transform_even_with_cropping()
+    public void Rejects_invalid_texture_transforms()
     {
-        float[] matrix = [0, -0.9f, 0, 0, -0.8f, 0, 0, 0, 0, 0, 1, 0, 0.9f, 0.95f, 0, 1];
-        Assert.Equal(0, CameraFrameOrientation.GetRemainingRotation(90, matrix));
+        Assert.Throws<ArgumentException>(() => CameraFrameOrientation.GetRemainingRotation(0, new float[15]));
+        Assert.Throws<ArgumentException>(() => CameraFrameOrientation.GetRemainingRotation(0, new float[16]));
+        var skewed = new float[] { 0.7f, -0.7f, 0, 0, -0.7f, -0.7f, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 };
+        Assert.Throws<ArgumentException>(() => CameraFrameOrientation.GetRemainingRotation(0, skewed));
     }
 
     [Theory]
