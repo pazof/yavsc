@@ -52,6 +52,46 @@ namespace PostIt.Tests;
 /// </summary>
 public class MainPageButtonsTests
 {
+    [AvaloniaFact]
+    public async Task Blog_toolbar_uses_page_view_model_in_home_navigation_and_tracks_changes()
+    {
+        var home = new HomePageViewModel();
+        var root = new MainView { DataContext = home };
+        var window = new Window { Content = root };
+        window.Show();
+        try
+        {
+            await root.NavRoot.PushAsync(new ContentPage { DataContext = home });
+            var first = new BlogsViewModel();
+            var page = new BlogsPage { DataContext = first };
+            await root.NavRoot.PushAsync(page);
+
+            page.BlogsCommandBar.IsOpen = true;
+            Assert.All(page.BlogsCommandBar.PrimaryCommands.OfType<Control>(),
+                control => Assert.Same(first, control.DataContext));
+            Assert.Same(first.NewPostCommand, page.NewPostButton.Command);
+            Assert.Same(first.SaveCommand, page.SaveButton.Command);
+            Assert.NotNull(page.ManageAclButton.Command);
+            Assert.False(page.SaveButton.IsVisible);
+
+            first.IsEditing = true;
+            Assert.True(page.SaveButton.IsVisible);
+
+            var second = new BlogsViewModel();
+            page.DataContext = second;
+            Assert.All(page.BlogsCommandBar.PrimaryCommands.OfType<Control>(),
+                control => Assert.Same(second, control.DataContext));
+            Assert.Same(second.NewPostCommand, page.NewPostButton.Command);
+            Assert.Same(second.SaveCommand, page.SaveButton.Command);
+            Assert.NotNull(page.ManageAclButton.Command);
+            Assert.False(page.SaveButton.IsVisible);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
     /// <summary>
     /// Fake <see cref="YavscApiClient"/> that throws on any
     /// wire call. These tests never invoke a command that hits

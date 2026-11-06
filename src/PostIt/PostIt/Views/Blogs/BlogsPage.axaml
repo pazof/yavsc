@@ -1,33 +1,170 @@
 <ContentPage
   x:Class="PostIt.Views.Blogs.BlogsPage"
-  x:Name="BlogsPageRoot"
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  xmlns:reader="clr-namespace:Markdown.Avalonia;assembly=Markdown.Avalonia"
-  xmlns:services="using:PostIt.Services"
   xmlns:models="using:Yavsc.Blogspot"
   xmlns:postitControls="using:PostIt.Controls"
+  xmlns:reader="clr-namespace:Markdown.Avalonia;assembly=Markdown.Avalonia"
+  xmlns:services="using:PostIt.Services"
   xmlns:vm="using:PostIt.ViewModels"
+  x:Name="BlogsPageRoot"
   HorizontalAlignment="Stretch"
   VerticalAlignment="Stretch"
   x:DataType="vm:BlogsViewModel"
-  mc:Ignorable="d"
   AutomaticallyApplySafeAreaPadding="True"
   Header="Billets de blog"
-  >
+  mc:Ignorable="d">
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
-  <ScrollViewer>
-  <Grid x:Name="MainGrid"
-    RowDefinitions="Auto,Auto,*,4,2*,Auto"
-    Margin="5,5,10,5"
-    HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch">
+  <NavigationPage.TopCommandBar>
+    <CommandBar
+      x:Name="BlogsCommandBar"
+      DataContext="{Binding #BlogsPageRoot.DataContext}"
+      IsDynamicOverflowEnabled="True">
+      <CommandBar.PrimaryCommands>
+        <CommandBarButton
+          x:Name="SaveButton"
+          Classes.modified="{Binding IsDraftModified}"
+          Command="{Binding SaveCommand}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsEnabled="{Binding !IsBusy}"
+          IsVisible="{Binding IsEditing}"
+          Label="Save">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource save_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
 
-      <WrapPanel x:Name="BlogsHeaderPanel"
+
+        <CommandBarButton
+          x:Name="ReadPostButton"
+          Command="{Binding ReadPostCommand}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsVisible="{Binding IsEditing}"
+          Label="Lire">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource eye_tracking_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton
+          x:Name="EditPostButton"
+          Command="{Binding EditPostCommand}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsEnabled="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNotNull}}"
+          IsVisible="{Binding !IsEditing}"
+          Label="Modifier">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource comment_edit_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+
+        <CommandBarButton
+          Command="{Binding DeleteCommand}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsVisible="{Binding IsEditing}"
+          Label="Supprimer">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource delete_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton
+          x:Name="AddAttachmentButton"
+          Click="AddAttachment_Click"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsEnabled="{Binding !IsBusy}"
+          IsVisible="{Binding IsEditing}"
+          Label="Ajouter fichiers">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource attach_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton
+          x:Name="ManageAclButton"
+          Command="{Binding ManageAclAsync}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsVisible="{Binding IsEditing}"
+          Label="ACL">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource AclIcon}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton
+          x:Name="OpenCirclesButton"
+          Command="{Binding OpenCirclesAsync}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          Label="Mes cercles">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource organization_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarToggleButton
+          Command="{Binding TogglePublishCommand}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsChecked="{Binding DraftIsPublished, Mode=TwoWay}"
+          IsVisible="{Binding IsEditing}"
+          Label="Publié">
+          <CommandBarToggleButton.Icon>
+            <PathIcon Data="{StaticResource send_regular}" />
+          </CommandBarToggleButton.Icon>
+        </CommandBarToggleButton>
+        <CommandBarToggleButton
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}"
+          IsVisible="{Binding IsEditing}"
+          Label="Aperçu">
+          <CommandBarToggleButton.Icon>
+            <PathIcon Data="{StaticResource preview_link_regular}" />
+          </CommandBarToggleButton.Icon>
+        </CommandBarToggleButton>
+        <CommandBarButton
+          x:Name="OpenSignatureDevButton"
+          Command="{Binding OpenSignatureDevAsync}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsVisible="{Binding IsEditing}"
+          Label="[DEV] Signature">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource signature_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+
+
+      </CommandBar.PrimaryCommands>
+      <CommandBar.SecondaryCommands>
+        <CommandBarButton Label="Search">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource search_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton Label="Share" >
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource share_android_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+        <CommandBarButton
+          x:Name="NewPostButton"
+          Command="{Binding NewPostCommand}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          Label="Nouveau billet">
+          <CommandBarButton.Icon>
+            <PathIcon Data="{StaticResource form_new_regular}" />
+          </CommandBarButton.Icon>
+        </CommandBarButton>
+      </CommandBar.SecondaryCommands>
+    </CommandBar>
+  </NavigationPage.TopCommandBar>
+  <ScrollViewer>
+    <Grid
+      x:Name="MainGrid"
+      Margin="5,5,10,5"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch"
+      RowDefinitions="Auto,Auto,*,4,2*,Auto">
+
+      <WrapPanel
+        x:Name="BlogsHeaderPanel"
         Margin="5"
         Orientation="Horizontal">
         <TextBox
@@ -35,232 +172,168 @@
           PlaceholderText="Rechercher un titre ou un auteur..."
           Text="{Binding SearchText, Mode=TwoWay}" />
       </WrapPanel>
-      <CommandBar x:Name="BlogsCommandBar"
-       Grid.Row="1"
-       HorizontalAlignment="Right" IsDynamicOverflowEnabled="True">
-        <CommandBar.PrimaryCommands>
-          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" Command="{Binding RefreshCommand}" Label="Actualiser">
-            <CommandBarButton.Icon>
-              <PathIcon Data="{StaticResource RefreshIcon}" />
-            </CommandBarButton.Icon>
-          </CommandBarButton>
-          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" x:Name="NewPostButton" Command="{Binding NewPostCommand}" Label="Nouveau billet" />
-          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" x:Name="ReadPostButton" Command="{Binding ReadPostCommand}"
-                            IsVisible="{Binding IsEditing}" Label="Lire" />
-          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" x:Name="EditPostButton" Command="{Binding EditPostCommand}"
-                            IsEnabled="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNotNull}}"
-                            IsVisible="{Binding !IsEditing}" Label="Modifier" />
-          <CommandBarButton
-            DataContext="{Binding #BlogsPageRoot.DataContext}"
-            x:Name="SaveButton"
-            IsVisible="{Binding IsEditing}"
-            Command="{Binding SaveCommand}"
-            Classes.modified="{Binding IsDraftModified}"
-            IsEnabled="{Binding !IsBusy}"
-            Label="Save">
-            <CommandBarButton.Icon>
-              <PathIcon Data="{StaticResource SaveIcon}" />
-            </CommandBarButton.Icon>
-          </CommandBarButton>
-          <CommandBarButton DataContext="{Binding #BlogsPageRoot.DataContext}" Command="{Binding DeleteCommand}" IsVisible="{Binding IsEditing}" Label="Supprimer">
-            <CommandBarButton.Icon>
-              <PathIcon Data="{StaticResource DeleteIcon}" />
-            </CommandBarButton.Icon>
-          </CommandBarButton>
-          <CommandBarButton
-            DataContext="{Binding #BlogsPageRoot.DataContext}"
-            x:Name="AddAttachmentButton"
-            IsVisible="{Binding IsEditing}"
-            Click="AddAttachment_Click"
-            IsEnabled="{Binding !IsBusy}"
-            Label="Ajouter fichiers">
-            <CommandBarButton.Icon>
-              <PathIcon Data="{StaticResource AddIcon}" />
-            </CommandBarButton.Icon>
-          </CommandBarButton>
-          <CommandBarButton
-            DataContext="{Binding #BlogsPageRoot.DataContext}"
-            x:Name="ManageAclButton"
-            IsVisible="{Binding IsEditing}"
-            Command="{Binding ManageAclAsync}"
-            Label="ACL">
-            <CommandBarButton.Icon>
-              <PathIcon Data="{StaticResource AclIcon}" />
-            </CommandBarButton.Icon>
-          </CommandBarButton>
-          <CommandBarButton
-            DataContext="{Binding #BlogsPageRoot.DataContext}"
-            x:Name="OpenCirclesButton"
-            Command="{Binding OpenCirclesAsync}"
-            Label="Mes cercles">
-            <CommandBarButton.Icon>
-              <PathIcon Data="{StaticResource CircleIcon}" />
-            </CommandBarButton.Icon>
-          </CommandBarButton>
-          <CommandBarToggleButton
-            DataContext="{Binding #BlogsPageRoot.DataContext}"
-            IsVisible="{Binding IsEditing}"
-            Command="{Binding TogglePublishCommand}"
-            IsChecked="{Binding DraftIsPublished, Mode=TwoWay}"
-            Label="Publié">
-            <CommandBarToggleButton.Icon>
-              <PathIcon Data="{StaticResource PublishedIcon}" />
-            </CommandBarToggleButton.Icon>
-          </CommandBarToggleButton>
-          <CommandBarToggleButton DataContext="{Binding #BlogsPageRoot.DataContext}" IsVisible="{Binding IsEditing}" IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}" Label="Aperçu">
-            <CommandBarToggleButton.Icon>
-              <PathIcon Data="{StaticResource MarkdownIcon}" />
-            </CommandBarToggleButton.Icon>
-          </CommandBarToggleButton>
-          <CommandBarButton
-            DataContext="{Binding #BlogsPageRoot.DataContext}"
-            x:Name="OpenSignatureDevButton"
-            IsVisible="{Binding IsEditing}"
-            Command="{Binding OpenSignatureDevAsync}"
-            Label="[DEV] Signature">
-            <CommandBarButton.Icon>
-              <PathIcon Data="{StaticResource SignIcon}" />
-            </CommandBarButton.Icon>
-          </CommandBarButton>
-        </CommandBar.PrimaryCommands>
-      </CommandBar>
 
-        <Border x:Name="PostsListBorder"
-          Grid.Row="2"
-          Margin="12"
-          Padding="8"
-          BorderBrush="Gray"
-          BorderThickness="1">
-          <ListBox
+      <Border
+        x:Name="PostsListBorder"
+        Grid.Row="2"
+        Margin="12"
+        Padding="8"
+        BorderBrush="Gray"
+        BorderThickness="1">
+        <ListBox
           x:Name="PostsListBox"
           IsEnabled="{Binding !IsBusy}"
-          ItemsSource="{Binding FilteredPosts}" SelectedItem="{Binding SelectedPost, Mode=TwoWay}">
-            <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="models:BlogPostDto">
-                <StackPanel Spacing="4">
-                  <StackPanel Orientation="Horizontal" Spacing="8">
+          ItemsSource="{Binding FilteredPosts}"
+          SelectedItem="{Binding SelectedPost, Mode=TwoWay}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="models:BlogPostDto">
+              <StackPanel Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock
+                    VerticalAlignment="Center"
+                    FontWeight="SemiBold"
+                    Text="{Binding Title}" />
+                  <Border
+                    x:Name="PublishedBadge"
+                    Padding="6,2"
+                    VerticalAlignment="Center"
+                    Background="#F2F7F2"
+                    BorderBrush="#2F6D2F"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    IsVisible="{Binding IsPublished}">
                     <TextBlock
-                      VerticalAlignment="Center"
+                      FontSize="10"
                       FontWeight="SemiBold"
-                      Text="{Binding Title}" />
-                    <Border
-                      x:Name="PublishedBadge"
-                      VerticalAlignment="Center"
-                      Padding="6,2"
-                      Background="#F2F7F2"
-                      BorderBrush="#2F6D2F"
-                      BorderThickness="1"
-                      CornerRadius="6"
-                      IsVisible="{Binding IsPublished}">
-                      <TextBlock
-                        FontSize="10"
-                        FontWeight="SemiBold"
-                        Foreground="#2F6D2F"
-                        Text="Publié" />
-                    </Border>
-                  </StackPanel>
-                  <TextBlock
-                    FontSize="10"
-                    Foreground="Gray"
-                    Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" />
-                  <TextBlock
-                    FontSize="10"
-                    Foreground="DarkSlateGray"
-                    Text="{Binding AuthorId}" />
+                      Foreground="#2F6D2F"
+                      Text="Publié" />
+                  </Border>
                 </StackPanel>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-        </Border>
+                <TextBlock
+                  FontSize="10"
+                  Foreground="Gray"
+                  Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" />
+                <TextBlock
+                  FontSize="10"
+                  Foreground="DarkSlateGray"
+                  Text="{Binding AuthorId}" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Border>
 
-        <GridSplitter x:Name="PostsSplitter"
-          Grid.Row="3"
-          Margin="12,0"
-          HorizontalAlignment="Stretch"
-          ResizeDirection="Rows" />
+      <GridSplitter
+        x:Name="PostsSplitter"
+        Grid.Row="3"
+        Margin="12,0"
+        HorizontalAlignment="Stretch"
+        ResizeDirection="Rows" />
 
-        <Grid x:Name="PostEditor"
-          IsVisible="{Binding IsEditing}"
-          Grid.Row="4"
-          Margin="12"
+      <Grid
+        x:Name="PostEditor"
+        Grid.Row="4"
+        Margin="12"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        IsVisible="{Binding IsEditing}"
+        RowSpacing="10">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+          Grid.Row="0"
+          FontWeight="SemiBold"
+          Text="Post detail" />
+        <TextBox
+          x:Name="DraftTitleTextBox"
+          Grid.Row="1"
+          PlaceholderText="Title"
+          Text="{Binding DraftTitle, Mode=TwoWay}" />
+
+        <postitControls:MarkdownEditorControl
+          Grid.Row="2"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
-          RowSpacing="10">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-          </Grid.RowDefinitions>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
+          Document="{Binding DraftArticleDocument, Mode=TwoWay}"
+          IsPreviewVisible="{Binding IsMarkdownViewerVisible, Mode=TwoWay}"
+          MarkdownText="{Binding DraftArticle, Mode=TwoWay}" />
 
-          <TextBlock
-            Grid.Row="0"
-            FontWeight="SemiBold"
-            Text="Post detail" />
-          <TextBox
-            x:Name="DraftTitleTextBox"
-            Grid.Row="1"
-            PlaceholderText="Title"
-            Text="{Binding DraftTitle, Mode=TwoWay}" />
+        <Border
+          x:Name="AttachmentsBorder"
+          Grid.Row="3"
+          Padding="8"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch"
+          BorderBrush="LightGray"
+          BorderThickness="1">
+          <StackPanel Spacing="4">
+            <TextBlock FontWeight="SemiBold" Text="Pièces jointes" />
+            <ItemsControl ItemsSource="{Binding DraftAttachments}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding FileName}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
 
-          <postitControls:MarkdownEditorControl
-            Grid.Row="2"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            IsPreviewVisible="{Binding IsMarkdownViewerVisible, Mode=TwoWay}"
-            MarkdownText="{Binding DraftArticle, Mode=TwoWay}"
-            Document="{Binding DraftArticleDocument, Mode=TwoWay}" />
-
-          <Border x:Name="AttachmentsBorder"
-            Grid.Row="3"
-            Padding="8"
-            BorderBrush="LightGray"
-            BorderThickness="1"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch">
-            <StackPanel Spacing="4">
-              <TextBlock FontWeight="SemiBold" Text="Pièces jointes" />
-              <ItemsControl ItemsSource="{Binding DraftAttachments}">
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate>
-                    <TextBlock Text="{Binding FileName}" />
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
-            </StackPanel>
-          </Border>
-
-        </Grid>
-        <Grid x:Name="PostReader" Grid.Row="4" Margin="12" IsVisible="{Binding !IsEditing}"
-              RowDefinitions="Auto,Auto,*" MaxWidth="900" HorizontalAlignment="Stretch" RowSpacing="12">
-          <TextBlock Text="{Binding ReaderTitle}" FontSize="28" FontWeight="SemiBold"
-                     TextWrapping="Wrap" />
-          <WrapPanel Grid.Row="1" Orientation="Horizontal"
-                     IsVisible="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNotNull}}">
-            <TextBlock Text="{Binding ReaderAuthor}" Margin="0,0,16,0" />
-            <TextBlock Text="{Binding ReaderDateModified, StringFormat='Mis à jour le {0:dd/MM/yyyy HH:mm}'}"
-                       Opacity="0.65" />
-          </WrapPanel>
-          <reader:MarkdownScrollViewer x:Name="ArticleReader" Grid.Row="2"
-                                       AssetPathRoot="{Binding ReaderBaseUrl}"
-                                       Markdown="{Binding ReaderArticle}"
-                                       SaveScrollValueWhenContentUpdated="False">
-            <reader:MarkdownScrollViewer.Plugins>
-              <reader:MdAvPlugins>
-                <reader:MdAvPlugins.PathResolver>
-                  <services:BlogImageResolver />
-                </reader:MdAvPlugins.PathResolver>
-              </reader:MdAvPlugins>
-            </reader:MarkdownScrollViewer.Plugins>
-          </reader:MarkdownScrollViewer>
-          <TextBlock Grid.RowSpan="3" IsVisible="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNull}}"
-                     Text="Choisissez un billet dans la liste pour le lire."
-                     HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" />
-        </Grid>
-      <postitControls:StatusBar Grid.Row="5" DataContext="{Binding ActionStatus}" x:Name="StatusBar" />
-  </Grid>
+      </Grid>
+      <Grid
+        x:Name="PostReader"
+        Grid.Row="4"
+        MaxWidth="900"
+        Margin="12"
+        HorizontalAlignment="Stretch"
+        IsVisible="{Binding !IsEditing}"
+        RowDefinitions="Auto,Auto,*"
+        RowSpacing="12">
+        <TextBlock
+          FontSize="28"
+          FontWeight="SemiBold"
+          Text="{Binding ReaderTitle}"
+          TextWrapping="Wrap" />
+        <WrapPanel
+          Grid.Row="1"
+          IsVisible="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNotNull}}"
+          Orientation="Horizontal">
+          <TextBlock Margin="0,0,16,0" Text="{Binding ReaderAuthor}" />
+          <TextBlock Opacity="0.65" Text="{Binding ReaderDateModified, StringFormat='Mis à jour le {0:dd/MM/yyyy HH:mm}'}" />
+        </WrapPanel>
+        <reader:MarkdownScrollViewer
+          x:Name="ArticleReader"
+          Grid.Row="2"
+          AssetPathRoot="{Binding ReaderBaseUrl}"
+          Markdown="{Binding ReaderArticle}"
+          SaveScrollValueWhenContentUpdated="False">
+          <reader:MarkdownScrollViewer.Plugins>
+            <reader:MdAvPlugins>
+              <reader:MdAvPlugins.PathResolver>
+                <services:BlogImageResolver />
+              </reader:MdAvPlugins.PathResolver>
+            </reader:MdAvPlugins>
+          </reader:MarkdownScrollViewer.Plugins>
+        </reader:MarkdownScrollViewer>
+        <TextBlock
+          Grid.RowSpan="3"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          IsVisible="{Binding SelectedPost, Converter={x:Static ObjectConverters.IsNull}}"
+          Text="Choisissez un billet dans la liste pour le lire."
+          TextWrapping="Wrap" />
+      </Grid>
+      <postitControls:StatusBar
+        x:Name="StatusBar"
+        Grid.Row="5"
+        DataContext="{Binding ActionStatus}" />
+    </Grid>
   </ScrollViewer>
 </ContentPage>

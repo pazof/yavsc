@@ -6,7 +6,6 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Platform.Storage;
 using Avalonia.Controls.Primitives;
-using Avalonia.Interactivity;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.Input;
 using Markdown.Avalonia;
@@ -55,7 +54,6 @@ public partial class BlogsPage : ContentPage
         MainGrid.ColumnDefinitions = new ColumnDefinitions(isWide ? "2*,4,*" : "*");
         var sidebarColumn = isWide ? 2 : 0;
         SetArea(BlogsHeaderPanel, 0, sidebarColumn);
-        SetArea(BlogsCommandBar, 1, sidebarColumn);
         SetArea(PostsListBorder, 2, sidebarColumn);
         SetArea(PostsSplitter, isWide ? 0 : 3, isWide ? 1 : 0, isWide ? 3 : 1);
         SetArea(PostReader, isWide ? 0 : 4, 0, isWide ? 3 : 1);

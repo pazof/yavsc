@@ -124,6 +124,7 @@
     {
       "label": "dotnet: build-postit-desktop",
       "type": "process",
+      "problemMatcher": "$msCompile",
       "isBuildCommand": true,
       "isTestCommand": false,
       "isBackground": true,
