@@ -13,10 +13,14 @@
   HorizontalAlignment="Stretch"
   VerticalAlignment="Stretch"
   x:DataType="vm:BlogsViewModel"
-  mc:Ignorable="d">
+  mc:Ignorable="d"
+  AutomaticallyApplySafeAreaPadding="True"
+  Header="Billets de blog"
+  >
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
+  <ScrollViewer>
   <Grid x:Name="MainGrid"
     RowDefinitions="Auto,Auto,*,4,2*,Auto"
     Margin="5,5,10,5"
@@ -26,10 +30,6 @@
       <WrapPanel x:Name="BlogsHeaderPanel"
         Margin="5"
         Orientation="Horizontal">
-        <TextBlock
-          FontSize="20"
-          FontWeight="SemiBold"
-          Text="Billets de blog" />
         <TextBox
           HorizontalAlignment="Right"
           PlaceholderText="Rechercher un titre ou un auteur..."
@@ -262,4 +262,5 @@
         </Grid>
       <postitControls:StatusBar Grid.Row="5" DataContext="{Binding ActionStatus}" x:Name="StatusBar" />
   </Grid>
+  </ScrollViewer>
 </ContentPage>
