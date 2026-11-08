@@ -7,7 +7,14 @@
 <h2>Index</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @if ((bool?)ViewBag.CanIssueEstimates == true)
+    {
+        <a asp-action="Create">Create New</a>
+    }
+    else
+    {
+        <span>Un identifiant d'entreprise est nécessaire pour émettre ou modifier des devis.</span>
+    }
 </p>
 <table class="table">
     <tr>

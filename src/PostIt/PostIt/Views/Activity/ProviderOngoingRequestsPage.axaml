@@ -28,11 +28,14 @@
                        Opacity="0.7" />
         </Grid>
 
-        <TextBlock Grid.Row="2"
-                   Text="Astuce: sélectionnez une ligne puis ouvrez le détail ou l'édition directe."
-                   Opacity="0.65"
-                   FontSize="11"
-                   Margin="0,0,0,8" />
+        <StackPanel Grid.Row="2" Spacing="3" Margin="0,0,0,8">
+            <TextBlock Text="Astuce: sélectionnez une ligne puis ouvrez le détail ou l'édition directe."
+                       Opacity="0.65"
+                       FontSize="11" />
+            <TextBlock Text="Profil amateur : l’émission de devis et la facturation sont désactivées tant qu’un identifiant d’entreprise n’est pas renseigné."
+                       IsVisible="{Binding !CanIssueEstimates}"
+                       TextWrapping="Wrap" />
+        </StackPanel>
 
         <Grid Grid.Row="3" RowDefinitions="*,Auto">
             <ListBox Grid.Row="0"

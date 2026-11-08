@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Threading;
@@ -9,6 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels.Chat;
+using Yavsc.Abstract.Workflow;
 using Yavsc.Abstract.Models.Messaging;
 using Yavsc.Api.Client;
 
@@ -218,7 +220,11 @@ public class HomePageViewModel : ViewModelBase
 
         var estimateClient = app.ServiceProvider?.GetRequiredService<EstimateApiClient>();
 
-        var vm = new ProviderOngoingRequestsPageViewModel(billingClient, Settings, estimateClient);
+        var profileEndpoint = new Uri(new Uri(Api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "account/performer-profile").ToString();
+        var profile = await Api.CallAsync<PerformerProfileSettings>(HttpMethod.Get, profileEndpoint).ConfigureAwait(true);
+        var vm = new ProviderOngoingRequestsPageViewModel(
+            billingClient, Settings, estimateClient,
+            canIssueEstimates: profile?.CanIssueEstimates == true);
         await vm.InitializeAsync();
         await app.PushPageAsync(vm);
     }

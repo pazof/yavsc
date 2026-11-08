@@ -84,10 +84,10 @@
     </div>
     <div class="form-group">
 
-        <label asp-for="SIREN" class="col-md-2 control-label">SIREN</label>
+        <label asp-for="SIREN" class="col-md-2 control-label">Identifiant d'entreprise (SIREN/SIRET, facultatif)</label>
         <div class="col-md-10">
             <input asp-for="SIREN" class="form-control" />
-
+            <small class="form-text text-muted">Sans identifiant, votre profil reste utilisable comme amateur, mais l'émission de devis et la facturation sont désactivées.</small>
             <span asp-validation-for="SIREN" class="text-danger"></span>
         </div>
     </div>

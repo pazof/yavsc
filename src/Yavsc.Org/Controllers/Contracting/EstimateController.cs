@@ -29,9 +29,10 @@ namespace Yavsc.Controllers
 
         // GET: Estimate
         
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.CanIssueEstimates = await CanIssueEstimatesAsync(uid);
             return View(_context.Estimates.Include(e=>e.Query)
             .Include(e=>e.Query.PerformerProfile)
             .Include(e=>e.Query.PerformerProfile.Performer)
@@ -73,9 +74,14 @@ namespace Yavsc.Controllers
 
         // GET: Estimate/Create
         [Authorize]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!await CanIssueEstimatesAsync(uid))
+            {
+                return RedirectToAction("SetActivity", "Manage");
+            }
+
             IQueryable<RdvQuery> queries = _context.RdvQueries.Include(q=>q.Location).Where(bq=>bq.PerformerId == uid);
             //.Select(bq=>new SelectListItem{ Text = bq.Client.UserName, Value = bq.Client.Id });
             ViewBag.Clients = queries.Select(q=>q.Client).Distinct();
@@ -93,6 +99,11 @@ namespace Yavsc.Controllers
          )
         {
             estimate.OwnerId = User.GetUserId();
+            if (!await CanIssueEstimatesAsync(estimate.OwnerId))
+            {
+                return RedirectToAction("SetActivity", "Manage");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Estimates
@@ -138,7 +149,7 @@ namespace Yavsc.Controllers
 
 
         // GET: Estimate/Edit/5
-        public IActionResult Edit(long? id)
+        public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
             {
@@ -152,6 +163,10 @@ namespace Yavsc.Controllers
             {
                 return NotFound();
             }
+            if (!await CanIssueEstimatesAsync(estimate.OwnerId))
+            {
+                return RedirectToAction("SetActivity", "Manage");
+            }
 
             return View(estimate);
         }
@@ -159,11 +174,15 @@ namespace Yavsc.Controllers
         // POST: Estimate/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Estimate estimate)
+        public async Task<IActionResult> Edit(Estimate estimate)
         {
             var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (estimate.OwnerId!=uid&&estimate.ClientId!=uid
             ) return NotFound();
+            if (!await CanIssueEstimatesAsync(estimate.OwnerId))
+            {
+                return RedirectToAction("SetActivity", "Manage");
+            }
             if (ModelState.IsValid)
             {
                 _context.Update(estimate);
@@ -202,6 +221,20 @@ namespace Yavsc.Controllers
             _context.Estimates.Remove(estimate);
             _context.SaveChanges(User.GetUserId());
             return RedirectToAction("Index");
+        }
+
+        private Task<bool> CanIssueEstimatesAsync(string? performerId)
+        {
+            if (string.IsNullOrWhiteSpace(performerId))
+            {
+                return Task.FromResult(false);
+            }
+
+            return _context.Performers
+                .AsNoTracking()
+                .AnyAsync(profile => profile.PerformerId == performerId
+                    && profile.SIREN != null
+                    && profile.SIREN.Trim() != "");
         }
     }
 }

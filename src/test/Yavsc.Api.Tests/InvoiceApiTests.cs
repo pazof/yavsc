@@ -131,6 +131,26 @@ public sealed class InvoiceApiTests(ApiWebServerFixture fixture) : IClassFixture
         Assert.Null(db.RdvQueries.Single(q => q.Id == commandId).AmountDue);
     }
 
+    [Fact]
+    public async Task Amateur_performer_cannot_generate_an_invoice()
+    {
+        var (estimateId, commandId) = Seed();
+        using (var scope = fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.Performers.Single(profile => profile.PerformerId == "alice").SIREN = "";
+            db.SaveChanges();
+        }
+
+        using var http = Client();
+        var response = await http.PostAsync($"/api/v1/invoices/from-estimate/{estimateId}", null, Ct);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        using var checkScope = fixture.Services.CreateScope();
+        var checkDb = checkScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        Assert.Null(checkDb.RdvQueries.Single(query => query.Id == commandId).AmountDue);
+    }
+
     [Theory]
     [InlineData("wrong-signer")]
     [InlineData("missing-date")]

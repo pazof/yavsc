@@ -66,7 +66,7 @@ namespace Yavsc.Controllers
 
         // PUT: api/Estimate/5
         [HttpPut("{id}"), Produces("application/json")]
-        public IActionResult PutEstimate(long id, [FromBody] Estimate estimate)
+        public async Task<IActionResult> PutEstimate(long id, [FromBody] Estimate estimate)
         {
 
             if (!ModelState.IsValid)
@@ -86,6 +86,11 @@ namespace Yavsc.Controllers
                     ModelState.AddModelError("OwnerId", "You can only modify your own estimates");
                     return BadRequest(ModelState);
                 }
+            }
+
+            if (!await CanIssueEstimatesAsync(estimate.OwnerId))
+            {
+                return Conflict(new { Error = "A business registration is required to issue or edit estimates." });
             }
 
             var entry = _context.Attach(estimate);
@@ -110,7 +115,7 @@ namespace Yavsc.Controllers
 
         // POST: api/Estimate
         [HttpPost, Produces("application/json")]
-        public IActionResult PostEstimate([FromBody] Estimate estimate)
+        public async Task<IActionResult> PostEstimate([FromBody] Estimate estimate)
         {
             var uid = User.GetUserId();
             if (estimate.OwnerId == null) estimate.OwnerId = uid;
@@ -122,6 +127,11 @@ namespace Yavsc.Controllers
                     ModelState.AddModelError("OwnerId", "You can only create your own estimates");
                     return BadRequest(ModelState);
                 }
+            }
+
+            if (!await CanIssueEstimatesAsync(estimate.OwnerId))
+            {
+                return Conflict(new { Error = "A business registration is required to issue estimates." });
             }
 
             if (estimate.CommandId != null)
@@ -333,6 +343,20 @@ namespace Yavsc.Controllers
         private bool EstimateExists(long id)
         {
             return _context.Estimates.Count(e => e.Id == id) > 0;
+        }
+
+        private Task<bool> CanIssueEstimatesAsync(string? performerId)
+        {
+            if (string.IsNullOrWhiteSpace(performerId))
+            {
+                return Task.FromResult(false);
+            }
+
+            return _context.Performers
+                .AsNoTracking()
+                .AnyAsync(profile => profile.PerformerId == performerId
+                    && profile.SIREN != null
+                    && profile.SIREN.Trim() != "");
         }
     }
 }

@@ -608,6 +608,7 @@ namespace Yavsc.Controllers
             var uid = user.Id;
             var postedCountryCode = model.ExerciseCountryCode;
             model.ExerciseCountryCode = NormalizeCountryCodeOrDefault(model.ExerciseCountryCode);
+            model.SIREN = model.SIREN?.Trim() ?? string.Empty;
 
             // Model binding validated the raw posted payload before entering
             // the action. If country was empty, we fallback to "fr" above,
@@ -622,7 +623,7 @@ namespace Yavsc.Controllers
                 if (ModelState.IsValid)
                 {
                     var isFrenchPerformerCode = string.Equals(model.ExerciseCountryCode, "fr", StringComparison.Ordinal);
-                    if (isFrenchPerformerCode)
+                    if (isFrenchPerformerCode && !string.IsNullOrWhiteSpace(model.SIREN))
                     {
                         var exSiren = await _dbContext.ExceptionsSIREN.FirstOrDefaultAsync(
                             ex => ex.SIREN == model.SIREN

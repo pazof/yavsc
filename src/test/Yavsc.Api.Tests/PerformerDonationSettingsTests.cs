@@ -55,11 +55,13 @@ public sealed class PerformerDonationSettingsTests(ApiWebServerFixture fixture) 
         var profile = await client.GetFromJsonAsync<PerformerProfileSettings>(Endpoint, Ct);
         Assert.NotNull(profile);
         Assert.Equal("", profile.DonationPayPalEmail);
+        Assert.False(profile.CanIssueEstimates);
         profile.DonationPayPalEmail = "new@payments.example";
         using var response = await client.PutAsJsonAsync(Endpoint, profile, Ct);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("new@payments.example",
-            (await client.GetFromJsonAsync<PerformerProfileSettings>(Endpoint, Ct))?.DonationPayPalEmail);
+        var saved = await client.GetFromJsonAsync<PerformerProfileSettings>(Endpoint, Ct);
+        Assert.Equal("new@payments.example", saved?.DonationPayPalEmail);
+        Assert.False(saved?.CanIssueEstimates);
     }
 
     [Theory]

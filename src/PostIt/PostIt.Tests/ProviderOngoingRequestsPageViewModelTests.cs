@@ -156,6 +156,21 @@ public class ProviderOngoingRequestsPageViewModelTests
         Assert.False(vm.CreateEstimateForSelectedCommand.CanExecute(null));
     }
 
+    [Fact]
+    public async Task CreateEstimateForSelectedCommand_is_disabled_for_an_amateur_profile()
+    {
+        var api = new StubProviderApi();
+        var client = new BillingApiClient(api, "https://business.example/api/v1/");
+        var estimateClient = new EstimateApiClient(api, "https://business.example/api/v1/");
+        var vm = new ProviderOngoingRequestsPageViewModel(
+            client, estimateClient: estimateClient, canIssueEstimates: false);
+
+        await vm.InitializeAsync();
+        vm.SelectedQuery = vm.Queries[0];
+
+        Assert.False(vm.CreateEstimateForSelectedCommand.CanExecute(null));
+    }
+
     private sealed class StubProviderApi : IYavscApiClient
     {
         public HttpClient Http { get; } = new();

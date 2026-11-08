@@ -153,6 +153,30 @@ public sealed class EstimateApiControllerTests : IClassFixture<ApiWebServerFixtu
     }
 
     [Fact]
+    public async Task PostEstimate_is_rejected_for_a_performer_without_a_business_registration()
+    {
+        var commandId = SeedPendingCommand();
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.Performers.Single(profile => profile.PerformerId == "alice").SIREN = "";
+            db.SaveChanges();
+        }
+
+        using var http = NewClient("alice");
+        var response = await http.PostAsJsonAsync(
+            "/api/v1/estimate",
+            NewEstimatePayload(commandId, clientId: "bob"),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        using var checkScope = _fixture.Services.CreateScope();
+        var checkDb = checkScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        Assert.Empty(checkDb.Estimates);
+        Assert.Null(checkDb.RdvQueries.Single(query => query.Id == commandId).ValidationDate);
+    }
+
+    [Fact]
     public async Task PostEstimate_for_another_owner_is_rejected()
     {
         _fixture.ResetAndSeedActivityGraph();

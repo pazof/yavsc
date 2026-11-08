@@ -616,6 +616,12 @@ namespace Yavsc.WebApi.Controllers
                 return BadRequest(new { error = "Payload is required." });
             }
 
+            model.SIREN = model.SIREN?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(model.ExerciseCountryCode))
+            {
+                model.ExerciseCountryCode = "fr";
+            }
+
             var uid = User.GetUserId();
             if (string.IsNullOrWhiteSpace(uid))
             {
@@ -650,11 +656,6 @@ namespace Yavsc.WebApi.Controllers
             if (user is null)
             {
                 return NotFound();
-            }
-
-            if (string.IsNullOrWhiteSpace(model.ExerciseCountryCode))
-            {
-                model.ExerciseCountryCode = "fr";
             }
 
             var profile = await _dbContext.Performers.FirstOrDefaultAsync(p => p.PerformerId == uid);

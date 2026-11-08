@@ -51,6 +51,15 @@ public class PerformerCodeInputValidationTests
         Assert.Empty(Validate(pt));
     }
 
+    [Fact]
+    public void Validate_accepts_an_empty_business_code_for_amateur_performers()
+    {
+        var profile = CreateBaseProfile();
+        profile.SIREN = "";
+
+        Assert.Empty(Validate(profile));
+    }
+
     private static PerformerProfile CreateBaseProfile()
     {
         return new PerformerProfile

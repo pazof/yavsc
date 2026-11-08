@@ -28,7 +28,7 @@ namespace Yavsc.Models.Workflow
         [RegularExpression("^[A-Za-z]{2}$", ErrorMessage = "Country code must be a 2-letter code.")]
         public string ExerciseCountryCode { get; set; } = "fr";
 
-        [Required,YaStringLength(14),Display(Name="SIREN")]
+        [YaStringLength(14),Display(Name="Identifiant d'entreprise (SIREN/SIRET)")]
         public string SIREN { get; set; }
 
         public long OrganizationAddressId { get; set; }

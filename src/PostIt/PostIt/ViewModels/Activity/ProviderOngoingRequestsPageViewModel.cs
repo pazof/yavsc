@@ -27,6 +27,7 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
     private readonly EstimateApiClient? _estimateClient;
     private readonly Settings? _settings;
     private List<BillingQuerySummaryDto> _allQueries = new();
+    public bool CanIssueEstimates { get; }
 
     [ObservableProperty]
     public partial ObservableCollection<BillingQuerySummaryDto> Queries { get; set; } = new();
@@ -75,11 +76,13 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
     public ProviderOngoingRequestsPageViewModel(
         BillingApiClient billingClient,
         Settings? settings = null,
-        EstimateApiClient? estimateClient = null)
+        EstimateApiClient? estimateClient = null,
+        bool canIssueEstimates = true)
     {
         _billingClient = billingClient ?? throw new ArgumentNullException(nameof(billingClient));
         _estimateClient = estimateClient;
         _settings = settings;
+        CanIssueEstimates = canIssueEstimates;
 
         if (_settings is not null)
         {
@@ -225,7 +228,8 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
         }
     }
 
-    private bool CanCreateEstimateForSelected() => SelectedQuery is not null && _estimateClient is not null;
+    private bool CanCreateEstimateForSelected()
+        => SelectedQuery is not null && _estimateClient is not null && CanIssueEstimates;
 
     [RelayCommand(CanExecute = nameof(CanCreateEstimateForSelected))]
     public async Task CreateEstimateForSelectedAsync()
@@ -239,6 +243,12 @@ public partial class ProviderOngoingRequestsPageViewModel : ViewModelBase, IActi
         if (_estimateClient is null)
         {
             this.SetWarningStatus("Le client devis n'est pas disponible.");
+            return;
+        }
+
+        if (!CanIssueEstimates)
+        {
+            this.SetWarningStatus("Un identifiant d'entreprise est nécessaire pour émettre un devis.");
             return;
         }
 

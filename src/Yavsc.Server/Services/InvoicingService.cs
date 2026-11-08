@@ -38,6 +38,10 @@ public sealed class InvoicingService(ApplicationDbContext db, IPayPalTransaction
             RequirePerformer(actorId, command.InvoicePerformerId!, administrator);
             return await ResponseAsync(command, ct);
         }
+        var performerProfile = await db.Performers.AsNoTracking()
+            .SingleOrDefaultAsync(profile => profile.PerformerId == estimate.OwnerId, ct);
+        if (string.IsNullOrWhiteSpace(performerProfile?.SIREN))
+            throw new InvoiceOperationException(409, "A business registration is required to issue invoices.");
         if (command.InvoiceEstimateId.HasValue || command.AmountDue.HasValue || command.AmountPaid != 0m)
             throw new InvoiceOperationException(409, "This command already has an invoice or a balance requiring reconciliation.");
         if (command.ClientId != estimate.ClientId || command.PerformerId != estimate.OwnerId)

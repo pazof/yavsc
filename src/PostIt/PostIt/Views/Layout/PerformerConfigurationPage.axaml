@@ -23,7 +23,10 @@
       <TextBox Text="{Binding ExerciseCountryCode, Mode=TwoWay}"
                PlaceholderText="Code pays (fr, en...)"/>
       <TextBox Text="{Binding SIREN, Mode=TwoWay}"
-               PlaceholderText="SIREN"/>
+               PlaceholderText="SIREN / SIRET (facultatif)"/>
+      <TextBlock Text="Sans identifiant d’entreprise, votre profil reste utilisable comme amateur. L’émission de devis et la facturation sont alors désactivées."
+                 IsVisible="{Binding IsAmateur}"
+                 TextWrapping="Wrap"/>
       <TextBox Text="{Binding Website, Mode=TwoWay}"
                PlaceholderText="Site web"/>
 

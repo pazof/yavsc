@@ -44,8 +44,10 @@ public partial class PerformerConfigurationPageViewModel : ViewModelBase
     [ObservableProperty]
     public partial string ExerciseCountryCode { get; set; } = "fr";
 
-    [ObservableProperty]
+    [ObservableProperty, NotifyPropertyChangedFor(nameof(IsAmateur))]
     public partial string SIREN { get; set; } = string.Empty;
+
+    public bool IsAmateur => string.IsNullOrWhiteSpace(SIREN);
 
     [ObservableProperty]
     public partial string Website { get; set; } = string.Empty;
