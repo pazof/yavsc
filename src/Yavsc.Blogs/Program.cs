@@ -21,6 +21,7 @@ internal class Program
         builder.AddConfiguration("blogs");
 
         var services = builder.Services;
+        services.AddResourceUsage(builder.Configuration);
 
         var siteSection = builder.Configuration.GetSection("Site");
         services.Configure<SiteSettings>(siteSection);
@@ -100,9 +101,9 @@ internal class Program
             app
                 .UseRouting()
                 .UseAuthentication()
+                .UseCors("default")
                 .UseAuthorization()
                 .UseMiddleware<ResourceUsageTelemetryMiddleware>()
-                .UseCors("default")
                 ;
             app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Program")
             .LogInformation($"Yavsc.Blogs started, Authority is '{authority}''");

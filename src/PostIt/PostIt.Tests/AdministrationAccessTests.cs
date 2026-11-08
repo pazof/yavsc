@@ -15,6 +15,32 @@ namespace PostIt.Tests;
 
 public class AdministrationAccessTests
 {
+    [Fact]
+    public async Task Profile_quota_failure_keeps_the_consumption_visible_without_enabling_profile_changes()
+    {
+        await using var api = new ProfileTransport("Performer") { ExhaustedQuota = true };
+        var model = new UserProfilePageViewModel(api, usageClient: api.UsageClient);
+        await model.RefreshAsync();
+        Assert.True(model.ResourceUsage?.IsQuotaReached);
+        Assert.False(model.IsProfileLoaded);
+        Assert.False(model.SaveProfileCommand.CanExecute(null));
+        Assert.Contains("resource_quota_exceeded", model.StatusMessage);
+    }
+
+    [Fact]
+    public async Task Administration_quota_failure_keeps_the_authorized_usage_overview()
+    {
+        await using var api = new ProfileTransport("Administrator");
+        var session = new SessionStatusViewModel { Api = api };
+        await session.RefreshAsync();
+        api.ExhaustedQuota = true;
+        var model = new AdministrationPageViewModel(api, api.UsageClient, session);
+        await model.RefreshAsync();
+        Assert.True(Assert.Single(model.UsageOverview).IsQuotaReached);
+        Assert.Empty(model.Users);
+        Assert.Contains("les usages restent consultables", model.StatusMessage);
+    }
+
     [AvaloniaTheory]
     [InlineData("Moderator", false)]
     [InlineData("Administrator", true)]
@@ -242,6 +268,7 @@ public class AdministrationAccessTests
         public Task<Me>? PendingProfile { get; set; }
         public bool FailProfile { get; set; }
         public bool FailUsage { get; set; }
+        public bool ExhaustedQuota { get; set; }
         public bool HideIpAddressInCalls { get; set; }
         public ResourceUsageApiClient UsageClient => new(this, Settings.ApiUrl);
 
@@ -268,6 +295,8 @@ public class AdministrationAccessTests
             object result;
             if (path.EndsWith("/account/me"))
             {
+                if (ExhaustedQuota)
+                    throw new HttpRequestException("resource_quota_exceeded", null, System.Net.HttpStatusCode.TooManyRequests);
                 if (FailProfile)
                     throw new HttpRequestException("Profile unavailable");
                 result = PendingProfile is not null ? await PendingProfile
@@ -277,11 +306,22 @@ public class AdministrationAccessTests
             {
                 if (FailUsage)
                     throw new HttpRequestException("Usage unavailable");
-                var usage = new ResourceUsageSummary { UserId = "alice-id", UserName = "alice", ApiCalls = 12m };
+                var usage = new ResourceUsageSummary
+                {
+                    UserId = "alice-id", UserName = "alice", ApiCalls = 12m,
+                    Consumption = ExhaustedQuota ? 10000m : 0.24m,
+                    ConsumptionLimit = 10000m,
+                    RemainingConsumption = ExhaustedQuota ? 0m : 9999.76m,
+                    IsQuotaReached = ExhaustedQuota
+                };
                 result = path.EndsWith("/admin") ? new List<ResourceUsageSummary> { usage } : usage;
             }
             else if (path.EndsWith("/users"))
+            {
+                if (ExhaustedQuota)
+                    throw new HttpRequestException("resource_quota_exceeded", null, System.Net.HttpStatusCode.TooManyRequests);
                 result = new List<UserInfo> { new() { UserId = "alice-id", UserName = "alice" } };
+            }
             else
                 throw new InvalidOperationException($"Unexpected endpoint: {path}");
 

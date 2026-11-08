@@ -28,6 +28,7 @@ internal class Program
 
         var services = builder.Services;
         services.AddSiteAdministration();
+        services.AddResourceUsage(builder.Configuration);
 
         // Anthropic client
         builder.Services.AddSingleton<AnthropicClient>(_ =>
@@ -151,9 +152,9 @@ internal class Program
             app
                 .UseRouting()
                 .UseAuthentication()
+                .UseCors("default")
                 .UseAuthorization()
-                .UseMiddleware<ResourceUsageTelemetryMiddleware>()
-                .UseCors("default");
+                .UseMiddleware<ResourceUsageTelemetryMiddleware>();
             app.MapIdentityApi<ApplicationUser>().RequireAuthorization("ApiScope");
             app.MapDefaultControllerRoute();
             app.UseSession();

@@ -21,6 +21,7 @@ using Yavsc.Interface;
 using Yavsc.Server.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Yavsc.Api.Services;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Api.Test.Fixtures;
 
@@ -39,6 +40,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
 
     protected override WebApplication BuildApp(WebApplicationBuilder builder)
     {
+        builder.Services.AddResourceUsage(builder.Configuration);
         if (UseNpgsqlProvider())
         {
             var npgsqlConnectionString = EnsureNpgsqlDatabaseCreated();
@@ -76,7 +78,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
         builder.Services.AddPodcasts(builder.Configuration);
         builder.Services.Configure<PodcastOptions>(options => options.RootPath = podcastRoot);
         builder.Services.Configure<GoogleAuthSettings>(_ => { });
-        builder.Services.Configure<SiteSettings>(settings => settings.Authority = "example.test");
+        builder.Services.Configure<SiteSettings>(settings => settings.Authority = "https://example.test");
         builder.Services.AddTransient<IBillingService, BillingService>();
         builder.Services.AddInvoicing(builder.Configuration);
         builder.Services.AddSingleton<RecordingMessageDelivery>();
@@ -130,6 +132,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseMiddleware<ResourceUsageTelemetryMiddleware>();
         app.MapControllers();
         app.MapOpenApi().RequireAuthorization("AdministratorOnly");
 

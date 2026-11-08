@@ -34,5 +34,12 @@
         <Button Content="Signaler un problème"
                 Command="{Binding OpenIssuesCommand}"
                 HorizontalAlignment="Center"/>
+        <Button Content="CGU de PostIt et de Yavsc"
+                Command="{Binding OpenTermsCommand}"
+                HorizontalAlignment="Center"/>
+        <Button Content="Abonnements Découverte et Premium"
+                Command="{Binding OpenSubscriptionsCommand}"
+                HorizontalAlignment="Center"/>
+        <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" MaxWidth="420"/>
     </StackPanel>
 </ContentPage>

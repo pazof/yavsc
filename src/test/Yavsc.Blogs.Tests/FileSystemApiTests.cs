@@ -10,6 +10,7 @@ using Yavsc.Models.Blog;
 using Yavsc.Models.Relationship;
 using Yavsc.Models.Workflow;
 using Yavsc.Tests.Shared;
+using Yavsc.Server.Helpers;
 
 namespace Yavsc.Blogs.Tests;
 
@@ -133,6 +134,35 @@ public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
 
         Assert.True(File.Exists(PhysicalFile(_fixture, "alice", storedName)),
             "Expected the uploaded file on disk under the owner's personal root");
+    }
+
+    [Fact]
+    public async Task Upload_is_refused_before_writing_when_known_storage_would_exceed_quota()
+    {
+        _fixture.ResetDatabase();
+        _fixture.SeedUser("storage-quota-user", u => u.DiskQuota = 10_000_000);
+        using (var scope = _fixture.Services.CreateScope())
+            await ResourceUsageTracker.RecordAsync(
+                scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+                "storage-quota-user", "storage-quota-user", cpuSeconds: 9999.8m,
+                cancellationToken: TestContext.Current.CancellationToken);
+
+        const string fileName = "quota-refused-file.txt";
+        using var form = new MultipartFormDataContent();
+        form.Add(new ByteArrayContent(new byte[1048576]), "file", fileName);
+        using var http = NewClient("storage-quota-user");
+        using var response = await http.PostAsync("/api/v1/fs", form, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.TooManyRequests, response.StatusCode);
+        Assert.Contains("resource_quota_exceeded",
+            await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        Assert.False(File.Exists(PhysicalFile(_fixture, "storage-quota-user", fileName)));
+        using var finalScope = _fixture.Services.CreateScope();
+        var db = finalScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        Assert.Empty(db.UploadedFiles.Where(f => f.OwnerId == "storage-quota-user"));
+        var record = await db.ResourceUsageRecords.SingleAsync(
+            r => r.UserId == "storage-quota-user", TestContext.Current.CancellationToken);
+        Assert.Equal(0m, record.ApiCalls);
+        Assert.Equal(0m, record.StorageMb);
     }
 
     /// <summary>

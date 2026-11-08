@@ -1,0 +1,138 @@
+@using Yavsc.Settings
+@using Yavsc.Server.Helpers
+@inject Microsoft.Extensions.Options.IOptions<ResourceUsageOptions> UsageOptions
+@inject Microsoft.Extensions.Options.IOptions<ResourceSubscriptionOptions> SubscriptionOptions
+@{
+    ViewBag.Title = "CGU de PostIt et de Yavsc";
+    var rule = UsageOptions.Value;
+    var packs = SubscriptionOptions.Value;
+    var userId = User.GetUserId();
+    var limit = string.IsNullOrWhiteSpace(userId) ? rule.DefaultLimit : rule.GetLimit(userId);
+}
+
+<h1>Conditions d'utilisation de PostIt et de Yavsc : consommation des ressources</h1>
+<p>
+    PostIt est un client de Yavsc. Les opérations authentifiées sur les services API et Blogs
+    consomment des ressources communes, comptabilisées par identifiant de compte,
+    quel que soit le client utilisé.
+</p>
+
+<h2>Calcul de l'indicateur</h2>
+<p>L'indicateur est une somme pondérée, exprimée en points :</p>
+<p>
+    <strong>
+        I = @rule.ApiCallWeight × appels API
+        + @rule.CpuSecondWeight × secondes CPU enregistrées
+        + @rule.BandwidthMbWeight × Mio transférés
+        + @rule.StorageMbWeight × Mio ajoutés au stockage
+    </strong>
+</p>
+<ul>
+    <li>Un Mio vaut 1 048 576 octets ; les anciens champs de l'API portent le suffixe « Mb ».</li>
+    <li>Les compteurs sont cumulés depuis le début de leur comptabilisation, sans remise à zéro mensuelle.</li>
+    <li>
+        Les transferts comprennent le corps entrant déclaré ou lu et les octets de réponse écrits,
+        y compris les réponses diffusées sans taille annoncée. Les en-têtes et le surcoût du transport ne sont pas inclus.
+    </li>
+    <li>
+        Le stockage est le volume cumulé ajouté par les opérations instrumentées (fichiers personnels et génération de PDF),
+        pas l'espace disque actuellement occupé : suppression et remplacement ne remboursent pas de points.
+    </li>
+    <li>
+        Le compteur historique « CPU » contient les durées enregistrées par les traitements instrumentés,
+        notamment le temps écoulé de génération de PDF ; ce n'est pas une mesure exhaustive du processeur.
+        Les ressources locales de PostIt, les appels directs entre appareils et le trafic WebSocket ne sont pas mesurés par cet indicateur HTTP.
+    </li>
+</ul>
+<p>
+    Le calcul utilise les valeurs décimales non arrondies ; l'arrondi de l'affichage ne décide pas du blocage.
+    Cet indicateur n'est ni un prix, ni une facture, ni une estimation de compensation financière.
+</p>
+<h2>Inscription gratuite et abonnements mensuels</h2>
+<p>
+    L'inscription gratuite donne accès au quota décrit ci-dessous. Elle ne renouvelle pas automatiquement
+    ce quota chaque mois. Les compteurs historiques ne sont jamais supprimés par un abonnement :
+    les crédits sont déduits de l'indicateur brut pour obtenir la consommation nette soumise au seuil.
+</p>
+<ul>
+    <li>
+        <strong>Découverte</strong> : @packs.DiscoveryPriceExcludingTax.ToString("F2") € HT par mois,
+        TVA @packs.VatPercent %, soit @packs.TotalPrice(packs.DiscoveryPriceExcludingTax).ToString("F2") € TTC prélevés ;
+        chaque mensualité payée permet d'effacer jusqu'à @rule.DefaultLimit points.
+    </li>
+    <li>
+        <strong>Premium</strong> : @packs.PremiumPriceExcludingTax.ToString("F2") € HT par mois,
+        TVA @packs.VatPercent %, soit @packs.TotalPrice(packs.PremiumPriceExcludingTax).ToString("F2") € TTC prélevés ;
+        chaque mensualité payée permet d'effacer jusqu'à @(rule.DefaultLimit * 3m) points.
+    </li>
+</ul>
+<p>
+    Le prix et le volume mensuel sont fixés à la souscription, sur la base du quota gratuit par défaut
+    (pas d'une éventuelle exception individuelle). Le premier crédit est accordé dès le premier paiement
+    confirmé par PayPal, puis à chaque mensualité payée, à la date anniversaire UTC du début de l'abonnement.
+    Pour une date de fin de mois absente du mois suivant, l'anniversaire est le dernier jour de ce mois.
+    Il n'y a pas de remise à zéro calendaire ou de crédit accordé sur la seule approbation dans le navigateur.
+</p>
+<p>
+    Le crédit reporté existant est utilisé en premier. Le nouveau crédit mensuel efface ensuite
+    la consommation nette restante, sans la rendre négative ; les <strong>deux tiers du crédit mensuel
+    inutilisé</strong> sont conservés. Le tiers restant est perdu. Les reports antérieurs ne subissent
+    pas une nouvelle réduction, n'expirent pas et restent acquis après résiliation.
+    Le report est arrondi vers zéro à huit décimales de point.
+    Exemple : avec @(rule.DefaultLimit * 0.4m) points de consommation et un crédit Découverte de @rule.DefaultLimit points,
+    @(rule.DefaultLimit * 0.4m) points sont effacés et @(ResourceUsageCredit.MonthlyGrant(rule.DefaultLimit * 0.4m, 0m, rule.DefaultLimit) - rule.DefaultLimit * 0.4m) points sont reportés.
+</p>
+<p>
+    Les mensualités en attente ou impayées ne donnent aucun crédit. Les paiements sont rapprochés côté serveur
+    avec PayPal, de manière idempotente ; une notification répétée ne donne pas de crédit supplémentaire.
+    Si une notification est retardée, le crédit prend effet lors de son rapprochement sur la consommation
+    alors enregistrée. Un remboursement, même partiel, retire le crédit de la mensualité concernée.
+    La résiliation arrête les futurs prélèvements, sans effacer les crédits des paiements non remboursés.
+    Un seul abonnement non résilié est autorisé par compte ; un changement de pack nécessite sa résiliation préalable.
+</p>
+<p>
+    <a asp-controller="ResourceSubscription" asp-action="Index">Souscrire, consulter ou résilier un abonnement</a>.
+    Cette page et la consultation du quota restent accessibles lorsque le seuil est atteint.
+</p>
+<p>
+    L'inscription gratuite dispose du quota disque standard (@Constants.DefaultFSQ octets).
+    Découverte porte le quota disque à deux fois ce quota (@(Constants.DefaultFSQ * 2L) octets),
+    et Premium à cinq fois ce quota (@(Constants.DefaultFSQ * 5L) octets),
+    pendant la mensualité payée, même après résiliation jusqu'à son échéance UTC.
+    À l'échéance sans renouvellement payé, ou après remboursement de la mensualité, le quota habituel reprend.
+    Aucun fichier existant n'est supprimé ; si l'espace occupé dépasse le quota redevenu applicable,
+    de nouveaux téléversements sont refusés. La taille maximale autorisée d'un fichier n'augmente pas.
+</p>
+
+<h2>Seuil et contrôle des opérations</h2>
+<p>
+    Le seuil par défaut de cette instance est de <strong>@rule.DefaultLimit points</strong>.
+    Un seuil individuel peut être fixé par l'administration.
+    @if (!string.IsNullOrWhiteSpace(userId))
+    {
+        <span>Le seuil actuellement applicable à votre compte est de <strong>@limit points</strong>.</span>
+    }
+</p>
+<p>
+    Une opération est refusée si le quota est déjà atteint ou si son coût connu dépasse le solde disponible.
+    L'appel API et le corps entrant de taille connue sont comptabilisés avant son exécution.
+    Pour un téléversement de fichiers personnels, le volume de fichiers est aussi contrôlé avant l'écriture.
+    Le coût restant, inconnu à l'avance, est constaté après l'opération.
+    Une opération en cours peut donc porter l'indicateur au-delà du seuil, notamment en cas d'opérations simultanées ;
+    les suivantes sont alors refusées. Il ne s'agit pas d'une interruption stricte à chaque octet ou seconde consommée.
+</p>
+<p>
+    Un refus est signalé par le code HTTP <strong>429</strong> et le motif <code>resource_quota_exceeded</code>.
+    Les opérations exécutées, même en échec, peuvent consommer des points ; une tentative refusée par le contrôle
+    d'admission n'est pas comptabilisée. La consultation de la consommation et des présentes CGU,
+    ainsi que la connexion et le renouvellement de session, restent accessibles.
+    Le compte n'est pas suspendu : les opérations redeviennent possibles dès que le seuil configuré autorise leur coût.
+</p>
+<p>
+    Dans PostIt, consultez « Mon profil » pour connaître votre indicateur et votre solde.
+    En cas de quota insuffisant, contactez l'administration via
+    <a asp-controller="Home" asp-action="Contact">la page de contact</a>.
+    Les coefficients et seuils sont configurés par l'exploitant ; toute modification des coefficients
+    recalcule l'indicateur à partir des compteurs existants.
+</p>
+<p><a asp-controller="Home" asp-action="Privacy">Protection des données</a></p>

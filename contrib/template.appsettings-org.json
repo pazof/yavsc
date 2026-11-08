@@ -1,4 +1,15 @@
 {
+  "ResourceSubscriptions": {
+    "DiscoveryPlanId": "",
+    "PremiumPlanId": "",
+    "WebhookId": "",
+    "DiscoveryPriceExcludingTax": 1,
+    "PremiumPriceExcludingTax": 2,
+    "VatPercent": 20
+  },
+  "ResourceUsage": {
+    "UserLimits": {}
+  },
   "Logging": {
     "LogLevel": {
       "Default": "Information"

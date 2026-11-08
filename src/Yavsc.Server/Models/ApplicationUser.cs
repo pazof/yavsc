@@ -93,7 +93,16 @@ namespace Yavsc.Models
 
         public virtual List<BankIdentity>? BankInfo { get; set; }
 
-        public long DiskQuota { get; set; } = 512 * 1024 * 1024;
+        public long DiskQuota { get; set; } = Constants.DefaultFSQ;
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
+        public DateTimeOffset? PremiumDiskQuotaUntil { get; set; }
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
+        public DateTimeOffset? DiscoveryDiskQuotaUntil { get; set; }
+
+        public long GetEffectiveDiskQuota(DateTimeOffset now)
+            => PremiumDiskQuotaUntil > now ? checked(Constants.DefaultFSQ * 5L)
+                : DiscoveryDiskQuotaUntil > now ? checked(Constants.DefaultFSQ * 2L) : DiskQuota;
+
         public long DiskUsage { get; set; } = 0;
 
         public long MaxFileSize { get; set; } = 512 * 1024 * 1024;

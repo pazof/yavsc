@@ -83,6 +83,19 @@ public static class HostingExtensions
         builder.Services.AddSwaggerGen();
 
         IServiceCollection services = LoadConfiguration(builder);
+        services.AddResourceUsage(builder.Configuration);
+        services.AddOptions<ResourceSubscriptionOptions>()
+            .Bind(builder.Configuration.GetSection(ResourceSubscriptionOptions.SectionName))
+            .Validate(o => o.DiscoveryPriceExcludingTax > 0m && o.PremiumPriceExcludingTax > 0m
+                && decimal.Round(o.DiscoveryPriceExcludingTax, 2) == o.DiscoveryPriceExcludingTax
+                && decimal.Round(o.PremiumPriceExcludingTax, 2) == o.PremiumPriceExcludingTax
+                && o.VatPercent >= 0m && o.VatPercent <= 100m,
+                "ResourceSubscriptions prices and VAT are invalid.")
+            .ValidateOnStart();
+        services.AddHttpClient<Yavsc.Web.Services.IPayPalSubscriptionGateway, Yavsc.Web.Services.PayPalSubscriptionGateway>()
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
+        services.AddScoped<Yavsc.Web.Services.IResourceSubscriptionService, Yavsc.Web.Services.ResourceSubscriptionService>();
+        services.TryAddSingleton(TimeProvider.System);
 
         services.AddSession();
 

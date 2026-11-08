@@ -17,12 +17,23 @@ public partial class AboutPageViewModel : ViewModelBase
     public const string RepositoryUrl = "https://forgejo.pschneider.fr/notazof/yavsc";
     public const string IssuesUrl = RepositoryUrl + "/issues";
 
-    public AboutPageViewModel()
+    private readonly Settings? _settings;
+
+    public AboutPageViewModel(Settings? settings = null)
     {
+        _settings = settings;
         Version = ReadVersion();
     }
 
     public string Version { get; }
+
+    public Uri TermsUri => new(new Uri(
+        (_settings?.Authentication.Authority ?? AuthenticationSettings.DefaultAuthority).TrimEnd('/') + "/"), "Home/CGU");
+    public Uri SubscriptionsUri => new(new Uri(
+        (_settings?.Authentication.Authority ?? AuthenticationSettings.DefaultAuthority).TrimEnd('/') + "/"), "ResourceSubscription");
+
+    [ObservableProperty]
+    public partial string? StatusMessage { get; set; }
 
     public string Description { get; } =
         "PostIt est le client de la plateforme Yavsc : blog, devis, " +
@@ -49,13 +60,20 @@ public partial class AboutPageViewModel : ViewModelBase
     [RelayCommand]
     private Task OpenIssues() => OpenUrlAsync(IssuesUrl);
 
-    private static async Task OpenUrlAsync(string url)
+    [RelayCommand]
+    private Task OpenTerms() => OpenUrlAsync(TermsUri.AbsoluteUri);
+
+    [RelayCommand]
+    private Task OpenSubscriptions() => OpenUrlAsync(SubscriptionsUri.AbsoluteUri);
+
+    private async Task OpenUrlAsync(string url)
     {
+        StatusMessage = null;
         var app = (App)App.Current!;
         var topLevel = TopLevel.GetTopLevel(app.View);
-        if (topLevel is not null)
+        if (topLevel is null || !await topLevel.Launcher.LaunchUriAsync(new Uri(url)).ConfigureAwait(true))
         {
-            await topLevel.Launcher.LaunchUriAsync(new Uri(url)).ConfigureAwait(true);
+            StatusMessage = "Impossible d'ouvrir le navigateur : " + url;
         }
     }
 

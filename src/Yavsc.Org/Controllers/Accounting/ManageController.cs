@@ -117,7 +117,7 @@ namespace Yavsc.Controllers
                 Avatar = user.Avatar,
                 BankInfo = user.BankInfo,
                 DiskUsage = user.DiskUsage,
-                DiskQuota = user.DiskQuota,
+                DiskQuota = user.GetEffectiveDiskQuota(DateTimeOffset.UtcNow),
                 DedicatedCalendarId = user.DedicatedGoogleCalendar,
                 EMail = user.Email,
                 EmailConfirmed = await _userManager.IsEmailConfirmedAsync(user),

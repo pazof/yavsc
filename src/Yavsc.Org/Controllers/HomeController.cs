@@ -138,6 +138,10 @@ namespace Yavsc.Controllers
         {
             return View();
         }
+        public IActionResult CGU()
+        {
+            return View();
+        }
         public IActionResult AboutMarkdown()
         {
             return View();

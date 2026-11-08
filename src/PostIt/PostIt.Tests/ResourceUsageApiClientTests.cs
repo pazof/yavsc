@@ -8,6 +8,18 @@ namespace PostIt.Tests;
 public class ResourceUsageApiClientTests
 {
     [Fact]
+    public async Task Usage_remains_visible_when_the_rest_of_the_profile_is_unavailable()
+    {
+        var usage = new ResourceUsageApiClient(new FakeYavscApiClient(), "https://example.invalid/api/v1/");
+        var model = new PostIt.ViewModels.UserProfilePageViewModel(null, usageClient: usage);
+        await model.RefreshAsync();
+        Assert.NotNull(model.ResourceUsage);
+        Assert.Equal(20.65m, model.ResourceUsage.Consumption);
+        Assert.Null(model.UsageError);
+        Assert.False(model.IsProfileLoaded);
+        Assert.False(model.IsBusy);
+    }
+    [Fact]
     public async Task GetCurrentAsync_calls_user_usage_endpoint()
     {
         var fake = new FakeYavscApiClient();
@@ -19,6 +31,10 @@ public class ResourceUsageApiClientTests
         Assert.Equal("GET", fake.LastMethod);
         Assert.Equal(12.5m, usage.ApiCalls);
         Assert.Equal(3.2m, usage.CpuSeconds);
+        Assert.Equal(20.65m, usage.Consumption);
+        Assert.Equal(10000m, usage.ConsumptionLimit);
+        Assert.Equal(9979.35m, usage.RemainingConsumption);
+        Assert.False(usage.IsQuotaReached);
     }
 
     [Fact]
@@ -56,6 +72,9 @@ public class ResourceUsageApiClientTests
                     CpuSeconds = 3.2m,
                     BandwidthMb = 18.4m,
                     StorageMb = 51.2m,
+                    Consumption = 20.65m,
+                    ConsumptionLimit = 10000m,
+                    RemainingConsumption = 9979.35m,
                     EstimatedCompensation = 4.9m,
                     Currency = "EUR",
                     RecordedAtUtc = DateTimeOffset.UtcNow

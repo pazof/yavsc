@@ -217,6 +217,29 @@ public sealed class LiveProcessorTests : IDisposable
         if (Directory.Exists(_root)) Directory.Delete(_root, recursive: true);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Legacy_stream_uses_paid_premium_quota_and_refuses_growth_after_expiry(bool paid)
+    {
+        var clock = new Clock();
+        var processor = New(clock: clock);
+        Directory.CreateDirectory(_root);
+        var path = Path.Combine(_root, "disk.ts");
+        await File.WriteAllBytesAsync(path, new byte[] { 9 }, _ct);
+        using var socket = new IncomingSocket(new byte[] { 1, 2, 3 });
+        var context = new DefaultHttpContext();
+        context.Features.Set<IHttpWebSocketFeature>(socket);
+        var user = new ApplicationUser
+        {
+            UserName = "legacy", DiskQuota = 10, DiskUsage = 100,
+            PremiumDiskQuotaUntil = clock.Now.AddSeconds(paid ? 1 : -1)
+        };
+        Assert.Equal(paid, await processor.AcceptStream(context, user, _root, "disk.ts"));
+        Assert.Equal(paid ? new byte[] { 1, 2, 3 } : new byte[] { 9 }, await File.ReadAllBytesAsync(path, _ct));
+        Assert.Empty(processor.Casters);
+    }
+
     private sealed class Clock : TimeProvider
     {
         public DateTimeOffset Now { get; set; } = DateTimeOffset.UtcNow;

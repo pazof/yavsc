@@ -1,0 +1,38 @@
+@baseUrl = https://localhost:5001
+@antiforgeryToken = replace-from-subscription-page
+@sessionCookie = replace-with-web-session-and-antiforgery-cookies
+
+### Subscription management remains accessible with an exhausted quota
+GET {{baseUrl}}/ResourceSubscription
+Cookie: {{sessionCookie}}
+
+### Start the Discovery checkout (Premium uses pack=Premium)
+POST {{baseUrl}}/ResourceSubscription/Create
+Cookie: {{sessionCookie}}
+Content-Type: application/x-www-form-urlencoded
+
+pack=Discovery&__RequestVerificationToken={{antiforgeryToken}}
+
+### Reconcile confirmed payments from PayPal, including missed webhooks
+POST {{baseUrl}}/ResourceSubscription/Refresh
+Cookie: {{sessionCookie}}
+Content-Type: application/x-www-form-urlencoded
+
+__RequestVerificationToken={{antiforgeryToken}}
+
+### Cancel an owned subscription
+POST {{baseUrl}}/ResourceSubscription/Cancel
+Cookie: {{sessionCookie}}
+Content-Type: application/x-www-form-urlencoded
+
+id=replace-with-local-subscription-uuid&__RequestVerificationToken={{antiforgeryToken}}
+
+### A browser return only reconciles server-verified payments
+GET {{baseUrl}}/ResourceSubscription/Return?id=replace-with-local-subscription-uuid
+Cookie: {{sessionCookie}}
+
+### A forged notification must be rejected; real headers are supplied by PayPal
+POST {{baseUrl}}/ResourceSubscription/Notify
+Content-Type: application/json
+
+{"event_type":"PAYMENT.SALE.COMPLETED","resource":{"billing_agreement_id":"I-EXAMPLE"}}

@@ -99,6 +99,13 @@ de chaque téléphone.
 
 ## Administration et profil personnel
 
+Le quota disque renvoyé par le profil est le quota effectif : Découverte donne
+deux fois et Premium cinq fois le quota gratuit standard durant la mensualité confirmée payée,
+y compris après résiliation jusqu'à son échéance UTC. Ensuite, ou après
+remboursement, le quota habituel reprend sans suppression des fichiers.
+Les téléversements dépassant l'espace disponible sont refusés avant écriture.
+La taille maximale par fichier et les quotas podcast restent inchangés.
+
 L'accueil présente un seul accès **Administration**, visible et exécutable
 uniquement pour le rôle exact `Administrator`. `SessionStatusViewModel.RefreshAsync`
 lit les rôles dans `GET account/me` après le rafraîchissement de session ;
@@ -119,6 +126,33 @@ indépendamment de la visibilité du bouton dans PostIt.
 endpoints `account/me` pour lire et enregistrer les informations personnelles.
 Elle affiche aussi `resource-usage/me`, sans appeler la liste des usages
 globaux. Une indisponibilité de l'usage n'empêche pas la gestion du profil.
+La consommation est chargée avant le profil, pour rester consultable même
+si une opération de gestion reçoit un refus de quota. L'administration
+charge également les usages avant ses autres outils et les conserve sur
+un refus HTTP 429, tant que le rôle administrateur est toujours présent.
+
+L'indicateur cumulé est exprimé en points : `0,02 × appels API + secondes
+CPU enregistrées + 0,1 × Mio transférés + 0,3 × Mio ajoutés au stockage`.
+Le profil et les vues d'administration affichent le seuil effectif, le
+solde et l'atteinte du quota, indépendamment de l'estimation financière.
+La section serveur `ResourceUsage` configure les coefficients et les
+seuils individuels ; voir [INSTALL.md](../../INSTALL.md#resource-consumption-and-cgu).
+Le contrôle admet les coûts connus puis constate les coûts restants :
+il bloque les opérations suivantes, sans interrompre strictement celles
+déjà en cours.
+
+La page **À propos** ouvre les CGU dédiées de PostIt et de Yavsc sur
+`Home/CGU` auprès de l'autorité configurée, y compris sans session.
+Cette page publique présente les coefficients réellement configurés,
+la période cumulée, le seuil et les limites de la mesure.
+**Mon profil** et **À propos** proposent aussi un lien vers
+`ResourceSubscription` sur cette même autorité. La souscription mensuelle
+et la résiliation PayPal utilisent la session Web et des formulaires
+antiforgery ; PostIt ne stocke ni identifiant marchand ni secret PayPal.
+Le profil affiche la consommation brute, l'usage effacé et le crédit
+reporté, en plus de l'indicateur net. Les crédits Découverte/Premium ne
+suppriment pas les compteurs : les paiements confirmés sont rapprochés
+par Yavsc.Org et leur déduction est appliquée aussi au quota API/Blogs.
 
 ### Outils d'administration du site
 

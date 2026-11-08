@@ -96,6 +96,17 @@ public partial class AdministrationPageViewModel : ViewModelBase
         IsBusy = true;
         try
         {
+            var usage = await _usageClient.GetAdminOverviewAsync().ConfigureAwait(true)
+                ?? throw new InvalidOperationException("Le serveur a renvoyé une liste d’usages vide.");
+            if (!_session.IsAdministrator)
+            {
+                ClearAdministrationData();
+                StatusMessage = "Le rôle Administrator est requis.";
+                return;
+            }
+            foreach (var item in usage)
+                UsageOverview.Add(item);
+
             var query = SearchText.Trim();
             var usersEndpoint = string.IsNullOrWhiteSpace(query)
                 ? new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "users").ToString()
@@ -103,11 +114,10 @@ public partial class AdministrationPageViewModel : ViewModelBase
 
             var users = await _api.CallAsync<List<UserInfo>>(HttpMethod.Get, usersEndpoint).ConfigureAwait(true)
                 ?? throw new InvalidOperationException("Le serveur a renvoyé une liste d’utilisateurs vide.");
-            var usage = await _usageClient.GetAdminOverviewAsync().ConfigureAwait(true)
-                ?? throw new InvalidOperationException("Le serveur a renvoyé une liste d’usages vide.");
 
             if (!_session.IsAdministrator)
             {
+                ClearAdministrationData();
                 StatusMessage = "Le rôle Administrator est requis.";
                 return;
             }
@@ -116,14 +126,22 @@ public partial class AdministrationPageViewModel : ViewModelBase
             {
                 Users.Add(user);
             }
-            foreach (var item in usage)
-                UsageOverview.Add(item);
 
             OnPropertyChanged(nameof(FilteredUsers));
             OnPropertyChanged(nameof(SelectedUsage));
             if (_administrationClient is not null)
                 await LoadToolsAsync();
             StatusMessage = Users.Count > 0 ? $"{Users.Count} utilisateur(s) chargé(s)." : "Aucun utilisateur trouvé.";
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+        {
+            if (!_session.IsAdministrator)
+            {
+                ClearAdministrationData();
+                StatusMessage = "Le rôle Administrator est requis.";
+            }
+            else
+                StatusMessage = $"Quota insuffisant : les usages restent consultables. {ex.Message}";
         }
         catch (Exception ex)
         {

@@ -1,0 +1,64 @@
+@model Yavsc.ViewModels.ResourceSubscriptionPage
+@{
+    ViewBag.Title = "Abonnements de consommation";
+}
+<h1>Abonnements Découverte et Premium</h1>
+<p>L'inscription gratuite donne accès à @Model.FreeQuota points, sans renouvellement mensuel automatique.</p>
+<p>
+    Consommation brute : @Model.Usage.GrossConsumption points.
+    Après crédits : <strong>@Model.Usage.Consumption points</strong>.
+    Crédit reporté disponible : <strong>@Model.Usage.CreditBalance points</strong>.
+    Solde utilisable avec le quota gratuit : @Model.Usage.RemainingConsumption points.
+    Quota disque actuel : @Model.Usage.DiskQuota octets.
+</p>
+<p>
+    Chaque mensualité PayPal confirmée efface la consommation disponible, dans la limite du pack.
+    Les deux tiers du crédit mensuel inutilisé sont conservés sans expiration, même après résiliation.
+    Le crédit déjà reporté est utilisé avant le nouveau crédit. Aucune mensualité impayée ne donne de crédit.
+</p>
+<div class="row">
+    @foreach (var pack in new[] { "Discovery", "Premium" })
+    {
+        var premium = pack == "Premium";
+        var name = premium ? "Premium" : "Découverte";
+        var price = premium ? Model.Prices.PremiumPriceExcludingTax : Model.Prices.DiscoveryPriceExcludingTax;
+        <section class="col-md-6">
+            <h2>@name</h2>
+            <p>@(Model.FreeQuota * (premium ? 3 : 1)) points par mensualité payée.</p>
+            <p>Quota disque : @(premium ? "cinq" : "deux") fois le quota gratuit standard
+                (@(Constants.DefaultFSQ * (premium ? 5L : 2L)) octets) pendant la mensualité payée,
+                même après résiliation jusqu'à son échéance. Aucun fichier supprimé au retour au quota habituel.</p>
+            <p>
+                @price.ToString("F2") € HT par mois + TVA @Model.Prices.VatPercent %,
+                soit <strong>@Model.Prices.TotalPrice(price).ToString("F2") € TTC prélevés par mois</strong>.
+            </p>
+            <form asp-action="Create" method="post">
+                <input type="hidden" name="pack" value="@pack" />
+                <button type="submit" class="btn btn-primary">Souscrire / reprendre @name avec PayPal</button>
+            </form>
+        </section>
+    }
+</div>
+<p>Le premier crédit est accordé après le premier paiement confirmé, puis à chaque mensualité payée à la date anniversaire UTC du début PayPal.</p>
+<p>Un seul abonnement non résilié par compte. Pour changer de pack, résiliez d'abord le précédent. Un remboursement, même partiel, retire le crédit de la mensualité correspondante.</p>
+<h2>Mes abonnements</h2>
+@foreach (var subscription in Model.Subscriptions)
+{
+    <section class="border rounded p-3 mb-3">
+        <h3>@(subscription.Pack == "Premium" ? "Premium" : "Découverte")</h3>
+        <p>État PayPal : @subscription.State. Référence : @subscription.PayPalId</p>
+        <p>Tarif souscrit : @subscription.PriceExcludingTax.ToString("F2") € HT, @subscription.PriceIncludingTax.ToString("F2") € TTC. Crédit mensuel : @subscription.MonthlyPoints points.</p>
+        <p>Début UTC : @subscription.StartsAt?.ToUniversalTime().ToString("u"). Prochain prélèvement UTC : @subscription.NextBillingAt?.ToUniversalTime().ToString("u").</p>
+        @if (subscription.PayPalId is not null && subscription.State is not ("CANCELLED" or "EXPIRED"))
+        {
+            <form asp-action="Cancel" method="post">
+                <input type="hidden" name="id" value="@subscription.Id" />
+                <button type="submit" class="btn btn-outline-danger">Résilier cet abonnement PayPal</button>
+            </form>
+        }
+    </section>
+}
+<form asp-action="Refresh" method="post">
+    <button type="submit" class="btn btn-secondary">Actualiser les paiements et les crédits depuis PayPal</button>
+</form>
+<p><a asp-controller="Home" asp-action="CGU">CGU de PostIt et de Yavsc</a></p>

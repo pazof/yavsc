@@ -1,0 +1,14 @@
+@baseUrl = https://localhost:5104
+@token = replace-with-access-token
+
+### Current user's cumulative counters, indicator and effective quota (also accessible at the limit)
+GET {{baseUrl}}/api/v1/resource-usage/me
+Authorization: Bearer {{token}}
+
+### Latest snapshot per user (administrator role required)
+GET {{baseUrl}}/api/v1/resource-usage/admin
+Authorization: Bearer {{token}}
+
+### Consuming operation: returns 429 Problem Details when quota is exhausted
+GET {{baseUrl}}/api/v1/notifications/me
+Authorization: Bearer {{token}}

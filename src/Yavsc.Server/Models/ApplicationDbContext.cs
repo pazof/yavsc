@@ -96,6 +96,21 @@ namespace Yavsc.Models
                 entity.HasIndex(r => new { r.UserId, r.RecordedAtUtc });
                 entity.Property(r => r.Currency).HasMaxLength(8).HasDefaultValue(Constants.ResourceUsageDefaultCurrency);
                 entity.Property(r => r.UserName).HasMaxLength(256);
+                entity.Property(r => r.CreditPoints).HasPrecision(28, 8).HasDefaultValue(0m);
+            });
+
+            builder.Entity<ResourceSubscription>(entity =>
+            {
+                entity.HasIndex(s => s.PayPalId).IsUnique();
+                entity.HasIndex(s => s.UserId);
+                entity.HasOne<ApplicationUser>().WithMany().HasForeignKey(s => s.UserId).OnDelete(DeleteBehavior.Restrict);
+                entity.Property(s => s.MonthlyPoints).HasPrecision(28, 8);
+            });
+            builder.Entity<ResourceSubscriptionPayment>(entity =>
+            {
+                entity.HasIndex(p => new { p.SubscriptionId, p.Cycle }).IsUnique();
+                entity.HasOne<ResourceSubscription>().WithMany().HasForeignKey(p => p.SubscriptionId).OnDelete(DeleteBehavior.Restrict);
+                entity.Property(p => p.GrantedPoints).HasPrecision(28, 8);
             });
 
             // Customize the ASP.NET Identity model and override the defaults if needed.
@@ -365,6 +380,8 @@ namespace Yavsc.Models
         public DbSet<Estimate> Estimates { get; set; }
         public DbSet<Signature> Signatures { get; set; }
         public DbSet<ResourceUsageRecord> ResourceUsageRecords { get; set; }
+        public DbSet<ResourceSubscription> ResourceSubscriptions { get; set; }
+        public DbSet<ResourceSubscriptionPayment> ResourceSubscriptionPayments { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
         public DbSet<BalanceImpact> BalanceImpact { get; set; }
 

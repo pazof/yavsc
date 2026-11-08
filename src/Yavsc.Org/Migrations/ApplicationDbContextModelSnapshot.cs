@@ -1150,6 +1150,9 @@ namespace Yavsc.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
+                    b.Property<DateTimeOffset?>("DiscoveryDiskQuotaUntil")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<long>("DiskQuota")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
@@ -1201,6 +1204,9 @@ namespace Yavsc.Migrations
 
                     b.Property<long?>("PostalAddressId")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("PremiumDiskQuotaUntil")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -2803,6 +2809,101 @@ namespace Yavsc.Migrations
                     b.ToTable("PerformerDonations");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.Payment.ResourceSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastCreditedCycle")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("MonthlyPoints")
+                        .HasPrecision(28, 8)
+                        .HasColumnType("numeric(28,8)");
+
+                    b.Property<DateTimeOffset?>("NextBillingAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Pack")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("PayPalId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("PlanId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<decimal>("PriceExcludingTax")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<decimal>("PriceIncludingTax")
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTimeOffset?>("StartsAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<decimal>("VatPercent")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PayPalId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ResourceSubscriptions");
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Payment.ResourceSubscriptionPayment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<int>("Cycle")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("GrantedPoints")
+                        .HasPrecision(28, 8)
+                        .HasColumnType("numeric(28,8)");
+
+                    b.Property<DateTimeOffset>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Reversed")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionId", "Cycle")
+                        .IsUnique();
+
+                    b.ToTable("ResourceSubscriptionPayments");
+                });
+
             modelBuilder.Entity("Yavsc.Models.Relationship.Circle", b =>
                 {
                     b.Property<long>("Id")
@@ -2996,6 +3097,12 @@ namespace Yavsc.Migrations
 
                     b.Property<decimal>("CpuSeconds")
                         .HasColumnType("numeric");
+
+                    b.Property<decimal>("CreditPoints")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(28, 8)
+                        .HasColumnType("numeric(28,8)")
+                        .HasDefaultValue(0m);
 
                     b.Property<string>("Currency")
                         .IsRequired()
@@ -4619,6 +4726,24 @@ namespace Yavsc.Migrations
                     b.HasOne("Yavsc.Models.Workflow.PerformerProfile", null)
                         .WithMany()
                         .HasForeignKey("PerformerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Payment.ResourceSubscription", b =>
+                {
+                    b.HasOne("Yavsc.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Yavsc.Models.Payment.ResourceSubscriptionPayment", b =>
+                {
+                    b.HasOne("Yavsc.Models.Payment.ResourceSubscription", null)
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

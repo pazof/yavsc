@@ -17,6 +17,9 @@ public partial class UserProfilePageViewModel : ViewModelBase
     private readonly YavscApiClient? _api;
     private readonly SessionStatusViewModel? _sessionStatus;
     private readonly ResourceUsageApiClient? _usageClient;
+    private readonly AboutPageViewModel _subscriptionLinks;
+    public IAsyncRelayCommand OpenSubscriptionsCommand => _subscriptionLinks.OpenSubscriptionsCommand;
+    public string? SubscriptionLinkError => _subscriptionLinks.StatusMessage;
 
     [ObservableProperty]
     public partial ResourceUsageSummary? ResourceUsage { get; set; }
@@ -158,6 +161,8 @@ public partial class UserProfilePageViewModel : ViewModelBase
         _api = api;
         _sessionStatus = sessionStatus;
         _usageClient = usageClient;
+        _subscriptionLinks = new AboutPageViewModel(api?.Settings);
+        _subscriptionLinks.PropertyChanged += (_, _) => OnPropertyChanged(nameof(SubscriptionLinkError));
     }
 
     public UserProfilePageViewModel() : this(null, null) { }
@@ -167,19 +172,18 @@ public partial class UserProfilePageViewModel : ViewModelBase
     [RelayCommand]
     public async Task RefreshAsync()
     {
-        if (_api is null)
-        {
-            IsProfileLoaded = false;
-            StatusMessage = "Client API de profil indisponible.";
-            return;
-        }
-
         IsBusy = true;
         IsProfileLoaded = false;
         ResourceUsage = null;
         UsageError = null;
         try
         {
+            await LoadUsageAsync();
+            if (_api is null)
+            {
+                StatusMessage = "Client API de profil indisponible.";
+                return;
+            }
             var me = await _api.CallAsync<Me>(HttpMethod.Get, new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "account/me").ToString()).ConfigureAwait(true);
             if (me is null)
             {
@@ -218,18 +222,6 @@ public partial class UserProfilePageViewModel : ViewModelBase
             }
             IsProfileLoaded = true;
             StatusMessage = "Profil chargé.";
-            if (_usageClient is not null)
-            {
-                try
-                {
-                    ResourceUsage = await _usageClient.GetCurrentAsync()
-                        ?? throw new InvalidOperationException("Le serveur a renvoyé un usage vide.");
-                }
-                catch (Exception ex)
-                {
-                    UsageError = $"Impossible de charger mon usage : {ex.Message}";
-                }
-            }
         }
         catch (Exception ex)
         {
@@ -261,6 +253,24 @@ public partial class UserProfilePageViewModel : ViewModelBase
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    private async Task LoadUsageAsync()
+    {
+        if (_usageClient is null)
+        {
+            UsageError = "Client API de consommation indisponible.";
+            return;
+        }
+        try
+        {
+            ResourceUsage = await _usageClient.GetCurrentAsync()
+                ?? throw new InvalidOperationException("Le serveur a renvoyé un usage vide.");
+        }
+        catch (Exception ex) when (ex is HttpRequestException or JsonException or InvalidOperationException)
+        {
+            UsageError = $"Impossible de charger mon usage : {ex.Message}";
         }
     }
 

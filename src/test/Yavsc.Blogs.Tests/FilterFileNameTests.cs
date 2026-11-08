@@ -27,6 +27,45 @@ public sealed class FilterFileNameTests
         Assert.Equal(filtered, AbstractFileSystemHelpers.FilterFileName(filtered));
     }
 
+    [Theory]
+    [InlineData(true, 5)]
+    [InlineData(false, 2)]
+    public void Paid_upload_accepts_exact_effective_quota_and_refuses_overflow_without_touching_files(bool premium, long multiplier)
+    {
+        var root = Path.Combine(Path.GetTempPath(), $"yavsc-disk-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(root);
+        try
+        {
+            var limit = Yavsc.Constants.DefaultFSQ * multiplier;
+            var user = new ApplicationUser
+            {
+                DiskQuota = 10L, DiskUsage = limit - 3,
+                PremiumDiskQuotaUntil = premium ? DateTimeOffset.UtcNow.AddDays(1) : null,
+                DiscoveryDiskQuotaUntil = premium ? null : DateTimeOffset.UtcNow.AddDays(1)
+            };
+            using var input = new MemoryStream(new byte[] { 1, 2, 3 });
+            var received = user.ReceiveUserFile(root, new FormFile(input, 0, 3, "file", "disk.bin")
+            {
+                Headers = new HeaderDictionary(), ContentType = "application/octet-stream"
+            });
+            Assert.False(received.QuotaOffense);
+            Assert.Equal(limit, user.DiskUsage);
+            using var extra = new MemoryStream(new byte[] { 4 });
+            Assert.True(user.ReceiveUserFile(root, new FormFile(extra, 0, 1, "file", "extra.bin")).QuotaOffense);
+            Assert.False(File.Exists(Path.Combine(root, "extra.bin")));
+            user.PremiumDiskQuotaUntil = DateTimeOffset.UtcNow.AddSeconds(-1);
+            user.DiscoveryDiskQuotaUntil = DateTimeOffset.UtcNow.AddSeconds(-1);
+            using var replacement = new MemoryStream(new byte[] { 5 });
+            Assert.True(user.ReceiveUserFile(root, new FormFile(replacement, 0, 1, "file", "disk.bin")).QuotaOffense);
+            Assert.Equal(new byte[] { 1, 2, 3 }, File.ReadAllBytes(Path.Combine(root, "disk.bin")));
+            Assert.Equal(limit, user.DiskUsage);
+        }
+        finally
+        {
+            Directory.Delete(root, recursive: true);
+        }
+    }
+
     [Fact]
     public async Task Uploaded_accented_filename_is_accessible_through_static_files()
     {

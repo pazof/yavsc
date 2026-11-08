@@ -119,7 +119,7 @@ namespace Yavsc.WebApi.Controllers
             }).ToArray();
             user.PostsCounter = await _dbContext.BlogSpot.LongCountAsync(x => x.AuthorId == uid);
             user.DiskUsage = userData.DiskUsage;
-            user.DiskQuota = userData.DiskQuota;
+            user.DiskQuota = userData.GetEffectiveDiskQuota(DateTimeOffset.UtcNow);
             user.Credits = userData.AccountBalance?.Credits ?? 0;
             user.BankAccounts = (userData.BankInfo ?? [])
                 .Select(bank => new BankAccountInfo

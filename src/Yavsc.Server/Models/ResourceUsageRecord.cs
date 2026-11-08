@@ -23,6 +23,7 @@ public sealed class ResourceUsageRecord : ITrackedEntity
     public decimal CpuSeconds { get; set; }
     public decimal BandwidthMb { get; set; }
     public decimal StorageMb { get; set; }
+    public decimal CreditPoints { get; set; }
     public decimal EstimatedCompensation { get; set; }
 
     [Required]

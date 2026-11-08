@@ -166,6 +166,12 @@ namespace Yavsc.Server.Helpers
         }
         public static FileReceivedInfo ReceiveUserFile(this ApplicationUser user, string root, IFormFile f, string destFileName = null)
         {
+            var name = AbstractFileSystemHelpers.FilterFileName(destFileName ?? f.FileName);
+            var destination = new FileInfo(Path.Combine(root, name));
+            var replacedBytes = destination.Exists ? destination.Length : 0L;
+            var available = user.GetEffectiveDiskQuota(DateTimeOffset.UtcNow) - user.DiskUsage + replacedBytes;
+            if (f.Length > available)
+                return new FileReceivedInfo(root, name) { QuotaOffense = true };
             // f.FileName is parsed by ASP.NET Core from the
             // Content-Disposition header: it handles unquoted
             // values and the RFC 5987 filename* parameter that
@@ -203,6 +209,7 @@ namespace Yavsc.Server.Helpers
             // TODO lock user's disk usage for this scope,
             // this process is not safe at concurrent access.
             long usage = user.DiskUsage;
+            var quota = user.GetEffectiveDiskQuota(DateTimeOffset.UtcNow);
 
             var item = new FileReceivedInfo
             (root, AbstractFileSystemHelpers.FilterFileName(destFileName));
@@ -212,8 +219,15 @@ namespace Yavsc.Server.Helpers
                 item.Overridden = true;
                 usage -= fi.Length;
             }
+            if (usage >= quota)
+            {
+                inputStream.Dispose();
+                item.QuotaOffense = true;
+                return item;
+            }
             using (var dest = fi.OpenWrite())
             {
+                dest.SetLength(0);
                 using (inputStream)
                 {
                     const int blen = 1024;
@@ -221,16 +235,20 @@ namespace Yavsc.Server.Helpers
                     int len = 0;
                     while (!token.IsCancellationRequested && (len = inputStream.Read(buffer, 0, blen)) > 0)
                     {
+                        if (len > quota - usage)
+                        {
+                            item.QuotaOffense = true;
+                            break;
+                        }
                         dest.Write(buffer, 0, len);
                         usage += len;
-                        if (usage >= user.DiskQuota) break;
                     }
                     user.DiskUsage = usage;
                     dest.Close();
                     inputStream.Close();
                 }
             }
-            if (usage >= user.DiskQuota)
+            if (usage > quota)
             {
                 item.QuotaOffense = true;
             }

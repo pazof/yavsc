@@ -99,9 +99,20 @@ namespace Yavsc.Blogs.Controllers
         }
 
         [HttpPost("{*subdir}")]
-        public async Task<IActionResult> Post([ValidRemoteUserFilePath] string subdir="")
+        public async Task<IActionResult> Post([FromServices] IResourceUsageService usage,
+            [ValidRemoteUserFilePath] string subdir="", CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
+            var uid = User.GetUserId();
+            var form = await Request.ReadFormAsync(cancellationToken);
+            var anticipatedBytes = form.Files.Sum(f => f.Length);
+            if (!await usage.TryAdmitAsync(uid, User.Identity?.Name ?? uid, 0m, 0m,
+                anticipatedBytes, cancellationToken))
+            {
+                _logger.LogWarning("Resource quota refused file storage for user {UserId}", uid);
+                await ResourceUsageTelemetryMiddleware.WriteQuotaProblemAsync(HttpContext);
+                return new EmptyResult();
+            }
             string destDir = null;
             List<FileReceivedInfo> received = new List<FileReceivedInfo>();
             InvalidPathException pathex = null;
@@ -117,14 +128,13 @@ namespace Yavsc.Blogs.Controllers
             }
             _logger.LogInformation($"Receiving files, saved in '{destDir}' (specified as '{subdir}').");
 
-            var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
             int i=0;
-            _logger.LogInformation($"Receiving {Request.Form.Files.Count} files.");
+            _logger.LogInformation($"Receiving {form.Files.Count} files.");
 
-            foreach (var f in Request.Form.Files)
+            foreach (var f in form.Files)
             {
                 var item = user.ReceiveUserFile(destDir, f);
                 if (!item.QuotaOffense)

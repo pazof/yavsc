@@ -40,6 +40,36 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
         return http;
     }
 
+    [Theory]
+    [InlineData(true, 5)]
+    [InlineData(false, 2)]
+    public async Task Profile_reports_effective_paid_quota_then_base_quota_after_expiry(bool premium, long multiplier)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var userId = premium ? "premium-disk-profile" : "discovery-disk-profile";
+        using var scope = _fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<Yavsc.Models.ApplicationDbContext>();
+        var user = new Yavsc.Models.ApplicationUser
+        {
+            Id = userId, UserName = userId, NormalizedUserName = userId.ToUpperInvariant(),
+            Email = $"{userId}@example.test", DiskQuota = 1234L,
+            PremiumDiskQuotaUntil = premium ? DateTimeOffset.UtcNow.AddDays(1) : null,
+            DiscoveryDiskQuotaUntil = premium ? null : DateTimeOffset.UtcNow.AddDays(1)
+        };
+        db.Users.Add(user);
+        await db.SaveChangesAsync(ct);
+        using var http = NewClient(_fixture, userId);
+        var profile = await http.GetFromJsonAsync<Yavsc.Abstract.Identity.Me>("/api/v1/account/me", ct);
+        Assert.NotNull(profile);
+        Assert.Equal(Yavsc.Constants.DefaultFSQ * multiplier, profile.DiskQuota);
+        user.PremiumDiskQuotaUntil = DateTimeOffset.UtcNow.AddSeconds(-1);
+        user.DiscoveryDiskQuotaUntil = DateTimeOffset.UtcNow.AddSeconds(-1);
+        await db.SaveChangesAsync(ct);
+        profile = await http.GetFromJsonAsync<Yavsc.Abstract.Identity.Me>("/api/v1/account/me", ct);
+        Assert.NotNull(profile);
+        Assert.Equal(1234L, profile.DiskQuota);
+    }
+
     [Fact]
     public async Task GetCurrentUserUsage_persists_snapshot_in_database()
     {
@@ -100,9 +130,9 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
     }
 
     [Fact]
-    public async Task GetCurrentUserUsage_records_telemetry_values_from_authenticated_requests()
+    public async Task GetCurrentUserUsage_does_not_consume_quota()
     {
-        using var http = NewClient(_fixture, "telemetry-user");
+        using var http = NewClient(_fixture, "quota-consultation-user");
 
         var response = await http.GetAsync("/api/v1/resource-usage/me", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -110,10 +140,35 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
         using var scope = _fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<Yavsc.Models.ApplicationDbContext>();
         var record = await db.ResourceUsageRecords
-            .SingleAsync(r => r.UserId == "telemetry-user");
+            .SingleAsync(r => r.UserId == "quota-consultation-user");
 
-        Assert.True(record.ApiCalls >= 1m);
-        Assert.True(record.BandwidthMb > 0m);
+        Assert.Equal(0m, record.ApiCalls);
+        Assert.Equal(0m, record.BandwidthMb);
+    }
+
+    [Fact]
+    public async Task Exhausted_quota_blocks_operations_but_not_usage_consultation()
+    {
+        using var scope = _fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<Yavsc.Models.ApplicationDbContext>();
+        await ResourceUsageTracker.RecordAsync(db, "exhausted-quota-user", "exhausted-quota-user", cpuSeconds: 10000m);
+        using var http = NewClient(_fixture, "exhausted-quota-user");
+
+        var refused = await http.GetAsync("/api/v1/notifications/me", TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.TooManyRequests, refused.StatusCode);
+        Assert.Equal("application/problem+json", refused.Content.Headers.ContentType?.MediaType);
+        Assert.Contains("resource_quota_exceeded",
+            await refused.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+
+        var consulted = await http.GetAsync("/api/v1/resource-usage/me", TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, consulted.StatusCode);
+        var summary = await consulted.Content.ReadFromJsonAsync<ResourceUsageSummary>(TestContext.Current.CancellationToken);
+        Assert.NotNull(summary);
+        Assert.Equal(1000m, summary.Consumption);
+        Assert.Equal(1000m, summary.ConsumptionLimit);
+        Assert.Equal(0m, summary.RemainingConsumption);
+        Assert.True(summary.IsQuotaReached);
+        Assert.Equal(0m, summary.ApiCalls);
     }
 
     [Fact]

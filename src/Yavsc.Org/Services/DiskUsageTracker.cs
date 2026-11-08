@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using Yavsc;
 using Yavsc.Models;
 using Yavsc.Services;
@@ -40,7 +41,7 @@ public class DiskUsageTracker : IDiskUsageTracker
             DUTInfo usage = new DUTInfo
             {
                 Usage = user.DiskUsage,
-                Quota = user.DiskQuota
+                Quota = user.GetEffectiveDiskQuota(DateTimeOffset.UtcNow)
             };
             DiskUsage.Add(username, usage);
             if (DiskUsage.Count > ulistLength)
@@ -71,6 +72,8 @@ public class DiskUsageTracker : IDiskUsageTracker
     public bool GetSpace(string userName, long space)
     {
         var info = GetInfo(userName);
+        var user = context.Users.AsNoTracking().Single(u => u.UserName == userName);
+        info.Quota = user.GetEffectiveDiskQuota(DateTimeOffset.UtcNow);
         if (info.Quota < info.Usage + space) return false;
         info.Usage += space;
         #pragma warning disable CS4014

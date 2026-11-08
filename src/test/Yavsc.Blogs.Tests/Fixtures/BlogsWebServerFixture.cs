@@ -10,6 +10,7 @@ using Yavsc.Models.Blog;
 using Yavsc.Models.Relationship;
 using Yavsc.Services;
 using Yavsc.Tests.Shared;
+using Yavsc.Server.Helpers;
 using static Yavsc.Constants;
 namespace Yavsc.Blogs.Tests;
 
@@ -85,6 +86,7 @@ public sealed class BlogsWebServerFixture : WebHostFixture
 
     protected override WebApplication BuildApp(WebApplicationBuilder builder)
     {
+        builder.Services.AddResourceUsage(builder.Configuration);
         // Open the shared in-memory connection lazily on the first
         // fixture construction. Subsequent constructions (xUnit
         // creates one fixture instance per IClassFixture) reuse
@@ -132,6 +134,7 @@ public sealed class BlogsWebServerFixture : WebHostFixture
         builder.Services.Configure<SiteSettings>(s =>
         {
             s.UserFilesRoot = BlogFilesRoot;
+            s.Authority = "https://example.test";
         });
 
         // Real BlogSpotService — same instance the production host

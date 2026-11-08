@@ -76,6 +76,172 @@ login callback, updating and uninstallation on Windows with a standard
 (non-administrator) account. Installer compilation alone does not validate
 these Windows runtime behaviours.
 
+## Resource consumption and CGU
+
+Configure the **same** `ResourceUsage` section on Yavsc.Api, Yavsc.Blogs and
+Yavsc.Org. API and Blogs must also use the same application database.
+All three hosts and configuration templates inherit the backend defaults
+from [ResourceUsageOptions](src/Yavsc.Server/Settings/ResourceUsageOptions.cs).
+Deploy matching backend versions across hosts. The public CGU renders the
+effective coefficients and limit. The default limit is 1,000 points.
+The following is an example explicit override, not a duplicate of defaults.
+Use the account's immutable user ID (`sub`), not its login, for overrides:
+
+```json
+{
+  "ResourceUsage": {
+    "ApiCallWeight": 0.2,
+    "CpuSecondWeight": 0.1,
+    "BandwidthMbWeight": 0.05,
+    "StorageMbWeight": 0.5,
+    "DefaultLimit": 1000,
+    "UserLimits": {
+      "example-account-id": 20000
+    }
+  }
+}
+```
+
+Environment variables follow ASP.NET's convention, for example
+`ResourceUsage__DefaultLimit` and
+`ResourceUsage__UserLimits__example-account-id`. Restart all three services
+after changing the rule. Invalid weights or limits fail startup.
+Existing cumulative `ResourceUsageRecords` are reused, and changing weights
+recalculates their gross indicator. Apply the `ResourceSubscriptions`
+migration before deploying any of the three hosts: it adds the credit
+balance and subscription/payment tables without clearing existing counters.
+
+Consumption is in **points**, independent of `EstimatedCompensation` and
+currency. Counters have no automatic reset. Storage means cumulative
+instrumented writes, not current occupancy; the historical CPU counter is
+instrumented elapsed processing time, not exhaustive CPU profiling.
+
+Authenticated HTTP operations are admitted atomically against known costs
+(API call and declared request body). Personal-file uploads additionally
+check their aggregate storage cost before writing. Response bytes and
+unknown-length request bodies are measured through counting streams, and
+remaining costs are recorded after execution, including failed requests.
+PostgreSQL transaction-scoped advisory locks serialize admission and
+accounting for each user across hosts. In-flight operations can exceed the
+limit through costs unknown at admission; subsequent operations return
+HTTP 429 with `resource_quota_exceeded` Problem Details. No permanent account
+suspension or strict running-operation interruption is performed.
+
+`GET /api/v1/resource-usage/me` returns `Consumption`, `ConsumptionLimit`,
+`RemainingConsumption` and `IsQuotaReached`, alongside existing counters.
+It also returns `GrossConsumption`, `AppliedCredits` and `CreditBalance`.
+`Consumption` is the gross indicator less acquired credits, floored at zero.
+`RemainingConsumption` includes both unused free quota and carried credit.
+Usage consultation (including the role-protected admin overview), login,
+session refresh and the CGU remain accessible without consuming quota.
+The quota does not measure local PostIt resources, direct peer calls or
+WebSocket traffic. HTTP upload size limits and disk quotas still apply.
+
+The public page `/Home/CGU` describes the effective rule and default limit
+(and the individual limit for a signed-in user). It is linked from the Web
+footer and PostIt's **About** page, using the configured authentication
+authority. PostIt displays consumption and remaining points in **My profile**
+and the administration usage views.
+
+### Monthly resource subscriptions (PayPal REST)
+
+The free registration keeps the configured cumulative quota without a
+monthly reset. Discovery costs EUR 1 excluding VAT (EUR 1.20 including 20%
+VAT) per month; Premium costs EUR 2 excluding VAT (EUR 2.40 including VAT).
+Every **confirmed payment** grants up to one / three default quotas,
+respectively, with renewal on the UTC monthly anniversary of the PayPal
+start date. The pack allowance is captured at subscription creation, not
+multiplied by an individual user's quota override.
+
+At reconciliation, old carried credit is used first; the new allowance
+erases remaining net usage. Two thirds of the unused allowance are added
+to permanent carried credit, rounded down to eight decimal places.
+Old carried credit never loses another third and survives cancellation.
+Example: 400 points of usage and 1,000 new points erase 400 and carry
+400; an idle Premium month carries 2,000 points.
+Counters are never deleted. Pending/failed payments give no credit.
+Refunds (including partial refunds) revoke the corresponding award once.
+
+Discovery grants **twice `Constants.DefaultFSQ`** (1,000 MiB), and Premium
+**five times `Constants.DefaultFSQ`** (2,500 MiB) of disk space during each
+confirmed, non-reversed paid monthly period. Free registrations use the standard quota.
+The reference is the standard free quota (500 MiB), not an individual's
+administratively adjusted `DiskQuota`. That base quota is never overwritten.
+New user objects now use the existing 500 MiB database default rather than
+the former 512 MiB CLR initializer; existing accounts retain their stored quota.
+Cancellation retains the disk allowance through the UTC anniversary ending
+the paid period; expiry or refund restores the base quota without deleting
+existing files. Uploads exceeding available space are refused before writing.
+The maximum size of one file and separate podcast limits are unchanged.
+Pending/failed payments grant no disk bonus. Apply the
+`ResourceSubscriptions`, `PremiumDiskQuota` and `DiscoveryDiskQuota` EF migrations to the shared
+database before deploying any host. Profile and usage responses expose the
+effective disk quota; usage also exposes `PremiumDiskQuotaUntil` and `DiscoveryDiskQuotaUntil`.
+When paid periods overlap, Premium takes precedence until its expiry, then
+any still-paid Discovery period applies.
+
+Configure only **Yavsc.Org** for PayPal subscriptions. API and Blogs need
+the migrated shared database and matching resource weights, not PayPal
+credentials. Existing Classic donation settings remain unchanged.
+Use the existing `PayPal:Mode`, `PayPal:ClientId` and `PayPal:ClientSecret`
+REST settings; keep credentials in user-secrets or environment variables.
+
+```json
+{
+  "ResourceSubscriptions": {
+    "DiscoveryPlanId": "P-REPLACEWITHDISCOVERYPLAN",
+    "PremiumPlanId": "P-REPLACEWITHPREMIUMPLAN",
+    "WebhookId": "REPLACEWITHWEBHOOKID",
+    "DiscoveryPriceExcludingTax": 1,
+    "PremiumPriceExcludingTax": 2,
+    "VatPercent": 20
+  }
+}
+```
+
+Before enabling checkout, create a PayPal subscription product and two
+**ACTIVE** billing plans in the same REST app and environment:
+one indefinite `REGULAR` cycle with `interval_unit: MONTH`,
+`interval_count: 1`, `total_cycles: 0`, and EUR `fixed_price.value`
+of **1.20** / **2.40** respectively. These are **already VAT-inclusive**
+amounts: do not add PayPal tax, setup fees, trials, quantity support or
+shipping fees. Disable billing outstanding balances in the plans
+(`auto_bill_outstanding: false`) to avoid bundling missed installments
+into an amount that does not match one monthly payment.
+Checkout checks the configured plan against its expected TTC amount and
+refuses automatic collection of outstanding balances.
+Numerically invalid pricing fails startup; missing plan IDs/webhook/
+credentials returns an explicit unavailable error instead of a fake success.
+
+Register the HTTPS endpoint
+`https://<Yavsc.Org host>/ResourceSubscription/Notify` in that REST app.
+Subscribe to `BILLING.SUBSCRIPTION.ACTIVATED`, `UPDATED`, `CANCELLED`,
+`SUSPENDED`, `EXPIRED`, `PAYMENT.FAILED`, and `PAYMENT.SALE.COMPLETED`,
+`REFUNDED`, `REVERSED` (the lifecycle events use the
+`BILLING.SUBSCRIPTION.` prefix). Set the returned webhook ID in configuration.
+The server verifies the signature through PayPal, then fetches the bound
+subscription and transaction history; it never grants credit from an
+unverified webhook or the browser return. Payment IDs and monthly cycles
+are unique, and the same per-user PostgreSQL lock serializes usage and awards.
+Delayed notifications take effect on the usage measured when reconciled.
+
+Users manage subscriptions at `/ResourceSubscription`, linked from the Web
+footer and PostIt's About/profile pages. A browser Web login may be required
+independently of PostIt's session. Create/refresh/cancel require antiforgery
+tokens and ownership; the management page remains available at the quota.
+**Refresh payments** reconciles missed notifications and historical refunds.
+Cancellation is confirmed with PayPal, not merely recorded locally.
+Only one non-terminal subscription is allowed per account.
+An uncertain creation is retried with its same PayPal request ID for at
+most 24 hours; an older unresolved creation requires merchant-side review
+before allowing a second checkout. Do not delete that record and retry
+without checking PayPal for a possible existing agreement.
+
+Run a real Sandbox approval, first payment, renewal, repeated webhook,
+refund and cancellation before enabling production. The repository tests
+use synthetic PayPal transports and do not validate merchant credentials
+or PayPal account eligibility.
+
 ## Podcast live broadcasts and replays
 
 PostIt Desktop's home page provides **Podcasts : directs et replays**.

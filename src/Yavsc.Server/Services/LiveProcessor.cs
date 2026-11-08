@@ -447,13 +447,18 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             var path = Path.Combine(destDir, Path.GetFileName(fileName));
             var oldLength = File.Exists(path) ? new FileInfo(path).Length : 0;
             var usage = user.DiskUsage - oldLength;
+            if (usage >= user.GetEffectiveDiskQuota(_clock.GetUtcNow()))
+            {
+                await handler.Socket.CloseOutputAsync(WebSocketCloseStatus.PolicyViolation, "Available quota required.", ct);
+                return false;
+            }
             await using var file = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read);
             var buffer = new byte[Constants.WebSocketsMaxBufLen];
             while (handler.Socket.State == WebSocketState.Open)
             {
                 var received = await handler.Socket.ReceiveAsync(new ArraySegment<byte>(buffer), ct);
                 if (received.MessageType == WebSocketMessageType.Close) break;
-                if (received.MessageType != WebSocketMessageType.Binary || usage + received.Count > user.DiskQuota)
+                if (received.MessageType != WebSocketMessageType.Binary || usage + received.Count > user.GetEffectiveDiskQuota(_clock.GetUtcNow()))
                 {
                     await handler.Socket.CloseOutputAsync(WebSocketCloseStatus.PolicyViolation, "Binary data and available quota required.", ct);
                     return false;
