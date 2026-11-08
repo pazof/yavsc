@@ -74,7 +74,7 @@ namespace Yavsc.Services
             var subjectId = GetSubjectId(context.Subject);
             if (subjectId == null) return;
             var user = await _userManager.FindByIdAsync(subjectId);
-            if (user == null) return;
+            if (user == null || user.WithdrawalRequestedAt is not null) return;
             context.IssuedClaims = await GetClaimsFromUserAsync(context, user);
         }
 
@@ -87,7 +87,7 @@ namespace Yavsc.Services
                 return;
             }
             var user = await _userManager.FindByIdAsync(subjectId);
-            context.IsActive = user != null;
+            context.IsActive = user != null && user.WithdrawalRequestedAt is null;
         }
 
         private static string? GetSubjectId(ClaimsPrincipal claimsPrincipal)

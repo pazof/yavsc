@@ -96,6 +96,10 @@ public static class HostingExtensions
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
         services.AddScoped<Yavsc.Web.Services.IResourceSubscriptionService, Yavsc.Web.Services.ResourceSubscriptionService>();
         services.TryAddSingleton(TimeProvider.System);
+        services.AddScoped<IPaymentResidueService, PaymentResidueService>();
+        services.AddScoped<Yavsc.Web.Services.IAccountWithdrawalService, Yavsc.Web.Services.AccountWithdrawalService>();
+        services.Configure<Yavsc.Services.PodcastOptions>(builder.Configuration.GetSection("Podcast"));
+        services.AddHostedService<Yavsc.Web.Services.PaymentResiduePurgeWorker>();
 
         services.AddSession();
 
@@ -1067,6 +1071,7 @@ public static class HostingExtensions
         app.UseSwaggerUI();
         app.UseRouting();
         app.UseAuthentication();
+        app.UseMiddleware<WithdrawnAccountMiddleware>();
         app.UseIdentityServer();
         app.UseAuthorization();
         app.UseCors("default");

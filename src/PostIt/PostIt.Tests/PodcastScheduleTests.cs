@@ -10,6 +10,78 @@ namespace PostIt.Tests;
 public sealed class PodcastScheduleTests
 {
     [AvaloniaFact]
+    public async Task Late_obs_credentials_are_not_displayed_after_selection_changes_or_navigation()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"postit-obs-late-{Guid.NewGuid():N}.json");
+        var store = new TokenStore(path);
+        store.Save(new RefreshTokenRecord("test-access", "test-refresh", DateTimeOffset.UtcNow.AddHours(1), null));
+        try
+        {
+            await using var api = new ScheduleApi(store, path + ".settings");
+            var session = new SessionStatusViewModel { Api = api };
+            session.Refresh();
+            var vm = new PodcastsPageViewModel(new PodcastApiClient(api, () => "https://api.example/"), api, session);
+            await vm.ActivateAsync();
+            vm.SelectedPodcast = api.Plan;
+            api.PendingActivation = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            var activation = vm.ActivateObsCommand.ExecuteAsync(null);
+            vm.SelectedPodcast = api.Plan with { Id = Guid.NewGuid() };
+            vm.SelectedPodcast = api.Plan;
+            api.PendingActivation.SetResult(new("rtmps://obs.example:1936", "secret", DateTimeOffset.UtcNow.AddMinutes(30)));
+            await activation;
+            Assert.Empty(vm.ObsStreamKey);
+            api.PendingActivation = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            activation = vm.ActivateObsCommand.ExecuteAsync(null);
+            await vm.DeactivateAsync();
+            api.PendingActivation.SetResult(new("rtmps://obs.example:1936", "secret", DateTimeOffset.UtcNow.AddMinutes(30)));
+            await activation;
+            Assert.Empty(vm.ObsStreamKey);
+        }
+        finally { File.Delete(path); File.Delete(path + ".settings"); }
+    }
+
+    [AvaloniaFact]
+    public async Task Obs_activation_is_owned_displays_credentials_and_clears_them_on_navigation_and_revocation()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"postit-obs-{Guid.NewGuid():N}.json");
+        var store = new TokenStore(path);
+        store.Save(new RefreshTokenRecord("test-access", "test-refresh", DateTimeOffset.UtcNow.AddHours(1), null));
+        try
+        {
+            await using var api = new ScheduleApi(store, path + ".settings");
+            var session = new SessionStatusViewModel { Api = api };
+            session.Refresh();
+            var vm = new PodcastsPageViewModel(new PodcastApiClient(api, () => "https://api.example/"), api, session);
+            await vm.ActivateAsync();
+            vm.SelectedPodcast = api.Plan;
+            Assert.True(vm.ActivateObsCommand.CanExecute(null));
+            await vm.ActivateObsCommand.ExecuteAsync(null);
+            Assert.Equal("rtmps://obs.example:1936", vm.ObsServerUrl);
+            Assert.Equal("obs/stream-secret", vm.ObsStreamKey);
+            Assert.False(vm.IsBroadcasting);
+            api.Settings.Save();
+            Assert.DoesNotContain("stream-secret", await File.ReadAllTextAsync(path + ".settings"));
+            vm.SelectedPodcast = api.Plan with { Id = Guid.NewGuid(), OwnerId = "other" };
+            Assert.Empty(vm.ObsStreamKey);
+            Assert.False(vm.ActivateObsCommand.CanExecute(null));
+            vm.SelectedPodcast = api.Plan;
+            await vm.ActivateObsCommand.ExecuteAsync(null);
+            await vm.DeactivateAsync();
+            Assert.Empty(vm.ObsStreamKey);
+            Assert.True(api.ObsEnabled);
+            await vm.ActivateAsync();
+            vm.SelectedPodcast = api.Plan;
+            await vm.ActivateObsCommand.ExecuteAsync(null);
+            await vm.DeactivateObsCommand.ExecuteAsync(null);
+            Assert.False(api.ObsEnabled);
+            Assert.Empty(vm.ObsStreamKey);
+            Assert.EndsWith("/obs", api.RevokedPath);
+            await vm.DeactivateAsync();
+        }
+        finally { File.Delete(path); File.Delete(path + ".settings"); }
+    }
+
+    [AvaloniaFact]
     public async Task Preparation_and_editing_send_schedule_and_optional_announcement_without_capture()
     {
         var tokenPath = Path.Combine(Path.GetTempPath(), $"postit-plan-{Guid.NewGuid():N}.json");
@@ -62,18 +134,33 @@ public sealed class PodcastScheduleTests
         finally { File.Delete(tokenPath); File.Delete(tokenPath + ".settings"); }
     }
 
-    private sealed class ScheduleApi(TokenStore store, string settingsPath) : YavscApiClient(new Settings(settingsPath), store)
+    private sealed class ScheduleApi(TokenStore store, string settingsPath)
+        : YavscApiClient(new Settings(settingsPath), store), IYavscApiClient
     {
         public PodcastResponse Plan { get; private set; } = new(Guid.NewGuid(), "Concert", "owner", "Owner",
-            DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, PodcastState.Planned, 0, 0, 0);
+            DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, PodcastState.Planned, 0, 0, 0) { FlowId = 1 };
+        public bool ObsEnabled { get; private set; }
+        public string? RevokedPath { get; private set; }
         public PreparePodcastRequest? Saved { get; set; }
         public string? SavedPath { get; private set; }
         public HttpMethod? SavedMethod { get; private set; }
+        public TaskCompletionSource<PodcastObsCredentials>? PendingActivation { get; set; }
 
-        public override Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        public override async Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
         {
             object response;
             if (path.EndsWith("/account/me", StringComparison.Ordinal)) response = new Me { UserId = "owner" };
+            else if (path.EndsWith("/obs", StringComparison.Ordinal))
+            {
+                if (method == HttpMethod.Post)
+                {
+                    ObsEnabled = true;
+                    response = PendingActivation is null
+                        ? new PodcastObsCredentials("rtmps://obs.example:1936", "obs/stream-secret", DateTimeOffset.UtcNow.AddMinutes(30))
+                        : await PendingActivation.Task;
+                }
+                else response = new PodcastObsStatus(ObsEnabled, DateTimeOffset.UtcNow.AddMinutes(30), null);
+            }
             else if (method == HttpMethod.Get) response = new List<PodcastResponse> { Plan };
             else
             {
@@ -87,7 +174,16 @@ public sealed class PodcastScheduleTests
                 };
                 response = Plan;
             }
-            return Task.FromResult((T)response);
+            return (T)response;
+        }
+
+        Task IYavscApiClient.CallAsync(HttpMethod method, string path, object? body, CancellationToken ct)
+        {
+            Assert.Equal(HttpMethod.Delete, method);
+            Assert.EndsWith("/obs", path);
+            ObsEnabled = false;
+            RevokedPath = path;
+            return Task.CompletedTask;
         }
     }
 }

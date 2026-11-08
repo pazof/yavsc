@@ -15,6 +15,14 @@ namespace Yavsc.Models.Streaming
       public DateTimeOffset? PreparedAt { get; set; }
       public DateTimeOffset? StartedAt { get; set; }
       public bool PodcastDeleted { get; set; }
+      [MaxLength(64), System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]
+      public string? ObsKeyHash { get; set; }
+      [System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]
+      public DateTimeOffset? ObsEnabledUntil { get; set; }
+      [System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]
+      public Guid? ObsConnectionId { get; set; }
+      [MaxLength(512), System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]
+      public string? ObsLastError { get; set; }
 
       [Key(), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
       [Display(Name="FlowIdLabel", ResourceType=typeof(LiveFlow))]

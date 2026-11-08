@@ -15,6 +15,31 @@ namespace PostIt.Tests;
 
 public class AdministrationToolsTests
 {
+    [Fact]
+    public async Task Payment_purge_requires_confirmation_reports_counts_and_clears_on_logout()
+    {
+        await using var profile = new AdministrationAccessTests.ProfileTransport("Administrator");
+        var session = new SessionStatusViewModel { Api = profile };
+        await session.RefreshAsync();
+        await using var transport = new AdminTransport();
+        var vm = new AdministrationPageViewModel(null, session: session,
+            administrationClient: new AdministrationApiClient(transport, () => "https://example.invalid/api/v1"));
+        await vm.PurgePaymentResiduesCommand.ExecuteAsync(null);
+        Assert.Empty(transport.Paths);
+        vm.ConfirmDestructiveAction = true;
+        await vm.PurgePaymentResiduesCommand.ExecuteAsync(null);
+        Assert.Contains("POST https://example.invalid/api/v1/administration/payment-residues/purge", transport.Paths);
+        Assert.Contains("2 compte(s)", vm.PaymentPurgeReport);
+        Assert.False(vm.ConfirmDestructiveAction);
+        session.Api = null;
+        session.Refresh();
+        transport.Paths.Clear();
+        vm.ConfirmDestructiveAction = true;
+        await vm.PurgePaymentResiduesCommand.ExecuteAsync(null);
+        Assert.Empty(transport.Paths);
+        Assert.Empty(vm.PaymentPurgeReport);
+    }
+
     [AvaloniaTheory]
     [InlineData(400, 800)]
     [InlineData(800, 400)]
@@ -207,6 +232,8 @@ public class AdministrationToolsTests
                     : await PendingSecret.Task;
             else if (typeof(T) == typeof(ImportResult))
                 result = new ImportResult(0, 0, 0);
+            else if (typeof(T) == typeof(PaymentResiduePurgeResult))
+                result = new PaymentResiduePurgeResult(2, 3, 4, 1, 1);
             else
                 throw new NotSupportedException(typeof(T).Name);
             return JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(result))!;

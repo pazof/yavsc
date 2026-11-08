@@ -113,6 +113,17 @@ public partial class AdministrationPageViewModel
             throw new InvalidOperationException("Cochez la confirmation avant cette opération destructive.");
     }
 
+    [RelayCommand]
+    private Task PurgePaymentResiduesAsync() => RunOperationAsync(async client =>
+    {
+        RequireConfirmation();
+        var result = await client.PurgePaymentResiduesAsync();
+        RequireAccess();
+        PaymentPurgeReport = $"{result.Users} compte(s), {result.Subscriptions} abonnement(s), {result.Payments} mensualité(s), {result.Donations} don(s), {result.LegacyPayments} paiement(s) historique(s) purgés.";
+    });
+
+    [ObservableProperty] public partial string PaymentPurgeReport { get; set; } = "";
+
     partial void OnSelectedClientChanged(AdministrationClient? value)
     {
         ClientFields = AdministrationFieldViewModel.From(value?.Settings ?? new ClientSettings());

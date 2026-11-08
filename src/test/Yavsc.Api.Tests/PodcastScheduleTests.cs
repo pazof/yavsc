@@ -62,6 +62,15 @@ public sealed class PodcastScheduleTests(ApiWebServerFixture fixture) : IClassFi
         Assert.NotNull(plan.FlowId);
         Assert.Equal(request.ScheduledStartAt, plan.ScheduledStartAt);
         Assert.Equal(90, plan.PlannedDurationMinutes);
+        using var obsStatus = await owner.GetAsync(path + "/obs", Ct);
+        Assert.Equal(HttpStatusCode.OK, obsStatus.StatusCode);
+        Assert.True(obsStatus.Headers.CacheControl?.NoStore);
+        var status = await obsStatus.Content.ReadFromJsonAsync<PodcastObsStatus>(Ct);
+        Assert.False(status!.Enabled);
+        using var obsDenied = await other.GetAsync(path + "/obs", Ct);
+        Assert.Equal(HttpStatusCode.Forbidden, obsDenied.StatusCode);
+        using var obsAnonymous = await anonymous.GetAsync(path + "/obs", Ct);
+        Assert.Equal(HttpStatusCode.Unauthorized, obsAnonymous.StatusCode);
         using (var scope = fixture.Services.CreateScope())
         {
             var flow = await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().LiveFlow

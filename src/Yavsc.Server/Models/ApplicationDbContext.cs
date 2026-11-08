@@ -146,7 +146,8 @@ namespace Yavsc.Models
             builder.Entity<ApplicationUser>().Property(u => u.Avatar).HasDefaultValue(Constants.DefaultAvatar);
             builder.Entity<ApplicationUser>().Property(u => u.DiskQuota).HasDefaultValue(Constants.DefaultFSQ);
             builder.Entity<ResourceStorageRecord>().HasKey(r => new { r.UserId, r.Path });
-            builder.Entity<ApplicationUser>().HasAlternateKey(u => u.Email);
+            builder.Entity<ApplicationUser>().Property(u => u.Email).IsRequired();
+            builder.Entity<ApplicationUser>().HasIndex(u => u.Email).IsUnique();
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.User);
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.Owner);
             builder.Entity<UserActivity>().HasKey(u => new { u.DoesCode, u.UserId });

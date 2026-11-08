@@ -12,7 +12,7 @@ namespace Yavsc.Api.Services;
 public interface IPodcastScheduleService
 {
     Task<PodcastResponse> PrepareAsync(string ownerId, PreparePodcastRequest request, Guid? id, CancellationToken ct);
-    Task<PodcastResponse> StartAsync(Guid id, string ownerId, CancellationToken ct);
+    Task<PodcastResponse> StartAsync(Guid id, string ownerId, CancellationToken ct, Guid? obsConnectionId = null);
     Task<IReadOnlyList<PodcastResponse>> ListAsync(string ownerId, CancellationToken ct);
     Task<PodcastManifestResponse> GetAsync(Guid id, string ownerId, CancellationToken ct);
     Task<IReadOnlyList<PodcastAnnouncementResponse>> AnnouncementsAsync(CancellationToken ct);
@@ -35,6 +35,8 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
         try
         {
             var flow = id.HasValue ? await OwnedAsync(id.Value, ownerId, ct) : null;
+            if (flow?.ObsKeyHash is not null)
+                throw new PodcastException(409, "Desactivez l'entree OBS avant de modifier l'emission.");
             if (flow != null && (flow.StartedAt != null
                 || (await processor.ListAsync(ct)).Any(p => p.Id == id)))
                 throw new PodcastException(409, "Une emission demarree ne peut plus etre reprogrammee.");
@@ -63,21 +65,33 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
         finally { Gate.Release(); }
     }
 
-    public async Task<PodcastResponse> StartAsync(Guid id, string ownerId, CancellationToken ct)
+    public async Task<PodcastResponse> StartAsync(Guid id, string ownerId, CancellationToken ct, Guid? obsConnectionId = null)
     {
         await Gate.WaitAsync(ct);
         try
         {
-            var flow = await OwnedAsync(id, ownerId, ct);
-            var existing = (await processor.ListAsync(ct)).SingleOrDefault(p => p.Id == id);
-            if (existing != null && existing.State != PodcastState.Live)
-                throw new PodcastException(409, "Cette emission est terminee. Preparez une nouvelle emission.");
-            if (flow.StartedAt != null && existing == null)
-                throw new PodcastException(404, "Les medias de cette emission sont introuvables.");
-            var podcast = await processor.CreateAsync(ownerId, flow.Owner.UserName ?? ownerId, flow.Title, ct, id);
-            flow.StartedAt ??= podcast.CreatedAt;
-            await db.SaveChangesAsync(ct);
-            return Enrich(podcast, flow);
+            return await Yavsc.Server.Helpers.ResourceUsageTracker.WithUserLockAsync(db, ownerId, async () =>
+            {
+                var flow = await OwnedAsync(id, ownerId, ct);
+                await db.Entry(flow).ReloadAsync(ct);
+                await db.Entry(flow.Owner).ReloadAsync(ct);
+                if (flow.Owner.WithdrawalRequestedAt is not null)
+                    throw new PodcastException(403, "Le compte est ferme.");
+                if (obsConnectionId.HasValue && (flow.ObsConnectionId != obsConnectionId
+                    || flow.ObsKeyHash is null || flow.ObsEnabledUntil <= DateTimeOffset.UtcNow))
+                    throw new OperationCanceledException("OBS connection revoked or activation expired.", ct);
+                if (!obsConnectionId.HasValue && flow.ObsKeyHash is not null)
+                    throw new PodcastException(409, "Desactivez OBS avant de demarrer une capture PostIt.");
+                var existing = (await processor.ListAsync(ct)).SingleOrDefault(p => p.Id == id);
+                if (existing != null && existing.State != PodcastState.Live)
+                    throw new PodcastException(409, "Cette emission est terminee. Preparez une nouvelle emission.");
+                if (flow.StartedAt != null && existing == null)
+                    throw new PodcastException(404, "Les medias de cette emission sont introuvables.");
+                var podcast = await processor.CreateAsync(ownerId, flow.Owner.UserName ?? ownerId, flow.Title, ct, id);
+                flow.StartedAt ??= podcast.CreatedAt;
+                await db.SaveChangesAsync(ct);
+                return Enrich(podcast, flow);
+            }, ct);
         }
         finally { Gate.Release(); }
     }
@@ -130,10 +144,24 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
             var flow = await db.LiveFlow.SingleOrDefaultAsync(f => f.PodcastId == id, ct);
             if (flow == null) { await processor.DeleteAsync(id, ownerId, ct); return; }
             if (flow.OwnerId != ownerId) throw new PodcastException(403, "Seul l'auteur peut supprimer ce podcast.");
+            if (flow.ObsKeyHash is not null)
+                throw new PodcastException(409, "Desactivez l'entree OBS avant de supprimer l'emission.");
             var podcast = (await processor.ListAsync(ct)).SingleOrDefault(p => p.Id == id);
             if (podcast?.State == PodcastState.Live)
                 throw new PodcastException(409, "Terminez le direct avant de le supprimer.");
             if (podcast != null) await processor.DeleteAsync(id, ownerId, ct);
+            var storage = await db.ResourceStorageRecords.AsNoTracking()
+                .SingleOrDefaultAsync(r => r.UserId == ownerId && r.Path == $"podcast/{id:N}", ct);
+            if (storage is not null)
+            {
+                await Yavsc.Server.Helpers.ResourceUsageTracker.RecordStorageAsync(db, ownerId,
+                    flow.OwnerId, storage.Path, 0, ct, write: async () =>
+                    {
+                        var owner = await db.Users.SingleAsync(u => u.Id == ownerId, ct);
+                        await db.Entry(owner).ReloadAsync(ct);
+                        owner.DiskUsage = Math.Max(0, owner.DiskUsage - storage.Bytes);
+                    });
+            }
             flow.PodcastDeleted = true;
             await db.SaveChangesAsync(ct);
         }

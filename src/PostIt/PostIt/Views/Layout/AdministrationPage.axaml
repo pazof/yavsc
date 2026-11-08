@@ -77,6 +77,9 @@
                  TextWrapping="Wrap"/>
       <CheckBox Content="Je confirme la prochaine suppression, exclusion, régénération ou import."
                 IsChecked="{Binding ConfirmDestructiveAction, Mode=TwoWay}"/>
+      <Button Content="Purger les paiements résiduels des comptes retirés depuis un an"
+              Command="{Binding PurgePaymentResiduesCommand}" IsEnabled="{Binding !IsBusy}"/>
+      <TextBlock Text="{Binding PaymentPurgeReport}" TextWrapping="Wrap"/>
     </StackPanel>
 
     <TabControl Grid.Row="2" IsEnabled="{Binding !IsBusy}">

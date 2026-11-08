@@ -5,6 +5,10 @@
 
 ### Added
 
+* [Podcasts/OBS/PostIt] Add opt-in MediaMTX RTMPS ingestion for programmed emissions, activated explicitly from PostIt with one-time scoped, expiring and revocable keys. Start on publisher connection, remux H.264/AAC into the existing authenticated segments and MP4 replay workflow, bound concurrency/duration/buffering, enforce consumption and effective disk quotas, account storage with deletion refunds, and report owner-only ingest errors. Add relay configuration, installation instructions and real synthetic RTMP/RTMPS-to-replay regressions, including active revocation.
+
+* [Yavsc/PostIt/Privacy] Close and pseudonymize withdrawn accounts, cancel PayPal subscriptions before confirming withdrawal, erase managed personal files, avatars and podcasts, and reject old sessions across hosts. Purge eligible technical payment residues one year after effective withdrawal automatically and through a confirmed administrator-only PostIt action; preserve accounting records separately. Clarify the privacy policy, recipients, third-party integrations, withdrawal failures and deployment responsibilities. Make the unique email constraint mutable to support pseudonymization without deleting accounting identities.
+
 * [Yavsc/API/Blogs/PostIt] Refund tracked storage points when personal files are deleted or replaced, and when generated PDFs are replaced. Persist per-file accounting receipts, preserve them on rename, reject refunds for untracked legacy files, and allow deletion at the consumption limit without refunding API/CPU/transfer costs. Update CGU and installation instructions.
 
 * [Yavsc/PostIt/PayPal] Add monthly Découverte (EUR 1 excluding VAT) and Premium (EUR 2 excluding VAT) resource subscriptions, charged at EUR 1.20 / EUR 2.40 including 20% VAT. Confirmed monthly PayPal payments erase up to one / three default quotas, carry two thirds of unused monthly credit without expiry, and preserve historical counters. Add persistent idempotent payment credits, refund reconciliation, authenticated Web subscription/cancellation pages, verified REST webhooks, PostIt links and balances, migration and updated CGU.

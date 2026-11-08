@@ -81,3 +81,18 @@ Authorization: Bearer {{token}}
 ### OpenAPI in development (requires an Administrator token)
 GET {{baseUrl}}/openapi/podcasts.json
 Authorization: Bearer {{token}}
+### Activate OBS for an owned planned podcast (returns a one-time secret)
+POST {{baseUrl}}/api/v1/podcasts/{{id}}/obs
+Authorization: Bearer {{token}}
+
+### OBS activation status (never returns the stream key)
+GET {{baseUrl}}/api/v1/podcasts/{{id}}/obs
+Authorization: Bearer {{token}}
+
+### Revoke OBS and disconnect its publisher (allowed at consumption limit)
+DELETE {{baseUrl}}/api/v1/podcasts/{{id}}/obs
+Authorization: Bearer {{token}}
+
+# Activation: 403 other owner/closed account, 404 missing emission,
+# 409 already started, 413 disk full, 429 consumption limit, 503 OBS disabled.
+# relay/auth is called by MediaMTX, not by the end-user.

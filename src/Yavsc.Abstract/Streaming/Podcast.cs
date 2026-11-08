@@ -57,3 +57,24 @@ public sealed record PodcastSegmentResponse(int Sequence, double DurationSeconds
 /// <summary>The ordered, committed segments of a live broadcast or replay.</summary>
 public sealed record PodcastManifestResponse(
     PodcastResponse Podcast, IReadOnlyList<PodcastSegmentResponse> Segments);
+
+/// <summary>One-time OBS connection credentials for an activated planned emission.</summary>
+public sealed record PodcastObsCredentials(string ServerUrl, string StreamKey, DateTimeOffset ExpiresAt);
+
+/// <summary>Owner-only state of the external broadcasting activation.</summary>
+public sealed record PodcastObsStatus(bool Enabled, DateTimeOffset? ExpiresAt, string? Error);
+
+/// <summary>MediaMTX external authentication request; credentials are never logged or echoed.</summary>
+public sealed record PodcastRelayAuthentication
+{
+    public string User { get; init; } = "";
+    public string Password { get; init; } = "";
+    public string Action { get; init; } = "";
+    public string Path { get; init; } = "";
+    public string Protocol { get; init; } = "";
+    public string Query { get; init; } = "";
+    public string Id { get; init; } = "";
+}
+
+/// <summary>Maximum lifetime of an authenticated media relay session.</summary>
+public sealed record PodcastRelayAuthorization(DateTimeOffset? ExpireAt);

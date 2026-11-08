@@ -38,6 +38,7 @@ public sealed class SiteAdministrationApiTests(ApiWebServerFixture fixture) : IC
         var document = await http.GetFromJsonAsync<JsonElement>("/openapi/administration.json");
         Assert.True(document.GetProperty("paths").TryGetProperty(Root + "/clients", out _));
         Assert.True(document.GetProperty("paths").TryGetProperty(Root + "/transfer", out _));
+        Assert.True(document.GetProperty("paths").TryGetProperty(Root + "/payment-residues/purge", out _));
         using var moderator = Client("Moderator");
         Assert.Equal(HttpStatusCode.Forbidden, (await moderator.GetAsync("/openapi/administration.json")).StatusCode);
     }
@@ -64,7 +65,8 @@ public sealed class SiteAdministrationApiTests(ApiWebServerFixture fixture) : IC
             (HttpMethod.Get, "mailing-criteria"), (HttpMethod.Get, "mailing-templates"),
             (HttpMethod.Get, "mailing-templates/template"), (HttpMethod.Post, "mailing-templates"),
             (HttpMethod.Put, "mailing-templates/template"), (HttpMethod.Delete, "mailing-templates/template"),
-            (HttpMethod.Get, "transfer"), (HttpMethod.Post, "transfer")
+            (HttpMethod.Get, "transfer"), (HttpMethod.Post, "transfer"),
+            (HttpMethod.Post, "payment-residues/purge")
         };
         foreach (var route in routes)
         {
@@ -72,6 +74,22 @@ public sealed class SiteAdministrationApiTests(ApiWebServerFixture fixture) : IC
             using var response = await http.SendAsync(request, TestContext.Current.CancellationToken);
             Assert.Equal(expected, response.StatusCode);
         }
+
+    }
+
+    [Fact]
+    public async Task Administrator_can_purge_eligible_payment_residues_with_typed_report()
+    {
+        using var http = Client();
+        using var response = await http.PostAsync($"{Root}/payment-residues/purge", null, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var report = await response.Content.ReadFromJsonAsync<PaymentResiduePurgeResult>(TestContext.Current.CancellationToken);
+        Assert.NotNull(report);
+        Assert.True(report.Users >= 0);
+        Assert.True(report.LegacyPayments >= 0);
+        using var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(new[] { "donations", "legacyPayments", "payments", "subscriptions", "users" },
+            payload.RootElement.EnumerateObject().Select(p => p.Name).Order().ToArray());
     }
 
     [Fact]

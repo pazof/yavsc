@@ -156,6 +156,7 @@ public partial class AdministrationPageViewModel : ViewModelBase
 
     private void ClearAdministrationData()
     {
+        PaymentPurgeReport = "";
         Users.Clear();
         UsageOverview.Clear();
         SelectedUser = null;

@@ -90,10 +90,14 @@ public sealed class PodcastController(ILiveProcessor processor, IPodcastSchedule
     /// <summary>Ends the broadcast and schedules preparation of its MP4 replay.</summary>
     [HttpPost("{id:guid}/complete")]
     [ProducesResponseType<PodcastResponse>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<PodcastResponse>> Complete(Guid id, CancellationToken ct)
+    public async Task<ActionResult<PodcastResponse>> Complete(Guid id,
+        [FromServices] IPodcastObsService obs, CancellationToken ct)
     {
         var ownerId = User.GetUserId();
         if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
+        if ((await schedule.GetAsync(id, ownerId, ct)).Podcast.FlowId is not null
+            && (await obs.StatusAsync(id, ownerId, ct)).Enabled)
+            await obs.DeactivateAsync(id, ownerId, ct);
         await processor.CompleteAsync(id, ownerId, ct);
         return Ok((await schedule.GetAsync(id, ownerId, ct)).Podcast);
     }

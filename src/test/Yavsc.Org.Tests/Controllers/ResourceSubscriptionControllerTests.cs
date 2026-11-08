@@ -40,6 +40,21 @@ public sealed class ResourceSubscriptionControllerTests : IClassFixture<Resource
     }
 
     [Fact]
+    public async Task Withdrawal_requires_antiforgery_and_cannot_target_another_account()
+    {
+        using var client = _factory.SignedInClient();
+        using var missingToken = await client.PostAsync("/Account/Delete", new FormUrlEncodedContent(
+            new Dictionary<string, string> { ["UserId"] = "listener" }), Ct);
+        Assert.Equal(HttpStatusCode.BadRequest, missingToken.StatusCode);
+        using var tampered = await PostAsync(client, "/Account/Delete", new() { ["UserId"] = "author" });
+        Assert.Equal(HttpStatusCode.Redirect, tampered.StatusCode);
+        Assert.Contains("AccessDenied", tampered.Headers.Location?.ToString());
+        using var scope = _factory.Services.CreateScope();
+        Assert.Null((await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
+            .Users.SingleAsync(u => u.Id == "author", Ct)).WithdrawalRequestedAt);
+    }
+
+    [Fact]
     public async Task Subscription_management_requires_login_and_all_mutations_require_antiforgery()
     {
         using var anonymous = _factory.CreateClient(new() { AllowAutoRedirect = false });

@@ -1218,9 +1218,16 @@ namespace Yavsc.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<DateTimeOffset?>("WithdrawalRequestedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("WithdrawnAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("Email");
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -3199,6 +3206,20 @@ namespace Yavsc.Migrations
 
                     b.Property<string>("MediaType")
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("ObsConnectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ObsEnabledUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ObsKeyHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("ObsLastError")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("OwnerId")
                         .IsRequired()

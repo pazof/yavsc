@@ -28,6 +28,15 @@ public sealed class PodcastApiClient(IYavscApiClient api, Func<string> baseAddre
     public Task<PodcastResponse> StartAsync(Guid id, CancellationToken ct = default)
         => api.CallAsync<PodcastResponse>(HttpMethod.Post, Absolute($"{Prefix}/{id}/start"), ct: ct);
 
+    public Task<PodcastObsCredentials> ActivateObsAsync(Guid id, CancellationToken ct = default)
+        => api.CallAsync<PodcastObsCredentials>(HttpMethod.Post, Absolute($"{Prefix}/{id}/obs"), ct: ct);
+
+    public Task<PodcastObsStatus> ObsStatusAsync(Guid id, CancellationToken ct = default)
+        => api.CallAsync<PodcastObsStatus>(HttpMethod.Get, Absolute($"{Prefix}/{id}/obs"), ct: ct);
+
+    public Task DeactivateObsAsync(Guid id, CancellationToken ct = default)
+        => api.CallAsync(HttpMethod.Delete, Absolute($"{Prefix}/{id}/obs"), ct: ct);
+
     public Task<PodcastManifestResponse> GetAsync(Guid id, CancellationToken ct = default)
         => api.CallAsync<PodcastManifestResponse>(HttpMethod.Get, Absolute($"{Prefix}/{id}"), ct: ct);
 

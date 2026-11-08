@@ -8,6 +8,12 @@
 @scopeId = 1
 @templateId = REPLACE_WITH_MAILING_CRITERION
 
+### Purge payment residues after the effective withdrawal's one-year anniversary
+# 200: { users, subscriptions, payments, donations, legacyPayments }
+# 401: no token; 403: token without Administrator role.
+POST {{root}}/payment-residues/purge
+Authorization: Bearer {{token}}
+
 ### Protected OpenAPI document (development only)
 GET {{baseUrl}}/openapi/administration.json
 Authorization: Bearer {{token}}

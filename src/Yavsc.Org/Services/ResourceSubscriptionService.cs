@@ -38,6 +38,7 @@ public sealed class ResourceSubscriptionService(ApplicationDbContext db, IPayPal
             throw new SubscriptionOperationException(400, "Pack inconnu.");
         return ResourceUsageTracker.WithUserLockAsync(db, userId, async () =>
         {
+            await RequireActiveAccountAsync(userId, ct);
             var existing = await db.ResourceSubscriptions.Where(s => s.UserId == userId
                 && s.State != "CANCELLED" && s.State != "EXPIRED").SingleOrDefaultAsync(ct);
             if (existing is not null)
@@ -69,6 +70,7 @@ public sealed class ResourceSubscriptionService(ApplicationDbContext db, IPayPal
     public Task BindAsync(ResourceSubscription subscription, PayPalSubscriptionDetails remote, CancellationToken ct)
         => ResourceUsageTracker.WithUserLockAsync(db, subscription.UserId, async () =>
         {
+            await RequireActiveAccountAsync(subscription.UserId, ct, allowPendingWithdrawal: true);
             await db.Entry(subscription).ReloadAsync(ct);
             CheckBinding(subscription, remote);
             subscription.PayPalId = remote.Id;
@@ -87,6 +89,7 @@ public sealed class ResourceSubscriptionService(ApplicationDbContext db, IPayPal
         var transactions = await paypal.TransactionsAsync(remote.Id, subscription.CreatedAt, clock.GetUtcNow(), ct);
         await ResourceUsageTracker.WithUserLockAsync(db, subscription.UserId, async () =>
         {
+            await RequireActiveAccountAsync(subscription.UserId, ct);
             await db.Entry(subscription).ReloadAsync(ct);
             CheckBinding(subscription, remote);
             subscription.State = remote.State;
@@ -173,5 +176,12 @@ public sealed class ResourceSubscriptionService(ApplicationDbContext db, IPayPal
             || (subscription.State is "CANCELLED" or "EXPIRED" && remote.State is not ("CANCELLED" or "EXPIRED"))
             || remote.State is not ("APPROVAL_PENDING" or "APPROVED" or "ACTIVE" or "SUSPENDED" or "CANCELLED" or "EXPIRED"))
             throw new SubscriptionOperationException(409, "L'abonnement PayPal ne correspond pas au compte et au pack attendus.");
+    }
+
+    private async Task RequireActiveAccountAsync(string userId, CancellationToken ct, bool allowPendingWithdrawal = false)
+    {
+        if (await db.Users.AnyAsync(u => u.Id == userId &&
+            (u.WithdrawnAt != null || !allowPendingWithdrawal && u.WithdrawalRequestedAt != null), ct))
+            throw new SubscriptionOperationException(409, "Le compte est retire ; aucun nouveau credit ne peut etre attribue.");
     }
 }

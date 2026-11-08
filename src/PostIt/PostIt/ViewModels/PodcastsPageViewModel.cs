@@ -35,6 +35,11 @@ public partial class PodcastsPageViewModel : ViewModelBase
     private Control? _capturePreview;
     private bool _restoringPreferences;
     private bool _keepScreenOnDuringCapture;
+    private Guid? _obsPodcastId;
+    private int _obsVersion;
+    [ObservableProperty] public partial string ObsServerUrl { get; set; } = "";
+    [ObservableProperty] public partial string ObsStreamKey { get; set; } = "";
+    [ObservableProperty] public partial string ObsStatus { get; set; } = "";
     private IDisposable? _screenAwake;
     public bool SupportsCaptureScreenAwake => OperatingSystem.IsAndroid();
     public bool KeepScreenOnDuringCapture
@@ -165,6 +170,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
         set
         {
             if (!SetProperty(ref _selected, value)) return;
+            if (_obsPodcastId != value?.Id) ClearObsCredentials();
             if (value is { State: PodcastState.Planned } && value.OwnerId == _ownerId)
             {
                 _title = value.Title;
@@ -192,6 +198,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public IAsyncRelayCommand FinishCommand { get; }
     public IAsyncRelayCommand DeleteCommand { get; }
     public IAsyncRelayCommand RetryReplayCommand { get; }
+    public IAsyncRelayCommand ActivateObsCommand { get; }
+    public IAsyncRelayCommand DeactivateObsCommand { get; }
     public override bool CanNavigateNext { get => false; protected set { } }
     public override bool CanNavigatePrevious { get => !IsBroadcasting; protected set { } }
 
@@ -201,6 +209,12 @@ public partial class PodcastsPageViewModel : ViewModelBase
         _api = api;
         _session = session;
         RefreshCommand = new AsyncRelayCommand(RefreshAsync, () => !IsBusy);
+        ActivateObsCommand = new AsyncRelayCommand(ActivateObsAsync,
+            () => !IsBusy && !IsCapturing && _session.IsLoggedIn
+                && SelectedPodcast is { State: PodcastState.Planned } p && p.OwnerId == _ownerId);
+        DeactivateObsCommand = new AsyncRelayCommand(DeactivateObsAsync,
+            () => !IsBusy && !IsBroadcasting && _session.IsLoggedIn
+                && SelectedPodcast is { FlowId: not null } p && p.OwnerId == _ownerId);
         DetectDevicesCommand = new RelayCommand(DetectDevices, () => CanBroadcast && !IsCapturing && !IsBusy);
         PreviewCommand = new AsyncRelayCommand(StartPreviewAsync,
             () => CanBroadcast && !IsCapturing && !IsBusy && _session.IsLoggedIn && SelectedCamera is not null);
@@ -273,6 +287,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
         FinishCommand.NotifyCanExecuteChanged();
         DeleteCommand.NotifyCanExecuteChanged();
         RetryReplayCommand.NotifyCanExecuteChanged();
+        ActivateObsCommand.NotifyCanExecuteChanged();
+        DeactivateObsCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(CanNavigatePrevious));
     }
 
@@ -282,10 +298,18 @@ public partial class PodcastsPageViewModel : ViewModelBase
         try
         {
             var profileUrl = new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/"), "account/me");
-            _ownerId = (await _api.CallAsync<Me>(HttpMethod.Get, profileUrl.AbsoluteUri)).UserId;
+            var ownerId = (await _api.CallAsync<Me>(HttpMethod.Get, profileUrl.AbsoluteUri)).UserId;
+            if (_ownerId != ownerId) ClearObsCredentials();
+            _ownerId = ownerId;
             var podcasts = await _client.ListAsync();
             Podcasts.Clear();
             foreach (var podcast in podcasts) Podcasts.Add(podcast);
+            if (SelectedPodcast is { FlowId: not null } selected && selected.OwnerId == _ownerId)
+            {
+                var obs = await _client.ObsStatusAsync(selected.Id);
+                ObsStatus = obs.Error ?? (obs.Enabled ? "Entree OBS activee. Le direct commence a la connexion du diffuseur." : "Entree OBS desactivee.");
+                if (!obs.Enabled) ClearObsCredentials(clearStatus: false);
+            }
             Status = "Directs et replays reserves aux utilisateurs connectes.";
         }
         catch (Exception ex) { Status = $"Chargement impossible : {ex.Message}"; }
@@ -322,6 +346,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
 
     public async Task ActivateAsync()
     {
+        _session.LogoutCompleted -= ClearObsOnLogout;
+        _session.LogoutCompleted += ClearObsOnLogout;
         _restoringPreferences = true;
         try
         {
@@ -343,9 +369,67 @@ public partial class PodcastsPageViewModel : ViewModelBase
 
     public async Task DeactivateAsync()
     {
+        _session.LogoutCompleted -= ClearObsOnLogout;
+        ClearObsCredentials();
         _pageCancellation.Cancel();
         await StopPreviewAsync();
         if (_broadcaster is not null) await StopAsync();
+    }
+
+    private void ClearObsOnLogout()
+    {
+        ClearObsCredentials();
+        _ownerId = null;
+        SelectedPodcast = null;
+        UpdateCommands();
+    }
+
+    private void ClearObsCredentials(bool clearStatus = true)
+    {
+        ObsServerUrl = "";
+        ObsStreamKey = "";
+        _obsPodcastId = null;
+        _obsVersion++;
+        if (clearStatus) ObsStatus = "";
+    }
+
+    private async Task ActivateObsAsync()
+    {
+        IsBusy = true;
+        try
+        {
+            var podcast = SelectedPodcast ?? throw new InvalidOperationException("Selectionnez une emission programmee.");
+            var owner = _ownerId;
+            ClearObsCredentials();
+            var version = _obsVersion;
+            var token = _pageCancellation.Token;
+            var credentials = await _client.ActivateObsAsync(podcast.Id, token);
+            token.ThrowIfCancellationRequested();
+            if (_obsVersion != version || !_session.IsLoggedIn || _ownerId != owner || SelectedPodcast?.Id != podcast.Id)
+                throw new InvalidOperationException("La session ou l'emission a change ; les identifiants OBS ne seront pas affiches.");
+            _obsPodcastId = podcast.Id;
+            ObsServerUrl = credentials.ServerUrl;
+            ObsStreamKey = credentials.StreamKey;
+            ObsStatus = $"Connectez OBS avant {credentials.ExpiresAt.ToLocalTime():g}. Cette cle remplace toute cle precedente.";
+        }
+
+        catch (Exception ex) { Status = $"Activation OBS impossible : {ex.Message}"; }
+        finally { IsBusy = false; }
+    }
+
+    private async Task DeactivateObsAsync()
+    {
+        IsBusy = true;
+        try
+        {
+            var podcast = SelectedPodcast ?? throw new InvalidOperationException("Selectionnez une emission.");
+            await _client.DeactivateObsAsync(podcast.Id);
+            ClearObsCredentials();
+            ObsStatus = "Cle revoquee et diffuseur deconnecte. Le replay est finalise apres l'arret de la reception.";
+            await RefreshAsync();
+        }
+        catch (Exception ex) { Status = $"Desactivation OBS impossible : {ex.Message}"; }
+        finally { IsBusy = false; }
     }
 
     private void DetectDevices()

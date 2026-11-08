@@ -95,6 +95,10 @@ namespace Yavsc.Models
 
         public long DiskQuota { get; set; } = Constants.DefaultFSQ;
         [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
+        public DateTimeOffset? WithdrawalRequestedAt { get; set; }
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
+        public DateTimeOffset? WithdrawnAt { get; set; }
+        [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         public DateTimeOffset? PremiumDiskQuotaUntil { get; set; }
         [JsonIgnore, System.Text.Json.Serialization.JsonIgnore]
         public DateTimeOffset? DiscoveryDiskQuotaUntil { get; set; }

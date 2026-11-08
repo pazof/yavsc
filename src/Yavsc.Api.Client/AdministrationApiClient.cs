@@ -19,6 +19,8 @@ public sealed class AdministrationApiClient(IYavscApiClient api, Func<string> ba
         => api.CallAsync<List<AdministrationRole>>(HttpMethod.Get, Path("roles"), ct: ct);
     public Task EnsureRolesAsync(CancellationToken ct = default)
         => api.CallAsync(HttpMethod.Post, Path("roles/ensure"), ct: ct);
+    public Task<PaymentResiduePurgeResult> PurgePaymentResiduesAsync(CancellationToken ct = default)
+        => api.CallAsync<PaymentResiduePurgeResult>(HttpMethod.Post, Path("payment-residues/purge"), ct: ct);
     public Task<List<RoleMember>> GetRoleMembersAsync(string roleId, CancellationToken ct = default)
         => api.CallAsync<List<RoleMember>>(HttpMethod.Get, Path($"roles/{Escape(roleId)}/members"), ct: ct);
     public Task SetRoleMembershipAsync(string roleId, string userId, bool member, CancellationToken ct = default)

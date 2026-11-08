@@ -20,6 +20,13 @@ namespace Yavsc.ApiControllers.Administration;
 [ServiceFilter(typeof(AdministrationExceptionFilter))]
 public sealed class SiteAdministrationApiController(IAdministrationService service) : ControllerBase
 {
+    [HttpPost("payment-residues/purge"), EndpointSummary("Purger les paiements techniques des comptes retires depuis au moins un an")]
+    [ProducesResponseType<PaymentResiduePurgeResult>(200)]
+    [Yavsc.Server.Helpers.ResourceUsageExempt]
+    public async Task<ActionResult<PaymentResiduePurgeResult>> PurgePaymentResidues(
+        [FromServices] Yavsc.Server.Helpers.IPaymentResidueService residues, CancellationToken ct)
+        => Ok(await residues.PurgeAsync(ct));
+
     [HttpGet("summary"), EndpointSummary("Statistiques du site et informations du logiciel")]
     [ProducesResponseType<AdministrationSummary>(200)]
     public async Task<ActionResult<AdministrationSummary>> Summary(CancellationToken ct)

@@ -1049,10 +1049,12 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             return View(new UnregisterViewModel { UserId = id, ReturnUrl = returnUrl });
         }
 
-        [HttpPost, Authorize("AdministratorOnly")]
-        public async Task<IActionResult> AdminDelete(UnregisterViewModel model)
+        [HttpPost, Authorize("AdministratorOnly"), ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdminDelete(UnregisterViewModel model,
+            [FromServices] Yavsc.Web.Services.IAccountWithdrawalService withdrawal)
         {
-            var result = await DeleteUser(model.UserId);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var result = await DeleteUser(model.UserId, withdrawal);
 
             if (!result.Succeeded)
             {
@@ -1062,14 +1064,16 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
             return View();
         }
 
-        [HttpPost, Authorize]
-        public async Task<IActionResult> Delete(UnregisterViewModel model)
+        [HttpPost, Authorize, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(UnregisterViewModel model,
+            [FromServices] Yavsc.Web.Services.IAccountWithdrawalService withdrawal)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            var result = await DeleteUser(model.UserId);
+            if (model.UserId != User.GetUserId()) return Forbid();
+            var result = await DeleteUser(User.GetUserId(), withdrawal);
 
             if (!result.Succeeded)
             {
@@ -1080,20 +1084,30 @@ IHtmlLocalizerFactory htmlLocalizerFactory,
 
             return RedirectToAction("Index", "Home");
         }
-        async Task<IdentityResult> DeleteUser(string userId)
+        async Task<IdentityResult> DeleteUser(string userId, Yavsc.Web.Services.IAccountWithdrawalService withdrawal)
         {
-            ApplicationUser user = await _userManager.FindByIdAsync(userId);
-
-            _dbContext.DeviceDeclaration.RemoveRange(_dbContext.DeviceDeclaration.Where(g => g.DeviceOwnerId == userId));
-
-            return await _userManager.DeleteAsync(user);
+            try
+            {
+                await withdrawal.WithdrawAsync(userId, HttpContext.RequestAborted);
+                return IdentityResult.Success;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or HttpRequestException
+                or Yavsc.Web.Services.SubscriptionOperationException or DbUpdateException or InvalidOperationException)
+            {
+                _logger.LogError(ex, "Account withdrawal failed for {UserId}", userId);
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "WithdrawalFailed",
+                    Description = "Le retrait n'a pas pu etre termine. Contactez l'administration pour reprendre l'effacement."
+                });
+            }
         }
 
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, _localizer[error.Code]);
+                ModelState.AddModelError(string.Empty, error.Code == "WithdrawalFailed" ? error.Description : _localizer[error.Code]);
             }
         }
 

@@ -102,6 +102,7 @@ internal class Program
                 .UseRouting()
                 .UseAuthentication()
                 .UseCors("default")
+                .UseMiddleware<WithdrawnAccountMiddleware>()
                 .UseAuthorization()
                 .UseMiddleware<ResourceUsageTelemetryMiddleware>()
                 ;

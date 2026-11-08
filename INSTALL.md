@@ -78,6 +78,42 @@ these Windows runtime behaviours.
 
 ## Resource consumption and CGU
 
+### Account withdrawal and payment retention
+
+Apply the `AccountWithdrawal` migration before deploying all three hosts. It adds
+withdrawal timestamps and replaces the immutable alternate email key with a
+required unique email index, preserving uniqueness while allowing pseudonymization.
+Do not run the withdrawal flow until every host uses the matching backend.
+
+Yavsc.Org must have write/delete access to the same managed volumes as API/Blogs:
+`Site:UserFilesRoot`, `Site:Avatars` and `Podcast:RootPath`.
+Use absolute paths shared across processes; defaults relative to application
+directories are not shared automatically. Accounting files under `Site:Bills`
+are not erased by withdrawal. Symbolic links in managed user directories are
+refused rather than followed.
+
+The account is blocked before cancellation/erasure, and withdrawal is only
+confirmed when these operations and pseudonymization succeed. On an explicit
+failure, an administrator must fix the cause and retry the existing administrative
+withdrawal action. Ensure no live upload/encoding operation is still writing to
+the user's volumes during withdrawal; drain such operations before retrying.
+
+The Org hosted worker purges eligible technical payment records at startup and
+checks at most every minute, with an earlier wake-up for a known anniversary.
+Monitor errors and service availability: scheduled processing
+cannot ensure an exact wall-clock deletion while the host is stopped. At least
+one Org instance must run, and an external operations process must enforce the
+one-year retention deadline during prolonged downtime. PostIt administrators can
+also confirm and run `POST /api/v1/administration/payment-residues/purge`.
+The report counts accounts, subscriptions, monthly payments, donations and legacy
+PayPal payments. Active accounts and unfinished withdrawals are never purged.
+No new subscription credits may be granted after withdrawal begins.
+
+Invoice payments, invoices and other legal accounting records are excluded.
+Define and publish the actual accounting, logs and backup retention policy for
+the deployment, verify configured providers and international-transfer safeguards,
+and prevent withdrawn data from being reactivated by backup restoration.
+
 Configure the **same** `ResourceUsage` section on Yavsc.Api, Yavsc.Blogs and
 Yavsc.Org. API and Blogs must also use the same application database.
 All three hosts and configuration templates inherit the backend defaults
@@ -252,6 +288,100 @@ or PayPal account eligibility.
 
 ## Podcast live broadcasts and replays
 
+### OBS Studio for planned emissions
+
+Deploy MediaMTX **v1.21.3** beside the **single Yavsc.Api media instance** and
+FFmpeg on that API host. The generated configuration in
+[`contrib/mediamtx-podcasts.yml`](contrib/mediamtx-podcasts.yml) enables only the
+OBS publishing paths, RTMPS for publishers and private RTMP/control listeners.
+Adjust its `authHTTPAddress` to the API's internal HTTP listener; this listener
+must accept the local authentication callback without redirecting it to HTTPS.
+Alternatively, use an internal HTTPS URL with a valid certificate.
+Install the RTMPS TLS certificate and key at the configured paths. Keep the
+control API and internal RTMP ports on loopback (or an isolated authenticated network),
+never on the public Internet. Do not enable anonymous HLS/RTMP reads on the relay.
+MediaMTX must not record independent copies: Yavsc owns storage and retention.
+
+Apply the `PodcastObsIngestion` migration on the shared database. Configure
+`Podcast:Obs` on **Yavsc.Api only**, for example:
+
+```json
+{
+  "Podcast": {
+    "Obs": {
+      "Enabled": true,
+      "ServerUrl": "rtmps://obs.example.org:1936",
+      "RelayApiUrl": "http://127.0.0.1:9997/",
+      "RelayReadUrl": "rtmp://127.0.0.1:1935/",
+      "RelayUser": "yavsc",
+      "ActivationMinutes": 30,
+      "MaxDurationMinutes": 120,
+      "MaxConcurrentBroadcasts": 2
+    }
+  }
+}
+```
+
+Set `Podcast__Obs__RelayPassword` through the deployment's secret mechanism to
+a random password of at least 32 characters. It authenticates Yavsc's private
+reader/control client, not OBS users. Keep process arguments and credentials
+accessible only to the service administrator. The public RTMPS URL must have
+no `/live` suffix: the stream key includes the full `obs/<emission-id>` path.
+Plain RTMP for the public OBS URL requires the explicit `AllowUnencryptedRtmp: true` option and should
+only be used for local testing or inside a VPN. Limit publisher network bitrate
+at the relay/network level as well as configuring OBS; application quotas are
+checked on completed media segments, not on every incoming RTMP packet.
+
+In PostIt:
+
+1. Prepare an emission and select it.
+2. Choose **Activer OBS / renouveler la cle**.
+3. In OBS, select **Parametres > Stream > Service : Personnalise**, then copy
+   the displayed server and stream key. Use **H.264 video**, **AAC audio**,
+   a **2-second keyframe interval** and a bitrate producing segments below 8 MiB.
+4. Start streaming in OBS before the activation expires. The actual emission
+   starts when the publisher connects, even if the scheduled date is later.
+   No camera capture in PostIt is required; PostIt may be closed afterwards.
+5. Stop OBS or choose **Revoquer OBS et arreter le diffuseur** in PostIt.
+   Committed segments remain available and the normal MP4 worker prepares replay.
+
+Keys are scoped to one emission, stored only as SHA-256 hashes, displayed once,
+rotated on each activation and erased after completion. PostIt never persists
+them; navigation/logout clears the displayed key but does not revoke a running
+external emission. Revocation is available at the consumption limit.
+After disconnect, restart or timeout, the emission ends rather than silently
+resuming under a new publisher: prepare a new emission for another broadcast.
+
+The worker polls the authenticated relay once a second and starts bounded FFmpeg
+remuxing tasks. It rejects ended, deleted, revoked or withdrawn accounts and caps
+concurrent captures and duration (the lower of planned duration and configured
+maximum). MediaMTX also receives a session expiry from authentication, so the
+publisher is disconnected at that maximum lifetime even if the API stops.
+Committed segments are charged as transferred and stored MiB under the same
+consumption rule; their storage receipts are refunded on podcast deletion.
+OBS storage counts towards the user's effective disk quota and the existing
+podcast media limits. Pending capture files are monitored and bounded; enforcement
+can overshoot by one polling interval of incoming data. Processing errors are
+reported in the owner-only OBS status endpoint, without exposing keys or FFmpeg
+diagnostics. Monitor scan/cleanup failures and do not restore old activation keys
+from backups. A prolonged relay/API outage requires operational intervention.
+
+The normal API listens/authenticates playback; OBS stream credentials never grant
+listener access. If the relay is separately hosted, include it in the deployment's
+privacy/provider information.
+
+For the real media regression, set `YAVSC_TEST_MEDIAMTX` to the installed MediaMTX
+v1.21.3 executable and run:
+
+```bash
+dotnet test --project src/test/Yavsc.Api.Tests/Yavsc.Api.Tests.csproj --filter-class '*PodcastObsTests'
+```
+
+The test launches loopback-only listeners, generates synthetic H.264/AAC media
+with FFmpeg, verifies RTMP/RTMPS authentication, revocation during streaming,
+AAC audio, HLS segments, MP4 replay and refund,
+then stops its own processes and removes its temporary files.
+
 PostIt Desktop's home page provides **Podcasts : directs et replays**.
 Install LibVLC 3 with the `livehttp`, MPEG-TS, x264 and AAC plugins on the
 Desktop machine. Windows capture uses DirectShow; Linux uses V4L2 and the
@@ -274,7 +404,8 @@ replays; only the broadcaster can upload, complete or delete their podcast.
 Media is not anonymous and no access token is included in a playback URL.
 
 Configure Yavsc.Api's `Podcast` section (or environment variables such as
-`Podcast__RootPath`). No database migration is needed. Install **FFmpeg 5+
+`Podcast__RootPath`). The base media store needs no database migration;
+planned emissions and OBS require their migrations documented above. Install **FFmpeg 5+
 on the API server** (with `concatf`, MPEG-TS, MP4 and AAC bitstream-filter
 support; for Debian/Ubuntu: `apt-get install ffmpeg`). The API runtime stage
 in the main Dockerfile includes it. Only stream-copy remuxing is performed,
@@ -305,7 +436,10 @@ Defaults allow 8 MiB per segment (also the HTTP endpoint's hard limit),
 1 GiB retained per owner, 7,200 segments per episode and 100 episodes per
 owner. At the target two-second segment duration, this is roughly four hours
 per episode; the byte quota can be reached earlier. Podcast quotas are
-separate from the legacy user-files `DiskQuota`. Deleting an ended podcast
+separate from the legacy user-files `DiskQuota` for native HTTP capture.
+OBS source segments also count towards the user's effective disk quota and
+instrumented consumption; the additional MP4 is counted only by `MaxOwnerBytes`.
+Deleting an ended podcast
 releases its podcast quota. Reverse proxies must allow an 8 MiB PUT body
 and forward Authorization, Range and Content-Range on every API request/response.
 The retained MPEG-TS **and** the additional MP4 count toward `MaxOwnerBytes`.

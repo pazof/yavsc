@@ -42,6 +42,37 @@ public sealed class ResourceUsageTests
         };
 
     [Fact]
+    public async Task Instrumented_storage_admits_before_writing_and_refunds_disk_under_the_same_lock()
+    {
+        using var provider = NewProvider(o => o.DefaultLimit = 0.4m);
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var ct = TestContext.Current.CancellationToken;
+        const long mib = 1024 * 1024;
+        var user = new ApplicationUser { Id = "alice", UserName = "alice", Email = "alice@example.test" };
+        db.Users.Add(user);
+        await db.SaveChangesAsync(ct);
+        var policy = scope.ServiceProvider.GetRequiredService<IOptions<ResourceUsageOptions>>().Value;
+        await ResourceUsageTracker.RecordStorageAsync(db, user.Id, user.UserName!, "podcast/test", mib, ct,
+            write: () => { user.DiskUsage += mib; return Task.CompletedTask; }, policy: policy, bandwidthMb: 1m);
+        Assert.Equal(mib, user.DiskUsage);
+        Assert.Equal(mib, (await db.ResourceStorageRecords.SingleAsync(ct)).Bytes);
+        var wrote = false;
+        await Assert.ThrowsAsync<ResourceUsageLimitException>(() =>
+            ResourceUsageTracker.RecordStorageAsync(db, user.Id, user.UserName!, "podcast/test", 2 * mib, ct,
+                write: () => { wrote = true; return Task.CompletedTask; }, policy: policy, bandwidthMb: 1m));
+        Assert.False(wrote);
+        Assert.Equal(mib, (await db.ResourceStorageRecords.SingleAsync(ct)).Bytes);
+        await ResourceUsageTracker.RecordStorageAsync(db, user.Id, user.UserName!, "podcast/test", 0, ct,
+            write: () => { user.DiskUsage -= mib; return Task.CompletedTask; });
+        Assert.Equal(0, user.DiskUsage);
+        Assert.Empty(db.ResourceStorageRecords);
+        var usage = await db.ResourceUsageRecords.SingleAsync(ct);
+        Assert.Equal(0m, usage.StorageMb);
+        Assert.Equal(1m, usage.BandwidthMb);
+    }
+
+    [Fact]
     public void Configured_formula_uses_exact_decimal_points()
     {
         var rule = new ResourceUsageOptions

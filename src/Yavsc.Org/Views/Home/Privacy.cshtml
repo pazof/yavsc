@@ -1,16 +1,120 @@
 @{
-    ViewBag.Title = Localizer["Home"];
+    ViewBag.Title = "Confidentialité et protection des données";
 }
 
 <markdown>
-# La confidentialité
+# Confidentialité et protection des données
 
-À aucun moment, aucune adresse postale,
-aucune adresse e-mail ni aucun numéro de téléphone
-ne sont transmis à personne. Seul le système
-  son [possesseur ou l'administration](/Home/Contact) ont accès
- à ces informations.
+Dernière mise à jour : 8 novembre 2026.
 
-De plus, le droit de retrait est permanent
-et sa [mise en oeuvre est immédiate](/Account/Delete).
+## Responsable et contact
+
+L'exploitant de Yavsc, identifié sur la [page de contact](/Home/Contact),
+est votre interlocuteur pour les traitements de données et l'exercice de vos droits.
+Cette politique concerne Yavsc et son client PostIt.
+
+## Données et utilisation
+
+Le service traite les identifiants du compte, coordonnées renseignées, préférences,
+contenus publiés, fichiers, échanges nécessaires aux prestations, données techniques
+de connexion et de consommation, et références des abonnements et paiements.
+Ces données servent à fournir le service, authentifier les utilisateurs, gérer les
+prestations et paiements, protéger la plateforme et comptabiliser les ressources.
+Le fonctionnement du service repose sur l'exécution du contrat ; la sécurité relève
+de l'intérêt légitime de l'exploitant et les obligations comptables de la loi.
+Les fonctions optionnelles fondées sur un consentement peuvent être désactivées.
+
+## Accès et transmissions
+
+La confidentialité ne signifie pas qu'aucune donnée n'est transmise :
+
+* Le titulaire du compte et les administrateurs habilités accèdent aux informations
+  nécessaires à leur rôle. L'accès administratif sert au support et à l'exploitation.
+* Les contenus publiés sont accessibles selon leur visibilité et leurs autorisations.
+  Les parties à une demande, un devis ou une prestation peuvent recevoir les
+  coordonnées et pièces nécessaires à cette relation ; elles ne sont pas réservées
+  exclusivement à l'administration.
+* PostIt et les autres clients OAuth/OIDC autorisés reçoivent les informations prévues
+  par leurs autorisations : identifiant, nom de compte, adresse e-mail et rôles
+  lorsque l'accès au profil leur est accordé.
+* Lors d'un appel direct avec PostIt, l'adresse réseau que vous acceptez de communiquer
+  et les paramètres de connexion sont partagés avec l'interlocuteur pour établir
+  la liaison. L'audio et, si activée, la vidéo sont transmis aux participants ;
+  les diffusions de podcasts transmettent aussi les médias aux personnes autorisées.
+  Pour une émission diffusée avec OBS ou un autre encodeur externe, le relais média
+  configuré reçoit le flux, l'adresse réseau du diffuseur et une clé technique
+  limitée à l'émission. Cette clé permet de diffuser, pas d'accéder aux données
+  du compte ni de regarder les podcasts ; elle peut être révoquée dans PostIt.
+* Les prestataires d'hébergement et de messagerie traitent les données nécessaires
+  au stockage, au fonctionnement et à l'acheminement des messages.
+* PayPal reçoit les informations nécessaires au paiement et à l'abonnement :
+  formule, montant, devise, références et identifiant technique de rapprochement.
+  Pour les dons, l'adresse PayPal du destinataire est aussi utilisée. Les données
+  que vous fournissez directement à PayPal relèvent également de sa propre politique.
+  Yavsc ne stocke pas votre numéro de carte bancaire pour ces abonnements.
+* Si vous choisissez une connexion externe, notamment Google, ce fournisseur
+  intervient dans l'authentification. Les intégrations de calendrier et de notification,
+  lorsqu'elles sont configurées et utilisées, transmettent les données nécessaires
+  à leur fonction aux fournisseurs correspondants.
+* Si la modération par Claude est activée sur cette instance, le contenu soumis
+  et son contexte sont transmis à Anthropic pour cette modération.
+* Des données peuvent être communiquées aux autorités lorsqu'une obligation légale
+  l'impose. Leur publication ou transmission à d'autres utilisateurs dépend aussi
+  des fonctions et autorisations que vous utilisez.
+
+Certains fournisseurs peuvent traiter les données hors de l'Union européenne.
+L'exploitant doit vérifier les lieux de traitement et garanties contractuelles
+applicables aux fournisseurs effectivement activés ; leurs coordonnées et ces
+garanties peuvent être demandées via la page de contact.
+
+## Retrait et fichiers
+
+Vous pouvez [demander le retrait de votre compte](/Account/Delete).
+Le compte est bloqué dès le début du traitement. Le retrait effectif n'est confirmé
+qu'après arrêt des abonnements et effacement des fichiers personnels, avatars,
+pièces jointes personnelles/de blog et podcasts sur les volumes gérés par le service.
+Les contenus de profil et publications du compte sont effacés ou neutralisés,
+ses moyens de connexion sont supprimés et son identité est pseudonymisée.
+Une ligne technique peut rester nécessaire aux relations avec les documents conservés ;
+elle ne permet plus de se connecter.
+
+Une erreur d'effacement ou de résiliation est signalée : le retrait n'est pas annoncé
+comme réussi et l'administration doit reprendre le traitement.
+La suppression sur le service ne supprime pas les copies téléchargées par d'autres
+personnes ni les données détenues indépendamment par les prestataires.
+
+## Paiements et conservation
+
+Par exception au retrait ordinaire, les données techniques PayPal, abonnements,
+mensualités et dons nécessaires au rapprochement restent conservées pendant
+au maximum **un an à compter du retrait effectif**. Cette limite ne repart pas à
+chaque paiement ou notification.
+
+Les résidus arrivés à échéance sont purgés automatiquement ; une action réservée
+aux administrateurs dans PostIt permet également de lancer la purge des données
+éligibles. Les comptes actifs et les retraits non finalisés ne sont pas concernés.
+L'exploitant doit surveiller ce traitement et corriger tout incident ou arrêt
+du service empêchant la purge à échéance.
+
+**Les factures, pièces comptables et informations nécessaires aux obligations légales
+ne relèvent pas de cette limite d'un an.** Elles sont conservées selon les délais
+légaux applicables, avec accès limité aux besoins comptables et légaux.
+Les sauvegardes et journaux d'exploitation font l'objet d'une politique distincte :
+leur durée et les mesures empêchant la réactivation de données retirées doivent
+être précisées par l'exploitant selon le déploiement réel.
+
+## Cookies, stockage local et droits
+
+Yavsc utilise des cookies nécessaires à la connexion, à la session et à la protection
+des formulaires. PostIt conserve localement les éléments nécessaires à sa session ;
+la déconnexion et l'effacement des données locales doivent aussi être réalisés sur
+les appareils que vous utilisez.
+
+Vous pouvez demander l'accès, la rectification, l'effacement, la limitation,
+l'opposition et, lorsque applicable, la portabilité de vos données, ainsi que retirer
+un consentement sans affecter les traitements antérieurs. Contactez l'exploitant
+via la [page de contact](/Home/Contact). Vous pouvez également introduire une
+réclamation auprès de la [CNIL](https://www.cnil.fr/).
+
+La [règle de consommation et les abonnements](/Home/CGU) sont décrits séparément.
 </markdown>

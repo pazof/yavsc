@@ -1,26 +1,50 @@
 #nullable enable
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Logging;
 using Yavsc.Models;
 using Yavsc.Settings;
 
 namespace Yavsc.Server.Helpers;
+
+public sealed class ResourceUsageLimitException() : InvalidOperationException("Le seuil de consommation est atteint.")
+{
+}
 
 public static class ResourceUsageTracker
 {
     private static readonly SemaphoreSlim LocalGate = new(1, 1);
 
     public static Task RecordStorageAsync(ApplicationDbContext db, string userId, string userName,
-        string path, long bytes, CancellationToken cancellationToken = default)
+        string path, long bytes, CancellationToken cancellationToken = default,
+        Func<Task>? write = null, ResourceUsageOptions? policy = null, decimal bandwidthMb = 0m)
     {
         ArgumentNullException.ThrowIfNull(db);
         ArgumentException.ThrowIfNullOrWhiteSpace(userId);
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         ArgumentOutOfRangeException.ThrowIfNegative(bytes);
+        ArgumentOutOfRangeException.ThrowIfNegative(bandwidthMb);
         return WithUserLockAsync(db, userId, async () =>
         {
+            if (await IsWithdrawingAsync(db, userId, cancellationToken))
+                throw new InvalidOperationException("Storage accounting is closed for this withdrawn account.");
             var stored = await db.ResourceStorageRecords.FindAsync([userId, path], cancellationToken);
             if (stored is not null) await db.Entry(stored).ReloadAsync(cancellationToken);
             var delta = bytes - (stored?.Bytes ?? 0L);
+            if (write is not null)
+            {
+                if (policy is null && (delta > 0 || bandwidthMb > 0m))
+                    throw new ArgumentException("Storage admission requires a resource policy.", nameof(policy));
+                if (policy is not null && await UpdateCoreAsync(db, userId, userName, 0m, 0, 0m, bandwidthMb, userId,
+                    Constants.ResourceUsageDefaultCurrency, policy, Math.Max(0L, delta), cancellationToken) is null)
+                {
+                    db.GetService<ILoggerFactory>().CreateLogger("ResourceUsageTracker")
+                        .LogWarning("Storage admission refused at resource threshold for {UserId}", userId);
+                    throw new ResourceUsageLimitException();
+                }
+                await write();
+            }
+
             if (stored is null && bytes > 0)
                 db.ResourceStorageRecords.Add(new ResourceStorageRecord { UserId = userId, Path = path, Bytes = bytes });
             else if (stored is not null)
@@ -100,6 +124,7 @@ public static class ResourceUsageTracker
         decimal bandwidthMb, string? actorUserId, string currency, ResourceUsageOptions? policy,
         long anticipatedStorageBytes, CancellationToken cancellationToken)
     {
+        if (await IsWithdrawingAsync(dbContext, userId, cancellationToken)) return null;
         var effectiveActor = string.IsNullOrWhiteSpace(actorUserId) ? userId : actorUserId;
         var now = DateTime.UtcNow;
         var storageMb = (decimal)storageBytes / (1024m * 1024m);
@@ -149,6 +174,15 @@ public static class ResourceUsageTracker
 
         await dbContext.SaveChangesAsync(effectiveActor, cancellationToken);
         return record;
+    }
+
+    private static async Task<bool> IsWithdrawingAsync(ApplicationDbContext db, string userId, CancellationToken ct)
+    {
+        if (!await db.Users.AsNoTracking().AnyAsync(u => u.Id == userId && u.WithdrawalRequestedAt != null, ct))
+            return false;
+        db.GetService<ILoggerFactory>().CreateLogger("ResourceUsageTracker")
+            .LogWarning("Refused resource accounting for withdrawn account {UserId}", userId);
+        return true;
     }
 
     public static async Task<T> WithUserLockAsync<T>(ApplicationDbContext dbContext, string userId,
