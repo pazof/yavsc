@@ -12,6 +12,13 @@
 
 ## Surface : un code-base, trois front-ends
 
+Le projet Android active `EmbedAssembliesIntoApk` par défaut, y compris en
+Debug : un APK installé directement doit contenir les assemblies .NET,
+sans dépendre des fichiers de Fast Deployment sous `files/.__override__`.
+Sans elles, le runtime Android abandonne avant de charger l'interface
+avec « No assemblies found ». Le Makefile conserve également ce réglage
+explicite pour ses commandes de compilation.
+
 ```
                        ┌────────────────────────┐
                        │ PostIt (lib)           │
@@ -376,7 +383,8 @@ de modifier cette répartition. La liste et l'article défilent séparément.
 
 Lorsque la largeur de la fenêtre atteint ou dépasse sa hauteur, le lecteur
 ou l'éditeur passe à gauche (deux tiers de la largeur par défaut), et
-l'en-tête, la recherche, les commandes et la liste passent à droite.
+l'en-tête, la recherche et la liste passent à droite ; les commandes
+restent dans la barre de navigation.
 Le séparateur devient vertical. En portrait, la disposition verticale
 revient sans recréer les contrôles ni perdre le brouillon.
 Le seuil utilise les dimensions clientes de la fenêtre, indépendamment
@@ -394,6 +402,41 @@ la hauteur du `MarkdownViewer` lui-même : son contenu doit pouvoir
 dépasser le viewport pour que les barres automatiques s'activent.
 Ne pas placer cette grille dans un `StackPanel` vertical ou un
 `ScrollViewer` de page, qui lui donnerait une hauteur de mesure illimitée.
+
+Après un redimensionnement de la zone de texte (notamment à l'ouverture du
+clavier Android avec `AdjustResize`), l'éditeur remet le curseur dans son
+viewport après la mise en page, uniquement s'il garde le focus. Un toucher
+dans la zone éditable demande aussi le clavier via le pont natif Android,
+sans retirer puis redonner le focus ni modifier la sélection. Les autres
+plateformes conservent leur gestion habituelle du clavier.
+
+`MainView` compose les marges de `TopLevel.InsetsManager` (barres système
+et découpes) avec le recouvrement réel indiqué par `TopLevel.InputPane`,
+car le clavier ne redimensionne pas toujours la fenêtre Android en mode
+edge-to-edge. Si `AdjustResize` a déjà réduit la fenêtre, cette réserve
+ne soustrait pas une seconde fois la hauteur du clavier. La racine gère
+explicitement ces marges et désactive `TopLevel.AutoSafeAreaPadding` pour
+éviter deux propriétaires du même padding. Ne pas remplacer les marges
+système par un padding contenant uniquement la hauteur du clavier.
+En disposition large, tant que le clavier est ouvert et que l'article
+garde le focus, son titre et ses pièces jointes passent dans
+une colonne à côté du texte. La barre de commandes, la bannière de session
+et le statut restent visibles. La disposition habituelle revient à la
+fermeture du clavier ou au changement de focus, sans recréer le brouillon.
+Sous Android uniquement, le champ du titre est masqué pendant la saisie
+compacte avec le clavier ouvert, en portrait comme en paysage ; il réapparaît à la fermeture du clavier
+ou quand le focus quitte l'article. Sa valeur n'est jamais effacée.
+
+En Debug Android, `fr.pschneider.postit.MarkdownEditorTestActivity` ouvre
+un billet synthétique local, vérifie au moins trois lignes visibles et
+le bas de l'éditeur au-dessus des insets natifs du clavier et les contrôles
+en dehors des barres système,
+ferme puis rouvre le clavier par toucher sans perte de focus. Le résultat
+est écrit dans `files/markdown-editor-test-result.txt`. Ce test nécessite
+Android 11 ou plus pour vérifier les insets du clavier ; il ne publie
+aucun billet et retire sa page à la fin.
+L'extra booléen `landscape=true` force le paysage pendant le test et restaure
+l'orientation demandée précédemment à la fin.
 
 ## Navigation
 

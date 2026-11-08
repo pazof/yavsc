@@ -12,6 +12,7 @@ namespace PostIt.Services;
 /// </summary>
 public static class Platform
 {
+    public static Action? ShowSoftKeyboard { get; set; }
     public static ScreenAwakeRequests ScreenAwake { get; } = new();
     private static bool _isApplicationActive = !OperatingSystem.IsAndroid();
     public static event Action? ApplicationActivityChanged;

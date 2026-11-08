@@ -8,6 +8,7 @@
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
     <!-- LibVLC's native package targets inspect the plural RID property. -->
     <RuntimeIdentifiers Condition="'$(RuntimeIdentifiers)' == '' and '$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</RuntimeIdentifiers>
@@ -32,6 +33,7 @@
     <ProjectReference Include="..\PostIt\PostIt.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <Compile Include="..\PostIt.Tests\AndroidMarkdownEditorTestActivity.cs" Link="Tests\AndroidMarkdownEditorTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidChatServiceTestActivity.cs" Link="Tests\AndroidChatServiceTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidPodcastCaptureTestActivity.cs" Link="Tests\AndroidPodcastCaptureTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidCameraFrameRotationTestActivity.cs" Link="Tests\AndroidCameraFrameRotationTestActivity.cs" />

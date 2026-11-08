@@ -155,7 +155,6 @@
       </CommandBar.SecondaryCommands>
     </CommandBar>
   </NavigationPage.TopCommandBar>
-  <ScrollViewer>
     <Grid
       x:Name="MainGrid"
       Margin="5,5,10,5"
@@ -240,7 +239,6 @@
         RowSpacing="10">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -248,18 +246,15 @@
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock
-          Grid.Row="0"
-          FontWeight="SemiBold"
-          Text="Post detail" />
         <TextBox
           x:Name="DraftTitleTextBox"
-          Grid.Row="1"
+          Grid.Row="0"
           PlaceholderText="Title"
           Text="{Binding DraftTitle, Mode=TwoWay}" />
 
         <postitControls:MarkdownEditorControl
-          Grid.Row="2"
+          x:Name="ArticleEditor"
+          Grid.Row="1"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
           Document="{Binding DraftArticleDocument, Mode=TwoWay}"
@@ -268,12 +263,13 @@
 
         <Border
           x:Name="AttachmentsBorder"
-          Grid.Row="3"
+          Grid.Row="2"
           Padding="8"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Stretch"
           BorderBrush="LightGray"
           BorderThickness="1">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
           <StackPanel Spacing="4">
             <TextBlock FontWeight="SemiBold" Text="Pièces jointes" />
             <ItemsControl ItemsSource="{Binding DraftAttachments}">
@@ -284,6 +280,7 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
+          </ScrollViewer>
         </Border>
 
       </Grid>
@@ -335,5 +332,4 @@
         Grid.Row="5"
         DataContext="{Binding ActionStatus}" />
     </Grid>
-  </ScrollViewer>
 </ContentPage>

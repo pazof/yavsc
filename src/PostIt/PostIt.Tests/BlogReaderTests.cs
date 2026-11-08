@@ -228,7 +228,6 @@ public class BlogReaderTests
             {
                 Assert.True(reader.Bounds.Right <= list.Bounds.Left);
                 Assert.Equal(2, Grid.GetColumn(page.BlogsHeaderPanel));
-                Assert.Equal(2, Grid.GetColumn(page.BlogsCommandBar));
                 Assert.Equal(reader.Margin.Top, reader.Bounds.Top);
                 Assert.Equal(page.StatusBar.Bounds.Top - reader.Margin.Bottom, reader.Bounds.Bottom);
                 Assert.Equal(36, page.TranslatePoint(new Point(), nav)!.Value.Y);
@@ -237,9 +236,9 @@ public class BlogReaderTests
             {
                 Assert.True(list.Bounds.Bottom <= reader.Bounds.Top);
                 Assert.Equal(0, Grid.GetColumn(page.BlogsHeaderPanel));
-                Assert.Equal(0, Grid.GetColumn(page.BlogsCommandBar));
             }
 
+            Assert.Same(page.BlogsCommandBar, NavigationPage.GetTopCommandBar(page));
             var articleScroll = page.FindControl<MarkdownScrollViewer>("ArticleReader")!
                 .GetVisualDescendants().OfType<ScrollViewer>().Single();
             Assert.InRange(articleScroll.Viewport.Height, 1, window.ClientSize.Height);

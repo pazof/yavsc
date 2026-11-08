@@ -7,6 +7,9 @@ using Avalonia.Layout;
 using Avalonia.Platform.Storage;
 using Avalonia.Controls.Primitives;
 using Avalonia.Media;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Input;
 using Markdown.Avalonia;
 
@@ -17,11 +20,14 @@ public partial class BlogsPage : ContentPage
     private static readonly RelayCommand<string?> DisabledLinkCommand =
         new(static _ => { }, static _ => false);
     private bool? _isWideLayout;
+    private bool? _isCompactEditor;
     private ViewModels.BlogsViewModel? _observedViewModel;
 
     public BlogsPage()
     {
         InitializeComponent();
+        AddHandler(InputElement.GotFocusEvent, (_, _) => QueueLayoutUpdate(), RoutingStrategies.Bubble);
+        AddHandler(InputElement.LostFocusEvent, (_, _) => QueueLayoutUpdate(), RoutingStrategies.Bubble);
         SizeChanged += (_, _) =>
         Avalonia.Threading.Dispatcher.UIThread.Post(() =>
         {
@@ -38,6 +44,9 @@ public partial class BlogsPage : ContentPage
         UpdateHyperlinkCommand();
     }
 
+    private void QueueLayoutUpdate()
+        => Avalonia.Threading.Dispatcher.UIThread.Post(UpdateResponsiveLayout);
+
     private void UpdateResponsiveLayout()
     {
         var size = TopLevel.GetTopLevel(this)?.ClientSize ?? Bounds.Size;
@@ -46,6 +55,23 @@ public partial class BlogsPage : ContentPage
 
         // Use the window size so compacting the navigation bar cannot change the orientation.
         var isWide = size.Width >= size.Height;
+        var compact = this.FindAncestorOfType<MainView>()?.IsSoftKeyboardOpen == true
+            && ArticleEditor.IsKeyboardFocusWithin && !ArticleEditor.IsPreviewVisible;
+        var sideBySide = compact && isWide;
+        if (_isCompactEditor != compact || _isWideLayout != isWide)
+        {
+            _isCompactEditor = compact;
+            DraftTitleTextBox.IsVisible = !compact || !System.OperatingSystem.IsAndroid();
+            PostEditor.ColumnDefinitions = new ColumnDefinitions(sideBySide ? "3*,2*" : "*");
+            SetArea(ArticleEditor, sideBySide ? 0 : 1, 0, rowSpan: sideBySide ? 3 : 1);
+            SetArea(DraftTitleTextBox, 0, sideBySide ? 1 : 0);
+            SetArea(AttachmentsBorder, sideBySide ? 1 : 2, sideBySide ? 1 : 0);
+            ArticleEditor.SourceEditor.Padding = compact ? new Thickness(2) : new Thickness(5, 5, 5, 15);
+            PostEditor.Margin = new Thickness(compact ? 4 : 12);
+            PostEditor.RowSpacing = compact ? 2 : 10;
+        }
+        SetArea(StatusBar, sideBySide ? 1 : isWide ? 3 : 5, sideBySide ? 2 : 0,
+            columnSpan: isWide && !sideBySide ? 3 : 1);
         if (_isWideLayout == isWide)
             return;
         _isWideLayout = isWide;
@@ -58,7 +84,6 @@ public partial class BlogsPage : ContentPage
         SetArea(PostsSplitter, isWide ? 0 : 3, isWide ? 1 : 0, isWide ? 3 : 1);
         SetArea(PostReader, isWide ? 0 : 4, 0, isWide ? 3 : 1);
         SetArea(PostEditor, isWide ? 0 : 4, 0, isWide ? 3 : 1);
-        SetArea(StatusBar, isWide ? 3 : 5, 0, columnSpan: isWide ? 3 : 1);
         PostsSplitter.ResizeDirection = isWide ? GridResizeDirection.Columns : GridResizeDirection.Rows;
         PostsSplitter.HorizontalAlignment = isWide ? HorizontalAlignment.Center : HorizontalAlignment.Stretch;
         PostsSplitter.VerticalAlignment = isWide ? VerticalAlignment.Stretch : VerticalAlignment.Center;
