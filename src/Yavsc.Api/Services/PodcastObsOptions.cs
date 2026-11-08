@@ -4,30 +4,25 @@ public sealed class PodcastObsOptions
 {
     public bool Enabled { get; set; }
     public string ServerUrl { get; set; } = "";
-    public string RelayApiUrl { get; set; } = "http://127.0.0.1:9997/";
-    public string RelayReadUrl { get; set; } = "rtmp://127.0.0.1:1935/";
-    public string RelayUser { get; set; } = "yavsc";
-    public string RelayPassword { get; set; } = "";
+    public string ListenAddress { get; set; } = "0.0.0.0";
+    public int FirstPort { get; set; } = 10000;
+    public int PortCount { get; set; } = 16;
     public int ActivationMinutes { get; set; } = 30;
     public int MaxDurationMinutes { get; set; } = 120;
     public int MaxConcurrentBroadcasts { get; set; } = 2;
-    public bool AllowUnencryptedRtmp { get; set; }
 
     public void Validate()
     {
         if (!Enabled) return;
         if (!Uri.TryCreate(ServerUrl, UriKind.Absolute, out var server)
-            || (server.Scheme != "rtmps" && !(AllowUnencryptedRtmp && server.Scheme == "rtmp"))
+            || server.Scheme != "srt" || !server.IsDefaultPort
             || server.UserInfo.Length != 0 || server.Query.Length != 0 || server.Fragment.Length != 0
             || server.AbsolutePath is not ("" or "/")
-            || !Uri.TryCreate(RelayApiUrl, UriKind.Absolute, out var api) || api.Scheme is not ("http" or "https")
-            || api.UserInfo.Length != 0 || api.Query.Length != 0 || api.Fragment.Length != 0
-            || !Uri.TryCreate(RelayReadUrl, UriKind.Absolute, out var read) || read.Scheme != "rtmp"
-            || read.UserInfo.Length != 0 || read.Query.Length != 0 || read.Fragment.Length != 0
-            || read.AbsolutePath is not ("" or "/")
-            || RelayPassword.Length < 32 || string.IsNullOrWhiteSpace(RelayUser)
+            || !System.Net.IPAddress.TryParse(ListenAddress, out _)
+            || FirstPort is < 1024 or > 65535 || PortCount is < 1 or > 128
+            || (long)FirstPort + PortCount - 1 > 65535
             || ActivationMinutes is < 1 or > 1440 || MaxDurationMinutes is < 1 or > 1440
-            || MaxConcurrentBroadcasts is < 1 or > 16)
-            throw new InvalidOperationException("Invalid Podcast:Obs relay configuration. Use RTMPS, private relay addresses and a random password of at least 32 characters.");
+            || MaxConcurrentBroadcasts is < 1 or > 16 || MaxConcurrentBroadcasts > PortCount)
+            throw new InvalidOperationException("Invalid Podcast:Obs configuration. Use an SRT host without a port or query, a literal listen address and a bounded UDP port range.");
     }
 }

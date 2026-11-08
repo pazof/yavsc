@@ -1,7 +1,6 @@
 #nullable enable
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Yavsc.Abstract.Streaming;
@@ -18,43 +17,67 @@ public interface IPodcastObsService
     Task<PodcastObsCredentials> ActivateAsync(Guid id, string ownerId, CancellationToken ct);
     Task<PodcastObsStatus> StatusAsync(Guid id, string ownerId, CancellationToken ct);
     Task DeactivateAsync(Guid id, string ownerId, CancellationToken ct);
-    Task<PodcastRelayAuthorization?> AuthenticateAsync(PodcastRelayAuthentication request, CancellationToken ct);
 }
 
 public sealed class PodcastObsService(ApplicationDbContext db, IOptions<PodcastObsOptions> options,
-    IOptions<ResourceUsageOptions> usageOptions, IPodcastObsRelay relay, TimeProvider clock,
+    IOptions<ResourceUsageOptions> usageOptions, PodcastObsWorker worker, TimeProvider clock,
     ILogger<PodcastObsService> logger) : IPodcastObsService
 {
-    private PodcastObsOptions Settings()
+    public async Task<PodcastObsCredentials> ActivateAsync(Guid id, string ownerId, CancellationToken ct)
     {
-        var value = options.Value;
-        if (!value.Enabled) throw new PodcastException(503, "L'entree OBS n'est pas configuree sur cette instance.");
-        value.Validate();
-        return value;
-    }
-
-    public Task<PodcastObsCredentials> ActivateAsync(Guid id, string ownerId, CancellationToken ct)
-        => ResourceUsageTracker.WithUserLockAsync(db, ownerId, async () =>
+        var settings = options.Value;
+        if (!settings.Enabled) throw new PodcastException(503, "L'entree OBS n'est pas configuree sur cette instance.");
+        settings.Validate();
+        await worker.WaitUntilReadyAsync(ct);
+        await worker.Lifecycle.WaitAsync(ct);
+        try
         {
-            var settings = Settings();
-            var flow = await OwnedAsync(id, ownerId, ct);
-            if (flow.StartedAt is not null)
-                throw new PodcastException(409, "Cette emission a deja demarre. Preparez une nouvelle emission.");
-            if (flow.Owner.WithdrawalRequestedAt is not null)
-                throw new PodcastException(403, "Le compte est ferme.");
-            if (await QuotaReachedAsync(ownerId, ct))
-                throw new PodcastException(429, "Le seuil de consommation est atteint.");
-            if (flow.Owner.DiskUsage >= flow.Owner.GetEffectiveDiskQuota(clock.GetUtcNow()))
-                throw new PodcastException(413, "Le quota disque est atteint.");
-            var key = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
-            flow.ObsKeyHash = Hash(key);
-            flow.ObsEnabledUntil = clock.GetUtcNow().AddMinutes(settings.ActivationMinutes);
-            flow.ObsConnectionId = null;
-            flow.ObsLastError = null;
-            await db.SaveChangesAsync(ct);
-            return new PodcastObsCredentials(settings.ServerUrl.TrimEnd('/'),
-                $"obs/{id:N}?key={key}", flow.ObsEnabledUntil.Value);
-        }, ct);
+            await ResourceUsageTracker.WithUserLockAsync(db, ownerId, async () =>
+            {
+                var flow = await EligibleAsync(id, ownerId, ct);
+                flow.ObsKeyHash = null;
+                flow.ObsEnabledUntil = null;
+                flow.ObsConnectionId = null;
+                await db.SaveChangesAsync(ct);
+                return true;
+            }, ct);
+            await worker.StopCaptureAsync(id, ct);
+            return await ResourceUsageTracker.WithUserLockAsync(db, ownerId, async () =>
+            {
+                var flow = await EligibleAsync(id, ownerId, ct);
+                var key = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
+                var connectionId = Guid.NewGuid();
+                var expires = clock.GetUtcNow().AddMinutes(settings.ActivationMinutes);
+                flow.ObsKeyHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(key)));
+                flow.ObsEnabledUntil = expires;
+                flow.ObsConnectionId = connectionId;
+                flow.ObsLastError = null;
+                await db.SaveChangesAsync(ct);
+                try
+                {
+                    var port = await worker.ArmAsync(id, ownerId, connectionId, key, expires, ct);
+                    var url = new UriBuilder(settings.ServerUrl)
+                    {
+                        Port = port,
+                        Query = $"mode=caller&passphrase={key}&pbkeylen=32&enforced_encryption=1&latency=200000"
+                    };
+                    return new PodcastObsCredentials(url.Uri.AbsoluteUri, "", expires);
+                }
+                catch (Exception ex)
+                {
+                    flow.ObsKeyHash = null;
+                    flow.ObsEnabledUntil = null;
+                    flow.ObsConnectionId = null;
+                    flow.ObsLastError = "Activation SRT impossible. Verifiez FFmpeg, les ports UDP et la capacite disponible.";
+                    await db.SaveChangesAsync(CancellationToken.None);
+                    logger.LogError("OBS listener activation failed ({ErrorType})", ex.GetType().Name);
+                    if (ex is OperationCanceledException or PodcastException) throw;
+                    throw new PodcastException(503, flow.ObsLastError);
+                }
+            }, ct);
+        }
+        finally { worker.Lifecycle.Release(); }
+    }
 
     public async Task<PodcastObsStatus> StatusAsync(Guid id, string ownerId, CancellationToken ct)
     {
@@ -66,69 +89,39 @@ public sealed class PodcastObsService(ApplicationDbContext db, IOptions<PodcastO
 
     public async Task DeactivateAsync(Guid id, string ownerId, CancellationToken ct)
     {
-        var connectionId = await ResourceUsageTracker.WithUserLockAsync(db, ownerId, async () =>
+        await worker.Lifecycle.WaitAsync(ct);
+        try
         {
-            var flow = await OwnedAsync(id, ownerId, ct);
-            var connection = flow.ObsConnectionId;
-            flow.ObsKeyHash = null;
-            flow.ObsEnabledUntil = null;
-            flow.ObsConnectionId = null;
-            await db.SaveChangesAsync(ct);
-            return connection;
-        }, ct);
-        if (connectionId.HasValue) await relay.KickAsync(id, ct, connectionId);
-    }
-
-    public async Task<PodcastRelayAuthorization?> AuthenticateAsync(PodcastRelayAuthentication request, CancellationToken ct)
-    {
-        var settings = Settings();
-        if (request.User == settings.RelayUser && EqualSecret(request.Password, settings.RelayPassword))
-        {
-            if (request.Action == "api" || request.Action == "read" && request.Protocol == "rtmp" && TryId(request.Path, out _))
-                return new(null);
-        }
-        if (request.Action == "publish" && request.Protocol == "rtmp" && TryId(request.Path, out var id))
-        {
-            var query = QueryHelpers.ParseQuery(request.Query ?? "");
-            if (query.TryGetValue("key", out var keys) && keys.Count == 1 && keys[0] is { Length: 64 } key
-                && Guid.TryParse(request.Id, out var connectionId))
+            await ResourceUsageTracker.WithUserLockAsync(db, ownerId, async () =>
             {
-                var flow = await db.LiveFlow.AsNoTracking().Include(f => f.Owner)
-                    .SingleOrDefaultAsync(f => f.PodcastId == id && !f.PodcastDeleted, ct);
-                if (flow is not null)
-                    return await ResourceUsageTracker.WithUserLockAsync<PodcastRelayAuthorization?>(db, flow.OwnerId, async () =>
-                    {
-                        var current = await db.LiveFlow.Include(f => f.Owner).SingleAsync(f => f.PodcastId == id, ct);
-                        await db.Entry(current).ReloadAsync(ct);
-                        await db.Entry(current.Owner).ReloadAsync(ct);
-                        if (current is { StartedAt: null, ObsKeyHash: not null, PodcastDeleted: false }
-                            && (current.ObsConnectionId is null || current.ObsConnectionId == connectionId)
-                            && current.ObsEnabledUntil > clock.GetUtcNow() && current.Owner.WithdrawalRequestedAt is null
-                            && EqualSecret(Hash(key), current.ObsKeyHash)
-                            && !await QuotaReachedAsync(current.OwnerId, ct)
-                            && current.Owner.DiskUsage < current.Owner.GetEffectiveDiskQuota(clock.GetUtcNow()))
-                        {
-                            current.ObsConnectionId = connectionId;
-                            await db.SaveChangesAsync(ct);
-                            return new(clock.GetUtcNow().AddMinutes(Math.Min(current.PlannedDurationMinutes ?? 1, settings.MaxDurationMinutes)));
-                        }
-                        logger.LogWarning("OBS publication refused for emission {PodcastId}", id);
-                        return null;
-                    }, ct);
-            }
-
+                var flow = await OwnedAsync(id, ownerId, ct);
+                flow.ObsKeyHash = null;
+                flow.ObsEnabledUntil = null;
+                flow.ObsConnectionId = null;
+                await db.SaveChangesAsync(ct);
+                return true;
+            }, ct);
+            await worker.StopCaptureAsync(id, ct);
         }
-        logger.LogWarning("OBS relay authentication refused for action {Action}", request.Action is "publish" or "read" or "api" ? request.Action : "other");
-        return null;
+        finally { worker.Lifecycle.Release(); }
     }
 
-    private async Task<bool> QuotaReachedAsync(string ownerId, CancellationToken ct)
+    private async Task<LiveFlow> EligibleAsync(Guid id, string ownerId, CancellationToken ct)
     {
+        var flow = await OwnedAsync(id, ownerId, ct);
+        if (flow.StartedAt is not null)
+            throw new PodcastException(409, "Cette emission a deja demarre. Preparez une nouvelle emission.");
+        if (flow.Owner.WithdrawalRequestedAt is not null)
+            throw new PodcastException(403, "Le compte est ferme.");
         var record = await db.ResourceUsageRecords.AsNoTracking().Where(r => r.UserId == ownerId)
             .OrderByDescending(r => r.RecordedAtUtc).ThenByDescending(r => r.Id).FirstOrDefaultAsync(ct);
         var policy = usageOptions.Value;
         var gross = record is null ? 0m : policy.Calculate(record.ApiCalls, record.CpuSeconds, record.BandwidthMb, record.StorageMb);
-        return ResourceUsageCredit.NetConsumption(gross, record?.CreditPoints ?? 0m) >= policy.GetLimit(ownerId);
+        if (ResourceUsageCredit.NetConsumption(gross, record?.CreditPoints ?? 0m) >= policy.GetLimit(ownerId))
+            throw new PodcastException(429, "Le seuil de consommation est atteint.");
+        if (flow.Owner.DiskUsage >= flow.Owner.GetEffectiveDiskQuota(clock.GetUtcNow()))
+            throw new PodcastException(413, "Le quota disque est atteint.");
+        return flow;
     }
 
     private async Task<LiveFlow> OwnedAsync(Guid id, string ownerId, CancellationToken ct, bool tracking = true)
@@ -145,14 +138,4 @@ public sealed class PodcastObsService(ApplicationDbContext db, IOptions<PodcastO
         if (flow.OwnerId != ownerId) throw new PodcastException(403, "Seul l'auteur peut activer OBS.");
         return flow;
     }
-
-    internal static bool TryId(string? path, out Guid id)
-    {
-        id = default;
-        return path is not null && path.StartsWith("obs/", StringComparison.Ordinal) && Guid.TryParseExact(path[4..], "N", out id);
-    }
-
-    private static string Hash(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
-    private static bool EqualSecret(string? actual, string expected)
-        => actual is not null && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(actual), Encoding.UTF8.GetBytes(expected));
 }

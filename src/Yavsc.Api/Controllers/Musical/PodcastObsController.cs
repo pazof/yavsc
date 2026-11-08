@@ -44,14 +44,4 @@ public sealed class PodcastObsController(IPodcastObsService obs) : ControllerBas
         return NoContent();
     }
 
-    [AllowAnonymous, HttpPost("relay/auth")]
-    [RequestSizeLimit(4096), ResourceUsageExempt]
-    [EndpointSummary("Authentification externe MediaMTX : publication avec cle, lecture interne et administration privees")]
-    [ProducesResponseType<PodcastRelayAuthorization>(200)]
-    [ProducesResponseType(401)]
-    public async Task<IActionResult> Authenticate(PodcastRelayAuthentication request, CancellationToken ct)
-    {
-        var authorization = await obs.AuthenticateAsync(request, ct);
-        return authorization is null ? Unauthorized() : Ok(authorization);
-    }
 }

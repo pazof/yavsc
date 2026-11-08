@@ -1,6 +1,8 @@
 #nullable enable
-using System.Diagnostics;
 using System.Globalization;
+using System.Net;
+using System.Net.Sockets;
+using FFmpeg.NET;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Yavsc.Models;
@@ -11,222 +13,368 @@ using Yavsc.Settings;
 namespace Yavsc.Api.Services;
 
 public sealed class PodcastObsWorker(IServiceScopeFactory scopes, IOptions<PodcastObsOptions> options,
-    ILogger<PodcastObsWorker> logger) : BackgroundService
+    IOptions<PodcastOptions> mediaOptions, TimeProvider clock, ILogger<PodcastObsWorker> logger) : BackgroundService
 {
-    private sealed record Capture(CancellationTokenSource Cancellation, Task Task);
+    private sealed class Capture(Guid id, string ownerId, Guid connectionId, int port,
+        DateTimeOffset expires, CancellationTokenSource cancellation)
+    {
+        public Guid Id { get; } = id;
+        public string OwnerId { get; } = ownerId;
+        public Guid ConnectionId { get; } = connectionId;
+        public int Port { get; } = port;
+        public DateTimeOffset Expires { get; } = expires;
+        public CancellationTokenSource Cancellation { get; } = cancellation;
+        public TaskCompletionSource Completion { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public DateTimeOffset? Started { get; set; }
+        public string? Error { get; set; }
+    }
+
+    internal SemaphoreSlim Lifecycle { get; } = new(1, 1);
+    private readonly object gate = new();
     private readonly Dictionary<Guid, Capture> captures = new();
+    private readonly TaskCompletionSource ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private CancellationToken stopping;
+
+    internal Task WaitUntilReadyAsync(CancellationToken ct) => ready.Task.WaitAsync(ct);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (!options.Value.Enabled) return;
-        options.Value.Validate();
+        stopping = stoppingToken;
         try
         {
+            options.Value.Validate();
+            using (var scope = scopes.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var stale = await db.LiveFlow.Where(f => f.ObsKeyHash != null).ToListAsync(stoppingToken);
+                foreach (var flow in stale)
+                    await ResourceUsageTracker.WithUserLockAsync(db, flow.OwnerId, async () =>
+                    {
+                        flow.ObsKeyHash = null;
+                        flow.ObsConnectionId = null;
+                        flow.ObsEnabledUntil = null;
+                        flow.ObsLastError = "L'API a redemarre ; reactivez OBS pour obtenir une nouvelle URL SRT.";
+                        await db.SaveChangesAsync(stoppingToken);
+                        return true;
+                    }, stoppingToken);
+            }
+            ready.TrySetResult();
+            if (!options.Value.Enabled) return;
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
                     using var scope = scopes.CreateScope();
-                    var relay = scope.ServiceProvider.GetRequiredService<IPodcastObsRelay>();
                     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                    foreach (var pair in captures.Where(c => c.Value.Task.IsCompleted).ToArray())
-                    {
-                        captures.Remove(pair.Key);
-                        pair.Value.Cancellation.Dispose();
-                        await pair.Value.Task;
-                    }
-                    foreach (var publisher in await relay.PublishersAsync(stoppingToken))
+                    Capture[] active;
+                    lock (gate) active = captures.Values.ToArray();
+                    foreach (var capture in active)
                     {
                         var flow = await db.LiveFlow.AsNoTracking().Include(f => f.Owner)
-                            .SingleOrDefaultAsync(f => f.PodcastId == publisher.PodcastId, stoppingToken);
-                        var allowed = flow is { PodcastDeleted: false, ObsKeyHash: not null }
-                            && flow.ObsConnectionId == publisher.ConnectionId
-                            && flow.Owner.WithdrawalRequestedAt is null;
-                        if (!allowed)
+                            .SingleOrDefaultAsync(f => f.PodcastId == capture.Id, stoppingToken);
+                        lock (gate)
                         {
-                            if (captures.TryGetValue(publisher.PodcastId, out var running)) running.Cancellation.Cancel();
-                            await relay.KickAsync(publisher.PodcastId, stoppingToken, publisher.ConnectionId);
-                            continue;
+                            if (!captures.ContainsKey(capture.Id)) continue;
+                            if (capture.Completion.Task.IsCompleted)
+                            {
+                                captures.Remove(capture.Id);
+                                capture.Cancellation.Dispose();
+                            }
+                            else if (flow is null || flow.PodcastDeleted || flow.ObsConnectionId != capture.ConnectionId
+                                || flow.ObsKeyHash is null || flow.Owner.WithdrawalRequestedAt is not null)
+                                capture.Cancellation.Cancel();
                         }
-                        if (captures.ContainsKey(publisher.PodcastId)) continue;
-                        if (flow!.StartedAt is not null || flow.ObsEnabledUntil <= DateTimeOffset.UtcNow
-                            || captures.Count >= options.Value.MaxConcurrentBroadcasts)
-                        {
-                            await relay.KickAsync(publisher.PodcastId, stoppingToken, publisher.ConnectionId);
-                            await FailActivationAsync(publisher.PodcastId, publisher.ConnectionId, "Emission deja demarree, activation expiree ou capacite OBS atteinte.", stoppingToken);
-                            continue;
-                        }
-                        var cancellation = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
-                        captures.Add(publisher.PodcastId, new(cancellation,
-                            CaptureAsync(publisher.PodcastId, flow.OwnerId, publisher.ConnectionId, cancellation.Token)));
                     }
                 }
                 catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { break; }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "OBS relay scan failed; retrying");
-                }
-                await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+                catch (Exception ex) { logger.LogError(ex, "OBS listener state check failed; retrying"); }
+                await Task.Delay(250, stoppingToken);
             }
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { }
+        catch (Exception ex) { ready.TrySetException(ex); throw; }
         finally
         {
-            foreach (var capture in captures.Values) capture.Cancellation.Cancel();
-            await Task.WhenAll(captures.Values.Select(c => c.Task));
-            foreach (var capture in captures.Values) capture.Cancellation.Dispose();
+            Capture[] active;
+            lock (gate)
+            {
+                active = captures.Values.ToArray();
+                foreach (var capture in active) capture.Cancellation.Cancel();
+            }
+            await Task.WhenAll(active.Select(c => c.Completion.Task));
+            lock (gate)
+            {
+                foreach (var capture in captures.Values) capture.Cancellation.Dispose();
+                captures.Clear();
+            }
         }
     }
 
-    private async Task CaptureAsync(Guid id, string ownerId, Guid connectionId, CancellationToken ct)
+    internal async Task<int> ArmAsync(Guid id, string ownerId, Guid connectionId, string key,
+        DateTimeOffset expires, CancellationToken ct)
     {
-        using var scope = scopes.CreateScope();
-        var services = scope.ServiceProvider;
-        var db = services.GetRequiredService<ApplicationDbContext>();
-        var processor = services.GetRequiredService<ILiveProcessor>();
-        var relay = services.GetRequiredService<IPodcastObsRelay>();
-        var media = services.GetRequiredService<IOptions<PodcastOptions>>().Value;
-        var directory = Path.Combine(media.RootPath, "obs-capture-" + id.ToString("N"));
+        stopping.ThrowIfCancellationRequested();
+        Capture capture;
+        lock (gate)
+        {
+            foreach (var ended in captures.Values.Where(c => c.Completion.Task.IsCompleted).ToArray())
+            {
+                captures.Remove(ended.Id);
+                ended.Cancellation.Dispose();
+            }
+            if (captures.Count >= options.Value.MaxConcurrentBroadcasts)
+                throw new PodcastException(503, "Capacite OBS atteinte ; revoquez une activation inutilisee ou reessayez plus tard.");
+            var port = Enumerable.Range(options.Value.FirstPort, options.Value.PortCount)
+                .FirstOrDefault(p => captures.Values.All(c => c.Port != p) && !PortBound(p));
+            if (port == 0) throw new PodcastException(503, "Aucun port UDP OBS disponible.");
+            capture = new(id, ownerId, connectionId, port, expires,
+                CancellationTokenSource.CreateLinkedTokenSource(stopping));
+            captures.Add(id, capture);
+        }
+        _ = CaptureAsync(capture, key);
+        try
+        {
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct, stopping);
+            timeout.CancelAfter(TimeSpan.FromSeconds(10));
+            while (!PortBound(capture.Port))
+            {
+                if (capture.Error is not null || capture.Completion.Task.IsCompleted)
+                    throw new PodcastException(503, capture.Error ?? "L'ecoute SRT n'a pas demarre.");
+                await Task.Delay(50, timeout.Token);
+            }
+            return capture.Port;
+        }
+        catch
+        {
+            // Do not wait here: activation owns the accounting lock needed by capture cleanup.
+            lock (gate) capture.Cancellation.Cancel();
+            throw;
+        }
+    }
+
+    internal async Task StopCaptureAsync(Guid id, CancellationToken ct)
+    {
+        Capture? capture;
+        lock (gate)
+        {
+            if (!captures.TryGetValue(id, out capture)) return;
+            capture.Cancellation.Cancel();
+        }
+        await capture.Completion.Task.WaitAsync(ct);
+        if (PortBound(capture.Port))
+            throw new PodcastException(503, "L'ecoute SRT ne s'est pas arretee ; intervention de l'administration requise.");
+        lock (gate)
+            if (captures.Remove(id)) capture.Cancellation.Dispose();
+    }
+
+    private bool PortBound(int port)
+    {
+        var address = IPAddress.Parse(options.Value.ListenAddress);
+        using var socket = new Socket(address.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
+        try { socket.Bind(new IPEndPoint(address, port)); return false; }
+        catch (SocketException ex) when (ex.SocketErrorCode == SocketError.AddressAlreadyInUse) { return true; }
+    }
+
+    private async Task CaptureAsync(Capture capture, string key)
+    {
+        var media = mediaOptions.Value;
+        var directory = Path.Combine(media.RootPath, $"obs-capture-{capture.Id:N}-{capture.ConnectionId:N}");
         string? error = null;
-        var started = false;
         try
         {
             Directory.CreateDirectory(directory);
-            var podcast = await services.GetRequiredService<IPodcastScheduleService>().StartAsync(id, ownerId, ct, connectionId);
-            started = true;
-            using var deadline = CancellationTokenSource.CreateLinkedTokenSource(ct);
-            deadline.CancelAfter(TimeSpan.FromMinutes(Math.Min(podcast.PlannedDurationMinutes ?? 1, options.Value.MaxDurationMinutes)));
-            await ReceiveAsync(id, ownerId, connectionId, directory, db, processor, media, services, deadline.Token);
+            using var scope = scopes.CreateScope();
+            using var receive = CancellationTokenSource.CreateLinkedTokenSource(capture.Cancellation.Token);
+            var guard = GuardBufferAsync(directory, media.MaxSegmentBytes, receive.Token);
+            var ingest = ReceiveAsync(capture, key, directory, scope.ServiceProvider, receive.Token);
+            try
+            {
+                if (await Task.WhenAny(ingest, guard) == guard) await guard;
+                await ingest;
+            }
+            finally
+            {
+                receive.Cancel();
+                try { await ingest; }
+                catch (OperationCanceledException) when (receive.IsCancellationRequested) { }
+                try { await guard; }
+                catch (OperationCanceledException) when (receive.IsCancellationRequested) { }
+            }
         }
         catch (OperationCanceledException)
         {
-            logger.LogInformation("OBS capture {PodcastId} stopped or reached its duration limit", id);
+            logger.LogInformation("OBS capture {PodcastId} stopped", capture.Id);
         }
         catch (Exception ex)
         {
-            // FFmpeg diagnostics and request URLs can contain credentials: never persist or log them.
-            error = ex is PodcastException or ResourceUsageLimitException ? ex.Message : "Reception OBS impossible. Verifiez le relais, FFmpeg et l'encodage H.264/AAC.";
-            logger.LogError("OBS capture {PodcastId} failed ({ErrorType})", id, ex.GetType().Name);
+            error = ex is PodcastException or ResourceUsageLimitException ? ex.Message
+                : "Reception SRT impossible. Verifiez FFmpeg, la connexion et l'encodage H.264/AAC.";
+            logger.LogError("OBS capture {PodcastId} failed ({ErrorType})", capture.Id, ex.GetType().Name);
         }
         finally
         {
+            capture.Error = error;
             try
             {
+                using var scope = scopes.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-                await relay.KickAsync(id, timeout.Token, connectionId);
-                db.ChangeTracker.Clear();
-                var flow = await db.LiveFlow.Include(f => f.Owner).SingleOrDefaultAsync(f => f.PodcastId == id, timeout.Token);
-                if (flow is not null)
+                await ResourceUsageTracker.WithUserLockAsync(db, capture.OwnerId, async () =>
                 {
-                    if (flow.ObsKeyHash is null && flow.ObsConnectionId is null) error = null;
-                    if (started && flow.Owner.WithdrawalRequestedAt is null)
-                        await processor.CompleteAsync(id, ownerId, timeout.Token);
-                    if (flow.ObsConnectionId == connectionId || flow.ObsKeyHash is null)
+                    var flow = await db.LiveFlow.Include(f => f.Owner)
+                        .SingleOrDefaultAsync(f => f.PodcastId == capture.Id, timeout.Token);
+                    if (flow is not null)
                     {
-                        flow.ObsKeyHash = null;
-                        flow.ObsEnabledUntil = null;
-                        flow.ObsConnectionId = null;
-                        flow.ObsLastError = error;
+                        if (capture.Started is not null && flow.Owner.WithdrawalRequestedAt is null)
+                        {
+                            try
+                            {
+                                await scope.ServiceProvider.GetRequiredService<ILiveProcessor>()
+                                    .CompleteAsync(capture.Id, capture.OwnerId, timeout.Token);
+                            }
+                            catch (Exception ex)
+                            {
+                                error = "Finalisation OBS impossible ; intervention de l'administration requise.";
+                                capture.Error = error;
+                                logger.LogError("OBS replay finalization failed for {PodcastId} ({ErrorType})",
+                                    capture.Id, ex.GetType().Name);
+                            }
+                        }
+                        if (flow.ObsConnectionId == capture.ConnectionId)
+                        {
+                            flow.ObsKeyHash = null;
+                            flow.ObsEnabledUntil = null;
+                            flow.ObsConnectionId = null;
+                            flow.ObsLastError = error;
+                            await db.SaveChangesAsync(timeout.Token);
+                        }
                     }
-                    await db.SaveChangesAsync(timeout.Token);
-                }
+                    return true;
+                }, timeout.Token);
             }
             catch (Exception ex)
             {
-                logger.LogError("OBS capture {PodcastId} cleanup failed ({ErrorType}); operator intervention required", id, ex.GetType().Name);
-                await FailActivationAsync(id, connectionId, "Finalisation OBS impossible ; intervention de l'administration requise.", CancellationToken.None);
+                logger.LogError("OBS capture {PodcastId} finalization failed ({ErrorType}); operator intervention required",
+                    capture.Id, ex.GetType().Name);
+                capture.Error = "Finalisation OBS impossible ; intervention de l'administration requise.";
             }
-            if (Directory.Exists(directory)) Directory.Delete(directory, recursive: true);
+            try { if (Directory.Exists(directory)) Directory.Delete(directory, recursive: true); }
+            catch (Exception ex)
+            {
+                logger.LogError("OBS temporary files cleanup failed for {PodcastId} ({ErrorType})",
+                    capture.Id, ex.GetType().Name);
+            }
+            capture.Completion.TrySetResult();
         }
     }
 
-    private async Task ReceiveAsync(Guid id, string ownerId, Guid connectionId, string directory, ApplicationDbContext db,
-        ILiveProcessor processor, PodcastOptions media, IServiceProvider services, CancellationToken ct)
+    private async Task ReceiveAsync(Capture capture, string key, string directory, IServiceProvider services, CancellationToken ct)
     {
-        var settings = options.Value;
-        var input = new UriBuilder(new Uri(new Uri(settings.RelayReadUrl.TrimEnd('/') + "/"), $"obs/{id:N}"))
-        { Query = $"user={Uri.EscapeDataString(settings.RelayUser)}&pass={Uri.EscapeDataString(settings.RelayPassword)}" };
-        var start = new ProcessStartInfo(media.FfmpegPath)
+        var input = new UriBuilder("srt", options.Value.ListenAddress, capture.Port)
         {
-            UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true,
-            CreateNoWindow = true, WorkingDirectory = directory
+            Query = $"mode=listener&passphrase={key}&pbkeylen=32&enforced_encryption=1"
+                + $"&listen_timeout={options.Value.ActivationMinutes * 60000000L}&timeout=20000000&latency=200000"
         };
-        foreach (var argument in new[]
-        {
-            "-nostdin", "-hide_banner", "-loglevel", "error", "-rw_timeout", "15000000",
-            "-i", input.Uri.AbsoluteUri, "-map", "0:v:0", "-map", "0:a:0?", "-c", "copy",
-            "-f", "segment", "-segment_format", "mpegts", "-segment_time", "2",
-            "-segment_list", "pipe:1", "-segment_list_type", "csv", "segment-%08d.ts"
-        }) start.ArgumentList.Add(argument);
-        using var process = Process.Start(start) ?? throw new IOException("FFmpeg could not start.");
-        var diagnostics = DrainAsync(process.StandardError);
-        using var monitoring = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        var guard = GuardBufferAsync(directory, media.MaxSegmentBytes, monitoring.Token);
+        var engine = new Engine(mediaOptions.Value.FfmpegPath);
+        var failed = false;
+        engine.Error += (_, _) => Volatile.Write(ref failed, true);
+        using var processCancellation = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        var process = engine.ExecuteAsync(
+            $"-nostdin -hide_banner -loglevel error -i \"{input.Uri.AbsoluteUri}\" -map 0:v:0 -map 0:a:0? -c copy"
+            + " -f segment -segment_format mpegts -segment_time 2 -segment_list segments.csv"
+            + " -segment_list_type csv segment-%08d.ts", directory, processCancellation.Token);
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        var processor = services.GetRequiredService<ILiveProcessor>();
         var next = 0;
         var total = 0L;
-        var revoked = false;
+        var lastSegment = clock.GetUtcNow();
         try
         {
             while (true)
             {
-                using var idle = CancellationTokenSource.CreateLinkedTokenSource(ct);
-                idle.CancelAfter(TimeSpan.FromSeconds(20));
-                var read = process.StandardOutput.ReadLineAsync(idle.Token).AsTask();
-                if (await Task.WhenAny(read, guard) == guard) await guard;
-                var line = await read;
-                if (line is null) break;
-                var fields = line.Split(',');
-                if (fields.Length != 3 || fields[0] != $"segment-{next:D8}.ts"
-                    || !double.TryParse(fields[1], CultureInfo.InvariantCulture, out var begin)
-                    || !double.TryParse(fields[2], CultureInfo.InvariantCulture, out var end)
-                    || !double.IsFinite(end - begin) || end - begin <= 0 || end - begin > 15)
-                    throw new PodcastException(400, "Segments OBS invalides ; configurez H.264/AAC et des images cles toutes les deux secondes.");
-                var path = Path.Combine(directory, fields[0]);
-                var bytes = new FileInfo(path).Length;
-                if (bytes == 0 || bytes > media.MaxSegmentBytes)
-                    throw new PodcastException(413, "Segment OBS trop volumineux ; reduisez le debit et l'intervalle des images cles.");
-                total = checked(total + bytes);
-                await ResourceUsageTracker.RecordStorageAsync(db, ownerId, ownerId, $"podcast/{id:N}", total, ct,
-                    write: async () =>
+                ct.ThrowIfCancellationRequested();
+                var now = clock.GetUtcNow();
+                if (capture.Started is null && now >= capture.Expires)
+                    throw new PodcastException(408, "Activation OBS expiree ; obtenez une nouvelle URL SRT.");
+                if (capture.Started is not null)
+                {
+                    if (now - capture.Started >= TimeSpan.FromMinutes(options.Value.MaxDurationMinutes))
+                        break;
+                    if (now - lastSegment > TimeSpan.FromSeconds(20))
+                        throw new PodcastException(408, "Aucun segment OBS recu depuis vingt secondes ; verifiez la connexion.");
+                }
+                var playlist = Path.Combine(directory, "segments.csv");
+                var text = File.Exists(playlist) ? await File.ReadAllTextAsync(playlist, ct) : "";
+                var lines = text.Split('\n');
+                for (; next < lines.Length - 1; next++)
+                {
+                    if (next >= mediaOptions.Value.MaxSegments) throw new PodcastException(413, "Nombre maximal de segments atteint.");
+                    var fields = lines[next].TrimEnd('\r').Split(',');
+                    if (fields.Length != 3 || fields[0] != $"segment-{next:D8}.ts"
+                        || !double.TryParse(fields[1], CultureInfo.InvariantCulture, out var begin)
+                        || !double.TryParse(fields[2], CultureInfo.InvariantCulture, out var end)
+                        || !double.IsFinite(end - begin) || end - begin <= 0 || end - begin > 15)
+                        throw new PodcastException(400, "Segments OBS invalides ; configurez H.264/AAC et des images cles toutes les deux secondes.");
+                    if (capture.Started is null)
                     {
-                        var user = await db.Users.SingleAsync(u => u.Id == ownerId, ct);
-                        await db.Entry(user).ReloadAsync(ct);
-                        var flow = await db.LiveFlow.SingleAsync(f => f.PodcastId == id, ct);
-                        await db.Entry(flow).ReloadAsync(ct);
-                        if (user.WithdrawalRequestedAt is not null || flow.ObsKeyHash is null
-                            || flow.ObsConnectionId != connectionId || flow.PodcastDeleted)
+                        var podcast = await services.GetRequiredService<IPodcastScheduleService>()
+                            .StartAsync(capture.Id, capture.OwnerId, ct, capture.ConnectionId);
+                        capture.Started = now;
+                        processCancellation.CancelAfter(TimeSpan.FromMinutes(
+                            Math.Min(podcast.PlannedDurationMinutes ?? 1, options.Value.MaxDurationMinutes)));
+                    }
+                    var path = Path.Combine(directory, fields[0]);
+                    var bytes = new FileInfo(path).Length;
+                    if (bytes == 0 || bytes > mediaOptions.Value.MaxSegmentBytes)
+                        throw new PodcastException(413, "Segment OBS trop volumineux ; reduisez le debit.");
+                    total = checked(total + bytes);
+                    await ResourceUsageTracker.RecordStorageAsync(db, capture.OwnerId, capture.OwnerId,
+                        $"podcast/{capture.Id:N}", total, ct, write: async () =>
                         {
-                            revoked = true;
-                            throw new OperationCanceledException("OBS activation revoked or account closed.", ct);
-                        }
-                        if (bytes > user.GetEffectiveDiskQuota(DateTimeOffset.UtcNow) - user.DiskUsage)
-                            throw new PodcastException(413, "Quota disque atteint.");
-                        await using var stream = File.OpenRead(path);
-                        await processor.AppendAsync(id, ownerId, next, end - begin, stream, ct);
-                        user.DiskUsage = checked(user.DiskUsage + bytes);
-                    },
-                    policy: services.GetRequiredService<IOptions<ResourceUsageOptions>>().Value,
-                    bandwidthMb: (decimal)bytes / (1024m * 1024m));
-                File.Delete(path);
-                next++;
+                            var user = await db.Users.SingleAsync(u => u.Id == capture.OwnerId, ct);
+                            await db.Entry(user).ReloadAsync(ct);
+                            var flow = await db.LiveFlow.SingleAsync(f => f.PodcastId == capture.Id, ct);
+                            await db.Entry(flow).ReloadAsync(ct);
+                            if (user.WithdrawalRequestedAt is not null || flow.ObsKeyHash is null
+                                || flow.ObsConnectionId != capture.ConnectionId || flow.PodcastDeleted)
+                                throw new OperationCanceledException("OBS activation revoked or account closed.", ct);
+                            if (bytes > user.GetEffectiveDiskQuota(now) - user.DiskUsage)
+                                throw new PodcastException(413, "Quota disque atteint.");
+                            await using var stream = File.OpenRead(path);
+                            await processor.AppendAsync(capture.Id, capture.OwnerId, next, end - begin, stream, ct);
+                            user.DiskUsage = checked(user.DiskUsage + bytes);
+                        }, policy: services.GetRequiredService<IOptions<ResourceUsageOptions>>().Value,
+                        bandwidthMb: (decimal)bytes / (1024m * 1024m));
+                    File.Delete(path);
+                    lastSegment = now;
+                }
+                if (process.IsCompleted)
+                {
+                    await process;
+                    if (Volatile.Read(ref failed) || next == 0)
+                        throw new IOException("FFmpeg SRT listener failed or produced no media.");
+                    break;
+                }
+                await Task.Delay(100, ct);
             }
-            await process.WaitForExitAsync(ct);
-            if (process.ExitCode != 0 || next == 0) throw new IOException("FFmpeg ingest failed or produced no media.");
-        }
-        catch (OperationCanceledException) when (!ct.IsCancellationRequested && !revoked)
-        {
-            throw new PodcastException(408, "Aucun segment OBS recu depuis vingt secondes ; verifiez l'encodeur et la connexion.");
         }
         finally
         {
-            if (!process.HasExited) process.Kill(entireProcessTree: true);
-            await process.WaitForExitAsync(CancellationToken.None);
-            await diagnostics;
-            monitoring.Cancel();
-            try { await guard; }
-            catch (OperationCanceledException) when (monitoring.IsCancellationRequested) { }
+            processCancellation.Cancel();
+            try { await process; }
+            catch (OperationCanceledException) when (processCancellation.IsCancellationRequested) { }
+            // FFmpeg.NET cancels/kills without waiting for OS socket teardown.
+            using var released = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            try
+            {
+                while (PortBound(capture.Port))
+                    await Task.Delay(25, released.Token);
+            }
+            catch (OperationCanceledException) when (released.IsCancellationRequested)
+            {
+                throw new IOException("SRT listener did not release its UDP port after cancellation.");
+            }
         }
-
     }
 
     private static async Task GuardBufferAsync(string directory, int maxSegmentBytes, CancellationToken ct)
@@ -244,24 +392,5 @@ public sealed class PodcastObsWorker(IServiceScopeFactory scopes, IOptions<Podca
             }
             await Task.Delay(100, ct);
         }
-    }
-
-    private static async Task DrainAsync(StreamReader reader)
-    {
-        var buffer = new char[1024];
-        while (await reader.ReadAsync(buffer) != 0) { }
-    }
-
-    private async Task FailActivationAsync(Guid id, Guid connectionId, string message, CancellationToken ct)
-    {
-        using var scope = scopes.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var flow = await db.LiveFlow.SingleOrDefaultAsync(f => f.PodcastId == id, ct);
-        if (flow is null || flow.ObsKeyHash is not null && flow.ObsConnectionId != connectionId) return;
-        flow.ObsKeyHash = null;
-        flow.ObsEnabledUntil = null;
-        flow.ObsConnectionId = null;
-        flow.ObsLastError = message;
-        await db.SaveChangesAsync(ct);
     }
 }

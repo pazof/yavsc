@@ -1,12 +1,8 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,27 +17,29 @@ using Yavsc.Settings;
 
 namespace Yavsc.Api.Test;
 
-public sealed class PodcastObsTests : IDisposable
+public sealed class PodcastObsTests : IAsyncDisposable
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;
-    private readonly string root = Path.Combine(Path.GetTempPath(), "yavsc-obs-" + Guid.NewGuid().ToString("N"));
+    private readonly string root = Path.Combine(Path.GetTempPath(), "yavsc-srt-" + Guid.NewGuid().ToString("N"));
     private readonly SqliteConnection connection;
     private readonly ServiceProvider provider;
     private readonly PodcastObsOptions settings = new()
     {
-        Enabled = true, ServerUrl = "rtmps://obs.example.test:1936",
-        RelayPassword = new string('x', 48), MaxDurationMinutes = 1
+        Enabled = true, ServerUrl = "srt://127.0.0.1", ListenAddress = "127.0.0.1",
+        FirstPort = FreePort(), PortCount = 1, MaxConcurrentBroadcasts = 1, MaxDurationMinutes = 1
     };
     private readonly Clock clock = new();
     private sealed class Clock : TimeProvider
     {
-        public DateTimeOffset Now { get; set; } = DateTimeOffset.UtcNow;
+        private readonly object gate = new();
+        private DateTimeOffset now = DateTimeOffset.UtcNow;
+        public DateTimeOffset Now { get { lock (gate) return now; } set { lock (gate) now = value; } }
         public override DateTimeOffset GetUtcNow() => Now;
     }
 
     public PodcastObsTests()
     {
-        var connectionString = $"Data Source=obs-{Guid.NewGuid():N};Mode=Memory;Cache=Shared;Default Timeout=30";
+        var connectionString = $"Data Source=srt-{Guid.NewGuid():N};Mode=Memory;Cache=Shared;Default Timeout=30";
         connection = new SqliteConnection(connectionString);
         connection.Open();
         var services = new ServiceCollection();
@@ -54,7 +52,7 @@ public sealed class PodcastObsTests : IDisposable
         services.AddSingleton<ILiveProcessor, LiveProcessor>();
         services.AddScoped<IPodcastScheduleService, PodcastScheduleService>();
         services.AddScoped<IPodcastObsService, PodcastObsService>();
-        services.AddHttpClient<IPodcastObsRelay, PodcastObsRelay>(c => c.Timeout = TimeSpan.FromSeconds(5));
+        services.AddSingleton<PodcastObsWorker>();
         provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
         scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreated();
@@ -62,6 +60,7 @@ public sealed class PodcastObsTests : IDisposable
 
     private async Task<PodcastResponse> PlanAsync(IServiceProvider services)
     {
+        await provider.GetRequiredService<PodcastObsWorker>().StartAsync(Ct);
         var db = services.GetRequiredService<ApplicationDbContext>();
         db.Users.Add(new() { Id = "owner", UserName = "owner", Email = "owner@example.test" });
         await db.SaveChangesAsync(Ct);
@@ -71,61 +70,37 @@ public sealed class PodcastObsTests : IDisposable
         }, null, Ct);
     }
 
-    private static PodcastRelayAuthentication Publish(PodcastObsCredentials credentials)
-    {
-        var split = credentials.StreamKey.Split('?');
-        return new() { Action = "publish", Protocol = "rtmp", Path = split[0], Query = split[1], Id = Guid.NewGuid().ToString() };
-    }
-
     [Fact]
-    public async Task Activation_is_owned_rotatable_expiring_and_never_persists_the_plain_key()
+    public async Task Activation_is_owned_rotatable_expiring_and_keeps_secrets_only_in_memory()
     {
         using var scope = provider.CreateScope();
         var plan = await PlanAsync(scope.ServiceProvider);
         var obs = scope.ServiceProvider.GetRequiredService<IPodcastObsService>();
-        var denied = await Assert.ThrowsAsync<PodcastException>(() => obs.ActivateAsync(plan.Id, "other", Ct));
-        Assert.Equal(403, denied.StatusCode);
+        Assert.Equal(403, (await Assert.ThrowsAsync<PodcastException>(() => obs.ActivateAsync(plan.Id, "other", Ct))).StatusCode);
         var credentials = await obs.ActivateAsync(plan.Id, "owner", Ct);
-        Assert.Equal(settings.ServerUrl, credentials.ServerUrl);
+        var secret = QueryHelpers.ParseQuery(new Uri(credentials.ServerUrl).Query)["passphrase"].ToString();
+        Assert.Empty(credentials.StreamKey);
+        Assert.Equal(64, secret.Length);
         Assert.Equal(clock.Now.AddMinutes(30), credentials.ExpiresAt);
-        var request = Publish(credentials);
-        var flow = await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().LiveFlow.SingleAsync(Ct);
-        Assert.DoesNotContain(request.Query[4..], flow.ObsKeyHash!);
-        Assert.NotNull(await obs.AuthenticateAsync(request, Ct));
-        Assert.Null(await obs.AuthenticateAsync(request with { Id = Guid.NewGuid().ToString() }, Ct));
-        Assert.Null(await obs.AuthenticateAsync(request with { Path = "obs/" + Guid.NewGuid().ToString("N") }, Ct));
-        Assert.Null(await obs.AuthenticateAsync(request with { Query = request.Query + "&" + request.Query }, Ct));
-        var renewed = await obs.ActivateAsync(plan.Id, "owner", Ct);
-        Assert.Null(await obs.AuthenticateAsync(request, Ct));
-        Assert.NotNull(await obs.AuthenticateAsync(Publish(renewed), Ct));
-        clock.Now = renewed.ExpiresAt;
-        Assert.Null(await obs.AuthenticateAsync(Publish(renewed), Ct));
-        Assert.False((await obs.StatusAsync(plan.Id, "owner", Ct)).Enabled);
-    }
-
-    [Fact]
-    public async Task Publisher_cannot_read_media_or_control_relay_and_closed_accounts_cannot_publish()
-    {
-        using var scope = provider.CreateScope();
-        var plan = await PlanAsync(scope.ServiceProvider);
-        var obs = scope.ServiceProvider.GetRequiredService<IPodcastObsService>();
-        var publish = Publish(await obs.ActivateAsync(plan.Id, "owner", Ct));
-        Assert.Null(await obs.AuthenticateAsync(publish with { Action = "read", Protocol = "rtsp" }, Ct));
-        Assert.Null(await obs.AuthenticateAsync(publish with { Action = "api" }, Ct));
-        Assert.NotNull(await obs.AuthenticateAsync(new()
-        { Action = "api", User = settings.RelayUser, Password = settings.RelayPassword }, Ct));
-        Assert.NotNull(await obs.AuthenticateAsync(new()
-        { Action = "read", Protocol = "rtmp", Path = publish.Path, User = settings.RelayUser, Password = settings.RelayPassword }, Ct));
-        Assert.Null(await obs.AuthenticateAsync(new()
-        { Action = "read", Protocol = "hls", Path = publish.Path, User = settings.RelayUser, Password = settings.RelayPassword }, Ct));
+        Assert.Contains("pbkeylen=32", credentials.ServerUrl);
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        (await db.Users.SingleAsync(Ct)).WithdrawalRequestedAt = clock.Now;
-        await db.SaveChangesAsync(Ct);
-        Assert.Null(await obs.AuthenticateAsync(publish, Ct));
+        var flow = await db.LiveFlow.AsNoTracking().SingleAsync(Ct);
+        Assert.DoesNotContain(secret, flow.ObsKeyHash!);
+        Assert.NotNull(flow.ObsConnectionId);
+        Assert.DoesNotContain(secret, JsonSerializer.Serialize(flow));
+        Assert.Empty(await provider.GetRequiredService<ILiveProcessor>().ListAsync(Ct));
+        var renewed = await obs.ActivateAsync(plan.Id, "owner", Ct);
+        Assert.NotEqual(credentials.ServerUrl, renewed.ServerUrl);
+        clock.Now = renewed.ExpiresAt;
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(Ct);
+        timeout.CancelAfter(TimeSpan.FromSeconds(10));
+        await WaitAsync(async () => !(await obs.StatusAsync(plan.Id, "owner", timeout.Token)).Enabled, timeout.Token);
+        await WaitAsync(async () => (await obs.StatusAsync(plan.Id, "owner", timeout.Token)).Error is not null, timeout.Token);
+        Assert.Empty(await provider.GetRequiredService<ILiveProcessor>().ListAsync(Ct));
     }
 
     [Fact]
-    public async Task Activation_blocks_exhausted_quotas_and_direct_capture_cannot_steal_an_armed_emission()
+    public async Task Activation_blocks_exhausted_quotas_direct_capture_and_excess_listeners()
     {
         using var scope = provider.CreateScope();
         var services = scope.ServiceProvider;
@@ -141,155 +116,201 @@ public sealed class PodcastObsTests : IDisposable
         await obs.ActivateAsync(plan.Id, "owner", Ct);
         Assert.Equal(409, (await Assert.ThrowsAsync<PodcastException>(() =>
             services.GetRequiredService<IPodcastScheduleService>().StartAsync(plan.Id, "owner", Ct))).StatusCode);
+        var another = await services.GetRequiredService<IPodcastScheduleService>().PrepareAsync("owner", new()
+        { Title = "Other", ScheduledStartAt = clock.Now.AddDays(1), PlannedDurationMinutes = 1 }, null, Ct);
+        Assert.Equal(503, (await Assert.ThrowsAsync<PodcastException>(() => obs.ActivateAsync(another.Id, "owner", Ct))).StatusCode);
         await ResourceUsageTracker.RecordAsync(db, "owner", "owner", cpuSeconds: 20000, cancellationToken: Ct);
         Assert.Equal(429, (await Assert.ThrowsAsync<PodcastException>(() => obs.ActivateAsync(plan.Id, "owner", Ct))).StatusCode);
+        await obs.DeactivateAsync(plan.Id, "owner", Ct);
+        Assert.False((await obs.StatusAsync(plan.Id, "owner", Ct)).Enabled);
+        AssertPortFree(settings.FirstPort);
     }
 
     [Fact]
-    public void Public_transport_must_be_encrypted_unless_explicitly_opted_out()
+    public async Task Unavailable_FFmpeg_and_occupied_ports_fail_activation_without_leaving_a_key()
     {
-        settings.ServerUrl = "rtmp://obs.example.test:1935";
-        Assert.Throws<InvalidOperationException>(settings.Validate);
-        settings.AllowUnencryptedRtmp = true;
+        using var scope = provider.CreateScope();
+        var services = scope.ServiceProvider;
+        var plan = await PlanAsync(services);
+        var obs = services.GetRequiredService<IPodcastObsService>();
+        using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+        {
+            socket.Bind(new IPEndPoint(IPAddress.Loopback, settings.FirstPort));
+            Assert.Equal(503, (await Assert.ThrowsAsync<PodcastException>(() => obs.ActivateAsync(plan.Id, "owner", Ct))).StatusCode);
+        }
+        var media = services.GetRequiredService<IOptions<PodcastOptions>>().Value;
+        media.FfmpegPath = Path.Combine(root, "ffmpeg-does-not-exist");
+        Assert.Equal(503, (await Assert.ThrowsAsync<PodcastException>(() => obs.ActivateAsync(plan.Id, "owner", Ct))).StatusCode);
+        Assert.False((await obs.StatusAsync(plan.Id, "owner", Ct)).Enabled);
+        await obs.DeactivateAsync(plan.Id, "owner", Ct);
+        AssertPortFree(settings.FirstPort);
+    }
+
+    [Fact]
+    public async Task Restart_invalidates_persisted_activations_and_requires_a_new_secret()
+    {
+        using var scope = provider.CreateScope();
+        var services = scope.ServiceProvider;
+        var plan = await PlanAsync(services);
+        var obs = services.GetRequiredService<IPodcastObsService>();
+        var original = await obs.ActivateAsync(plan.Id, "owner", Ct);
+        await provider.GetRequiredService<PodcastObsWorker>().StopAsync(Ct);
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        db.ChangeTracker.Clear();
+        var flow = await db.LiveFlow.SingleAsync(Ct);
+        flow.ObsKeyHash = new string('A', 64);
+        flow.ObsEnabledUntil = clock.Now.AddMinutes(30);
+        flow.ObsConnectionId = Guid.NewGuid();
+        await db.SaveChangesAsync(Ct);
+        using var restarted = new PodcastObsWorker(provider.GetRequiredService<IServiceScopeFactory>(),
+            Options.Create(settings), services.GetRequiredService<IOptions<PodcastOptions>>(), clock,
+            services.GetRequiredService<ILogger<PodcastObsWorker>>());
+        await restarted.StartAsync(Ct);
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(Ct);
+        timeout.CancelAfter(TimeSpan.FromSeconds(5));
+        await WaitAsync(async () => !(await obs.StatusAsync(plan.Id, "owner", timeout.Token)).Enabled, timeout.Token);
+        Assert.Contains("redemarre", (await obs.StatusAsync(plan.Id, "owner", Ct)).Error);
+        var rearmed = new PodcastObsService(db, Options.Create(settings),
+            services.GetRequiredService<IOptions<ResourceUsageOptions>>(), restarted, clock,
+            services.GetRequiredService<ILogger<PodcastObsService>>());
+        var replacement = await rearmed.ActivateAsync(plan.Id, "owner", Ct);
+        Assert.NotEqual(original.ServerUrl, replacement.ServerUrl);
+        await restarted.StopAsync(Ct);
+        AssertPortFree(settings.FirstPort);
+    }
+
+    [Fact]
+    public void Configuration_requires_SRT_and_a_bounded_UDP_range()
+    {
         settings.Validate();
-        settings.ServerUrl = "rtmp://obs.example.test/live";
+        settings.ServerUrl = "rtmp://obs.example.test";
+        Assert.Throws<InvalidOperationException>(settings.Validate);
+        settings.ServerUrl = "srt://obs.example.test?passphrase=unsafe";
+        Assert.Throws<InvalidOperationException>(settings.Validate);
+        settings.ServerUrl = "srt://obs.example.test";
+        settings.FirstPort = 65535;
+        settings.PortCount = 2;
         Assert.Throws<InvalidOperationException>(settings.Validate);
     }
 
-    [Theory]
-    [InlineData(false, false)]
-    [InlineData(true, false)]
-    [InlineData(true, true)]
-    public async Task Real_rtmp_publisher_becomes_authenticated_HLS_and_MP4_with_storage_refund(bool revoke, bool secure)
+    [Fact]
+    public async Task Wrong_passphrase_never_starts_a_podcast_and_closed_accounts_cannot_arm()
     {
-        var binary = Environment.GetEnvironmentVariable("YAVSC_TEST_MEDIAMTX");
-        if (string.IsNullOrWhiteSpace(binary)) Assert.Skip("Set YAVSC_TEST_MEDIAMTX to the MediaMTX v1.21.3 binary to run the real OBS-compatible media test.");
-        var apiPort = FreePort();
-        var rtmpPort = FreePort();
-        var rtmpsPort = FreePort();
-        var authPort = FreePort();
-        settings.ServerUrl = secure ? $"rtmps://127.0.0.1:{rtmpsPort}" : $"rtmp://127.0.0.1:{rtmpPort}";
-        settings.AllowUnencryptedRtmp = !secure;
-        settings.RelayApiUrl = $"http://127.0.0.1:{apiPort}/";
-        settings.RelayReadUrl = $"rtmp://127.0.0.1:{rtmpPort}/";
-        Directory.CreateDirectory(root);
-        var tlsConfig = "";
-        if (secure)
+        using var scope = provider.CreateScope();
+        var services = scope.ServiceProvider;
+        var plan = await PlanAsync(services);
+        var obs = services.GetRequiredService<IPodcastObsService>();
+        var credentials = await obs.ActivateAsync(plan.Id, "owner", Ct);
+        var uri = new UriBuilder(credentials.ServerUrl) { Query = "mode=caller&passphrase=incorrect-test-passphrase&pbkeylen=32&enforced_encryption=1&connect_timeout=1000" };
+        using (var publisher = Publisher(uri.Uri.AbsoluteUri))
         {
-            using var key = RSA.Create(2048);
-            var request = new CertificateRequest("CN=localhost", key, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-            using var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddMinutes(-1), DateTimeOffset.UtcNow.AddHours(1));
-            var keyPath = Path.Combine(root, "server.key");
-            var certPath = Path.Combine(root, "server.crt");
-            await File.WriteAllTextAsync(keyPath, key.ExportPkcs8PrivateKeyPem(), Ct);
-            await File.WriteAllTextAsync(certPath, certificate.ExportCertificatePem(), Ct);
-            tlsConfig = $"rtmpEncryption: optional\nrtmpsAddress: 127.0.0.1:{rtmpsPort}\n"
-                + $"rtmpServerKey: {JsonSerializer.Serialize(keyPath)}\nrtmpServerCert: {JsonSerializer.Serialize(certPath)}";
+            var diagnostics = publisher.StandardError.ReadToEndAsync(Ct);
+            await publisher.WaitForExitAsync(Ct).WaitAsync(TimeSpan.FromSeconds(10), Ct);
+            Assert.NotEqual(0, publisher.ExitCode);
+            await diagnostics;
         }
-        var config = Path.Combine(root, "mediamtx.yml");
-        await File.WriteAllTextAsync(config, $$"""
-            logLevel: warn
-            authMethod: http
-            authHTTPAddress: http://127.0.0.1:{{authPort}}/auth
-            authHTTPExclude: []
-            api: true
-            apiAddress: 127.0.0.1:{{apiPort}}
-            rtsp: false
-            rtmpAddress: 127.0.0.1:{{rtmpPort}}
-            {{tlsConfig}}
-            hls: false
-            webrtc: false
-            srt: false
-            playback: false
-            pathDefaults:
-              overridePublisher: false
-              maxReaders: 1
-            paths:
-              "~^obs/[0-9a-f]{32}$":
-            """, Ct);
-        var builder = WebApplication.CreateBuilder();
-        builder.WebHost.UseUrls($"http://127.0.0.1:{authPort}");
-        await using var app = builder.Build();
-        app.MapPost("/auth", async (PodcastRelayAuthentication request) =>
-        {
-            using var scope = provider.CreateScope();
-            var result = await scope.ServiceProvider.GetRequiredService<IPodcastObsService>().AuthenticateAsync(request, Ct);
-            return result is null ? Results.Unauthorized() : Results.Ok(result);
-        });
-        await app.StartAsync(Ct);
-        using var relayProcess = StartProcess(binary!, config);
-        var relayOutput = relayProcess.StandardOutput.ReadToEndAsync();
-        var relayErrors = relayProcess.StandardError.ReadToEndAsync();
-        var worker = new PodcastObsWorker(provider.GetRequiredService<IServiceScopeFactory>(), Options.Create(settings),
-            provider.GetRequiredService<ILogger<PodcastObsWorker>>());
-        Process? publisher = null;
-        Task<string>? publisherErrors = null;
+        Assert.Empty(await provider.GetRequiredService<ILiveProcessor>().ListAsync(Ct));
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        var user = await db.Users.SingleAsync(Ct);
+        user.WithdrawalRequestedAt = clock.Now;
+        await db.SaveChangesAsync(Ct);
+        await obs.DeactivateAsync(plan.Id, "owner", Ct);
+        Assert.Equal(403, (await Assert.ThrowsAsync<PodcastException>(() => obs.ActivateAsync(plan.Id, "owner", Ct))).StatusCode);
+        Assert.Empty(await db.ResourceStorageRecords.ToListAsync(Ct));
+    }
+
+    [Fact]
+    public Task Real_encrypted_SRT_disconnect_produces_HLS_and_MP4_with_refund() => RealMediaAsync("disconnect");
+
+    [Fact]
+    public Task Real_encrypted_SRT_revocation_stops_ingestion_and_finalizes_replay() => RealMediaAsync("revoke");
+
+    [Fact]
+    public Task Real_encrypted_SRT_withdrawal_stops_ingestion() => RealMediaAsync("withdraw");
+
+    [Fact]
+    public Task Real_encrypted_SRT_consumption_limit_stops_ingestion_and_allows_refund() => RealMediaAsync("limit");
+
+    [Fact]
+    public Task Real_encrypted_SRT_disk_limit_stops_ingestion_and_allows_refund() => RealMediaAsync("disk");
+
+    [Fact]
+    public Task Real_encrypted_SRT_duration_limit_stops_ingestion_and_finalizes_replay() => RealMediaAsync("duration");
+
+    private async Task RealMediaAsync(string end)
+    {
+        using var scope = provider.CreateScope();
+        var services = scope.ServiceProvider;
+        var plan = await PlanAsync(services);
+        var obs = services.GetRequiredService<IPodcastObsService>();
+        var credentials = await obs.ActivateAsync(plan.Id, "owner", Ct);
+        var processor = services.GetRequiredService<ILiveProcessor>();
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(Ct);
+        timeout.CancelAfter(TimeSpan.FromSeconds(60));
+        using var publisher = Publisher(credentials.ServerUrl);
+        var diagnostics = publisher.StandardError.ReadToEndAsync(Ct);
         try
         {
-            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(Ct);
-            timeout.CancelAfter(TimeSpan.FromSeconds(75));
-            using var scope = provider.CreateScope();
-            var services = scope.ServiceProvider;
-            var plan = await PlanAsync(services);
-            var credentials = await services.GetRequiredService<IPodcastObsService>().ActivateAsync(plan.Id, "owner", Ct);
-            using var http = new HttpClient();
-            // Probe the listener independently of media authorization before starting the publisher.
-            await WaitAsync(async () =>
+            await WaitAsync(async () => (await processor.ListAsync(timeout.Token))
+                .Any(p => p.Id == plan.Id && p.SegmentCount >= 2), timeout.Token);
+            if (end == "revoke") await obs.DeactivateAsync(plan.Id, "owner", timeout.Token);
+            else if (end == "withdraw")
             {
-                try { using var response = await http.GetAsync(settings.RelayApiUrl, timeout.Token); return true; }
-                catch (HttpRequestException) { return false; }
-            }, timeout.Token);
-            await worker.StartAsync(Ct);
-            publisher = StartProcess("ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-re",
-                "-f", "lavfi", "-i", "testsrc=size=160x120:rate=10", "-re", "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000",
-                "-t", "20", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "ultrafast", "-g", "20",
-                "-c:a", "aac", "-b:v", "180k", "-b:a", "32k", "-f", "flv", $"{credentials.ServerUrl}/{credentials.StreamKey}");
-            publisherErrors = publisher.StandardError.ReadToEndAsync();
-            var processor = services.GetRequiredService<ILiveProcessor>();
-            if (revoke)
-            {
-                await WaitAsync(async () => (await processor.ListAsync(timeout.Token))
-                    .Any(p => p.Id == plan.Id && p.SegmentCount >= 2), timeout.Token);
-                await services.GetRequiredService<IPodcastObsService>().DeactivateAsync(plan.Id, "owner", timeout.Token);
+                using var dbScope = provider.CreateScope();
+                var withdrawalDb = dbScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                (await withdrawalDb.Users.SingleAsync(timeout.Token)).WithdrawalRequestedAt = clock.Now;
+                await withdrawalDb.SaveChangesAsync(timeout.Token);
             }
-            await WaitAsync(async () =>
+            else if (end == "limit")
             {
-                if (!revoke && publisher.HasExited && publisher.ExitCode != 0)
-                    throw new InvalidOperationException("Synthetic publisher failed: " +
-                        (await publisherErrors).Replace(credentials.StreamKey, "[redacted]", StringComparison.Ordinal));
-                var status = await services.GetRequiredService<IPodcastObsService>().StatusAsync(plan.Id, "owner", timeout.Token);
-                if (status.Error is not null) throw new InvalidOperationException(status.Error);
-                return (await processor.ListAsync(timeout.Token)).Any(p =>
-                    p.Id == plan.Id && p.State == PodcastState.Completed && p.SegmentCount > 0);
-            }, timeout.Token);
+                using var dbScope = provider.CreateScope();
+                var usageDb = dbScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await ResourceUsageTracker.RecordAsync(usageDb, "owner", "owner", cpuSeconds: 20000, cancellationToken: timeout.Token);
+            }
+            else if (end == "disk")
+            {
+                using var dbScope = provider.CreateScope();
+                var diskDb = dbScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var user = await diskDb.Users.SingleAsync(timeout.Token);
+                user.DiskQuota = user.DiskUsage;
+                await diskDb.SaveChangesAsync(timeout.Token);
+            }
+            else if (end == "duration") clock.Now = clock.Now.AddMinutes(settings.MaxDurationMinutes);
+            await WaitAsync(async () => !(await obs.StatusAsync(plan.Id, "owner", timeout.Token)).Enabled, timeout.Token);
+            if (end == "withdraw")
+            {
+                await publisher.WaitForExitAsync(timeout.Token);
+                return;
+            }
+            await WaitAsync(async () => (await processor.GetAsync(plan.Id, timeout.Token)).Podcast.State == PodcastState.Completed, timeout.Token);
             var manifest = await processor.GetAsync(plan.Id, Ct);
-            Assert.True(manifest.Podcast.DurationSeconds >= (revoke ? 2 : 8));
+            Assert.True(manifest.Podcast.DurationSeconds >= 2);
             Assert.True(manifest.Podcast.Bytes > 0);
             using (var probe = StartProcess("ffprobe", "-v", "error", "-show_streams", "-of", "json",
                 Path.Combine(root, plan.Id.ToString("N"), "00000000.ts")))
             {
-                var probeOutput = await probe.StandardOutput.ReadToEndAsync(Ct);
+                var output = await probe.StandardOutput.ReadToEndAsync(Ct);
                 var probeError = await probe.StandardError.ReadToEndAsync(Ct);
                 await probe.WaitForExitAsync(Ct);
                 Assert.Equal(0, probe.ExitCode);
-                using var probeDocument = JsonDocument.Parse(probeOutput);
-                var audio = Assert.Single(probeDocument.RootElement.GetProperty("streams").EnumerateArray(),
+                Assert.Empty(probeError);
+                using var document = JsonDocument.Parse(output);
+                var audio = Assert.Single(document.RootElement.GetProperty("streams").EnumerateArray(),
                     s => s.GetProperty("codec_type").GetString() == "audio");
                 Assert.Equal("aac", audio.GetProperty("codec_name").GetString());
-                Assert.True(string.IsNullOrEmpty(probeError), probeError);
                 Assert.Equal("48000", audio.GetProperty("sample_rate").GetString());
             }
             var db = services.GetRequiredService<ApplicationDbContext>();
             var receipt = await db.ResourceStorageRecords.AsNoTracking().SingleAsync(Ct);
             Assert.Equal(manifest.Podcast.Bytes, receipt.Bytes);
-            var user = await db.Users.AsNoTracking().SingleAsync(Ct);
-            Assert.Equal(receipt.Bytes, user.DiskUsage);
+            Assert.Equal(receipt.Bytes, (await db.Users.AsNoTracking().SingleAsync(Ct)).DiskUsage);
             var usage = await db.ResourceUsageRecords.AsNoTracking().SingleAsync(Ct);
             Assert.Equal((decimal)receipt.Bytes / (1024m * 1024m), usage.StorageMb);
             Assert.True(usage.BandwidthMb >= usage.StorageMb);
-            if (!revoke) Assert.Equal(usage.StorageMb, usage.BandwidthMb);
-            Assert.False((await services.GetRequiredService<IPodcastObsService>().StatusAsync(plan.Id, "owner", Ct)).Enabled);
-            Assert.Null((await services.GetRequiredService<IPodcastObsService>().StatusAsync(plan.Id, "owner", Ct)).Error);
+            var state = await obs.StatusAsync(plan.Id, "owner", Ct);
+            if (end == "limit") Assert.Contains("seuil", state.Error);
+            else if (end == "disk") Assert.Contains("Quota disque", state.Error);
+            else Assert.Null(state.Error);
             Assert.True(await processor.PrepareNextReplayAsync(new FfmpegPodcastReplayRemuxer(
                 services.GetRequiredService<IOptions<PodcastOptions>>()), Ct));
             Assert.Equal(PodcastReplayState.Ready, (await processor.GetAsync(plan.Id, Ct)).Podcast.Replay?.State);
@@ -303,46 +324,49 @@ public sealed class PodcastObsTests : IDisposable
         }
         finally
         {
-            await worker.StopAsync(CancellationToken.None);
-            worker.Dispose();
-            if (publisher is not null)
-            {
-                if (!publisher.HasExited) publisher.Kill(entireProcessTree: true);
-                await publisher.WaitForExitAsync(CancellationToken.None);
-                await publisherErrors!;
-                publisher.Dispose();
-            }
-            if (!relayProcess.HasExited) relayProcess.Kill(entireProcessTree: true);
-            await relayProcess.WaitForExitAsync(CancellationToken.None);
-            await relayOutput;
-            await relayErrors;
-            await app.StopAsync(CancellationToken.None);
+            if (!publisher.HasExited) publisher.Kill(entireProcessTree: true);
+            await publisher.WaitForExitAsync(CancellationToken.None);
+            await diagnostics;
         }
     }
 
+    private static Process Publisher(string url) => StartProcess("ffmpeg",
+        "-nostdin", "-hide_banner", "-loglevel", "error", "-re",
+        "-f", "lavfi", "-i", "testsrc=size=160x120:rate=10", "-re", "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000",
+        "-t", "12", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "ultrafast", "-g", "20",
+        "-c:a", "aac", "-f", "mpegts", url + "&timeout=3000000");
+
     private static int FreePort()
     {
-        using var listener = new TcpListener(IPAddress.Loopback, 0);
-        listener.Start();
-        return ((IPEndPoint)listener.LocalEndpoint).Port;
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+        return ((IPEndPoint)socket.LocalEndPoint!).Port;
     }
 
-    private static Process StartProcess(string file, params string[] args)
+    private static void AssertPortFree(int port)
     {
-        var start = new ProcessStartInfo(file) { UseShellExecute = false, RedirectStandardError = true, RedirectStandardOutput = true };
-        foreach (var arg in args) start.ArgumentList.Add(arg);
-        return Process.Start(start) ?? throw new IOException("Could not start test media process.");
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket.Bind(new IPEndPoint(IPAddress.Loopback, port));
+    }
+
+    private static Process StartProcess(string executable, params string[] arguments)
+    {
+        var start = new ProcessStartInfo(executable)
+        { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
+        foreach (var argument in arguments) start.ArgumentList.Add(argument);
+        return Process.Start(start) ?? throw new InvalidOperationException("Test process could not start.");
     }
 
     private static async Task WaitAsync(Func<Task<bool>> condition, CancellationToken ct)
     {
-        while (!await condition()) await Task.Delay(200, ct);
+        while (!await condition()) await Task.Delay(100, ct);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        provider.Dispose();
-        connection.Dispose();
+        await provider.GetRequiredService<PodcastObsWorker>().StopAsync(CancellationToken.None);
+        await provider.DisposeAsync();
+        await connection.DisposeAsync();
         if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
     }
 }

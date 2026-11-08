@@ -290,17 +290,14 @@ or PayPal account eligibility.
 
 ### OBS Studio for planned emissions
 
-Deploy MediaMTX **v1.21.3** beside the **single Yavsc.Api media instance** and
-FFmpeg on that API host. The generated configuration in
-[`contrib/mediamtx-podcasts.yml`](contrib/mediamtx-podcasts.yml) enables only the
-OBS publishing paths, RTMPS for publishers and private RTMP/control listeners.
-Adjust its `authHTTPAddress` to the API's internal HTTP listener; this listener
-must accept the local authentication callback without redirecting it to HTTPS.
-Alternatively, use an internal HTTPS URL with a valid certificate.
-Install the RTMPS TLS certificate and key at the configured paths. Keep the
-control API and internal RTMP ports on loopback (or an isolated authenticated network),
-never on the public Internet. Do not enable anonymous HLS/RTMP reads on the relay.
-MediaMTX must not record independent copies: Yavsc owns storage and retention.
+OBS publishes **encrypted SRT directly to Yavsc.Api**, using
+[FFmpeg.NET](https://github.com/cmxl/FFmpeg.NET) (`xFFmpeg.NET`) to manage FFmpeg
+listeners. No MediaMTX, external media server, authentication callback or RTMPS
+certificate is required. Install **FFmpeg with libsrt, H.264/AAC and MPEG-TS
+support** on the **single Yavsc.Api media host** (`ffmpeg -h protocol=srt`).
+OBS supports SRT in its Custom streaming service; see its
+[SRT streaming guide](https://obsproject.com/kb/srt-protocol-streaming-guide).
+This replaces the previous RTMP/RTMPS transport, not the authenticated playback API.
 
 Apply the `PodcastObsIngestion` migration on the shared database. Configure
 `Podcast:Obs` on **Yavsc.Api only**, for example:
@@ -310,10 +307,10 @@ Apply the `PodcastObsIngestion` migration on the shared database. Configure
   "Podcast": {
     "Obs": {
       "Enabled": true,
-      "ServerUrl": "rtmps://obs.example.org:1936",
-      "RelayApiUrl": "http://127.0.0.1:9997/",
-      "RelayReadUrl": "rtmp://127.0.0.1:1935/",
-      "RelayUser": "yavsc",
+      "ServerUrl": "srt://obs.example.org",
+      "ListenAddress": "0.0.0.0",
+      "FirstPort": 10000,
+      "PortCount": 16,
       "ActivationMinutes": 30,
       "MaxDurationMinutes": 120,
       "MaxConcurrentBroadcasts": 2
@@ -322,63 +319,75 @@ Apply the `PodcastObsIngestion` migration on the shared database. Configure
 }
 ```
 
-Set `Podcast__Obs__RelayPassword` through the deployment's secret mechanism to
-a random password of at least 32 characters. It authenticates Yavsc's private
-reader/control client, not OBS users. Keep process arguments and credentials
-accessible only to the service administrator. The public RTMPS URL must have
-no `/live` suffix: the stream key includes the full `obs/<emission-id>` path.
-Plain RTMP for the public OBS URL requires the explicit `AllowUnencryptedRtmp: true` option and should
-only be used for local testing or inside a VPN. Limit publisher network bitrate
-at the relay/network level as well as configuring OBS; application quotas are
-checked on completed media segments, not on every incoming RTMP packet.
+`ServerUrl` contains the public SRT host only, with no port, path, secret or query.
+`ListenAddress` is a literal local IP address (IPv4 or IPv6); configure a matching
+public address family. Open/forward **UDP 10000-10015** in this example.
+An ordinary HTTP reverse proxy does not carry SRT. NAT forwarding must preserve
+the advertised port numbers.
+One FFmpeg process and UDP port are reserved per armed emission, even before OBS
+connects. Armed and running emissions share `MaxConcurrentBroadcasts`; an exhausted
+pool returns HTTP 503. The port range is bounded (at most 128 ports) and must be
+large enough for the concurrency limit. Listener startup failure is reported,
+not treated as successful activation.
+Keep process arguments and credentials accessible only to the service administrator.
+Limit ingress bitrate at the network level and in OBS: application quotas are checked
+on completed media segments, not on every incoming packet.
 
 In PostIt:
 
 1. Prepare an emission and select it.
 2. Choose **Activer OBS / renouveler la cle**.
 3. In OBS, select **Parametres > Stream > Service : Personnalise**, then copy
-   the displayed server and stream key. Use **H.264 video**, **AAC audio**,
+   the complete displayed **secret SRT URL as Server**, leaving **Stream Key empty**.
+   The URL includes caller mode, a random passphrase and enforced AES-256 encryption.
+   Use **H.264 video**, **AAC audio**,
    a **2-second keyframe interval** and a bitrate producing segments below 8 MiB.
 4. Start streaming in OBS before the activation expires. The actual emission
-   starts when the publisher connects, even if the scheduled date is later.
+   starts when the first complete media segment arrives, even if the scheduled date is later.
    No camera capture in PostIt is required; PostIt may be closed afterwards.
 5. Stop OBS or choose **Revoquer OBS et arreter le diffuseur** in PostIt.
    Committed segments remain available and the normal MP4 worker prepares replay.
 
-Keys are scoped to one emission, stored only as SHA-256 hashes, displayed once,
-rotated on each activation and erased after completion. PostIt never persists
-them; navigation/logout clears the displayed key but does not revoke a running
+Passphrases are scoped to one emission, displayed once and rotated on activation.
+Only a SHA-256 hash and lifecycle metadata are stored in the database; FFmpeg needs
+the actual passphrase in memory/process arguments for SRT encryption. It is never
+included in status responses or persisted in PostIt. Navigation/logout clears
+the displayed secret URL but does not revoke a running
 external emission. Revocation is available at the consumption limit.
 After disconnect, restart or timeout, the emission ends rather than silently
 resuming under a new publisher: prepare a new emission for another broadcast.
+An API restart invalidates all old activations; an unstarted emission must be
+activated again because its passphrase is not recoverable from the database.
+An invalid handshake can end an armed listener; no podcast is created without
+media, and the owner can activate again. Rate-limit connection attempts at deployment.
 
-The worker polls the authenticated relay once a second and starts bounded FFmpeg
-remuxing tasks. It rejects ended, deleted, revoked or withdrawn accounts and caps
+The worker manages bounded FFmpeg.NET listener/remuxing tasks. It rejects ended,
+deleted, revoked or withdrawn accounts and caps
 concurrent captures and duration (the lower of planned duration and configured
-maximum). MediaMTX also receives a session expiry from authentication, so the
-publisher is disconnected at that maximum lifetime even if the API stops.
+maximum). Revocation cancels the corresponding FFmpeg process and frees its port.
+Activation expiry stops unused listeners. The passphrase is required before SRT
+media can be received; a stream name alone is not an authentication mechanism.
 Committed segments are charged as transferred and stored MiB under the same
 consumption rule; their storage receipts are refunded on podcast deletion.
 OBS storage counts towards the user's effective disk quota and the existing
 podcast media limits. Pending capture files are monitored and bounded; enforcement
 can overshoot by one polling interval of incoming data. Processing errors are
-reported in the owner-only OBS status endpoint, without exposing keys or FFmpeg
-diagnostics. Monitor scan/cleanup failures and do not restore old activation keys
-from backups. A prolonged relay/API outage requires operational intervention.
+reported in the owner-only OBS status endpoint, without exposing secret URLs or
+FFmpeg diagnostics. Monitor process/cleanup failures and drain active captures
+before maintenance. An API outage ends ingestion and requires reactivation.
 
-The normal API listens/authenticates playback; OBS stream credentials never grant
-listener access. If the relay is separately hosted, include it in the deployment's
-privacy/provider information.
+The normal HTTP API authenticates playback; OBS stream credentials never grant
+viewer or account access.
 
-For the real media regression, set `YAVSC_TEST_MEDIAMTX` to the installed MediaMTX
-v1.21.3 executable and run:
+For the real media regressions, install FFmpeg with libsrt and run:
 
 ```bash
 dotnet test --project src/test/Yavsc.Api.Tests/Yavsc.Api.Tests.csproj --filter-class '*PodcastObsTests'
 ```
 
-The test launches loopback-only listeners, generates synthetic H.264/AAC media
-with FFmpeg, verifies RTMP/RTMPS authentication, revocation during streaming,
+The tests launch loopback-only listeners, generate synthetic H.264/AAC media
+with FFmpeg, verify encrypted SRT through FFmpeg.NET, wrong-passphrase rejection,
+revocation during streaming,
 AAC audio, HLS segments, MP4 replay and refund,
 then stops its own processes and removes its temporary files.
 
@@ -613,6 +622,6 @@ You'll need to send e-mail ... using smtp and the provider of your choice, see t
 
 ### Google
 
-I'll have to make with it, a least a moment, it needs a *service account*, and some setup, 
-in the `appsettings.*.json` file, and 
+I'll have to make with it, a least a moment, it needs a *service account*, and some setup,
+in the `appsettings.*.json` file, and
 the execution environment variable GOOGLE_APPLICATION_CREDENTIALS to a value pointing the json description file for the Google Service account.

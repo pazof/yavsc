@@ -62,8 +62,9 @@ public sealed class ApiWebServerFixture : WebHostFixture
                 sharedConnection = _sharedSqliteConnection;
             }
 
+            // The anchor keeps the database alive; each request needs its own connection.
             builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-                opt.UseSqlite(sharedConnection));
+                opt.UseSqlite(sharedConnection.ConnectionString));
         }
 
         builder.Services.AddControllers()

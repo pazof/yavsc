@@ -99,16 +99,14 @@
             <Button Content="Arreter et publier le replay" Command="{Binding StopCommand}" />
             <StackPanel Spacing="8">
                 <TextBlock Text="Diffuser l'emission programmee avec OBS Studio" FontWeight="SemiBold" />
-                <TextBlock Text="Selectionnez votre emission puis activez OBS. Dans OBS : service Personnalise, video H.264, audio AAC, images cles toutes les 2 secondes. Le direct commence lorsque OBS se connecte, pas a l'heure prevue."
+                <TextBlock Text="Selectionnez votre emission puis activez OBS. Dans OBS : service Personnalise, URL SRT ci-dessous, cle de stream vide, video H.264, audio AAC, images cles toutes les 2 secondes. Le direct commence a la reception des premiers medias, pas a l'heure prevue."
                            TextWrapping="Wrap" />
                 <WrapPanel>
                     <Button Content="Activer OBS / renouveler la cle" Command="{Binding ActivateObsCommand}" Margin="0,0,8,8" />
                     <Button Content="Revoquer OBS et arreter le diffuseur" Command="{Binding DeactivateObsCommand}" />
                 </WrapPanel>
-                <TextBlock Text="Serveur OBS" />
+                <TextBlock Text="URL SRT secrete (ne pas partager)" />
                 <TextBox Text="{Binding ObsServerUrl, Mode=OneWay}" IsReadOnly="True" />
-                <TextBlock Text="Cle de stream (secrete : ne pas partager)" />
-                <TextBox Text="{Binding ObsStreamKey, Mode=OneWay}" IsReadOnly="True" />
                 <TextBlock Text="{Binding ObsStatus}" TextWrapping="Wrap" />
                 <TextBlock Text="Les identifiants ne sont pas sauvegardes dans PostIt. Quitter la page masque la cle, mais n'arrete pas OBS : utilisez la revocation ou arretez OBS."
                            TextWrapping="Wrap" />

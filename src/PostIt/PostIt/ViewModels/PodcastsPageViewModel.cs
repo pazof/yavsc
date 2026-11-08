@@ -307,7 +307,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
             if (SelectedPodcast is { FlowId: not null } selected && selected.OwnerId == _ownerId)
             {
                 var obs = await _client.ObsStatusAsync(selected.Id);
-                ObsStatus = obs.Error ?? (obs.Enabled ? "Entree OBS activee. Le direct commence a la connexion du diffuseur." : "Entree OBS desactivee.");
+                ObsStatus = obs.Error ?? (obs.Enabled ? "Entree SRT activee. Le direct commence a la reception des premiers medias." : "Entree OBS desactivee.");
                 if (!obs.Enabled) ClearObsCredentials(clearStatus: false);
             }
             Status = "Directs et replays reserves aux utilisateurs connectes.";
@@ -410,7 +410,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
             _obsPodcastId = podcast.Id;
             ObsServerUrl = credentials.ServerUrl;
             ObsStreamKey = credentials.StreamKey;
-            ObsStatus = $"Connectez OBS avant {credentials.ExpiresAt.ToLocalTime():g}. Cette cle remplace toute cle precedente.";
+            ObsStatus = $"Copiez l'URL SRT secrete dans OBS avant {credentials.ExpiresAt.ToLocalTime():g}, avec la cle de stream vide. Cette URL remplace la precedente.";
         }
 
         catch (Exception ex) { Status = $"Activation OBS impossible : {ex.Message}"; }

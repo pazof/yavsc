@@ -41,10 +41,12 @@ La confidentialité ne signifie pas qu'aucune donnée n'est transmise :
   et les paramètres de connexion sont partagés avec l'interlocuteur pour établir
   la liaison. L'audio et, si activée, la vidéo sont transmis aux participants ;
   les diffusions de podcasts transmettent aussi les médias aux personnes autorisées.
-  Pour une émission diffusée avec OBS ou un autre encodeur externe, le relais média
-  configuré reçoit le flux, l'adresse réseau du diffuseur et une clé technique
-  limitée à l'émission. Cette clé permet de diffuser, pas d'accéder aux données
-  du compte ni de regarder les podcasts ; elle peut être révoquée dans PostIt.
+  Pour une émission diffusée avec OBS ou un autre encodeur externe, l'API reçoit
+  directement le flux SRT chiffré et l'adresse réseau du diffuseur. L'URL technique
+  contient une phrase secrète limitée à l'émission, conservée en mémoire pendant
+  l'activation et nécessaire au chiffrement. Elle permet de diffuser, pas d'accéder
+  aux données du compte ni de regarder les podcasts ; elle peut être révoquée dans
+  PostIt. Aucun relais média tiers n'est requis.
 * Les prestataires d'hébergement et de messagerie traitent les données nécessaires
   au stockage, au fonctionnement et à l'acheminement des messages.
 * PayPal reçoit les informations nécessaires au paiement et à l'abonnement :

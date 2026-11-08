@@ -27,14 +27,16 @@ public sealed class PodcastScheduleTests
             var activation = vm.ActivateObsCommand.ExecuteAsync(null);
             vm.SelectedPodcast = api.Plan with { Id = Guid.NewGuid() };
             vm.SelectedPodcast = api.Plan;
-            api.PendingActivation.SetResult(new("rtmps://obs.example:1936", "secret", DateTimeOffset.UtcNow.AddMinutes(30)));
+            api.PendingActivation.SetResult(new("srt://obs.example:10000?passphrase=secret", "", DateTimeOffset.UtcNow.AddMinutes(30)));
             await activation;
+            Assert.Empty(vm.ObsServerUrl);
             Assert.Empty(vm.ObsStreamKey);
             api.PendingActivation = new(TaskCreationOptions.RunContinuationsAsynchronously);
             activation = vm.ActivateObsCommand.ExecuteAsync(null);
             await vm.DeactivateAsync();
-            api.PendingActivation.SetResult(new("rtmps://obs.example:1936", "secret", DateTimeOffset.UtcNow.AddMinutes(30)));
+            api.PendingActivation.SetResult(new("srt://obs.example:10000?passphrase=secret", "", DateTimeOffset.UtcNow.AddMinutes(30)));
             await activation;
+            Assert.Empty(vm.ObsServerUrl);
             Assert.Empty(vm.ObsStreamKey);
         }
         finally { File.Delete(path); File.Delete(path + ".settings"); }
@@ -56,17 +58,19 @@ public sealed class PodcastScheduleTests
             vm.SelectedPodcast = api.Plan;
             Assert.True(vm.ActivateObsCommand.CanExecute(null));
             await vm.ActivateObsCommand.ExecuteAsync(null);
-            Assert.Equal("rtmps://obs.example:1936", vm.ObsServerUrl);
-            Assert.Equal("obs/stream-secret", vm.ObsStreamKey);
+            Assert.Equal("srt://obs.example:10000?passphrase=stream-secret", vm.ObsServerUrl);
+            Assert.Empty(vm.ObsStreamKey);
             Assert.False(vm.IsBroadcasting);
             api.Settings.Save();
             Assert.DoesNotContain("stream-secret", await File.ReadAllTextAsync(path + ".settings"));
             vm.SelectedPodcast = api.Plan with { Id = Guid.NewGuid(), OwnerId = "other" };
+            Assert.Empty(vm.ObsServerUrl);
             Assert.Empty(vm.ObsStreamKey);
             Assert.False(vm.ActivateObsCommand.CanExecute(null));
             vm.SelectedPodcast = api.Plan;
             await vm.ActivateObsCommand.ExecuteAsync(null);
             await vm.DeactivateAsync();
+            Assert.Empty(vm.ObsServerUrl);
             Assert.Empty(vm.ObsStreamKey);
             Assert.True(api.ObsEnabled);
             await vm.ActivateAsync();
@@ -74,6 +78,7 @@ public sealed class PodcastScheduleTests
             await vm.ActivateObsCommand.ExecuteAsync(null);
             await vm.DeactivateObsCommand.ExecuteAsync(null);
             Assert.False(api.ObsEnabled);
+            Assert.Empty(vm.ObsServerUrl);
             Assert.Empty(vm.ObsStreamKey);
             Assert.EndsWith("/obs", api.RevokedPath);
             await vm.DeactivateAsync();
@@ -156,7 +161,7 @@ public sealed class PodcastScheduleTests
                 {
                     ObsEnabled = true;
                     response = PendingActivation is null
-                        ? new PodcastObsCredentials("rtmps://obs.example:1936", "obs/stream-secret", DateTimeOffset.UtcNow.AddMinutes(30))
+                        ? new PodcastObsCredentials("srt://obs.example:10000?passphrase=stream-secret", "", DateTimeOffset.UtcNow.AddMinutes(30))
                         : await PendingActivation.Task;
                 }
                 else response = new PodcastObsStatus(ObsEnabled, DateTimeOffset.UtcNow.AddMinutes(30), null);
