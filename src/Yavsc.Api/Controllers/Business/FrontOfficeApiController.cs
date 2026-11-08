@@ -159,7 +159,6 @@ namespace Yavsc.ApiControllers
                         uid,
                         User.Identity?.Name ?? uid,
                         cpuSeconds: (decimal)stopwatch.Elapsed.TotalSeconds,
-                        storageBytes: fo.Length,
                         actorUserId: uid);
 
                     return File(fo.OpenRead(), "application/pdf");
@@ -185,11 +184,20 @@ namespace Yavsc.ApiControllers
                     uid,
                     User.Identity?.Name ?? uid,
                     cpuSeconds: (decimal)stopwatch.Elapsed.TotalSeconds,
-                    storageBytes: renderedPdf?.Length ?? 0,
                     actorUserId: uid);
 
                 logger.LogError(ex, "estimate {QueryId}: TeX/PDF render failed", queryId);
                 return Problem("TeX render failed: " + ex.Message);
+            }
+            finally
+            {
+                if (renderedPdf is not null)
+                {
+                    renderedPdf.Refresh();
+                    if (renderedPdf.Exists)
+                        await ResourceUsageTracker.RecordStorageAsync(dbContext, uid, User.Identity?.Name ?? uid,
+                            "pdf/" + renderedPdf.FullName, renderedPdf.Length, CancellationToken.None);
+                }
             }
       }
 

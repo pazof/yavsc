@@ -26,5 +26,8 @@ public sealed class ResourceUsageTermsTests
         Assert.Contains((Yavsc.Constants.DefaultFSQ * 2L).ToString(), html);
         Assert.Contains("quota disque", html);
         Assert.Contains("Découverte porte le quota disque", html);
+        Assert.Contains("remboursent les points de stockage", html);
+        Assert.Contains("suppression de fichiers reste autorisée", html);
+        Assert.DoesNotContain("ne remboursent pas de points", html);
     }
 }

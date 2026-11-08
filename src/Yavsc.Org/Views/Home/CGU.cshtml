@@ -36,7 +36,10 @@
     </li>
     <li>
         Le stockage est le volume cumulé ajouté par les opérations instrumentées (fichiers personnels et génération de PDF),
-        pas l'espace disque actuellement occupé : suppression et remplacement ne remboursent pas de points.
+        diminué des volumes comptabilisés supprimés ou remplacés : ces opérations remboursent les points de stockage associés.
+        Un remplacement rembourse l'ancien volume suivi puis comptabilise le nouveau.
+        Les anciens fichiers sans suivi individuel ne donnent pas de remboursement ; le compteur de stockage ne devient jamais négatif.
+        Les points d'appels API, de CPU et de transfert ne sont pas remboursés.
     </li>
     <li>
         Le compteur historique « CPU » contient les durées enregistrées par les traitements instrumentés,
@@ -44,6 +47,7 @@
         Les ressources locales de PostIt, les appels directs entre appareils et le trafic WebSocket ne sont pas mesurés par cet indicateur HTTP.
     </li>
 </ul>
+<p>La suppression de fichiers reste autorisée même lorsque le seuil de consommation est atteint, afin de libérer du stockage.</p>
 <p>
     Le calcul utilise les valeurs décimales non arrondies ; l'arrondi de l'affichage ne décide pas du blocage.
     Cet indicateur n'est ni un prix, ni une facture, ni une estimation de compensation financière.

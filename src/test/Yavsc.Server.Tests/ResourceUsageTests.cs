@@ -257,6 +257,92 @@ public sealed class ResourceUsageTests
     }
 
     [Fact]
+    public async Task Tracked_storage_replacement_and_deletion_refund_only_their_original_volume()
+    {
+        using var provider = NewProvider();
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var ct = TestContext.Current.CancellationToken;
+        await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 5m, storageBytes: 1048576, cancellationToken: ct);
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "personal/file", 2 * 1048576, ct);
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "personal/file", 1048576, ct);
+        var record = await db.ResourceUsageRecords.SingleAsync(ct);
+        Assert.Equal(2m, record.StorageMb);
+        var usage = scope.ServiceProvider.GetRequiredService<IResourceUsageService>();
+        Assert.Equal(5.6m, (await usage.GetCurrentAsync("alice", "alice", ct)).Consumption);
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "personal/legacy", 0, ct);
+        Assert.Equal(2m, record.StorageMb);
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "personal/file", 0, ct);
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "personal/file", 0, ct);
+        Assert.Equal(1m, record.StorageMb);
+        Assert.Equal(5m, record.CpuSeconds);
+        Assert.Equal(5.3m, (await usage.GetCurrentAsync("alice", "alice", ct)).Consumption);
+        Assert.Empty(await db.ResourceStorageRecords.ToListAsync(ct));
+    }
+
+    [Fact]
+    public async Task Concurrent_deletions_do_not_refund_the_same_receipt_twice()
+    {
+        using var provider = NewProvider();
+        var ct = TestContext.Current.CancellationToken;
+        using (var setup = provider.CreateScope())
+        {
+            var db = setup.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "file", 1048576, ct);
+            await ResourceUsageTracker.RecordAsync(db, "alice", "alice", storageBytes: 1048576, cancellationToken: ct);
+        }
+        await Task.WhenAll(Enumerable.Range(0, 5).Select(async _ =>
+        {
+            using var scope = provider.CreateScope();
+            await ResourceUsageTracker.RecordStorageAsync(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+                "alice", "alice", "file", 0, ct);
+        }));
+        using var verify = provider.CreateScope();
+        Assert.Equal(1m, (await verify.ServiceProvider.GetRequiredService<ApplicationDbContext>()
+            .ResourceUsageRecords.SingleAsync(ct)).StorageMb);
+    }
+
+    [Fact]
+    public async Task Repeated_pdf_storage_accounting_is_idempotent_and_renamed_files_remain_refundable()
+    {
+        using var provider = NewProvider();
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var ct = TestContext.Current.CancellationToken;
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "pdf/file", 1048576, ct);
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "pdf/file", 1048576, ct);
+        await ResourceUsageTracker.MoveStorageAsync(db, "alice", "pdf", "renamed", ct);
+        Assert.Equal("renamed/file", (await db.ResourceStorageRecords.SingleAsync(ct)).Path);
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "renamed/file", 0, ct);
+        Assert.Equal(0m, (await db.ResourceUsageRecords.SingleAsync(ct)).StorageMb);
+    }
+
+    [Fact]
+    public async Task Relief_request_runs_at_the_limit_but_still_counts_api_and_transfer_costs()
+    {
+        using var provider = NewProvider(o => o.DefaultLimit = 0.01m);
+        using var scope = provider.CreateScope();
+        var context = NewContext(scope.ServiceProvider);
+        context.SetEndpoint(new Endpoint(_ => Task.CompletedTask,
+            new EndpointMetadataCollection(new ResourceUsageReliefAttribute()), "delete"));
+        var ran = false;
+        var middleware = new ResourceUsageTelemetryMiddleware(
+            async ctx =>
+            {
+                ran = true;
+                await ctx.Response.Body.WriteAsync(new byte[1048576], TestContext.Current.CancellationToken);
+            },
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            NullLogger<ResourceUsageTelemetryMiddleware>.Instance);
+        await middleware.InvokeAsync(context, scope.ServiceProvider.GetRequiredService<IResourceUsageService>());
+        Assert.True(ran);
+        var record = await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
+            .ResourceUsageRecords.SingleAsync(TestContext.Current.CancellationToken);
+        Assert.Equal(1m, record.ApiCalls);
+        Assert.Equal(1m, record.BandwidthMb);
+    }
+
+    [Fact]
     public async Task Negative_counter_deltas_are_explicitly_rejected()
     {
         using var provider = NewProvider();

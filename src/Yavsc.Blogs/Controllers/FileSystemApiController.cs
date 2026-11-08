@@ -98,6 +98,13 @@ namespace Yavsc.Blogs.Controllers
             return $"{subdir.TrimStart('/')}/{fileName}";
         }
 
+        static string StoragePath(string relativePath)
+        {
+            var root = Path.GetPathRoot(Path.GetFullPath("."))!;
+            return "personal/" + Path.GetRelativePath(root,
+                Path.GetFullPath(Path.Combine(root, relativePath.TrimStart('/', '\\')))).Replace('\\', '/');
+        }
+
         [HttpPost("{*subdir}")]
         public async Task<IActionResult> Post([FromServices] IResourceUsageService usage,
             [ValidRemoteUserFilePath] string subdir="", CancellationToken cancellationToken = default)
@@ -105,7 +112,15 @@ namespace Yavsc.Blogs.Controllers
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
             var uid = User.GetUserId();
             var form = await Request.ReadFormAsync(cancellationToken);
-            var anticipatedBytes = form.Files.Sum(f => f.Length);
+            var anticipatedBytes = 0L;
+            foreach (var file in form.Files)
+            {
+                var path = StoragePath(RelPath(subdir, AbstractFileSystemHelpers.FilterFileName(file.FileName)));
+                var previous = await dbContext.ResourceStorageRecords.AsNoTracking()
+                    .Where(r => r.UserId == uid && r.Path == path)
+                    .Select(r => r.Bytes).SingleOrDefaultAsync(cancellationToken);
+                anticipatedBytes = checked(anticipatedBytes + Math.Max(0L, file.Length - previous));
+            }
             if (!await usage.TryAdmitAsync(uid, User.Identity?.Name ?? uid, 0m, 0m,
                 anticipatedBytes, cancellationToken))
             {
@@ -136,6 +151,8 @@ namespace Yavsc.Blogs.Controllers
 
             foreach (var f in form.Files)
             {
+                var path = Path.Combine(destDir, AbstractFileSystemHelpers.FilterFileName(f.FileName));
+                var oldLength = System.IO.File.Exists(path) ? new FileInfo(path).Length : 0L;
                 var item = user.ReceiveUserFile(destDir, f);
                 if (!item.QuotaOffense)
                 {
@@ -170,12 +187,10 @@ namespace Yavsc.Blogs.Controllers
                     item.ContentType = f.ContentType;
                 }
 
-                await ResourceUsageTracker.RecordAsync(
-                    dbContext,
-                    uid,
-                    user.UserName,
-                    storageBytes: item.Length,
-                    actorUserId: uid);
+                var newLength = System.IO.File.Exists(path) ? new FileInfo(path).Length : 0L;
+                if (!item.QuotaOffense || newLength != oldLength)
+                    await ResourceUsageTracker.RecordStorageAsync(dbContext, uid, user.UserName,
+                        StoragePath(RelPath(subdir, item.FileName)), newLength, CancellationToken.None);
 
                 received.Add(item);
                 _logger.LogInformation($"Received  '{item.FileName}'.");
@@ -259,22 +274,24 @@ namespace Yavsc.Blogs.Controllers
         [HttpPost]
         [Route("/api/fsc/mvftd")]
         [Authorize()]
-        public IActionResult MoveFile([FromBody] RenameFileQuery query)
+        public async Task<IActionResult> MoveFile([FromBody] RenameFileQuery query)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
             var info = user.MoveUserFileToDir(query.Id, query.To, siteSettings);
             if (!info.Done) return new BadRequestObjectResult(info);
+            await ResourceUsageTracker.MoveStorageAsync(dbContext, uid, StoragePath(query.Id),
+                StoragePath(Path.Combine(query.To ?? "", Path.GetFileName(query.Id))), CancellationToken.None);
             return Ok(new { moved = query.Id });
         }
 
         [HttpPost]
         [Route("/api/fsc/mvf")]
         [Authorize()]
-        public IActionResult RenameFile([FromBody] RenameFileQuery query)
+        public async Task<IActionResult> RenameFile([FromBody] RenameFileQuery query)
         {
             if (!ModelState.IsValid) {
                 var idvr = new ValidRemoteUserFilePathAttribute();
@@ -282,23 +299,30 @@ namespace Yavsc.Blogs.Controllers
                 return this.BadRequest(new { id = idvr.IsValid(query.Id), to = idvr.IsValid(query.To), errors = ModelState });
             }
             _logger.LogInformation($"Valid move query: {query.Id} => {query.To}");
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var uid = User.GetUserId();
             var user = dbContext.Users.Single(
                 u => u.Id == uid
             );
             try {
-                if (Config.UserFilesOptions.FileProvider.GetFileInfo(Path.Combine(user.UserName, query.Id)).Exists)
+                var destination = query.To;
+                var root = Path.Combine(siteSettings.UserFilesRoot, user.UserName);
+                if (System.IO.File.Exists(Path.Combine(root, query.Id)))
                 {
                     var result = user.MoveUserFile(query.Id, query.To, siteSettings);
                     if (!result.Done) return new BadRequestObjectResult(result);
                 }
                 else {
+                    var dir = new DirectoryInfo(Path.Combine(root, query.To));
+                    if (dir.Exists) destination = Path.Combine(query.To, dir.Name);
                     var result = user.MoveUserDir(query.Id, query.To, siteSettings);
                     if (!result.Done) return new BadRequestObjectResult(result);
                 }
+                await ResourceUsageTracker.MoveStorageAsync(dbContext, uid, StoragePath(query.Id),
+                    StoragePath(destination), CancellationToken.None);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to rename user file {Path} for {UserId}", query.Id, uid);
                 return new BadRequestObjectResult(
                     new FsOperationInfo {
                         Done = false,
@@ -310,7 +334,8 @@ namespace Yavsc.Blogs.Controllers
         }
 
         [HttpDelete("{*id}")]
-        public IActionResult RemoveDirOrFile ([ValidRemoteUserFilePath] string id)
+        [ResourceUsageRelief]
+        public async Task<IActionResult> RemoveDirOrFile ([ValidRemoteUserFilePath] string id)
         {
             if (!ModelState.IsValid) return new BadRequestObjectResult(ModelState);
 
@@ -322,10 +347,13 @@ namespace Yavsc.Blogs.Controllers
                 var result = user.DeleteUserDirOrFile(id, siteSettings);
                 if (!result.Done)
                     return new BadRequestObjectResult(result);
+                await ResourceUsageTracker.RecordStorageAsync(dbContext, user.Id, user.UserName,
+                    StoragePath(id), 0L, CancellationToken.None);
             }
 
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to delete user file {Path} for {UserId}", id, user.Id);
                 return new BadRequestObjectResult(
                     new FsOperationInfo {
                         Done = false,

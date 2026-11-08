@@ -24,7 +24,14 @@ public sealed class ResourceUsageTelemetryMiddleware(
 
         var userName = context.User.Identity?.Name ?? userId;
         var requestBytes = context.Request.ContentLength ?? 0L;
-        if (!await usage.TryAdmitAsync(userId, userName, 1m, ToMb(requestBytes), 0,
+        var relief = context.GetEndpoint()?.Metadata.GetMetadata<ResourceUsageReliefAttribute>() is not null;
+        if (relief)
+        {
+            using var admissionScope = scopeFactory.CreateScope();
+            await ResourceUsageTracker.RecordAsync(admissionScope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+                userId, userName, apiCalls: 1m, bandwidthMb: ToMb(requestBytes), actorUserId: userId);
+        }
+        else if (!await usage.TryAdmitAsync(userId, userName, 1m, ToMb(requestBytes), 0,
             context.RequestAborted))
         {
             logger.LogWarning("Resource quota refused a request for user {UserId}", userId);

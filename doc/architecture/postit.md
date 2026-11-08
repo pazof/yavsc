@@ -131,8 +131,12 @@ si une opération de gestion reçoit un refus de quota. L'administration
 charge également les usages avant ses autres outils et les conserve sur
 un refus HTTP 429, tant que le rôle administrateur est toujours présent.
 
-L'indicateur cumulé est exprimé en points : `0,02 × appels API + secondes
-CPU enregistrées + 0,1 × Mio transférés + 0,3 × Mio ajoutés au stockage`.
+L'indicateur est exprimé en points selon les coefficients effectifs du
+backend, présentés dans les CGU. Le stockage correspond aux volumes
+instrumentés ajoutés, moins les volumes individuellement suivis supprimés
+ou remplacés. Les anciens fichiers sans suivi ne sont pas remboursés.
+La suppression reste disponible au seuil ; CPU, appels API et transferts
+ne sont pas remboursés. Les renommages conservent le suivi individuel.
 Le profil et les vues d'administration affichent le seuil effectif, le
 solde et l'atteinte du quota, indépendamment de l'estimation financière.
 La section serveur `ResourceUsage` configure les coefficients et les

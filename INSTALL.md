@@ -113,7 +113,15 @@ balance and subscription/payment tables without clearing existing counters.
 
 Consumption is in **points**, independent of `EstimatedCompensation` and
 currency. Counters have no automatic reset. Storage means cumulative
-instrumented writes, not current occupancy; the historical CPU counter is
+instrumented writes less individually tracked bytes removed or replaced,
+not total filesystem occupancy. Replacements refund their tracked previous
+size and charge the new size. Legacy files without an individual receipt
+receive no refund; storage counters never become negative. Deletion remains
+available at the consumption limit, but API/transfer/CPU costs are not refunded.
+Apply the `RefundableResourceStorage` migration before deployment; its empty
+receipt table deliberately does not infer provenance from historical counters.
+Renames preserve receipts and repeated PDF generation replaces the previous
+tracked volume rather than charging the whole file again. The historical CPU counter is
 instrumented elapsed processing time, not exhaustive CPU profiling.
 
 Authenticated HTTP operations are admitted atomically against known costs

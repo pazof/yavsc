@@ -3081,6 +3081,24 @@ namespace Yavsc.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("Yavsc.Models.ResourceStorageRecord", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
+                    b.Property<string>("Path")
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
+
+                    b.Property<long>("Bytes")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("UserId", "Path");
+
+                    b.ToTable("ResourceStorageRecords");
+                });
+
             modelBuilder.Entity("Yavsc.Models.ResourceUsageRecord", b =>
                 {
                     b.Property<long>("Id")

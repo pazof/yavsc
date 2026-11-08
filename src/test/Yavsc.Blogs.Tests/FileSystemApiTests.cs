@@ -137,6 +137,79 @@ public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
     }
 
     [Fact]
+    public async Task Same_size_replacement_is_admitted_near_the_limit_and_renaming_keeps_refundability()
+    {
+        _fixture.ResetDatabase();
+        const string owner = "storage-replacement";
+        _fixture.SeedUser(owner, u => u.DiskQuota = 10_000_000);
+        using var http = NewClient(owner);
+        var ct = TestContext.Current.CancellationToken;
+        async Task Upload()
+        {
+            using var form = new MultipartFormDataContent();
+            form.Add(new ByteArrayContent(new byte[1048576]), "file", "original.bin");
+            using var response = await http.PostAsync("/api/v1/fs", form, ct);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+        await Upload();
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var policy = scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<Yavsc.Settings.ResourceUsageOptions>>().Value;
+            var cpu = (policy.DefaultLimit - policy.StorageMbWeight * 1.5m) / policy.CpuSecondWeight;
+            await ResourceUsageTracker.RecordAsync(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+                owner, owner, cpuSeconds: cpu, cancellationToken: ct);
+        }
+        await Upload();
+        using var moved = await http.PostAsync("/api/fsc/mvf",
+            new StringContent("""{"id":"original.bin","to":"renamed.bin"}""", System.Text.Encoding.UTF8, "application/json"), ct);
+        Assert.Equal(HttpStatusCode.OK, moved.StatusCode);
+        using var deleted = await http.DeleteAsync("/api/v1/fs/renamed.bin", ct);
+        Assert.Equal(HttpStatusCode.OK, deleted.StatusCode);
+        using var verify = _fixture.Services.CreateScope();
+        var db = verify.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        Assert.Equal(0m, (await db.ResourceUsageRecords.SingleAsync(r => r.UserId == owner, ct)).StorageMb);
+        Assert.Empty(await db.ResourceStorageRecords.Where(r => r.UserId == owner).ToListAsync(ct));
+    }
+
+    [Fact]
+    public async Task Replacement_and_deletion_refund_tracked_storage_but_not_a_legacy_file()
+    {
+        _fixture.ResetDatabase();
+        const string owner = "storage-refunds";
+        _fixture.SeedUser(owner, u => u.DiskQuota = 10_000_000);
+        using var http = NewClient(owner);
+        var ct = TestContext.Current.CancellationToken;
+        async Task Upload(int length)
+        {
+            using var form = new MultipartFormDataContent();
+            form.Add(new ByteArrayContent(new byte[length]), "file", "refunded.bin");
+            using var response = await http.PostAsync("/api/v1/fs", form, ct);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+        await Upload(2 * 1048576);
+        await Upload(1048576);
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            Assert.Equal(1m, (await db.ResourceUsageRecords.SingleAsync(r => r.UserId == owner, ct)).StorageMb);
+            Assert.Equal(1048576L, (await db.ResourceStorageRecords.SingleAsync(r => r.UserId == owner, ct)).Bytes);
+            await ResourceUsageTracker.RecordAsync(db, owner, owner, cpuSeconds: 20000m, cancellationToken: ct);
+        }
+        using var deleted = await http.DeleteAsync("/api/v1/fs/refunded.bin", ct);
+        Assert.Equal(HttpStatusCode.OK, deleted.StatusCode);
+        Assert.False(File.Exists(PhysicalFile(_fixture, owner, "refunded.bin")));
+        WritePhysicalFile(_fixture, owner, "legacy.bin", new byte[1048576]);
+        using var legacy = await http.DeleteAsync("/api/v1/fs/legacy.bin", ct);
+        Assert.Equal(HttpStatusCode.OK, legacy.StatusCode);
+        using var verify = _fixture.Services.CreateScope();
+        var final = verify.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var usage = await final.ResourceUsageRecords.SingleAsync(r => r.UserId == owner, ct);
+        Assert.Equal(0m, usage.StorageMb);
+        Assert.Equal(20000m, usage.CpuSeconds);
+        Assert.Empty(await final.ResourceStorageRecords.Where(r => r.UserId == owner).ToListAsync(ct));
+    }
+
+    [Fact]
     public async Task Upload_is_refused_before_writing_when_known_storage_would_exceed_quota()
     {
         _fixture.ResetDatabase();

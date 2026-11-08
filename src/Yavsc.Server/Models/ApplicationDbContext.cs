@@ -145,6 +145,7 @@ namespace Yavsc.Models
             builder.Entity<ApplicationUser>().HasMany<ChatConnection>(c => c.Connections);
             builder.Entity<ApplicationUser>().Property(u => u.Avatar).HasDefaultValue(Constants.DefaultAvatar);
             builder.Entity<ApplicationUser>().Property(u => u.DiskQuota).HasDefaultValue(Constants.DefaultFSQ);
+            builder.Entity<ResourceStorageRecord>().HasKey(r => new { r.UserId, r.Path });
             builder.Entity<ApplicationUser>().HasAlternateKey(u => u.Email);
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.User);
             builder.Entity<BlackListed>().HasOne<ApplicationUser>(bl => bl.Owner);
@@ -380,6 +381,7 @@ namespace Yavsc.Models
         public DbSet<Estimate> Estimates { get; set; }
         public DbSet<Signature> Signatures { get; set; }
         public DbSet<ResourceUsageRecord> ResourceUsageRecords { get; set; }
+        public DbSet<ResourceStorageRecord> ResourceStorageRecords { get; set; }
         public DbSet<ResourceSubscription> ResourceSubscriptions { get; set; }
         public DbSet<ResourceSubscriptionPayment> ResourceSubscriptionPayments { get; set; }
         public DbSet<AccountBalance> BankStatus { get; set; }
