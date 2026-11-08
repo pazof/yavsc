@@ -36,6 +36,8 @@ internal static class PlatformBootstrap
             Platform.RequestPodcastPermissionsAsync = AndroidPodcastCapture.RequestPermissionsAsync;
             Platform.CreatePodcastCaptureAsync = AndroidPodcastCapture.StartAsync;
             Platform.CreatePodcastPreviewAsync = AndroidPodcastCapture.StartPreviewAsync;
+            Platform.CreateBlurredPodcastCaptureAsync = AndroidPodcastCapture.StartBlurredAsync;
+            Platform.CreateBlurredPodcastPreviewAsync = AndroidPodcastCapture.StartBlurredPreviewAsync;
         }
     }
 }

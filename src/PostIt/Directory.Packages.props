@@ -39,5 +39,6 @@
     <PackageVersion Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.11.0.1" />
     <PackageVersion Include="Xamarin.UITest" Version="4.4.2" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.ML.OnnxRuntime" Version="1.31.1" />
   </ItemGroup>
 </Project>

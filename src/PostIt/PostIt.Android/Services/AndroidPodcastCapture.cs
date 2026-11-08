@@ -85,9 +85,16 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
 
     public static async Task<IPodcastCapture> StartAsync(string camera, string? microphone, string directory, CancellationToken ct)
         => await StartCoreAsync(camera, microphone,
-            (stream, token) => new TransportStreamCapture(directory).RunAsync(stream, token), null, null, ct);
+            (stream, token) => new TransportStreamCapture(directory).RunAsync(stream, token), null, null, ct, false);
 
-    public static async Task<IPodcastCapture> StartPreviewAsync(string camera, CancellationToken ct)
+    public static async Task<IPodcastCapture> StartBlurredAsync(string camera, string? microphone, string directory, CancellationToken ct)
+        => await StartCoreAsync(camera, microphone,
+            (stream, token) => new TransportStreamCapture(directory).RunAsync(stream, token), null, null, ct, true);
+
+    public static Task<IPodcastCapture> StartPreviewAsync(string camera, CancellationToken ct) => StartPreviewAsync(camera, ct, false);
+    public static Task<IPodcastCapture> StartBlurredPreviewAsync(string camera, CancellationToken ct) => StartPreviewAsync(camera, ct, true);
+
+    private static async Task<IPodcastCapture> StartPreviewAsync(string camera, CancellationToken ct, bool blur)
     {
         var activity = MainActivity.Current ?? throw new InvalidOperationException("Activite Android indisponible.");
         await PodcastPermissions.EnsureAsync(activity, false, ct, notifications: false);
@@ -99,7 +106,7 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         Platform.PlaybackSuspending += capture.RequestStop;
         try
         {
-            await capture.StartNativeAsync(camera, false, null, null, ct);
+            await capture.StartNativeAsync(camera, false, null, null, ct, blur);
             return capture;
         }
         catch
@@ -111,11 +118,11 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
 
     internal static Task<IPodcastCapture> StartCallAsync(string camera, string microphone,
         Func<int, CancellationToken, Task> output, Func<Task> stopOutput, CancellationToken ct) =>
-        StartCoreAsync(camera, microphone, null, output, stopOutput, ct);
+        StartCoreAsync(camera, microphone, null, output, stopOutput, ct, false);
 
     private static async Task<IPodcastCapture> StartCoreAsync(string camera, string? microphone,
         Func<Stream, CancellationToken, Task>? output,
-        Func<int, CancellationToken, Task>? pipeOutput, Func<Task>? stopOutput, CancellationToken ct)
+        Func<int, CancellationToken, Task>? pipeOutput, Func<Task>? stopOutput, CancellationToken ct, bool blur)
     {
         await RequestPermissionsAsync(microphone, ct);
         var activity = MainActivity.Current ?? throw new InvalidOperationException("Activite Android indisponible.");
@@ -133,7 +140,7 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         try
         {
             ct.ThrowIfCancellationRequested();
-            await capture.StartNativeAsync(camera, microphone is not null, output, pipeOutput, ct);
+            await capture.StartNativeAsync(camera, microphone is not null, output, pipeOutput, ct, blur);
             return capture;
         }
         catch
@@ -145,16 +152,16 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
 
     private async Task StartNativeAsync(string cameraId, bool microphone,
         Func<Stream, CancellationToken, Task>? output,
-        Func<int, CancellationToken, Task>? pipeOutput, CancellationToken ct)
+        Func<int, CancellationToken, Task>? pipeOutput, CancellationToken ct, bool blur)
     {
         await _stopGate.WaitAsync(ct);
-        try { await ConfigureNativeAsync(cameraId, microphone, output, pipeOutput, ct); }
+        try { await ConfigureNativeAsync(cameraId, microphone, output, pipeOutput, ct, blur); }
         finally { _stopGate.Release(); }
     }
 
     private async Task ConfigureNativeAsync(string cameraId, bool microphone,
         Func<Stream, CancellationToken, Task>? output,
-        Func<int, CancellationToken, Task>? pipeOutput, CancellationToken ct)
+        Func<int, CancellationToken, Task>? pipeOutput, CancellationToken ct, bool blur)
     {
         var manager = GetManager(_context);
         using var characteristics = manager.GetCameraCharacteristics(cameraId);
@@ -205,7 +212,8 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         }
         ct.ThrowIfCancellationRequested();
         if (_stopRequested) throw new System.OperationCanceledException("Demarrage de la capture annule.");
-        _rotator = await AndroidCameraFrameRotator.CreateAsync(_surface, size.Width, size.Height, rotation, Fail);
+        _rotator = await AndroidCameraFrameRotator.CreateAsync(_surface, size.Width, size.Height, rotation, Fail,
+            blur ? _context : null);
         _preview = new AndroidCapturePreview(_rotator);
         ct.ThrowIfCancellationRequested();
         if (_stopRequested) throw new System.OperationCanceledException("Demarrage de la capture annule.");

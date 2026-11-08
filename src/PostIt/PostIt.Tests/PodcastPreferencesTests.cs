@@ -29,6 +29,8 @@ public sealed class PodcastPreferencesTests
             vm.Title = "Mon emission habituelle";
             Assert.False(vm.KeepScreenOnDuringCapture);
             vm.KeepScreenOnDuringCapture = true;
+            Assert.False(vm.BlurPodcastBackground);
+            vm.BlurPodcastBackground = true;
             vm.DetectDevicesCommand.Execute(null);
             Assert.Equal("rear", vm.SelectedCamera?.Value);
             Assert.Equal("", vm.SelectedMicrophone?.Value);
@@ -41,6 +43,7 @@ public sealed class PodcastPreferencesTests
             Assert.Equal("rear", restored.PodcastCameraId);
             Assert.Equal("", restored.PodcastMicrophoneId);
             Assert.True(restored.PodcastKeepScreenOn);
+            Assert.True(restored.PodcastBlurBackground);
             Platform.GetPodcastCaptureDevices = () => throw new InvalidOperationException("Must use saved devices.");
             await using var otherApi = new PreferencesApi(restored, new TokenStore(path + ".tokens"));
             var other = new PodcastsPageViewModel(new PodcastApiClient(otherApi, () => restored.ApiUrl), otherApi, session);
@@ -50,13 +53,16 @@ public sealed class PodcastPreferencesTests
             Assert.Equal("", other.SelectedMicrophone?.Value);
             Assert.Equal(vm.Title, other.Title);
             Assert.True(other.KeepScreenOnDuringCapture);
+            Assert.True(other.BlurPodcastBackground);
             restored.PodcastCameraId = "front";
             restored.PodcastMicrophoneId = "usb";
             restored.PodcastKeepScreenOn = false;
+            restored.PodcastBlurBackground = false;
             await other.ActivateAsync();
             Assert.Equal("front", other.SelectedCamera?.Value);
             Assert.Equal("usb", other.SelectedMicrophone?.Value);
             Assert.False(other.KeepScreenOnDuringCapture);
+            Assert.False(other.BlurPodcastBackground);
 
             Platform.GetPodcastCaptureDevices = () => new([], []);
             other.DetectDevicesCommand.Execute(null);

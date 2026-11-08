@@ -34,6 +34,8 @@ public static class Platform
     public static Func<string?, CancellationToken, Task>? RequestPodcastPermissionsAsync { get; set; }
     public static Func<string, string?, string, CancellationToken, Task<IPodcastCapture>>? CreatePodcastCaptureAsync { get; set; }
     public static Func<string, CancellationToken, Task<IPodcastCapture>>? CreatePodcastPreviewAsync { get; set; }
+    public static Func<string, string?, string, CancellationToken, Task<IPodcastCapture>>? CreateBlurredPodcastCaptureAsync { get; set; }
+    public static Func<string, CancellationToken, Task<IPodcastCapture>>? CreateBlurredPodcastPreviewAsync { get; set; }
 
     /// <summary>Platform-specific video surface inside the shared video page.</summary>
     public static Func<MediaPlayer, bool, Control>? CreateVideoSurface { get; set; }

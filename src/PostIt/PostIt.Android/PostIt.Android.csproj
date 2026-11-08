@@ -25,6 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia.Android" />
     <PackageReference Include="LibVLCSharp" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" />
     <PackageReference Include="VideoLAN.LibVLC.Android" />
     <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" />
     <PackageReference Include="Xamarin.AndroidX.Browser" />
@@ -37,6 +38,7 @@
     <Compile Include="..\PostIt.Tests\AndroidChatServiceTestActivity.cs" Link="Tests\AndroidChatServiceTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidPodcastCaptureTestActivity.cs" Link="Tests\AndroidPodcastCaptureTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidCameraFrameRotationTestActivity.cs" Link="Tests\AndroidCameraFrameRotationTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\AndroidPodcastBlurTestActivity.cs" Link="Tests\AndroidPodcastBlurTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidLanCallTestActivity.cs" Link="Tests\AndroidLanCallTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidScreenAwakeTestActivity.cs" Link="Tests\AndroidScreenAwakeTestActivity.cs" />
   </ItemGroup>

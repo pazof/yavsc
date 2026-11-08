@@ -90,6 +90,12 @@
                         <DataTemplate x:DataType="services:CaptureDevice"><TextBlock Text="{Binding Name}" /></DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <CheckBox Content="Flouter le decor de la camera (Android)"
+                          IsVisible="{Binding SupportsPodcastBackgroundBlur}"
+                          IsEnabled="{Binding CanChangePodcastBackgroundBlur}"
+                          IsChecked="{Binding BlurPodcastBackground, Mode=TwoWay}" />
+                <TextBlock Text="Le masque automatique peut laisser apparaitre des details du decor. Verifiez l'apercu avant de diffuser."
+                           IsVisible="{Binding SupportsPodcastBackgroundBlur}" TextWrapping="Wrap" />
                 <WrapPanel>
                     <Button Content="Previsualiser la camera" Command="{Binding PreviewCommand}" Margin="0,0,8,8" />
                     <Button Content="Arreter la previsualisation" Command="{Binding StopPreviewCommand}" Margin="0,0,8,8" />

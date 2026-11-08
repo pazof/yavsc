@@ -5,6 +5,8 @@
 
 ### Added
 
+* [PostIt.Android/Podcasts] Add an optional persisted background blur for camera preview and broadcasting. Run the bundled PPHumanSeg model locally with ONNX Runtime and composite with OpenGL before encoding; preserve the unfiltered pipeline for calls and OBS.
+
 * [Podcasts/OBS/PostIt] Replace the MediaMTX relay with direct encrypted SRT ingestion managed by [FFmpeg.NET](https://github.com/cmxl/FFmpeg.NET). Reserve bounded UDP listeners on activation, display a secret SRT URL with an empty OBS stream-key field, start on received media, preserve revocation/expiry/quotas and authenticated replay, and invalidate in-memory activations after restart. Remove relay configuration and its authentication endpoint; update deployment, privacy and real-media regressions. Use separate request connections to the shared SQLite test database for reliable concurrent podcast requests.
 
 * [Podcasts/OBS/PostIt] Add opt-in MediaMTX RTMPS ingestion for programmed emissions, activated explicitly from PostIt with one-time scoped, expiring and revocable keys. Start on publisher connection, remux H.264/AAC into the existing authenticated segments and MP4 replay workflow, bound concurrency/duration/buffering, enforce consumption and effective disk quotas, account storage with deletion refunds, and report owner-only ingest errors. Add relay configuration, installation instructions and real synthetic RTMP/RTMPS-to-replay regressions, including active revocation.

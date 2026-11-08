@@ -35,6 +35,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
     private Control? _capturePreview;
     private bool _restoringPreferences;
     private bool _keepScreenOnDuringCapture;
+    private bool _blurPodcastBackground;
     private Guid? _obsPodcastId;
     private int _obsVersion;
     [ObservableProperty] public partial string ObsServerUrl { get; set; } = "";
@@ -42,6 +43,22 @@ public partial class PodcastsPageViewModel : ViewModelBase
     [ObservableProperty] public partial string ObsStatus { get; set; } = "";
     private IDisposable? _screenAwake;
     public bool SupportsCaptureScreenAwake => OperatingSystem.IsAndroid();
+    public bool SupportsPodcastBackgroundBlur => Platform.CreateBlurredPodcastCaptureAsync is not null
+        && Platform.CreateBlurredPodcastPreviewAsync is not null;
+    public bool CanChangePodcastBackgroundBlur => !IsCapturing && !IsBusy;
+    public bool BlurPodcastBackground
+    {
+        get => _blurPodcastBackground;
+        set
+        {
+            if (!SetProperty(ref _blurPodcastBackground, value)) return;
+            if (!_restoringPreferences)
+            {
+                _api.Settings.PodcastBlurBackground = value;
+                SavePreferences();
+            }
+        }
+    }
     public bool KeepScreenOnDuringCapture
     {
         get => _keepScreenOnDuringCapture;
@@ -123,6 +140,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
         {
             if (!SetProperty(ref _isBroadcasting, value)) return;
             OnPropertyChanged(nameof(IsCapturing));
+            OnPropertyChanged(nameof(CanChangePodcastBackgroundBlur));
             UpdateScreenAwake();
             UpdateCommands();
         }
@@ -131,7 +149,12 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public bool IsBusy
     {
         get => _busy;
-        private set { if (SetProperty(ref _busy, value)) UpdateCommands(); }
+        private set
+        {
+            if (!SetProperty(ref _busy, value)) return;
+            OnPropertyChanged(nameof(CanChangePodcastBackgroundBlur));
+            UpdateCommands();
+        }
     }
 
     public CaptureDevice? SelectedCamera
@@ -245,6 +268,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
                 && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
         _title = _api.Settings.PodcastDefaultTitle;
         _keepScreenOnDuringCapture = _api.Settings.PodcastKeepScreenOn;
+        _blurPodcastBackground = _api.Settings.PodcastBlurBackground;
         _restoringPreferences = true;
         try
         {
@@ -352,6 +376,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
         try
         {
             KeepScreenOnDuringCapture = _api.Settings.PodcastKeepScreenOn;
+            BlurPodcastBackground = _api.Settings.PodcastBlurBackground;
             Cameras.Clear();
             Microphones.Clear();
             foreach (var device in _api.Settings.PodcastCameras) Cameras.Add(device);
@@ -477,7 +502,11 @@ public partial class PodcastsPageViewModel : ViewModelBase
             ct.ThrowIfCancellationRequested();
             if (_previewCapture is not null) return;
             var camera = SelectedCamera?.Value ?? throw new InvalidOperationException("Choisissez une camera.");
-            capture = Platform.CreatePodcastPreviewAsync is { } createPreview
+            var previewFactory = BlurPodcastBackground && OperatingSystem.IsAndroid()
+                ? Platform.CreateBlurredPodcastPreviewAsync
+                    ?? throw new InvalidOperationException("Le flou d'arriere-plan n'est pas disponible sur cet appareil.")
+                : Platform.CreatePodcastPreviewAsync;
+            capture = previewFactory is { } createPreview
                 ? await createPreview(camera, ct)
                 : new LibVlcPodcastCapture(
                     vlc => new CameraStreamer(vlc).CreateCaptureMedia(camera, null), null, preview: true);
@@ -506,6 +535,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(IsPreviewing));
         OnPropertyChanged(nameof(IsCapturing));
+        OnPropertyChanged(nameof(CanChangePodcastBackgroundBlur));
         UpdateScreenAwake();
         UpdateCommands();
     }
@@ -553,7 +583,11 @@ public partial class PodcastsPageViewModel : ViewModelBase
             var microphone = string.IsNullOrWhiteSpace(SelectedMicrophone?.Value) ? null : SelectedMicrophone.Value;
             if (Platform.RequestPodcastPermissionsAsync is { } requestPermissions)
                 await requestPermissions(microphone, _pageCancellation.Token);
-            _broadcaster = Platform.CreatePodcastCaptureAsync is { } createCapture
+            var captureFactory = BlurPodcastBackground && OperatingSystem.IsAndroid()
+                ? Platform.CreateBlurredPodcastCaptureAsync
+                    ?? throw new InvalidOperationException("Le flou d'arriere-plan n'est pas disponible sur cet appareil.")
+                : Platform.CreatePodcastCaptureAsync;
+            _broadcaster = captureFactory is { } createCapture
                 ? await PodcastBroadcaster.StartAsync(_client, Title,
                     (directory, ct) => createCapture(camera, microphone, directory, ct), _pageCancellation.Token, SelectedPodcast?.Id)
                 : await PodcastBroadcaster.StartAsync(_client, Title, camera, microphone, _pageCancellation.Token, SelectedPodcast?.Id);

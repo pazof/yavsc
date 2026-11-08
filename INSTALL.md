@@ -526,6 +526,22 @@ at IDR frames, with timestamps used for segment durations. Closed segments
 enter the same ordered upload/retry/quota/replay pipeline as desktop.
 Devices without a supported camera/encoder report a startup error.
 
+On Android, the optional **Flouter le decor de la camera** setting is saved
+locally and disabled by default. It applies to podcast camera preview and
+recording, not calls or OBS. The bundled Apache-2.0 PPHumanSeg model from
+[OpenCV Zoo](https://github.com/opencv/opencv_zoo/tree/main/models/human_segmentation_pphumanseg)
+is evaluated locally with ONNX Runtime; OpenGL blends the blurred background
+before the native encoder. No frames are sent to a third party. Segmentation
+is imperfect and can expose parts of the background: check the preview and do
+not rely on it to conceal sensitive surroundings. Performance and battery
+usage depend on the device. Capture stops on processing failure.
+The bundled `pphumanseg.onnx` is the OpenCV Zoo 2023mar model (SHA-256
+`552d8a984054e59b5d773d24b9b12022b22046ceb2bbc4c9aaeaceb36a9ddf24`);
+its Apache-2.0 license is included beside the asset.
+ONNX Runtime's Android library requires API 24; it is only loaded by the
+podcast capture code, which is restricted to API 26 and later. The manifest
+override preserves PostIt's existing API 23 minimum for its other features.
+
 Camera frames are rotated through an OpenGL surface before encoding, so both
 live playback and replays have upright pixels without relying on rotation
 metadata (not supported by the MPEG-TS recorder). The sensor, front/rear lens

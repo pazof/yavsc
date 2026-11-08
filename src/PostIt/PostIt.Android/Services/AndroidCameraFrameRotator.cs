@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Android.Graphics;
+using Android.Content;
 using Android.Opengl;
 using Android.OS;
 using Android.Views;
@@ -17,9 +18,32 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         attribute vec2 textureCoordinate;
         uniform mat4 textureMatrix;
         varying vec2 uv;
+        varying vec2 maskUv;
         void main() {
             gl_Position = vec4(position, 0.0, 1.0);
             uv = (textureMatrix * vec4(textureCoordinate, 0.0, 1.0)).xy;
+            maskUv = (position + vec2(1.0)) * 0.5;
+        }
+        """;
+    private const string BlurFragmentShader = """
+        #extension GL_OES_EGL_image_external : require
+        precision mediump float;
+        uniform samplerExternalOES cameraTexture;
+        uniform sampler2D personMask;
+        uniform vec2 blurStep;
+        varying vec2 uv;
+        varying vec2 maskUv;
+        void main() {
+            vec4 original = texture2D(cameraTexture, uv);
+            vec4 blurred = vec4(0.0);
+            for (int x = -2; x <= 2; x++) {
+                for (int y = -2; y <= 2; y++) {
+                    blurred += texture2D(cameraTexture, uv + vec2(float(x), float(y)) * blurStep);
+                }
+            }
+            blurred /= 25.0;
+            float person = texture2D(personMask, maskUv).r;
+            gl_FragColor = mix(blurred, original, person);
         }
         """;
     private const string FragmentShader = """
@@ -59,7 +83,17 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
     private int _program;
     private int _textureId;
     private int _matrixLocation;
+    private int _blurProgram;
+    private int _blurMatrixLocation;
+    private int _maskTexture;
+    private int _samplingTexture;
+    private int _framebuffer;
+    private IPodcastPersonSegmenter? _segmenter;
+    private ByteBuffer? _samplingBuffer;
+    private ByteBuffer? _maskBuffer;
+    private byte[]? _samplingBytes;
     private bool _rendering;
+    private bool _blackout;
     private bool _disposed;
     private int _rotation;
     private int _remainingRotation = -1;
@@ -76,12 +110,13 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
     }
 
     internal static async Task<AndroidCameraFrameRotator> CreateAsync(
-        Surface? encoderSurface, int width, int height, int rotation, Action<Exception> failed)
+        Surface? encoderSurface, int width, int height, int rotation, Action<Exception> failed, Context? blurContext = null,
+        Func<Context, IPodcastPersonSegmenter>? segmenterFactory = null)
     {
         var rotator = new AndroidCameraFrameRotator(failed);
         try
         {
-            await rotator.InvokeAsync(() => rotator.Initialize(encoderSurface, width, height, rotation));
+            await rotator.InvokeAsync(() => rotator.Initialize(encoderSurface, width, height, rotation, blurContext, segmenterFactory));
             return rotator;
         }
         catch
@@ -91,7 +126,8 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         }
     }
 
-    private void Initialize(Surface? encoderSurface, int width, int height, int rotation)
+    private void Initialize(Surface? encoderSurface, int width, int height, int rotation, Context? blurContext,
+        Func<Context, IPodcastPersonSegmenter>? segmenterFactory)
     {
         _rotation = rotation;
         _inputWidth = width;
@@ -126,7 +162,7 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         if (!EGL14.EglMakeCurrent(_display, _window, _window, _context))
             throw EglError("Activation du contexte EGL");
 
-        _program = CreateProgram();
+        _program = CreateProgram(FragmentShader);
         var ids = new int[1];
         GLES20.GlGenTextures(1, ids, 0);
         _textureId = ids[0];
@@ -142,6 +178,7 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         BindAttribute("textureCoordinate", _coordinates);
         _matrixLocation = GLES20.GlGetUniformLocation(_program, "textureMatrix");
         GLES20.GlUniform1i(GLES20.GlGetUniformLocation(_program, "cameraTexture"), 0);
+        if (blurContext is not null) InitializeBlur(blurContext, segmenterFactory);
         _outputWidth = rotation is 90 or 270 ? height : width;
         _outputHeight = rotation is 90 or 270 ? width : height;
         GLES20.GlViewport(0, 0, _outputWidth, _outputHeight);
@@ -181,6 +218,82 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         }
     }
 
+    private void InitializeBlur(Context context, Func<Context, IPodcastPersonSegmenter>? segmenterFactory)
+    {
+        _segmenter = segmenterFactory is null ? new PodcastPersonSegmenter(context) : segmenterFactory(context);
+        _samplingBytes = new byte[PodcastPersonSegmenter.Size * PodcastPersonSegmenter.Size * 4];
+        _samplingBuffer = ByteBuffer.AllocateDirect(_samplingBytes.Length)
+            ?? throw new InvalidOperationException("Tampon de segmentation indisponible.");
+        _maskBuffer = ByteBuffer.AllocateDirect(PodcastPersonSegmenter.Size * PodcastPersonSegmenter.Size)
+            ?? throw new InvalidOperationException("Tampon du masque indisponible.");
+        _blurProgram = CreateProgram(BlurFragmentShader);
+        GLES20.GlUseProgram(_blurProgram);
+        _blurMatrixLocation = GLES20.GlGetUniformLocation(_blurProgram, "textureMatrix");
+        GLES20.GlUniform1i(GLES20.GlGetUniformLocation(_blurProgram, "cameraTexture"), 0);
+        GLES20.GlUniform1i(GLES20.GlGetUniformLocation(_blurProgram, "personMask"), 1);
+        GLES20.GlUniform2f(GLES20.GlGetUniformLocation(_blurProgram, "blurStep"), 4f / _inputWidth, 4f / _inputHeight);
+        var ids = new int[1];
+        GLES20.GlGenTextures(1, ids, 0);
+        _maskTexture = ids[0];
+        GLES20.GlActiveTexture(GLES20.GlTexture1);
+        GLES20.GlBindTexture(GLES20.GlTexture2d, _maskTexture);
+        SetTextureParameters();
+        GLES20.GlTexImage2D(GLES20.GlTexture2d, 0, GLES20.GlLuminance,
+            PodcastPersonSegmenter.Size, PodcastPersonSegmenter.Size, 0, GLES20.GlLuminance, GLES20.GlUnsignedByte, null);
+        GLES20.GlGenTextures(1, ids, 0);
+        _samplingTexture = ids[0];
+        GLES20.GlBindTexture(GLES20.GlTexture2d, _samplingTexture);
+        SetTextureParameters();
+        GLES20.GlTexImage2D(GLES20.GlTexture2d, 0, GLES20.GlRgba,
+            PodcastPersonSegmenter.Size, PodcastPersonSegmenter.Size, 0, GLES20.GlRgba, GLES20.GlUnsignedByte, null);
+        GLES20.GlGenFramebuffers(1, ids, 0);
+        _framebuffer = ids[0];
+        GLES20.GlBindFramebuffer(GLES20.GlFramebuffer, _framebuffer);
+        GLES20.GlFramebufferTexture2D(GLES20.GlFramebuffer, GLES20.GlColorAttachment0,
+            GLES20.GlTexture2d, _samplingTexture, 0);
+        if (GLES20.GlCheckFramebufferStatus(GLES20.GlFramebuffer) != GLES20.GlFramebufferComplete)
+            throw new InvalidOperationException("Surface de segmentation OpenGL indisponible.");
+        GLES20.GlBindFramebuffer(GLES20.GlFramebuffer, 0);
+        GLES20.GlBindTexture(GLES20.GlTexture2d, _maskTexture);
+        GLES20.GlActiveTexture(GLES20.GlTexture0);
+        GLES20.GlUseProgram(_program);
+        BindAttribute("position", _vertices!);
+        BindAttribute("textureCoordinate", _coordinates!);
+        CheckGl();
+    }
+
+    private static void SetTextureParameters()
+    {
+        GLES20.GlTexParameteri(GLES20.GlTexture2d, GLES20.GlTextureMinFilter, GLES20.GlLinear);
+        GLES20.GlTexParameteri(GLES20.GlTexture2d, GLES20.GlTextureMagFilter, GLES20.GlLinear);
+        GLES20.GlTexParameteri(GLES20.GlTexture2d, GLES20.GlTextureWrapS, GLES20.GlClampToEdge);
+        GLES20.GlTexParameteri(GLES20.GlTexture2d, GLES20.GlTextureWrapT, GLES20.GlClampToEdge);
+    }
+
+    private void UpdatePersonMask()
+    {
+        GLES20.GlBindFramebuffer(GLES20.GlFramebuffer, _framebuffer);
+        GLES20.GlViewport(0, 0, PodcastPersonSegmenter.Size, PodcastPersonSegmenter.Size);
+        GLES20.GlDrawArrays(GLES20.GlTriangleStrip, 0, 4);
+        _samplingBuffer!.Position(0);
+        GLES20.GlReadPixels(0, 0, PodcastPersonSegmenter.Size, PodcastPersonSegmenter.Size,
+            GLES20.GlRgba, GLES20.GlUnsignedByte, _samplingBuffer);
+        CheckGl();
+        _samplingBuffer.Position(0);
+        _samplingBuffer.Get(_samplingBytes!);
+        var mask = _segmenter!.Segment(_samplingBytes!);
+        _maskBuffer!.Position(0);
+        _maskBuffer.Put(mask);
+        _maskBuffer.Position(0);
+        GLES20.GlActiveTexture(GLES20.GlTexture1);
+        GLES20.GlBindTexture(GLES20.GlTexture2d, _maskTexture);
+        GLES20.GlTexSubImage2D(GLES20.GlTexture2d, 0, 0, 0, PodcastPersonSegmenter.Size,
+            PodcastPersonSegmenter.Size, GLES20.GlLuminance, GLES20.GlUnsignedByte, _maskBuffer);
+        GLES20.GlActiveTexture(GLES20.GlTexture0);
+        GLES20.GlBindFramebuffer(GLES20.GlFramebuffer, 0);
+        CheckGl();
+    }
+
     private void DrawFrame(SurfaceTexture texture)
     {
         if (!_rendering) return;
@@ -191,6 +304,21 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
             texture.UpdateTexImage();
             var presentationTime = _clock.GetPresentationTime(texture.Timestamp, Java.Lang.JavaSystem.NanoTime());
             if (presentationTime is null) return;
+            if (_blackout)
+            {
+                if (!_previewOnly)
+                {
+                    GLES20.GlBindFramebuffer(GLES20.GlFramebuffer, 0);
+                    GLES20.GlViewport(0, 0, _outputWidth, _outputHeight);
+                    GLES20.GlClearColor(0, 0, 0, 1);
+                    GLES20.GlClear(GLES20.GlColorBufferBit);
+                    CheckGl();
+                    if (!EGLExt.EglPresentationTimeANDROID(_display, _window, presentationTime.Value)
+                        || !EGL14.EglSwapBuffers(_display, _window))
+                        throw EglError("Envoi d'une image noire a l'encodeur");
+                }
+                return;
+            }
             texture.GetTransformMatrix(_textureMatrix);
             var remainingRotation = CameraFrameOrientation.GetRemainingRotation(_rotation, _textureMatrix);
             if (_remainingRotation != remainingRotation)
@@ -204,6 +332,14 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
                     $"Camera texture transform: [{FirstTextureTransform}], sensor/display rotation={_rotation}, remaining rotation={remainingRotation}");
             }
             GLES20.GlUniformMatrix4fv(_matrixLocation, 1, false, _textureMatrix, 0);
+            if (_segmenter is not null) UpdatePersonMask();
+            if (_blurProgram != 0)
+            {
+                GLES20.GlUseProgram(_blurProgram);
+                BindAttribute("position", _vertices!);
+                BindAttribute("textureCoordinate", _coordinates!);
+                GLES20.GlUniformMatrix4fv(_blurMatrixLocation, 1, false, _textureMatrix, 0);
+            }
             if (!_previewOnly)
             {
                 SetViewport(_outputWidth, _outputHeight);
@@ -215,11 +351,25 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
                     throw EglError("Envoi de l'image a l'encodeur");
             }
             DrawPreview();
+            if (_blurProgram != 0)
+            {
+                GLES20.GlUseProgram(_program);
+                BindAttribute("position", _vertices!);
+                BindAttribute("textureCoordinate", _coordinates!);
+            }
         }
         catch (Exception ex)
         {
-            _rendering = false;
-            _failed(new InvalidOperationException("Rotation de la capture Android impossible.", ex));
+            if (_blackout)
+            {
+                _rendering = false;
+                global::Android.Util.Log.Error("PostIt.Podcast", $"Arret de la capture impossible : {ex}");
+            }
+            else
+            {
+                _blackout = true;
+                _failed(new InvalidOperationException("Traitement de la capture Android impossible.", ex));
+            }
         }
     }
 
@@ -315,14 +465,14 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         throw new InvalidOperationException($"Compilation du shader camera impossible : {error}");
     }
 
-    private static int CreateProgram()
+    private static int CreateProgram(string fragmentSource)
     {
         var vertex = CreateShader(GLES20.GlVertexShader, VertexShader);
         var fragment = 0;
         var program = 0;
         try
         {
-            fragment = CreateShader(GLES20.GlFragmentShader, FragmentShader);
+            fragment = CreateShader(GLES20.GlFragmentShader, fragmentSource);
             program = GLES20.GlCreateProgram();
             GLES20.GlAttachShader(program, vertex);
             GLES20.GlAttachShader(program, fragment);
@@ -384,6 +534,13 @@ internal sealed class AndroidCameraFrameRotator : IDisposable
         _texture?.Release();
         _texture?.Dispose();
         _listener?.Dispose();
+        _segmenter?.Dispose();
+        _samplingBuffer?.Dispose();
+        _maskBuffer?.Dispose();
+        if (_framebuffer != 0) GLES20.GlDeleteFramebuffers(1, [_framebuffer], 0);
+        if (_samplingTexture != 0) GLES20.GlDeleteTextures(1, [_samplingTexture], 0);
+        if (_maskTexture != 0) GLES20.GlDeleteTextures(1, [_maskTexture], 0);
+        if (_blurProgram != 0) GLES20.GlDeleteProgram(_blurProgram);
         if (_program != 0) GLES20.GlDeleteProgram(_program);
         if (_textureId != 0) GLES20.GlDeleteTextures(1, [_textureId], 0);
         _vertices?.Dispose();
