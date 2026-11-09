@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: docker
     container:
-      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v4
+      image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v5
     steps:
     - name: Clone yavsc
       run: |
@@ -50,9 +50,6 @@ jobs:
       run: |
         echo "🏗️ Building the solution..."
         cd /src/_src && dotnet build --verbosity normal
-    - name: Install deps
-      run: |
-        apt install ffmpeg
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."
