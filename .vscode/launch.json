@@ -56,7 +56,6 @@
       "request": "launch",
       "projectPath": "${workspaceFolder}/src/Yavsc.Blogs/Yavsc.Blogs.csproj"
     },
-
     {
       "name": "Test PostIt.Android launch (Xamarin.UITest)",
       "type": "coreclr",

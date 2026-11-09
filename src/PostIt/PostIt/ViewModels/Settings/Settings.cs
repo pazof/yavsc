@@ -450,7 +450,7 @@ public partial class Settings : ViewModelBase
                     this.Authentication.ClientId = string.IsNullOrWhiteSpace(settings.Authentication.ClientId) ?
                      AuthenticationSettings.DefaultClientId : settings.Authentication.ClientId;
                     this.Authentication.RedirectUri = string.IsNullOrWhiteSpace(settings.Authentication.RedirectUri) ?
-                     AuthenticationSettings.DesktopRedirectUri : settings.Authentication.RedirectUri;
+                     AuthenticationSettings.BrowserRedirectUri : settings.Authentication.RedirectUri;
                     if (settings.Authentication.Scopes is null || settings.Authentication.Scopes.Length == 0)
                     {
                         this.Authentication.Scopes = AuthenticationSettings.DefaultScopes;
@@ -513,7 +513,7 @@ public partial class Settings : ViewModelBase
         {
             Authority = AuthenticationSettings.DefaultAuthority,
             ClientId = AuthenticationSettings.DefaultClientId,
-            RedirectUri = AuthenticationSettings.DesktopRedirectUri,
+            RedirectUri = AuthenticationSettings.BrowserRedirectUri,
             Scopes = AuthenticationSettings.DefaultScopes
         };
         this.DarkMode = false;

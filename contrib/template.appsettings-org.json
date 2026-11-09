@@ -29,7 +29,8 @@
     "ApiUrl": "https://preprod-api.$DOMAIN",
     "CorsAllowedOrigins": [
       "https://preprod-blogs.$DOMAIN",
-      "https://preprod-api.$DOMAIN"
+      "https://preprod-api.$DOMAIN",
+      "https://postit.$DOMAIN"
     ],
     "Banner": "/images/banner-dewang.jpg",
     "Owner": {

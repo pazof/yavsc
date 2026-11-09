@@ -31,6 +31,13 @@ public sealed class ResourceUsageTelemetryMiddleware(
             await ResourceUsageTracker.RecordAsync(admissionScope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
                 userId, userName, apiCalls: 1m, bandwidthMb: ToMb(requestBytes), actorUserId: userId);
         }
+        else if (context.User.IsInMsRole("Administrator"))
+        {
+            using var admissionScope = scopeFactory.CreateScope();
+            await ResourceUsageTracker.RecordAsync(admissionScope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+                userId, userName, apiCalls: 1m, bandwidthMb: ToMb(requestBytes), actorUserId: userId,
+                cancellationToken: context.RequestAborted);
+        }
         else if (!await usage.TryAdmitAsync(userId, userName, 1m, ToMb(requestBytes), 0,
             context.RequestAborted))
         {

@@ -288,6 +288,31 @@ public sealed class ResourceUsageTests
     }
 
     [Fact]
+    public async Task Administrator_request_bypasses_quota_rejection_and_remains_accounted()
+    {
+        using var provider = NewProvider(o => o.DefaultLimit = 0.01m);
+        using var scope = provider.CreateScope();
+        var context = NewContext(scope.ServiceProvider);
+        context.User.AddIdentity(new ClaimsIdentity([
+            new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "Administrator")
+        ], "Bearer"));
+        var ran = false;
+        var middleware = new ResourceUsageTelemetryMiddleware(
+            _ => { ran = true; return Task.CompletedTask; },
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            NullLogger<ResourceUsageTelemetryMiddleware>.Instance);
+
+        await middleware.InvokeAsync(context, scope.ServiceProvider.GetRequiredService<IResourceUsageService>());
+
+        Assert.True(ran);
+        Assert.Equal(StatusCodes.Status200OK, context.Response.StatusCode);
+        var summary = await scope.ServiceProvider.GetRequiredService<IResourceUsageService>()
+            .GetCurrentAsync("alice", "alice", TestContext.Current.CancellationToken);
+        Assert.Equal(1m, summary.ApiCalls);
+        Assert.True(summary.IsQuotaReached);
+    }
+
+    [Fact]
     public async Task Tracked_storage_replacement_and_deletion_refund_only_their_original_volume()
     {
         using var provider = NewProvider();

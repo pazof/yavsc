@@ -1,7 +1,6 @@
 {
   "version": "2.0.0",
   "isRoot": true,
-
   "tasks": [
     {
       "label": "build-debug-android",
@@ -136,6 +135,22 @@
       "group": {
         "kind": "build"
       }
+    },
+    {
+      "label": "build-postit-browser",
+      "type": "process",
+      "problemMatcher": ["$msCompile"],
+      "isBuildCommand": true,
+      "isTestCommand": false,
+      "isBackground": true,
+      "command": "dotnet",
+      "args": ["build", "/property:GenerateFullPaths=true"],
+      "options": {
+        "cwd": "src/PostIt/PostIt.Browser"
+      },
+      "group": {
+        "kind": "build"
+      },
     }
   ]
 }

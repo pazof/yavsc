@@ -14,6 +14,8 @@ sealed class Program
     public static void Main(string[] args)
     {
         Platform.IsPodcastSupported = true;
+        Platform.CreateBrowser = () => new CustomSchemeBrowser("postit://callback");
+
         CLIOptionHandler.HandleArgs(args);
 
         // Short-circuit 2nd-instance launches (OS handing us the

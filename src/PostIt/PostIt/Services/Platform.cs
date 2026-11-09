@@ -69,7 +69,7 @@ public static class Platform
     /// <c>LoginAsync</c> will surface a clear error.
     /// </summary>
     public static System.Func<IBrowser?>? CreateBrowser { get; set; } =
-        () => new CustomSchemeBrowser(CustomScheme);
+        () => null;
 
     /// <summary>
     /// Optional platform hook used by the shared billing form to request a

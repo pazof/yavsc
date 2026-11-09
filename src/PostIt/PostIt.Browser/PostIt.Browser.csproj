@@ -8,6 +8,7 @@
     <FileVersion>1.1.0.0</FileVersion>
     <InformationalVersion>1.1.0-feat-calls.1+472.Branch.feat-calls.Sha.d8200cb98ddef152313ef1f102b866c50f107cbd</InformationalVersion>
     <Version>1.1.0-feat-calls.1</Version>
+    <PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Browser" />

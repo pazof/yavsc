@@ -17,6 +17,8 @@ public partial class AuthenticationSettings : ObservableObject
     /// in <c>PostIt.Android/Properties/AndroidManifest.xml</c> must match.
     /// </summary>
     public const string AndroidRedirectUri = "android://postit-signin";
+    public const string BrowserRedirectUri = "https://postit.pschneider.fr/callback";
+
 
     public const string DefaultAuthority  = "https://yavsc.pschneider.fr";
 
