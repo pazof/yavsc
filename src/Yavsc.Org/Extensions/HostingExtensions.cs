@@ -1070,11 +1070,14 @@ public static class HostingExtensions
         app.UseSwagger();
         app.UseSwaggerUI();
         app.UseRouting();
+        // CORS must run before IdentityServer/Auth middleware so the discovery
+        // document and token endpoints can emit the required
+        // Access-Control-Allow-Origin headers on cross-origin browser fetches.
+        app.UseCors("default");
         app.UseAuthentication();
         app.UseMiddleware<WithdrawnAccountMiddleware>();
         app.UseIdentityServer();
         app.UseAuthorization();
-        app.UseCors("default");
         app.MapDefaultControllerRoute();
         app.MapStaticAssets(staticAssetsManifestPath);
 
