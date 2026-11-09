@@ -26,6 +26,20 @@ on:
 jobs:
   build:
     runs-on: docker
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     container:
       image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v5
     steps:
@@ -51,6 +65,9 @@ jobs:
         echo "🏗️ Building the solution..."
         cd /src/_src && dotnet build --verbosity normal
     - name: Test
+      env:
+        YAVSC_API_TEST_DB_PROVIDER: npgsql
+        YAVSC_API_TEST_NPGSQL_ADMIN_CONNECTION: Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=postgres;Include Error Detail=true
       run: |
         echo "🚀 Lancement des tests..."
         cd /src/_src && dotnet test \

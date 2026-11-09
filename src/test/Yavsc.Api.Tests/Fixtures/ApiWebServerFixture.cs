@@ -35,6 +35,7 @@ public sealed class ApiWebServerFixture : WebHostFixture
 
     private static SqliteConnection? _sharedSqliteConnection;
     private static readonly object _sqliteLock = new();
+    private static readonly object _resetLock = new();
     private static readonly object _npgsqlLock = new();
     private static string? _sharedNpgsqlConnectionString;
 
@@ -239,109 +240,112 @@ public sealed class ApiWebServerFixture : WebHostFixture
 
     public void ResetAndSeedActivityGraph()
     {
-        Services.GetRequiredService<RecordingMessageDelivery>().Clear();
-        using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        ResetDatabase(db);
-        db.Database.EnsureCreated();
-
-        var user = new ApplicationUser
+        lock (_resetLock)
         {
-            Id = "alice",
-            UserName = "alice",
-            Email = "alice@example.test",
-            EmailConfirmed = true,
-            FullName = "Alice",
-        };
-        db.Users.Add(user);
+            Services.GetRequiredService<RecordingMessageDelivery>().Clear();
+            using var scope = Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var location = new Location
-        {
-            Address = "1 rue du Test",
-            Latitude = 48.8566,
-            Longitude = 2.3522,
-        };
-        db.Add(location);
-        db.SaveChanges();
+            ResetDatabase(db);
+            db.Database.EnsureCreated();
 
-        var activity = new Activity
-        {
-            Code = "dev",
-            Name = "Dev",
-            Hidden = false,
-            DateCreated = DateTime.UtcNow,
-            DateModified = DateTime.UtcNow,
-        };
-        db.Activities.Add(activity);
+            var user = new ApplicationUser
+            {
+                Id = "alice",
+                UserName = "alice",
+                Email = "alice@example.test",
+                EmailConfirmed = true,
+                FullName = "Alice",
+            };
+            db.Users.Add(user);
 
-        db.Activities.Add(new Activity
-        {
-            Code = "ghost",
-            Name = "Ghost",
-            Hidden = false,
-            DateCreated = DateTime.UtcNow,
-            DateModified = DateTime.UtcNow,
-        });
+            var location = new Location
+            {
+                Address = "1 rue du Test",
+                Latitude = 48.8566,
+                Longitude = 2.3522,
+            };
+            db.Add(location);
+            db.SaveChanges();
 
-        var performer = new PerformerProfile
-        {
-            PerformerId = "alice",
-            SIREN = "123456789",
-            OrganizationAddressId = location.Id,
-            AcceptNotifications = true,
-            AcceptPublicContact = true,
-            Active = true,
-            Rate = 5,
-            WebSite = "https://alice.dev",
-        };
-        db.Performers.Add(performer);
+            var activity = new Activity
+            {
+                Code = "dev",
+                Name = "Dev",
+                Hidden = false,
+                DateCreated = DateTime.UtcNow,
+                DateModified = DateTime.UtcNow,
+            };
+            db.Activities.Add(activity);
 
-        db.UserActivities.Add(new UserActivity
-        {
-            UserId = "alice",
-            DoesCode = "dev",
-            Weight = 100,
-        });
+            db.Activities.Add(new Activity
+            {
+                Code = "ghost",
+                Name = "Ghost",
+                Hidden = false,
+                DateCreated = DateTime.UtcNow,
+                DateModified = DateTime.UtcNow,
+            });
 
-        db.Users.Add(new ApplicationUser
-        {
-            Id = "bob",
-            UserName = "bob",
-            Email = "bob@example.test",
-            EmailConfirmed = true,
-            FullName = "Bob",
-        });
+            var performer = new PerformerProfile
+            {
+                PerformerId = "alice",
+                SIREN = "123456789",
+                OrganizationAddressId = location.Id,
+                AcceptNotifications = true,
+                AcceptPublicContact = true,
+                Active = true,
+                Rate = 5,
+                WebSite = "https://alice.dev",
+            };
+            db.Performers.Add(performer);
 
-        db.Activities.Add(new Activity
-        {
-            Code = "declared-only",
-            Name = "Declared Only",
-            Hidden = false,
-            DateCreated = DateTime.UtcNow,
-            DateModified = DateTime.UtcNow,
-        });
+            db.UserActivities.Add(new UserActivity
+            {
+                UserId = "alice",
+                DoesCode = "dev",
+                Weight = 100,
+            });
 
-        db.Performers.Add(new PerformerProfile
-        {
-            PerformerId = "bob",
-            SIREN = "987654321",
-            OrganizationAddressId = location.Id,
-            AcceptNotifications = false,
-            AcceptPublicContact = false,
-            Active = false,
-            Rate = 0,
-            WebSite = "",
-        });
+            db.Users.Add(new ApplicationUser
+            {
+                Id = "bob",
+                UserName = "bob",
+                Email = "bob@example.test",
+                EmailConfirmed = true,
+                FullName = "Bob",
+            });
 
-        db.UserActivities.Add(new UserActivity
-        {
-            UserId = "bob",
-            DoesCode = "declared-only",
-            Weight = 10,
-        });
+            db.Activities.Add(new Activity
+            {
+                Code = "declared-only",
+                Name = "Declared Only",
+                Hidden = false,
+                DateCreated = DateTime.UtcNow,
+                DateModified = DateTime.UtcNow,
+            });
 
-        db.SaveChanges();
+            db.Performers.Add(new PerformerProfile
+            {
+                PerformerId = "bob",
+                SIREN = "987654321",
+                OrganizationAddressId = location.Id,
+                AcceptNotifications = false,
+                AcceptPublicContact = false,
+                Active = false,
+                Rate = 0,
+                WebSite = "",
+            });
+
+            db.UserActivities.Add(new UserActivity
+            {
+                UserId = "bob",
+                DoesCode = "declared-only",
+                Weight = 10,
+            });
+
+            db.SaveChanges();
+        }
     }
 
     private static void ResetDatabase(ApplicationDbContext db)
@@ -473,48 +477,19 @@ public sealed class ApiWebServerFixture : WebHostFixture
             Taints = new List<HairTaintInstance>(),
         };
 
-        db.HairPrestation.AddRange(prestation1, prestation2);
-        db.SaveChanges();
-
-        db.HairCutQueries.Add(new HairCutQuery
+        var prestation3 = new HairPrestation
         {
-            ActivityCode = "brush",
-            ClientId = "alice",
-            PerformerId = "alice",
-            Consent = true,
-            UserCreated = "alice",
-            UserModified = "alice",
-            DateCreated = DateTime.UtcNow,
-            DateModified = DateTime.UtcNow,
-            EventDate = DateTime.UtcNow.AddDays(3),
-            Location = location,
-            PrestationId = prestation1.Id,
-            Prestation = prestation1,
-            AdditionalInfo = "Coupe test",
-            Status = Yavsc.QueryStatus.Inserted,
-            Description = "Haircut seed",
-        });
+            Gender = HairCutGenders.Man,
+            Length = HairLength.Short,
+            Cut = true,
+            Shampoo = true,
+            Dressing = HairDressings.Brushing,
+            Tech = HairTechnos.NoTech,
+            Cares = false,
+            Taints = new List<HairTaintInstance>(),
+        };
 
-        db.HairMultiCutQueries.Add(new HairMultiCutQuery
-        {
-            ActivityCode = "mbrush",
-            ClientId = "alice",
-            PerformerId = "alice",
-            Consent = true,
-            UserCreated = "alice",
-            UserModified = "alice",
-            DateCreated = DateTime.UtcNow,
-            DateModified = DateTime.UtcNow,
-            EventDate = DateTime.UtcNow.AddDays(4),
-            Location = location,
-            Prestations = new List<HairPrestationCollectionItem>
-            {
-                new() { PrestationId = prestation1.Id, Prestation = prestation1 },
-                new() { PrestationId = prestation2.Id, Prestation = prestation2 },
-            },
-            Status = Yavsc.QueryStatus.Inserted,
-        });
-
+        db.HairPrestation.AddRange(prestation1, prestation2, prestation3);
         db.SaveChanges();
     }
 

@@ -34,6 +34,18 @@ public class AndroidAppLaunchTests
             return;
         }
 
+        if (!HasAdb())
+        {
+            _output.WriteLine("[skip] adb not available on this machine");
+            return;
+        }
+
+        if (!HasConnectedDevice())
+        {
+            _output.WriteLine("[skip] no Android device/emulator connected via adb");
+            return;
+        }
+
         if (!IsPackageInstalledOnAnyDevice())
         {
             _output.WriteLine($"[skip] {PackageName} not installed on any device");
@@ -60,6 +72,68 @@ public class AndroidAppLaunchTests
             || Environment.GetEnvironmentVariable("CI_NAME") is { Length: > 0 };
     }
 
+    private static bool HasAdb()
+    {
+        try
+        {
+            var startInfo = new ProcessStartInfo("adb", "version")
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+            using var proc = Process.Start(startInfo);
+            if (proc is null) return false;
+            var _ = proc.StandardOutput.ReadToEnd();
+            var __ = proc.StandardError.ReadToEnd();
+            if (!proc.WaitForExit(2000))
+            {
+                proc.Kill(entireProcessTree: true);
+                return false;
+            }
+
+            return proc.ExitCode == 0;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static bool HasConnectedDevice()
+    {
+        try
+        {
+            var startInfo = new ProcessStartInfo("adb", "devices")
+            {
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+            using var proc = Process.Start(startInfo);
+            if (proc is null) return false;
+            var stdout = proc.StandardOutput.ReadToEnd();
+            _ = proc.StandardError.ReadToEnd();
+            if (!proc.WaitForExit(2000))
+            {
+                proc.Kill(entireProcessTree: true);
+                return false;
+            }
+
+            return stdout
+                .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                .Skip(1)
+                .Any(line => line.Contains("device", StringComparison.OrdinalIgnoreCase)
+                    && !line.Contains("offline", StringComparison.OrdinalIgnoreCase));
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private static bool IsPackageInstalledOnAnyDevice()
     {
         try
@@ -74,7 +148,13 @@ public class AndroidAppLaunchTests
             using var proc = Process.Start(startInfo);
             if (proc is null) return false;
             var stdout = proc.StandardOutput.ReadToEnd();
-            proc.WaitForExit(5000);
+            _ = proc.StandardError.ReadToEnd();
+            if (!proc.WaitForExit(5000))
+            {
+                proc.Kill(entireProcessTree: true);
+                return false;
+            }
+
             return stdout
                 .Split('\n', StringSplitOptions.RemoveEmptyEntries)
                 .Any(line => line.Trim().Equals($"package:{PackageName}", StringComparison.Ordinal));

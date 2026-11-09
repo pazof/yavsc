@@ -9,6 +9,20 @@ on:
 jobs:
   production-deploy:
     runs-on: ubuntu-26.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     steps:
       # 1. Récupération du code
       - name: Check out the repo
@@ -33,6 +47,8 @@ jobs:
       - name: Test
         env:
           TEST_FAILED: ""
+          YAVSC_API_TEST_DB_PROVIDER: npgsql
+          YAVSC_API_TEST_NPGSQL_ADMIN_CONNECTION: Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres;Include Error Detail=true
         run: make test || export TEST_FAILED=$?
       - uses: actions/upload-artifact@v7
         with:
