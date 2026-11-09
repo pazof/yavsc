@@ -33,13 +33,14 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
+          PGPORT: "55432"
         ports:
-          - 5432:5432
+          - "55432:55432"
         options: >-
-          --health-cmd="pg_isready -U postgres -d postgres"
+          --health-cmd="pg_isready -h 127.0.0.1 -p 55432 -U postgres -d postgres"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=10
     container:
       image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v5
     steps:
@@ -64,10 +65,23 @@ jobs:
       run: |
         echo "🏗️ Building the solution..."
         cd /src/_src && dotnet build --verbosity normal
+    - name: Wait for PostgreSQL
+      run: |
+        echo "⏳ Waiting for PostgreSQL on 127.0.0.1:55432..."
+        for i in $(seq 1 30); do
+          if pg_isready -h 127.0.0.1 -p 55432 -U postgres >/dev/null 2>&1; then
+            echo "✅ PostgreSQL is accepting connections"
+            exit 0
+          fi
+          echo "PostgreSQL not ready yet ($i/30)"
+          sleep 2
+        done
+        echo "❌ PostgreSQL did not become ready in time" >&2
+        exit 1
     - name: Test
       env:
         YAVSC_API_TEST_DB_PROVIDER: npgsql
-        YAVSC_API_TEST_NPGSQL_ADMIN_CONNECTION: Host=postgres;Port=5432;Database=postgres;Username=postgres;Password=postgres;Include Error Detail=true
+        YAVSC_API_TEST_NPGSQL_ADMIN_CONNECTION: Host=127.0.0.1;Port=55432;Database=postgres;Username=postgres;Password=postgres;Include Error Detail=true
       run: |
         echo "🚀 Lancement des tests..."
         cd /src/_src && dotnet test \
