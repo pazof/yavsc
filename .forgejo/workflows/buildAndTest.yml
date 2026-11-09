@@ -50,6 +50,9 @@ jobs:
       run: |
         echo "🏗️ Building the solution..."
         cd /src/_src && dotnet build --verbosity normal
+    - name: Install deps
+      run: |
+        apt install ffmpeg
     - name: Test
       run: |
         echo "🚀 Lancement des tests..."

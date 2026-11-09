@@ -12,9 +12,6 @@ internal sealed partial class Program
 
         return BuildAvaloniaApp()
             .WithInterFont()
-#if DEBUG
-            .WithDeveloperTools()
-#endif
             .StartBrowserAppAsync("out");
     }
 
