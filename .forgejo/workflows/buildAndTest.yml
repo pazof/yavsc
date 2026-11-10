@@ -26,21 +26,6 @@ on:
 jobs:
   build:
     runs-on: docker
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-          PGPORT: "55432"
-        ports:
-          - "55432:55432"
-        options: >-
-          --health-cmd="pg_isready -h 127.0.0.1 -p 55432 -U postgres -d postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
     container:
       image: pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v5
     steps:
@@ -48,6 +33,7 @@ jobs:
       run: |
         set -e
         cd /src
+        echo "🔄 Cloning repository ${FORGEJO_SERVER_URL}/${FORGEJO_REPOSITORY}.git"
         git clone "${FORGEJO_SERVER_URL}/${FORGEJO_REPOSITORY}.git" _src
         cd _src
         if [ -n "${GITHUB_REF:-}" ]; then
@@ -65,18 +51,31 @@ jobs:
       run: |
         echo "🏗️ Building the solution..."
         cd /src/_src && dotnet build --verbosity normal
-    - name: Wait for PostgreSQL
+    - name: Start PostgreSQL
       run: |
-        echo "⏳ Waiting for PostgreSQL on 127.0.0.1:55432..."
-        for i in $(seq 1 30); do
+        set -e
+        echo "🐘 Starting local PostgreSQL..."
+        if docker ps -a --format '{{.Names}}' | grep -qx 'yavsc-ci-postgres'; then
+          echo "PostgreSQL container already exists; restarting it"
+          docker rm -f yavsc-ci-postgres >/dev/null 2>&1 || true
+        fi
+        docker run -d \
+          --name yavsc-ci-postgres \
+          -e POSTGRES_USER=postgres \
+          -e POSTGRES_PASSWORD=postgres \
+          -e POSTGRES_DB=postgres \
+          -p 55432:5432 \
+          postgres:16
+        for i in $(seq 1 40); do
           if pg_isready -h 127.0.0.1 -p 55432 -U postgres >/dev/null 2>&1; then
-            echo "✅ PostgreSQL is accepting connections"
+            echo "✅ PostgreSQL is ready"
             exit 0
           fi
-          echo "PostgreSQL not ready yet ($i/30)"
+          echo "PostgreSQL not ready yet ($i/40)"
           sleep 2
         done
         echo "❌ PostgreSQL did not become ready in time" >&2
+        docker logs yavsc-ci-postgres || true
         exit 1
     - name: Test
       env:
