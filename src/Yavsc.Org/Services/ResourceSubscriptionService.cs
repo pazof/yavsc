@@ -16,12 +16,37 @@ public interface IResourceSubscriptionService
     Task<ResourceSubscription> PrepareAsync(string userId, string pack, CancellationToken ct);
     Task BindAsync(ResourceSubscription subscription, PayPalSubscriptionDetails remote, CancellationToken ct);
     Task ReconcileAsync(ResourceSubscription subscription, CancellationToken ct);
+    Task<string?> CheckoutAsync(ResourceSubscription subscription, string returnUrl, string cancelUrl, CancellationToken ct);
+    Task CancelAsync(ResourceSubscription subscription, CancellationToken ct);
 }
 
 public sealed class ResourceSubscriptionService(ApplicationDbContext db, IPayPalSubscriptionGateway paypal,
     IOptions<ResourceSubscriptionOptions> options, IOptions<ResourceUsageOptions> usageOptions,
     TimeProvider clock) : IResourceSubscriptionService
 {
+    public async Task<string?> CheckoutAsync(ResourceSubscription subscription, string returnUrl, string cancelUrl, CancellationToken ct)
+    {
+        var remote = subscription.PayPalId is null
+            ? await paypal.CreateAsync(subscription, returnUrl, cancelUrl, ct)
+            : await paypal.GetAsync(subscription.PayPalId, ct);
+        await BindAsync(subscription, remote, ct);
+        if (remote.State == "APPROVAL_PENDING")
+            return remote.ApprovalUrl
+                ?? throw new SubscriptionOperationException(502, "Le lien d'approbation PayPal est manquant.");
+        await ReconcileAsync(subscription, ct);
+        return null;
+    }
+
+    public async Task CancelAsync(ResourceSubscription subscription, CancellationToken ct)
+    {
+        if (subscription.PayPalId is null)
+            throw new SubscriptionOperationException(409, "Reprenez la creation PayPal avant de resilier cet abonnement.");
+        await ReconcileAsync(subscription, ct);
+        if (subscription.State is not ("CANCELLED" or "EXPIRED"))
+            await paypal.CancelAsync(subscription.PayPalId, ct);
+        await ReconcileAsync(subscription, ct);
+    }
+
     public Task<List<ResourceSubscription>> GetAllAsync(string userId, CancellationToken ct)
         => db.ResourceSubscriptions.Where(s => s.UserId == userId).OrderByDescending(s => s.CreatedAt).ToListAsync(ct);
 

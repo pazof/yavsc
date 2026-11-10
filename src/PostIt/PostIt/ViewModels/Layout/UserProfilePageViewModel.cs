@@ -17,9 +17,7 @@ public partial class UserProfilePageViewModel : ViewModelBase
     private readonly YavscApiClient? _api;
     private readonly SessionStatusViewModel? _sessionStatus;
     private readonly ResourceUsageApiClient? _usageClient;
-    private readonly AboutPageViewModel _subscriptionLinks;
-    public IAsyncRelayCommand OpenSubscriptionsCommand => _subscriptionLinks.OpenSubscriptionsCommand;
-    public string? SubscriptionLinkError => _subscriptionLinks.StatusMessage;
+    public IAsyncRelayCommand OpenSubscriptionsCommand { get; } = new AsyncRelayCommand(SubscriptionsPageViewModel.OpenAsync);
 
     [ObservableProperty]
     public partial ResourceUsageSummary? ResourceUsage { get; set; }
@@ -161,8 +159,6 @@ public partial class UserProfilePageViewModel : ViewModelBase
         _api = api;
         _sessionStatus = sessionStatus;
         _usageClient = usageClient;
-        _subscriptionLinks = new AboutPageViewModel(api?.Settings);
-        _subscriptionLinks.PropertyChanged += (_, _) => OnPropertyChanged(nameof(SubscriptionLinkError));
     }
 
     public UserProfilePageViewModel() : this(null, null) { }

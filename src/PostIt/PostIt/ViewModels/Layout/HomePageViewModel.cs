@@ -74,6 +74,7 @@ public class HomePageViewModel : ViewModelBase
         OpenBlogs = new AsyncRelayCommand(App.PushBlogsPageAsync);
         OpenMyFiles = new AsyncRelayCommand(OpenMyFilesAsync);
         OpenProfile = new AsyncRelayCommand(OpenProfileAsync);
+        OpenSubscriptions = new AsyncRelayCommand(SubscriptionsPageViewModel.OpenAsync);
         OpenPerformerConfiguration = new AsyncRelayCommand(OpenPerformerConfigurationAsync);
         OpenAdministration = new AsyncRelayCommand(OpenAdministrationAsync, () => SessionStatus.IsAdministrator);
         OpenChat = new AsyncRelayCommand(OpenChatAsync);
@@ -92,6 +93,7 @@ public class HomePageViewModel : ViewModelBase
     public bool SupportsPodcasts => Platform.IsPodcastSupported;
     public IAsyncRelayCommand OpenBlogs { get; }
     public IAsyncRelayCommand OpenProfile { get; }
+    public IAsyncRelayCommand OpenSubscriptions { get; }
     public IAsyncRelayCommand OpenPerformerConfiguration { get; }
     public IAsyncRelayCommand OpenAdministration { get; }
     public IAsyncRelayCommand OpenActivities { get; }

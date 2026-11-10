@@ -94,6 +94,10 @@
               Command="{Binding OpenPerformerConfiguration}"
               HorizontalAlignment="Center"
               IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
+          <Button Content="Mon abonnement PayPal"
+              Command="{Binding OpenSubscriptions}"
+              HorizontalAlignment="Center"
+              IsEnabled="{Binding SessionStatus.IsLoggedIn}"/>
           <Button Content="Administration"
               Command="{Binding OpenAdministration}"
               HorizontalAlignment="Center"

@@ -1,12 +1,18 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Yavsc.Abstract.Resources;
+using Yavsc.Tests.Shared;
 using Yavsc.Models;
 using Yavsc.Models.Payment;
 using Yavsc.Server.Helpers;
@@ -64,6 +70,123 @@ public sealed class ResourceSubscriptionControllerTests : IClassFixture<Resource
         using var create = await client.PostAsync("/ResourceSubscription/Create", new FormUrlEncodedContent(
             new Dictionary<string, string> { ["pack"] = "Discovery" }), Ct);
         Assert.Equal(HttpStatusCode.BadRequest, create.StatusCode);
+    }
+
+    [Fact]
+    public async Task Native_api_requires_bearer_and_does_not_accept_a_web_cookie()
+    {
+        using var anonymous = _factory.CreateClient(new() { AllowAutoRedirect = false });
+        using var unsigned = await anonymous.GetAsync("/api/v1/resource-subscriptions", Ct);
+        Assert.Equal(HttpStatusCode.Unauthorized, unsigned.StatusCode);
+        using var cookie = _factory.SignedInClient();
+        using var response = await cookie.PostAsJsonAsync("/api/v1/resource-subscriptions",
+            new { pack = "Premium" }, Ct);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Native_checkout_reuses_subscription_ignores_client_prices_and_requires_verified_payment()
+    {
+        using (var scope = _factory.Services.CreateScope())
+            await ResourceUsageTracker.RecordAsync(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+                "listener", "Listener", cpuSeconds: 12000m, cancellationToken: Ct);
+        using var client = NativeClient();
+        var catalogue = await client.GetFromJsonAsync<ResourceSubscriptionsResponse>("/api/v1/resource-subscriptions", Ct);
+        Assert.Equal(1.2m, catalogue!.Offers[0].PriceIncludingTax);
+        Assert.Equal(2.4m, catalogue.Offers[1].PriceIncludingTax);
+        Assert.True(catalogue.Usage.IsQuotaReached);
+        using var created = await client.PostAsJsonAsync("/api/v1/resource-subscriptions",
+            new { pack = "Discovery", priceIncludingTax = 0.01m, userId = "author" }, Ct);
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        Assert.NotNull(created.Headers.Location);
+        Assert.True(created.Headers.CacheControl?.NoStore);
+        var checkout = (await created.Content.ReadFromJsonAsync<ResourceSubscriptionCheckoutResponse>(Ct))!;
+        Assert.Equal("https://www.sandbox.paypal.com/approve", checkout.ApprovalUrl);
+        Assert.Equal(1.2m, checkout.Subscription.PriceIncludingTax);
+        Assert.Equal(1200m, (await UsageAsync()).Consumption);
+        using var resumed = await client.PostAsJsonAsync("/api/v1/resource-subscriptions", new { pack = "Discovery" }, Ct);
+        Assert.Equal(checkout.Subscription.Id,
+            (await resumed.Content.ReadFromJsonAsync<ResourceSubscriptionCheckoutResponse>(Ct))!.Subscription.Id);
+        using var conflict = await client.PostAsJsonAsync("/api/v1/resource-subscriptions", new { pack = "Premium" }, Ct);
+        Assert.Equal(HttpStatusCode.Conflict, conflict.StatusCode);
+        using var anonymous = _factory.CreateClient();
+        using var returned = await anonymous.GetAsync("/api/v1/resource-subscriptions/return?success=true", Ct);
+        Assert.Equal(HttpStatusCode.OK, returned.StatusCode);
+        Assert.Equal("text/html", returned.Content.Headers.ContentType?.MediaType);
+        Assert.Equal(1200m, (await UsageAsync()).Consumption);
+        using var other = NativeClient("author");
+        using var forbidden = await other.PostAsync($"/api/v1/resource-subscriptions/{checkout.Subscription.Id}/cancel", null, Ct);
+        Assert.Equal(HttpStatusCode.NotFound, forbidden.StatusCode);
+        Assert.Empty((await other.GetFromJsonAsync<ResourceSubscriptionsResponse>("/api/v1/resource-subscriptions", Ct))!.Subscriptions);
+        _factory.PayPal.Payments.Add(new("PAY-NATIVE", "COMPLETED", 1.2m, "EUR", DateTimeOffset.UtcNow));
+        using var refreshed = await client.PostAsync("/api/v1/resource-subscriptions/refresh", null, Ct);
+        Assert.Equal(HttpStatusCode.OK, refreshed.StatusCode);
+        Assert.Equal(200m, (await UsageAsync()).Consumption);
+        using var repeated = await client.PostAsync("/api/v1/resource-subscriptions/refresh", null, Ct);
+        Assert.Equal(HttpStatusCode.OK, repeated.StatusCode);
+        Assert.Equal(200m, (await UsageAsync()).Consumption);
+        using var cancelled = await client.PostAsync($"/api/v1/resource-subscriptions/{checkout.Subscription.Id}/cancel", null, Ct);
+        Assert.Equal(HttpStatusCode.OK, cancelled.StatusCode);
+        Assert.Equal("CANCELLED", (await cancelled.Content.ReadFromJsonAsync<ResourceSubscriptionsResponse>(Ct))!.Subscriptions.Single().State);
+        Assert.Equal(1, _factory.PayPal.CancelCount);
+    }
+
+    [Theory]
+    [InlineData("{}")]
+    [InlineData("""{"pack":"Other"}""")]
+    [InlineData("""{"pack":null}""")]
+    public async Task Native_checkout_rejects_invalid_packs(string json)
+    {
+        using var client = NativeClient();
+        using var response = await client.PostAsync("/api/v1/resource-subscriptions",
+            new StringContent(json, System.Text.Encoding.UTF8, "application/json"), Ct);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        using var scope = _factory.Services.CreateScope();
+        Assert.Empty(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().ResourceSubscriptions);
+    }
+
+    private HttpClient NativeClient(string userId = "listener")
+    {
+        var client = _factory.CreateClient(new() { AllowAutoRedirect = false });
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TestTokenIssuer.Issue(userId, "api"));
+        return client;
+    }
+
+    [Fact]
+    public async Task Native_catalogue_uses_instance_prices_and_reports_unconfigured_offers_explicitly()
+    {
+        var options = _factory.Services.GetRequiredService<IOptions<ResourceSubscriptionOptions>>().Value;
+        var originalPrice = options.DiscoveryPriceExcludingTax;
+        var originalPlan = options.DiscoveryPlanId;
+        try
+        {
+            options.DiscoveryPriceExcludingTax = 3m;
+            options.DiscoveryPlanId = "";
+            using var client = NativeClient();
+            var catalogue = (await client.GetFromJsonAsync<ResourceSubscriptionsResponse>("/api/v1/resource-subscriptions", Ct))!;
+            Assert.Equal(3.6m, catalogue.Offers[0].PriceIncludingTax);
+            Assert.False(catalogue.Offers[0].Available);
+            using var response = await client.PostAsJsonAsync("/api/v1/resource-subscriptions", new { pack = "Discovery" }, Ct);
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+            Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        }
+        finally
+        {
+            options.DiscoveryPriceExcludingTax = originalPrice;
+            options.DiscoveryPlanId = originalPlan;
+        }
+    }
+
+    [Fact]
+    public async Task Native_routes_are_described_in_the_existing_openapi_document()
+    {
+        using var client = NativeClient();
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/swagger/v1/swagger.json", Ct));
+        var paths = document.RootElement.GetProperty("paths");
+        Assert.True(paths.GetProperty("/api/v1/resource-subscriptions").TryGetProperty("get", out _));
+        Assert.True(paths.GetProperty("/api/v1/resource-subscriptions").TryGetProperty("post", out _));
+        Assert.True(paths.GetProperty("/api/v1/resource-subscriptions/refresh").TryGetProperty("post", out _));
+        Assert.True(paths.GetProperty("/api/v1/resource-subscriptions/{id}/cancel").TryGetProperty("post", out _));
     }
 
     [Fact]
@@ -225,6 +348,21 @@ public sealed class ResourceSubscriptionControllerTests : IClassFixture<Resource
             base.ConfigureWebHost(builder);
             builder.ConfigureTestServices(services =>
             {
+                services.PostConfigure<JwtBearerOptions>("Bearer", o =>
+                {
+                    o.Authority = null;
+                    o.MetadataAddress = "";
+                    o.ConfigurationManager = null;
+                    o.Configuration = new OpenIdConnectConfiguration { Issuer = TestTokenIssuer.Issuer };
+                    o.MapInboundClaims = false;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true, ValidIssuer = TestTokenIssuer.Issuer,
+                        ValidateAudience = false, ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true, IssuerSigningKey = TestTokenIssuer.SigningKey,
+                        NameClaimType = "name"
+                    };
+                });
                 services.AddSingleton<IPayPalSubscriptionGateway>(PayPal);
                 services.Configure<ResourceSubscriptionOptions>(o =>
                 {

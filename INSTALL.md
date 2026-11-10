@@ -227,6 +227,22 @@ any still-paid Discovery period applies.
 Configure only **Yavsc.Org** for PayPal subscriptions. API and Blogs need
 the migrated shared database and matching resource weights, not PayPal
 credentials. Existing Classic donation settings remain unchanged.
+
+PostIt's **Mon abonnement PayPal** page (Home, profile or About) loads offers
+and creates/resumes checkout through `api/v1/resource-subscriptions` on the
+configured OIDC **authority**, not the business API host. These routes require
+the current bearer token, reject cookie-only requests, and remain accessible
+at the resource-consumption limit. Prices, VAT, monthly points and plan IDs
+are controlled by the server; no PayPal credentials are shipped to PostIt.
+Only approval opens in the browser. The anonymous `/api/v1/resource-subscriptions/return`
+landing page asks the user to return to PostIt and press **Actualiser**:
+it does not reconcile or grant credit, and requires no second web login.
+The authenticated `POST refresh` reconciles verified PayPal transactions;
+`POST {id}/cancel` cancels only the caller's subscription. Existing web
+checkout and verified webhooks remain supported. Deploy Yavsc.Org with the
+new routes before distributing the updated client. Example requests are in
+[`resource-subscriptions.http`](src/Yavsc.Org/resource-subscriptions.http).
+
 Use the existing `PayPal:Mode`, `PayPal:ClientId` and `PayPal:ClientSecret`
 REST settings; keep credentials in user-secrets or environment variables.
 

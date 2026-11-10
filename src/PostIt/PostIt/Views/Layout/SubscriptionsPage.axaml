@@ -1,0 +1,62 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             xmlns:resources="using:Yavsc.Abstract.Resources"
+             x:Class="PostIt.Views.SubscriptionsPage"
+             x:DataType="vm:SubscriptionsPageViewModel"
+             Header="Mon abonnement">
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="16" Spacing="12" MaxWidth="720">
+      <TextBlock Text="Mon abonnement PayPal" FontSize="22" FontWeight="SemiBold"/>
+      <TextBlock Text="Abonnement mensuel à renouvellement automatique. Choisissez une offre, puis approuvez le paiement sur le site sécurisé de PayPal."
+                 TextWrapping="Wrap"/>
+      <ProgressBar IsVisible="{Binding IsBusy}" IsIndeterminate="True" Height="4"/>
+      <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"/>
+      <Button Command="{Binding RefreshCommand}" HorizontalAlignment="Stretch">
+        <TextBlock Text="Actualiser les paiements et mon solde" TextWrapping="Wrap"/>
+      </Button>
+      <TextBlock Text="Offres de cette instance (EUR par mois)" FontSize="18" FontWeight="SemiBold"/>
+      <ComboBox x:Name="OfferSelector" ItemsSource="{Binding Offers}" SelectedItem="{Binding SelectedOffer, Mode=TwoWay}"
+                IsEnabled="{Binding !IsBusy}" HorizontalAlignment="Stretch">
+        <ComboBox.ItemTemplate>
+          <DataTemplate x:DataType="resources:ResourceSubscriptionOfferResponse">
+            <TextBlock Text="{Binding Name}"/>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <StackPanel DataContext="{Binding SelectedOffer}" Spacing="6">
+        <TextBlock Text="{Binding PriceExcludingTax, StringFormat='Prix HT : {0:F2} EUR / mois'}"/>
+        <TextBlock Text="{Binding VatPercent, StringFormat='TVA : {0:F2} %'}"/>
+        <TextBlock x:Name="OfferPrice" Text="{Binding PriceIncludingTax, StringFormat='Prix TTC : {0:F2} EUR / mois'}" FontWeight="Bold"/>
+        <TextBlock Text="{Binding MonthlyPoints, StringFormat='Crédit mensuel : {0:F0} points'}"/>
+        <TextBlock Text="{Binding DiskQuotaMultiplier, StringFormat='Stockage : {0} fois le quota standard pendant les périodes payées'}" TextWrapping="Wrap"/>
+        <TextBlock Text="Cette offre n'est pas configurée sur cette instance." IsVisible="{Binding !Available}" TextWrapping="Wrap"/>
+      </StackPanel>
+      <TextBlock Text="Les paiements mensuels confirmés effacent l'usage dans la limite du crédit de l'offre. Deux tiers du crédit mensuel inutilisé sont reportés sans expiration. Aucun crédit n'est accordé avant vérification du paiement."
+                 TextWrapping="Wrap"/>
+      <Button Command="{Binding SubscribeCommand}" HorizontalAlignment="Stretch">
+        <TextBlock Text="Souscrire / reprendre l'approbation PayPal" TextWrapping="Wrap"/>
+      </Button>
+      <TextBlock Text="Abonnement en cours" FontSize="18" FontWeight="SemiBold"/>
+      <TextBlock Text="Aucun abonnement en cours." IsVisible="{Binding CurrentSubscription, Converter={x:Static ObjectConverters.IsNull}}"/>
+      <StackPanel DataContext="{Binding CurrentSubscription}" Spacing="6">
+        <TextBlock Text="{Binding Pack, StringFormat='Offre : {0}'}"/>
+        <TextBlock Text="{Binding State, StringFormat='Etat PayPal : {0}'}"/>
+        <TextBlock Text="{Binding PriceIncludingTax, StringFormat='Mensualité TTC souscrite : {0:F2} EUR'}"/>
+        <TextBlock Text="{Binding NextBillingAt, StringFormat='Prochaine échéance : {0:g}'}"/>
+      </StackPanel>
+      <TextBlock Text="Résiliez l'abonnement existant avant de changer d'offre. La résiliation arrête les prochains renouvellements, sans effacer les droits déjà acquis."
+                 TextWrapping="Wrap"/>
+      <CheckBox Content="Je confirme la résiliation de mon abonnement" IsChecked="{Binding ConfirmCancellation}"
+                IsEnabled="{Binding !IsBusy}"/>
+      <Button Content="Résilier l'abonnement" Command="{Binding CancelSubscriptionCommand}"/>
+      <TextBlock Text="Mon solde" FontSize="18" FontWeight="SemiBold"/>
+      <StackPanel DataContext="{Binding Usage}" Spacing="6">
+        <TextBlock Text="{Binding Consumption, StringFormat='Consommation : {0:F3} points'}"/>
+        <TextBlock Text="{Binding CreditBalance, StringFormat='Crédit reporté disponible : {0:F3} points'}"/>
+        <TextBlock Text="{Binding RemainingConsumption, StringFormat='Solde : {0:F3} points'}"/>
+        <TextBlock Text="{Binding DiskQuota, StringFormat='Quota de stockage effectif : {0} octets'}"/>
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</ContentPage>

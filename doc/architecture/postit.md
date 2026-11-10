@@ -47,6 +47,21 @@ spécifiques (IntentFilter Android, `app.manifest` Desktop).
 Toute la logique (VM, services, navigation, settings, OIDC) est
 dans le code-base partagé.
 
+## Abonnements PayPal
+
+La page native **Mon abonnement PayPal** est accessible depuis l'accueil,
+le profil et « À propos ». Elle utilise `ResourceSubscriptionsApiClient`
+avec l'autorité OIDC configurée pour charger les offres, l'abonnement en
+cours et le solde. Les prix HT/TTC, la TVA et les droits proviennent du serveur.
+La création ou reprise de souscription utilise la session bearer de PostIt ;
+seule l'approbation est ouverte dans le navigateur, sur un domaine PayPal HTTPS.
+Après approbation ou abandon, l'utilisateur revient dans PostIt et utilise
+**Actualiser les paiements et mon solde**. Ni l'ouverture du navigateur ni
+la page de retour ne prouvent un paiement : seul le rapprochement serveur
+des transactions vérifiées accorde les droits. La résiliation demande une
+confirmation explicite et conserve les droits des périodes déjà payées.
+La configuration serveur et les routes sont décrites dans [INSTALL.md](../../INSTALL.md).
+
 ## Reprise Android
 
 `IActivityApplicationLifetime.MainViewFactory` crée une nouvelle `MainView`

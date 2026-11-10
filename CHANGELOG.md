@@ -5,6 +5,8 @@
 
 ### Added
 
+* [PostIt/PayPal] Add a native subscription page reachable from Home, profile and About: load server-priced Discovery/Premium offers, prepare or resume checkout with the current bearer session, open only PayPal for approval, reconcile confirmed payments and balances, and cancel with confirmation. Add quota-exempt bearer-only endpoints on Yavsc.Org, sharing checkout/cancellation logic with the existing web flow, and regression coverage. Browser return never confirms payment.
+
 * [Resource usage] Let users with the `Administrator` role continue making requests after reaching their consumption quota, while still recording their usage.
 
 * [PostIt.Android/Podcasts] Add an optional persisted background blur for camera preview and broadcasting. Run the bundled PPHumanSeg model locally with ONNX Runtime and composite with OpenGL before encoding; preserve the unfiltered pipeline for calls and OBS.

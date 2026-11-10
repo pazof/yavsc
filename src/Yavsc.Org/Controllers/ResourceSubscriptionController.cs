@@ -30,23 +30,12 @@ public sealed class ResourceSubscriptionController(IResourceSubscriptionService 
     public async Task<IActionResult> Create(string pack, CancellationToken ct)
     {
         var subscription = await subscriptions.PrepareAsync(User.GetUserId(), pack, ct);
-        PayPalSubscriptionDetails remote;
-        if (subscription.PayPalId is null)
-        {
-            var root = SiteRoot();
-            remote = await paypal.CreateAsync(subscription,
-                root + "ResourceSubscription/Return?id=" + subscription.Id,
-                root + "ResourceSubscription", ct);
-            await subscriptions.BindAsync(subscription, remote, ct);
-        }
-        else
-        {
-            remote = await paypal.GetAsync(subscription.PayPalId, ct);
-            await subscriptions.BindAsync(subscription, remote, ct);
-        }
-        if (remote.ApprovalUrl is not null && remote.State == "APPROVAL_PENDING")
-            return Redirect(remote.ApprovalUrl);
-        await subscriptions.ReconcileAsync(subscription, ct);
+        var root = subscription.PayPalId is null ? SiteRoot() : "";
+        var approvalUrl = await subscriptions.CheckoutAsync(subscription,
+            root + "ResourceSubscription/Return?id=" + subscription.Id,
+            root + "ResourceSubscription", ct);
+        if (approvalUrl is not null)
+            return Redirect(approvalUrl);
         return RedirectToAction(nameof(Index));
     }
 
@@ -72,10 +61,7 @@ public sealed class ResourceSubscriptionController(IResourceSubscriptionService 
     {
         var subscription = await OwnedAsync(id, ct);
         if (subscription is null || subscription.PayPalId is null) return NotFound();
-        await subscriptions.ReconcileAsync(subscription, ct);
-        if (subscription.State is not ("CANCELLED" or "EXPIRED"))
-            await paypal.CancelAsync(subscription.PayPalId, ct);
-        await subscriptions.ReconcileAsync(subscription, ct);
+        await subscriptions.CancelAsync(subscription, ct);
         return RedirectToAction(nameof(Index));
     }
 

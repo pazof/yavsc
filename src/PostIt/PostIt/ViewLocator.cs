@@ -63,6 +63,7 @@ public class ViewLocator : IDataTemplate
             EstimateValidationPageViewModel => services.GetRequiredService<EstimateValidationPage>(),
             MyFilesViewModel => services.GetRequiredService<MyFilesPage>(),
             UserProfilePageViewModel => services.GetRequiredService<UserProfilePage>(),
+            SubscriptionsPageViewModel => services.GetRequiredService<SubscriptionsPage>(),
             PerformerConfigurationPageViewModel => services.GetRequiredService<PerformerConfigurationPage>(),
             AdministrationPageViewModel => services.GetRequiredService<AdministrationPage>(),
             ChatViewModel => services.GetRequiredService<ChatPage>(),

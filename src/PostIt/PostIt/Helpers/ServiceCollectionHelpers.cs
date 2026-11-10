@@ -94,6 +94,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<EstimateValidationPage>();
         services.AddTransient<MyFilesPage>();
         services.AddTransient<UserProfilePage>();
+        services.AddTransient<SubscriptionsPage>();
         services.AddTransient<PerformerConfigurationPage>();
         services.AddTransient<AdministrationPage>();
 
@@ -110,6 +111,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton(invoicesClient);
         services.AddSingleton(frontClient);
         services.AddSingleton(resourceUsageClient);
+        services.AddSingleton(new ResourceSubscriptionsApiClient(api, () => settings.Authentication.Authority));
         services.AddSingleton(administrationClient);
         services.AddSingleton(notificationsClient);
         services.AddSingleton(podcastClient);
@@ -120,6 +122,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<AboutPageViewModel>();
         services.AddSingleton<HomePageViewModel>();
         services.AddTransient<UserProfilePageViewModel>();
+        services.AddTransient<SubscriptionsPageViewModel>();
         services.AddTransient<PerformerConfigurationPageViewModel>();
         services.AddTransient<AdministrationPageViewModel>();
         services.AddSingleton<SignaturePageViewModel>();

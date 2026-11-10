@@ -1,0 +1,32 @@
+@baseUrl = https://localhost:5001
+@token = replace-with-access-token
+@subscriptionId = 00000000-0000-0000-0000-000000000000
+
+### Offers, own subscriptions and balance (authority host, not business API host)
+GET {{baseUrl}}/api/v1/resource-subscriptions
+Authorization: Bearer {{token}}
+
+### Prepare or resume approval; server owns all prices and PayPal plan identifiers
+POST {{baseUrl}}/api/v1/resource-subscriptions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"pack":"Discovery"}
+
+### Reconcile verified payments after returning from PayPal
+POST {{baseUrl}}/api/v1/resource-subscriptions/refresh
+Authorization: Bearer {{token}}
+
+### Cancel own subscription; unknown or foreign identifiers return 404
+POST {{baseUrl}}/api/v1/resource-subscriptions/{{subscriptionId}}/cancel
+Authorization: Bearer {{token}}
+
+### Browser landing page (anonymous, never grants credit)
+GET {{baseUrl}}/api/v1/resource-subscriptions/return
+
+### Invalid pack: 400
+POST {{baseUrl}}/api/v1/resource-subscriptions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"pack":"Unknown"}

@@ -33,7 +33,6 @@
           <TextBlock Text="{Binding UsageError}" TextWrapping="Wrap"/>
           <Button Content="Abonnements Découverte et Premium"
                   Command="{Binding OpenSubscriptionsCommand}"/>
-          <TextBlock Text="{Binding SubscriptionLinkError}" TextWrapping="Wrap"/>
           <StackPanel DataContext="{Binding ResourceUsage}" Spacing="4">
             <TextBlock Text="{Binding ApiCalls, StringFormat='Appels API : {0:F0}'}"/>
             <TextBlock Text="{Binding CpuSeconds, StringFormat='CPU : {0:F3} s'}"/>

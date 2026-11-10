@@ -64,7 +64,7 @@ public partial class AboutPageViewModel : ViewModelBase
     private Task OpenTerms() => OpenUrlAsync(TermsUri.AbsoluteUri);
 
     [RelayCommand]
-    private Task OpenSubscriptions() => OpenUrlAsync(SubscriptionsUri.AbsoluteUri);
+    private Task OpenSubscriptions() => SubscriptionsPageViewModel.OpenAsync();
 
     private async Task OpenUrlAsync(string url)
     {
