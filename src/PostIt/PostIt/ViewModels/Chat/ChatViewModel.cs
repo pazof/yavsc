@@ -56,11 +56,11 @@ namespace PostIt.ViewModels.Chat
 
         public CallSignalingClient? Calls { get; private set; }
 
-        public bool SupportsLanCalls => Platform.CreateLanCallMedia != null ||
+        public bool SupportsVideoCalls => Platform.CreateWebRtcMedia != null ||
             (OperatingSystem.IsLinux() && !OperatingSystem.IsAndroid());
 
         [ObservableProperty]
-        public partial LanCallViewModel? LanCall { get; set; }
+        public partial WebRtcCallViewModel? VideoCall { get; set; }
 
         [ObservableProperty]
         public partial string CurrentRoom { get; set; } = "General";
@@ -106,7 +106,7 @@ namespace PostIt.ViewModels.Chat
 
         partial void OnSelectedRoomChanged(string? value)
         {
-            if (LanCall != null) LanCall.Room = value ?? "";
+            if (VideoCall != null) VideoCall.Room = value ?? "";
             FocusedMessages = value != null && _messagesByRoom.TryGetValue(value, out var msgs)
                 ? msgs : _systemMessages;
             FocusedUsers = value != null && _usersByRoom.TryGetValue(value, out var users)
@@ -160,7 +160,7 @@ namespace PostIt.ViewModels.Chat
             if (_transport == null || room == null) return;
             try
             {
-                if (LanCall != null) await LanCall.HangupAsync();
+                if (VideoCall != null) await VideoCall.HangupAsync();
                 await _transport.LeaveAsync(room);
                 JoinedRooms.Remove(room);
                 _messagesByRoom.Remove(room);
@@ -210,11 +210,11 @@ namespace PostIt.ViewModels.Chat
         private async Task DisconnectCoreAsync()
         {
             Exception? callError = null;
-            if (LanCall != null)
+            if (VideoCall != null)
             {
-                try { await LanCall.DisposeAsync(); }
+                try { await VideoCall.DisposeAsync(); }
                 catch (Exception error) { callError = error; }
-                finally { LanCall = null; }
+                finally { VideoCall = null; }
             }
             Calls?.Dispose();
             Calls = null;
@@ -269,10 +269,10 @@ namespace PostIt.ViewModels.Chat
                     return;
                 if (_connection != null)
                 {
-                    if (LanCall != null)
+                    if (VideoCall != null)
                     {
-                        await LanCall.DisposeAsync();
-                        LanCall = null;
+                        await VideoCall.DisposeAsync();
+                        VideoCall = null;
                     }
                     Calls?.Dispose();
                     Calls = null;
@@ -296,8 +296,8 @@ namespace PostIt.ViewModels.Chat
                 // Le hub est [Authorize] : on attache le Bearer OIDC.
 
                 Calls = new CallSignalingClient(_connection);
-                if (SupportsLanCalls)
-                    LanCall = new LanCallViewModel(Calls, settings: _settings) { Room = SelectedRoom ?? "" };
+                if (SupportsVideoCalls)
+                    VideoCall = new WebRtcCallViewModel(Calls, settings: _settings) { Room = SelectedRoom ?? "" };
                 else
                     Calls.Invitation += call => PostForCurrentSession(() =>
                         Log($"Invitation audio-vidéo de {call.Caller} dans {call.RoomName} ; transport non disponible sur cette plateforme."));

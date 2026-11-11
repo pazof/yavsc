@@ -104,17 +104,14 @@
         Content="Envoyer" />
     </Grid>
 
-    <Expander Grid.Row="3" Header="Appel direct IPv4/IPv6 (LAN/VPN ou IP publique)" IsVisible="{Binding SupportsLanCalls}" IsExpanded="True"
+    <Expander Grid.Row="3" Header="Appel video WebRTC" IsVisible="{Binding SupportsVideoCalls}" IsExpanded="True"
               IsEnabled="{Binding IsConnected}" Margin="0,0,0,8">
       <ScrollViewer MaxHeight="520">
-      <StackPanel DataContext="{Binding LanCall}" x:DataType="vm:LanCallViewModel" Spacing="8">
-        <TextBlock Text="Android et Desktop Linux : IPv4 ou IPv6 globale/privee directement assignee a la machine (hors IPv6 link-local). Les pairs doivent pouvoir joindre leurs adresses. SRTP chiffre les medias ; le pair connait votre IP. Ouvrir le port UDP choisi et le suivant. Sans TURN ni traversee NAT. Casque recommande (pas d'annulation d'echo)."
+      <StackPanel DataContext="{Binding VideoCall}" x:DataType="vm:WebRtcCallViewModel" Spacing="8">
+        <TextBlock Text="Android et Linux : medias chiffres par WebRTC (DTLS-SRTP), ICE/STUN/TURN. Activez le masquage IP dans votre profil pour imposer un relais TURN aux deux participants, sans repli direct. La camera et le microphone ne demarrent qu'apres acceptation."
                    TextWrapping="Wrap" />
         <WrapPanel IsEnabled="{Binding CanConfigure}" IsVisible="{Binding !RemoteVideo}">
           <Button Content="Actualiser les peripheriques" Command="{Binding RefreshDevicesCommand}" Margin="0,0,8,4" />
-          <ComboBox Width="160" ItemsSource="{Binding Addresses}" SelectedItem="{Binding Address}"
-                    PlaceholderText="Adresse IPv4/IPv6 de cette machine" Margin="0,0,8,4" />
-          <TextBox Width="80" Text="{Binding Port}" PlaceholderText="Port pair" Margin="0,0,8,4" />
           <ComboBox Width="190" ItemsSource="{Binding Cameras}" SelectedItem="{Binding Camera}"
                     PlaceholderText="Camera" Margin="0,0,8,4">
             <ComboBox.ItemTemplate>
@@ -133,7 +130,7 @@
           </ComboBox>
           <TextBox Width="170" Text="{Binding Target}" PlaceholderText="Pseudo du pair" Margin="0,0,8,4" />
         </WrapPanel>
-        <CheckBox Content="Je consens a partager mon adresse IP avec le pair."
+        <CheckBox Content="Si le masquage IP est desactive, je consens a partager mon adresse IP avec le pair."
                   IsChecked="{Binding AllowAddressDisclosure}" IsEnabled="{Binding CanConfigure}"
                   IsVisible="{Binding !RemoteVideo}" />
         <WrapPanel>

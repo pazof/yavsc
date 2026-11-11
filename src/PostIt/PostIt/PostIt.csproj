@@ -19,6 +19,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Services/WebRtc/gstreamer_peer.py" LogicalName="PostIt.WebRtc.gstreamer_peer.py" />
     <EmbeddedResource Include="postit-settings.json">
       <LogicalName>PostIt.postit-settings.json</LogicalName>
     </EmbeddedResource>

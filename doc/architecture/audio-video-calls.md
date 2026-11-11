@@ -2,12 +2,14 @@
 
 ## Statut et périmètre
 
-Ce document décrit l'architecture cible et l'implémentation commencée.
+Ce document décrit l'architecture cible, l'implementation native actuelle et
+l'historique du transport direct.
 La préférence de confidentialité est persistée et éditable dans le profil.
-La signalisation est intégrée au chat, désactivée par défaut. Un premier
-transport natif **Android et Desktop Linux en IPv4/IPv6 directe (LAN/VPN ou IP publique)** est raccordé :
-captures Podcast existantes et SRTP direct, sans libwebrtc ni nouvelle
-couche JNI WebRTC. Il ne réalise pas encore la cible Internet, TURN ou groupe.
+La signalisation est intégrée au chat, désactivée par défaut. La page du chat
+utilise maintenant **WebRTC natif sur Android et Desktop Linux**, avec
+ICE/STUN/TURN et masquage IP impose par la politique serveur. L'ancien
+transport VLC/SRTP n'est plus raccorde a cette page. Les groupes et les
+clients navigateur ne sont pas implementes.
 Il complète la [topologie de PostIt](postit.md) et les
 [mécanismes de notification existants](notifications.md).
 La cible couvre :
@@ -18,7 +20,105 @@ La cible couvre :
 - les appels de groupe ;
 - les clients Browser, Android et Desktop.
 
-## Première implémentation Android et Desktop Linux : SRTP direct IPv4/IPv6
+## Implementation actuelle : WebRTC natif Android et Linux
+
+- [WebRtcCallViewModel](../../src/PostIt/PostIt/ViewModels/Chat/WebRtcCallViewModel.cs)
+  conserve invitation/acceptation/fin via SignalR, sans demarrer la capture
+  avant consentement. Les SDP et candidats ICE utilisent les contrats existants.
+- [AndroidWebRtcMedia](../../src/PostIt/PostIt.Android/Services/AndroidWebRtcMedia.cs)
+  heberge deux surfaces natives. Le pont Java
+  [WebRtcPeer](../../src/PostIt/PostIt.Android/Services/WebRtcPeer.java) utilise
+  l'AAR officiel `io.github.webrtc-sdk:android:150.7871.04`, Camera2,
+  l'audio natif et DTLS-SRTP. Les commandes et callbacks SDP/ICE restent en
+  Java sur un executeur unique ; pas de WebView ni de binding C# complet du SDK.
+- [LinuxWebRtcMedia](../../src/PostIt/PostIt/Services/LinuxWebRtcMedia.cs)
+  pilote un processus Python GI prive utilisant GStreamer `webrtcbin`,
+  VP8/Opus, la camera V4L2 et le microphone PulseAudio/PipeWire.
+  Les trames decodees sont affichees dans Avalonia, l'audio sur la sortie native.
+  Le protocole JSON utilise uniquement stdin/stdout, pas de serveur local.
+- Le serveur impose `RelayOnly` aux deux clients si l'un des comptes masque
+  son IP. Le client configure la politique native avant capture/negociation,
+  valide les SDP/candidats sortants et confirme le type du candidat local
+  de la paire ICE selectionnee. Aucun repli direct ni transport SRTP historique
+  n'est tente en cas d'echec TURN.
+- Avec libnice, les metadonnees ICE `raddr`/`rport` des candidats relais sont
+  neutralisees a la frontiere de signalisation (RFC 8828), sans modifier
+  l'adresse du relais ni reecrire le SDP. UPnP est desactive. Les politiques
+  `relay` de webrtcbin et `force-relay` de libnice sont toutes deux activees.
+  Un SDP qui expose une adresse non relayee est refuse, pas corrige.
+- Raccrocher, sortir de la page/salle, se deconnecter ou passer l'application
+  en arriere-plan annule aussi un demarrage natif en cours et libere les medias.
+  Un echec natif, une perte ICE ou 30 secondes sans progression audio/video
+  terminent l'appel explicitement. Il n'y a pas d'ICE restart/renegociation
+  automatique ni de migration transparente d'un appel existant.
+
+Le panneau ne demande plus d'adresse ni de port RTP manuel. Sans masquage,
+un consentement explicite au partage IP reste requis. Activer le masquage
+dans le profil pendant un appel fait terminer cet appel par le serveur :
+il faut rappeler pour appliquer la nouvelle politique.
+
+Configuration coturn, certificats, ports et dependances Linux :
+[INSTALL](../../INSTALL.md#postit-native-webrtc-calls-android-and-linux).
+Les moteurs d'appel sont independants des captures/encodeurs Podcast ;
+les Podcasts conservent leur chemin existant.
+
+### Regressions natives
+
+Tests Linux reels, sans compte ni camera, avec sources video/audio synthetiques,
+decodage bidirectionnel, selection effective d'un relais coturn, controle des
+adresses signalees et panne TURN sans repli :
+
+```bash
+python3 src/PostIt/PostIt.Tests/Native/webrtc_media_test.py -v
+```
+
+Installer coturn pour ces tests (ou definir `POSTIT_TURN_SERVER` vers son
+executable). Ils demarrent un processus local prive, avec secret REST aleatoire
+temporaire, et l'arretent en fin de test ; ils ne changent aucun service systeme.
+
+Tests du consentement, de la politique, des interruptions et du rendu de vraies
+trames dans Avalonia/Skia :
+
+```bash
+XDG_CONFIG_HOME="$(mktemp -d)" POSTIT_TEST_NATIVE_WEBRTC=1 \
+  dotnet test --project src/PostIt/PostIt.Tests \
+  --filter-class 'PostIt.Tests.WebRtcCallViewModelTests' \
+  --filter-class 'PostIt.Tests.LanCallViewModelTests'
+```
+
+Le test de rendu natif est ignore sans `POSTIT_TEST_NATIVE_WEBRTC=1`.
+Les tests headless ordinaires conservent leur moteur de dessin simule.
+Utiliser un dossier de configuration de test sans comptes reels et le supprimer
+apres execution.
+
+Le test Android physique est reserve a l'APK **Debug** installe : camera avant,
+microphone, deux surfaces natives, pair Linux synthetique et coturn local,
+aucun compte ni enregistrement. Il utilise `adb reverse` pour des ports TCP
+temporaires et retire uniquement ses propres redirections :
+
+```bash
+POSTIT_TEST_ANDROID_WEBRTC=1 POSTIT_ANDROID_SERIAL=SERIAL \
+  python3 src/PostIt/PostIt.Tests/Native/webrtc_media_test.py \
+  NativeWebRtcTests.test_android_linux_relay_bidirectional_media -v
+```
+
+Ce controle local ne remplace pas un essai sur deux reseaux Internet distincts,
+avec DNS/certificats publics et pare-feu de production.
+
+Validation effectuee : 37 tests PostIt (dont rendu Linux avec Skia), 76 tests
+serveur de signalisation et 5 regressions natives reussis. Sur le telephone
+Android arm64, les deux roles appelant/appele ont recu plus de 100 trames
+video et 500 paquets audio pendant au moins 10 secondes, avec deux rendus
+natifs confirmes et un candidat local `relay` des deux cotes. La panne TURN
+ne produit aucun candidat direct sur Android ou Linux. Les essais utilisent
+la camera avant et le microphone Android reels, des sources Linux synthetiques
+et un coturn TCP local via USB ; la camera et la sortie audio Linux materielles,
+TURN/TLS et les reseaux Internet distincts restent a verifier.
+
+## Historique : premiere implementation SRTP direct IPv4/IPv6
+
+Les paragraphes suivants decrivent le transport precedent, conserve dans le
+code et ses tests mais non propose par le panneau d'appel actuel.
 
 Les adresses IPv4 publiques directement assignees a une interface locale active
 sont egalement disponibles, avec la meme validation unicast cote client,
@@ -508,45 +608,37 @@ les redémarrages ICE et renégociations restent à implémenter.
 
 Configuration serveur, section `AudioVideoCalls` :
 
-- `Enabled` : `false` par défaut, à conserver tant que les moteurs ne sont
-  pas validés ;
+- `Enabled` : `false` par défaut, a activer apres configuration et validation
+  du deploiement ICE/TURN ;
 - `StunUrls` : tableau d'URI `stun:` ou `stuns:` ;
 - `TurnUrls` : tableau d'URI `turn:` ou `turns:`, avec transport optionnel ;
 - `TurnSharedSecret` : secret REST coturn, **uniquement côté serveur**,
   à fournir par le gestionnaire de secrets ou la variable d'environnement
   `AudioVideoCalls__TurnSharedSecret`, jamais dans le dépôt.
 
+Linux GStreamer prend en charge `stun:`, mais pas `stuns:` : utiliser TURN/TLS
+pour ce dernier besoin.
+
 Les credentials TURN temporaires sont calculés côté serveur avec le
 format REST coturn (expiration, nonce aléatoire et HMAC-SHA1). Aucun secret
-de longue durée n'est envoyé aux clients. Aucun service TURN n'a été
-déployé ou configuré par cette tranche.
+de longue durée n'est envoyé aux clients. Aucun service TURN de production
+n'est deploye automatiquement ; seuls les tests lancent un coturn isole.
 
 Le [transport PostIt](../../src/PostIt/PostIt/Services/CallSignalingClient.cs)
 utilise la connexion authentifiée du `ChatViewModel`, sans seconde connexion
 ni interrogation HTTP. Il expose les commandes et événements typés et
-signale les interruptions ; il ne capture aucun média. L'interface ne
-propose pas encore de bouton d'appel ; une éventuelle invitation est
-signalée comme non utilisable faute de moteur natif, sans acceptation
-automatique.
+signale les interruptions ; il ne capture aucun média.
+Le panneau WebRTC de la page du chat et les deux adaptateurs natifs
+consomment maintenant cette signalisation, toujours sans acceptation automatique.
 
 ### Travail restant pour la cible Internet multi-plateforme
 
-- Android : l'approche Java/JNI libwebrtc a été écartée à la demande du
-  projet ; aucun adaptateur libwebrtc expérimental n'est conservé.
-  L'adaptateur SRTP LAN réutilise désormais la capture Podcast ; la solution
-  compatible avec la cible Internet reste à choisir.
-- Desktop Linux : le transport SRTP LAN est raccordé, mais ne remplace pas
-  les validations matérielles ni une solution de connectivité Internet.
-- Côté partagé : relier consentement, états réels du moteur, mise en
-  sourdine, arrêt et libération des ressources à la signalisation.
-- Valider un appel Android ↔ Desktop Linux avec caméra avant et microphone
-  réels, rendu et audio distants, VP8/Opus, puis transport TURN sélectionné
-  dans les statistiques, sans repli direct lorsque le masquage est demandé.
-
-Les tests de cette tranche portent sur les contrats, autorisations, courses
-d'acceptation, expirations, limites, interruption et préférence persistée.
-La compilation des applications Android et Desktop ne prouve pas le
-fonctionnement de WebRTC natif : le crash antérieur n'est pas résolu.
+- Valider les cameras, microphones et sorties audio Linux materiels.
+- Valider les appels sur deux reseaux Internet distincts, UDP/TCP/TLS,
+  DNS, certificats et politiques de pare-feu de production.
+- Ajouter si necessaire les commandes de sourdine, renegociation/ICE restart
+  et renouvellement des credentials pour les appels longs.
+- Les groupes/SFU, Browser et les autres plateformes restent hors perimetre.
 
 ## Retour sur l'essai Android du 25 octobre 2026
 
@@ -584,4 +676,9 @@ impossibilité de WebRTC sur Android ou une défaillance du ChatHub.
 Les essais Browser/GStreamer réussis utilisaient des sources synthétiques
 et un décodage sans affichage côté GStreamer : ils ne valident pas
 PostIt.Desktop Linux, ses périphériques réels ou son rendu Avalonia.
-La validation multi-plateforme demeure incomplète.
+Ces limites de l'ancien laboratoire ne constituent plus le bilan du moteur
+actuel : les nouvelles regressions Android/GStreamer ci-dessus verifient
+des medias bidirectionnels et des rendus reels via TURN. La cause precise
+du crash de cet ancien prototype reste inconnue ; aucun crash natif n'a
+ete reproduit pendant les nouveaux essais. Cela ne remplace pas les
+validations Internet et materielles encore indiquees.

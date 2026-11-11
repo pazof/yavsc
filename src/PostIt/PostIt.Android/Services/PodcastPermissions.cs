@@ -32,6 +32,7 @@ internal static class PodcastPermissions
         if (!await pending.Task.WaitAsync(ct))
             throw new UnauthorizedAccessException(notifications
                 ? "Autorisez la camera, les notifications et, si selectionne, le microphone pour diffuser."
+                : microphone ? "Autorisez la camera et le microphone pour l'appel."
                 : "Autorisez la camera pour la previsualisation.");
     }
 

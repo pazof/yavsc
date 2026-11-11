@@ -5,6 +5,10 @@
 
 ### Added
 
+* [PostIt/Calls] Replace the chat's direct VLC/SRTP call panel with native WebRTC on Android and Linux: official libwebrtc/Camera2 and GStreamer webrtcbin, existing consent/SignalR signaling, ICE/STUN/coturn, and fail-closed relay-only IP masking. Cancel pending startup and release media on hangup, navigation, interruption and backgrounding. Add privacy/lifecycle, real Linux media/rendering and debug Android interoperability regressions, coturn deployment instructions and a protected-server-secret configuration example.
+
+* [PostIt] Upgrade Avalonia to 12.1.6 and align the headless and native Skia test rendering packages.
+
 * [PostIt/PayPal] Add a native subscription page reachable from Home, profile and About: load server-priced Discovery/Premium offers, prepare or resume checkout with the current bearer session, open only PayPal for approval, reconcile confirmed payments and balances, and cancel with confirmation. Add quota-exempt bearer-only endpoints on Yavsc.Org, sharing checkout/cancellation logic with the existing web flow, and regression coverage. Browser return never confirms payment.
 
 * [Resource usage] Let users with the `Administrator` role continue making requests after reaching their consumption quota, while still recording their usage.

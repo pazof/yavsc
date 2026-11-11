@@ -28,6 +28,61 @@ dotnet publish -c Release
 
 and then, install the app, from the `src/PostIt/PostIt.Android/bin/Release/net10.0/PostIt.apk`
 
+## PostIt native WebRTC calls (Android and Linux)
+
+Calls are opt-in on the HTTPS chat host. Configure `AudioVideoCalls` there:
+
+```json
+{
+  "AudioVideoCalls": {
+    "Enabled": true,
+    "EnableLanCalls": false,
+    "StunUrls": ["stun:turn.example.org:3478"],
+    "TurnUrls": [
+      "turn:turn.example.org:3478?transport=udp",
+      "turn:turn.example.org:3478?transport=tcp",
+      "turns:turn.example.org:5349?transport=tcp"
+    ]
+  }
+}
+```
+
+Set `AudioVideoCalls__TurnSharedSecret` through the host's protected environment
+or secret store, **not** in a committed settings file or in PostIt. Generate
+a strong random secret (for example `openssl rand -hex 32`), install coturn and
+adapt [coturn.conf.example](contrib/coturn.conf.example) outside the repository.
+Set its `static-auth-secret` to the same value. The server issues separate,
+short-lived REST/HMAC credentials only after invitation acceptance; clients
+never receive the shared secret. Keep clocks synchronized.
+
+Expose TURN on UDP/TCP 3478, TLS/TCP 5349, and the configured **UDP relay range**
+(49160–49200 in the example). Use a publicly trusted certificate matching the
+TURN hostname and ensure coturn can read its key. TURN is not an HTTP reverse
+proxy route. If behind NAT, configure coturn's `external-ip=PUBLIC/PRIVATE`,
+`listening-ip` and `relay-ip` for the actual deployment and forward the relay
+range without changing port numbers. Restrict relay access to private services,
+set bandwidth/capacity limits appropriate to the host, and avoid logging SDP,
+credentials or candidates. Do not copy the loopback permissions used by tests.
+
+Android 8+ bundles native libwebrtc from the official Maven AAR. Linux needs
+Python 3 GI and GStreamer with `webrtcbin`, libnice, VP8, Opus, JPEG, V4L2 and
+PulseAudio/PipeWire support. On Debian/Ubuntu:
+
+```bash
+sudo apt install python3-gi python3-gst-1.0 gir1.2-gst-plugins-bad-1.0 \
+  gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+  gstreamer1.0-plugins-bad gstreamer1.0-nice gstreamer1.0-pulseaudio
+```
+
+Join the same chat room, refresh/select camera and microphone, invite a peer,
+then accept on the other client. Capture starts only after acceptance.
+The profile's IP-masking setting forces **both participants** through TURN;
+missing/unreachable TURN fails the call, never falls back to direct media.
+Without masking, explicit IP-disclosure consent is required.
+TURN still sees each client's address, and masking does not hide addresses
+from the signaling host or local network. See the
+[architecture and native regression commands](doc/architecture/audio-video-calls.md).
+
 
 ## PostIt.Desktop on Windows (per-user installer)
 

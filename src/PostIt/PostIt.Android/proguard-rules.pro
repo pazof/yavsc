@@ -7,3 +7,5 @@
 -keepattributes *Annotation*
 -dontwarn org.videolan.libvlc.**
 -dontwarn org.videolan.medialibrary.**
+-keep class org.webrtc.** { *; }
+-keep class fr.pschneider.postit.WebRtcPeer { *; }

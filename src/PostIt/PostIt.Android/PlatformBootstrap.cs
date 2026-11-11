@@ -27,6 +27,10 @@ internal static class PlatformBootstrap
         Platform.CreateVideoSurface = (player, replay) => new AndroidVideoSurface(player, replay);
         if (System.OperatingSystem.IsAndroidVersionAtLeast(26))
         {
+            Platform.CreateWebRtcMedia = () => System.OperatingSystem.IsAndroidVersionAtLeast(26)
+                ? new AndroidWebRtcMedia()
+                : throw new System.PlatformNotSupportedException("Android 8 requis pour WebRTC.");
+            Platform.GetWebRtcDevices = AndroidLanCallMedia.GetDevices;
             Platform.GetLanCallDevices = AndroidLanCallMedia.GetDevices;
             Platform.CreateLanCallMedia = (address, port) =>
                 System.OperatingSystem.IsAndroidVersionAtLeast(26)

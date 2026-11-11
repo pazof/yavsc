@@ -4,18 +4,19 @@
   <!-- https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management -->
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <AvaloniaVersionBase>12.1.4</AvaloniaVersionBase>
+    <AvaloniaVersionBase>12.1.6</AvaloniaVersionBase>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Avalonia" Version="$(AvaloniaVersionBase)" />
-    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersionBase)" />
     <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersionBase)" />
     <PackageVersion Include="Avalonia.Browser" Version="$(AvaloniaVersionBase)" />
     <PackageVersion Include="Avalonia.Android" Version="$(AvaloniaVersionBase)" />
-    <PackageVersion Include="Avalonia.Headless" Version="12.1.4" />
+    <PackageVersion Include="Avalonia.Headless" Version="$(AvaloniaVersionBase)" />
     <PackageVersion Include="Avalonia.Headless.Xunit" Version="$(AvaloniaVersionBase)" />
+    <PackageVersion Include="Avalonia.Skia" Version="$(AvaloniaVersionBase)" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersionBase)" />
+    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
     <PackageVersion Include="DirectShowLib" Version="1.0.0" />
     <PackageVersion Include="LibVLCSharp.Avalonia" Version="3.10.2" />
     <PackageVersion Include="LibVLCSharp" Version="3.10.2" />

@@ -6,7 +6,7 @@ using Yavsc.Abstract.Chat.Calls;
 
 namespace PostIt.Services;
 
-public sealed class CallSignalingClient : ILanCallSignaling, IDisposable
+public sealed class CallSignalingClient : IWebRtcCallSignaling, IDisposable
 {
     private readonly HubConnection _connection;
     private readonly IDisposable[] _subscriptions;

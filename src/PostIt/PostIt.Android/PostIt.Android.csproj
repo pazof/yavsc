@@ -31,6 +31,10 @@
     <PackageReference Include="Xamarin.AndroidX.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidMavenLibrary Include="io.github.webrtc-sdk:android" Version="150.7871.04" Bind="false" VerifyDependencies="false" />
+    <AndroidJavaSource Update="Services/WebRtcPeer.java" Bind="false" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\PostIt\PostIt.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
@@ -40,6 +44,7 @@
     <Compile Include="..\PostIt.Tests\AndroidCameraFrameRotationTestActivity.cs" Link="Tests\AndroidCameraFrameRotationTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidPodcastBlurTestActivity.cs" Link="Tests\AndroidPodcastBlurTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidLanCallTestActivity.cs" Link="Tests\AndroidLanCallTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\AndroidWebRtcTestActivity.cs" Link="Tests\AndroidWebRtcTestActivity.cs" />
     <Compile Include="..\PostIt.Tests\AndroidScreenAwakeTestActivity.cs" Link="Tests\AndroidScreenAwakeTestActivity.cs" />
   </ItemGroup>
   <!-- This is an Avalonia app, not a MAUI app: exclude the .NET MAUI VS Code

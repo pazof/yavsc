@@ -7,10 +7,14 @@ namespace PostIt.Tests;
 
 public class TestAppBuilder
 {
-    public static AppBuilder BuildAvaloniaApp() =>
-        AppBuilder.Configure<PostIt.App>()
-        .UseHeadless(new AvaloniaHeadlessPlatformOptions
-            {
-                UseHeadlessDrawing = true
-            });
+    public static AppBuilder BuildAvaloniaApp()
+    {
+        var nativeMedia = System.Environment.GetEnvironmentVariable("POSTIT_TEST_NATIVE_WEBRTC") == "1";
+        var builder = AppBuilder.Configure<PostIt.App>();
+        if (nativeMedia) builder.UseSkia();
+        return builder.UseHeadless(new AvaloniaHeadlessPlatformOptions
+        {
+            UseHeadlessDrawing = !nativeMedia
+        });
+    }
 }
