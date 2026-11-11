@@ -1,0 +1,50 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PostIt.ViewModels"
+             xmlns:resources="using:Yavsc.Abstract.Resources"
+             x:Class="PostIt.Views.ResourceUsageReliefPage"
+             x:DataType="vm:ResourceUsageReliefPageViewModel"
+             Header="Remise de consommation">
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="16" Spacing="12" MaxWidth="720">
+      <TextBlock Text="Effacer des points de consommation" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap"/>
+      <TextBlock Text="Réservé aux administrateurs. Seuls les comptes dont la limite est atteinte peuvent bénéficier d’une remise. Les compteurs API, CPU, transfert et stockage sont conservés. Aucun crédit futur ni espace disque supplémentaire n’est accordé."
+                 TextWrapping="Wrap"/>
+      <TextBlock x:Name="ReliefStatus" Text="{Binding StatusMessage}" TextWrapping="Wrap"/>
+      <ProgressBar IsVisible="{Binding IsBusy}" IsIndeterminate="True" Height="4"/>
+      <StackPanel Spacing="12" IsVisible="{Binding IsAdministrator}">
+        <Button Content="Actualiser les consommations" Command="{Binding RefreshCommand}"/>
+        <StackPanel Spacing="8" IsEnabled="{Binding !IsBusy}">
+          <TextBox Text="{Binding SearchText, Mode=TwoWay}" PlaceholderText="Rechercher par nom ou identifiant"/>
+          <ComboBox x:Name="ReliefUser" ItemsSource="{Binding FilteredUsers}" SelectedItem="{Binding SelectedUsage, Mode=TwoWay}"
+                    PlaceholderText="Choisir un utilisateur à la limite" HorizontalAlignment="Stretch">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="resources:ResourceUsageSummary">
+                <StackPanel>
+                  <TextBlock Text="{Binding UserName}" FontWeight="Bold"/>
+                  <TextBlock Text="{Binding UserId}"/>
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <StackPanel DataContext="{Binding SelectedUsage}" Spacing="4">
+            <TextBlock x:Name="ReliefTarget" Text="{Binding UserId, StringFormat='Compte cible : {0}'}"/>
+            <TextBlock Text="{Binding Consumption, StringFormat='Consommation : {0:G29} points'}" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding ConsumptionLimit, StringFormat='Limite : {0:G29} points'}" TextWrapping="Wrap"/>
+            <TextBlock Text="Limite atteinte" IsVisible="{Binding IsQuotaReached}"/>
+          </StackPanel>
+          <TextBlock Text="Nombre de points à effacer (maximum : consommation actuelle)" TextWrapping="Wrap"/>
+          <TextBox x:Name="ReliefPoints" Text="{Binding PointsText, Mode=TwoWay}" MaxLength="40"
+                   PlaceholderText="Exemple : 100 ou 125,50"/>
+          <TextBlock Text="{Binding AmountError}" TextWrapping="Wrap"/>
+          <TextBlock x:Name="ReliefPreview" Text="{Binding ConsumptionAfter, StringFormat='Consommation après remise : {0:G29} points'}"
+                     TextWrapping="Wrap"/>
+          <CheckBox x:Name="ReliefConfirmation" IsChecked="{Binding ConfirmErasure, Mode=TwoWay}">
+            <TextBlock Text="Je confirme l’effacement du montant indiqué pour le compte sélectionné." TextWrapping="Wrap"/>
+          </CheckBox>
+          <Button x:Name="ErasePoints" Content="Effacer les points" Command="{Binding EraseCommand}"/>
+        </StackPanel>
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</ContentPage>

@@ -50,7 +50,20 @@ public partial class AdministrationPage : ContentPage
         vm.IsBusy = true;
         try
         {
-            if (!vm.ConfirmDestructiveAction) throw new InvalidOperationException("Confirmez l’import avant de choisir un fichier.");
+            if (!vm.ConfirmDestructiveAction)
+            {
+                var confirmed = await App.ConfirmAsync(
+                    "Importer les données métier ?",
+                    "Cette importation remplacera des données de production et peut être irréversible.",
+                    confirmText: "Importer",
+                    cancelText: "Annuler");
+                if (!confirmed)
+                {
+                    vm.StatusMessage = "Confirmez l’import avant de choisir un fichier.";
+                    return;
+                }
+                vm.ConfirmDestructiveAction = true;
+            }
             var topLevel = TopLevel.GetTopLevel(this) ?? throw new InvalidOperationException("Sélecteur de fichiers indisponible.");
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {

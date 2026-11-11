@@ -242,6 +242,21 @@ footer and PostIt's **About** page, using the configured authentication
 authority. PostIt displays consumption and remaining points in **My profile**
 and the administration usage views.
 
+PostIt **Administration > Effacer des points de consommation** lets an
+`Administrator` select an account whose consumption limit is reached, enter
+a positive amount (up to eight decimal places), preview the remaining
+consumption and explicitly confirm. An amount exceeding current consumption
+is rejected: this action grants neither future credit nor additional disk
+space, and preserves the technical counters and payment history.
+`POST /api/v1/resource-usage/admin/{userId}/erase` accepts `points` and
+`expectedCredits` (the displayed `AppliedCredits + CreditBalance`). The
+Administrator-only endpoint is quota-exempt, rechecks eligibility under the
+shared accounting lock and rejects stale credit snapshots with HTTP 409.
+Refresh and confirm again after a conflict or uncertain request outcome.
+Successful adjustments record the administrator as the modifying actor and
+log the target, amount and remaining consumption. No new migration is needed
+beyond the existing resource-subscription credit column.
+
 ### Monthly resource subscriptions (PayPal REST)
 
 The free registration keeps the configured cumulative quota without a

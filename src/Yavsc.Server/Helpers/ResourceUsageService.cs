@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Yavsc.Abstract.Resources;
 using Yavsc.Models;
 using Yavsc.Settings;
@@ -15,6 +17,13 @@ public interface IResourceUsageService
     Task<List<ResourceUsageSummary>> GetOverviewAsync(CancellationToken cancellationToken);
     Task<bool> TryAdmitAsync(string userId, string userName, decimal apiCalls, decimal bandwidthMb,
         long anticipatedStorageBytes, CancellationToken cancellationToken);
+    Task<ResourceUsageSummary> EraseAsync(string userId, string actorUserId,
+        EraseResourceUsageRequest request, CancellationToken cancellationToken);
+}
+
+public sealed class ResourceUsageAdjustmentException(int statusCode, string message) : InvalidOperationException(message)
+{
+    public int StatusCode { get; } = statusCode;
 }
 
 public sealed class ResourceUsageService(
@@ -50,6 +59,51 @@ public sealed class ResourceUsageService(
             apiCalls: apiCalls, bandwidthMb: bandwidthMb,
             policy: _options, anticipatedStorageBytes: anticipatedStorageBytes,
             cancellationToken: cancellationToken) is not null;
+
+    public Task<ResourceUsageSummary> EraseAsync(string userId, string actorUserId,
+        EraseResourceUsageRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(userId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(actorUserId);
+        const decimal maximum = 99999999999999999999.99999999m;
+        if (request.Points <= 0m || request.Points > maximum ||
+            decimal.Round(request.Points, 8) != request.Points ||
+            request.ExpectedCredits < 0m || request.ExpectedCredits > maximum ||
+            decimal.Round(request.ExpectedCredits, 8) != request.ExpectedCredits)
+            throw new ResourceUsageAdjustmentException(400, "Le montant doit être positif, avec au plus huit décimales.");
+
+        return ResourceUsageTracker.WithUserLockAsync(dbContext, userId, async () =>
+        {
+            var user = await dbContext.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == userId, cancellationToken)
+                ?? throw new ResourceUsageAdjustmentException(404, "Utilisateur introuvable.");
+            if (user.WithdrawalRequestedAt is not null)
+                throw new ResourceUsageAdjustmentException(409, "Ce compte est retiré ou en cours de retrait.");
+            var record = await dbContext.ResourceUsageRecords.Where(r => r.UserId == userId)
+                .OrderByDescending(r => r.RecordedAtUtc).ThenByDescending(r => r.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (record is null)
+                throw new ResourceUsageAdjustmentException(409, "Cet utilisateur n’a pas atteint sa limite.");
+            await dbContext.Entry(record).ReloadAsync(cancellationToken);
+            if (record.CreditPoints != request.ExpectedCredits)
+                throw new ResourceUsageAdjustmentException(409, "Les crédits ont changé. Actualisez puis confirmez à nouveau.");
+            var current = ToSummary(record, user);
+            if (!current.IsQuotaReached)
+                throw new ResourceUsageAdjustmentException(409, "Cet utilisateur n’a pas atteint sa limite.");
+            if (request.Points > current.Consumption)
+                throw new ResourceUsageAdjustmentException(409, "Le montant dépasse les points actuellement consommés.");
+            if (request.Points > maximum - record.CreditPoints)
+                throw new ResourceUsageAdjustmentException(409, "La capacité du compteur de crédits serait dépassée.");
+            record.CreditPoints += request.Points;
+            record.RecordedAtUtc = (clock ?? TimeProvider.System).GetUtcNow().UtcDateTime;
+            record.DateModified = record.RecordedAtUtc;
+            record.UserModified = actorUserId;
+            await dbContext.SaveChangesAsync(actorUserId, cancellationToken);
+            dbContext.GetService<ILoggerFactory>().CreateLogger<ResourceUsageService>()
+                .LogInformation("Administrator {ActorUserId} erased {Points} consumption points for {UserId}; remaining consumption {Consumption}",
+                    actorUserId, request.Points, userId, current.Consumption - request.Points);
+            return ToSummary(record, user);
+        }, cancellationToken);
+    }
 
     private ResourceUsageSummary ToSummary(ResourceUsageRecord record, ApplicationUser? user)
     {

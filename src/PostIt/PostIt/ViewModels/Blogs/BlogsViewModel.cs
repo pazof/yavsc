@@ -154,7 +154,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     public partial string? ReaderBaseUrl { get; private set; }
 
     public string ReaderArticle => ReaderBaseUrl is not null ? SelectedPost?.Article ?? string.Empty : string.Empty;
-    public string ReaderAuthor => SelectedPost?.Author?.UserName ?? SelectedPost?.AuthorId ?? string.Empty;
+    public string ReaderAuthor => SelectedPost?.Author?.UserName ?? string.Empty;
     public string ReaderTitle => SelectedPost?.Title ?? string.Empty;
     public DateTime? ReaderDateModified => SelectedPost?.DateModified;
 
@@ -351,6 +351,14 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
             this.SetWarningStatus("Sélectionnez un billet existant avant suppression.");
             return;
         }
+
+        var confirmed = await App.ConfirmAsync(
+            "Supprimer ce billet ?",
+            $"Le billet \"{SelectedPost.Title}\" sera supprimé définitivement.",
+            confirmText: "Supprimer",
+            cancelText: "Annuler");
+        if (!confirmed)
+            return;
 
         await ExecuteAsync(async () =>
         {

@@ -53,6 +53,7 @@ public class ViewLocator : IDataTemplate
             RdvViewModel => services.GetRequiredService<RdvPage>(),
             SignaturePageViewModel => services.GetRequiredService<SignaturePage>(),
             AddCircleMemberDialogViewModel => services.GetRequiredService<AddCircleMemberDialog>(),
+            ConfirmationDialogViewModel => services.GetRequiredService<ConfirmationDialog>(),
             CirclesPageViewModel => services.GetRequiredService<CirclesPage>(),
             PostAclDialogViewModel => services.GetRequiredService<PostAclDialog>(),
             BillingQueriesPageViewModel => services.GetRequiredService<BillingQueriesPage>(),
@@ -66,6 +67,7 @@ public class ViewLocator : IDataTemplate
             SubscriptionsPageViewModel => services.GetRequiredService<SubscriptionsPage>(),
             PerformerConfigurationPageViewModel => services.GetRequiredService<PerformerConfigurationPage>(),
             AdministrationPageViewModel => services.GetRequiredService<AdministrationPage>(),
+            ResourceUsageReliefPageViewModel => services.GetRequiredService<ResourceUsageReliefPage>(),
             ChatViewModel => services.GetRequiredService<ChatPage>(),
             null => new TextBlock { Text = "No view for <null>" },
             _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }

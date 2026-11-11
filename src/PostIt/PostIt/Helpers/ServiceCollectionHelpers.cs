@@ -97,6 +97,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<SubscriptionsPage>();
         services.AddTransient<PerformerConfigurationPage>();
         services.AddTransient<AdministrationPage>();
+        services.AddTransient<ResourceUsageReliefPage>();
 
         // ViewModels
         services.AddSingleton(settings);
@@ -125,6 +126,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<SubscriptionsPageViewModel>();
         services.AddTransient<PerformerConfigurationPageViewModel>();
         services.AddTransient<AdministrationPageViewModel>();
+        services.AddTransient<ResourceUsageReliefPageViewModel>();
         services.AddSingleton<SignaturePageViewModel>();
         services.AddSingleton<CirclesPageViewModel>();
         services.AddSingleton<ActivitiesPageViewModel>();
@@ -138,6 +140,7 @@ public static class ServiceCollectionHelpers
         // here — the parametrised ctors stay for direct test wiring.
         services.AddTransient<PostAclDialog>();
         services.AddTransient<AddCircleMemberDialog>();
+        services.AddTransient<ConfirmationDialog>();
         // Persistent session banner: one instance for the lifetime of
         // the app so the same VM survives page navigation.
         var sessionStatus = new SessionStatusViewModel { Api = api };

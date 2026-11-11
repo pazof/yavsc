@@ -8,6 +8,19 @@ namespace PostIt.Tests;
 public class ResourceUsageApiClientTests
 {
     [Fact]
+    public async Task Erase_sends_amount_and_expected_credits_to_escaped_user_endpoint()
+    {
+        var fake = new FakeYavscApiClient();
+        var client = new ResourceUsageApiClient(fake, "https://example.invalid/api/v1/");
+        var request = new EraseResourceUsageRequest { Points = 125.5m, ExpectedCredits = 12m };
+        await client.EraseAsync("user/name ?#", request, TestContext.Current.CancellationToken);
+        Assert.Equal("POST", fake.LastMethod);
+        Assert.Equal("https://example.invalid/api/v1/resource-usage/admin/user%2Fname%20%3F%23/erase", fake.LastPath);
+        Assert.Same(request, fake.LastBody);
+        Assert.Equal(TestContext.Current.CancellationToken, fake.LastToken);
+    }
+
+    [Fact]
     public async Task Usage_remains_visible_when_the_rest_of_the_profile_is_unavailable()
     {
         var usage = new ResourceUsageApiClient(new FakeYavscApiClient(), "https://example.invalid/api/v1/");
@@ -56,11 +69,15 @@ public class ResourceUsageApiClientTests
         public HttpClient Http { get; } = new();
         public string? LastPath { get; private set; }
         public string? LastMethod { get; private set; }
+        public object? LastBody { get; private set; }
+        public CancellationToken LastToken { get; private set; }
 
         public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
         {
             LastMethod = method.Method;
             LastPath = path;
+            LastBody = body;
+            LastToken = ct;
 
             if (typeof(T) == typeof(ResourceUsageSummary))
             {

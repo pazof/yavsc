@@ -162,15 +162,6 @@
       VerticalAlignment="Stretch"
       RowDefinitions="Auto,Auto,*,4,2*,Auto">
 
-      <WrapPanel
-        x:Name="BlogsHeaderPanel"
-        Margin="5"
-        Orientation="Horizontal">
-        <TextBox
-          HorizontalAlignment="Right"
-          PlaceholderText="Rechercher un titre ou un auteur..."
-          Text="{Binding SearchText, Mode=TwoWay}" />
-      </WrapPanel>
 
       <Border
         x:Name="PostsListBorder"
@@ -179,6 +170,12 @@
         Padding="8"
         BorderBrush="Gray"
         BorderThickness="1">
+
+      <WrapPanel
+        x:Name="BlogsHeaderPanel"
+        Margin="5"
+        Orientation="Horizontal">
+
         <ListBox
           x:Name="PostsListBox"
           IsEnabled="{Binding !IsBusy}"
@@ -196,30 +193,32 @@
                     x:Name="PublishedBadge"
                     Padding="6,2"
                     VerticalAlignment="Center"
-                    Background="#F2F7F2"
-                    BorderBrush="#2F6D2F"
+                    BorderBrush="#81F881"
                     BorderThickness="1"
                     CornerRadius="6"
                     IsVisible="{Binding IsPublished}">
                     <TextBlock
                       FontSize="10"
                       FontWeight="SemiBold"
-                      Foreground="#2F6D2F"
+                      Foreground="#81F881"
+                      Background="Black"
                       Text="Publié" />
                   </Border>
                 </StackPanel>
-                <TextBlock
-                  FontSize="10"
-                  Foreground="Gray"
-                  Text="{Binding DateModified, StringFormat='Updated: {0:yyyy-MM-dd HH:mm}'}" />
-                <TextBlock
-                  FontSize="10"
-                  Foreground="DarkSlateGray"
-                  Text="{Binding AuthorId}" />
+                  <TextBlock Margin="0,0,16,0" Text="{Binding Author.UserName}" />
+                  <TextBlock Opacity="0.65" Text="{Binding DateModified, StringFormat='Mis à jour le {0:dd/MM/yyyy HH:mm}'}" />
+
+
               </StackPanel>
             </DataTemplate>
           </ListBox.ItemTemplate>
         </ListBox>
+         <TextBox
+          HorizontalAlignment="Right"
+          PlaceholderText="Rechercher un titre ou un auteur..."
+          MaxLines="1"
+          Text="{Binding SearchText, Mode=TwoWay}" />
+      </WrapPanel>
       </Border>
 
       <GridSplitter

@@ -1,15 +1,22 @@
 
 # Changelog
 
-## [1.0.8-rc35] - unstable
+
+## [1.0.8-rc36] - unstable
 
 ### Added
 
-* [PostIt/Calls] Replace the chat's direct VLC/SRTP call panel with native WebRTC on Android and Linux: official libwebrtc/Camera2 and GStreamer webrtcbin, existing consent/SignalR signaling, ICE/STUN/coturn, and fail-closed relay-only IP masking. Cancel pending startup and release media on hangup, navigation, interruption and backgrounding. Add privacy/lifecycle, real Linux media/rendering and debug Android interoperability regressions, coturn deployment instructions and a protected-server-secret configuration example.
+* [PostIt/Administration] Add an administrator-only consumption relief page reachable from Administration: select a user at their limit, preview and confirm an arbitrary point erasure up to current consumption. Protect the quota-exempt API with the Administrator policy, serialize adjustments with accounting, reject stale confirmations, preserve technical counters and disk quotas, and audit the actor. Add API, service, client and responsive-page regressions.
 
 * [PostIt] Upgrade Avalonia to 12.1.6 and align the headless and native Skia test rendering packages.
 
+* [PostIt/Calls] Replace the chat's direct VLC/SRTP call panel with native WebRTC on Android and Linux: official libwebrtc/Camera2 and GStreamer webrtcbin, existing consent/SignalR signaling, ICE/STUN/coturn, and fail-closed relay-only IP masking. Cancel pending startup and release media on hangup, navigation, interruption and backgrounding. Add privacy/lifecycle, real Linux media/rendering and debug Android interoperability regressions, coturn deployment instructions and a protected-server-secret configuration example.
+
 * [PostIt/PayPal] Add a native subscription page reachable from Home, profile and About: load server-priced Discovery/Premium offers, prepare or resume checkout with the current bearer session, open only PayPal for approval, reconcile confirmed payments and balances, and cancel with confirmation. Add quota-exempt bearer-only endpoints on Yavsc.Org, sharing checkout/cancellation logic with the existing web flow, and regression coverage. Browser return never confirms payment.
+
+## [1.0.8-rc35] - unstable
+
+### Added
 
 * [Resource usage] Let users with the `Administrator` role continue making requests after reaching their consumption quota, while still recording their usage.
 

@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Avalonia;
+using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PostIt.Services;
@@ -70,6 +72,38 @@ public partial class AdministrationPageViewModel : ViewModelBase
     public AdministrationPageViewModel() : this(null) { }
 
     public Task InitializeAsync() => RefreshAsync();
+
+    [RelayCommand]
+    private async Task OpenResourceUsageReliefAsync()
+    {
+        ResourceUsageReliefPageViewModel? page = null;
+        try
+        {
+            if (_session?.IsAdministrator != true)
+                throw new UnauthorizedAccessException("Le rôle Administrator est requis.");
+            if (IsBusy) throw new InvalidOperationException("Une opération d’administration est déjà en cours.");
+            var app = Application.Current as App ?? throw new InvalidOperationException("Application PostIt indisponible.");
+            page = app.ServiceProvider?.GetRequiredService<ResourceUsageReliefPageViewModel>()
+                ?? throw new InvalidOperationException("Page de remise de consommation indisponible.");
+            page.UsageUpdated += updated =>
+            {
+                if (_session?.IsAdministrator != true) return;
+                var previous = UsageOverview.FirstOrDefault(u => u.UserId == updated.UserId);
+                if (previous is null) UsageOverview.Add(updated);
+                else UsageOverview[UsageOverview.IndexOf(previous)] = updated;
+                OnPropertyChanged(nameof(SelectedUsage));
+            };
+            await page.InitializeAsync(SelectedUser?.UserId);
+            if (_session?.IsAdministrator != true)
+                throw new UnauthorizedAccessException("Le rôle Administrator est requis.");
+            await app.PushPageAsync(page);
+        }
+        catch (Exception error)
+        {
+            page?.Dispose();
+            StatusMessage = $"Remise de consommation indisponible : {error.Message}";
+        }
+    }
 
     partial void OnSearchTextChanged(string value)
     {

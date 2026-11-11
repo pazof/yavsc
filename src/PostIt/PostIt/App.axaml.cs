@@ -124,6 +124,21 @@ public partial class App : Application, ILiveView, IVMPusherApp
 #endif
     }
 
+    public static async Task<bool> ConfirmAsync(
+        string title,
+        string message,
+        string confirmText = "Confirmer",
+        string cancelText = "Annuler")
+    {
+        var app = Current as App;
+        if (app is null || app.View is null)
+            return false;
+
+        var vm = new ConfirmationDialogViewModel(title, message, confirmText, cancelText);
+        await app.PushPageAsync(vm);
+        return await vm.WaitForResultAsync();
+    }
+
     public async Task<Page> PushPageAsync(ViewModelBase viewModel)
     {
         var mainView = View ?? throw new InvalidOperationException("The navigation root is not initialized.");

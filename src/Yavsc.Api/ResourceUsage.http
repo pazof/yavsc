@@ -1,5 +1,6 @@
 @baseUrl = https://localhost:5104
 @token = replace-with-access-token
+@userId = replace-with-user-id
 
 ### Current user's cumulative counters, indicator and effective quota (also accessible at the limit)
 GET {{baseUrl}}/api/v1/resource-usage/me
@@ -12,3 +13,25 @@ Authorization: Bearer {{token}}
 ### Consuming operation: returns 429 Problem Details when quota is exhausted
 GET {{baseUrl}}/api/v1/notifications/me
 Authorization: Bearer {{token}}
+
+### Erase points for an exhausted user (administrator only; exempt from quota)
+# ExpectedCredits = AppliedCredits + CreditBalance from the latest overview.
+# Returns 409 for stale credits, a non-exhausted user or an amount above consumption.
+POST {{baseUrl}}/api/v1/resource-usage/admin/{{userId}}/erase
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "points": 100,
+  "expectedCredits": 0
+}
+
+### Unknown target: 404 (administrator token required)
+POST {{baseUrl}}/api/v1/resource-usage/admin/missing-user/erase
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "points": 100,
+  "expectedCredits": 0
+}

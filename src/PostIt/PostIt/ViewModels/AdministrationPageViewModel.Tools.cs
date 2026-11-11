@@ -114,13 +114,31 @@ public partial class AdministrationPageViewModel
     }
 
     [RelayCommand]
-    private Task PurgePaymentResiduesAsync() => RunOperationAsync(async client =>
+    private async Task PurgePaymentResiduesAsync()
     {
-        RequireConfirmation();
-        var result = await client.PurgePaymentResiduesAsync();
-        RequireAccess();
-        PaymentPurgeReport = $"{result.Users} compte(s), {result.Subscriptions} abonnement(s), {result.Payments} mensualité(s), {result.Donations} don(s), {result.LegacyPayments} paiement(s) historique(s) purgés.";
-    });
+        if (!ConfirmDestructiveAction)
+        {
+            var confirmed = await App.ConfirmAsync(
+                "Purger les paiements résiduels ?",
+                "Cette action supprimera les paiements historiques et résiduels des comptes retirés. Cette opération est irréversible.",
+                confirmText: "Purger",
+                cancelText: "Annuler");
+            if (!confirmed)
+            {
+                StatusMessage = "Cochez la confirmation avant cette opération destructive.";
+                return;
+            }
+            ConfirmDestructiveAction = true;
+        }
+
+        await RunOperationAsync(async client =>
+        {
+            RequireConfirmation();
+            var result = await client.PurgePaymentResiduesAsync();
+            RequireAccess();
+            PaymentPurgeReport = $"{result.Users} compte(s), {result.Subscriptions} abonnement(s), {result.Payments} mensualité(s), {result.Donations} don(s), {result.LegacyPayments} paiement(s) historique(s) purgés.";
+        });
+    }
 
     [ObservableProperty] public partial string PaymentPurgeReport { get; set; } = "";
 

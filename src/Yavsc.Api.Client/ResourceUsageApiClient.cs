@@ -47,7 +47,16 @@ public sealed class ResourceUsageApiClient
             ct: ct);
     }
 
-    private string Absolute(string relativePath) => new Uri(ResolveBusinessBaseAddress(), relativePath).ToString();
+    public Task<ResourceUsageSummary> EraseAsync(string userId, EraseResourceUsageRequest request,
+        CancellationToken ct = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(userId);
+        return _api.CallAsync<ResourceUsageSummary>(HttpMethod.Post,
+            Absolute($"{PathPrefix}/{Constants.ResourceUsageAdminRoute}/{Uri.EscapeDataString(userId)}/erase"),
+            request, ct);
+    }
+
+    private string Absolute(string relativePath) => new Uri(ResolveBusinessBaseAddress(), relativePath).AbsoluteUri;
 
     private Uri ResolveBusinessBaseAddress()
     {

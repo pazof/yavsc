@@ -8,11 +8,127 @@ using Microsoft.Extensions.Options;
 using Yavsc.Models;
 using Yavsc.Server.Helpers;
 using Yavsc.Settings;
+using Yavsc.Abstract.Resources;
 
 namespace Yavsc.Server.Tests;
 
 public sealed class ResourceUsageTests
 {
+    [Theory]
+    [InlineData("125.12345678", "1874.87654322", true)]
+    [InlineData("2000", "0", false)]
+    public async Task Administrative_erasure_preserves_counters_and_existing_credits_and_audits_actor(
+        string amount, string remaining, bool stillReached)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var provider = NewProvider(o => o.DefaultLimit = 1000m);
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Users.Add(new ApplicationUser { Id = "alice", UserName = "alice", Email = "alice@example.test" });
+        var old = new ResourceUsageRecord { UserId = "alice", CpuSeconds = 1200m, RecordedAtUtc = DateTime.UtcNow.AddDays(-1) };
+        var current = new ResourceUsageRecord
+        {
+            UserId = "alice", UserName = "alice", ApiCalls = 100m, CpuSeconds = 1800m,
+            BandwidthMb = 1000m, StorageMb = 1000m, CreditPoints = 202m, EstimatedCompensation = 17m
+        };
+        db.ResourceUsageRecords.AddRange(old, current);
+        await db.SaveChangesAsync(ct);
+        var points = decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture);
+        var usage = scope.ServiceProvider.GetRequiredService<IResourceUsageService>();
+        var result = await usage.EraseAsync("alice", "admin", new() { Points = points, ExpectedCredits = 202m }, ct);
+        Assert.Equal(decimal.Parse(remaining, System.Globalization.CultureInfo.InvariantCulture), result.Consumption);
+        Assert.Equal(stillReached, result.IsQuotaReached);
+        Assert.Equal(0m, result.CreditBalance);
+        Assert.Equal(202m + points, current.CreditPoints);
+        Assert.Equal(100m, current.ApiCalls);
+        Assert.Equal(1800m, current.CpuSeconds);
+        Assert.Equal(1000m, current.BandwidthMb);
+        Assert.Equal(1000m, current.StorageMb);
+        Assert.Equal(17m, current.EstimatedCompensation);
+        Assert.Equal("admin", current.UserModified);
+        Assert.Equal(0m, old.CreditPoints);
+        await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 1m, cancellationToken: ct);
+        Assert.Equal(result.Consumption + 1m, (await usage.GetCurrentAsync("alice", "alice", ct)).Consumption);
+    }
+
+    [Theory]
+    [InlineData("0")]
+    [InlineData("-1")]
+    [InlineData("0.000000001")]
+    [InlineData("100000000000000000000")]
+    public async Task Administrative_erasure_rejects_invalid_precision_and_nonpositive_amounts(string input)
+    {
+        using var provider = NewProvider();
+        using var scope = provider.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<IResourceUsageService>();
+        var points = decimal.Parse(input, System.Globalization.CultureInfo.InvariantCulture);
+        var error = await Assert.ThrowsAsync<ResourceUsageAdjustmentException>(() => service.EraseAsync(
+            "alice", "admin", new() { Points = points }, TestContext.Current.CancellationToken));
+        Assert.Equal(400, error.StatusCode);
+        Assert.Empty(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().ResourceUsageRecords);
+    }
+
+    [Theory]
+    [InlineData("missing", 404)]
+    [InlineData("withdrawn", 409)]
+    [InlineData("below-limit", 409)]
+    [InlineData("no-usage", 409)]
+    [InlineData("excess", 409)]
+    [InlineData("stale", 409)]
+    public async Task Administrative_erasure_refuses_ineligible_targets_without_mutation(string scenario, int status)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var provider = NewProvider(o => o.DefaultLimit = 1000m);
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        if (scenario != "missing") db.Users.Add(new ApplicationUser
+        {
+            Id = "alice", UserName = "alice", Email = "alice@example.test",
+            WithdrawalRequestedAt = scenario == "withdrawn" ? DateTimeOffset.UtcNow : null
+        });
+        if (scenario != "no-usage") db.ResourceUsageRecords.Add(new()
+        {
+            UserId = "alice", CpuSeconds = scenario == "below-limit" ? 999m : 1000m
+        });
+        await db.SaveChangesAsync(ct);
+        var service = scope.ServiceProvider.GetRequiredService<IResourceUsageService>();
+        var error = await Assert.ThrowsAsync<ResourceUsageAdjustmentException>(() => service.EraseAsync("alice", "admin",
+            new() { Points = scenario == "excess" ? 1001m : 100m, ExpectedCredits = scenario == "stale" ? 1m : 0m }, ct));
+        Assert.Equal(status, error.StatusCode);
+        Assert.All(db.ResourceUsageRecords, r => Assert.Equal(0m, r.CreditPoints));
+    }
+
+    [Fact]
+    public async Task Concurrent_confirmations_apply_once_and_do_not_lose_usage_updates()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var provider = NewProvider(o => o.DefaultLimit = 1000m);
+        using (var seed = provider.CreateScope())
+        {
+            var db = seed.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.Users.Add(new ApplicationUser { Id = "alice", UserName = "alice", Email = "alice@example.test" });
+            await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 2000m, cancellationToken: ct);
+        }
+        var results = await Task.WhenAll(Enumerable.Range(0, 10).Select(async _ =>
+        {
+            using var scope = provider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 1m, cancellationToken: ct);
+            try
+            {
+                await scope.ServiceProvider.GetRequiredService<IResourceUsageService>()
+                    .EraseAsync("alice", "admin", new() { Points = 100m, ExpectedCredits = 0m }, ct);
+                return true;
+            }
+            catch (ResourceUsageAdjustmentException error) when (error.StatusCode == 409) { return false; }
+        }));
+        Assert.Single(results, applied => applied);
+        using var final = provider.CreateScope();
+        var summary = await final.ServiceProvider.GetRequiredService<IResourceUsageService>().GetCurrentAsync("alice", "alice", ct);
+        Assert.Equal(1910m, summary.Consumption);
+        Assert.Equal(100m, summary.AppliedCredits);
+    }
+
     private static ServiceProvider NewProvider(Action<ResourceUsageOptions>? configure = null)
     {
         var services = new ServiceCollection();

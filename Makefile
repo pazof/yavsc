@@ -29,6 +29,7 @@ test-postit:
     --report-xunit-html \
 		--results-directory "test-reports" \
     --report-xunit-html-filename "postit-test-results.html" \
+    --no-progress \
 	  --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj
 
 backend-tests: Blogs-backend-test Org-backend-test Api-backend-test

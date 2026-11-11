@@ -89,14 +89,27 @@ public partial class SubscriptionsPageViewModel : ViewModelBase
     private bool CanCancelSubscription() => !IsBusy && CurrentSubscription is { State: not "CREATING" };
 
     [RelayCommand(CanExecute = nameof(CanCancelSubscription))]
-    private Task CancelSubscriptionAsync() => RunAsync(async () =>
+    private async Task CancelSubscriptionAsync()
     {
         if (!ConfirmCancellation)
-            throw new InvalidOperationException("Cochez la confirmation de résiliation avant de continuer.");
+        {
+            var confirmed = await App.ConfirmAsync(
+                "Résilier l’abonnement ?",
+                "Cette action met fin aux futurs renouvellements. Les droits déjà acquis restent conservés.",
+                confirmText: "Résilier",
+                cancelText: "Annuler");
+            if (!confirmed)
+            {
+                StatusMessage = "Cochez la confirmation de résiliation avant de continuer.";
+                return;
+            }
+            ConfirmCancellation = true;
+        }
+
         Apply(await _client.CancelAsync(CurrentSubscription!.Id));
         ConfirmCancellation = false;
         StatusMessage = "Abonnement résilié. Les droits déjà acquis restent soumis aux périodes payées.";
-    });
+    }
 
     private void Apply(ResourceSubscriptionsResponse response)
     {

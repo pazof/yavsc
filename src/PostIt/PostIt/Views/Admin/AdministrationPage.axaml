@@ -75,6 +75,8 @@
                    Height="8"/>
       <TextBlock Text="{Binding StatusMessage}"
                  TextWrapping="Wrap"/>
+      <Button x:Name="OpenResourceUsageRelief" Content="Effacer des points de consommation"
+              Command="{Binding OpenResourceUsageReliefCommand}" IsEnabled="{Binding !IsBusy}"/>
       <CheckBox Content="Je confirme la prochaine suppression, exclusion, régénération ou import."
                 IsChecked="{Binding ConfirmDestructiveAction, Mode=TwoWay}"/>
       <Button Content="Purger les paiements résiduels des comptes retirés depuis un an"
