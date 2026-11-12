@@ -69,10 +69,7 @@ jobs:
         YAVSC_API_TEST_NPGSQL_ADMIN_CONNECTION: Host=127.0.0.1;Port=55432;Database=postgres;Username=postgres;Password=postgres;Include Error Detail=true
       run: |
         echo "🚀 Lancement des tests..."
-        cd /src/_src && dotnet test \
-          --report-xunit \
-          --report-xunit-html \
-          --report-xunit-html-filename "test-results.html"
+        cd /src/_src && make test
         TEST_EXIT_CODE=$?
         echo "Test exit code: $TEST_EXIT_CODE"
         if [ $TEST_EXIT_CODE -ne 0 ]; then

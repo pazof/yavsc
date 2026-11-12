@@ -7,6 +7,7 @@ using PostIt.Views;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class ActivityNavigationTests
 {
     [AvaloniaFact]

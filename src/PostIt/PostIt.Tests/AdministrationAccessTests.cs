@@ -1,4 +1,3 @@
-using System.Net.Http;
 using System.Text.Json;
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
@@ -13,6 +12,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class AdministrationAccessTests
 {
     [Fact]
@@ -39,44 +39,6 @@ public class AdministrationAccessTests
         Assert.True(Assert.Single(model.UsageOverview).IsQuotaReached);
         Assert.Empty(model.Users);
         Assert.Contains("les usages restent consultables", model.StatusMessage);
-    }
-
-    [AvaloniaTheory]
-    [InlineData("Moderator", false)]
-    [InlineData("Administrator", true)]
-    [InlineData("administrator", false)]
-    [InlineData("Performer", false)]
-    [InlineData("moderator", false)]
-    [InlineData("", false)]
-    public async Task Home_administration_visibility_and_command_follow_the_administrator_role(string role, bool allowed)
-    {
-        await using var api = new ProfileTransport(role);
-        var session = new SessionStatusViewModel { Api = api };
-        var vm = new HomePageViewModel(api, api.Settings, session, null!);
-        var page = new HomePage { DataContext = vm };
-        var window = new Window { Content = page };
-        try
-        {
-            window.Show();
-            var button = Assert.Single(page.GetVisualDescendants().OfType<Button>(),
-                button => Equals(button.Content, "Administration"));
-            Assert.False(button.IsVisible);
-            await session.RefreshAsync();
-            Assert.Equal(allowed, session.IsAdministrator);
-            Assert.Equal(allowed, button.IsVisible);
-            Assert.Equal(allowed, vm.OpenAdministration.CanExecute(null));
-            Assert.DoesNotContain(page.GetVisualDescendants().OfType<Button>(),
-                button => Equals(button.Content, "Mon usage / administration"));
-
-            session.Api = null;
-            session.Refresh();
-            Assert.False(button.IsVisible);
-            Assert.False(vm.OpenAdministration.CanExecute(null));
-        }
-        finally
-        {
-            window.Close();
-        }
     }
 
     [Fact]

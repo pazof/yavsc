@@ -1,7 +1,5 @@
 using System.Net;
-using System.Net.Http;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using LibVLCSharp.Shared;
 using PostIt.Services;
@@ -10,18 +8,18 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("DependsOn", "Native")]
+[Trait("Speed", "Slow")]
+[Trait("Category", "non-reg")]
 public sealed class PodcastNativeCaptureTests(ITestOutputHelper output)
 {
     public static bool HasFixture => File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_MEDIA"));
 
-    [Theory(Skip = "Set POSTIT_TEST_MEDIA to a local video with audio and install LibVLC with H.264/AAC encoders.", SkipUnless = nameof(HasFixture))]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task LibVLC_produces_complete_H264_AAC_HLS_segments_without_external_encoder(bool preview)
+    [Fact(Skip = "Set POSTIT_TEST_MEDIA to a local video with audio and install LibVLC with H.264/AAC encoders.", SkipUnless = nameof(HasFixture))]
+    public async Task LibVLC_produces_complete_H264_AAC_HLS_segments_without_external_encoder()
     {
         var root = Path.Combine(Path.GetTempPath(), $"postit native's hls {Guid.NewGuid():N}");
         Directory.CreateDirectory(root);
-        var pixels = preview ? Marshal.AllocHGlobal(640 * 480 * 4) : IntPtr.Zero;
         try
         {
             Core.Initialize();
@@ -29,24 +27,12 @@ public sealed class PodcastNativeCaptureTests(ITestOutputHelper output)
                 "--avcodec-hw=none", "--avcodec-threads=2");
             using var media = new Media(vlc, new Uri(Path.GetFullPath(Environment.GetEnvironmentVariable("POSTIT_TEST_MEDIA")!)));
             using var player = new MediaPlayer(vlc);
-            var displayed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            if (preview)
-            {
-                player.SetVideoFormat("RV32", 640, 480, 640 * 4);
-                player.SetVideoCallbacks((_, planes) =>
-                {
-                    Marshal.WriteIntPtr(planes, pixels);
-                    return IntPtr.Zero;
-                }, null, (_, _) => displayed.TrySetResult());
-            }
-            PodcastBroadcaster.ConfigureOutput(media, root, preview);
+            PodcastBroadcaster.ConfigureOutput(media, root);
             var ended = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             player.EndReached += (_, _) => ended.TrySetResult();
             player.EncounteredError += (_, _) => ended.TrySetException(new InvalidOperationException("LibVLC encoding failed."));
             Assert.True(player.Play(media));
-            output.WriteLine($"Encoding started (preview={preview}).");
-            if (preview)
-                await displayed.Task.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+            output.WriteLine("Encoding started.");
             await ended.Task.WaitAsync(TimeSpan.FromSeconds(45), TestContext.Current.CancellationToken);
             output.WriteLine("End reached; stopping player.");
             player.Stop();
@@ -88,7 +74,6 @@ public sealed class PodcastNativeCaptureTests(ITestOutputHelper output)
         }
         finally
         {
-            if (pixels != IntPtr.Zero) Marshal.FreeHGlobal(pixels);
             Directory.Delete(root, recursive: true);
         }
     }

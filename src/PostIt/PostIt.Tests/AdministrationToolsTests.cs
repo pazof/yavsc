@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
 using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
@@ -13,6 +12,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class AdministrationToolsTests
 {
     [Fact]

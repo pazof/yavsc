@@ -11,6 +11,7 @@ namespace PostIt.Tests;
 /// control is render-agnostic, and the rendering is plain Polyline
 /// reconstruction that we'll exercise manually in PostIt.Desktop.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class SignaturePageViewModelTests
 {
     [Fact]

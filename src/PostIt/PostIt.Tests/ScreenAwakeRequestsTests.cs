@@ -2,6 +2,7 @@ using PostIt.Services;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class ScreenAwakeRequestsTests
 {
     [Fact]

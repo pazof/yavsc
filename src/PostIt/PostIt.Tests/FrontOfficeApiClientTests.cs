@@ -1,4 +1,3 @@
-using System.Net.Http;
 using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
@@ -9,6 +8,7 @@ namespace PostIt.Tests;
 /// the PostIt signature payload, using a recording fake
 /// <see cref="IYavscApiClient"/> (no network).
 /// </summary>
+[Trait("Category", "non-reg")]
 public class FrontOfficeApiClientTests
 {
     private static QueryAcceptanceRequestDto SampleBody() => new()

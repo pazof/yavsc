@@ -2,6 +2,7 @@ using PostIt.Android.Services;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class CameraFrameClockTests
 {
     [Theory]

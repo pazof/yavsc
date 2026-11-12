@@ -10,6 +10,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class ResourceUsageReliefPageTests
 {
     private static ResourceUsageSummary Usage(string id, decimal consumption, decimal credits = 0m) => new()

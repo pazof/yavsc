@@ -10,6 +10,7 @@ using Yavsc.Models.Haircut;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class BillingCommandPageViewModelTests
 {
     [Fact]

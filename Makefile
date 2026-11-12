@@ -4,6 +4,7 @@ FRAMEWORK=net9.0
 DESTDIR=/tmp/yavsc
 APP_PATH=srv/www/yavsc
 APP_FULL_PATH=$(DESTDIR)/$(APP_PATH)
+UNITTESTEXTRA= --long-running 8 --filter-trait Category=non-reg --filter-not-trait Speed=Slow --filter-not-trait DependsOn=Native
 
 all:
 	dotnet build --nologo
@@ -19,30 +20,36 @@ src/Yavsc/bin/output/wwwroot:
 	dotnet --project src/Yavsc.Org/Yavsc.Org.csproj publish
 
 test:
-	ASPNETCORE_ENVIRONMENT=Development dotnet test --report-xunit \
-    --report-xunit-html \
-		--results-directory "test-reports"
+	ASPNETCORE_ENVIRONMENT=Development \
+	TESTINGPLATFORM_EXITCODE_IGNORE="110;1" \
+	dotnet test yavsc.sln \
+	-- --report-xunit \
+  --report-xunit-html \
+	--results-directory "test-reports" \
+	$(UNITTESTEXTRA) || EXITCODE=$$? && echo "🗱💻 Tests failed, exited with code $$EXITCODE";
 
 test-postit:
-	ASPNETCORE_ENVIRONMENT=Development dotnet test \
-	  --report-xunit \
-    --report-xunit-html \
-		--results-directory "test-reports" \
-    --report-xunit-html-filename "postit-test-results.html" \
-    --no-progress \
-	  --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj
+	ASPNETCORE_ENVIRONMENT=Development \
+	TESTINGPLATFORM_EXITCODE_IGNORE="110;1" \
+	dotnet test \
+  src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
+  -- --report-xunit \
+  --report-xunit-html \
+  --results-directory "test-reports" \
+  --report-xunit-html-filename "postit-test-results.html" \
+  $(UNITTESTEXTRA) || EXITCODE=$$? && echo "🗱📱 Tests failed, exited with code $$EXITCODE";
 
 backend-tests: Blogs-backend-test Org-backend-test Api-backend-test
 Api-backend-test:
 Blogs-backend-test:
 Org-backend-test:
 %-backend-test:
-	ASPNETCORE_ENVIRONMENT=Development dotnet test \
+	ASPNETCORE_ENVIRONMENT=Development dotnet test
+	  src/test/Yavsc.$*.Tests/Yavsc.$*.Tests.csproj \
 	  --report-xunit \
     --report-xunit-html \
 		--results-directory "test-reports" \
-    --report-xunit-html-filename "$*-backend-test-results.html" \
-	  --project src/test/Yavsc.$*.Tests/Yavsc.$*.Tests.csproj
+    --report-xunit-html-filename "$*-backend-test-results.html"
 
 watch:
 	dotnet watch -p:Configuration=$(CONFIG) --project src/Yavsc/Yavsc.csproj

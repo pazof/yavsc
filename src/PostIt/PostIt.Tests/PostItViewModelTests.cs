@@ -10,6 +10,7 @@ using PostIt.Views.Blogs;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class PostItViewModelTests
 {
     [Fact]

@@ -5,6 +5,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class ResourceUsageApiClientTests
 {
     [Fact]

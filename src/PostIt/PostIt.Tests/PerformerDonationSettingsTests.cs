@@ -8,6 +8,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class PerformerDonationSettingsTests
 {
     [Theory]

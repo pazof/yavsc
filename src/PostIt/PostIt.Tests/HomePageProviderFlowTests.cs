@@ -3,6 +3,7 @@ using PostIt.ViewModels;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class HomePageProviderFlowTests
 {
     [Fact]

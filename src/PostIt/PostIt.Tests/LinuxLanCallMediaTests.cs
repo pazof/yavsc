@@ -8,6 +8,9 @@ using PostIt.Services;
 
 namespace PostIt.Tests;
 
+[Trait("DependsOn", "Native")]
+[Trait("Speed", "Slow")]
+[Trait("Category", "non-reg")]
 public sealed class LinuxLanCallMediaTests(ITestOutputHelper output)
 {
     public static bool HasFixture => OperatingSystem.IsLinux() &&

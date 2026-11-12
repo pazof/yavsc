@@ -9,6 +9,7 @@ namespace PostIt.Tests;
 /// even when Avalonia has not booted, otherwise the 2nd instance
 /// flashes its own MainWindow before shutting down.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class SchemeUrlDetectorTests
 {
     [Fact]

@@ -28,6 +28,7 @@ namespace PostIt.Tests;
 /// it reaches production.
 /// </para>
 /// </summary>
+[Trait("Category", "non-reg")]
 public class BearerScopeTests
 {
     /// <summary>

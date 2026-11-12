@@ -12,7 +12,8 @@ namespace PostIt.Tests;
 /// Skip conditions: the package is not installed on the connected device,
 /// or no device is connected via adb.
 /// </summary>
-[Trait("Category", "Platform-Android")]
+[Trait("Platform", "Android")]
+[Trait("Category", "non-reg")]
 public class AndroidAppLaunchTests
 {
     private const string PackageName = "fr.pschneider.postit";

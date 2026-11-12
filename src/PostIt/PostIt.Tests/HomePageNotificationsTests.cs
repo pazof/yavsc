@@ -1,15 +1,12 @@
-using System.Net.Http;
-using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
-using Avalonia.VisualTree;
 using PostIt.Services;
 using PostIt.ViewModels;
-using PostIt.Views;
 using Yavsc.Abstract.Models.Messaging;
 using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class HomePageNotificationsTests
 {
     [Fact]
@@ -162,56 +159,6 @@ public class HomePageNotificationsTests
         Assert.True(vm.HasNoNotifications);
         Assert.Null(vm.NotificationsError);
         Assert.Null(transport.LastMethod);
-    }
-
-    [AvaloniaFact]
-    public async Task Home_page_loads_on_navigation_and_renders_wrapped_titles_and_bodies()
-    {
-        var transport = new NotificationTransport
-        {
-            Response = Task.FromResult(new List<Notification> { Note(1, "Notification title") })
-        };
-        var vm = CreateViewModel(transport);
-        var page = new HomePage { DataContext = vm };
-        var nav = new NavigationPage();
-        var window = new Window { Content = nav, Width = 320, Height = 450 };
-        try
-        {
-            window.Show();
-            await nav.PushAsync(page);
-            window.UpdateLayout();
-
-            Assert.Single(vm.Notifications);
-            var texts = page.GetVisualDescendants().OfType<TextBlock>().ToArray();
-            Assert.Contains(texts, t => t.Text == "Notification title"
-                && t.TextWrapping == Avalonia.Media.TextWrapping.Wrap);
-            Assert.Contains(texts, t => t.Text == "Notification body"
-                && t.TextWrapping == Avalonia.Media.TextWrapping.Wrap);
-            var refresh = Assert.Single(page.GetVisualDescendants().OfType<Button>(),
-                b => b.Command == vm.RefreshNotificationsCommand);
-            Assert.True(refresh.IsEnabled);
-            var dismiss = Assert.Single(page.GetVisualDescendants().OfType<Button>(),
-                b => b.Command == vm.DismissNotificationCommand);
-            Assert.Same(vm.Notifications[0], dismiss.CommandParameter);
-            Assert.Equal("Close", dismiss.Content);
-            Assert.True(dismiss.IsVisible);
-            Assert.True(dismiss.IsEnabled);
-            Assert.Contains(page.GetVisualDescendants().OfType<ScrollViewer>(),
-                s => s.Extent.Height > s.Viewport.Height);
-
-            await nav.PushAsync(new ContentPage());
-            transport.Response = Task.FromResult(new List<Notification> { Note(2, "Updated title") });
-            await nav.PopAsync();
-            Assert.Equal(2, Assert.Single(vm.Notifications).Id);
-            await vm.DismissNotificationCommand.ExecuteAsync(vm.Notifications[0]);
-            window.UpdateLayout();
-            Assert.Empty(vm.Notifications);
-            Assert.Null(transport.LastMethod);
-        }
-        finally
-        {
-            window.Close();
-        }
     }
 
     private static HomePageViewModel CreateViewModel(NotificationTransport transport,

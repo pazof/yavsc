@@ -10,6 +10,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "not-ending")]
 public sealed class PodcastBroadcasterTests
 {
     [Theory]

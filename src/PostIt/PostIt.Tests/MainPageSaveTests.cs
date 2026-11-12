@@ -4,7 +4,6 @@ using Avalonia.VisualTree;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using PostIt.ViewModels;
-using PostIt.Views;
 using PostIt.Views.Blogs;
 namespace PostIt.Tests;
 
@@ -30,6 +29,7 @@ namespace PostIt.Tests;
 /// pass once the VM owns a dedicated <c>Title</c>/<c>Article</c>
 /// buffer that the XAML binds to and the Save command consumes.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 public class MainPageSaveTests
 {
     [AvaloniaFact]

@@ -5,6 +5,7 @@ using Yavsc.Abstract.Chat.Calls;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class CallSignalingClientTests
 {
     [Fact]

@@ -14,6 +14,7 @@ namespace PostIt.Tests;
 /// when a template is applied; see
 /// <see cref="Pointer_handlers_attach_when_capture_area_is_set"/>.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class SignaturePadControlTests
 {
     // --- SignaturePadData (pure) ---------------------------------------

@@ -28,6 +28,7 @@ namespace PostIt.Tests;
 /// it actually manifested in production.
 /// </para>
 /// </summary>
+[Trait("Category", "non-reg")]
 public class BlogPostAuthorDtoTests
 {
     private static readonly JsonSerializerOptions CaseInsensitiveJson

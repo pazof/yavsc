@@ -15,6 +15,8 @@ namespace PostIt.Tests;
 /// Uses the project's <see cref="OIDCStubAuthority"/> for the IdP and
 /// a tiny in-process HTTP listener for the API server side.
 /// </summary>
+[Trait("Category", "Integration")]
+[Trait("Category", "non-reg")]
 public class YavscApiClientTests
 {
     [Theory]

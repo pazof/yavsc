@@ -2,6 +2,7 @@ using PostIt.Views.Commands;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class RdvPageTests
 {
     [Fact]

@@ -18,6 +18,7 @@ namespace PostIt.Tests;
 /// (relative, authority-less) instead of
 /// <c>https://{authority}/files/{user}/blogs/{id}/{name}</c>.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 public class BlogAttachmentLinkTests
 {
     [Theory]

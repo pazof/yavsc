@@ -2,6 +2,7 @@ using System.Text.Json;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class SettingsLoadTests
 {
     /// <summary>

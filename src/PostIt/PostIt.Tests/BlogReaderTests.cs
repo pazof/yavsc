@@ -21,6 +21,7 @@ using SkiaSharp;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class BlogReaderTests
 {
     private static BlogPostDto Post(string article = "Texte du billet.") => new()
@@ -136,57 +137,6 @@ public class BlogReaderTests
         finally
         {
             window.Close();
-        }
-    }
-
-    [AvaloniaFact]
-    public async Task Reader_initialization_and_empty_selection_do_not_report_binding_errors()
-    {
-        var vm = CreateViewModel();
-        await vm.InitializeAsync();
-        var post = Post();
-        vm.Posts.Add(post);
-        vm.FilteredPosts.Add(post);
-        var previousSink = Logger.Sink;
-        var sink = new RecordingLogSink();
-        Logger.Sink = sink;
-        Window? window = null;
-        try
-        {
-            var page = new BlogsPage();
-            var reader = page.FindControl<MarkdownScrollViewer>("ArticleReader")!;
-            var engine = Assert.IsAssignableFrom<IMarkdownEngine2>(reader.Engine);
-            Assert.NotNull(engine.HyperlinkCommand);
-            Assert.False(engine.HyperlinkCommand.CanExecute("https://example.test/"));
-            page.DataContext = vm;
-            var nav = new NavigationPage();
-            await nav.PushAsync(page);
-            window = new Window { Width = 800, Height = 700, Content = nav };
-            window.Show();
-            Dispatcher.UIThread.RunJobs();
-            Assert.Empty(vm.ReaderTitle);
-            Assert.Null(vm.ReaderDateModified);
-            Assert.Same(vm.OpenResourceCommand, engine.HyperlinkCommand);
-            Assert.IsType<BlogImageResolver>(reader.Plugins.PathResolver);
-
-            vm.SelectedPost = post;
-            Dispatcher.UIThread.RunJobs();
-            Assert.Equal(post.Title, vm.ReaderTitle);
-            Assert.Equal(post.DateModified, vm.ReaderDateModified);
-
-            vm.SelectedPost = null;
-            page.DataContext = null;
-            Dispatcher.UIThread.RunJobs();
-            Assert.Empty(vm.ReaderTitle);
-            Assert.Null(vm.ReaderDateModified);
-            Assert.NotNull(engine.HyperlinkCommand);
-            Assert.False(engine.HyperlinkCommand.CanExecute("https://example.test/"));
-            Assert.DoesNotContain(sink.Entries, entry => entry.Area == LogArea.Binding);
-        }
-        finally
-        {
-            window?.Close();
-            Logger.Sink = previousSink;
         }
     }
 

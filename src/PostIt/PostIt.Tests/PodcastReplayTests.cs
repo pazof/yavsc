@@ -9,6 +9,9 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("DependsOn", "Native")]
+[Trait("Speed", "Slow")]
+[Trait("Category", "non-reg")]
 public sealed class PodcastReplayTests
 {
     private static readonly Guid Id = Guid.NewGuid();

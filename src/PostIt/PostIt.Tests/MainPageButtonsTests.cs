@@ -9,7 +9,6 @@ using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
 using PostIt.Views.Blogs;
-using PostIt.Helpers;
 
 namespace PostIt.Tests;
 
@@ -50,6 +49,7 @@ namespace PostIt.Tests;
 ///     stack.</item>
 /// </list>
 /// </summary>
+[Trait("Category", "non-reg")]
 public class MainPageButtonsTests
 {
     [AvaloniaFact]

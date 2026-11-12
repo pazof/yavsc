@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using PostIt.Controls;
 using PostIt.ViewModels;
 using Yavsc.Api.Client;
@@ -19,6 +16,7 @@ namespace PostIt.Tests;
 /// <c>TestApp</c> makes <c>GoBackAsync</c> a no-op, so the success paths
 /// run to completion without navigation side effects.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class EstimateValidationPageViewModelTests
 {
     private static EstimateDto SampleEstimate(long? commandId = 42) => new()

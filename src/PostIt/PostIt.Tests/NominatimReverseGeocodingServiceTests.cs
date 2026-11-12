@@ -4,6 +4,7 @@ using PostIt.Services;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class NominatimReverseGeocodingServiceTests
 {
     [Fact]

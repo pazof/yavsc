@@ -14,10 +14,10 @@ using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.ViewModels.Chat;
 using PostIt.Views;
-using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class MessagingSessionTests
 {
     [Fact]

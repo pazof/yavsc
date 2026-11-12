@@ -47,6 +47,7 @@ namespace PostIt.Tests;
 /// <c>ExecutionTask</c> to completion, to avoid blocking on the
 /// (platform-dependent) picker.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 public class MyFilesPageHeadlessTests
 {
     private static (MyFilesPage page, MyFilesViewModel vm, StubFsApi api) CreatePage()

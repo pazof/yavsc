@@ -1,9 +1,9 @@
-using System.Net.Http;
 using Yavsc.Api.Client;
 using Yavsc.Billing;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class InvoicesApiClientTests
 {
     [Fact]

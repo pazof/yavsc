@@ -17,6 +17,7 @@ namespace PostIt.Tests;
 /// if the message control regresses to a plain <c>TextBlock</c>,
 /// selectability is lost and the test fails.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class StatusBarTests
 {
     [AvaloniaFact]

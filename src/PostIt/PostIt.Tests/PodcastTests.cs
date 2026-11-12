@@ -8,6 +8,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class PodcastTests
 {
     private static readonly Guid Id = Guid.Parse("9e2f6d47-2b9a-47ae-a870-073980bf2628");

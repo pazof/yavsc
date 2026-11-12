@@ -44,6 +44,7 @@ namespace PostIt.Tests;
 /// <see cref="BlogAclApiClient"/> / <see cref="CircleApiClient"/>
 /// talking to it.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 public class PostAclDialogTests
 {
     /// <summary>

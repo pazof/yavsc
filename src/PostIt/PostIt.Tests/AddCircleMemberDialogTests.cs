@@ -2,7 +2,6 @@
 using Avalonia;
 using Avalonia.Headless.XUnit;
 using Microsoft.Extensions.DependencyInjection;
-using PostIt.Helpers;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -29,6 +28,7 @@ namespace PostIt.Tests;
 /// click via <c>button.Command?.Execute(...)</c> + flush
 /// any async command before asserting.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 public class AddCircleMemberDialogTests
 {
     /// <summary>

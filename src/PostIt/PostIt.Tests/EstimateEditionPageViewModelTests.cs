@@ -1,4 +1,3 @@
-using System.Net.Http;
 using PostIt.Models;
 using PostIt.ViewModels;
 using Yavsc;
@@ -6,6 +5,7 @@ using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
 
+[Trait("Category", "non-reg")]
 public class EstimateEditionPageViewModelTests
 {
     private static BillingQuerySummaryDto SampleQuery() => new()

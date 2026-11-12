@@ -8,6 +8,9 @@ using Yavsc.Abstract.Chat.Calls;
 
 namespace PostIt.Tests;
 
+[Trait("DependsOn", "Native")]
+[Trait("Speed", "Slow")]
+[Trait("Category", "non-reg")]
 public sealed class WebRtcCallViewModelTests
 {
     private static readonly CallIceServer[] Turn = [new(["turn:localhost:3478"], "temporary", "password")];
