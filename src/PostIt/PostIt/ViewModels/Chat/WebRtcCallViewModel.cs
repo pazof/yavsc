@@ -168,6 +168,8 @@ public partial class WebRtcCallViewModel : ObservableObject, IAsyncDisposable
                 return;
             }
             _call = call;
+            Room = call.RoomName;
+            Target = call.Caller;
             _caller = false;
             _callLifetime = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
             Busy = Incoming = true;

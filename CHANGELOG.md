@@ -6,6 +6,8 @@
 
 ### Added
 
+* [PostIt/Calls] Move WebRTC and direct SRTP controls out of the text chat into a dedicated call page, opened for a selected room member or an incoming invitation. Include resolved room-member names in chat snapshots for call targeting, without replacing internal connection identifiers. Preserve the call when leaving the chat for that page and hang up when leaving the call page.
+
 * [PostIt/Contacts] Add a Contacts page listing circle members and their associated circles, with duplicate members merged. Presence and calling contacts outside a shared chat room are not yet implemented.
 
 * [PostIt/Calls] Restore the direct IPv4/IPv6 VLC/SRTP call panel alongside WebRTC on supported platforms, route invitations to the matching transport, and retain explicit IP disclosure consent and server privacy policy. Add transport routing and lifecycle regressions.

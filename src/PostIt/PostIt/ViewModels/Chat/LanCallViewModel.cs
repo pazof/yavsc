@@ -251,6 +251,8 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
             if (_call != null) throw new InvalidOperationException("Invitation concurrente inattendue.");
             if (call.RelayOnly) throw new InvalidOperationException("Le mode LAN ne peut pas masquer les adresses IP.");
             _call = call;
+            Room = call.RoomName;
+            Target = call.Caller;
             Busy = true;
             Incoming = true;
             Status = $"{call.Caller} propose un appel SRTP dans {call.RoomName}. Acceptez ou refusez.";

@@ -89,6 +89,51 @@ public sealed class CallHubTests
     }
 
     [Fact]
+    public async Task Room_snapshot_resolves_all_members_without_changing_internal_connection_ids()
+    {
+        using var f = new Fixture();
+        f.Connections.OnConnected("alice-2", "alice", false);
+        f.Connections.RoomInfo.Users.AddRange(["bob-1", "alice-2"]);
+        f.Connections.RoomInfo.Ops.Add("alice-1");
+        using var hub = f.Hub("alice", "alice-1");
+        hub.Groups = new Groups();
+        hub.Clients = new RoomClients(f.Delivery);
+
+        var snapshot = await hub.Join("General");
+
+        Assert.Equal(["bob", "alice"], snapshot.UserNames);
+        Assert.Equal(["bob-1", "alice-2"], snapshot.Users);
+        Assert.Equal(["alice-1"], snapshot.Ops);
+        Assert.Null(f.Connections.RoomInfo.UserNames);
+        Assert.NotSame(f.Connections.RoomInfo.Users, snapshot.Users);
+        Assert.Same(snapshot, Assert.Single(f.Delivery.Messages).Arguments[0]);
+    }
+
+    private sealed class Groups : IGroupManager
+    {
+        public Task AddToGroupAsync(string connectionId, string groupName, CancellationToken ct = default) =>
+            Task.CompletedTask;
+        public Task RemoveFromGroupAsync(string connectionId, string groupName, CancellationToken ct = default) =>
+            throw new NotSupportedException();
+    }
+
+    private sealed class RoomClients(RecordingCallHub delivery) : IHubCallerClients
+    {
+        public IClientProxy Caller => delivery.Client("alice-1");
+        public IClientProxy All => throw new NotSupportedException();
+        public IClientProxy Others => throw new NotSupportedException();
+        public IClientProxy AllExcept(IReadOnlyList<string> ids) => throw new NotSupportedException();
+        public IClientProxy Client(string id) => throw new NotSupportedException();
+        public IClientProxy Clients(IReadOnlyList<string> ids) => throw new NotSupportedException();
+        public IClientProxy Group(string name) => throw new NotSupportedException();
+        public IClientProxy GroupExcept(string name, IReadOnlyList<string> ids) => throw new NotSupportedException();
+        public IClientProxy Groups(IReadOnlyList<string> names) => throw new NotSupportedException();
+        public IClientProxy OthersInGroup(string name) => throw new NotSupportedException();
+        public IClientProxy User(string id) => throw new NotSupportedException();
+        public IClientProxy Users(IReadOnlyList<string> ids) => throw new NotSupportedException();
+    }
+
+    [Fact]
     public async Task Invitation_requires_existing_accounts_presence_and_the_authenticated_connection()
     {
         using var f = new Fixture();
@@ -174,6 +219,7 @@ public sealed class CallHubTests
     private sealed class Connections : IConnexionManager
     {
         public HashSet<string> Present { get; } = ["alice", "bob"];
+        public ChatRoomInfo RoomInfo { get; } = new() { Name = "General" };
         private readonly Dictionary<string, string> _names = [];
         public string GetUserName(string cxId) => _names.GetValueOrDefault(cxId)!;
         public bool IsConnected(string user) => _names.ContainsValue(user);
@@ -189,7 +235,11 @@ public sealed class CallHubTests
         public bool DeOp(string room, string user) => throw new NotSupportedException();
         public bool Hop(string room, string user) => throw new NotSupportedException();
         public bool DeHop(string room, string user) => throw new NotSupportedException();
-        public bool TryGetChanInfo(string room, out ChatRoomInfo info) => throw new NotSupportedException();
+        public bool TryGetChanInfo(string room, out ChatRoomInfo info)
+        {
+            info = RoomInfo;
+            return room == RoomInfo.Name;
+        }
         public IEnumerable<ChannelShortInfo> ListChannels(string pattern) => throw new NotSupportedException();
     }
 }

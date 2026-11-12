@@ -1,4 +1,6 @@
 using Avalonia.Headless.XUnit;
+using Avalonia.Controls;
+using PostIt.Views.Chat;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.ViewModels.Chat;
@@ -87,6 +89,71 @@ public sealed class CallTransportRoutingTests
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         timeout.CancelAfter(TimeSpan.FromSeconds(5));
         while (!condition()) await Task.Delay(10, timeout.Token);
+    }
+
+    [AvaloniaFact]
+    public async Task Selecting_a_room_member_prepares_both_transports_without_inviting()
+    {
+        var signaling = new Signaling();
+        await using var lan = new LanCallViewModel(signaling);
+        await using var webRtc = new WebRtcCallViewModel(signaling);
+        var chat = new ChatViewModel(settings: new Settings())
+        {
+            LanCall = lan, VideoCall = webRtc, IsConnected = true, SelectedRoom = "General",
+            FocusedUsers = new()
+        };
+        chat.FocusedUsers.Add("bob");
+        Assert.False(chat.OpenCallCommand.CanExecute(null));
+        chat.SelectedUser = "bob";
+        Assert.True(chat.OpenCallCommand.CanExecute(null));
+        var page = chat.PrepareCallPage();
+        Assert.Same(chat, page.Chat);
+        Assert.Equal("bob", lan.Target);
+        Assert.Equal("bob", webRtc.Target);
+        Assert.False(lan.Busy);
+        Assert.False(webRtc.Busy);
+        chat.FocusedUsers.Remove("bob");
+        Assert.Null(chat.SelectedUser);
+        Assert.False(chat.OpenCallCommand.CanExecute(null));
+        chat.FocusedUsers.Add("bob");
+        chat.SelectedUser = "bob";
+        chat.SelectedRoom = "Other";
+        Assert.Null(chat.SelectedUser);
+        Assert.False(chat.OpenCallCommand.CanExecute(null));
+    }
+
+    [AvaloniaTheory]
+    [InlineData(CallTransports.LanSrtp)]
+    [InlineData(CallTransports.WebRtc)]
+    public async Task Leaving_text_chat_preserves_invitation_and_leaving_call_page_ends_it(string transport)
+    {
+        var signaling = new Signaling();
+        await using var lan = new LanCallViewModel(signaling);
+        await using var webRtc = new WebRtcCallViewModel(signaling);
+        var chat = new ChatViewModel(settings: new Settings())
+        {
+            LanCall = lan, VideoCall = webRtc, IsConnected = true, SelectedRoom = "General",
+            FocusedUsers = new()
+        };
+        var call = new CallSession(Guid.NewGuid(), "General", "alice", "bob", false,
+            DateTimeOffset.UtcNow.AddMinutes(1), transport);
+        signaling.Invite(call);
+        await WaitAsync(() => lan.Incoming || webRtc.Incoming);
+        Assert.True(chat.ShowCallCommand.CanExecute(null));
+        var window = new Window { Content = new ChatPage { DataContext = chat } };
+        try
+        {
+            window.Show();
+            window.Content = new CallPage { DataContext = new CallPageViewModel(chat) };
+            Assert.Empty(signaling.EndedCalls);
+            Assert.True(lan.Incoming || webRtc.Incoming);
+            window.Content = null;
+            await WaitAsync(() => signaling.EndedCalls.Count != 0);
+            Assert.Equal([call.Id], signaling.EndedCalls);
+            Assert.False(lan.Busy);
+            Assert.False(webRtc.Busy);
+        }
+        finally { window.Close(); }
     }
 
     private sealed class Signaling : IWebRtcCallSignaling

@@ -1,0 +1,101 @@
+<ContentPage
+  x:Class="PostIt.Views.Chat.CallPage"
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="using:PostIt.ViewModels.Chat"
+  xmlns:services="using:PostIt.Services"
+  x:DataType="vm:CallPageViewModel"
+  Header="Appel audio-video">
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="16" Spacing="16">
+      <TextBlock Text="Choisissez WebRTC ou SRTP direct. Les deux participants doivent etre presents dans le meme salon. Quitter cette page termine l'appel."
+                 TextWrapping="Wrap" />
+      <StackPanel IsVisible="{Binding Chat.SupportsVideoCalls}">
+        <TextBlock Text="Appel video WebRTC" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8" />
+        <StackPanel DataContext="{Binding Chat.VideoCall}" x:DataType="vm:WebRtcCallViewModel"
+                    IsEnabled="{Binding $parent[ContentPage].((vm:CallPageViewModel)DataContext).Chat.IsConnected}" Spacing="8">
+          <TextBlock Text="Android et Linux : medias chiffres par WebRTC (DTLS-SRTP), ICE/STUN/TURN. Activez le masquage IP dans votre profil pour imposer un relais TURN aux deux participants, sans repli direct. La camera et le microphone ne demarrent qu'apres acceptation."
+                     TextWrapping="Wrap" />
+          <WrapPanel IsEnabled="{Binding CanConfigure}" IsVisible="{Binding !RemoteVideo}">
+            <Button Content="Actualiser les peripheriques" Command="{Binding RefreshDevicesCommand}" Margin="0,0,8,4" />
+            <ComboBox Width="190" ItemsSource="{Binding Cameras}" SelectedItem="{Binding Camera}"
+                      PlaceholderText="Camera" Margin="0,0,8,4">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="services:CaptureDevice">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ComboBox Width="190" ItemsSource="{Binding Microphones}" SelectedItem="{Binding Microphone}"
+                      PlaceholderText="Microphone" Margin="0,0,8,4">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="services:CaptureDevice">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="{Binding Target}" VerticalAlignment="Center" Margin="0,0,8,4" />
+          </WrapPanel>
+          <CheckBox Content="Si le masquage IP est desactive, je consens a partager mon adresse IP avec le pair."
+                    IsChecked="{Binding AllowAddressDisclosure}" IsEnabled="{Binding CanConfigure}"
+                    IsVisible="{Binding !RemoteVideo}" />
+          <WrapPanel>
+            <Button Content="Appeler dans la salle active" Command="{Binding InviteCommand}" IsEnabled="{Binding !Busy}" Margin="0,0,8,4" />
+            <Button Content="Accepter" Command="{Binding AcceptCommand}" IsEnabled="{Binding Incoming}" Margin="0,0,8,4" />
+            <Button Content="Refuser / Raccrocher" Command="{Binding HangupCommand}" IsEnabled="{Binding Busy}" Margin="0,0,8,4" />
+          </WrapPanel>
+          <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
+          <Grid ColumnDefinitions="*,2*" Height="280" IsVisible="{Binding !!RemoteVideo}">
+            <ContentControl Content="{Binding LocalVideo}" Margin="0,0,8,0" />
+            <ContentControl Grid.Column="1" Content="{Binding RemoteVideo}" />
+          </Grid>
+        </StackPanel>
+      </StackPanel>
+      <StackPanel IsVisible="{Binding Chat.SupportsLanCalls}">
+        <TextBlock Text="Appel direct IPv4/IPv6 SRTP (LAN/VPN ou IP publique)"
+                   FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,8" />
+        <StackPanel DataContext="{Binding Chat.LanCall}" x:DataType="vm:LanCallViewModel"
+                    IsEnabled="{Binding $parent[ContentPage].((vm:CallPageViewModel)DataContext).Chat.IsConnected}" Spacing="8">
+          <TextBlock Text="Connexion directe sans TURN ni traversee NAT : le pair connait votre IP. Le masquage IP doit etre desactive dans les profils des deux participants. Les medias sont chiffres par SRTP. Ouvrez le port UDP pair choisi et le suivant ; HTTPS est requis pour la signalisation. Casque recommande."
+                     TextWrapping="Wrap" />
+          <WrapPanel IsEnabled="{Binding CanConfigure}" IsVisible="{Binding !RemoteVideo}">
+            <Button Content="Actualiser les peripheriques" Command="{Binding RefreshDevicesCommand}" Margin="0,0,8,4" />
+            <ComboBox Width="160" ItemsSource="{Binding Addresses}" SelectedItem="{Binding Address}"
+                      PlaceholderText="Adresse IPv4/IPv6 de cette machine" Margin="0,0,8,4" />
+            <TextBox Width="80" Text="{Binding Port}" PlaceholderText="Port pair" Margin="0,0,8,4" />
+            <ComboBox Width="190" ItemsSource="{Binding Cameras}" SelectedItem="{Binding Camera}"
+                      PlaceholderText="Camera" Margin="0,0,8,4">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="services:CaptureDevice">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ComboBox Width="190" ItemsSource="{Binding Microphones}" SelectedItem="{Binding Microphone}"
+                      PlaceholderText="Microphone" Margin="0,0,8,4">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="services:CaptureDevice">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="{Binding Target}" VerticalAlignment="Center" Margin="0,0,8,4" />
+          </WrapPanel>
+          <CheckBox Content="Je consens a partager mon adresse IP avec le pair."
+                    IsChecked="{Binding AllowAddressDisclosure}" IsEnabled="{Binding CanConfigure}"
+                    IsVisible="{Binding !RemoteVideo}" />
+          <WrapPanel>
+            <Button Content="Appeler dans la salle active" Command="{Binding InviteCommand}" IsEnabled="{Binding !Busy}" Margin="0,0,8,4" />
+            <Button Content="Accepter" Command="{Binding AcceptCommand}" IsEnabled="{Binding Incoming}" Margin="0,0,8,4" />
+            <Button Content="Refuser / Raccrocher" Command="{Binding HangupCommand}" IsEnabled="{Binding Busy}" Margin="0,0,8,4" />
+          </WrapPanel>
+          <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
+          <Grid ColumnDefinitions="*,2*" Height="280" IsVisible="{Binding !!RemoteVideo}">
+            <ContentControl Content="{Binding LocalVideo}" Margin="0,0,8,0" />
+            <ContentControl Grid.Column="1" Content="{Binding RemoteVideo}" />
+          </Grid>
+        </StackPanel>
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</ContentPage>

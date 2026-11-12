@@ -7,5 +7,6 @@ namespace PostIt.ViewModels.Chat
     {
         public string? Name { get; set; }
         public List<string> Users { get; set; } = new();
+        public List<string>? UserNames { get; set; }
     }
 }

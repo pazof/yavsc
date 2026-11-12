@@ -163,8 +163,19 @@ namespace Yavsc.Server.Hubs
             }
 
             _logger.LogInformation($"returning channel info");
-            await Clients.Caller.SendAsync("joint", channelInfo);
-            return channelInfo;
+            var snapshot = new ChatRoomInfo
+            {
+                Name = channelInfo.Name,
+                Topic = channelInfo.Topic,
+                Users = [.. channelInfo.Users],
+                Ops = [.. channelInfo.Ops],
+                Hops = [.. channelInfo.Hops],
+                UserNames = channelInfo.Users.Concat(channelInfo.Ops).Concat(channelInfo.Hops)
+                    .Select(id => _cxManager.GetUserName(id))
+                    .Where(name => !string.IsNullOrWhiteSpace(name)).Distinct().ToList()
+            };
+            await Clients.Caller.SendAsync("joint", snapshot);
+            return snapshot;
         }
 
         public void Register(string room)

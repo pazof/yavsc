@@ -25,6 +25,7 @@ namespace Yavsc
     {
         public string Name;
         public List<string> Users = new List<string>();
+        public List<string>? UserNames { get; set; }
         public List<string> Ops = new List<string>();
         public List<string> Hops = new List<string>();
         public string Topic;

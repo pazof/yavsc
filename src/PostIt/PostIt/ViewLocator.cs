@@ -70,6 +70,7 @@ public class ViewLocator : IDataTemplate
             AdministrationPageViewModel => services.GetRequiredService<AdministrationPage>(),
             ResourceUsageReliefPageViewModel => services.GetRequiredService<ResourceUsageReliefPage>(),
             ChatViewModel => services.GetRequiredService<ChatPage>(),
+            CallPageViewModel => services.GetRequiredService<CallPage>(),
             null => new TextBlock { Text = "No view for <null>" },
             _ => new TextBlock { Text = $"No view for {data.GetType().Name}" }
         };

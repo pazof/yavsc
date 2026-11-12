@@ -85,6 +85,7 @@ public static class ServiceCollectionHelpers
         AddReusablePage<ActivitiesPage>();
         services.AddTransient<CommandFormsPage>();
         services.AddTransient<ChatPage>();
+        services.AddTransient<CallPage>();
         services.AddTransient<RdvPage>();
         services.AddTransient<BrushPage>();
         services.AddTransient<BillingQueriesPage>();

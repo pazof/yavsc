@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -63,10 +64,16 @@ namespace PostIt.ViewModels.Chat
             (OperatingSystem.IsLinux() && !OperatingSystem.IsAndroid());
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(ShowCallCommand))]
         public partial WebRtcCallViewModel? VideoCall { get; set; }
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(ShowCallCommand))]
         public partial LanCallViewModel? LanCall { get; set; }
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand))]
+        public partial string? SelectedUser { get; set; }
 
         [ObservableProperty]
         public partial string CurrentRoom { get; set; } = "General";
@@ -79,6 +86,7 @@ namespace PostIt.ViewModels.Chat
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(ShowCallCommand))]
         public partial bool IsConnected { get; set; } = false;
 
         [ObservableProperty]
@@ -92,6 +100,7 @@ namespace PostIt.ViewModels.Chat
         // alors les notifications système.
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand))]
         public partial string? SelectedRoom { get; set; }
 
         // Notifications globales (connexion, erreurs de join, ...)
@@ -110,14 +119,85 @@ namespace PostIt.ViewModels.Chat
         [ObservableProperty]
         public partial ObservableCollection<string> FocusedUsers { get; set; } = _noUsers;
 
+        partial void OnFocusedUsersChanging(ObservableCollection<string> value) =>
+            FocusedUsers.CollectionChanged -= OnFocusedUsersCollectionChanged;
+
+        partial void OnFocusedUsersChanged(ObservableCollection<string> value)
+        {
+            value.CollectionChanged += OnFocusedUsersCollectionChanged;
+            OpenCallCommand.NotifyCanExecuteChanged();
+        }
+
+        private void OnFocusedUsersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
+        {
+            if (SelectedUser != null && !FocusedUsers.Contains(SelectedUser)) SelectedUser = null;
+            OpenCallCommand.NotifyCanExecuteChanged();
+        }
+
+        private void UpdateRoomUsers(string type, string room, string user)
+        {
+            if (!_usersByRoom.TryGetValue(room, out var users)) return;
+            if (string.Equals(type, NotificationTypes.UserJoin, StringComparison.OrdinalIgnoreCase))
+            {
+                if (!users.Contains(user)) users.Add(user);
+            }
+            else if (string.Equals(type, NotificationTypes.UserPart, StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(type, NotificationTypes.Kick, StringComparison.OrdinalIgnoreCase))
+            {
+                var separator = user.IndexOf(':');
+                users.Remove(separator < 0 ? user : user[..separator]);
+            }
+        }
+
         partial void OnSelectedRoomChanged(string? value)
         {
+            SelectedUser = null;
             if (VideoCall != null) VideoCall.Room = value ?? "";
             if (LanCall != null) LanCall.Room = value ?? "";
             FocusedMessages = value != null && _messagesByRoom.TryGetValue(value, out var msgs)
                 ? msgs : _systemMessages;
             FocusedUsers = value != null && _usersByRoom.TryGetValue(value, out var users)
                 ? users : _noUsers;
+        }
+
+        private bool CanShowCall() => IsConnected && (VideoCall != null || LanCall != null);
+
+        private bool CanOpenCall() => CanShowCall() && SelectedRoom != null &&
+            !string.IsNullOrWhiteSpace(SelectedUser) && FocusedUsers.Contains(SelectedUser);
+
+        internal CallPageViewModel PrepareCallPage()
+        {
+            if (!CanOpenCall())
+                throw new InvalidOperationException("Selectionnez un utilisateur present dans le salon et connectez le chat.");
+            if (VideoCall?.Busy != true && LanCall?.Busy != true)
+            {
+                if (VideoCall != null) VideoCall.Target = SelectedUser!;
+                if (LanCall != null) LanCall.Target = SelectedUser!;
+            }
+            return new CallPageViewModel(this);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanOpenCall))]
+        private Task OpenCallAsync() => NavigateToCallAsync(configureTarget: true);
+
+        [RelayCommand(CanExecute = nameof(CanShowCall))]
+        private Task ShowCallAsync() => NavigateToCallAsync(configureTarget: false);
+
+        private async Task NavigateToCallAsync(bool configureTarget)
+        {
+            try
+            {
+                var app = App.Current as App ?? throw new InvalidOperationException("Application indisponible.");
+                var page = configureTarget ? PrepareCallPage() : new CallPageViewModel(this);
+                await app.PushPageAsync(page);
+            }
+            catch (Exception error) { Log($"Impossible d'ouvrir l'appel : {error.Message}"); }
+        }
+
+        public async Task HangupCallsAsync()
+        {
+            if (VideoCall != null) await VideoCall.HangupAsync();
+            if (LanCall != null) await LanCall.HangupAsync();
         }
 
         // Trace une notification système dans la vue courante
@@ -167,8 +247,7 @@ namespace PostIt.ViewModels.Chat
             if (_transport == null || room == null) return;
             try
             {
-                if (VideoCall != null) await VideoCall.HangupAsync();
-                if (LanCall != null) await LanCall.HangupAsync();
+                await HangupCallsAsync();
                 await _transport.LeaveAsync(room);
                 JoinedRooms.Remove(room);
                 _messagesByRoom.Remove(room);
@@ -351,9 +430,7 @@ namespace PostIt.ViewModels.Chat
                                 roomLog.Add($"*{user} a interagi avec le salon {room} (Action: {type})");
                             else
                                 Log($"*{user} a interagi avec le salon {room} (Action: {type})");
-                            if (type == "UserJoin" && _usersByRoom.TryGetValue(room, out var users)
-                                && !users.Contains(user))
-                                users.Add(user);
+                            UpdateRoomUsers(type, room, user);
                         });
                     });
 
@@ -422,7 +499,7 @@ namespace PostIt.ViewModels.Chat
                 roomLog = _messagesByRoom[roomName] = new();
             roomLog.Add($"Salon rejoint avec succès : {roomName}");
             var users = _usersByRoom[roomName] = new();
-            foreach (var u in roomInfo.Users) users.Add(u);
+            foreach (var u in roomInfo.UserNames ?? roomInfo.Users) users.Add(u);
             if (!JoinedRooms.Contains(roomName))
                 JoinedRooms.Add(roomName);
             SelectedRoom = roomName;

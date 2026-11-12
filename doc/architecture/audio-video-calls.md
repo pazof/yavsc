@@ -5,12 +5,18 @@
 Ce document décrit l'architecture cible, l'implementation native actuelle et
 l'historique du transport direct.
 La préférence de confidentialité est persistée et éditable dans le profil.
-La signalisation est intégrée au chat, désactivée par défaut. La page du chat
-propose **WebRTC natif** et le transport direct VLC/SRTP sur Android et
+La signalisation est intégrée au chat, désactivée par défaut. Une page d'appel
+separee propose **WebRTC natif** et le transport direct VLC/SRTP sur Android et
 Desktop Linux. WebRTC utilise ICE/STUN/TURN et le masquage IP impose par la
 politique serveur. Le mode SRTP direct ne masque pas les adresses IP et exige
 que cette preference soit desactivee pour les deux participants. Les groupes
 et les clients navigateur ne sont pas implementes.
+Depuis le chat textuel, selectionner un membre present puis « Ouvrir l'appel »
+prepare le pair sans demarrer les medias. Les invitations entrantes disposent
+d'un bouton pour ouvrir cette meme page sans selection de membre. Passer du
+chat a la page d'appel ne raccroche pas ; quitter la page d'appel termine les
+medias. Un salon commun reste requis ; les capacites distantes et les appels
+depuis Contacts ne sont pas encore raccordes.
 Il complète la [topologie de PostIt](postit.md) et les
 [mécanismes de notification existants](notifications.md).
 La cible couvre :
@@ -123,7 +129,7 @@ TURN/TLS et les reseaux Internet distincts restent a verifier.
 ## Implementation SRTP direct IPv4/IPv6
 
 Les paragraphes suivants decrivent le transport direct historique, de nouveau
-propose a cote de WebRTC dans la page du chat.
+propose a cote de WebRTC dans la page d'appel.
 
 Les adresses IPv4 publiques directement assignees a une interface locale active
 sont egalement disponibles, avec la meme validation unicast cote client,
@@ -193,10 +199,12 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
    H.264/AAC. La version Debian 13 a été utilisée pour les essais Linux.
    Les deux comptes doivent être présents dans
    la même salle existante et ne pas se bloquer mutuellement.
-3. Dans « Appel direct IPv4/IPv6 (LAN/VPN ou IP publique) », actualiser les périphériques,
-   sélectionner la caméra, le microphone et une IPv4 privée locale
-   accessible depuis le pair. Les adresses RFC1918 et de bouclage sont
-   acceptées ; pas de DNS, IPv6 ou adresse publique. Le bouclage sert aux
+3. Selectionner le destinataire dans les membres presents du chat puis
+   « Ouvrir l'appel ». Dans la section « Appel direct IPv4/IPv6 SRTP »,
+   actualiser les périphériques, sélectionner la caméra, le microphone et
+   une adresse locale accessible depuis le pair. Les adresses IPv4 privées
+   ou publiques assignées et les IPv6 globales ou ULA sont acceptées, pas
+   les noms DNS ni les adresses link-local. Le bouclage sert aux
    essais sur un même hôte, pas à joindre un second poste.
 4. Choisir un port UDP **pair entre 1024 et 65534**, par défaut 5004.
    Autoriser l'entrée UDP sur ce port **et le suivant** depuis le pair dans
@@ -204,7 +212,7 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
    Les deux ports doivent être disponibles. Deux clients sur la même
    adresse doivent utiliser des paires distinctes.
    Aucun pare-feu n'est modifié automatiquement.
-5. Saisir le pseudo exact du destinataire, confirmer la divulgation de
+5. Verifier le pseudo du destinataire selectionne, confirmer la divulgation de
    l'adresse IP locale (LAN/VPN ou publique), puis appeler. Le destinataire choisit ses propres
    périphériques et son adresse, confirme et accepte explicitement.
    Aucun accès à la caméra/microphone ne commence avant l'acceptation ;
