@@ -21,7 +21,7 @@ src/Yavsc/bin/output/wwwroot:
 
 test:
 	ASPNETCORE_ENVIRONMENT=Development \
-	TESTINGPLATFORM_EXITCODE_IGNORE="110;1" \
+	TESTINGPLATFORM_EXITCODE_IGNORE="110" \
 	dotnet test yavsc.sln \
 	-- --report-xunit \
   --report-xunit-html \
@@ -30,7 +30,7 @@ test:
 
 test-postit:
 	ASPNETCORE_ENVIRONMENT=Development \
-	TESTINGPLATFORM_EXITCODE_IGNORE="110;1" \
+	TESTINGPLATFORM_EXITCODE_IGNORE="110" \
 	dotnet test \
   src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
   -- --report-xunit \
