@@ -8,6 +8,7 @@ using Yavsc.Server.Helpers;
 namespace Yavsc.ApiControllers.Administration;
 
 [Produces("application/json")]
+[ResourceUsageExempt]
 [Route(Constants.APIPrefix + "/" + Constants.NotificationsPath)]
 public sealed class NotificationsApiController : Controller
 {

@@ -160,6 +160,19 @@ Le contrôle admet les coûts connus puis constate les coûts restants :
 il bloque les opérations suivantes, sans interrompre strictement celles
 déjà en cours.
 
+Au franchissement de 50 %, 75 %, 90 %, 95 % ou 99 % de la limite personnelle,
+le serveur enregistre une notification privée `user/{UserId}`, visible dans
+les notifications de l'accueil lors de leur prochain chargement. Le calcul
+porte sur le total pondéré net des crédits, pas sur chaque compteur séparé.
+Une mise à jour franchissant plusieurs paliers ne produit que l'avertissement
+du plus haut palier atteint ; rester au-dessus ne répète pas l'alerte.
+Après une baisse sous un palier (crédit ou suppression de stockage suivi),
+un nouveau franchissement produit une nouvelle notification, même si la
+précédente a été fermée. Les notifications et le comptage sont enregistrés
+ensemble ; aucune migration de schéma n'est nécessaire.
+La lecture et la fermeture des notifications restent accessibles au quota
+atteint et ne consomment pas de points. Aucun email ni push immédiat n'est envoyé.
+
 La page **À propos** ouvre les CGU dédiées de PostIt et de Yavsc sur
 `Home/CGU` auprès de l'autorité configurée, y compris sans session.
 Cette page publique présente les coefficients réellement configurés,

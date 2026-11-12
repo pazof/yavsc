@@ -12,6 +12,7 @@ namespace Yavsc.ApiControllers.Administration;
 /// Notifications dismissed by the authenticated user.
 /// </summary>
 [Authorize]
+[ResourceUsageExempt]
 [Produces("application/json")]
 [Route(Constants.APIPrefix + "/" + Constants.NotificationsDismissPath)]
 public sealed class DismissClicksApiController : Controller

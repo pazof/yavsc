@@ -147,6 +147,9 @@ public static class ResourceUsageServiceCollectionExtensions
             .Validate(o => o.DefaultLimit > 0m && o.UserLimits.All(p => !string.IsNullOrWhiteSpace(p.Key) && p.Value > 0m),
                 "ResourceUsage limits must be positive and keyed by user ID.")
             .ValidateOnStart();
+        services.AddSingleton<ResourceUsageNotificationInterceptor>();
+        services.ConfigureDbContext<ApplicationDbContext>((provider, options) =>
+            options.AddInterceptors(provider.GetRequiredService<ResourceUsageNotificationInterceptor>()));
         return services.AddScoped<IResourceUsageService, ResourceUsageService>();
     }
 }

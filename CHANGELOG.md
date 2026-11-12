@@ -6,6 +6,8 @@
 
 ### Added
 
+* [Resources/Notifications] Persist private user alerts when net resource consumption crosses 50%, 75%, 90%, 95% or 99% of the personal limit, atomically with accounting. Report only the highest threshold crossed per update and rearm after credits or released storage lower consumption. Keep notification consultation and dismissal accessible at quota without consuming resources; no email or live push is sent.
+
 * [Yavsc.Api] Preserve `application/problem+json` for resource-usage relief errors instead of overriding it with a JSON-only Produces attribute; document success/error media types in OpenAPI and verify error payloads. Restore the haircut and grouped-haircut commands removed from the test seed while retaining its three catalog prestations, with repeated-reset coverage.
 
 * [Yavsc.Api/Tests] Reset the anchored shared SQLite in-memory database by dropping and recreating its tables before seeding, avoiding duplicate user emails across tests. Restore foreign-key enforcement after cleanup and cover repeated resets with a regression test; leave PostgreSQL cleanup unchanged.

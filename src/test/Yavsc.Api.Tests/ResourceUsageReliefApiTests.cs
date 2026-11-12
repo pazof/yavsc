@@ -72,7 +72,7 @@ public sealed class ResourceUsageReliefApiTests(ApiWebServerFixture fixture) : I
                 "relief-admin-exhausted", "Admin", cpuSeconds: 20000m, cancellationToken: Ct);
         using var admin = Client(subject: "relief-admin-exhausted");
         using var target = Client("Performer", id);
-        Assert.Equal(HttpStatusCode.TooManyRequests, (await target.GetAsync("/api/v1/notifications/me", Ct)).StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, (await target.GetAsync("/api/v1/activity", Ct)).StatusCode);
         var request = new EraseResourceUsageRequest { Points = 200.12545678m, ExpectedCredits = 0m };
         using var response = await admin.PostAsJsonAsync($"{Root}/{id}/erase", request, Ct);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -83,7 +83,7 @@ public sealed class ResourceUsageReliefApiTests(ApiWebServerFixture fixture) : I
         Assert.Equal(799.87454322m, summary.Consumption);
         Assert.Equal(0m, summary.CreditBalance);
         Assert.False(summary.IsQuotaReached);
-        Assert.Equal(HttpStatusCode.OK, (await target.GetAsync("/api/v1/notifications/me", Ct)).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await target.GetAsync("/api/v1/activity", Ct)).StatusCode);
         using var scope = fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var record = await db.ResourceUsageRecords.SingleAsync(r => r.UserId == id, Ct);

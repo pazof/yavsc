@@ -16,6 +16,124 @@ namespace Yavsc.Server.Tests;
 public sealed class ResourceUsageTests
 {
     [Theory]
+    [InlineData(50)]
+    [InlineData(75)]
+    [InlineData(90)]
+    [InlineData(95)]
+    [InlineData(99)]
+    public async Task Resource_alert_is_created_at_the_exact_threshold_and_not_repeated_above_it(int threshold)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var provider = NewProvider(o => o.DefaultLimit = 1000m);
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: threshold * 10m - 0.001m,
+            cancellationToken: ct);
+        db.Notification.RemoveRange(db.Notification);
+        await db.SaveChangesAsync(ct);
+
+        await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 0.001m, cancellationToken: ct);
+        var notification = Assert.Single(db.Notification);
+        Assert.Equal("user/alice", notification.Target);
+        Assert.Equal($"resource-usage/{threshold}", notification.tag);
+        Assert.Contains($"{threshold} %", notification.title);
+        Assert.Equal("Fermer", notification.click_action);
+        await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 0.001m, cancellationToken: ct);
+        await scope.ServiceProvider.GetRequiredService<IResourceUsageService>().GetCurrentAsync("alice", "alice", ct);
+        Assert.Single(db.Notification);
+    }
+
+    [Fact]
+    public void Resource_alert_uses_personal_limit_all_resource_weights_and_net_credits()
+    {
+        using var provider = NewProvider(o => o.UserLimits["alice"] = 100m);
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var record = new ResourceUsageRecord
+        {
+            UserId = "alice", UserName = "alice",
+            ApiCalls = 500m, CpuSeconds = 40m, BandwidthMb = 100m, StorageMb = 100m,
+            CreditPoints = 41m
+        };
+        db.ResourceUsageRecords.Add(record);
+        db.SaveChanges();
+        Assert.Empty(db.Notification);
+        record.ApiCalls += 50m;
+        db.SaveChanges();
+        Assert.Equal("resource-usage/50", Assert.Single(db.Notification).tag);
+    }
+
+    [Fact]
+    public async Task Resource_alert_for_a_jump_only_reports_the_highest_crossed_threshold()
+    {
+        using var provider = NewProvider(o => o.DefaultLimit = 1000m);
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 1000m,
+            cancellationToken: TestContext.Current.CancellationToken);
+        Assert.Equal("resource-usage/99", Assert.Single(db.Notification).tag);
+    }
+
+    [Fact]
+    public async Task Resource_alert_rearms_after_administrative_credits_lower_consumption()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var provider = NewProvider(o => o.DefaultLimit = 1000m);
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Users.Add(new ApplicationUser { Id = "alice", UserName = "alice", Email = "alice@example.test" });
+        await db.SaveChangesAsync(ct);
+        await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 500m, cancellationToken: ct);
+        var firstId = Assert.Single(db.Notification).Id;
+        await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 500m, cancellationToken: ct);
+        var count = db.Notification.Count();
+        await scope.ServiceProvider.GetRequiredService<IResourceUsageService>()
+            .EraseAsync("alice", "admin", new() { Points = 501m }, ct);
+        Assert.Equal(count, db.Notification.Count());
+        await ResourceUsageTracker.RecordAsync(db, "alice", "alice", cpuSeconds: 1m, cancellationToken: ct);
+        var alerts = db.Notification.Where(n => n.tag == "resource-usage/50").OrderBy(n => n.Id).ToArray();
+        Assert.Equal(2, alerts.Length);
+        Assert.Equal(firstId, alerts[0].Id);
+        Assert.NotEqual(firstId, alerts[1].Id);
+    }
+
+    [Fact]
+    public async Task Resource_alert_rearms_after_storage_is_released()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var provider = NewProvider(o => o.DefaultLimit = 60m);
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        const long bytes = 100 * 1024 * 1024;
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "test-file", bytes, ct);
+        Assert.Single(db.Notification);
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "test-file", 0, ct);
+        Assert.Single(db.Notification);
+        await ResourceUsageTracker.RecordStorageAsync(db, "alice", "alice", "test-file", bytes, ct);
+        Assert.Equal(2, db.Notification.Count());
+        Assert.All(db.Notification, note => Assert.Equal("resource-usage/50", note.tag));
+    }
+
+    [Fact]
+    public async Task Concurrent_resource_updates_only_create_one_alert_per_crossing()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        using var provider = NewProvider(o => o.DefaultLimit = 1000m);
+        using (var seed = provider.CreateScope())
+            await ResourceUsageTracker.RecordAsync(seed.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+                "alice", "alice", cpuSeconds: 499m, cancellationToken: ct);
+        await Task.WhenAll(Enumerable.Range(0, 10).Select(async _ =>
+        {
+            using var scope = provider.CreateScope();
+            await ResourceUsageTracker.RecordAsync(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(),
+                "alice", "alice", cpuSeconds: 1m, cancellationToken: ct);
+        }));
+        using var verification = provider.CreateScope();
+        Assert.Equal("resource-usage/50",
+            Assert.Single(verification.ServiceProvider.GetRequiredService<ApplicationDbContext>().Notification).tag);
+    }
+
+    [Theory]
     [InlineData("125.12345678", "1874.87654322", true)]
     [InlineData("2000", "0", false)]
     public async Task Administrative_erasure_preserves_counters_and_existing_credits_and_audits_actor(

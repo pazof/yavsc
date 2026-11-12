@@ -41,6 +41,72 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
         return http;
     }
 
+    [Fact]
+    public async Task Resource_alert_is_rolled_back_with_its_usage_update()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var userId = "resource-alert-rollback-" + Guid.NewGuid().ToString("N");
+        using (var scope = _fixture.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<Yavsc.Models.ApplicationDbContext>();
+            await using var transaction = await db.Database.BeginTransactionAsync(ct);
+            await ResourceUsageTracker.RecordAsync(db, userId, userId, cpuSeconds: 5000m, cancellationToken: ct);
+            Assert.Single(db.Notification, note => note.Target == $"user/{userId}");
+            await transaction.RollbackAsync(ct);
+        }
+        using var verification = _fixture.Services.CreateScope();
+        var persisted = verification.ServiceProvider.GetRequiredService<Yavsc.Models.ApplicationDbContext>();
+        Assert.False(await persisted.ResourceUsageRecords.AnyAsync(record => record.UserId == userId, ct));
+        Assert.False(await persisted.Notification.AnyAsync(note => note.Target == $"user/{userId}", ct));
+    }
+
+    [Fact]
+    public async Task Resource_alerts_are_private_persistent_dismissible_at_quota_and_reappear_on_a_new_crossing()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var userId = "resource-alert-" + Guid.NewGuid().ToString("N");
+        using var seed = _fixture.Services.CreateScope();
+        var db = seed.ServiceProvider.GetRequiredService<Yavsc.Models.ApplicationDbContext>();
+        db.Users.Add(new Yavsc.Models.ApplicationUser
+        {
+            Id = userId, UserName = userId, Email = userId + "@example.test"
+        });
+        await db.SaveChangesAsync(ct);
+        await ResourceUsageTracker.RecordAsync(db, userId, userId, cpuSeconds: 5000m, cancellationToken: ct);
+        var first = await db.Notification.SingleAsync(n => n.Target == $"user/{userId}", ct);
+        Assert.Equal("resource-usage/50", first.tag);
+        await ResourceUsageTracker.RecordAsync(db, userId, userId, cpuSeconds: 5000m, cancellationToken: ct);
+
+        using var owner = NewClient(_fixture, userId);
+        using var other = NewClient(_fixture, "other-resource-user");
+        using var anonymous = NewClient(_fixture);
+        anonymous.DefaultRequestHeaders.Authorization = null;
+        var ownerNotes = await owner.GetFromJsonAsync<List<Notification>>("/api/v1/notifications/me", ct);
+        Assert.NotNull(ownerNotes);
+        Assert.Equal(2, ownerNotes.Count(n => n.Target == $"user/{userId}"));
+        Assert.DoesNotContain((await other.GetFromJsonAsync<List<Notification>>("/api/v1/notifications/me", ct))!,
+            n => n.Target == $"user/{userId}");
+        Assert.DoesNotContain((await anonymous.GetFromJsonAsync<List<Notification>>("/api/v1/notifications", ct))!,
+            n => n.Target == $"user/{userId}");
+        using var dismissed = await owner.PostAsync($"/api/v1/dismiss/click/{first.Id}", null, ct);
+        Assert.Equal(HttpStatusCode.OK, dismissed.StatusCode);
+        Assert.DoesNotContain((await owner.GetFromJsonAsync<List<Notification>>("/api/v1/notifications/me", ct))!,
+            n => n.Id == first.Id);
+        var summary = await owner.GetFromJsonAsync<ResourceUsageSummary>("/api/v1/resource-usage/me", ct);
+        Assert.NotNull(summary);
+        Assert.True(summary.IsQuotaReached);
+        Assert.Equal(0m, summary.ApiCalls);
+        Assert.Equal(0m, summary.BandwidthMb);
+
+        await seed.ServiceProvider.GetRequiredService<IResourceUsageService>()
+            .EraseAsync(userId, "admin", new() { Points = 501m }, ct);
+        await ResourceUsageTracker.RecordAsync(db, userId, userId, cpuSeconds: 10m, cancellationToken: ct);
+        var visible = await owner.GetFromJsonAsync<List<Notification>>("/api/v1/notifications/me", ct);
+        Assert.NotNull(visible);
+        Assert.DoesNotContain(visible, n => n.Id == first.Id);
+        Assert.Single(visible, n => n.Target == $"user/{userId}" && n.tag == "resource-usage/50" && n.Id != first.Id);
+    }
+
     [Theory]
     [InlineData(true, 5)]
     [InlineData(false, 2)]
@@ -155,7 +221,7 @@ public sealed class ResourceUsageApiControllerTests : IClassFixture<ApiWebServer
         await ResourceUsageTracker.RecordAsync(db, "exhausted-quota-user", "exhausted-quota-user", cpuSeconds: 10000m);
         using var http = NewClient(_fixture, "exhausted-quota-user");
 
-        var refused = await http.GetAsync("/api/v1/notifications/me", TestContext.Current.CancellationToken);
+        var refused = await http.GetAsync("/api/v1/activity", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.TooManyRequests, refused.StatusCode);
         Assert.Equal("application/problem+json", refused.Content.Headers.ContentType?.MediaType);
         Assert.Contains("resource_quota_exceeded",
