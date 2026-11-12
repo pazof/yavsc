@@ -11,6 +11,7 @@ using Yavsc.Web.Services;
 
 namespace Yavsc.Server.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class ResourceSubscriptionTests
 {
     private static readonly DateTimeOffset Start = new(2026, 1, 31, 12, 0, 0, TimeSpan.Zero);

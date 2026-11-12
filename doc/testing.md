@@ -31,6 +31,26 @@ bug : ils doivent être **rouges avant le fix, verts après**, et
 continuer à **casser** si quelqu'un revert le fix. Pas de test
 qui passe à vide.
 
+## Selection des tests serveur
+
+Toutes les classes de tests des projets `Yavsc.Org.Tests`, `Yavsc.Api.Tests`,
+`Yavsc.Blogs.Tests` et `Yavsc.Server.Tests`, sous `src/test/`, portent
+`[Trait("Category", "non-reg")]`, y compris celles qui heritent de tests.
+Conserver ce trait sur toute nouvelle classe de tests ; les fixtures et
+les helpers sans tests n'en ont pas besoin. Les autres traits restent inchanges.
+
+Avec le runner Microsoft.Testing.Platform et le SDK .NET 10 :
+
+```bash
+dotnet test --project src/test/Yavsc.Org.Tests/Yavsc.Org.Tests.csproj \
+  --filter-trait 'Category=non-reg'
+```
+
+Remplacer le projet pour executer les trois autres suites. Le trait couvre
+aussi les tests d'integration qui requierent leurs services/configurations ;
+il ne supprime ni ces prerequis ni les exclusions d'autres traits.
+Ajouter `--list-tests` pour verifier la selection sans executer les tests.
+
 ## Isolation des tests PostIt
 
 L'assemblee `src/PostIt/PostIt.Tests` execute ses collections xUnit sans

@@ -24,6 +24,7 @@ using Xunit;
 /// Once the WebServerFixture is stable in CI, this test can be
 /// deleted.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class StaticAssetsPathsTests
 {
     private readonly ITestOutputHelper _output;

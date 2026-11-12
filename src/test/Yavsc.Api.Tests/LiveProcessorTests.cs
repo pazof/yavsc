@@ -9,6 +9,7 @@ using Yavsc.Services;
 
 namespace Yavsc.Api.Test;
 
+[Trait("Category", "non-reg")]
 public sealed class LiveProcessorTests : IDisposable
 {
     private readonly string _root = Path.Combine(Path.GetTempPath(), $"yavsc-podcast-unit-{Guid.NewGuid():N}");

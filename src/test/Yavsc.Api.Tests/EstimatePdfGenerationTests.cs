@@ -20,6 +20,7 @@ namespace Yavsc.Api.Test;
 // The PDF test requires the system `lualatex` (and the TeX Live packages
 // listed in the README runtime-deps section) on the host running the
 // tests. On hosts without lualatex it skips cleanly rather than failing.
+[Trait("Category", "non-reg")]
 public sealed class EstimatePdfGenerationTests
 {
     // A provider signature: a downstroke, a cross, and a tap (dot).

@@ -8,6 +8,7 @@ using Yavsc.Web.Services;
 
 namespace Yavsc.Server.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class PayPalSubscriptionGatewayTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;

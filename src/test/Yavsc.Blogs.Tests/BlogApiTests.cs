@@ -26,6 +26,7 @@ namespace Yavsc.Blogs.Tests;
 /// header (or sending a token signed with the wrong key) gets a
 /// 401 back from the framework.
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Blogs")]
 public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
 {

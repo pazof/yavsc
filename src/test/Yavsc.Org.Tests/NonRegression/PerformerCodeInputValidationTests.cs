@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Yavsc.Tests.NonRegression;
 
+[Trait("Category", "non-reg")]
 public class PerformerCodeInputValidationTests
 {
     [Fact]

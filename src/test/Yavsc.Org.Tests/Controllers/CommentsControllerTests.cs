@@ -9,6 +9,7 @@ using Xunit;
 
 namespace Yavsc.Org.Tests.Controllers;
 
+[Trait("Category", "non-reg")]
 public class CommentsControllerTests
 {
     [Fact]

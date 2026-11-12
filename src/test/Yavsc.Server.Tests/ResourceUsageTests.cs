@@ -12,6 +12,7 @@ using Yavsc.Abstract.Resources;
 
 namespace Yavsc.Server.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class ResourceUsageTests
 {
     [Theory]

@@ -10,6 +10,7 @@ using Yavsc.Models;
 
 namespace Yavsc.Api.Test;
 
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Api")]
 public sealed class PodcastScheduleTests(ApiWebServerFixture fixture) : IClassFixture<ApiWebServerFixture>
 {

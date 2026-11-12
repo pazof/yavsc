@@ -4,6 +4,7 @@ using Xunit;
 
 namespace Yavsc
 {
+    [Trait("Category", "non-reg")]
     [Collection("Yavsc Abstract tests")]
     [Trait("regression", "II")]
     public class AbstractTests

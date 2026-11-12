@@ -14,6 +14,7 @@ using Yavsc.Models.Workflow;
 
 namespace Yavsc.Api.Test;
 
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Api")]
 public sealed class HomeControllerTests : IClassFixture<ApiWebServerFixture>
 {

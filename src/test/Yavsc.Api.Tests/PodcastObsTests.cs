@@ -17,6 +17,7 @@ using Yavsc.Settings;
 
 namespace Yavsc.Api.Test;
 
+[Trait("Category", "non-reg")]
 public sealed class PodcastObsTests : IAsyncDisposable
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;

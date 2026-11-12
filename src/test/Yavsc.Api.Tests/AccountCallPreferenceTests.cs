@@ -16,6 +16,7 @@ using Yavsc.Settings;
 
 namespace Yavsc.Api.Test;
 
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Api")]
 public sealed class AccountCallPreferenceTests(ApiWebServerFixture fixture) : IClassFixture<ApiWebServerFixture>
 {

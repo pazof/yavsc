@@ -7,6 +7,7 @@ using Yavsc.Settings;
 
 namespace Yavsc.Server.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class CallLanSignalingTests
 {
     private static LanCallEndpoint Endpoint(string address = "192.168.1.2", int port = 5004) =>

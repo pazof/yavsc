@@ -9,6 +9,7 @@ using Yavsc.Services;
 
 namespace Yavsc.Server.Tests;
 
+[Trait("Category", "non-reg")]
 public class PaymentSummaryTests
 {
     [Theory]

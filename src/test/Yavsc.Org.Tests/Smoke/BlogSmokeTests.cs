@@ -16,6 +16,7 @@ namespace Yavsc.Org.Tests.Smoke;
 /// <c>doc/architecture/decoupage-organisation.md</c>. The smoke
 /// here asserts the front-end side of the BC.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class BlogSmokeTests : BaseTestContext, IClassFixture<TestWebApplicationFactory>
 {
     private readonly TestWebApplicationFactory _factory;

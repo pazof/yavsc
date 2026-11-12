@@ -29,6 +29,7 @@ namespace Yavsc.Blogs.Tests;
 /// where it manifested in production (PostIt showing a published
 /// post's status as <c>false</c>).</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 public sealed class IBlogPostWireShapeTests
 {
     private static readonly JsonSerializerOptions WebDefaults

@@ -12,6 +12,7 @@ using Yavsc.Blogs.Tests.Fixtures;
 
 namespace Yavsc.Blogs.Tests;
 
+[Trait("Category", "non-reg")]
 [Collection("JwtClaimMapping")]
 public sealed class BlogApiMappedClaimsTests :
 IClassFixture<MappedClaimsBlogsWebServerFixture>

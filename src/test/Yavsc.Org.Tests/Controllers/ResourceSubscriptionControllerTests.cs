@@ -22,6 +22,7 @@ using Xunit;
 
 namespace Yavsc.Org.Tests.Controllers;
 
+[Trait("Category", "non-reg")]
 public sealed class ResourceSubscriptionControllerTests : IClassFixture<ResourceSubscriptionControllerTests.Factory>
 {
     private readonly Factory _factory;

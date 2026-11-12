@@ -25,6 +25,7 @@ using Xunit;
 
 namespace Yavsc.Org.Tests.Controllers;
 
+[Trait("Category", "non-reg")]
 public sealed class PodcastWebTests : IClassFixture<PodcastWebTests.Factory>
 {
     private readonly Factory _factory;

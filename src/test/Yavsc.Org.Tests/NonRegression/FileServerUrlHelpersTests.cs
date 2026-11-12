@@ -3,6 +3,7 @@ using Yavsc.Abstract.Files;
 namespace Yavsc.Org.Tests.NonRegression;
 using Xunit;
 
+[Trait("Category", "non-reg")]
 public class FileServerUrlHelpersTests
 {
     [Fact]

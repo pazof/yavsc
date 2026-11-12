@@ -2,6 +2,7 @@ namespace Yavsc.Org.Tests.Mandatory
 {
     using Xunit;
 
+    [Trait("Category", "non-reg")]
     [Collection("Database")]
     [Trait("regression", "II")]
     [Trait("dev", "wip")]

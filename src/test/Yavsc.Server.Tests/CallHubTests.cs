@@ -17,6 +17,7 @@ using Yavsc.ViewModels.Chat;
 
 namespace Yavsc.Server.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class CallHubTests
 {
     private sealed class Fixture : IDisposable

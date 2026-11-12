@@ -6,6 +6,7 @@ using Xunit;
 /// for missing files. The pipeline falls back to static defaults under
 /// /images/Users/icon_user*.png.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class AvatarFallbackTests : IClassFixture<TestWebApplicationFactory>
 {
     private readonly TestWebApplicationFactory _factory;

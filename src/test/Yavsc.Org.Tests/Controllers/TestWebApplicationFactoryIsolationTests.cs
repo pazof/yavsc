@@ -27,6 +27,7 @@ namespace Yavsc.Org.Tests.Controllers;
 /// straight to the DbContext is the same code path the production
 /// code uses, so it is the right surface to assert against.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class TestWebApplicationFactoryIsolationTests
 {
     [Fact]

@@ -7,6 +7,7 @@ namespace Yavsc.Org.Tests.NonRegression;
 /// - client-side SIREN validation is wired to country-specific regex rules
 /// - controller exposes the validation catalog to the view
 /// </summary>
+[Trait("Category", "non-reg")]
 public class SetActivityCountryValidationViewTests
 {
     [Fact]

@@ -6,6 +6,8 @@
 
 ### Added
 
+* [Yavsc/Tests] Apply the class-level `Category=non-reg` trait to all test classes in Yavsc.Org.Tests, Yavsc.Api.Tests, Yavsc.Blogs.Tests and Yavsc.Server.Tests, including inherited tests, while preserving existing traits. Remove the empty Services class.
+
 * [PostIt/Tests] Add an xUnit collection fixture owning a headless UI session and its thread, with shared window creation, layout, closing and binding cleanup even after failures. Migrate the subscription page binding test as a pilot; retain per-dispatch application isolation and the parallelism guard during coexistence with legacy headless tests.
 
 * [PostIt/Tests] Disable parallel execution of test collections sharing the Avalonia runtime and static platform state, preventing cross-thread headless initialization and test-case cleanup failures when UI and ordinary tests run together.

@@ -21,6 +21,7 @@ namespace Yavsc.Org.Tests;
 /// encoding of the thumbprint, which is independent of the key
 /// type and the cert issuer.
 /// </remarks>
+[Trait("Category", "non-reg")]
 public class ComputeKidTests : IDisposable
 {
     private readonly string _tempDir;

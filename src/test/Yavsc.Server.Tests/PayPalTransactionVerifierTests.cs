@@ -5,6 +5,7 @@ using Yavsc.Services;
 
 namespace Yavsc.Server.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class PayPalTransactionVerifierTests
 {
     private static CancellationToken Ct => TestContext.Current.CancellationToken;

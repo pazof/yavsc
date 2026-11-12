@@ -47,6 +47,7 @@ namespace Yavsc.Blogs.Tests;
 /// <c>[Collection("Yavsc Blogs")]</c> + <c>IClassFixture</c> so the
 /// one shared host serves both legs without spinning a second one.
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Blogs")]
 public sealed class CreateMultipartContentTests : IClassFixture<BlogsWebServerFixture>
 {

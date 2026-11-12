@@ -19,6 +19,7 @@ using Xunit;
 
 namespace Yavsc.Org.Tests.Controllers;
 
+[Trait("Category", "non-reg")]
 public sealed class PerformerDonationTests : IClassFixture<PerformerDonationTests.Factory>
 {
     private readonly Factory _factory;

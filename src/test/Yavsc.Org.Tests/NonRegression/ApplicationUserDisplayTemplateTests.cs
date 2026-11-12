@@ -14,6 +14,7 @@ using Xunit;
 /// statiquement que le cshtml ne porte plus l'accès fautif. Si
 /// quelqu'un revert la ligne, ce test casse.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class ApplicationUserDisplayTemplateTests
 {
     [Fact]

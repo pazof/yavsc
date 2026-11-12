@@ -17,6 +17,7 @@ namespace Yavsc
     // breaking the idempotency count assertion (a flaky failure that
     // surfaces whenever the fixture's timing shifts). Pinning the class
     // to the same collection serializes it with the host build.
+    [Trait("Category", "non-reg")]
     [Collection("Yavsc Server")]
     [Trait("regression", "II")]
     public class BillingServiceTests

@@ -26,6 +26,7 @@ namespace Yavsc.Api.Test;
 /// belong to the caller, and listing is open to both parties
 /// (client/provider) plus admin. A third party is refused.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Api")]
 public sealed class FrontOfficeQueryAttachmentsApiTests : IClassFixture<ApiWebServerFixture>
 {

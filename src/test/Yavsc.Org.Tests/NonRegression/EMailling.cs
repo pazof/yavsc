@@ -20,6 +20,7 @@ namespace Yavsc.Org.Tests
 {
 
 
+    [Trait("Category", "non-reg")]
     [Collection("EMaillingTeststCollection")]
     [Trait("regression", "II")]
     public class EMaillingTests : IClassFixture<WebServerFixture>

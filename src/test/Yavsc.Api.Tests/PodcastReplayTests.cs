@@ -9,6 +9,7 @@ using Yavsc.Services;
 
 namespace Yavsc.Api.Test;
 
+[Trait("Category", "non-reg")]
 public sealed class PodcastReplayTests : IDisposable
 {
     private readonly string _root = Path.Combine(Path.GetTempPath(), $"yavsc-replay-{Guid.NewGuid():N}");

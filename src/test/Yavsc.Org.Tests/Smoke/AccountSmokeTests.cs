@@ -23,6 +23,7 @@ namespace Yavsc.Org.Tests.Smoke;
 /// entire pipeline (routing + Razor + IdentityServer + EF + DI)
 /// is wired correctly end-to-end.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class AccountSmokeTests : IClassFixture<TestWebApplicationFactory>
 {
     private readonly TestWebApplicationFactory _factory;

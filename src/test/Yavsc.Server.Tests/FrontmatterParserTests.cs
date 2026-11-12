@@ -2,6 +2,7 @@ using Yavsc.Server.Services;
 
 namespace Yavsc.Server.Tests;
 
+[Trait("Category", "non-reg")]
 public class FrontmatterParserTests
 {
     [Fact]

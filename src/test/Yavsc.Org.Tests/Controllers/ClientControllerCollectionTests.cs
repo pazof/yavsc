@@ -21,6 +21,7 @@ namespace Yavsc.Org.Tests.Controllers;
 /// production policy to honour that header, sidestepping the login flow
 /// (which is itself not exercised by these tests).
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Server")]
 public class ClientControllerCollectionTests : IClassFixture<TestWebApplicationFactory>
 {

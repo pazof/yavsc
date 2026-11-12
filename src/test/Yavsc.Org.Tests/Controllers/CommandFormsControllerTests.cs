@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Yavsc.Org.Tests.Controllers;
 
+[Trait("Category", "non-reg")]
 public class CommandFormsControllerTests : IClassFixture<TestWebApplicationFactory>
 {
     private readonly TestWebApplicationFactory _factory;

@@ -13,6 +13,7 @@ using Yavsc.Web.Services;
 
 namespace Yavsc.Server.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class AccountWithdrawalTests : IDisposable
 {
     private readonly string root = Path.Combine(Path.GetTempPath(), "yavsc-withdrawal-" + Guid.NewGuid().ToString("N"));

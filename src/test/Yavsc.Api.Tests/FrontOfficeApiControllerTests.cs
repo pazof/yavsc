@@ -14,6 +14,7 @@ using Yavsc.Services;
 
 namespace Yavsc.Api.Test;
 
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Api")]
 public sealed class FrontOfficeApiControllerTests : IClassFixture<ApiWebServerFixture>
 {

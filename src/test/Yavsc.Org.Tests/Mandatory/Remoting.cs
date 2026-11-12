@@ -8,6 +8,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Org.Tests
 {
+    [Trait("Category", "non-reg")]
     [Collection("Yavsc Server")]
     [Trait("regression", "oui")]
     public class Remoting : BaseTestContext, IClassFixture<WebServerFixture>

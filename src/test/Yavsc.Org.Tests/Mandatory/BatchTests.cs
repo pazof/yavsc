@@ -8,6 +8,7 @@ using Yavsc.Server.Models.IT;
 
 namespace Yavsc.Org.Tests
 {
+    [Trait("Category", "non-reg")]
     [Collection("Yavsc Server")]
     [Trait("regression", "oui")]
     public abstract class BaseTestContext : IClassFixture<WebServerFixture>, IDisposable

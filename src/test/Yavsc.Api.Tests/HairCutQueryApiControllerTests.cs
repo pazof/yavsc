@@ -15,6 +15,7 @@ using Yavsc.Tests.Shared;
 
 namespace Yavsc.Api.Test;
 
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Api")]
 public sealed class HairCutQueryApiControllerTests : IClassFixture<ApiWebServerFixture>
 {

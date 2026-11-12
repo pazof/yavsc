@@ -17,6 +17,7 @@ namespace Yavsc.Org.Tests.NonRegression;
 /// donnée partielle. Ces tests couvrent les trois formes de
 /// "donnée absente" : user null, UserName vide, UserName whitespace.
 /// </summary>
+[Trait("Category", "non-reg")]
 public class UserDisplayHelpersTests
 {
     [Fact]

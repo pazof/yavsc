@@ -35,6 +35,7 @@ namespace Yavsc.Blogs.Tests;
 /// (the existing <c>BlogPost</c> and <c>Circle</c>) are not
 /// attached to the DbContext in the same change-tracker graph.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Blogs")]
 public sealed class BlogAclApiTests : IClassFixture<BlogsWebServerFixture>
 {

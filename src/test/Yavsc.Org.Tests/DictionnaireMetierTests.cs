@@ -6,6 +6,7 @@ using Xunit;
 
 namespace Yavsc.Org.Tests;
 
+[Trait("Category", "non-reg")]
 public class DictionnaireMetierTests
 {
     [Fact]

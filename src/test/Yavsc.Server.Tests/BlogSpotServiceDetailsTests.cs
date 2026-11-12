@@ -26,6 +26,7 @@ namespace Yavsc.Server.Tests;
 /// before the one <see cref="BlogSpotService.Details"/> reads through,
 /// mirroring the per-request DbContext lifetime in production.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Server")]
 public sealed class BlogSpotServiceDetailsTests : IClassFixture<ServerServicesFixture>
 {

@@ -8,6 +8,7 @@ using Xunit;
 
 namespace Yavsc.Org.Tests.Services;
 
+[Trait("Category", "non-reg")]
 public class FileSystemAuthManagerTests
 {
     [Fact]

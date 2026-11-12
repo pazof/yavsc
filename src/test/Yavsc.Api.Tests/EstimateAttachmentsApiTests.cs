@@ -26,6 +26,7 @@ namespace Yavsc.Api.Test;
 /// exercised in <c>Yavsc.Blogs.Tests</c>; these tests cover only the
 /// metadata/relationship endpoints that live on the API host.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Api")]
 public sealed class EstimateAttachmentsApiTests : IClassFixture<ApiWebServerFixture>
 {

@@ -30,6 +30,7 @@ namespace Yavsc.Blogs.Tests;
 /// through the DbContext the same way the production code
 /// would.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("JwtClaimMapping")]
 public sealed class CircleMembersApiTests : IClassFixture<BlogsWebServerFixture>
 {

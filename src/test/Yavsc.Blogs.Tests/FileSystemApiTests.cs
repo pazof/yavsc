@@ -35,6 +35,7 @@ namespace Yavsc.Blogs.Tests;
 ///   download endpoint lives here and not on the API host.</description></item>
 /// </list>
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Blogs")]
 public sealed class FileSystemApiTests : IClassFixture<BlogsWebServerFixture>
 {

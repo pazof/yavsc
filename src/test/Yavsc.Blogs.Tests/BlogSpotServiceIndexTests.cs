@@ -28,6 +28,7 @@ namespace Yavsc.Blogs.Tests;
 /// <see cref="BlogsWebServerFixture"/>) is resolved from DI and run
 /// end-to-end — no mocking.</para>
 /// </summary>
+[Trait("Category", "non-reg")]
 [Collection("Yavsc Blogs")]
 public sealed class BlogSpotServiceIndexTests : IClassFixture<BlogsWebServerFixture>
 {

@@ -8,6 +8,7 @@ using Yavsc.Server.Helpers;
 
 namespace Yavsc.Blogs.Tests;
 
+[Trait("Category", "non-reg")]
 public sealed class FilterFileNameTests
 {
     [Theory]

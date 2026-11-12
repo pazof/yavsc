@@ -18,6 +18,7 @@ namespace Yavsc
     /// must reference an ApiResource, and the seed's translation to
     /// SQL must stay valid.
     /// </summary>
+    [Trait("Category", "non-reg")]
     [Trait("regression", "OIDC seed")]
     public class OidcSeedTests
     {
