@@ -10,7 +10,6 @@ namespace Yavsc.ApiControllers.Administration;
 [Authorize("AdministratorOnly")]
 [ResourceUsageExempt]
 [Route(Constants.APIPrefix + "/" + Constants.ResourceUsagePath + "/admin")]
-[Produces("application/json")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class ResourceUsageReliefApiController(
     IResourceUsageService usage, ILogger<ResourceUsageReliefApiController> logger) : ControllerBase
@@ -18,12 +17,12 @@ public sealed class ResourceUsageReliefApiController(
     [HttpPost("{userId}/erase")]
     [EndpointSummary("Effacer des points de consommation d’un utilisateur ayant atteint sa limite")]
     [EndpointDescription("Conserve les compteurs techniques, refuse les montants supérieurs à la consommation et les confirmations périmées, sans crédit futur.")]
-    [ProducesResponseType<ResourceUsageSummary>(200)]
-    [ProducesResponseType<ProblemDetails>(400)]
+    [ProducesResponseType<ResourceUsageSummary>(200, "application/json")]
+    [ProducesResponseType<ProblemDetails>(400, "application/problem+json")]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    [ProducesResponseType<ProblemDetails>(404)]
-    [ProducesResponseType<ProblemDetails>(409)]
+    [ProducesResponseType<ProblemDetails>(404, "application/problem+json")]
+    [ProducesResponseType<ProblemDetails>(409, "application/problem+json")]
     public async Task<ActionResult<ResourceUsageSummary>> Erase(
         string userId, EraseResourceUsageRequest request, CancellationToken ct)
     {

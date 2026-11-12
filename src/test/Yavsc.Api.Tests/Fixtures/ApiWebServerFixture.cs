@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
@@ -375,7 +377,44 @@ public sealed class ApiWebServerFixture : WebHostFixture
             return;
         }
 
-        db.Database.EnsureDeleted();
+        // EnsureDeleted cannot clear a shared in-memory database kept alive by the anchor.
+        db.Database.OpenConnection();
+        try
+        {
+            using var command = db.Database.GetDbConnection().CreateCommand();
+            command.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT GLOB 'sqlite_*';";
+            var tables = new List<string>();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                    tables.Add(reader.GetString(0));
+            }
+            command.CommandText = "PRAGMA foreign_keys = OFF;";
+            command.ExecuteNonQuery();
+            try
+            {
+                using var transaction = db.Database.BeginTransaction();
+                command.Transaction = transaction.GetDbTransaction();
+                foreach (var table in tables)
+                {
+                    command.CommandText = $"DROP TABLE \"{table.Replace("\"", "\"\"")}\";";
+                    command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+            finally
+            {
+                command.Transaction = null;
+                command.CommandText = "PRAGMA foreign_keys = ON;";
+                command.ExecuteNonQuery();
+            }
+        }
+        finally
+        {
+            db.Database.CloseConnection();
+        }
+        // SQLite retains sqlite_sequence, so EnsureCreated would incorrectly see an existing schema.
+        db.GetService<IRelationalDatabaseCreator>().CreateTables();
     }
 
     public void ResetAndSeedRdvQueryGraph()
@@ -490,6 +529,46 @@ public sealed class ApiWebServerFixture : WebHostFixture
         };
 
         db.HairPrestation.AddRange(prestation1, prestation2, prestation3);
+        db.SaveChanges();
+
+        db.HairCutQueries.Add(new HairCutQuery
+        {
+            ActivityCode = "brush",
+            ClientId = "alice",
+            PerformerId = "alice",
+            Consent = true,
+            UserCreated = "alice",
+            UserModified = "alice",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow,
+            EventDate = DateTime.UtcNow.AddDays(3),
+            Location = location,
+            PrestationId = prestation1.Id,
+            Prestation = prestation1,
+            AdditionalInfo = "Coupe test",
+            Status = Yavsc.QueryStatus.Inserted,
+            Description = "Haircut seed",
+        });
+
+        db.HairMultiCutQueries.Add(new HairMultiCutQuery
+        {
+            ActivityCode = "mbrush",
+            ClientId = "alice",
+            PerformerId = "alice",
+            Consent = true,
+            UserCreated = "alice",
+            UserModified = "alice",
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow,
+            EventDate = DateTime.UtcNow.AddDays(4),
+            Location = location,
+            Prestations = new List<HairPrestationCollectionItem>
+            {
+                new() { PrestationId = prestation1.Id, Prestation = prestation1 },
+                new() { PrestationId = prestation2.Id, Prestation = prestation2 },
+            },
+            Status = Yavsc.QueryStatus.Inserted,
+        });
         db.SaveChanges();
     }
 

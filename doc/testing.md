@@ -51,6 +51,21 @@ aussi les tests d'integration qui requierent leurs services/configurations ;
 il ne supprime ni ces prerequis ni les exclusions d'autres traits.
 Ajouter `--list-tests` pour verifier la selection sans executer les tests.
 
+### Remise a zero SQLite des tests API
+
+`ApiWebServerFixture` conserve une connexion d'ancrage vers la base SQLite
+en memoire partagee. `EnsureDeleted()` ne vide pas cette base tant que cette
+connexion reste ouverte. Le reset supprime donc les tables, puis recree
+explicitement le schema avant le peuplement ; `EnsureCreated()` seul ne suffit
+pas car SQLite conserve sa table interne `sqlite_sequence`.
+Les cles etrangeres sont desactivees uniquement pendant la suppression et
+reactivees en `finally`. Le nettoyage PostgreSQL reste distinct.
+
+`ResetAndSeedHaircutGraph()` inclut le catalogue de trois prestations, une
+commande `brush` et une commande groupee `mbrush`, toutes deux pour Alice.
+Les tests de facturation s'appuient sur ces commandes initiales ; les tests
+CRUD creent et manipulent leurs propres commandes par identifiant.
+
 ## Isolation des tests PostIt
 
 L'assemblee `src/PostIt/PostIt.Tests` execute ses collections xUnit sans

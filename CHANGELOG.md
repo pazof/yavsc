@@ -6,6 +6,10 @@
 
 ### Added
 
+* [Yavsc.Api] Preserve `application/problem+json` for resource-usage relief errors instead of overriding it with a JSON-only Produces attribute; document success/error media types in OpenAPI and verify error payloads. Restore the haircut and grouped-haircut commands removed from the test seed while retaining its three catalog prestations, with repeated-reset coverage.
+
+* [Yavsc.Api/Tests] Reset the anchored shared SQLite in-memory database by dropping and recreating its tables before seeding, avoiding duplicate user emails across tests. Restore foreign-key enforcement after cleanup and cover repeated resets with a regression test; leave PostgreSQL cleanup unchanged.
+
 * [Yavsc/Tests] Apply the class-level `Category=non-reg` trait to all test classes in Yavsc.Org.Tests, Yavsc.Api.Tests, Yavsc.Blogs.Tests and Yavsc.Server.Tests, including inherited tests, while preserving existing traits. Remove the empty Services class.
 
 * [PostIt/Tests] Add an xUnit collection fixture owning a headless UI session and its thread, with shared window creation, layout, closing and binding cleanup even after failures. Migrate the subscription page binding test as a pilot; retain per-dispatch application isolation and the parallelism guard during coexistence with legacy headless tests.

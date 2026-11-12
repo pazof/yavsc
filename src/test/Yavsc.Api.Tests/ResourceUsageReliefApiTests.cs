@@ -76,6 +76,7 @@ public sealed class ResourceUsageReliefApiTests(ApiWebServerFixture fixture) : I
         var request = new EraseResourceUsageRequest { Points = 200.12545678m, ExpectedCredits = 0m };
         using var response = await admin.PostAsJsonAsync($"{Root}/{id}/erase", request, Ct);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
         Assert.True(response.Headers.CacheControl?.NoStore);
         var summary = await response.Content.ReadFromJsonAsync<ResourceUsageSummary>(Ct);
         Assert.NotNull(summary);
@@ -106,6 +107,10 @@ public sealed class ResourceUsageReliefApiTests(ApiWebServerFixture fixture) : I
         using var response = await client.PostAsync($"{Root}/{id}/erase", body, Ct);
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        var problem = await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>(Ct);
+        Assert.NotNull(problem);
+        Assert.Equal((int)response.StatusCode, problem.Status);
+        Assert.False(string.IsNullOrWhiteSpace(problem.Title));
         using var scope = fixture.Services.CreateScope();
         Assert.Equal(0m, (await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
             .ResourceUsageRecords.SingleAsync(r => r.UserId == id, Ct)).CreditPoints);
@@ -128,6 +133,10 @@ public sealed class ResourceUsageReliefApiTests(ApiWebServerFixture fixture) : I
         }, Ct);
         Assert.Equal(status, response.StatusCode);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        var problem = await response.Content.ReadFromJsonAsync<Microsoft.AspNetCore.Mvc.ProblemDetails>(Ct);
+        Assert.NotNull(problem);
+        Assert.Equal((int)status, problem.Status);
+        Assert.False(string.IsNullOrWhiteSpace(problem.Title));
     }
 
     [Fact]
@@ -152,5 +161,10 @@ public sealed class ResourceUsageReliefApiTests(ApiWebServerFixture fixture) : I
         Assert.False(string.IsNullOrWhiteSpace(operation.GetProperty("summary").GetString()));
         foreach (var status in new[] { "200", "400", "401", "403", "404", "409" })
             Assert.True(operation.GetProperty("responses").TryGetProperty(status, out _));
+        Assert.True(operation.GetProperty("responses").GetProperty("200").GetProperty("content")
+            .TryGetProperty("application/json", out _));
+        foreach (var status in new[] { "400", "404", "409" })
+            Assert.True(operation.GetProperty("responses").GetProperty(status).GetProperty("content")
+                .TryGetProperty("application/problem+json", out _));
     }
 }
