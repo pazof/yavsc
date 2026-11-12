@@ -38,14 +38,14 @@
     <ProjectReference Include="..\PostIt\PostIt.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <Compile Include="..\PostIt.Tests\AndroidMarkdownEditorTestActivity.cs" Link="Tests\AndroidMarkdownEditorTestActivity.cs" />
-    <Compile Include="..\PostIt.Tests\AndroidChatServiceTestActivity.cs" Link="Tests\AndroidChatServiceTestActivity.cs" />
-    <Compile Include="..\PostIt.Tests\AndroidPodcastCaptureTestActivity.cs" Link="Tests\AndroidPodcastCaptureTestActivity.cs" />
-    <Compile Include="..\PostIt.Tests\AndroidCameraFrameRotationTestActivity.cs" Link="Tests\AndroidCameraFrameRotationTestActivity.cs" />
-    <Compile Include="..\PostIt.Tests\AndroidPodcastBlurTestActivity.cs" Link="Tests\AndroidPodcastBlurTestActivity.cs" />
-    <Compile Include="..\PostIt.Tests\AndroidLanCallTestActivity.cs" Link="Tests\AndroidLanCallTestActivity.cs" />
-    <Compile Include="..\PostIt.Tests\AndroidWebRtcTestActivity.cs" Link="Tests\AndroidWebRtcTestActivity.cs" />
-    <Compile Include="..\PostIt.Tests\AndroidScreenAwakeTestActivity.cs" Link="Tests\AndroidScreenAwakeTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\Fixtures\AndroidMarkdownEditorTestActivity.cs" Link="Tests\AndroidMarkdownEditorTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\Fixtures\AndroidChatServiceTestActivity.cs" Link="Tests\AndroidChatServiceTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\Fixtures\AndroidPodcastCaptureTestActivity.cs" Link="Tests\AndroidPodcastCaptureTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\Fixtures\AndroidCameraFrameRotationTestActivity.cs" Link="Tests\AndroidCameraFrameRotationTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\Fixtures\AndroidPodcastBlurTestActivity.cs" Link="Tests\AndroidPodcastBlurTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\Fixtures\AndroidLanCallTestActivity.cs" Link="Tests\AndroidLanCallTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\Fixtures\AndroidWebRtcTestActivity.cs" Link="Tests\AndroidWebRtcTestActivity.cs" />
+    <Compile Include="..\PostIt.Tests\Fixtures\AndroidScreenAwakeTestActivity.cs" Link="Tests\AndroidScreenAwakeTestActivity.cs" />
   </ItemGroup>
   <!-- This is an Avalonia app, not a MAUI app: exclude the .NET MAUI VS Code
        extension's injected HotReload agent (references Microsoft.Maui.*).
