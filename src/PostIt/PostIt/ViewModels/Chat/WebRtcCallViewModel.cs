@@ -156,22 +156,26 @@ public partial class WebRtcCallViewModel : ObservableObject, IAsyncDisposable
         return RunAsync(() => StopAsync("Appel termine.", true));
     }
 
-    private void OnInvitation(CallSession call) => Queue(async () =>
+    private void OnInvitation(CallSession call)
     {
-        if (call.Transport != CallTransports.WebRtc || _call is not null)
+        if (call.Transport == CallTransports.LanSrtp) return;
+        Queue(async () =>
         {
-            await _signaling.EndAsync(call.Id, _lifetime.Token);
-            Status = "Invitation refusee : transport incompatible ou appel deja en cours.";
-            return;
-        }
-        _call = call;
-        _caller = false;
-        _callLifetime = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
-        Busy = Incoming = true;
-        Status = $"{call.Caller} propose un appel dans {call.RoomName}. "
-            + (call.RelayOnly ? "Masquage IP : relais TURN obligatoire. " : "Mode direct : consentement au partage IP requis. ")
-            + "Acceptez ou refusez.";
-    });
+            if (call.Transport != CallTransports.WebRtc || _call is not null)
+            {
+                await _signaling.EndAsync(call.Id, _lifetime.Token);
+                Status = "Invitation refusee : transport incompatible ou appel deja en cours.";
+                return;
+            }
+            _call = call;
+            _caller = false;
+            _callLifetime = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+            Busy = Incoming = true;
+            Status = $"{call.Caller} propose un appel dans {call.RoomName}. "
+                + (call.RelayOnly ? "Masquage IP : relais TURN obligatoire. " : "Mode direct : consentement au partage IP requis. ")
+                + "Acceptez ou refusez.";
+        });
+    }
 
     private void OnAccepted(CallAccepted accepted) => Queue(async () =>
     {

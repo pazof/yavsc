@@ -78,6 +78,7 @@ public class HomePageViewModel : ViewModelBase
         OpenPerformerConfiguration = new AsyncRelayCommand(OpenPerformerConfigurationAsync);
         OpenAdministration = new AsyncRelayCommand(OpenAdministrationAsync, () => SessionStatus.IsAdministrator);
         OpenChat = new AsyncRelayCommand(OpenChatAsync);
+        OpenContacts = new AsyncRelayCommand(OpenContactsAsync);
         OpenPodcasts = new AsyncRelayCommand(async () =>
         {
             var app = Application.Current as App ?? throw new InvalidOperationException("Application indisponible.");
@@ -89,6 +90,7 @@ public class HomePageViewModel : ViewModelBase
 
 
     public IAsyncRelayCommand OpenChat { get; }
+    public IAsyncRelayCommand OpenContacts { get; }
     public IAsyncRelayCommand OpenPodcasts { get; }
     public bool SupportsPodcasts => Platform.IsPodcastSupported;
     public IAsyncRelayCommand OpenBlogs { get; }
@@ -262,6 +264,15 @@ public class HomePageViewModel : ViewModelBase
         var vm = app!.ServiceProvider?.GetRequiredService<ChatViewModel>();
         await app.PushPageAsync(vm!);
 
+    }
+
+    private async Task OpenContactsAsync()
+    {
+        var app = Application.Current as App ?? throw new InvalidOperationException("Application indisponible.");
+        var vm = app.ServiceProvider?.GetRequiredService<ContactsPageViewModel>()
+            ?? throw new InvalidOperationException("Page contacts indisponible.");
+        await app.PushPageAsync(vm);
+        await vm.RefreshAsync();
     }
 
     /// <summary>

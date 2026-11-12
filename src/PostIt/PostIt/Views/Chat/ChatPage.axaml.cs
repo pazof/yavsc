@@ -13,7 +13,10 @@ public partial class ChatPage : ContentPage
     protected override async void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
-        if (DataContext is ChatViewModel { VideoCall: { } call })
-            await call.HangupAsync();
+        if (DataContext is ChatViewModel chat)
+        {
+            if (chat.VideoCall is { } video) await video.HangupAsync();
+            if (chat.LanCall is { } lan) await lan.HangupAsync();
+        }
     }
 }

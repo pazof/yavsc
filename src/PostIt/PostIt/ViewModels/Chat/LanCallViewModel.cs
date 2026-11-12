@@ -243,22 +243,20 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         return RunAsync(() => StopAsync("Appel termine.", true));
     }
 
-    private void OnInvitation(CallSession call) => Queue(async () =>
+    private void OnInvitation(CallSession call)
     {
-        if (call.Transport != CallTransports.LanSrtp)
+        if (call.Transport != CallTransports.LanSrtp) return;
+        Queue(async () =>
         {
-            await _signaling.EndAsync(call.Id, _lifetime.Token);
-            Status = "Invitation WebRTC non prise en charge par le mode LAN.";
-            return;
-        }
-        if (_call != null) throw new InvalidOperationException("Invitation concurrente inattendue.");
-        if (call.RelayOnly) throw new InvalidOperationException("Le mode LAN ne peut pas masquer les adresses IP.");
-        _call = call;
-        Busy = true;
-        Incoming = true;
-        Status = $"{call.Caller} propose un appel SRTP dans {call.RoomName}. Acceptez ou refusez.";
-        await Task.CompletedTask;
-    });
+            if (_call != null) throw new InvalidOperationException("Invitation concurrente inattendue.");
+            if (call.RelayOnly) throw new InvalidOperationException("Le mode LAN ne peut pas masquer les adresses IP.");
+            _call = call;
+            Busy = true;
+            Incoming = true;
+            Status = $"{call.Caller} propose un appel SRTP dans {call.RoomName}. Acceptez ou refusez.";
+            await Task.CompletedTask;
+        });
+    }
 
     private void OnAccepted(CallAccepted accepted) => Queue(async () =>
     {

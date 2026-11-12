@@ -81,6 +81,7 @@ public static class ServiceCollectionHelpers
         AddReusablePage<HomePage>();
         AddReusablePage<SignaturePage>();
         AddReusablePage<CirclesPage>();
+        services.AddTransient<ContactsPage>();
         AddReusablePage<ActivitiesPage>();
         services.AddTransient<CommandFormsPage>();
         services.AddTransient<ChatPage>();
@@ -129,6 +130,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<ResourceUsageReliefPageViewModel>();
         services.AddSingleton<SignaturePageViewModel>();
         services.AddSingleton<CirclesPageViewModel>();
+        services.AddTransient<ContactsPageViewModel>();
         services.AddSingleton<ActivitiesPageViewModel>();
         services.AddTransient<SelectableHairPrestationItem>();
 

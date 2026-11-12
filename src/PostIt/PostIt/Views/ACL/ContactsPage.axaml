@@ -1,0 +1,23 @@
+<ContentPage
+  x:Class="PostIt.Views.ContactsPage"
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="using:PostIt.ViewModels"
+  x:DataType="vm:ContactsPageViewModel"
+  Header="Contacts">
+  <Grid Margin="16" RowDefinitions="Auto,Auto,*">
+    <Button Content="Actualiser" Command="{Binding RefreshCommand}" IsEnabled="{Binding !IsBusy}" />
+    <TextBlock Grid.Row="1" Margin="0,8" Text="{Binding Status}" TextWrapping="Wrap" />
+    <ListBox Grid.Row="2" ItemsSource="{Binding Contacts}">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="vm:ContactEntry">
+          <StackPanel Margin="4" Spacing="3">
+            <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" />
+            <TextBlock Text="{Binding UserName}" />
+            <TextBlock Text="{Binding Circles}" TextWrapping="Wrap" />
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </Grid>
+</ContentPage>

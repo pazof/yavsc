@@ -6,10 +6,11 @@ Ce document décrit l'architecture cible, l'implementation native actuelle et
 l'historique du transport direct.
 La préférence de confidentialité est persistée et éditable dans le profil.
 La signalisation est intégrée au chat, désactivée par défaut. La page du chat
-utilise maintenant **WebRTC natif sur Android et Desktop Linux**, avec
-ICE/STUN/TURN et masquage IP impose par la politique serveur. L'ancien
-transport VLC/SRTP n'est plus raccorde a cette page. Les groupes et les
-clients navigateur ne sont pas implementes.
+propose **WebRTC natif** et le transport direct VLC/SRTP sur Android et
+Desktop Linux. WebRTC utilise ICE/STUN/TURN et le masquage IP impose par la
+politique serveur. Le mode SRTP direct ne masque pas les adresses IP et exige
+que cette preference soit desactivee pour les deux participants. Les groupes
+et les clients navigateur ne sont pas implementes.
 Il complète la [topologie de PostIt](postit.md) et les
 [mécanismes de notification existants](notifications.md).
 La cible couvre :
@@ -52,7 +53,11 @@ La cible couvre :
   terminent l'appel explicitement. Il n'y a pas d'ICE restart/renegociation
   automatique ni de migration transparente d'un appel existant.
 
-Le panneau ne demande plus d'adresse ni de port RTP manuel. Sans masquage,
+Le panneau WebRTC ne demande pas d'adresse ni de port RTP manuel. Le panneau
+SRTP direct demande une adresse locale, un port UDP pair et le consentement au
+partage d'adresse ; il requiert HTTPS pour proteger les cles de signalisation.
+Les invitations sont dirigees vers le panneau correspondant, sans bascule
+automatique entre transports. Sans masquage,
 un consentement explicite au partage IP reste requis. Activer le masquage
 dans le profil pendant un appel fait terminer cet appel par le serveur :
 il faut rappeler pour appliquer la nouvelle politique.
@@ -115,10 +120,10 @@ la camera avant et le microphone Android reels, des sources Linux synthetiques
 et un coturn TCP local via USB ; la camera et la sortie audio Linux materielles,
 TURN/TLS et les reseaux Internet distincts restent a verifier.
 
-## Historique : premiere implementation SRTP direct IPv4/IPv6
+## Implementation SRTP direct IPv4/IPv6
 
-Les paragraphes suivants decrivent le transport precedent, conserve dans le
-code et ses tests mais non propose par le panneau d'appel actuel.
+Les paragraphes suivants decrivent le transport direct historique, de nouveau
+propose a cote de WebRTC dans la page du chat.
 
 Les adresses IPv4 publiques directement assignees a une interface locale active
 sont egalement disponibles, avec la meme validation unicast cote client,

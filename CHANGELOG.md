@@ -6,6 +6,10 @@
 
 ### Added
 
+* [PostIt/Contacts] Add a Contacts page listing circle members and their associated circles, with duplicate members merged. Presence and calling contacts outside a shared chat room are not yet implemented.
+
+* [PostIt/Calls] Restore the direct IPv4/IPv6 VLC/SRTP call panel alongside WebRTC on supported platforms, route invitations to the matching transport, and retain explicit IP disclosure consent and server privacy policy. Add transport routing and lifecycle regressions.
+
 * [PostIt/Administration] Add an administrator-only consumption relief page reachable from Administration: select a user at their limit, preview and confirm an arbitrary point erasure up to current consumption. Protect the quota-exempt API with the Administrator policy, serialize adjustments with accounting, reject stale confirmations, preserve technical counters and disk quotas, and audit the actor. Add API, service, client and responsive-page regressions.
 
 * [PostIt] Upgrade Avalonia to 12.1.6 and align the headless and native Skia test rendering packages.

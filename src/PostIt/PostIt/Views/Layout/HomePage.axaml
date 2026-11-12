@@ -27,6 +27,10 @@
       </CommandBar.PrimaryCommands>
       <CommandBar.SecondaryCommands>
         <CommandBarButton
+          Command="{Binding OpenContacts}"
+          IsEnabled="{Binding SessionStatus.IsLoggedIn}"
+          Label="Contacts" />
+        <CommandBarButton
           HorizontalAlignment="Center"
           Command="{Binding OpenChat}"
           IsEnabled="{Binding SessionStatus.IsLoggedIn}"
