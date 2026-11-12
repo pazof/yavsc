@@ -6,6 +6,10 @@
 
 ### Added
 
+* [PostIt/Tests] Add an xUnit collection fixture owning a headless UI session and its thread, with shared window creation, layout, closing and binding cleanup even after failures. Migrate the subscription page binding test as a pilot; retain per-dispatch application isolation and the parallelism guard during coexistence with legacy headless tests.
+
+* [PostIt/Tests] Disable parallel execution of test collections sharing the Avalonia runtime and static platform state, preventing cross-thread headless initialization and test-case cleanup failures when UI and ordinary tests run together.
+
 * [PostIt/Calls] Move WebRTC and direct SRTP controls out of the text chat into a dedicated call page, opened for a selected room member or an incoming invitation. Include resolved room-member names in chat snapshots for call targeting, without replacing internal connection identifiers. Preserve the call when leaving the chat for that page and hang up when leaving the call page.
 
 * [PostIt/Contacts] Add a Contacts page listing circle members and their associated circles, with duplicate members merged. Presence and calling contacts outside a shared chat room are not yet implemented.

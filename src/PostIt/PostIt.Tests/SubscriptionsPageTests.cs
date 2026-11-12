@@ -2,7 +2,6 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Globalization;
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using PostIt.ViewModels;
 using PostIt.Views;
 using Yavsc.Abstract.Resources;
@@ -11,29 +10,33 @@ using Yavsc.Api.Client;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public sealed class SubscriptionsPageTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class SubscriptionsPageTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaFact]
+    [Fact]
     public async Task Page_binds_server_offers_prices_and_balance()
     {
         await using var api = new FakeApi();
         var model = Model(api);
-        await model.InitializeAsync();
-        var page = new SubscriptionsPage { DataContext = model };
-        Assert.IsType<SubscriptionsPage>(new ViewLocator().Build(model));
-        var selector = page.FindControl<ComboBox>("OfferSelector")!;
-        Assert.Equal(2, selector.ItemCount);
-        Assert.Equal(1.2m, model.SelectedOffer?.PriceIncludingTax);
-        Assert.Equal($"Prix TTC : {1.2m.ToString("F2", CultureInfo.CurrentCulture)} EUR / mois",
-            page.FindControl<TextBlock>("OfferPrice")!.Text);
-        selector.SelectedIndex = 1;
-        Assert.Equal("Premium", model.SelectedOffer?.Pack);
-        Assert.Equal($"Prix TTC : {2.4m.ToString("F2", CultureInfo.CurrentCulture)} EUR / mois",
-            page.FindControl<TextBlock>("OfferPrice")!.Text);
-        Assert.Equal(45m, model.Usage?.Consumption);
-        Assert.Null(model.StatusMessage);
-        Assert.True(model.SubscribeCommand.CanExecute(null));
-        Assert.False(model.CancelSubscriptionCommand.CanExecute(null));
+        await ui.WithWindowAsync(() => new SubscriptionsPage { DataContext = model }, async window =>
+        {
+            await model.InitializeAsync();
+            var page = Assert.IsType<SubscriptionsPage>(window.Content);
+            Assert.IsType<SubscriptionsPage>(new ViewLocator().Build(model));
+            var selector = page.FindControl<ComboBox>("OfferSelector")!;
+            Assert.Equal(2, selector.ItemCount);
+            Assert.Equal(1.2m, model.SelectedOffer?.PriceIncludingTax);
+            Assert.Equal($"Prix TTC : {1.2m.ToString("F2", CultureInfo.CurrentCulture)} EUR / mois",
+                page.FindControl<TextBlock>("OfferPrice")!.Text);
+            selector.SelectedIndex = 1;
+            Assert.Equal("Premium", model.SelectedOffer?.Pack);
+            Assert.Equal($"Prix TTC : {2.4m.ToString("F2", CultureInfo.CurrentCulture)} EUR / mois",
+                page.FindControl<TextBlock>("OfferPrice")!.Text);
+            Assert.Equal(45m, model.Usage?.Consumption);
+            Assert.Null(model.StatusMessage);
+            Assert.True(model.SubscribeCommand.CanExecute(null));
+            Assert.False(model.CancelSubscriptionCommand.CanExecute(null));
+        }, TestContext.Current.CancellationToken);
     }
 
     [Fact]

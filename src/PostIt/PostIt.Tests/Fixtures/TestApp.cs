@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Headless;
 
 [assembly: AvaloniaTestApplication(typeof(PostIt.Tests.TestAppBuilder))]
+// Ordinary tests also use App.Current and Platform while headless tests reset the shared runtime.
+[assembly: Xunit.CollectionBehavior(DisableTestParallelization = true)]
 
 namespace PostIt.Tests;
 

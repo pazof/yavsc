@@ -31,6 +31,57 @@ bug : ils doivent être **rouges avant le fix, verts après**, et
 continuer à **casser** si quelqu'un revert le fix. Pas de test
 qui passe à vide.
 
+## Isolation des tests PostIt
+
+L'assemblee `src/PostIt/PostIt.Tests` execute ses collections xUnit sans
+parallelisme. Les tests `[AvaloniaFact]`/`[AvaloniaTheory]` reinitialisent le
+runtime Avalonia entre tests ; des tests ordinaires utilisent aussi
+`App.Current` et les delegates statiques de `Platform`. Leur execution
+concurrente peut creer le dispatcher sur un autre thread ou utiliser une
+application appartenant a un test headless en cours, avec une erreur de
+thread UI signalee comme `Test Case Cleanup`.
+
+Conserver provisoirement cette isolation dans `Fixtures/TestApp.cs`. Les tests qui exercent
+intentionnellement plusieurs operations concurrentes peuvent toujours le faire
+dans leur propre methode ; les autres assemblees de tests ne sont pas affectees.
+
+### Migration progressive vers une fixture UI
+
+La collection `[Collection(AvaloniaUiCollection.Name)]` fournit
+`AvaloniaUiFixture` par injection de constructeur. La fixture possede sa
+session `HeadlessUnitTestSession`, initialise le runtime sur son thread UI et
+arrete ce thread a la fin de la collection. Les tests migres utilisent `[Fact]`
+ou `[Theory]`, pas `[AvaloniaFact]` : la fixture assure elle-meme le dispatch.
+
+`RunAsync` execute du code sur le thread UI. `WithWindowAsync` cree le contenu
+et la fenetre sur ce thread, affiche la fenetre, effectue le layout, puis la
+ferme et detache ses bindings en `finally`, meme si une assertion echoue :
+
+```csharp
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class ExampleTests(AvaloniaUiFixture ui)
+{
+    [Fact]
+    public Task Page_is_visible() => ui.WithWindowAsync(
+        () => new TextBlock { Text = "Example" },
+        window =>
+        {
+            Assert.True(window.IsVisible);
+            return Task.CompletedTask;
+        },
+        TestContext.Current.CancellationToken,
+        width: 640, height: 480);
+}
+```
+
+Le pilote est `SubscriptionsPageTests`. Le thread est conserve pour la
+collection, mais l'application reste isolee **par dispatch** : conserver une
+application unique des maintenant changerait l'isolation des anciens tests
+et risquerait de partager navigation, services et preferences. Ne pas conserver
+de controles entre dispatchs dans les tests metier. La protection globale
+contre le parallelisme reste necessaire tant que les autres consommateurs
+d'Avalonia et de l'etat statique ne sont pas migres.
+
 ## EF Core en test
 
 Pour les tests qui ont besoin d'un `ApplicationDbContext`, on
