@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,19 +13,7 @@ using PostIt.Services;
 namespace PostIt.ViewModels;
 
 /// <summary>
-/// Persistent session banner VM, hosted in
-/// <c>MainWindow.axaml</c>. Mirrors <see cref="YavscApiClient"/>'s
-/// session state ("Connecté" / "Déconnecté") and exposes a
-/// <c>Logout</c> command that purges the token store and asks the
-/// navigation owner to route the user back to <c>HomePage</c>, plus
-/// a <c>Login</c> command that drives the OIDC interactive flow
-/// and raises a <see cref="LoginSucceeded"/> event on success so
-/// <c>MainWindow</c> can push <c>MainPage</c> on top of
-/// <c>HomePage</c>.
-///
-/// Construction is deferred until the API client exists; the
-/// App.axaml.cs wiring sets <see cref="Api"/> after building both,
-/// so the banner reflects reality from frame zero.
+/// Shared authentication state and commands for the modal and home menu.
 /// </summary>
 public partial class SessionStatusViewModel : ViewModelBase
 {
@@ -31,9 +21,7 @@ public partial class SessionStatusViewModel : ViewModelBase
     /// <c>App.axaml.cs</c> listens and swaps the navigation root.</summary>
     public event System.Action? LogoutCompleted;
 
-    /// <summary>Raised after <see cref="LoginAsync"/> acquired a valid session;
-    /// <c>App.axaml.cs</c> listens and pushes <c>MainPage</c> on top of
-    /// <c>HomePage</c> so the user lands on the blog editor.</summary>
+    /// <summary>Raised after an interactive login acquired a valid session.</summary>
     public event System.Action? LoginSucceeded;
 
     [ObservableProperty]
@@ -44,27 +32,62 @@ public partial class SessionStatusViewModel : ViewModelBase
 
     private int _accessVersion;
 
-    /// <summary>Inverse of <see cref="IsLoggedIn"/>, for XAML bindings
-    /// (the banner shows the Login button when the user is logged out).
-    /// Updated from <see cref="Refresh"/>.</summary>
     [ObservableProperty]
     public partial bool IsLoggedOut { get; private set; } = true;
 
     [ObservableProperty]
+    public partial bool IsAuthenticationRequired { get; private set; }
+
+    [ObservableProperty]
     public partial string SessionLabel { get; private set; } = "Déconnecté";
 
-    /// <summary>True while a Login flow is in flight; the Login button
-    /// binds <c>IsEnabled</c> to <c>!IsBusy</c> via
-    /// <see cref="LoginCommand"/>'s <c>CanExecute</c>.</summary>
+    [ObservableProperty]
+    public partial string? ProfileError { get; private set; }
+
     [ObservableProperty]
     public partial bool IsBusy { get; private set; }
 
-    /// <summary>The API client backing the banner. Set once at startup;
-    /// the banner polls <c>HasValidSession</c> on demand rather than
-    /// subscribing to a stream — the session state only changes at
-    /// login, logout, and silent refresh, all of which already
-    /// re-evaluate from the same <c>_tokens</c> snapshot.</summary>
-    public YavscApiClient? Api { get; set; }
+    private YavscApiClient? _api;
+    public YavscApiClient? Api
+    {
+        get => _api;
+        set
+        {
+            if (_api is not null) _api.SessionChanged -= OnSessionChanged;
+            _api = value;
+            if (_api is not null) _api.SessionChanged += OnSessionChanged;
+        }
+    }
+
+    public Uri RegistrationUri => AccountUri("Register");
+    public Uri ForgotPasswordUri => AccountUri("ForgotPassword");
+
+    private Uri AccountUri(string action) => new(
+        new Uri((Api?.Settings.Authentication.Authority ?? AuthenticationSettings.DefaultAuthority).TrimEnd('/') + "/"),
+        "Account/" + action);
+
+    private void OnSessionChanged(string? error)
+    {
+        void Update()
+        {
+            if (error is not null)
+                SetError(error);
+            else if (!IsLoggedIn || Api?.HasValidSession != true)
+                _ = RefreshAsync();
+        }
+        if (Dispatcher.UIThread.CheckAccess()) Update();
+        else Dispatcher.UIThread.Post(Update);
+    }
+
+    public async Task InitializeAsync()
+    {
+        if (Api is null)
+            throw new InvalidOperationException("Client d'authentification indisponible.");
+        if (await Api.TrySilentLoginAsync())
+            await RefreshAsync();
+        else
+            await LoginAsync();
+    }
 
     public override bool CanNavigateNext
     {
@@ -85,6 +108,8 @@ public partial class SessionStatusViewModel : ViewModelBase
         var has = Api?.HasValidSession ?? false;
         IsLoggedIn = has;
         IsLoggedOut = !has;
+        IsAuthenticationRequired = !has;
+        ProfileError = null;
         SessionLabel = has ? "Connecté" : "Déconnecté";
     }
 
@@ -108,44 +133,40 @@ public partial class SessionStatusViewModel : ViewModelBase
         catch (Exception ex)
         {
             if (version == _accessVersion)
+            {
                 SessionLabel = $"Impossible de vérifier les droits : {ex.Message}";
+                ProfileError = SessionLabel;
+            }
         }
     }
 
-    /// <summary>
-    /// Override the banner label with an error message. Used when
-    /// an interactive login attempt fails so the operator sees
-    /// something on the persistent UI without us needing a
-    /// dedicated error page. The next <see cref="Refresh"/> call
-    /// reverts to "Connecté" / "Déconnecté".
-    /// </summary>
     public void SetError(string message)
     {
         ++_accessVersion;
         IsAdministrator = false;
         IsLoggedIn = false;
         IsLoggedOut = true;
+        IsAuthenticationRequired = true;
+        ProfileError = null;
         SessionLabel = message;
     }
 
-    /// <summary>
-    /// Drive the OIDC interactive login. On success, refreshes
-    /// the banner state and raises <see cref="LoginSucceeded"/> so
-    /// the navigation owner can push <c>MainPage</c>. On failure,
-    /// surfaces the error in the banner via <see cref="SetError"/>.
-    /// </summary>
     [RelayCommand(CanExecute = nameof(CanLogin))]
     public async Task LoginAsync()
     {
-        if (Api is null) return;
+        if (IsBusy) return;
+        var api = Api;
         IsBusy = true;
+        SessionLabel = "Connexion en cours dans le navigateur…";
         try
         {
-            await Api.LoginInteractiveAsync().ConfigureAwait(true);
+            if (api is null)
+                throw new InvalidOperationException("Client d'authentification indisponible.");
+            await api.LoginInteractiveAsync().ConfigureAwait(true);
         }
         catch (Exception ex)
         {
-            SetError($"Login failed: {ex.Message}");
+            SetError($"Connexion impossible : {ex.Message}");
             return;
         }
         finally
@@ -154,13 +175,41 @@ public partial class SessionStatusViewModel : ViewModelBase
         }
 
         await RefreshAsync();
-        if (Api.HasValidSession)
+        if (IsLoggedIn)
             LoginSucceeded?.Invoke();
     }
 
     private bool CanLogin() => !IsBusy;
 
-    partial void OnIsBusyChanged(bool value) => LoginCommand.NotifyCanExecuteChanged();
+    partial void OnIsBusyChanged(bool value)
+    {
+        LoginCommand.NotifyCanExecuteChanged();
+        RegisterCommand.NotifyCanExecuteChanged();
+        ForgotPasswordCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanLogin))]
+    private Task Register() => OpenAccountPageAsync("Register");
+
+    [RelayCommand(CanExecute = nameof(CanLogin))]
+    private Task ForgotPassword() => OpenAccountPageAsync("ForgotPassword");
+
+    private async Task OpenAccountPageAsync(string action)
+    {
+        try
+        {
+            var uri = AccountUri(action);
+            var view = (App.Current as App)?.View;
+            var topLevel = view is null ? null : TopLevel.GetTopLevel(view);
+            if (topLevel is null || !await topLevel.Launcher.LaunchUriAsync(uri))
+                throw new InvalidOperationException("Impossible d'ouvrir le navigateur.");
+            SessionLabel = "Terminez l'opération dans le navigateur, puis choisissez Se connecter.";
+        }
+        catch (Exception ex)
+        {
+            SetError(ex.Message);
+        }
+    }
 
     [RelayCommand]
     public async System.Threading.Tasks.Task LogoutAsync()

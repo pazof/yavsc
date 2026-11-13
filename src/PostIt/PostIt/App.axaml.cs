@@ -270,7 +270,6 @@ public partial class App : Application, ILiveView, IVMPusherApp
         if (rootView.DataContext==null)
             rootView.DataContext = ServiceProvider!.GetRequiredService<HomePageViewModel>();
 
-        rootView.SessionBanner.DataContext = sessionStatus;
         this.View = rootView;
     }
 
@@ -296,21 +295,17 @@ public partial class App : Application, ILiveView, IVMPusherApp
 
     private Task BootOnceAsync()
     {
-        var api = ServiceProvider!.GetRequiredService<YavscApiClient>();
-        return _bootTask ??= BootAsync(ServiceProvider!, api);
+        return _bootTask ??= BootAsync(ServiceProvider!);
     }
 
     /// <summary>
     /// Refresh cached OIDC tokens once per application process.
     /// Each root view initializes or restores its own navigation stack separately.
     /// </summary>
-    private static async Task BootAsync(
-        IServiceProvider provider,
-        YavscApiClient api)
+    private static async Task BootAsync(IServiceProvider provider)
     {
-        await api.TrySilentLoginAsync().ConfigureAwait(true);
         var sessionStatus = provider.GetRequiredService<SessionStatusViewModel>();
-        await sessionStatus.RefreshAsync();
+        await sessionStatus.InitializeAsync();
         await provider.GetRequiredService<MessagingSession>().StartAsync(connectOnLogin: OperatingSystem.IsAndroid());
     }
 

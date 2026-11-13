@@ -124,7 +124,7 @@ La taille maximale par fichier et les quotas podcast restent inchangés.
 L'accueil présente un seul accès **Administration**, visible et exécutable
 uniquement pour le rôle exact `Administrator`. `SessionStatusViewModel.RefreshAsync`
 lit les rôles dans `GET account/me` après le rafraîchissement de session ;
-une erreur de lecture masque l'accès et affiche une erreur dans la bannière.
+une erreur de lecture masque l'accès et affiche une erreur sur l'accueil.
 La déconnexion invalide aussi les vérifications de droits encore en vol.
 
 `AdministrationPage` regroupe sept onglets : utilisateurs, usages globaux,
@@ -430,7 +430,7 @@ le DI est construit. Ordre, dans cet ordre :
 | `SettingsPage`                | **Singleton** | Une seule instance pour la vie de l'app : le `DataContext` est câblé une fois au boot, le push est idempotent (cf. section *Garde anti-empilement* ci-dessous). |
 | `MainPage` / `HomePage` / `SignaturePage` | Transient | Résolution à la demande par le `ViewLocator`.                                              |
 | `MainPageViewModel` / `HomePageViewModel` / `SignaturePageViewModel` | Transient | VM reconstruites à chaque navigation ; pas d'état partagé à conserver.                    |
-| `SessionStatusViewModel` + `SessionStatusBanner` | Singleton + Transient | Le VM est un singleton (survit à la navigation), le bandeau est transient (réinstancié quand la fenêtre le recrée). |
+| `SessionStatusViewModel` | Singleton | État partagé de session ; la modale de `MainView` survit fonctionnellement à la navigation et à la recréation d'activité via ce VM. |
 
 > **Invariant** : `Settings` est **uniquement** un singleton. Un
 > `AddTransient<Settings>()` supplémentaire (qui réécrase le
@@ -621,7 +621,7 @@ pour `[RelayCommand]`".
 | Page                       | DataContext              | Rôle                                                                  |
 |----------------------------|--------------------------|-----------------------------------------------------------------------|
 | `MainWindow`               | `HomePageViewModel` (initial) | Host de la `NavigationPage`.                                          |
-| `SessionStatusBanner`      | `SessionStatusViewModel` | Bandeau persistant en haut de la fenêtre, visible sur toutes les pages. Boutons Login / Logout / Paramètres. |
+| Modale de `MainView`       | `SessionStatusViewModel` | Connexion requise : login, inscription et mot de passe oublié. Navigation bloquée jusqu'à la reprise de session ; aucune barre d'état persistante. |
 | `HomePage`                 | `HomePageViewModel`      | Page d'accueil publique.                                              |
 | `MainPage`                 | `MainPageViewModel`      | Éditeur de post de blog (après login).                                |
 | `SignaturePage`            | `SignaturePageViewModel` | Capture de signature (estimateur).                                    |

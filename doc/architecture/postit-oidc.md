@@ -20,7 +20,10 @@ L'authentification suit **RFC 8252 §7.1** (OAuth 2.0 for Native
 Apps — Custom URI Scheme Redirect), pas le pattern loopback
 historique. La séquence :
 
-1. L'utilisateur clique **Se connecter** sur `LoginPage`.
+1. Au démarrage, PostIt restaure la session silencieusement. Si cette
+   reprise échoue, il lance directement le login OIDC, sans confirmation.
+   Une nouvelle tentative peut aussi être lancée avec **Se connecter**
+   dans la modale d'authentification.
 2. `YavscApiClient.LoginInteractiveAsync` demande à `OidcClient`
    de calculer l'authorize URL et de la passer à
    `CustomSchemeBrowser.InvokeAsync`.
@@ -61,8 +64,8 @@ pas vers un serveur HTTP.
 | `Services/CustomSchemeBrowser`  | `IBrowser` OidcClient qui ouvre le système + attend le pipe.      |
 | `Services/SchemeUrlDetector`    | Détection pure, testable, du `postit://callback` dans argv.       |
 | `Services/TokenStore`           | Persiste `RefreshTokenRecord` (access/refresh/id + expiry). Mode 0600 sur POSIX. |
-| `ViewModels/SessionStatusViewModel` | VM du bandeau persistant Connecté/Déconnecté + Logout.         |
-| `Views/SessionStatusBanner`     | Bandeau affiché en haut de `MainWindow`, visible sur toutes les pages. |
+| `ViewModels/SessionStatusViewModel` | État partagé de session, démarrage automatique, login/logout et liens de compte. |
+| `Views/Layout/MainView`        | Modale d'authentification superposée à la navigation, sans barre d'état persistante. |
 
 ## Plateformes (`PostIt.Desktop`, `PostIt.Android`, `PostIt.Browser`)
 
@@ -78,8 +81,9 @@ Chaque plateforme injecte son propre `IBrowser` via
 
 ## UX observable
 
-`LoginPage` affiche en continu la **phase** courante du flow
-(badge `PhaseLabel`) en plus du `StatusMessage` textuel :
+La modale affiche l'attente du navigateur et les erreurs de connexion.
+Les actions sont désactivées pendant le login pour éviter les ouvertures
+concurrentes. Le client expose aussi les phases suivantes à ses appelants :
 
 | Phase              | Signification                                                    |
 |--------------------|------------------------------------------------------------------|
@@ -89,7 +93,7 @@ Chaque plateforme injecte son propre `IBrowser` via
 | `ExchangingCode`   | Trade du `code` contre les tokens à `/connect/token`.            |
 | `Success` / `Error`| Issue du flow.                                                   |
 
-Si le badge reste bloqué sur `OpeningBrowser`, **l'OS n'a jamais
+Si le flow reste bloqué sur `OpeningBrowser`, **l'OS n'a jamais
 relancé PostIt avec l'URL `postit://callback`** : le scheme
 handler n'est pas enregistré correctement.
 
@@ -100,19 +104,42 @@ Au boot, `App.OnFrameworkInitializationCompleted` :
 1. Construit le `TokenStore` (~/.config/PostIt/tokens.json) et
    `YavscApiClient`. Ce dernier charge `_tokens = store.Load()`
    dans son constructeur.
-2. Ouvre `MainWindow` avec `HomePage` comme racine.
-3. Sur l'événement `Opened`, appelle `TrySilentLoginAsync` :
+2. Crée la racine `MainView` et démarre la maintenance de session.
+3. À l'initialisation de la racine, appelle `TrySilentLoginAsync` une
+   seule fois par processus :
    - si l'access token a encore `> RefreshSkew` (60 s) de vie →
-     `Success` immédiat, push `MainPage`.
+     `Success` immédiat.
    - sinon, tente un refresh via le refresh token. Si l'IdP
-     accepte → push `MainPage`. Si l'IdP rejette (révocation,
-     vol, expiration du refresh) → `_store.Clear()`, retour à
-     `HomePage`.
+     accepte → la session est restaurée. Un rejet permanent
+     (`invalid_grant` / `invalid_client`) purge le store ; une erreur
+     temporaire conserve les jetons pour une nouvelle tentative.
+   - sans session restaurée, lance immédiatement le login interactif.
+4. Initialise la messagerie et affiche `HomePage` si la pile est vide.
 
-Le bandeau `SessionStatusBanner` reflète `Api.HasValidSession`
-en continu et expose le bouton **Se déconnecter**, qui appelle
-`Api.LogoutAsync()` (purge du store) puis `PopToRootAsync`
-pour ramener sur `HomePage`.
+La maintenance renouvelle les jetons 60 secondes avant expiration,
+sans attendre un appel API. Les échecs temporaires sont retentés après
+30 secondes ; la reprise d'activité réveille également la maintenance.
+L'option Android de maintien en arrière-plan conserve son comportement.
+
+Un échec de login ou de renouvellement, l'expiration sans refresh token,
+une déconnexion explicite ou un 401 authentifié persistant après la
+tentative de refresh affiche la modale de `MainView`. La navigation en
+dessous est désactivée et le clavier reste dans la modale. Celle-ci
+défile sur les petits écrans et propose :
+
+- **Se connecter** : nouveau flow OIDC/PKCE ;
+- **Créer un compte** : navigateur sur `Account/Register` de l'autorité ;
+- **Mot de passe oublié** : navigateur sur `Account/ForgotPassword`
+  de la même autorité configurée.
+
+Les liens conservent l'éventuel préfixe de chemin de l'autorité.
+L'ouverture d'un lien de compte ne valide pas une session : l'utilisateur
+revient ensuite sur **Se connecter**. Un renouvellement silencieux réussi
+ferme la modale sans changer la page ni les brouillons.
+
+**Paramètres**, **À propos** et **Se déconnecter** sont dans le menu
+secondaire de l'accueil. La déconnexion purge le store puis ramène la
+navigation à l'accueil ; elle ne relance pas le navigateur automatiquement.
 
 ## Garanties testées
 
@@ -125,9 +152,13 @@ pour ramener sur `HomePage`.
   case-insensitive, refuse les faux positifs (`postit-…://`),
   retourne le premier match de manière déterministe.
 
-Le chemin "refresh token rejeté → purge du store" est testé
-manuellement ; le stub `OidcStubAuthority` ne sait pas encore
-rejeter un refresh token précis — extension future.
+- Démarrage sans session, avec session valide et après refresh silencieux.
+- Rejet du refresh token, erreur temporaire puis reprise, expiration sans
+  refresh token, refus 401 persistant et déconnexion explicite.
+- Modale en portrait compact et paysage bas : actions accessibles par
+  défilement, navigation bloquée, restauration du focus et de la page.
+- Liens de création de compte et de récupération du mot de passe sur
+  l'autorité configurée, y compris avec un préfixe de chemin.
 
 ## Voir aussi
 

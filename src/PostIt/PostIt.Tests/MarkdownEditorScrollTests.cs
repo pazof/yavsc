@@ -44,7 +44,7 @@ public class MarkdownEditorScrollTests
             window.UpdateLayout();
             Assert.True(page.DraftTitleTextBox.IsVisible);
             Assert.True(page.AttachmentsBorder.IsVisible);
-            Assert.True(root.SessionBanner.IsVisible);
+            Assert.False(root.AuthenticationModal.IsVisible);
             Assert.Equal(1, Grid.GetColumn(page.DraftTitleTextBox));
             Assert.Equal(1, Grid.GetColumn(page.AttachmentsBorder));
             Assert.True(page.StatusBar.IsVisible);
@@ -60,7 +60,7 @@ public class MarkdownEditorScrollTests
             window.UpdateLayout();
             Assert.True(page.DraftTitleTextBox.IsVisible);
             Assert.True(page.AttachmentsBorder.IsVisible);
-            Assert.True(root.SessionBanner.IsVisible);
+            Assert.False(root.AuthenticationModal.IsVisible);
             Assert.Equal(0, Grid.GetColumn(page.DraftTitleTextBox));
             Assert.Same(document, source.Document);
             Assert.True(source.TextArea.IsFocused);
@@ -98,10 +98,10 @@ public class MarkdownEditorScrollTests
             window.UpdateLayout();
             Assert.Equal(new Thickness(20, 26, 22, 32), root.Padding);
             var navigationTop = root.NavRoot.TranslatePoint(new Point(), window)!.Value.Y;
-            var bannerBottom = root.SessionBanner.TranslatePoint(new Point(0, root.SessionBanner.Bounds.Height), window)!.Value.Y;
+            var navigationBottom = root.NavRoot.TranslatePoint(new Point(0, root.NavRoot.Bounds.Height), window)!.Value.Y;
             Assert.True(navigationTop >= 26);
-            Assert.True(bannerBottom <= 768);
-            Assert.True(root.SessionBanner.IsVisible);
+            Assert.True(navigationBottom <= 768);
+            Assert.False(root.AuthenticationModal.IsVisible);
         }
         finally
         {

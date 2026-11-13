@@ -27,6 +27,15 @@
       </CommandBar.PrimaryCommands>
       <CommandBar.SecondaryCommands>
         <CommandBarButton
+          Command="{Binding SessionStatus.OpenSettingsCommand}"
+          Label="Paramètres" />
+        <CommandBarButton
+          Command="{Binding SessionStatus.OpenAboutCommand}"
+          Label="À propos" />
+        <CommandBarButton
+          Command="{Binding SessionStatus.LogoutCommand}"
+          Label="Se déconnecter" />
+        <CommandBarButton
           Command="{Binding OpenContacts}"
           IsEnabled="{Binding SessionStatus.IsLoggedIn}"
           Label="Contacts" />
@@ -98,6 +107,11 @@
         FontSize="22"
         FontWeight="SemiBold"
         Text="{x:Static lang:Resources.GreetingText}" />
+
+      <TextBlock
+        Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+        Text="{Binding SessionStatus.ProfileError}"
+        TextWrapping="Wrap" />
 
       <Grid ColumnDefinitions="*,Auto">
         <TextBlock

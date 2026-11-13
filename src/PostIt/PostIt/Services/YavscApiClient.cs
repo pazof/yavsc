@@ -28,6 +28,8 @@ namespace PostIt.Services;
 public class YavscApiClient : IYavscApiClient, IAsyncDisposable
 {
     public event Func<Task>? SigningOut;
+    /// <summary>A null error announces renewal or logout; failures require authentication UI.</summary>
+    public event Action<string?>? SessionChanged;
     private int _signingOut;
     public bool IsSigningOut => Volatile.Read(ref _signingOut) != 0;
     // 60s of slack before the access_token's nominal expiry. Covers
@@ -138,16 +140,19 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
     {
         var tokens = _tokens;
         if ((!applicationActive && !Settings.AndroidKeepChatConnected)
-            || IsSigningOut || string.IsNullOrEmpty(tokens?.RefreshToken))
+            || IsSigningOut || tokens is null)
             return Timeout.InfiniteTimeSpan;
-        var delay = tokens.AccessTokenExpiresAt - RefreshSkew - now;
+        var delay = tokens.AccessTokenExpiresAt
+            - (string.IsNullOrEmpty(tokens.RefreshToken) ? TimeSpan.Zero : RefreshSkew) - now;
         return delay > TimeSpan.Zero ? delay : TimeSpan.Zero;
     }
 
     internal async Task RefreshSessionIfNeededAsync(bool applicationActive, CancellationToken ct)
     {
         if ((!applicationActive && !Settings.AndroidKeepChatConnected)
-            || IsSigningOut || string.IsNullOrEmpty(_tokens?.RefreshToken)) return;
+            || IsSigningOut || _tokens is null) return;
+        if (string.IsNullOrEmpty(_tokens.RefreshToken)
+            && _tokens.AccessTokenExpiresAt > DateTimeOffset.UtcNow) return;
         await ForceRefreshAsync(ct).ConfigureAwait(false);
     }
 
@@ -174,6 +179,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
                 catch (Exception ex)
                 {
                     Console.Error.WriteLine($"Session maintenance failed: {ex}");
+                    SessionChanged?.Invoke($"Renouvellement automatique de la session impossible : {ex.Message}");
                     Settings.SetActionStatus($"Renouvellement automatique de la session impossible : {ex.Message}",
                         PostIt.Models.StatusSeverity.Error);
                     await _maintenanceChanged.WaitAsync(TimeSpan.FromSeconds(30), ct).ConfigureAwait(false);
@@ -230,14 +236,18 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
                 "Missing refresh_token — vérifie le scope 'offline_access'.");
         }
 
-        _tokens = new RefreshTokenRecord(
-            AccessToken: result.AccessToken,
-            RefreshToken: result.RefreshToken,
-            AccessTokenExpiresAt: ComputeExpiry(result.AccessTokenExpiration, result.AccessToken),
-            IdToken: result.IdentityToken);
-
-        _store.Save(_tokens);
-        WakeSessionMaintenance();
+        await _refreshGate.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            _tokens = new RefreshTokenRecord(
+                AccessToken: result.AccessToken,
+                RefreshToken: result.RefreshToken,
+                AccessTokenExpiresAt: ComputeExpiry(result.AccessTokenExpiration, result.AccessToken),
+                IdToken: result.IdentityToken);
+            _store.Save(_tokens);
+            WakeSessionMaintenance();
+        }
+        finally { _refreshGate.Release(); }
         progress?.Report(OIDCLoginPhase.Success);
     }
 
@@ -264,11 +274,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             return true;
         }
 
-        // Access token expired but we have a refresh token: try the
-        // silent refresh once. If the OP rejects (revoked, rotation
-        // theft, network down), the refresh path already purges the
-        // store and throws RefreshFailedException; we catch and route
-        // the user back to the login page.
+        // Only a permanent rejection clears the store; transient failures retain it for retry.
         try
         {
             progress?.Report(OIDCLoginPhase.ExchangingCode);
@@ -276,13 +282,19 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             progress?.Report(OIDCLoginPhase.Success);
             return true;
         }
-        catch (RefreshFailedException)
+        catch (RefreshFailedException ex)
         {
+            Console.Error.WriteLine($"Silent login failed: {ex}");
             progress?.Report(OIDCLoginPhase.Idle);
             return false;
         }
-        catch
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Silent login failed: {ex}");
             progress?.Report(OIDCLoginPhase.Idle);
             return false;
         }
@@ -433,7 +445,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
     /// here is enough to make the next "click Save" self-explanatory
     /// (e.g. <i>"Error: 400 — The Title field is required."</i>).
     /// </summary>
-    private static async Task EnsureSuccessOrThrowAsync(HttpResponseMessage response, CancellationToken ct)
+    private async Task EnsureSuccessOrThrowAsync(HttpResponseMessage response, CancellationToken ct)
     {
         if (response.IsSuccessStatusCode) return;
 
@@ -458,6 +470,9 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         var msg = body.Length > 0
             ? $"{(int)response.StatusCode} {response.ReasonPhrase}: {body}"
             : $"{(int)response.StatusCode} {response.ReasonPhrase}";
+        if (response.StatusCode == HttpStatusCode.Unauthorized
+            && !(response.RequestMessage?.Options.TryGetValue(AnonymousRequest, out var anonymous) == true && anonymous))
+            SessionChanged?.Invoke("Le serveur a refusé la session. Veuillez vous reconnecter.");
         throw new HttpRequestException(msg, inner: null, statusCode: response.StatusCode);
     }
 
@@ -484,8 +499,15 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             if (IsSigningOut)
                 throw new InvalidOperationException("Deconnexion en cours.");
             var tokens = _tokens;
-            if (tokens is null || string.IsNullOrEmpty(tokens.RefreshToken))
+            if (tokens is null)
                 throw new InvalidOperationException("Session expirée. Veuillez vous reconnecter.");
+            if (string.IsNullOrEmpty(tokens.RefreshToken))
+            {
+                _store.Clear();
+                _tokens = null;
+                WakeSessionMaintenance();
+                throw new RefreshFailedException("Session expirée. Veuillez vous reconnecter.", isPermanent: true);
+            }
 
             if (rejectedAccessToken is null
                 ? tokens.AccessTokenExpiresAt - DateTimeOffset.UtcNow > RefreshSkew
@@ -517,6 +539,17 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
 
             _store.Save(_tokens);
             WakeSessionMaintenance();
+            SessionChanged?.Invoke(null);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            if (!IsSigningOut)
+                SessionChanged?.Invoke(ex.Message);
+            throw;
         }
         finally
         {
@@ -671,6 +704,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
                 _refreshGate.Release();
                 Interlocked.Exchange(ref _signingOut, 0);
                 WakeSessionMaintenance();
+                SessionChanged?.Invoke(null);
             }
         }
         // Optional: clear the IdP session in the browser too.

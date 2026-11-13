@@ -144,12 +144,10 @@ public static class ServiceCollectionHelpers
         services.AddTransient<PostAclDialog>();
         services.AddTransient<AddCircleMemberDialog>();
         services.AddTransient<ConfirmationDialog>();
-        // Persistent session banner: one instance for the lifetime of
-        // the app so the same VM survives page navigation.
+        // Authentication state survives page navigation and Android activity recreation.
         var sessionStatus = new SessionStatusViewModel { Api = api };
         sessionStatus.Refresh();
         services.AddSingleton(sessionStatus);
-        services.AddSingleton<SessionStatusBanner>();
         services.AddSingleton<BlogsViewModel>();
         return services.BuildServiceProvider();
     }

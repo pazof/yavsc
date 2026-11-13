@@ -26,6 +26,7 @@ public sealed class OIDCStubAuthority : IAsyncDisposable, IDisposable
     public string Issuer { get; }
     public string LoopbackRedirectUri { get; }
     public int RefreshRequestCount { get; private set; }
+    public string? RefreshError { get; set; }
 
     private OIDCStubAuthority(HttpListener listener, RSA rsa, string kid, string issuer, string loopback)
     {
@@ -137,6 +138,11 @@ public sealed class OIDCStubAuthority : IAsyncDisposable, IDisposable
         if (form.TryGetValue("grant_type", out var grantType) && grantType == "refresh_token")
         {
             RefreshRequestCount++;
+            if (RefreshError is { } error)
+            {
+                await WriteJsonAsync(ctx.Response, new { error }, 503);
+                return;
+            }
             if (!form.TryGetValue("refresh_token", out var suppliedToken)
                 || !_refreshTokens.Remove(suppliedToken))
             {

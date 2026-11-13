@@ -3,7 +3,6 @@
              xmlns:vm="using:PostIt.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:views="using:PostIt.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PostIt.Views.MainView"
              x:DataType="vm:HomePageViewModel">
@@ -13,11 +12,38 @@
     <vm:HomePageViewModel />
   </Design.DataContext>
 
-  <DockPanel LastChildFill="True">
-    <views:SessionStatusBanner
-      x:Name="SessionBanner"
-      DataContext="{Binding SessionStatus}"
-      DockPanel.Dock="Bottom"/>
+  <Grid>
     <NavigationPage x:Name="NavRoot"/>
-  </DockPanel>
+    <Border x:Name="AuthenticationModal"
+            IsVisible="{Binding SessionStatus.IsAuthenticationRequired, FallbackValue=False}"
+            Background="#80000000"
+            Padding="12"
+            KeyboardNavigation.TabNavigation="Cycle">
+      <Border MaxWidth="420"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Center"
+              Padding="20"
+              CornerRadius="8"
+              Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+              AutomationProperties.Name="Connexion requise">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Connexion requise" FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap"/>
+            <TextBlock Text="PostIt nécessite une connexion. Connectez-vous pour continuer." TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding SessionStatus.SessionLabel}" TextWrapping="Wrap"/>
+            <ProgressBar Height="4" IsIndeterminate="True" IsVisible="{Binding SessionStatus.IsBusy}"/>
+            <Button x:Name="LoginButton" Content="Se connecter"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Command="{Binding SessionStatus.LoginCommand}"/>
+            <Button x:Name="RegisterButton" Content="Créer un compte"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Command="{Binding SessionStatus.RegisterCommand}"/>
+            <Button x:Name="ForgotPasswordButton" Content="Mot de passe oublié"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Command="{Binding SessionStatus.ForgotPasswordCommand}"/>
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+    </Border>
+  </Grid>
 </UserControl>

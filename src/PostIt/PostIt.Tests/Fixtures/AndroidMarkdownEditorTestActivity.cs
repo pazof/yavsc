@@ -186,15 +186,14 @@ public sealed class AndroidMarkdownEditorTestActivity : Activity
         activity.CurrentFocus!.GetLocationInWindow(location);
         var topLevel = TopLevel.GetTopLevel(root)!;
         var navigation = root.FindControl<NavigationPage>("NavRoot")!;
-        var banner = root.FindControl<PostIt.Views.SessionStatusBanner>("SessionBanner")!;
         var top = navigation.TranslatePoint(new Point(), topLevel)!.Value.Y * topLevel.RenderScaling + location[1];
-        var bottom = banner.TranslatePoint(new Point(0, banner.Bounds.Height), topLevel)!.Value.Y
+        var bottom = navigation.TranslatePoint(new Point(0, navigation.Bounds.Height), topLevel)!.Value.Y
             * topLevel.RenderScaling + location[1];
         var visibleBottom = decor.Height - bars.Bottom;
         if (KeyboardVisible())
             visibleBottom = Math.Min(visibleBottom, decor.Height - insets.GetInsets(WindowInsets.Type.Ime()).Bottom);
-        if (top < bars.Top - 2 || bottom > visibleBottom + 2 || !banner.IsVisible)
-            throw new InvalidOperationException($"Controls overlap system bars: top={top}, safeTop={bars.Top}, bottom={bottom}, safeBottom={visibleBottom}, banner={banner.IsVisible}.");
+        if (top < bars.Top - 2 || bottom > visibleBottom + 2)
+            throw new InvalidOperationException($"Controls overlap system bars: top={top}, safeTop={bars.Top}, bottom={bottom}, safeBottom={visibleBottom}.");
         if (navigation.NavigationStack.LastOrDefault() is BlogsPage page)
         {
             var bar = NavigationPage.GetTopCommandBar(page)!;

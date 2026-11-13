@@ -2,6 +2,8 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Platform;
+using Avalonia.Input;
+using Avalonia.Threading;
 
 namespace PostIt.Views;
 
@@ -11,11 +13,43 @@ public partial class MainView : UserControl
     private IInsetsManager? _insetsManager;
     private Thickness _safeArea;
     private Rect? _keyboardRect;
+    private IInputElement? _previousFocus;
     internal bool IsSoftKeyboardOpen { get; private set; }
 
     public MainView()
     {
         InitializeComponent();
+        AuthenticationModal.PropertyChanged += (_, e) =>
+        {
+            if (e.Property != IsVisibleProperty) return;
+            if (AuthenticationModal.IsVisible)
+            {
+                _previousFocus = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();
+                NavRoot.IsEnabled = false;
+                Dispatcher.UIThread.Post(FocusAuthentication, DispatcherPriority.Input);
+            }
+            else
+            {
+                NavRoot.IsEnabled = true;
+                var previousFocus = _previousFocus;
+                _previousFocus = null;
+                Dispatcher.UIThread.Post(() =>
+                {
+                    if (!AuthenticationModal.IsVisible)
+                        previousFocus?.Focus();
+                }, DispatcherPriority.Input);
+            }
+        };
+        LoginButton.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == IsEnabledProperty && LoginButton.IsEnabled && AuthenticationModal.IsVisible)
+                Dispatcher.UIThread.Post(FocusAuthentication, DispatcherPriority.Input);
+        };
+        Loaded += (_, _) =>
+        {
+            Dispatcher.UIThread.Post(FocusAuthentication, DispatcherPriority.Input);
+        };
+        NavRoot.IsEnabled = !AuthenticationModal.IsVisible;
         TopLevel.SetAutoSafeAreaPadding(this, false);
         AttachedToVisualTree += (_, _) =>
         {
@@ -44,6 +78,12 @@ public partial class MainView : UserControl
             _insetsManager = null;
         };
         SizeChanged += (_, _) => ApplyKeyboardOcclusion(_keyboardRect);
+    }
+
+    private void FocusAuthentication()
+    {
+        if (AuthenticationModal.IsVisible)
+            LoginButton.Focus();
     }
 
     private void InputPaneStateChanged(object? sender, InputPaneStateEventArgs e)

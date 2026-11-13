@@ -20,6 +20,30 @@ namespace PostIt.Tests;
 public class YavscApiClientTests
 {
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Rejected_authenticated_retry_requires_login_but_anonymous_401_does_not(bool anonymous)
+    {
+        using var authority = await OIDCStubAuthority.StartAsync();
+        using var apiServer = new StubApiServer { AlwaysUnauthorized = true };
+        await apiServer.StartAsync();
+        var path = TokensPath();
+        try
+        {
+            await using var client = await LoginAndPersistAsync(BuildSettings(authority, apiServer.BaseUrl), authority, path);
+            var changes = new List<string?>();
+            client.SessionChanged += changes.Add;
+            await Assert.ThrowsAsync<HttpRequestException>(() => anonymous
+                ? client.GetAnonymousAsync<List<StubApiServer.Post>>(apiServer.BaseUrl, TestContext.Current.CancellationToken)
+                : client.CallAsync<List<StubApiServer.Post>>(HttpMethod.Get, apiServer.BaseUrl, TestContext.Current.CancellationToken));
+            Assert.Equal(anonymous ? 0 : 1, authority.RefreshRequestCount);
+            if (anonymous) Assert.Empty(changes);
+            else Assert.Contains("Veuillez vous reconnecter", changes.Last());
+        }
+        finally { File.Delete(path); }
+    }
+
+    [Theory]
     [InlineData(600, true, false, 540)]
     [InlineData(3600, false, true, 3540)]
     [InlineData(40, true, false, 0)]
@@ -792,6 +816,7 @@ internal sealed class StubApiServer : IAsyncDisposable, IDisposable
     public List<string> SeenBearers { get; } = new();
     public int RequestCount => _requestCount;
     public string? RejectedBearer { get; set; }
+    public bool AlwaysUnauthorized { get; set; }
 
     public StubApiServer(bool forceFirstRequest = false)
     {
@@ -824,7 +849,7 @@ internal sealed class StubApiServer : IAsyncDisposable, IDisposable
             if (!string.IsNullOrEmpty(auth))
                 SeenBearers.Add(auth!);
 
-            if ((_forceFirstRequest && _requestCount == 1)
+            if (AlwaysUnauthorized || (_forceFirstRequest && _requestCount == 1)
                 || (RejectedBearer is not null && auth == RejectedBearer))
             {
                 ctx.Response.StatusCode = 401;
