@@ -76,7 +76,10 @@ namespace PostIt.ViewModels.Chat
         public partial string? SelectedUser { get; set; }
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsConnectedAndInARoom))]
         public partial string CurrentRoom { get; set; } = "General";
+
+        public bool IsConnectedAndInARoom => IsConnected && !string.IsNullOrEmpty(CurrentRoom);
 
         [ObservableProperty]
         public partial string NickName { get; set; } = "";
@@ -87,6 +90,7 @@ namespace PostIt.ViewModels.Chat
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(ShowCallCommand))]
+        [NotifyPropertyChangedFor(nameof(IsConnectedAndInARoom))]
         public partial bool IsConnected { get; set; } = false;
 
         [ObservableProperty]

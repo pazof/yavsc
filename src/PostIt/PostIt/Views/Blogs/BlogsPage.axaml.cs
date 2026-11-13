@@ -88,7 +88,6 @@ public partial class BlogsPage : ContentPage
         PostsSplitter.HorizontalAlignment = isWide ? HorizontalAlignment.Center : HorizontalAlignment.Stretch;
         PostsSplitter.VerticalAlignment = isWide ? VerticalAlignment.Stretch : VerticalAlignment.Center;
         PostsSplitter.Margin = isWide ? new Thickness(0, 12) : new Thickness(12, 0);
-        NavigationPage.SetBarHeightOverride(this, isWide ? 36 : null);
     }
 
     private static void SetArea(Control control, int row, int column, int rowSpan = 1, int columnSpan = 1)

@@ -33,6 +33,16 @@
   ],
   "PodcastCameraId": "/dev/video0",
   "PodcastMicrophoneId": "default",
+  "PodcastKeepScreenOn": false,
+  "PodcastBlurBackground": false,
+  "LanCallAddress": null,
+  "AndroidKeepChatConnected": false,
+  "ChatRoomsByAccount": {
+    "1E801AB5E07C3365EDFE78054C60FB3A13A84182A65DDCC7F85DBE3F8B5D142D": [
+      "General"
+    ]
+  },
   "SelectedLanguage": "fr-FR",
-  "SaveCommand": {}
+  "SaveCommand": {},
+  "ApplyCommand": {}
 }

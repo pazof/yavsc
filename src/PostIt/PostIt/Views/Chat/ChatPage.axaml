@@ -30,7 +30,7 @@
             Text="{Binding CurrentRoom}"
             PlaceholderText="Nom du salon" />
           <Button Command="{Binding JoinRoomCommand}" Content="Rejoindre Salon (Join)" />
-          <Button Command="{Binding LeaveRoomCommand}" Content="Quitter le salon" IsEnabled="{Binding !!SelectedRoom}" />
+          <Button Command="{Binding LeaveRoomCommand}" Content="Quitter le salon" IsEnabled="{Binding IsConnectedAndInARoom}" />
           <!--  Choix de la salle en focus parmi celles jointes  -->
           <ComboBox
             Width="180"
@@ -85,7 +85,7 @@
         Grid.Column="0"
         VerticalAlignment="Center"
         AcceptsReturn="False"
-        IsEnabled="{Binding !!SelectedRoom}"
+        IsEnabled="{Binding IsConnectedAndInARoom}"
         PlaceholderText="Votre message..."
         Text="{Binding MessageToSend}">
         <TextBox.KeyBindings>

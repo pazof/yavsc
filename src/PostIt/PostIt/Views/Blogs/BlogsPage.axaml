@@ -2,20 +2,15 @@
   x:Class="PostIt.Views.Blogs.BlogsPage"
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:models="using:Yavsc.Blogspot"
   xmlns:postitControls="using:PostIt.Controls"
   xmlns:reader="clr-namespace:Markdown.Avalonia;assembly=Markdown.Avalonia"
   xmlns:services="using:PostIt.Services"
   xmlns:vm="using:PostIt.ViewModels"
   x:Name="BlogsPageRoot"
-  HorizontalAlignment="Stretch"
-  VerticalAlignment="Stretch"
   x:DataType="vm:BlogsViewModel"
   AutomaticallyApplySafeAreaPadding="True"
-  Header="Billets de blog"
-  mc:Ignorable="d">
+  Header="Billets de blog">
   <Design.DataContext>
     <vm:BlogsViewModel />
   </Design.DataContext>
