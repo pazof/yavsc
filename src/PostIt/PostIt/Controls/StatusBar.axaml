@@ -8,7 +8,8 @@
             BorderThickness="1"
             CornerRadius="6"
             Padding="8">
-        <StackPanel Orientation="Horizontal" Spacing="8">
+
+        <WrapPanel Orientation="Horizontal" >
             <TextBlock Text="{Binding Glyph}"
               FontWeight="Bold"
               Foreground="{Binding Foreground}"
@@ -23,6 +24,6 @@
                     IsVisible="{Binding HasCheckCommand}"
                     Command="{Binding CheckCommand}"
                     />
-        </StackPanel>
-    </Border>
+        </WrapPanel>
+      </Border>
 </UserControl>
