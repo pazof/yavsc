@@ -30,10 +30,25 @@ internal static class ChatBootState
             throw new IOException("Impossible d'enregistrer la deconnexion Android.");
     }
 
-    internal static bool CanStart(YavscApiClient api) =>
-        OptedIn && Preferences.GetBoolean("signed-in", false)
-        && api.Settings.AndroidKeepChatConnected && !api.IsSigningOut && api.HasValidSession
-        && Identity(api) is { } identity && identity == Preferences.GetString("identity", null);
+    internal static bool CanStart(YavscApiClient api)
+    {
+        if (!OptedIn || !api.Settings.AndroidKeepChatConnected || api.IsSigningOut || !api.HasValidSession)
+            return false;
+
+        var identity = Identity(api);
+        if (identity is null) return false;
+
+        var signedIn = Preferences.GetBoolean("signed-in", false);
+        var storedIdentity = Preferences.GetString("identity", null);
+
+        // A valid refresh-capable session can coexist with stale native prefs
+        // (for example after app relaunch or an interrupted token renewal).
+        // Treat missing/lagging prefs as recoverable instead of rejecting the
+        // start outright, but keep strict identity matching when both values exist.
+        if (!signedIn && string.IsNullOrEmpty(storedIdentity)) return true;
+        if (signedIn && !string.IsNullOrEmpty(storedIdentity)) return identity == storedIdentity;
+        return true;
+    }
 
     internal static string? Identity(YavscApiClient api)
     {
