@@ -43,21 +43,7 @@ public class HomePageProviderFlowTests
     }
 
     [Fact]
-    public void Administration_page_filters_users_by_search_text()
-    {
-        var vm = new AdministrationPageViewModel();
-        vm.Users.Add(new Yavsc.Abstract.Identity.UserInfo { UserId = "1", UserName = "alice", FullName = "Alice Example" });
-        vm.Users.Add(new Yavsc.Abstract.Identity.UserInfo { UserId = "2", UserName = "bob", FullName = "Bob Jones" });
-        vm.Users.Add(new Yavsc.Abstract.Identity.UserInfo { UserId = "3", UserName = "carol", FullName = "Carol Smith" });
-
-        vm.SearchText = "ali";
-
-        Assert.Single(vm.FilteredUsers);
-        Assert.Equal("alice", vm.FilteredUsers[0].UserName);
-    }
-
-    [Fact]
-    public void Administration_page_filters_users_by_full_name()
+    public void Administration_search_text_does_not_filter_the_loaded_page_locally()
     {
         var vm = new AdministrationPageViewModel();
         vm.Users.Add(new Yavsc.Abstract.Identity.UserInfo { UserId = "1", UserName = "alice", FullName = "Alice Example" });
@@ -65,8 +51,8 @@ public class HomePageProviderFlowTests
 
         vm.SearchText = "example";
 
-        Assert.Single(vm.FilteredUsers);
-        Assert.Equal("alice", vm.FilteredUsers[0].UserName);
+        Assert.Equal(2, vm.Users.Count);
+        Assert.Equal("example", vm.SearchText);
     }
 
     [Fact]

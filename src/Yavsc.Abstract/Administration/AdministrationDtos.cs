@@ -1,11 +1,15 @@
 #nullable enable
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Yavsc.Abstract.Identity;
 
 namespace Yavsc.Abstract.Administration;
 
 /// <summary>Site administration counts and runtime information.</summary>
 public sealed record AdministrationSummary(int UserCount, int AdministratorCount, string Assembly, string Runtime);
+
+/// <summary>A page of users matching an administration search.</summary>
+public sealed record AdministrationUserPage(IReadOnlyList<UserInfo> Users, bool HasNextPage);
 
 /// <summary>A role with its current membership count.</summary>
 public sealed record AdministrationRole(string Id, string Name, int UserCount);

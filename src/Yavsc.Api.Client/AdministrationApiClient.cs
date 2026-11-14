@@ -15,6 +15,9 @@ public sealed class AdministrationApiClient(IYavscApiClient api, Func<string> ba
 
     public Task<AdministrationSummary> GetSummaryAsync(CancellationToken ct = default)
         => api.CallAsync<AdministrationSummary>(HttpMethod.Get, Path("summary"), ct: ct);
+    public Task<AdministrationUserPage> SearchUsersAsync(string? query, int page, CancellationToken ct = default)
+        => api.CallAsync<AdministrationUserPage>(HttpMethod.Get,
+            Path($"users?page={page}&query={Escape(query ?? string.Empty)}"), ct: ct);
     public Task<List<AdministrationRole>> GetRolesAsync(CancellationToken ct = default)
         => api.CallAsync<List<AdministrationRole>>(HttpMethod.Get, Path("roles"), ct: ct);
     public Task EnsureRolesAsync(CancellationToken ct = default)

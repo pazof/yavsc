@@ -5,6 +5,7 @@ using IdentityServer8.EntityFramework.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Yavsc.Abstract.Administration;
+using Yavsc.Abstract.Identity;
 using Yavsc.Models;
 using Yavsc.Server.Helpers;
 using Yavsc.Server.Models.Calendar;
@@ -17,6 +18,8 @@ public sealed partial class AdministrationService(
     ApplicationDbContext db, UserManager<ApplicationUser> users, RoleManager<IdentityRole> roles,
     IHttpContextAccessor httpContext) : IAdministrationService
 {
+    private const int UserPageSize = 25;
+
     private string Actor => httpContext.HttpContext?.User.GetUserId()
         ?? throw new AdministrationOperationException(401, "Session administrateur indisponible.");
 
@@ -34,6 +37,50 @@ public sealed partial class AdministrationService(
         => new(await db.Users.CountAsync(ct),
             (await users.GetUsersInRoleAsync(Constants.AdminName)).Count,
             typeof(AdministrationService).Assembly.GetName().ToString(), System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
+
+    public async Task<AdministrationUserPage> SearchUsersAsync(string? query, int page, CancellationToken ct)
+    {
+        if (page < 1 || page > int.MaxValue / UserPageSize)
+            throw Invalid("Le numéro de page est invalide.");
+
+        var normalizedQuery = query?.Trim().ToLowerInvariant();
+        var userQuery = db.Users.AsNoTracking()
+            .Include(user => user.PostalAddress)
+            .Include(user => user.BankInfo)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(normalizedQuery))
+        {
+            userQuery = userQuery.Where(user =>
+                (user.UserName != null && user.UserName.ToLower().Contains(normalizedQuery)) ||
+                (user.FullName != null && user.FullName.ToLower().Contains(normalizedQuery)));
+        }
+
+        var matches = await userQuery
+            .OrderBy(user => user.UserName)
+            .ThenBy(user => user.Id)
+            .Skip((page - 1) * UserPageSize)
+            .Take(UserPageSize + 1)
+            .ToListAsync(ct);
+
+        var hasNextPage = matches.Count > UserPageSize;
+        var result = matches.Take(UserPageSize).Select(user => new UserInfo
+        {
+            UserId = user.Id,
+            UserName = user.UserName,
+            FullName = user.FullName,
+            Email = user.Email,
+            Address = user.PostalAddress?.Address ?? string.Empty,
+            Avatar = user.Avatar,
+            DedicatedGoogleCalendar = user.DedicatedGoogleCalendar,
+            BankInfoSummary = user.BankInfo is { Count: > 0 }
+                ? string.Join(" | ", user.BankInfo.Select(bank =>
+                    string.IsNullOrWhiteSpace(bank.IBAN) ? bank.BIC : $"{bank.IBAN} / {bank.BIC}"))
+                : string.Empty
+        }).ToArray();
+
+        return new AdministrationUserPage(result, hasNextPage);
+    }
 
     public async Task<IReadOnlyList<AdministrationRole>> GetRolesAsync(CancellationToken ct)
     {

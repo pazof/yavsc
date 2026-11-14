@@ -6,6 +6,7 @@ using Avalonia.VisualTree;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
+using Yavsc.Abstract.Administration;
 using Yavsc.Abstract.Identity;
 using Yavsc.Abstract.Resources;
 using Yavsc.Api.Client;
@@ -80,6 +81,42 @@ public class AdministrationAccessTests
         Assert.Single(vm.UsageOverview);
         Assert.Contains(api.Requests, path => path.EndsWith("/resource-usage/admin"));
         Assert.DoesNotContain(api.Requests, path => path.EndsWith("/resource-usage/me"));
+    }
+
+    [Fact]
+    public async Task Administration_searches_users_on_the_server_and_pages_results()
+    {
+        await using var api = new ProfileTransport("Administrator") { ManyUsers = true };
+        var session = new SessionStatusViewModel { Api = api };
+        await session.RefreshAsync();
+        var vm = new AdministrationPageViewModel(api, api.UsageClient, session);
+
+        await vm.RefreshAsync();
+        Assert.Equal(1, vm.UserPage);
+        Assert.True(vm.HasNextUserPage);
+        Assert.Equal(25, vm.Users.Count);
+        Assert.Contains(api.Requests, path => path.Contains(
+            "/administration/users?page=1&query=", StringComparison.Ordinal));
+
+        vm.SearchText = "Jean Dupont";
+        await vm.SearchUsersCommand.ExecuteAsync(null);
+        Assert.Equal(1, vm.UserPage);
+        Assert.False(vm.HasNextUserPage);
+        Assert.Contains(api.Requests, path => path.Contains(
+            "/administration/users?page=1&query=Jean", StringComparison.Ordinal));
+
+        vm.SearchText = "";
+        await vm.SearchUsersCommand.ExecuteAsync(null);
+        Assert.True(vm.HasNextUserPage);
+        await vm.NextUserPageCommand.ExecuteAsync(null);
+        Assert.Equal(2, vm.UserPage);
+        Assert.False(vm.HasNextUserPage);
+        Assert.Contains(api.Requests, path => path.Contains(
+            "/administration/users?page=2&query=", StringComparison.Ordinal));
+        Assert.False(vm.NextUserPageCommand.CanExecute(null));
+
+        await vm.PreviousUserPageCommand.ExecuteAsync(null);
+        Assert.Equal(1, vm.UserPage);
     }
 
     [AvaloniaFact]
@@ -232,6 +269,7 @@ public class AdministrationAccessTests
         public bool FailUsage { get; set; }
         public bool ExhaustedQuota { get; set; }
         public bool HideIpAddressInCalls { get; set; }
+        public bool ManyUsers { get; set; }
         public ResourceUsageApiClient UsageClient => new(this, Settings.ApiUrl);
 
         public ProfileTransport(string role)
@@ -278,11 +316,22 @@ public class AdministrationAccessTests
                 };
                 result = path.EndsWith("/admin") ? new List<ResourceUsageSummary> { usage } : usage;
             }
-            else if (path.EndsWith("/users"))
+            else if (path.Contains("/administration/users", StringComparison.Ordinal))
             {
                 if (ExhaustedQuota)
                     throw new HttpRequestException("resource_quota_exceeded", null, System.Net.HttpStatusCode.TooManyRequests);
-                result = new List<UserInfo> { new() { UserId = "alice-id", UserName = "alice" } };
+                var matchingQuery = path.Contains("query=Jean", StringComparison.Ordinal);
+                var page = path.Contains("page=2", StringComparison.Ordinal);
+                var returnedUsers = !matchingQuery && !page && ManyUsers
+                    ? Enumerable.Range(1, 25).Select(index => new UserInfo
+                    {
+                        UserId = $"alice-id-{index}", UserName = $"alice-{index}"
+                    }).ToList()
+                    : matchingQuery
+                        ? new List<UserInfo> { new() { UserId = "jean-id", UserName = "jean", FullName = "Jean Dupont" } }
+                        : page ? new List<UserInfo>()
+                        : new List<UserInfo> { new() { UserId = "alice-id", UserName = "alice" } };
+                result = new AdministrationUserPage(returnedUsers, ManyUsers && !matchingQuery && !page);
             }
             else
                 throw new InvalidOperationException($"Unexpected endpoint: {path}");

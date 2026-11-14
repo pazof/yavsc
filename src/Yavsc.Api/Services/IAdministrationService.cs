@@ -5,6 +5,7 @@ namespace Yavsc.Api.Services;
 public interface IAdministrationService
 {
     Task<AdministrationSummary> GetSummaryAsync(CancellationToken ct);
+    Task<AdministrationUserPage> SearchUsersAsync(string? query, int page, CancellationToken ct);
     Task<IReadOnlyList<AdministrationRole>> GetRolesAsync(CancellationToken ct);
     Task EnsureRolesAsync(CancellationToken ct);
     Task<IReadOnlyList<RoleMember>> GetRoleMembersAsync(string roleId, CancellationToken ct);

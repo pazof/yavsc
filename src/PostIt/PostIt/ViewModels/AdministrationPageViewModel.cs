@@ -22,6 +22,10 @@ public partial class AdministrationPageViewModel : ViewModelBase
     private readonly ResourceUsageApiClient? _usageClient;
     private readonly SessionStatusViewModel? _session;
     private readonly AdministrationApiClient? _administrationClient;
+    private AdministrationApiClient? UserSearchClient =>
+        _administrationClient ?? (_api is null
+            ? null
+            : new AdministrationApiClient(_api, () => _api.Settings.ApiUrl));
 
     public ObservableCollection<ResourceUsageSummary> UsageOverview { get; } = new();
 
@@ -38,20 +42,18 @@ public partial class AdministrationPageViewModel : ViewModelBase
     public partial string SearchText { get; set; } = string.Empty;
 
     [ObservableProperty]
+    public partial int UserPage { get; set; } = 1;
+
+    [ObservableProperty]
+    public partial bool HasNextUserPage { get; set; }
+
+    public bool HasPreviousUserPage => UserPage > 1;
+
+    [ObservableProperty]
     public partial string StatusMessage { get; set; } = "Chargement…";
 
     [ObservableProperty]
     public partial UserInfo? SelectedUser { get; set; }
-
-    public IReadOnlyList<UserInfo> FilteredUsers =>
-        string.IsNullOrWhiteSpace(SearchText)
-            ? Users.ToList()
-            : Users.Where(user =>
-                    (user.UserName ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-                 || (user.FullName ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-                 || (user.Email ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-                 || (user.UserId ?? string.Empty).Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-                .ToList();
 
     public override bool CanNavigateNext { get => false; protected set { _ = value; } }
     public override bool CanNavigatePrevious { get => true; protected set { _ = value; } }
@@ -107,7 +109,25 @@ public partial class AdministrationPageViewModel : ViewModelBase
 
     partial void OnSearchTextChanged(string value)
     {
-        OnPropertyChanged(nameof(FilteredUsers));
+        UserPage = 1;
+        HasNextUserPage = false;
+    }
+
+    partial void OnUserPageChanged(int value)
+    {
+        OnPropertyChanged(nameof(HasPreviousUserPage));
+        PreviousUserPageCommand.NotifyCanExecuteChanged();
+        NextUserPageCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnHasNextUserPageChanged(bool value)
+        => NextUserPageCommand.NotifyCanExecuteChanged();
+
+    partial void OnIsBusyChanged(bool value)
+    {
+        SearchUsersCommand.NotifyCanExecuteChanged();
+        PreviousUserPageCommand.NotifyCanExecuteChanged();
+        NextUserPageCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnSelectedUserChanged(UserInfo? value) => OnPropertyChanged(nameof(SelectedUsage));
@@ -121,7 +141,7 @@ public partial class AdministrationPageViewModel : ViewModelBase
             StatusMessage = "Le rôle Administrator est requis.";
             return;
         }
-        if (_api is null || _usageClient is null)
+        if (_api is null || _usageClient is null || UserSearchClient is null)
         {
             StatusMessage = "Client API d’administration indisponible.";
             return;
@@ -141,31 +161,13 @@ public partial class AdministrationPageViewModel : ViewModelBase
             foreach (var item in usage)
                 UsageOverview.Add(item);
 
-            var query = SearchText.Trim();
-            var usersEndpoint = string.IsNullOrWhiteSpace(query)
-                ? new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), "users").ToString()
-                : new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute), $"users/search/{Uri.EscapeDataString(query)}").ToString();
-
-            var users = await _api.CallAsync<List<UserInfo>>(HttpMethod.Get, usersEndpoint).ConfigureAwait(true)
-                ?? throw new InvalidOperationException("Le serveur a renvoyé une liste d’utilisateurs vide.");
-
-            if (!_session.IsAdministrator)
-            {
-                ClearAdministrationData();
-                StatusMessage = "Le rôle Administrator est requis.";
-                return;
-            }
-
-            foreach (var user in users)
-            {
-                Users.Add(user);
-            }
-
-            OnPropertyChanged(nameof(FilteredUsers));
+            await LoadUsersPageCoreAsync(1);
             OnPropertyChanged(nameof(SelectedUsage));
             if (_administrationClient is not null)
                 await LoadToolsAsync();
-            StatusMessage = Users.Count > 0 ? $"{Users.Count} utilisateur(s) chargé(s)." : "Aucun utilisateur trouvé.";
+            StatusMessage = Users.Count > 0
+                ? $"{Users.Count} utilisateur(s) affiché(s), page {UserPage}."
+                : "Aucun utilisateur trouvé.";
         }
         catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
         {
@@ -186,6 +188,83 @@ public partial class AdministrationPageViewModel : ViewModelBase
         {
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private Task SearchUsersAsync() => LoadUsersPageAsync(1);
+
+    [RelayCommand(CanExecute = nameof(CanGoToPreviousUserPage))]
+    private Task PreviousUserPageAsync() => LoadUsersPageAsync(UserPage - 1);
+
+    [RelayCommand(CanExecute = nameof(CanGoToNextUserPage))]
+    private Task NextUserPageAsync() => LoadUsersPageAsync(UserPage + 1);
+
+    private bool CanGoToPreviousUserPage() => !IsBusy && UserPage > 1;
+    private bool CanGoToNextUserPage() => !IsBusy && HasNextUserPage;
+
+    private async Task LoadUsersPageAsync(int page)
+    {
+        if (IsBusy)
+            return;
+        if (_session?.IsAdministrator != true)
+        {
+            Users.Clear();
+            SelectedUser = null;
+            HasNextUserPage = false;
+            StatusMessage = "Le rôle Administrator est requis.";
+            return;
+        }
+        if (UserSearchClient is null)
+        {
+            StatusMessage = "Client API d’administration indisponible.";
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            await LoadUsersPageCoreAsync(page);
+            StatusMessage = Users.Count > 0
+                ? $"{Users.Count} utilisateur(s) affiché(s), page {UserPage}."
+                : "Aucun utilisateur trouvé.";
+        }
+        catch (Exception ex)
+        {
+            Users.Clear();
+            SelectedUser = null;
+            HasNextUserPage = false;
+            StatusMessage = $"Recherche d’utilisateurs indisponible : {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task LoadUsersPageCoreAsync(int page)
+    {
+        var client = UserSearchClient;
+        if (client is null)
+            throw new InvalidOperationException("Client API d’administration indisponible.");
+
+        var result = await client.SearchUsersAsync(
+            SearchText.Trim(), page).ConfigureAwait(true);
+        if (_session?.IsAdministrator != true)
+        {
+            Users.Clear();
+            SelectedUser = null;
+            HasNextUserPage = false;
+            StatusMessage = "Le rôle Administrator est requis.";
+            return;
+        }
+
+        Users.Clear();
+        foreach (var user in result.Users)
+            Users.Add(user);
+        SelectedUser = null;
+        UserPage = page;
+        HasNextUserPage = result.HasNextPage;
+        OnPropertyChanged(nameof(SelectedUsage));
     }
 
     private void ClearAdministrationData()
@@ -214,7 +293,8 @@ public partial class AdministrationPageViewModel : ViewModelBase
         EntryValue = "";
         EnrollUserId = "";
         ConfirmDestructiveAction = false;
-        OnPropertyChanged(nameof(FilteredUsers));
+        UserPage = 1;
+        HasNextUserPage = false;
         OnPropertyChanged(nameof(SelectedUsage));
     }
 }

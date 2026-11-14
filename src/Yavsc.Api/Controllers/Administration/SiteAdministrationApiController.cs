@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -31,6 +32,14 @@ public sealed class SiteAdministrationApiController(IAdministrationService servi
     [ProducesResponseType<AdministrationSummary>(200)]
     public async Task<ActionResult<AdministrationSummary>> Summary(CancellationToken ct)
         => Ok(await service.GetSummaryAsync(ct));
+
+    [HttpGet("users"), EndpointSummary("Rechercher les utilisateurs par login ou nom")]
+    [ProducesResponseType<AdministrationUserPage>(200)]
+    public async Task<ActionResult<AdministrationUserPage>> SearchUsers(
+        [FromQuery, StringLength(128)] string? query,
+        [FromQuery, Range(1, int.MaxValue / 25)] int page = 1,
+        CancellationToken ct = default)
+        => Ok(await service.SearchUsersAsync(query, page, ct));
 
     [HttpGet("roles"), EndpointSummary("Lister les rôles et leurs effectifs")]
     public async Task<ActionResult<IReadOnlyList<AdministrationRole>>> Roles(CancellationToken ct)
