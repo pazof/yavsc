@@ -8,6 +8,8 @@
 
 * [PostIt] Replace the persistent status bar with a global notification service using ephemeral toasts for info/success and dismissible modal alerts for warnings/errors.
 
+* [PostIt] Refactor rendez-vous address editing around a dedicated physical-address view model and a dedicated address editor page so the map remains usable without a ScrollViewer and the main command form stays compact on small screens.
+
 * [PostIt/Administration] Rechercher les utilisateurs côté serveur par login ou nom, par pages de 25 résultats maximum avec navigation précédente/suivante.
 
 * [PostIt] Telemetry

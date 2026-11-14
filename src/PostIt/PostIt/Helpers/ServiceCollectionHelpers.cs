@@ -88,6 +88,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<ChatPage>();
         services.AddTransient<CallPage>();
         services.AddTransient<RdvPage>();
+        services.AddTransient<AddressEditorPage>();
         services.AddTransient<BrushPage>();
         services.AddTransient<BillingQueriesPage>();
         services.AddTransient<BillingQueryDetailsPage>();

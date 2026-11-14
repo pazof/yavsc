@@ -17,21 +17,64 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
     public override string SupportMessage => "Complétez les informations du rendez-vous puis postez la commande.";
 
-    [ObservableProperty]
-    public partial string Address { get; set; } = string.Empty;
+    public PhysicalAddressViewModel PhysicalAddress { get; }
 
-    [ObservableProperty]
-    public partial string SuggestedAddress { get; set; } = string.Empty;
+    public string Address
+    {
+        get => PhysicalAddress.Address;
+        set
+        {
+            if (PhysicalAddress.Address == value)
+                return;
 
-    [ObservableProperty]
-    public partial bool IsResolvingAddress { get; set; }
+            PhysicalAddress.Address = value;
+            if (!_hydratingExistingQuery)
+                _existingLocationId = null;
+        }
+    }
 
-    [ObservableProperty]
-    public partial double? Latitude { get; set; }
+    public string SuggestedAddress
+    {
+        get => PhysicalAddress.SuggestedAddress;
+        set => PhysicalAddress.SuggestedAddress = value;
+    }
 
-    [ObservableProperty]
-    public partial double? Longitude { get; set; }
+    public bool IsResolvingAddress
+    {
+        get => PhysicalAddress.IsResolvingAddress;
+        set => PhysicalAddress.IsResolvingAddress = value;
+    }
 
+    public double? Latitude
+    {
+        get => PhysicalAddress.Latitude;
+        set
+        {
+            if (PhysicalAddress.Latitude == value)
+                return;
+
+            PhysicalAddress.Latitude = value;
+            if (!_hydratingExistingQuery)
+                _existingLocationId = null;
+        }
+    }
+
+    public double? Longitude
+    {
+        get => PhysicalAddress.Longitude;
+        set
+        {
+            if (PhysicalAddress.Longitude == value)
+                return;
+
+            PhysicalAddress.Longitude = value;
+            if (!_hydratingExistingQuery)
+                _existingLocationId = null;
+        }
+    }
+
+    public IAsyncRelayCommand UseCurrentLocationCommand => PhysicalAddress.UseCurrentLocationCommand;
+    public IRelayCommand ApplySuggestedAddressCommand => PhysicalAddress.ApplySuggestedAddressCommand;
 
     [ObservableProperty]
     public partial DateTime EventDate { get; set; }
@@ -48,14 +91,15 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         }
     }
 
+    public bool HasSuggestedAddress => PhysicalAddress.HasSuggestedAddress;
+    public bool HasSuggestedAddressPanel => PhysicalAddress.HasSuggestedAddressPanel;
+
     public RdvViewModel(ActivityInfo activity, ActivityUserDisplayItem performer, CommandFormSummary form, BillingApiClient billingClient)
         : base(activity, performer, form, billingClient)
     {
+        PhysicalAddress = new PhysicalAddressViewModel(new NominatimReverseGeocodingService());
         EventDate = DateTime.Now.AddDays(1);
     }
-
-    public bool HasSuggestedAddress => !string.IsNullOrWhiteSpace(SuggestedAddress);
-    public bool HasSuggestedAddressPanel => HasSuggestedAddress || IsResolvingAddress;
 
     protected override void ApplyExistingQuery(BillingQueryDetailsDto existingQuery)
     {
@@ -75,10 +119,10 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         if (existingQuery.Location is not null)
         {
             _existingLocationId = existingQuery.Location.Id;
-            Address = existingQuery.Location.Address ?? string.Empty;
-            SuggestedAddress = string.Empty;
-            Latitude = existingQuery.Location.Latitude;
-            Longitude = existingQuery.Location.Longitude;
+            PhysicalAddress.Address = existingQuery.Location.Address ?? string.Empty;
+            PhysicalAddress.SuggestedAddress = string.Empty;
+            PhysicalAddress.Latitude = existingQuery.Location.Latitude;
+            PhysicalAddress.Longitude = existingQuery.Location.Longitude;
         }
         else
         {
@@ -88,44 +132,6 @@ public partial class RdvViewModel : BillingCommandPageViewModel
         _hydratingExistingQuery = false;
 
         this.SetInfoStatus($"Commande #{existingQuery.Id} chargée.");
-    }
-
-    [RelayCommand(CanExecute = nameof(CanUseCurrentLocation))]
-    private async Task UseCurrentLocationAsync()
-    {
-        if (!CanUseCurrentLocation)
-        {
-            return;
-        }
-
-        IsBusy = true;
-        try
-        {
-            var result = await Platform.TryGetCurrentLocationAsync(default).ConfigureAwait(true);
-            if (!result.IsSuccess || !result.Latitude.HasValue || !result.Longitude.HasValue)
-            {
-                this.SetWarningStatus(result.Message);
-                return;
-            }
-
-            Latitude = result.Latitude.Value;
-            Longitude = result.Longitude.Value;
-            this.SetInfoStatus(string.IsNullOrWhiteSpace(Address)
-                ? "Position récupérée. Complétez l'adresse puis envoyez la commande."
-                : result.Message);
-        }
-        catch (OperationCanceledException)
-        {
-            this.SetWarningStatus("La récupération de la position a été annulée.");
-        }
-        catch (Exception ex)
-        {
-            this.SetErrorStatus($"Impossible de récupérer la position: {ex.Message}");
-        }
-        finally
-        {
-            IsBusy = false;
-        }
     }
 
     protected static BillingLocationDto BuildLocationPayload(string address, double? latitude, double? longitude, long? locationId = null)
@@ -150,10 +156,9 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
     public void ApplyLocationFromMap(double latitude, double longitude)
     {
-        Latitude = Math.Round(latitude, 6);
-        Longitude = Math.Round(longitude, 6);
+        PhysicalAddress.ApplyLocationFromMap(latitude, longitude);
 
-        if (string.IsNullOrWhiteSpace(Address))
+        if (string.IsNullOrWhiteSpace(PhysicalAddress.Address))
         {
             this.SetInfoStatus("Position sélectionnée sur la carte. Complétez l'adresse puis envoyez la commande.");
             return;
@@ -164,8 +169,8 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
     public void NotifyReverseGeocodingStarted()
     {
-        IsResolvingAddress = true;
-        this.SetInfoStatus(string.IsNullOrWhiteSpace(Address)
+        PhysicalAddress.NotifyReverseGeocodingStarted();
+        this.SetInfoStatus(string.IsNullOrWhiteSpace(PhysicalAddress.Address)
             ? "Recherche de l'adresse depuis la carte..."
             : "Recherche d'une adresse suggérée..."
         );
@@ -173,8 +178,8 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
     public void NotifyReverseGeocodingUnavailable()
     {
-        IsResolvingAddress = false;
-        if (HasSuggestedAddress || !string.IsNullOrWhiteSpace(Address))
+        PhysicalAddress.NotifyReverseGeocodingUnavailable();
+        if (PhysicalAddress.HasSuggestedAddress || !string.IsNullOrWhiteSpace(PhysicalAddress.Address))
             return;
 
         this.SetInfoStatus("Position sélectionnée sur la carte. Complétez l'adresse puis envoyez la commande.");
@@ -182,84 +187,29 @@ public partial class RdvViewModel : BillingCommandPageViewModel
 
     public void ApplyResolvedAddress(string address)
     {
+        PhysicalAddress.ApplyResolvedAddress(address);
         if (string.IsNullOrWhiteSpace(address))
             return;
 
         var trimmedAddress = address.Trim();
-        if (string.IsNullOrWhiteSpace(Address))
+        if (string.IsNullOrWhiteSpace(PhysicalAddress.Address))
         {
-            Address = trimmedAddress;
-            SuggestedAddress = string.Empty;
-            IsResolvingAddress = false;
             this.SetInfoStatus("Adresse mise à jour depuis la carte.");
             return;
         }
 
-        if (string.Equals(Address.Trim(), trimmedAddress, StringComparison.Ordinal))
+        if (string.Equals(PhysicalAddress.Address.Trim(), trimmedAddress, StringComparison.Ordinal))
         {
-            SuggestedAddress = string.Empty;
-            IsResolvingAddress = false;
             return;
         }
 
-        SuggestedAddress = trimmedAddress;
-        IsResolvingAddress = false;
         this.SetInfoStatus("Adresse suggérée depuis la carte. Appliquez-la si besoin.");
-    }
-
-    [RelayCommand(CanExecute = nameof(HasSuggestedAddress))]
-    private void ApplySuggestedAddress()
-    {
-        if (string.IsNullOrWhiteSpace(SuggestedAddress))
-            return;
-
-        Address = SuggestedAddress.Trim();
-        SuggestedAddress = string.Empty;
-        IsResolvingAddress = false;
-        this.SetInfoStatus("Adresse suggérée appliquée.");
-    }
-
-    partial void OnSuggestedAddressChanged(string value)
-    {
-        OnPropertyChanged(nameof(HasSuggestedAddress));
-        OnPropertyChanged(nameof(HasSuggestedAddressPanel));
-        ApplySuggestedAddressCommand.NotifyCanExecuteChanged();
-    }
-
-    partial void OnIsResolvingAddressChanged(bool value)
-    {
-        OnPropertyChanged(nameof(HasSuggestedAddressPanel));
     }
 
     partial void OnEventDateChanged(DateTime value)
     {
         OnPropertyChanged(nameof(EventDateSelection));
     }
-
-    partial void OnAddressChanged(string value)
-    {
-        if (_hydratingExistingQuery)
-            return;
-
-        _existingLocationId = null;
-    }
-
-    partial void OnLatitudeChanged(double? value)
-    {
-        if (_hydratingExistingQuery)
-            return;
-
-        _existingLocationId = null;
-    }
-
-    partial void OnLongitudeChanged(double? value)
-    {
-        if (_hydratingExistingQuery)
-            return;
-
-        _existingLocationId = null;
-    }
-
 
     protected override async Task SubmitAsync()
     {
@@ -275,12 +225,11 @@ public partial class RdvViewModel : BillingCommandPageViewModel
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(Address))
+        if (string.IsNullOrWhiteSpace(PhysicalAddress.Address))
         {
             this.SetWarningStatus("L'adresse du rendez-vous est requise.");
             return;
         }
-
 
         if (string.IsNullOrWhiteSpace(Reason))
         {
@@ -288,13 +237,11 @@ public partial class RdvViewModel : BillingCommandPageViewModel
             return;
         }
 
-
-
         IsBusy = true;
         try
         {
-            var address = Address.Trim();
-            var locationPayload = BuildLocationPayload(address, Latitude, Longitude, IsEditingExisting ? _existingLocationId : null);
+            var address = PhysicalAddress.Address.Trim();
+            var locationPayload = BuildLocationPayload(address, PhysicalAddress.Latitude, PhysicalAddress.Longitude, IsEditingExisting ? _existingLocationId : null);
 
             var payload = new BillingQueryDetailsDto
             {
