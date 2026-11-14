@@ -87,6 +87,7 @@ internal sealed class AndroidBackgroundChatService : IBackgroundChatService
         {
             Cancel(epoch);
             Log.Error("PostIt.Chat", ex.ToString());
+            api.QueueExceptionReport(ex, "PostIt.Android.Chat");
             try
             {
                 await AndroidSettings.UpdateAsync(api.Settings, s => s.SetActionStatus(ex.Message, StatusSeverity.Error))

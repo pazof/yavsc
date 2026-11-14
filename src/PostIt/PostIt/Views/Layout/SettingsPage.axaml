@@ -55,6 +55,10 @@
                 <TextBlock Text="SignalR uniquement, sans notification permanente. Les alertes s'affichent seulement a reception d'un message ou evenement. Sauver avec cette option active demande l'exemption batterie Android seulement si PostIt n'est pas deja exempte. Vous restez libre de refuser. Autorisez aussi les donnees en arriere-plan dans Android. Ces reglages ne garantissent pas la survie du service ni sa reprise au demarrage. Sans cette option, la connexion dure pendant la vie du processus PostIt."
                            TextWrapping="Wrap" />
             </StackPanel>
+            <CheckBox Content="Partager les exceptions techniques avec Yavsc"
+                      IsChecked="{Binding ShareExceptionReports, Mode=TwoWay}" />
+            <TextBlock Text="Desactive par defaut. Si vous activez cette option, PostIt transmet le type, le message et la trace technique des exceptions signalees pour aider au diagnostic. Ces details peuvent contenir des informations issues de l'environnement de l'application."
+                       TextWrapping="Wrap" />
             <TextBlock Text="Avatar: PNG, JPG/JPEG, WEBP, GIF. Taille max 2 MB."
                    Opacity="0.8"
                    TextWrapping="Wrap" />

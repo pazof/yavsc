@@ -23,6 +23,7 @@ namespace PostIt;
 public partial class App : Application, ILiveView, IVMPusherApp
 {
     public static bool LiveMode { get; private set; }
+    private static bool _exceptionHandlersRegistered;
     private Task? _bootTask;
     private bool _sessionNavigationConfigured;
     public static string? CliConfigFileSpecification { get; private set; }
@@ -52,7 +53,14 @@ public partial class App : Application, ILiveView, IVMPusherApp
 
         this.ServiceProvider = Platform.CreateServiceProvider?.Invoke() ?? new ServiceCollection().BuildPostItServices();
         var settings = ServiceProvider.GetRequiredService<Settings>();
-        ServiceProvider.GetRequiredService<YavscApiClient>().StartSessionMaintenance();
+        var api = ServiceProvider.GetRequiredService<YavscApiClient>();
+        api.StartSessionMaintenance();
+        if (!_exceptionHandlersRegistered)
+        {
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+            TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+            _exceptionHandlersRegistered = true;
+        }
 
         if (!LiveMode)
         {
@@ -113,6 +121,20 @@ public partial class App : Application, ILiveView, IVMPusherApp
 #endif
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void OnUnhandledException(object? sender, UnhandledExceptionEventArgs args)
+    {
+        if (args.ExceptionObject is Exception exception && Current is App app)
+            app.ServiceProvider?.GetService<YavscApiClient>()
+                ?.QueueExceptionReport(exception, "PostIt");
+    }
+
+    private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs args)
+    {
+        if (Current is App app)
+            app.ServiceProvider?.GetService<YavscApiClient>()
+                ?.QueueExceptionReport(args.Exception, "PostIt");
     }
 
     private bool IsProduction()

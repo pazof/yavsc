@@ -19,6 +19,51 @@ namespace PostIt.Tests;
 [Trait("Category", "non-reg")]
 public class YavscApiClientTests
 {
+    [Fact]
+    public async Task Exception_reports_are_sent_only_after_local_opt_in()
+    {
+        using var apiServer = new StubApiServer();
+        await apiServer.StartAsync();
+        var tokensPath = TokensPath();
+        try
+        {
+            var settings = new Settings
+            {
+                ApiUrl = apiServer.BaseUrl + "/api/v1/",
+                ShareExceptionReports = true,
+                Authentication = new AuthenticationSettings
+                {
+                    Authority = "https://example.test/"
+                }
+            };
+            settings.Load();
+            var store = new TokenStore(tokensPath);
+            store.Save(new RefreshTokenRecord(
+                "access", "refresh", DateTimeOffset.UtcNow.AddMinutes(5)));
+            await using var client = new YavscApiClient(settings, store);
+            Assert.True(settings.ShareExceptionReports);
+            Assert.True(client.HasValidSession);
+
+            var reportWasSent = await client.ReportExceptionAsync(
+                new InvalidOperationException("Messaging service unavailable"),
+                "PostIt.Android.Chat",
+                TestContext.Current.CancellationToken);
+            Assert.True(reportWasSent, $"share={settings.ShareExceptionReports}; session={client.HasValidSession}");
+            Assert.Equal(1, apiServer.RequestCount);
+
+            settings.ShareExceptionReports = false;
+            Assert.False(await client.ReportExceptionAsync(
+                new InvalidOperationException("Do not send"),
+                "PostIt.Android.Chat",
+                TestContext.Current.CancellationToken));
+            Assert.Equal(1, apiServer.RequestCount);
+        }
+        finally
+        {
+            if (File.Exists(tokensPath)) File.Delete(tokensPath);
+        }
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

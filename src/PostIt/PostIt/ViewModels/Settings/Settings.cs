@@ -67,6 +67,8 @@ public partial class Settings : ViewModelBase
     [ObservableProperty]
     public partial bool AndroidKeepChatConnected { get; set; }
     [ObservableProperty]
+    public partial bool ShareExceptionReports { get; set; }
+    [ObservableProperty]
     public partial Dictionary<string, string[]> ChatRoomsByAccount { get; set; } = new();
     [JsonIgnore]
     public bool SupportsBackgroundChatService => OperatingSystem.IsAndroid();
@@ -174,6 +176,7 @@ public partial class Settings : ViewModelBase
     partial void OnPodcastBlurBackgroundChanged(bool value) => MarkDirty();
     partial void OnLanCallAddressChanged(string? value) => MarkDirty();
     partial void OnAndroidKeepChatConnectedChanged(bool value) => MarkDirty();
+    partial void OnShareExceptionReportsChanged(bool value) => MarkDirty();
     partial void OnChatRoomsByAccountChanged(Dictionary<string, string[]> value) => MarkDirty();
 
     /// <summary>
@@ -441,6 +444,7 @@ public partial class Settings : ViewModelBase
                 PodcastBlurBackground = settings.PodcastBlurBackground;
                 LanCallAddress = settings.LanCallAddress;
                 AndroidKeepChatConnected = settings.AndroidKeepChatConnected;
+                ShareExceptionReports = settings.ShareExceptionReports;
                 ChatRoomsByAccount = settings.ChatRoomsByAccount ?? new();
                 if (!(settings.Authentication is null))
                 {
@@ -521,6 +525,7 @@ public partial class Settings : ViewModelBase
         this.ApiUrl = "https://api.pschneider.fr/api/v1/";
         this.SearchText = string.Empty;
         this.ProviderOngoingRequestsSortOption = string.Empty;
+        this.ShareExceptionReports = false;
     }
 
     /// <summary>

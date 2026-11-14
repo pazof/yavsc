@@ -34,8 +34,11 @@ public sealed class ChatBootReceiver : BroadcastReceiver
             {
                 Log.Error("PostIt.Chat", "Boot restart rejected: " + ex);
                 if (api is not null)
+                {
+                    api.QueueExceptionReport(ex, "PostIt.Android.Chat");
                     AndroidSettings.ReportError(api.Settings,
                         "Android a refuse le redemarrage de la messagerie : " + ex.Message);
+                }
             }
             finally { pending?.Finish(); }
         });

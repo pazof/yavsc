@@ -253,6 +253,7 @@ public sealed class ChatConnectionService : Service
     private void ReportError(Exception ex)
     {
         Log.Error("PostIt.Chat", ex.ToString());
+        _api?.QueueExceptionReport(ex, "PostIt.Android.Chat");
         if (_api is not null) AndroidSettings.ReportError(_api.Settings, ex.Message);
     }
 

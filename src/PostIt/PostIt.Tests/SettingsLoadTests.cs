@@ -175,6 +175,20 @@ public class SettingsLoadTests
         Assert.Equal("bonjour", roundTrip.SearchText);
     }
 
+    [Fact]
+    public void Exception_reports_are_disabled_by_default_and_persist_when_enabled()
+    {
+        var defaults = new PostIt.ViewModels.Settings();
+        Assert.False(defaults.ShareExceptionReports);
+
+        defaults.ShareExceptionReports = true;
+        var roundTrip = JsonSerializer.Deserialize<PostIt.ViewModels.Settings>(
+            JsonSerializer.Serialize(defaults));
+
+        Assert.NotNull(roundTrip);
+        Assert.True(roundTrip.ShareExceptionReports);
+    }
+
         /// <summary>
         /// First-start regression guard: older settings payloads can
         /// still contain <c>ActionStatus</c> from a previous write. This

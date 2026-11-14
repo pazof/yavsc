@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Yavsc.Models;
@@ -22,22 +21,26 @@ namespace Yavsc.ApiControllers
 
         [HttpPost("signal")]
         [Authorize]
-        public IActionResult Signal([FromBody] BugReport report)
+        public async Task<IActionResult> Signal([FromBody] BugReport report)
         {
-            _logger.LogWarning("bug reported : "+report.ExceptionObjectJson);
             if (report.ExceptionObjectJson!=null)
                 if (report.ExceptionObjectJson.Length > 10240)
                     report.ExceptionObjectJson = report.ExceptionObjectJson.Substring(0,10240);
             if (!ModelState.IsValid)
-
             {
-                _logger.LogError("Bag request :");
-                _logger.LogError(JsonConvert.SerializeObject(ModelState));
+                _logger.LogError("Invalid bug report request.");
                 return new BadRequestObjectResult(ModelState);
             }
-            var existent = _context.Bug.FirstOrDefault( b =>
+            _logger.LogWarning("Bug report received for component {Component}.", report.Component);
+            var feature = string.IsNullOrWhiteSpace(report.FeatureShortName)
+                ? null
+                : await _context.Feature.FirstOrDefaultAsync(
+                    f => f.ShortName == report.FeatureShortName);
+            long? featureId = feature?.Id;
+            var existent = await _context.Bug.FirstOrDefaultAsync(b =>
                 b.Description == report.ExceptionObjectJson &&
                 b.Title == report.Component &&
+                b.FeatureId == featureId &&
                 b.Status != BugStatus.Rejected
             );
             if (existent != null)
@@ -48,10 +51,11 @@ namespace Yavsc.ApiControllers
             _logger.LogInformation("Filling a new bug report");
             var bug = new Bug {
                  Title = report.Component,
-                 Description = report.ExceptionObjectJson
+                 Description = report.ExceptionObjectJson,
+                 FeatureId = featureId
             };
             _context.Bug.Add(bug);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return CreatedAtRoute("GetBug", new { id = bug.Id }, bug);
         }
 

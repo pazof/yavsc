@@ -2,6 +2,10 @@
 # Changelog
 
 
+## [1.0.8-rc37] - unstable
+
+* [PostIt] Telemetry
+
 ## [1.0.8-rc36] - unstable
 
 ### Added

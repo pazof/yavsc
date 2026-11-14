@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using IdentityModel.OidcClient;
 using PostIt.ViewModels;
+using Yavsc.ApiControllers;
 using Yavsc.Api.Client;
 
 namespace PostIt.Services;
@@ -109,6 +110,55 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
 
     /// <summary>The current OIDC id_token, or null.</summary>
     public string? CurrentIdToken => _tokens?.IdToken;
+
+    public async Task<bool> ReportExceptionAsync(
+        Exception exception,
+        string component,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+        ArgumentException.ThrowIfNullOrWhiteSpace(component);
+
+        if (!Settings.ShareExceptionReports || !HasValidSession)
+            return false;
+
+        var exceptionType = exception.GetType().FullName ?? exception.GetType().Name;
+        var exceptionDetails = exception.ToString();
+        var exceptionJson = SerializeExceptionDetails(exceptionType, exceptionDetails);
+        while (exceptionJson.Length > 10240 && exceptionDetails.Length > 0)
+        {
+            exceptionDetails = exceptionDetails[..(exceptionDetails.Length / 2)];
+            exceptionJson = SerializeExceptionDetails(exceptionType, exceptionDetails);
+        }
+
+        var apiRoot = new Uri(Settings.ApiUrl.TrimEnd('/') + "/", UriKind.Absolute);
+        var endpoint = new Uri(apiRoot, "/api/bug/signal");
+        var report = new BugReport
+        {
+            Component = component,
+            FeatureShortName = "PostIt",
+            ExceptionObjectJson = exceptionJson
+        };
+        await CallAsync(HttpMethod.Post, endpoint.ToString(), report, ct).ConfigureAwait(false);
+        return true;
+    }
+
+    public void QueueExceptionReport(Exception exception, string component)
+    {
+        if (!Settings.ShareExceptionReports || !HasValidSession)
+            return;
+
+        var report = ReportExceptionAsync(exception, component);
+        _ = report.ContinueWith(
+            failed => Console.Error.WriteLine(
+                $"Exception report failed: {failed.Exception?.GetBaseException()}"),
+            CancellationToken.None,
+            TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
+            TaskScheduler.Default);
+    }
+
+    private static string SerializeExceptionDetails(string exceptionType, string details) =>
+        JsonSerializer.Serialize(new { ExceptionType = exceptionType, Details = details });
 
     public void StartSessionMaintenance()
     {
