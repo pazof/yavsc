@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Yavsc.ApiControllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("~/api/bug")]
     public class BugApiController : Controller
