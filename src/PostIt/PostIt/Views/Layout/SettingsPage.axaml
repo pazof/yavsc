@@ -7,6 +7,7 @@
         xmlns:vm="using:PostIt.ViewModels"
         x:DataType="vm:Settings"
       >
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -78,4 +79,5 @@
         </StackPanel>
 
     </Grid>
+    </ScrollViewer>
 </ContentPage>

@@ -55,8 +55,8 @@
       </StackPanel>
     </DataTemplate>
   </ContentPage.DataTemplates>
-
-  <Grid RowDefinitions="Auto,Auto,*" Margin="16" RowSpacing="12">
+<ScrollViewer HorizontalScrollBarVisibility="Disabled">
+  <Grid RowDefinitions="Auto,Auto,*" Margin="16" RowSpacing="12" >
     <TextBlock Grid.Row="0"
                Text="Administration"
                FontSize="22"
@@ -271,4 +271,5 @@
       </TabItem>
     </TabControl>
   </Grid>
+</ScrollViewer>
 </ContentPage>
