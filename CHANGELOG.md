@@ -4,9 +4,9 @@
 
 ## [1.0.8-rc38] - unstable
 
-* [PostIt/Administration] Rechercher les utilisateurs côté serveur par login ou nom, par pages de 25 résultats maximum avec navigation précédente/suivante.
+### Added
 
-## [1.0.8-rc37] - unstable
+* [PostIt/Administration] Rechercher les utilisateurs côté serveur par login ou nom, par pages de 25 résultats maximum avec navigation précédente/suivante.
 
 * [PostIt] Telemetry
 
