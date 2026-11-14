@@ -321,9 +321,6 @@
           Text="Choisissez un billet dans la liste pour le lire."
           TextWrapping="Wrap" />
       </Grid>
-      <postitControls:StatusBar
-        x:Name="StatusBar"
-        Grid.Row="5"
-        DataContext="{Binding ActionStatus}" />
+      
     </Grid>
 </ContentPage>

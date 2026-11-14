@@ -42,8 +42,7 @@
             <Button Grid.Column="4"
                     Content="Demandes en cours (validées, en lecture seule)"
                     Command="{Binding OpenOngoingQueriesCommand}" />
-            <postitControls:StatusBar Grid.Column="6"
-                                      DataContext="{Binding ActionStatus}" />
+            
         </Grid>
     </Grid>
 </ContentPage>

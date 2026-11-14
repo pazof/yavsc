@@ -187,8 +187,7 @@
             <Button Grid.Column="0"
                     Content="{Binding SendLabel}"
                     Command="{Binding SendCommand}" />
-            <postitControls:StatusBar Grid.Column="2"
-                                      DataContext="{Binding ActionStatus}" />
+            
             <ProgressBar Grid.Column="3"
                          Width="120"
                          IsIndeterminate="True"

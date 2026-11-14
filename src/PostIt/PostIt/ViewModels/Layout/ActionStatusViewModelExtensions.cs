@@ -1,4 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using PostIt.Models;
+using PostIt.Services;
 
 namespace PostIt.ViewModels;
 
@@ -22,13 +24,22 @@ public static class ActionStatusViewModelExtensions
     public static void SetStatus(this IActionStatusViewModel viewModel, string message, StatusSeverity severity)
     {
         var normalizedMessage = string.IsNullOrWhiteSpace(message) ? "Pret." : message.Trim();
-
-        viewModel.StatusMessage = normalizedMessage;
-        viewModel.ActionStatus = severity switch
+        var statusNotice = severity switch
         {
             StatusSeverity.Error => StatusNotice.Error(normalizedMessage),
             StatusSeverity.Warning => StatusNotice.Warning(normalizedMessage),
             _ => StatusNotice.Info(normalizedMessage),
         };
+
+        viewModel.StatusMessage = normalizedMessage;
+        viewModel.ActionStatus = statusNotice;
+
+        if (App.Current is App app && app.ServiceProvider is { } serviceProvider)
+        {
+            var settings = serviceProvider.GetRequiredService<Settings>();
+            settings.SetActionStatus(normalizedMessage, severity);
+            var notificationService = serviceProvider.GetRequiredService<NotificationService>();
+            notificationService.Show(normalizedMessage, severity);
+        }
     }
 }

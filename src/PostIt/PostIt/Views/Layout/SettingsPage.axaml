@@ -64,8 +64,6 @@
                    Opacity="0.8"
                    TextWrapping="Wrap" />
 
-            <postitControls:StatusBar DataContext="{Binding ActionStatus}"/>
-
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="ChooseAvatarButton"
                 Content="Choisir l'avatar"

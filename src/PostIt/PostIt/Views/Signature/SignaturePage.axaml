@@ -46,10 +46,7 @@
             <Button Content="Capturer" Command="{Binding CaptureAsync}" />
         </StackPanel>
 
-        <postitControls:StatusBar Grid.Row="3"
-                      DataContext="{Binding ActionStatus}" />
-
-        <TextBlock Grid.Row="4"
+        <TextBlock Grid.Row="3"
                    FontSize="11"
                    Foreground="DarkSlateGray"
                    TextWrapping="Wrap">

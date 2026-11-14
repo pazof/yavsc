@@ -70,8 +70,6 @@ public partial class BlogsPage : ContentPage
             PostEditor.Margin = new Thickness(compact ? 4 : 12);
             PostEditor.RowSpacing = compact ? 2 : 10;
         }
-        SetArea(StatusBar, sideBySide ? 1 : isWide ? 3 : 5, sideBySide ? 2 : 0,
-            columnSpan: isWide && !sideBySide ? 3 : 1);
         if (_isWideLayout == isWide)
             return;
         _isWideLayout = isWide;

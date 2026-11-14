@@ -14,6 +14,68 @@
 
   <Grid>
     <NavigationPage x:Name="NavRoot"/>
+
+    <Border x:Name="NotificationToast"
+            IsVisible="False"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="16"
+            CornerRadius="10"
+            Padding="12"
+            BorderThickness="1"
+            BorderBrush="#5B8DEF"
+            Background="#E8F0FE"
+            BoxShadow="0 6 16 0 #26000000"
+            PointerPressed="NotificationToast_PointerPressed">
+      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+        <TextBlock x:Name="NotificationToastGlyph"
+                   VerticalAlignment="Center"
+                   FontSize="18"
+                   FontWeight="Bold"
+                   Foreground="#1E3A8A"
+                   Text="✓"/>
+        <TextBlock x:Name="NotificationToastMessage"
+                   Grid.Column="1"
+                   MaxWidth="420"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center"
+                   Foreground="#1E3A8A"
+                   Text=""/>
+      </Grid>
+    </Border>
+
+    <Border x:Name="NotificationModal"
+            IsVisible="False"
+            Background="#80000000"
+            Padding="12"
+            KeyboardNavigation.TabNavigation="Cycle">
+      <Border MaxWidth="420"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Center"
+              Padding="20"
+              CornerRadius="8"
+              Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+        <StackPanel Spacing="12">
+          <TextBlock x:Name="NotificationModalTitle"
+                     FontSize="22"
+                     FontWeight="SemiBold"
+                     TextWrapping="Wrap"
+                     Text="Notification"/>
+          <TextBlock x:Name="NotificationModalMessage"
+                     TextWrapping="Wrap"
+                     Text=""/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button x:Name="NotificationModalCloseButton"
+                    Content="Fermer"
+                    Click="NotificationModalCloseButton_Click"/>
+            <Button x:Name="NotificationModalActionButton"
+                    IsVisible="False"
+                    Click="NotificationModalActionButton_Click"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </Border>
+
     <Border x:Name="AuthenticationModal"
             IsVisible="{Binding SessionStatus.IsAuthenticationRequired, FallbackValue=False}"
             Background="#80000000"

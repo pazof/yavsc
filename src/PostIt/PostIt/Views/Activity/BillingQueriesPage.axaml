@@ -82,8 +82,7 @@
         </ListBox>
 
         <Grid Grid.Row="4" ColumnDefinitions="*,Auto" Margin="0,12,0,0">
-            <postitControls:StatusBar Grid.Column="0"
-                                      DataContext="{Binding ActionStatus}" />
+            
             <ProgressBar Grid.Column="1" Width="120" IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
         </Grid>
     </Grid>

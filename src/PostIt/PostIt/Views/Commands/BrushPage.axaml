@@ -94,8 +94,7 @@
                 Content="{Binding SubmitLabel}"
                 Command="{Binding SubmitCommand}"
                 IsEnabled="{Binding IsSupported}" />
-        <postitControls:StatusBar Grid.Column="2"
-                DataContext="{Binding ActionStatus}" />
+        
         <ProgressBar Grid.Column="3"
                      Width="120"
                      IsIndeterminate="True"

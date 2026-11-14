@@ -2,9 +2,11 @@
 # Changelog
 
 
-## [1.0.8-rc38] - unstable
+## [1.0.8-rc37] - unstable
 
 ### Added
+
+* [PostIt] Replace the persistent status bar with a global notification service using ephemeral toasts for info/success and dismissible modal alerts for warnings/errors.
 
 * [PostIt/Administration] Rechercher les utilisateurs côté serveur par login ou nom, par pages de 25 résultats maximum avec navigation précédente/suivante.
 

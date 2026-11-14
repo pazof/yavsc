@@ -54,8 +54,7 @@
 
         <!-- Status bar -->
         <Grid Grid.Row="3" ColumnDefinitions="*,Auto">
-            <postitControls:StatusBar Grid.Column="0"
-                                      DataContext="{Binding ActionStatus}" />
+            
             <ProgressBar Grid.Column="1" IsIndeterminate="True"
                          IsVisible="{Binding IsBusy}"
                          Width="120"/>

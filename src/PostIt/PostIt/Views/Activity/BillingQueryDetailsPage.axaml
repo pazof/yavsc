@@ -174,8 +174,7 @@
         </ScrollViewer>
 
         <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="0,8,0,0">
-            <postitControls:StatusBar Grid.Column="0"
-                                      DataContext="{Binding ActionStatus}" />
+            
             <ProgressBar Grid.Column="1"
                          Width="120"
                          IsIndeterminate="True"

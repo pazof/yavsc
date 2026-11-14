@@ -11,11 +11,10 @@ public sealed class StatusNotice
     public string Background { get; }
     public string BorderBrush { get; }
     public string Foreground { get; }
-
-    public bool HasCheckCommand { get => CheckCommand != null; }
-
+    public bool HasCheckCommand => CheckCommand is not null;
+    public bool IsTransient => Severity == StatusSeverity.Info && CheckCommand is null;
+    public bool IsModal => !IsTransient;
     public ICommand? CheckCommand { get; }
-
     public string CheckCommandLabel { get; }
 
     public StatusNotice(string message, StatusSeverity severity, ICommand? checkCommand)
@@ -27,7 +26,7 @@ public sealed class StatusNotice
         {
             StatusSeverity.Error => ("!", "#7F1D1D", "#C62828", "#e1f0f6"),
             StatusSeverity.Warning => ("~", "#7C4A03", "#E6A700", "#eaeaea"),
-            _ => ("i", "#E8F0FE", "#5B8DEF", "#1E3A8A"),
+            _ => ("✓", "#E8F0FE", "#5B8DEF", "#1E3A8A"),
         };
         CheckCommand = checkCommand;
         CheckCommandLabel = HasCheckCommand ?

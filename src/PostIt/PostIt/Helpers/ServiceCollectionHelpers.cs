@@ -55,6 +55,7 @@ public static class ServiceCollectionHelpers
         services.AddSingleton<ChatViewModel>();
         services.AddSingleton<ChatHubConnection>();
         services.AddSingleton<MessagingSession>();
+        services.AddSingleton(NotificationService.Instance);
 
         // Android activities need fresh controls; retain state in singleton VMs.
         void AddReusablePage<TPage>() where TPage : class

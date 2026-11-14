@@ -132,8 +132,7 @@
         </Grid>
 
         <Grid Grid.Row="2" ColumnDefinitions="*,Auto">
-            <postitControls:StatusBar Grid.Column="0"
-                                      DataContext="{Binding ActionStatus}" />
+            
             <ProgressBar Grid.Column="1" Width="120" IsIndeterminate="True" IsVisible="{Binding IsBusy}" />
         </Grid>
     </Grid>

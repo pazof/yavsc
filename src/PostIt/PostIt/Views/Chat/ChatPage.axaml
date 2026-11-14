@@ -107,10 +107,7 @@
               IsVisible="{Binding LanCall.Incoming}" />
     </StackPanel>
 
-    <postitControls:StatusBar
-      x:Name="StatusBar"
-      Grid.Row="4"
-      DataContext="{Binding Status}" />
+    
 
   </Grid>
 </ContentPage>

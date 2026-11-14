@@ -139,7 +139,7 @@
                 <ProgressBar Width="120"
                              IsIndeterminate="True"
                              IsVisible="{Binding IsBusy}" />
-                <postitControls:StatusBar DataContext="{Binding ActionStatus}" />
+                
             </StackPanel>
         </Grid>
     </Grid>
