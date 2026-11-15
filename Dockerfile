@@ -79,7 +79,7 @@ COPY --from=build-env /app/publish/Yavsc.Blogs/ /publish/
 # CONTRIBUTING.md.
 # ---------------------------------------------------------------------
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS web-runtime
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS web-runtime
 WORKDIR /app
 COPY --from=publish-org /publish/ ./
 RUN --mount=type=secret,id=yavsc_appsettings,dst=/run/secrets/yavsc_appsettings \
@@ -92,7 +92,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD wget --quiet --spider http://localhost:5000/ || exit 1
 ENTRYPOINT ["dotnet", "Yavsc.Org.dll"]
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS api-runtime
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS api-runtime
 WORKDIR /app
 COPY --from=publish-api /publish/ ./
 RUN --mount=type=secret,id=yavsc_appsettings,dst=/run/secrets/yavsc_appsettings \
@@ -105,7 +105,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD wget --quiet --spider http://localhost:5002/ || exit 1
 ENTRYPOINT ["dotnet", "Yavsc.Api.dll"]
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS blogs-runtime
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS blogs-runtime
 WORKDIR /app
 COPY --from=publish-blogs /publish/ ./
 RUN --mount=type=secret,id=yavsc_appsettings,dst=/run/secrets/yavsc_appsettings \
