@@ -1,5 +1,5 @@
 # Utilisation de l'image globale pour le build et l'exécution
-FROM pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-v4 AS build-env
+FROM pazof/yavsc-build-env:debian13-dotnet10-android36-jdk21-V7 AS build-env
 WORKDIR /src
 
 # 1. Copie de la solution
