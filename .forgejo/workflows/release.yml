@@ -2,10 +2,7 @@
 # with the PostIt Android APK as an attached asset.
 #
 # Triggered by a push of a git tag. Validates the tag/changelog pair,
-# builds the APK using the existing Dockerfile (--target build-env), then
-# publishes a Forgejo release via the Forgejo REST API and uploads the
-# APK as an asset.
-#
+# builds the APK using the existing Dockerfile (--target bupermissions
 # Authentication uses ${{ secrets.GITHUB_TOKEN }} (auto-provided by the
 # Forgejo runner, scoped to contents: write for the current repo). A
 # dedicated PAT (${{ secrets.RELEASE_TOKEN }}) was the preferred option
@@ -42,9 +39,6 @@ on:
         description: 'Tag à publier (requis en dispatch, ex. 1.0.6 ou 1.0.7-rc1).'
         required: true
         type: string
-
-permissions:
-  contents: write
 
 jobs:
   # Job unique : validation tag/CHANGELOG + build APK + publication
