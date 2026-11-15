@@ -22,6 +22,7 @@ public partial class AddressEditorPage : ContentPage
     private const double DefaultLongitude = 2.3522;
     private const int DefaultZoomLevel = 4;
     private const int SelectedZoomLevel = 13;
+    private const string OpenStreetMapUserAgent = "PostIt/1.1 (+https://github.com/pazof/yavsc)";
 
     private MapControl? _locationMap;
     private MemoryLayer? _selectionLayer;
@@ -45,7 +46,7 @@ public partial class AddressEditorPage : ContentPage
             return;
 
         var map = new Map();
-        map.Layers.Add(OpenStreetMap.CreateTileLayer());
+        map.Layers.Add(OpenStreetMap.CreateTileLayer(OpenStreetMapUserAgent));
         _selectionLayer = CreateSelectionLayer();
         map.Layers.Add(_selectionLayer);
         _locationMap.Map = map;

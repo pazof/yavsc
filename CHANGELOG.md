@@ -2,6 +2,12 @@
 # Changelog
 
 
+## [1.0.8-rc38] - unstable
+
+### Fixed
+
+* [PostIt] Set a custom OpenStreetMap User-Agent for the address editor map tiles to satisfy the OSM tile usage policy.
+
 ## [1.0.8-rc37] - unstable
 
 ### Added
