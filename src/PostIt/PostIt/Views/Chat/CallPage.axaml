@@ -5,21 +5,22 @@
   xmlns:vm="using:PostIt.ViewModels.Chat"
   xmlns:services="using:PostIt.Services"
   x:DataType="vm:CallPageViewModel"
-  Header="Appel audio-video">
+  Header="{Binding Header}">
   <ScrollViewer HorizontalScrollBarVisibility="Disabled">
     <StackPanel Margin="16" Spacing="16">
-      <TextBlock Text="Choisissez WebRTC ou SRTP direct. Les deux participants doivent etre presents dans le meme salon. Quitter cette page termine l'appel."
+      <TextBlock Text="{Binding Description}"
                  TextWrapping="Wrap" />
       <StackPanel IsVisible="{Binding Chat.SupportsVideoCalls}">
-        <TextBlock Text="Appel video WebRTC" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8" />
+        <TextBlock Text="Appel WebRTC" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,8" />
         <StackPanel DataContext="{Binding Chat.VideoCall}" x:DataType="vm:WebRtcCallViewModel"
                     IsEnabled="{Binding $parent[ContentPage].((vm:CallPageViewModel)DataContext).Chat.IsConnected}" Spacing="8">
-          <TextBlock Text="Android et Linux : medias chiffres par WebRTC (DTLS-SRTP), ICE/STUN/TURN. Activez le masquage IP dans votre profil pour imposer un relais TURN aux deux participants, sans repli direct. La camera et le microphone ne demarrent qu'apres acceptation."
+          <TextBlock Text="Android et Linux : medias chiffres par WebRTC (DTLS-SRTP), ICE/STUN/TURN. Activez le masquage IP dans votre profil pour imposer un relais TURN aux deux participants, sans repli direct. Les medias ne demarrent qu'apres acceptation ; l'appel audio ne demande pas de camera."
                      TextWrapping="Wrap" />
           <WrapPanel IsEnabled="{Binding CanConfigure}" IsVisible="{Binding !RemoteVideo}">
             <Button Content="Actualiser les peripheriques" Command="{Binding RefreshDevicesCommand}" Margin="0,0,8,4" />
-            <ComboBox Width="190" ItemsSource="{Binding Cameras}" SelectedItem="{Binding Camera}"
-                      PlaceholderText="Camera" Margin="0,0,8,4">
+            <ComboBox x:Name="WebRtcCamera" Width="190" ItemsSource="{Binding Cameras}" SelectedItem="{Binding Camera}"
+                      PlaceholderText="Camera" Margin="0,0,8,4"
+                      IsVisible="{Binding !$parent[ContentPage].((vm:CallPageViewModel)DataContext).IsAudioPage}">
               <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="services:CaptureDevice">
                   <TextBlock Text="{Binding Name}" />
@@ -40,19 +41,29 @@
                     IsChecked="{Binding AllowAddressDisclosure}" IsEnabled="{Binding CanConfigure}"
                     IsVisible="{Binding !RemoteVideo}" />
           <WrapPanel>
-            <Button Content="Appeler dans la salle active" Command="{Binding InviteCommand}" IsEnabled="{Binding !Busy}" Margin="0,0,8,4" />
+            <Button x:Name="WebRtcVideoInvite" Content="Appeler en audio-video" Command="{Binding InviteCommand}" IsEnabled="{Binding !Busy}"
+                    IsVisible="{Binding !$parent[ContentPage].((vm:CallPageViewModel)DataContext).IsAudioPage}" Margin="0,0,8,4" />
+            <Button Content="Appeler en audio" Command="{Binding InviteAudioCommand}" IsEnabled="{Binding !Busy}" Margin="0,0,8,4" />
             <Button Content="Accepter" Command="{Binding AcceptCommand}" IsEnabled="{Binding Incoming}" Margin="0,0,8,4" />
             <Button Content="Refuser / Raccrocher" Command="{Binding HangupCommand}" IsEnabled="{Binding Busy}" Margin="0,0,8,4" />
           </WrapPanel>
           <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
+          <StackPanel IsVisible="{Binding IsAudioCall}" HorizontalAlignment="Center" Spacing="8">
+            <Grid Width="160" Height="160">
+              <Image x:Name="AudioFallbackImage" Source="avares://PostIt/Assets/Icon.png" Stretch="Uniform" />
+              <Image x:Name="AudioAvatarImage" Source="{Binding RemoteAvatar}" Stretch="Uniform" />
+            </Grid>
+            <TextBlock Text="{Binding Target}" HorizontalAlignment="Center" />
+            <TextBlock Text="{Binding AvatarStatus}" TextWrapping="Wrap" />
+          </StackPanel>
           <Grid ColumnDefinitions="*,2*" Height="280" IsVisible="{Binding !!RemoteVideo}">
             <ContentControl Content="{Binding LocalVideo}" Margin="0,0,8,0" />
             <ContentControl Grid.Column="1" Content="{Binding RemoteVideo}" />
           </Grid>
         </StackPanel>
       </StackPanel>
-      <StackPanel IsVisible="{Binding Chat.SupportsLanCalls}">
-        <TextBlock Text="Appel direct IPv4/IPv6 SRTP (LAN/VPN ou IP publique)"
+      <StackPanel x:Name="LanCallPanel" IsVisible="{Binding ShowLanCalls}">
+        <TextBlock Text="Appel audio-video direct IPv4/IPv6 SRTP (LAN/VPN ou IP publique)"
                    FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,8" />
         <StackPanel DataContext="{Binding Chat.LanCall}" x:DataType="vm:LanCallViewModel"
                     IsEnabled="{Binding $parent[ContentPage].((vm:CallPageViewModel)DataContext).Chat.IsConnected}" Spacing="8">

@@ -44,6 +44,73 @@ public sealed class WebRtcCallViewModelTests
         Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
     }
 
+    [AvaloniaTheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Audio_call_uses_only_microphone_and_monitors_audio(bool outgoing)
+    {
+        var signaling = new Signaling(true);
+        var media = new Media();
+        await using var vm = Configure(signaling, media);
+        vm.Camera = null;
+        if (outgoing)
+            await vm.InviteAudioCommand.ExecuteAsync(null);
+        else
+        {
+            signaling.InviteAudio();
+            await WaitAsync(() => vm.Incoming);
+            await vm.AcceptCommand.ExecuteAsync(null);
+        }
+        Assert.True(vm.AudioOnly);
+        if (outgoing) signaling.Ready();
+        await WaitAsync(() => media.Configuration is not null);
+        Assert.True(media.Configuration!.AudioOnly);
+        Assert.Equal("", media.Configuration.Camera);
+        Assert.Equal("default", media.Configuration.Microphone);
+        Assert.Null(vm.LocalVideo);
+        Assert.Null(vm.RemoteVideo);
+        media.Report(new("connected", "relay", 20, 0));
+        await WaitAsync(() => vm.Status.Contains("Audio WebRTC etabli"));
+    }
+
+    [AvaloniaFact]
+    public async Task Accepted_mode_mismatch_ends_call_without_opening_media()
+    {
+        var signaling = new Signaling(true);
+        var media = new Media();
+        await using var vm = Configure(signaling, media);
+        await vm.InviteAudioCommand.ExecuteAsync(null);
+        signaling.Ready(signaling.Call with { DisplayMode = CallDisplayMode.AudioVideo });
+        await WaitAsync(() => !vm.Busy);
+        Assert.Null(media.Configuration);
+        Assert.Single(signaling.EndedCalls);
+    }
+
+    [AvaloniaFact]
+    public async Task Audio_call_loads_the_remote_avatar_without_blocking_hangup()
+    {
+        var signaling = new Signaling(true);
+        var media = new Media();
+        var avatar = new TaskCompletionSource<Bitmap?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        string? requestedUser = null;
+        await using var vm = new WebRtcCallViewModel(signaling, () => media, loadAvatar: user =>
+        {
+            requestedUser = user;
+            return avatar.Task;
+        })
+        { Microphone = new("Mic", "default"), Target = " bob ", Room = "General" };
+        await vm.InviteAudioCommand.ExecuteAsync(null);
+        signaling.Ready();
+        await WaitAsync(() => requestedUser is not null);
+        Assert.Equal("bob", requestedUser);
+        await vm.HangupAsync();
+        avatar.SetResult(null);
+        await Task.Delay(20, TestContext.Current.CancellationToken);
+        Assert.False(vm.Busy);
+        Assert.Null(vm.RemoteAvatar);
+        Assert.Equal("", vm.AvatarStatus);
+    }
+
     [AvaloniaFact]
     public async Task Incoming_relay_needs_acceptance_but_never_requires_IP_disclosure()
     {
@@ -275,11 +342,16 @@ public sealed class WebRtcCallViewModelTests
         public event Action<CallEnded>? Ended;
         public event Action<Guid, CallSignal>? Signal;
         public event Action? Interrupted;
-        public CallSession Call { get; } = new(Guid.NewGuid(), "General", "alice", "bob", relay,
+        public CallSession Call { get; private set; } = new(Guid.NewGuid(), "General", "alice", "bob", relay,
             DateTimeOffset.UtcNow.AddMinutes(1));
         public List<CallSignal> Sent { get; } = [];
         public List<Guid> EndedCalls { get; } = [];
         public Task<CallSession> InviteAsync(string room, string user, CancellationToken ct = default) => Task.FromResult(Call);
+        public Task<CallSession> InviteAudioAsync(string room, string user, CancellationToken ct = default)
+        {
+            Call = Call with { DisplayMode = CallDisplayMode.AudioOnly };
+            return Task.FromResult(Call);
+        }
         public Task<CallSession> InviteLanAsync(string room, string user, CancellationToken ct = default) =>
             throw new InvalidOperationException("Legacy LAN transport must not be used");
         public Task AcceptAsync(Guid callId, CancellationToken ct = default) { Ready(); return Task.CompletedTask; }
@@ -288,6 +360,11 @@ public sealed class WebRtcCallViewModelTests
         public Task SendAsync(Guid callId, CallSignal signal, CancellationToken ct = default)
         { Sent.Add(signal); return Task.CompletedTask; }
         public void Invite() => Invitation?.Invoke(Call);
+        public void InviteAudio()
+        {
+            Call = Call with { DisplayMode = CallDisplayMode.AudioOnly };
+            Invitation?.Invoke(Call);
+        }
         public void Ready(CallSession? session = null, CallIceServer[]? servers = null) =>
             Accepted?.Invoke(new(session ?? Call, servers ?? Turn));
         public void Receive(CallSignal signal) => Signal?.Invoke(Call.Id, signal);

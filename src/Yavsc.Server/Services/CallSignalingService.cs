@@ -65,7 +65,8 @@ public sealed class CallSignalingService(
     private bool AllowsCallMode(string connection, CallDisplayMode mode) => mode switch
     {
         CallDisplayMode.AudioVideo => GetContactPreferences(connection)?.AllowVideoCalls != false,
-        CallDisplayMode.AudioOnly => GetContactPreferences(connection)?.AllowAudioCalls == true,
+        CallDisplayMode.AudioOnly => GetContactPreferences(connection) is
+            { AllowAudioCalls: true, SupportsAudioOnly: true },
         _ => false
     };
 
@@ -98,6 +99,8 @@ public sealed class CallSignalingService(
         ValidateTransport(transport, relayOnly);
         if (displayMode is not (CallDisplayMode.AudioVideo or CallDisplayMode.AudioOnly))
             throw new HubException("Unknown call mode.");
+        if (transport == CallTransports.LanSrtp && displayMode == CallDisplayMode.AudioOnly)
+            throw new HubException("Audio-only calls require WebRTC.");
         await _gate.WaitAsync();
         try
         {

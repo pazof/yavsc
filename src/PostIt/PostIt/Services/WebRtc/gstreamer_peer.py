@@ -71,27 +71,33 @@ class Peer:
     def start(self, configuration):
         if self.pipeline is not None:
             raise RuntimeError("WebRTC already started")
-        for plugin in ("webrtcbin", "nicesrc", "vp8enc", "opusenc", "jpegenc"):
+        audio_only = configuration.get("audioOnly", False)
+        plugins = ("webrtcbin", "nicesrc", "opusenc") if audio_only else (
+            "webrtcbin", "nicesrc", "vp8enc", "opusenc", "jpegenc")
+        for plugin in plugins:
             if not Gst.ElementFactory.find(plugin):
                 raise RuntimeError("Missing GStreamer plugin: " + plugin)
-        synthetic = configuration["camera"] == "test"
+        synthetic = (configuration["microphone"] == "test" if audio_only
+                     else configuration["camera"] == "test")
         camera = "videotestsrc is-live=true" if synthetic else "v4l2src name=camera"
         microphone = "audiotestsrc is-live=true" if synthetic else "pulsesrc name=microphone"
-        self.pipeline = Gst.parse_launch(
-            "webrtcbin name=rtc bundle-policy=max-bundle latency=100 "
-            + camera + " ! videoconvert ! videoscale ! videorate ! "
+        video = "" if audio_only else (
+            camera + " ! videoconvert ! videoscale ! videorate ! "
             "video/x-raw,width=640,height=360,framerate=15/1 ! tee name=local "
             "local. ! queue leaky=downstream max-size-buffers=2 ! "
             "vp8enc deadline=1 target-bitrate=900000 keyframe-max-dist=30 ! "
             "rtpvp8pay pt=96 ! application/x-rtp,media=video,encoding-name=VP8,payload=96 ! rtc. "
             "local. ! queue leaky=downstream max-size-buffers=1 ! videorate ! "
             "video/x-raw,framerate=10/1 ! jpegenc ! appsink name=local_frames "
-            "emit-signals=true sync=false max-buffers=1 drop=true "
-            + microphone + " ! audioconvert ! audioresample ! audio/x-raw,rate=48000,channels=1 ! "
+            "emit-signals=true sync=false max-buffers=1 drop=true ")
+        self.pipeline = Gst.parse_launch(
+            "webrtcbin name=rtc bundle-policy=max-bundle latency=100 "
+            + video + microphone + " ! audioconvert ! audioresample ! audio/x-raw,rate=48000,channels=1 ! "
             "opusenc ! rtpopuspay pt=111 ! application/x-rtp,media=audio,encoding-name=OPUS,payload=111 ! rtc."
         )
         if not synthetic:
-            self.pipeline.get_by_name("camera").set_property("device", configuration["camera"])
+            if not audio_only:
+                self.pipeline.get_by_name("camera").set_property("device", configuration["camera"])
             if configuration["microphone"] != "default":
                 self.pipeline.get_by_name("microphone").set_property("device", configuration["microphone"])
         self.synthetic = synthetic
@@ -117,7 +123,8 @@ class Peer:
                     self.rtc.set_property("stun-server", url.replace(":", "://", 1))
                 elif not configuration["relayOnly"] and url.startswith("stuns:"):
                     raise RuntimeError("GStreamer does not support STUN/TLS; configure STUN or TURN/TLS")
-        self.pipeline.get_by_name("local_frames").connect("new-sample", self.frame, "local")
+        if not audio_only:
+            self.pipeline.get_by_name("local_frames").connect("new-sample", self.frame, "local")
         self.rtc.connect("on-ice-candidate", self.candidate)
         self.rtc.connect("pad-added", self.incoming)
         bus = self.pipeline.get_bus()

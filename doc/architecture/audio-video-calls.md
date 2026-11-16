@@ -8,10 +8,11 @@ La préférence de confidentialité est persistée et éditable dans le profil.
 PostIt conserve aussi trois activations de contact locales (audio, audio-video,
 messages prives) et les annonce pour chaque connexion ChatHub, y compris apres
 reconnexion. Les modifications prennent effet a la prochaine connexion. Le
-serveur filtre les invitations video et les messages prives par appareil ;
+serveur filtre les invitations et les messages prives par appareil ;
 une autre connexion peut avoir des preferences differentes et les anciens
-clients sans annonce restent autorises. Le mode audio seul n'est pas encore
-implemente.
+clients sans annonce restent autorises pour la video et les messages. Les
+invitations audio seules exigent en outre une annonce explicite de compatibilite
+audio seul sur chaque appareil, pour ne pas solliciter les anciens clients.
 La signalisation est intégrée au chat, désactivée par défaut. Une page d'appel
 separee propose **WebRTC natif** et le transport direct VLC/SRTP sur Android et
 Desktop Linux. WebRTC utilise ICE/STUN/TURN et le masquage IP impose par la
@@ -19,7 +20,9 @@ politique serveur. Le mode SRTP direct ne masque pas les adresses IP et exige
 que cette preference soit desactivee pour les deux participants. Les groupes
 et les clients navigateur ne sont pas implementes.
 Depuis le chat textuel, selectionner un membre present puis « Ouvrir l'appel »
-prepare le pair sans demarrer les medias. Les invitations entrantes disposent
+ou « Ouvrir l'appel audio » prepare le pair sans demarrer les medias. La page
+WebRTC propose les deux modes : un utilisateur autorisant l'audio et la video
+peut appeler en audio seul. Les invitations entrantes disposent
 d'un bouton pour ouvrir cette meme page sans selection de membre. Passer du
 chat a la page d'appel ne raccroche pas ; quitter la page d'appel termine les
 medias. Un salon commun reste requis ; les capacites distantes et les appels
@@ -38,7 +41,11 @@ La cible couvre :
 
 - [WebRtcCallViewModel](../../src/PostIt/PostIt/ViewModels/Chat/WebRtcCallViewModel.cs)
   conserve invitation/acceptation/fin via SignalR, sans demarrer la capture
-  avant consentement. Les SDP et candidats ICE utilisent les contrats existants.
+  avant consentement. En audio seul, seul le microphone est requis et ouvert :
+  aucune piste video ni permission camera n'est demandee. L'avatar du
+  correspondant, choisi dans les parametres PostIt, sert d'image fixe ; une
+  icone de remplacement est affichee si l'avatar est indisponible.
+  Les SDP et candidats ICE utilisent les contrats existants.
 - [AndroidWebRtcMedia](../../src/PostIt/PostIt.Android/Services/AndroidWebRtcMedia.cs)
   heberge deux surfaces natives. Le pont Java
   [WebRtcPeer](../../src/PostIt/PostIt.Android/Services/WebRtcPeer.java) utilise
@@ -62,12 +69,12 @@ La cible couvre :
   Un SDP qui expose une adresse non relayee est refuse, pas corrige.
 - Raccrocher, sortir de la page/salle, se deconnecter ou passer l'application
   en arriere-plan annule aussi un demarrage natif en cours et libere les medias.
-  Un echec natif, une perte ICE ou 30 secondes sans progression audio/video
+  Un echec natif, une perte ICE ou 30 secondes sans progression des medias requis
   terminent l'appel explicitement. Il n'y a pas d'ICE restart/renegociation
   automatique ni de migration transparente d'un appel existant.
 
 Le panneau WebRTC ne demande pas d'adresse ni de port RTP manuel. Le panneau
-SRTP direct demande une adresse locale, un port UDP pair et le consentement au
+SRTP direct ne prend en charge que l'audio-video. Il demande une adresse locale, un port UDP pair et le consentement au
 partage d'adresse ; il requiert HTTPS pour proteger les cles de signalisation.
 Les invitations sont dirigees vers le panneau correspondant, sans bascule
 automatique entre transports. Sans masquage,
@@ -84,7 +91,8 @@ les Podcasts conservent leur chemin existant.
 
 Tests Linux reels, sans compte ni camera, avec sources video/audio synthetiques,
 decodage bidirectionnel, selection effective d'un relais coturn, controle des
-adresses signalees et panne TURN sans repli :
+adresses signalees et panne TURN sans repli. Les tests audio seuls verifient
+egalement l'absence de piste et de trames video, en direct et via TURN :
 
 ```bash
 python3 src/PostIt/PostIt.Tests/Native/webrtc_media_test.py -v

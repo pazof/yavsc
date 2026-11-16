@@ -1,5 +1,6 @@
 using Avalonia.Headless.XUnit;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using PostIt.Views.Chat;
 using PostIt.Services;
 using PostIt.ViewModels;
@@ -34,6 +35,34 @@ public sealed class CallTransportRoutingTests
         Assert.Equal([call.Id], signaling.EndedCalls);
         Assert.False(lan.Busy);
         Assert.False(webRtc.Busy);
+    }
+
+    [AvaloniaFact]
+    public async Task Audio_page_shows_static_image_and_hides_video_and_srtp_controls()
+    {
+        var signaling = new Signaling();
+        await using var webRtc = new WebRtcCallViewModel(signaling);
+        var chat = new ChatViewModel(settings: new Settings()) { VideoCall = webRtc, IsConnected = true };
+        signaling.Invite(new CallSession(Guid.NewGuid(), "General", "alice", "bob", false,
+            DateTimeOffset.UtcNow.AddMinutes(1), DisplayMode: CallDisplayMode.AudioOnly));
+        await WaitAsync(() => webRtc.Incoming);
+        var page = new CallPage { DataContext = new AudioCallPageViewModel(chat) };
+        var window = new Window { Content = page };
+        try
+        {
+            window.Show();
+            Assert.False(page.FindControl<ComboBox>("WebRtcCamera")!.IsVisible);
+            Assert.False(page.FindControl<Button>("WebRtcVideoInvite")!.IsVisible);
+            Assert.False(page.FindControl<StackPanel>("LanCallPanel")!.IsVisible);
+            var fallback = page.FindControl<Image>("AudioFallbackImage")!;
+            Assert.True(fallback.IsEffectivelyVisible);
+            Assert.NotNull(fallback.Source);
+            var displayedAvatar = page.FindControl<Image>("AudioAvatarImage")!;
+            Assert.Null(displayedAvatar.Source);
+            webRtc.RemoteAvatar = Assert.IsType<Bitmap>(fallback.Source);
+            Assert.Same(webRtc.RemoteAvatar, displayedAvatar.Source);
+        }
+        finally { window.Close(); }
     }
 
     [AvaloniaFact]
@@ -104,8 +133,10 @@ public sealed class CallTransportRoutingTests
         };
         chat.FocusedUsers.Add("bob");
         Assert.False(chat.OpenCallCommand.CanExecute(null));
+        Assert.False(chat.OpenAudioCallCommand.CanExecute(null));
         chat.SelectedUser = "bob";
         Assert.True(chat.OpenCallCommand.CanExecute(null));
+        Assert.True(chat.OpenAudioCallCommand.CanExecute(null));
         var page = chat.PrepareCallPage();
         Assert.Same(chat, page.Chat);
         Assert.Equal("bob", lan.Target);
@@ -115,6 +146,7 @@ public sealed class CallTransportRoutingTests
         chat.FocusedUsers.Remove("bob");
         Assert.Null(chat.SelectedUser);
         Assert.False(chat.OpenCallCommand.CanExecute(null));
+        Assert.False(chat.OpenAudioCallCommand.CanExecute(null));
         chat.FocusedUsers.Add("bob");
         chat.SelectedUser = "bob";
         chat.SelectedRoom = "Other";
@@ -167,6 +199,8 @@ public sealed class CallTransportRoutingTests
 
         public void Invite(CallSession call) => Invitation?.Invoke(call);
         public Task<CallSession> InviteAsync(string room, string user, CancellationToken ct = default) =>
+            throw new NotSupportedException();
+        public Task<CallSession> InviteAudioAsync(string room, string user, CancellationToken ct = default) =>
             throw new NotSupportedException();
         public Task<CallSession> InviteLanAsync(string room, string user, CancellationToken ct = default) =>
             throw new NotSupportedException();

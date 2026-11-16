@@ -143,7 +143,8 @@ public sealed class ChatHubConnection : IAsyncDisposable
     private Task AnnounceContactPreferencesAsync(HubConnection connection, CancellationToken ct) =>
         connection.InvokeAsync(CallHubMethods.SetContactPreferences,
             new ContactPreferences(_api.Settings.AllowAudioCalls, _api.Settings.AllowVideoCalls,
-                _api.Settings.AllowPrivateMessages), ct);
+                _api.Settings.AllowPrivateMessages, Platform.CreateWebRtcMedia != null ||
+                (OperatingSystem.IsLinux() && !OperatingSystem.IsAndroid())), ct);
 
     public async Task StopAsync(CancellationToken ct = default)
     {

@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Models;
 using PostIt.Services;
+using PostIt.Helpers;
+using Yavsc.Api.Client;
 using Yavsc;
 
 namespace PostIt.ViewModels.Chat
@@ -64,7 +66,7 @@ namespace PostIt.ViewModels.Chat
             (OperatingSystem.IsLinux() && !OperatingSystem.IsAndroid());
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(ShowCallCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(OpenAudioCallCommand), nameof(ShowCallCommand))]
         public partial WebRtcCallViewModel? VideoCall { get; set; }
 
         [ObservableProperty]
@@ -72,7 +74,7 @@ namespace PostIt.ViewModels.Chat
         public partial LanCallViewModel? LanCall { get; set; }
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(OpenAudioCallCommand))]
         public partial string? SelectedUser { get; set; }
 
         [ObservableProperty]
@@ -89,7 +91,7 @@ namespace PostIt.ViewModels.Chat
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
-        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(ShowCallCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(OpenAudioCallCommand), nameof(ShowCallCommand))]
         [NotifyPropertyChangedFor(nameof(IsConnectedAndInARoom))]
         public partial bool IsConnected { get; set; } = false;
 
@@ -104,7 +106,7 @@ namespace PostIt.ViewModels.Chat
         // alors les notifications système.
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SendMessageCommand))]
-        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(OpenAudioCallCommand))]
         public partial string? SelectedRoom { get; set; }
 
         // Notifications globales (connexion, erreurs de join, ...)
@@ -130,12 +132,14 @@ namespace PostIt.ViewModels.Chat
         {
             value.CollectionChanged += OnFocusedUsersCollectionChanged;
             OpenCallCommand.NotifyCanExecuteChanged();
+            OpenAudioCallCommand.NotifyCanExecuteChanged();
         }
 
         private void OnFocusedUsersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
         {
             if (SelectedUser != null && !FocusedUsers.Contains(SelectedUser)) SelectedUser = null;
             OpenCallCommand.NotifyCanExecuteChanged();
+            OpenAudioCallCommand.NotifyCanExecuteChanged();
         }
 
         private void UpdateRoomUsers(string type, string room, string user)
@@ -184,15 +188,22 @@ namespace PostIt.ViewModels.Chat
         [RelayCommand(CanExecute = nameof(CanOpenCall))]
         private Task OpenCallAsync() => NavigateToCallAsync(configureTarget: true);
 
+        [RelayCommand(CanExecute = nameof(CanOpenAudioCall))]
+        private Task OpenAudioCallAsync() => NavigateToCallAsync(configureTarget: true, audio: true);
+
+        private bool CanOpenAudioCall() => CanOpenCall() && VideoCall != null;
+
         [RelayCommand(CanExecute = nameof(CanShowCall))]
         private Task ShowCallAsync() => NavigateToCallAsync(configureTarget: false);
 
-        private async Task NavigateToCallAsync(bool configureTarget)
+        private async Task NavigateToCallAsync(bool configureTarget, bool audio = false)
         {
             try
             {
                 var app = App.Current as App ?? throw new InvalidOperationException("Application indisponible.");
                 var page = configureTarget ? PrepareCallPage() : new CallPageViewModel(this);
+                if (VideoCall?.Busy == true ? VideoCall.AudioOnly : audio && LanCall?.Busy != true)
+                    page = new AudioCallPageViewModel(this);
                 await app.PushPageAsync(page);
             }
             catch (Exception error) { Log($"Impossible d'ouvrir l'appel : {error.Message}"); }
@@ -401,7 +412,13 @@ namespace PostIt.ViewModels.Chat
 
                 Calls = new CallSignalingClient(_connection);
                 if (SupportsVideoCalls)
-                    VideoCall = new WebRtcCallViewModel(Calls, settings: _settings) { Room = SelectedRoom ?? "" };
+                {
+                    var avatars = new ActivityApiClient(_api, () => _settings.ApiUrl,
+                        () => _settings.Authentication.Authority);
+                    VideoCall = new WebRtcCallViewModel(Calls, settings: _settings,
+                        loadAvatar: user => ImageHelper.LoadFromWeb(new Uri(avatars.BuildAvatarXsUrl(user))))
+                        { Room = SelectedRoom ?? "" };
+                }
                 if (SupportsLanCalls)
                     LanCall = new LanCallViewModel(Calls, settings: _settings) { Room = SelectedRoom ?? "" };
                 Calls.Invitation += call =>

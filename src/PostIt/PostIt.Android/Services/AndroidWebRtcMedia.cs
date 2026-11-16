@@ -37,10 +37,12 @@ internal sealed class AndroidWebRtcMedia : WebRtcNativeMedia
     protected override async Task StartCoreAsync(WebRtcMediaConfiguration configuration, CancellationToken ct)
     {
         var activity = MainActivity.Current ?? throw new InvalidOperationException("Activité Android indisponible.");
-        await PodcastPermissions.EnsureAsync(activity, microphone: true, ct, notifications: false);
+        await PodcastPermissions.EnsureAsync(activity, microphone: true, ct, notifications: false,
+            camera: !configuration.AudioOnly);
         if (!MainActivity.IsForeground)
             throw new InvalidOperationException("Revenez dans PostIt pour demarrer l'appel.");
-        await Task.WhenAll(_local.Ready, _remote.Ready).WaitAsync(TimeSpan.FromSeconds(10), ct);
+        if (!configuration.AudioOnly)
+            await Task.WhenAll(_local.Ready, _remote.Ready).WaitAsync(TimeSpan.FromSeconds(10), ct);
         await SendCommandAsync(StartCommand(configuration), ct);
     }
 

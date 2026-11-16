@@ -20,10 +20,14 @@ public partial class ChatHub
     public Task<CallSession> InviteCall(string roomName, string callee) =>
         InviteCoreAsync(roomName, callee, CallTransports.WebRtc);
 
+    public Task<CallSession> InviteAudioCall(string roomName, string callee) =>
+        InviteCoreAsync(roomName, callee, CallTransports.WebRtc, CallDisplayMode.AudioOnly);
+
     public Task<CallSession> InviteLanCall(string roomName, string callee) =>
         InviteCoreAsync(roomName, callee, CallTransports.LanSrtp);
 
-    private async Task<CallSession> InviteCoreAsync(string roomName, string callee, string transport)
+    private async Task<CallSession> InviteCoreAsync(string roomName, string callee, string transport,
+        CallDisplayMode mode = CallDisplayMode.AudioVideo)
     {
         var caller = CallUser();
         RequireSecureLanControl(transport);
@@ -33,7 +37,7 @@ public partial class ChatHub
         RequireCallPresence(roomName, caller, callee);
         var relayOnly = await RequiresRelayAsync(caller, callee);
         return await _calls.InviteAsync(roomName, caller, callee, Context.ConnectionId,
-            _cxManager.GetConnexionIds(callee)?.Distinct().ToArray() ?? [], relayOnly, transport);
+            _cxManager.GetConnexionIds(callee)?.Distinct().ToArray() ?? [], relayOnly, transport, mode);
     }
 
     public async Task AcceptCall(Guid callId)

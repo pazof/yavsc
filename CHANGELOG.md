@@ -6,6 +6,8 @@
 
 ### Added
 
+* [PostIt/Chat] Add audio-only WebRTC calls on Linux and Android with the user's avatar as a static image, microphone-only capture, dedicated navigation and capability-aware invitations. Keep direct SRTP audio-video only; add signaling, UI and Linux native-media regressions.
+
 * [PostIt/Chat] Filter video invitations and private messages by announced per-connection preferences, stop affected calls when preferences change, and prepare mode-aware audio signaling. Audio-only calls and static images are not implemented yet; legacy clients without preferences remain reachable.
 
 * [PostIt/Chat] Persist audio, audio-video and private-message contact preferences and announce them to ChatHub on connection and reconnection. Add the audio-only call display contract; filtering contacts and audio-only media are not implemented yet.

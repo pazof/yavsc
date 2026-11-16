@@ -45,6 +45,12 @@ public sealed class CallSignalingClient : IWebRtcCallSignaling, IDisposable
         return _connection.InvokeAsync<CallSession>(CallHubMethods.InviteLan, room, user, ct);
     }
 
+    public Task<CallSession> InviteAudioAsync(string room, string user, CancellationToken ct = default)
+    {
+        EnsureConnected();
+        return _connection.InvokeAsync<CallSession>(CallHubMethods.InviteAudio, room, user, ct);
+    }
+
     public Task AcceptAsync(Guid callId, CancellationToken ct = default)
     {
         EnsureConnected();

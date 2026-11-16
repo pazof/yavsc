@@ -56,7 +56,7 @@
                       IsChecked="{Binding AllowVideoCalls, Mode=TwoWay}" />
             <CheckBox Content="Autoriser les messages prives"
                       IsChecked="{Binding AllowPrivateMessages, Mode=TwoWay}" />
-            <TextBlock Text="Les changements prennent effet a la prochaine connexion au chat. Les autres appareils conservent leurs propres preferences ; les anciens clients sans preferences restent joignables. Les appels audio seuls ne sont pas encore disponibles."
+            <TextBlock Text="Les changements prennent effet a la prochaine connexion au chat. Les autres appareils conservent leurs propres preferences ; les appels audio seuls necessitent un client compatible."
                        TextWrapping="Wrap" />
             <StackPanel IsVisible="{Binding SupportsBackgroundChatService}" Spacing="6">
                 <CheckBox x:Name="BackgroundChatCheckBox"
@@ -69,7 +69,7 @@
                       IsChecked="{Binding ShareExceptionReports, Mode=TwoWay}" />
             <TextBlock Text="Desactive par defaut. Si vous activez cette option, PostIt transmet le type, le message et la trace technique des exceptions signalees pour aider au diagnostic. Ces details peuvent contenir des informations issues de l'environnement de l'application."
                        TextWrapping="Wrap" />
-            <TextBlock Text="Avatar: PNG, JPG/JPEG, WEBP, GIF. Taille max 2 MB."
+            <TextBlock Text="Avatar affiche notamment pendant les appels audio : PNG, JPG/JPEG, WEBP, GIF. Taille max 2 MB."
                    Opacity="0.8"
                    TextWrapping="Wrap" />
 

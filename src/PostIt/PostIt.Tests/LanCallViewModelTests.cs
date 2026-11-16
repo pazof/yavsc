@@ -115,6 +115,23 @@ public sealed class LanCallViewModelTests
         return vm;
     }
 
+    [AvaloniaFact]
+    public async Task Audio_only_invitation_on_srtp_is_rejected_without_opening_media()
+    {
+        var signaling = new Signaling();
+        var created = false;
+        await using var vm = Configure(signaling, (_, _) =>
+        {
+            created = true;
+            return new FakeMedia();
+        });
+        signaling.Invite(vm, signaling.Call with { DisplayMode = CallDisplayMode.AudioOnly });
+        await WaitAsync(() => signaling.EndedCalls.Count != 0);
+        Assert.False(created);
+        Assert.False(vm.Busy);
+        Assert.Contains("audio seul", vm.Status);
+    }
+
     [AvaloniaTheory]
     [InlineData("8.8.8.8")]
     [InlineData("2001:db8::1")]

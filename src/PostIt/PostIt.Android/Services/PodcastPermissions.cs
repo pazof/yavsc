@@ -17,9 +17,11 @@ internal static class PodcastPermissions
     private static TaskCompletionSource<bool>? _pending;
     private static string[] _requested = [];
 
-    public static async Task EnsureAsync(Activity activity, bool microphone, CancellationToken ct, bool notifications = true)
+    public static async Task EnsureAsync(Activity activity, bool microphone, CancellationToken ct,
+        bool notifications = true, bool camera = true)
     {
-        var requested = new List<string> { Manifest.Permission.Camera };
+        var requested = new List<string>();
+        if (camera) requested.Add(Manifest.Permission.Camera);
         if (microphone) requested.Add(Manifest.Permission.RecordAudio);
         if (notifications && OperatingSystem.IsAndroidVersionAtLeast(33)) requested.Add(Manifest.Permission.PostNotifications);
         var permissions = requested.ToArray();
@@ -32,6 +34,7 @@ internal static class PodcastPermissions
         if (!await pending.Task.WaitAsync(ct))
             throw new UnauthorizedAccessException(notifications
                 ? "Autorisez la camera, les notifications et, si selectionne, le microphone pour diffuser."
+                : microphone && !camera ? "Autorisez le microphone pour l'appel."
                 : microphone ? "Autorisez la camera et le microphone pour l'appel."
                 : "Autorisez la camera pour la previsualisation.");
     }

@@ -59,8 +59,12 @@ public sealed class CallSignalingTests
     public async Task Audio_mode_reaches_only_devices_that_announced_audio_and_is_preserved_on_acceptance()
     {
         using var f = new Fixture();
-        await f.Service.SetContactPreferencesAsync("alice-device", new(true, true, true));
-        await f.Service.SetContactPreferencesAsync("bob-1", new(true, false, true));
+        await f.Service.SetContactPreferencesAsync("alice-device", new(true, true, true, true));
+        await f.Service.SetContactPreferencesAsync("bob-1", new(true, false, true, true));
+        await f.Service.SetContactPreferencesAsync("bob-2", new(true, true, true));
+        await Assert.ThrowsAsync<HubException>(() => f.Service.InviteAsync(
+            "General", "alice", "bob", "alice-device", ["bob-1"], false,
+            transport: CallTransports.LanSrtp, displayMode: CallDisplayMode.AudioOnly));
         await Assert.ThrowsAsync<HubException>(() => f.Service.InviteAsync(
             "General", "alice", "bob", "alice-device", ["bob-2"], false,
             displayMode: CallDisplayMode.AudioOnly));

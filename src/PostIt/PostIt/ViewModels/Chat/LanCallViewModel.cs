@@ -221,6 +221,8 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
             throw new InvalidOperationException("Selectionnez une salle jointe et un autre utilisateur.");
         Busy = true;
         _call = await _signaling.InviteLanAsync(Room, Target.Trim(), _lifetime.Token);
+        if (_call.Transport != CallTransports.LanSrtp || _call.DisplayMode != CallDisplayMode.AudioVideo)
+            throw new InvalidOperationException("Mode d'appel SRTP incompatible.");
         Status = $"Invitation envoyee a {_call.Callee} ; attente du consentement.";
     });
 
@@ -248,6 +250,12 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         if (call.Transport != CallTransports.LanSrtp) return;
         Queue(async () =>
         {
+            if (call.DisplayMode != CallDisplayMode.AudioVideo)
+            {
+                await _signaling.EndAsync(call.Id, _lifetime.Token);
+                Status = "Le mode audio seul n'est pas disponible en SRTP.";
+                return;
+            }
             if (_call != null) throw new InvalidOperationException("Invitation concurrente inattendue.");
             if (call.RelayOnly) throw new InvalidOperationException("Le mode LAN ne peut pas masquer les adresses IP.");
             _call = call;
@@ -265,6 +273,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         if (_call?.Id != accepted.Session.Id) return;
         if (_media != null) throw new InvalidOperationException("Acceptation repetee.");
         if (accepted.Session.Transport != CallTransports.LanSrtp || accepted.Session.RelayOnly ||
+            accepted.Session.DisplayMode != CallDisplayMode.AudioVideo ||
             (Incoming && !_accepting))
             throw new InvalidOperationException("Acceptation ou politique de transport inattendue.");
         _call = accepted.Session;

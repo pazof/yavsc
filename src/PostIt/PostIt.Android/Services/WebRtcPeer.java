@@ -123,27 +123,32 @@ public final class WebRtcPeer {
         rtc.iceTransportsType = relay ? PeerConnection.IceTransportsType.RELAY : PeerConnection.IceTransportsType.ALL;
         peer = factory.createPeerConnection(rtc, new Observer());
         if (peer == null) throw new IllegalStateException("Cannot create native WebRTC peer");
-        Camera2Enumerator cameras = new Camera2Enumerator(context);
-        String camera = configuration.getString("camera");
-        capturer = cameras.createCapturer(camera, new CameraVideoCapturer.CameraEventsHandler() {
-            public void onCameraError(String message) { error("Camera: " + message); }
-            public void onCameraDisconnected() { if (!closed) error("Camera disconnected"); }
-            public void onCameraFreezed(String message) { error("Camera frozen: " + message); }
-            public void onCameraOpening(String name) {}
-            public void onFirstFrameAvailable() {}
-            public void onCameraClosed() { if (!closed) error("Camera closed unexpectedly"); }
-        });
-        if (capturer == null) throw new IllegalArgumentException("Camera unavailable");
-        texture = SurfaceTextureHelper.create("PostIt-WebRTC-camera", egl.getEglBaseContext());
-        videoSource = factory.createVideoSource(false);
-        capturer.initialize(texture, context, videoSource.getCapturerObserver());
-        videoTrack = factory.createVideoTrack("postit-video", videoSource);
-        videoTrack.addSink(local);
+        boolean audioOnly = configuration.optBoolean("audioOnly", false);
+        if (!audioOnly) {
+            Camera2Enumerator cameras = new Camera2Enumerator(context);
+            String camera = configuration.getString("camera");
+            capturer = cameras.createCapturer(camera, new CameraVideoCapturer.CameraEventsHandler() {
+                public void onCameraError(String message) { error("Camera: " + message); }
+                public void onCameraDisconnected() { if (!closed) error("Camera disconnected"); }
+                public void onCameraFreezed(String message) { error("Camera frozen: " + message); }
+                public void onCameraOpening(String name) {}
+                public void onFirstFrameAvailable() {}
+                public void onCameraClosed() { if (!closed) error("Camera closed unexpectedly"); }
+            });
+            if (capturer == null) throw new IllegalArgumentException("Camera unavailable");
+            texture = SurfaceTextureHelper.create("PostIt-WebRTC-camera", egl.getEglBaseContext());
+            videoSource = factory.createVideoSource(false);
+            capturer.initialize(texture, context, videoSource.getCapturerObserver());
+            videoTrack = factory.createVideoTrack("postit-video", videoSource);
+            videoTrack.addSink(local);
+        }
         audioSource = factory.createAudioSource(new MediaConstraints());
         audioTrack = factory.createAudioTrack("postit-audio", audioSource);
         peer.addTrack(audioTrack, Collections.singletonList("postit"));
-        peer.addTrack(videoTrack, Collections.singletonList("postit"));
-        capturer.startCapture(640, 480, 24);
+        if (!audioOnly) {
+            peer.addTrack(videoTrack, Collections.singletonList("postit"));
+            capturer.startCapture(640, 480, 24);
+        }
         if (configuration.getBoolean("caller")) peer.createOffer(new CreateDescription("offer"), new MediaConstraints());
     }
 

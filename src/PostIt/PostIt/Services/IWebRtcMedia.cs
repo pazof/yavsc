@@ -7,7 +7,7 @@ using Yavsc.Abstract.Chat.Calls;
 namespace PostIt.Services;
 
 public sealed record WebRtcMediaConfiguration(CallIceServer[] IceServers, bool RelayOnly,
-    bool Caller, string Camera, string Microphone);
+    bool Caller, string Camera, string Microphone, bool AudioOnly = false);
 
 public sealed record WebRtcMediaStatus(string ConnectionState, string? LocalCandidateType,
     long AudioPackets, long VideoFrames, bool LocalVideoRendered = false, bool RemoteVideoRendered = false)
@@ -29,4 +29,5 @@ public interface IWebRtcMedia : IAsyncDisposable
 public interface IWebRtcCallSignaling : ILanCallSignaling
 {
     Task<CallSession> InviteAsync(string room, string user, CancellationToken ct = default);
+    Task<CallSession> InviteAudioAsync(string room, string user, CancellationToken ct = default);
 }

@@ -82,7 +82,7 @@ class AndroidPeer:
 
 
 class NativeWebRtcTests(unittest.TestCase):
-    def run_pair(self, relay, unavailable=False, android=False, android_caller=False):
+    def run_pair(self, relay, unavailable=False, android=False, android_caller=False, audio_only=False):
         processes = []
         events = queue.Queue()
         errors = []
@@ -156,7 +156,8 @@ class NativeWebRtcTests(unittest.TestCase):
                     self.send(process, {"command": "start", "configuration": {
                         "iceServers": servers, "relayOnly": relay,
                         "caller": index == (1 if android_caller else 0),
-                        "camera": "test", "microphone": "test"}})
+                        "camera": "" if audio_only else "test", "microphone": "test",
+                        "audioOnly": audio_only}})
                 stats = {}
                 rendered = set()
                 candidates = 0
@@ -176,6 +177,8 @@ class NativeWebRtcTests(unittest.TestCase):
                         self.fail(message["message"] + "\n" + str(errors[-10:]))
                     if kind == "signal":
                         signal = message["signal"]
+                        if audio_only and signal.get("sdp"):
+                            self.assertNotIn("m=video", signal["sdp"])
                         if relay:
                             candidate = signal.get("candidate")
                             if candidate:
@@ -195,15 +198,17 @@ class NativeWebRtcTests(unittest.TestCase):
                         self.send(processes[1 - index], {"command": "signal", "signal": signal})
                     if kind == "rendered" and message["size"] > 100:
                         rendered.add((index, message["target"]))
+                        self.assertFalse(audio_only, "Audio-only call produced a video frame")
                     if kind == "status":
                         stats[index] = message["status"]
                         if unavailable:
                             self.assertNotEqual("connected", message["status"]["connectionState"])
                             self.assertEqual(0, message["status"]["audioPackets"])
                             self.assertEqual(0, message["status"]["videoFrames"])
-                        elif time.monotonic() - started >= 10 and len(stats) == 2 and len(rendered) == 4 and all(
+                        elif time.monotonic() - started >= 10 and len(stats) == 2 and (audio_only or len(rendered) == 4) and all(
                             s["connectionState"] == "connected" and s["audioPackets"] > 100
-                            and s["videoFrames"] >= 100 for s in stats.values()
+                            and (s["videoFrames"] == 0 if audio_only else s["videoFrames"] >= 100)
+                            for s in stats.values()
                         ):
                             if relay:
                                 self.assertTrue(all(s["localCandidateType"] == "relay" for s in stats.values()))
@@ -245,6 +250,12 @@ class NativeWebRtcTests(unittest.TestCase):
 
     def test_direct_bidirectional_media(self):
         self.run_pair(False)
+
+    def test_audio_only_bidirectional_media(self):
+        self.run_pair(False, audio_only=True)
+
+    def test_audio_only_relay_bidirectional_media(self):
+        self.run_pair(True, audio_only=True)
 
     def test_relay_bidirectional_media_and_no_address_disclosure(self):
         self.run_pair(True)

@@ -59,7 +59,7 @@
         Margin="10,0,0,0"
         BorderBrush="#E0E0E0"
         BorderThickness="1">
-        <Grid RowDefinitions="Auto, *, Auto">
+        <Grid RowDefinitions="Auto, *, Auto, Auto">
           <TextBlock
             Grid.Row="0"
             Margin="5"
@@ -73,6 +73,8 @@
             SelectedItem="{Binding SelectedUser}" />
           <Button Grid.Row="2" Margin="5" Content="Ouvrir l'appel"
                   Command="{Binding OpenCallCommand}" />
+          <Button Grid.Row="3" Margin="5" Content="Ouvrir l'appel audio"
+                  Command="{Binding OpenAudioCallCommand}" />
         </Grid>
       </Border>
     </Grid>
