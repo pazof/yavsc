@@ -63,9 +63,10 @@ utilise un MP4 navigable et des requêtes authentifiées par plages d'octets.
 Le lecteur de direct utilise les segments et rejoint le flux près du direct.
 
 Sur ordinateur, les contrôles du lecteur sont des contrôles Avalonia. Sur
-Android, la surface vidéo et ses commandes sont natives. Le curseur de replay
-actuel valide la recherche au relâchement : il ne fournit pas encore d'aperçu
-continu pendant son déplacement.
+Android, la surface vidéo et ses commandes sont natives. Sur desktop, le
+curseur de replay met à jour l'image pendant son déplacement (voir le résultat
+du prototype ci-dessous) ; sur Android, la recherche n'est encore validée qu'au
+relâchement.
 
 
 Les captures PostIt desktop et Android n'utilisent pas le même pipeline média.
@@ -140,6 +141,17 @@ Android, avant de choisir entre recherche vidéo directe et extraction
 d'images ; ne pas supposer que la recherche actuelle est précise à l'image.
 Les miniatures sont dérivées de la source privée et ne doivent pas apparaître
 dans un cache public.
+
+**Résultat du prototype desktop** : la recherche vidéo directe suffit.
+LibVLC 3, avec sa recherche précise par défaut (sans `--input-fast-seek`),
+affiche en pause l'image exacte demandée, y compris entre deux images clés et
+en reculant. Un test natif le vérifie sur une vidéo synthétique dont chaque
+image a une luminance distincte ; il échoue avec `--input-fast-seek`, qui
+retombe sur l'image clé. Pendant le glissement, `ReplayControls` ne garde que
+la dernière position demandée et l'envoie au lecteur au plus toutes les 60 ms ;
+le relâchement applique la position finale. Restent à mesurer la réactivité
+sur un long replay distant (requêtes par plages) et le comportement sur
+Android.
 
 Les limites de suppression sont définies sur les images réellement décodées ;
 l'interface devra préciser quelle image est conservée à chaque limite. Le
@@ -271,7 +283,8 @@ différent de celui annoncé à l'auteur.
 
 1. Valider le parcours, la politique de visibilité et les questions ci-dessous.
 2. Prototyper sur desktop la navigation précise et l'aperçu pendant le
-   glissement, ainsi que l'assemblage audio/vidéo précis côté serveur.
+   glissement (fait, voir « Résultat du prototype desktop »), puis
+   l'assemblage audio/vidéo précis côté serveur.
 3. Ajouter le brouillon privé et ses états, les autorisations, les limites et
    la reprise après incident, puis l'éditeur de marques et plages desktop.
 4. Valider la finalisation sur de vrais médias synthétiques et conserver le
@@ -310,6 +323,6 @@ différent de celui annoncé à l'auteur.
 
 Toutes les questions de conception posées jusqu'ici ont reçu une réponse.
 Les points encore ouverts sont techniques et seront tranchés par les
-prototypes : mode d'aperçu à l'image près sur desktop, chaîne FFmpeg de
-découpe et d'incrustation, détection d'une interruption côté serveur et
-choix de composition live (PostIt ou serveur).
+prototypes : chaîne FFmpeg de découpe et d'incrustation, détection d'une
+interruption côté serveur et choix de composition live (PostIt ou serveur).
+L'aperçu à l'image près sur desktop est tranché : recherche directe LibVLC.

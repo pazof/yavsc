@@ -14,6 +14,7 @@ public partial class ReplayControls : UserControl
 {
     private readonly ReplayControlsState _state = new();
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(250) };
+    private readonly DispatcherTimer _previewTimer = new() { Interval = TimeSpan.FromMilliseconds(60) };
     private MediaPlayer? _player;
     private bool _updating;
 
@@ -21,6 +22,7 @@ public partial class ReplayControls : UserControl
     {
         InitializeComponent();
         _timer.Tick += Update;
+        _previewTimer.Tick += (_, _) => ApplyPreview();
         PointerMoved += (_, _) => _state.Show();
         PointerPressed += (_, _) => _state.Show();
         KeyDown += (_, _) => _state.Show();
@@ -54,6 +56,7 @@ public partial class ReplayControls : UserControl
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         _timer.Stop();
+        _previewTimer.Stop();
         base.OnDetachedFromVisualTree(e);
     }
 
@@ -76,12 +79,21 @@ public partial class ReplayControls : UserControl
     {
         _state.IsInteracting = true;
         _state.Show();
+        _previewTimer.Start();
     }
 
     private void EndSeek(object? sender, PointerReleasedEventArgs e) => CommitSeek();
 
+    private void ApplyPreview()
+    {
+        if (_player is { IsSeekable: true } player && _state.TryTakePreview(out var time))
+            player.Time = time;
+    }
+
     private void CommitSeek()
     {
+        _previewTimer.Stop();
+        _state.EndPreview();
         if (_player is { IsSeekable: true } player) player.Time = (long)PositionSlider.Value;
         _state.IsInteracting = false;
         _state.Show();
@@ -89,7 +101,9 @@ public partial class ReplayControls : UserControl
 
     private void Position_Changed(object? sender, RangeBaseValueChangedEventArgs e)
     {
-        if (!_updating && !_state.IsInteracting) CommitSeek();
+        if (_updating) return;
+        if (_state.IsInteracting) _state.RequestPreview((long)e.NewValue);
+        else CommitSeek();
     }
 
     private void Toggle_Click(object? sender, RoutedEventArgs e)

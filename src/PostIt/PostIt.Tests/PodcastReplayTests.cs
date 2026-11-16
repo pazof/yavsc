@@ -206,6 +206,86 @@ public sealed class PodcastReplayTests
         Assert.Equal("1:01:02", ReplayControlsState.FormatTime(3662000));
     }
 
+    [Fact]
+    public void Drag_preview_keeps_only_the_latest_new_position()
+    {
+        var state = new ReplayControlsState();
+        Assert.False(state.TryTakePreview(out _));
+        state.RequestPreview(1000);
+        state.RequestPreview(2000);
+        Assert.True(state.TryTakePreview(out var time));
+        Assert.Equal(2000, time);
+        Assert.False(state.TryTakePreview(out _));
+        state.RequestPreview(2000);
+        Assert.False(state.TryTakePreview(out _));
+        state.EndPreview();
+        state.RequestPreview(2000);
+        Assert.True(state.TryTakePreview(out time));
+        Assert.Equal(2000, time);
+    }
+
+    public static bool HasFfmpeg => (Environment.GetEnvironmentVariable("PATH") ?? "")
+        .Split(Path.PathSeparator).Any(dir => File.Exists(Path.Combine(dir, "ffmpeg")));
+
+    [Fact(Skip = "Install ffmpeg and LibVLC.", SkipUnless = nameof(HasFfmpeg))]
+    public async Task LibVLC_shows_the_exact_frame_after_seeking_while_paused()
+    {
+        const int Fps = 25, Size = 64;
+        var path = Path.Combine(Path.GetTempPath(), $"postit-frames-{Guid.NewGuid():N}.mp4");
+        try
+        {
+            // Each frame N has luma 2N; keyframes every 2 s so seeks land between keyframes.
+            var source = "color=black:s=" + Size + "x" + Size + ":r=" + Fps + ":d=4,format=yuv420p,geq=lum='N*2':cb=128:cr=128";
+            var start = new System.Diagnostics.ProcessStartInfo("ffmpeg");
+            foreach (var argument in new[] { "-v", "error", "-f", "lavfi", "-i", source,
+                         "-c:v", "libx264", "-qp", "0", "-g", "50", "-pix_fmt", "yuv420p", path })
+                start.ArgumentList.Add(argument);
+            using (var ffmpeg = System.Diagnostics.Process.Start(start))
+            {
+                Assert.NotNull(ffmpeg);
+                await ffmpeg.WaitForExitAsync(_ct);
+                Assert.Equal(0, ffmpeg.ExitCode);
+            }
+
+            var frame = -1;
+            var buffer = Marshal.AllocHGlobal(Size * Size * 4);
+            try
+            {
+                using var vlc = new LibVLC("--no-audio");
+                using var player = new MediaPlayer(vlc);
+                using var media = new Media(vlc, path, FromType.FromPath);
+                player.SetVideoFormat("RV32", Size, Size, Size * 4);
+                player.SetVideoCallbacks((_, planes) => { Marshal.WriteIntPtr(planes, buffer); return IntPtr.Zero; }, null,
+                    (_, _) =>
+                    {
+                        // Undo the limited-range YUV to RGB conversion on the red channel.
+                        var red = Marshal.ReadByte(buffer, (Size * (Size / 2) + Size / 2) * 4 + 2);
+                        Volatile.Write(ref frame, (int)Math.Round((red * 219.0 / 255 + 16) / 2));
+                    });
+                Assert.True(player.Play(media));
+                await WaitFor(() => player.IsPlaying && Volatile.Read(ref frame) >= 0);
+                player.SetPause(true);
+                await WaitFor(() => !player.IsPlaying);
+
+                foreach (var target in new[] { 37, 73, 12, 61 })
+                {
+                    player.Time = target * 1000L / Fps + 20;
+                    await WaitFor(() => Volatile.Read(ref frame) == target);
+                    Assert.Equal(target, Volatile.Read(ref frame));
+                    Assert.False(player.IsPlaying);
+                }
+                player.Stop();
+            }
+            finally { Marshal.FreeHGlobal(buffer); }
+        }
+        finally { File.Delete(path); }
+
+        async Task WaitFor(Func<bool> condition)
+        {
+            for (var i = 0; i < 100 && !condition(); i++) await Task.Delay(50, _ct);
+        }
+    }
+
     private sealed class Clock : TimeProvider
     {
         public DateTimeOffset Now { get; set; } = DateTimeOffset.UtcNow;

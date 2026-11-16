@@ -6,6 +6,8 @@
 
 ### Added
 
+* [PostIt/Podcasts] Preview the replay frame while dragging the desktop position slider, coalescing seek requests to the latest position. A native LibVLC test checks frame-accurate paused seeking on a synthetic video; the video edition document records the prototype result.
+
 * [Docs/Podcasts] Add the video edition design document: optional author-only replay refinement (marks, frame-accurate cuts, chapters, timed overlays, re-edition and retention), live credits and overlays, end postponement and server-side "Direct interrompu" handling. Desktop first; OBS broadcasts are out of scope.
 
 * [PostIt/Calls] Allow direct SRTP calls without a camera on Linux and Android by transmitting the user's avatar as repeating video with microphone audio through the existing LibVLC H.264/AAC pipeline. Announce transport-specific support, retain video reception and address-disclosure consent, and capture only microphone audio on Android in avatar mode. Add avatar lifecycle, UI, signaling and real IPv4/IPv6 media regressions; document validation and remaining Android device testing.
