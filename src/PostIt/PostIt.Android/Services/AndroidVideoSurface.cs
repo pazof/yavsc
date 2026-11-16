@@ -14,7 +14,7 @@ using Button = Android.Widget.Button;
 
 namespace PostIt.Android.Services;
 
-internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : NativeControlHost, IDisposable
+internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay, bool showControls = false, Action? playbackFailed = null) : NativeControlHost, IDisposable
 {
     private VideoView? _video;
     private ReplayLayout? _layout;
@@ -44,9 +44,9 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
         {
             if (!_disposed) _ready.TrySetResult();
         }, Avalonia.Threading.DispatcherPriority.Loaded);
-        if (replay && !_disposed)
+        if ((replay || showControls) && !_disposed)
         {
-            _layout = new ReplayLayout(activity, video, player);
+            _layout = new ReplayLayout(activity, video, player, replay, playbackFailed);
             return new AndroidViewControlHandle(_layout);
         }
         return new AndroidViewControlHandle(video);
@@ -110,19 +110,23 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
         private readonly Button _toggle;
         private readonly SeekBar _seek;
         private readonly TextView _time;
+        private readonly Action? _playbackFailed;
         private bool _stopped;
 
-        public ReplayLayout(Context context, VideoView video, MediaPlayer player) : base(context)
+        public ReplayLayout(Context context, VideoView video, MediaPlayer player, bool replay, Action? playbackFailed) : base(context)
         {
             _player = player;
+            _playbackFailed = playbackFailed;
             AddView(video, new FrameLayout.LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent));
             _bar = new LinearLayout(context) { Orientation = Orientation.Horizontal };
             _bar.SetGravity(GravityFlags.CenterVertical);
             _bar.SetPadding(12, 8, 12, 8);
             _bar.SetBackgroundColor(global::Android.Graphics.Color.Argb(210, 20, 20, 20));
-            _toggle = new Button(context) { Text = "Pause", ContentDescription = "Lecture ou pause du replay" };
+            _toggle = new Button(context) { Text = "Pause", ContentDescription = "Lecture ou pause de la vidéo" };
             _seek = new SeekBar(context) { Max = 10000, ContentDescription = "Position dans le replay" };
             _time = new TextView(context);
+            _seek.Visibility = replay ? ViewStates.Visible : ViewStates.Gone;
+            _time.Visibility = replay ? ViewStates.Visible : ViewStates.Gone;
             _time.SetTextColor(global::Android.Graphics.Color.White);
             _bar.AddView(_toggle);
             _bar.AddView(_seek, new LinearLayout.LayoutParams(0, LayoutParams.WrapContent, 1));
@@ -160,7 +164,7 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay) : Nat
         private void Toggle(object? sender, EventArgs e)
         {
             if (_player.IsPlaying) _player.Pause();
-            else _player.Play();
+            else if (!_player.Play()) _playbackFailed?.Invoke();
             _state.Show();
         }
 

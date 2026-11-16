@@ -6,7 +6,7 @@
             VerticalAlignment="Bottom">
         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
             <Button x:Name="ToggleButton" Content="Pause" Click="Toggle_Click"
-                    AutomationProperties.Name="Lecture ou pause du replay" />
+                    AutomationProperties.Name="Lecture ou pause de la vidéo" />
             <Slider x:Name="PositionSlider" Grid.Column="1" Minimum="0" Maximum="1"
                     ValueChanged="Position_Changed" VerticalAlignment="Center"
                     AutomationProperties.Name="Position dans le replay" />

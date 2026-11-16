@@ -24,7 +24,8 @@ internal static class PlatformBootstrap
         Platform.BackgroundChatService = AndroidBackgroundChatService.Instance;
         Platform.ShowSoftKeyboard = MainActivity.ShowSoftKeyboard;
         Platform.TryGetCurrentLocationAsync = AndroidCurrentLocationProvider.TryGetCurrentLocationAsync;
-        Platform.CreateVideoSurface = (player, replay) => new AndroidVideoSurface(player, replay);
+        Platform.CreateVideoSurface = (player, replay, playbackFailed) =>
+            new AndroidVideoSurface(player, replay, showControls: true, playbackFailed);
         if (System.OperatingSystem.IsAndroidVersionAtLeast(26))
         {
             Platform.CreateWebRtcMedia = () => System.OperatingSystem.IsAndroidVersionAtLeast(26)

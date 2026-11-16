@@ -9,10 +9,7 @@
         <Border Grid.Row="1" Background="Black" BorderThickness="1" BorderBrush="Green">
             <ContentControl x:Name="VideoSurface" />
         </Border>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12">
-            <Button x:Name="PlayButton" Content="Lire / Pause" Click="PlayPause_Click" />
-            <Button Content="Ouvrir dans le navigateur" Click="OpenExternal_Click" IsVisible="{Binding CanOpenExternal}" />
-        </StackPanel>
+        <Button Grid.Row="2" Content="Ouvrir dans le navigateur" Click="OpenExternal_Click" IsVisible="{Binding CanOpenExternal}" />
         <TextBlock x:Name="PlaybackStatus" Grid.Row="3" TextWrapping="Wrap" />
     </Grid>
 </ContentPage>

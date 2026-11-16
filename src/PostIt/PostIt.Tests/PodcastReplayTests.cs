@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using LibVLCSharp.Shared;
 using Avalonia.Controls;
 using Avalonia.Headless;
+using Avalonia.Headless.XUnit;
+using Avalonia.Interactivity;
 using PostIt.Services;
 using Yavsc.Api.Client;
 
@@ -80,6 +82,47 @@ public sealed class PodcastReplayTests
             }
             finally { window.Close(); }
         }, _ct);
+
+    [AvaloniaTheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Desktop_controls_show_seeking_only_for_replay(bool replay)
+    {
+        var controls = new PostIt.Controls.ReplayControls(replay);
+        Assert.NotNull(controls.FindControl<Button>("ToggleButton"));
+        Assert.Equal(replay, controls.FindControl<Slider>("PositionSlider")!.IsVisible);
+        Assert.Equal(replay, controls.FindControl<TextBlock>("TimeLabel")!.IsVisible);
+    }
+
+    [AvaloniaFact(Skip = "Set POSTIT_TEST_REPLAY to a local MP4 and install LibVLC.", SkipUnless = nameof(HasNativeFixture))]
+    public async Task Desktop_live_controls_pause_and_resume_the_player()
+    {
+        Core.Initialize();
+        using var vlc = new LibVLC("--vout=dummy", "--aout=dummy", "--no-xlib");
+        using var player = new MediaPlayer(vlc);
+        using var media = new Media(vlc, Environment.GetEnvironmentVariable("POSTIT_TEST_REPLAY")!, FromType.FromPath);
+        media.AddOption(":input-repeat=100");
+        var controls = new PostIt.Controls.ReplayControls(player, replay: false);
+        var toggle = controls.FindControl<Button>("ToggleButton")!;
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(_ct);
+        timeout.CancelAfter(TimeSpan.FromSeconds(15));
+        async Task WaitForPlayback(bool playing)
+        {
+            while (player.IsPlaying != playing)
+                await Task.Delay(20, timeout.Token);
+        }
+
+        Assert.True(player.Play(media));
+        try
+        {
+            await WaitForPlayback(true);
+            toggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await WaitForPlayback(false);
+            toggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            await WaitForPlayback(true);
+        }
+        finally { player.Stop(); }
+    }
 
     [Fact]
     public async Task Ranges_use_authenticated_factory_with_bounded_exact_content_and_no_token_in_URL()

@@ -32,7 +32,17 @@ public partial class ReplayControls : UserControl
         };
     }
 
-    public ReplayControls(MediaPlayer player) : this() => _player = player;
+    internal ReplayControls(bool replay) : this()
+    {
+        PositionSlider.IsVisible = replay;
+        TimeLabel.IsVisible = replay;
+    }
+
+    public ReplayControls(MediaPlayer player) : this(player, replay: true) { }
+
+    public ReplayControls(MediaPlayer player, bool replay) : this(replay) => _player = player;
+
+    public event Action? PlaybackFailed;
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -86,7 +96,7 @@ public partial class ReplayControls : UserControl
     {
         if (_player is not { } player) return;
         if (player.IsPlaying) player.Pause();
-        else player.Play();
+        else if (!player.Play()) PlaybackFailed?.Invoke();
         _state.Show();
     }
 }

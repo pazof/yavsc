@@ -80,11 +80,11 @@ public partial class VideoPage : ContentPage
                 : new Media(_libVlc, vm.Source);
             if (_podcastInput is not null)
                 media.AddOption(":demux=ts");
-            var surface = Platform.CreateVideoSurface?.Invoke(_player, replay)
+            var surface = Platform.CreateVideoSurface?.Invoke(_player, replay, PlaybackResumeFailed)
                 ?? new LibVLCSharp.Avalonia.VideoView
                 {
                     MediaPlayer = _player,
-                    Content = replay ? new PostIt.Controls.ReplayControls(_player) : null
+                    Content = CreatePlaybackControls(_player, replay)
                 };
             VideoSurface.Content = surface;
             var player = _player;
@@ -94,7 +94,6 @@ public partial class VideoPage : ContentPage
                 if (ReferenceEquals(_player, player) && surface is LibVLCSharp.Avalonia.VideoView desktopVideo)
                     desktopVideo.TryUpdateNativeControlPosition();
             }, DispatcherPriority.Loaded);
-            PlayButton.IsEnabled = true;
             PlaybackStatus.Text = replay ? "video/mp4" : vm.MimeType;
             if (!_player.Play(media))
                 PlaybackStatus.Text = vm.Podcast is null
@@ -131,7 +130,6 @@ public partial class VideoPage : ContentPage
         _initialization?.Cancel();
         _initialization?.Dispose();
         _initialization = null;
-        PlayButton.IsEnabled = false;
         _podcastInput?.Cancel();
         _replayInput?.Cancel();
         if (VideoSurface.Content is LibVLCSharp.Avalonia.VideoView desktopVideo)
@@ -183,15 +181,14 @@ public partial class VideoPage : ContentPage
                 : "Impossible de lire le podcast.";
         });
 
-    private void PlayPause_Click(object? sender, RoutedEventArgs e)
+    private PostIt.Controls.ReplayControls CreatePlaybackControls(MediaPlayer player, bool replay)
     {
-        if (_player is null)
-            return;
-        if (_player.IsPlaying)
-            _player.Pause();
-        else if (!_player.Play())
-            PlaybackStatus.Text = "Impossible de reprendre la vidéo.";
+        var controls = new PostIt.Controls.ReplayControls(player, replay);
+        controls.PlaybackFailed += PlaybackResumeFailed;
+        return controls;
     }
+
+    private void PlaybackResumeFailed() => PlaybackStatus.Text = "Impossible de reprendre la vidéo.";
 
     private async void OpenExternal_Click(object? sender, RoutedEventArgs e)
     {

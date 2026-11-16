@@ -40,7 +40,7 @@ public static class Platform
     public static Func<string, CancellationToken, Task<IPodcastCapture>>? CreateBlurredPodcastPreviewAsync { get; set; }
 
     /// <summary>Platform-specific video surface inside the shared video page.</summary>
-    public static Func<MediaPlayer, bool, Control>? CreateVideoSurface { get; set; }
+    public static Func<MediaPlayer, bool, Action, Control>? CreateVideoSurface { get; set; }
 
     public static event Action? PlaybackSuspending;
     public static event Action? PlaybackResuming;

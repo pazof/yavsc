@@ -284,7 +284,9 @@ affichées dans la barre de statut, sans les masquer par une déduction MIME.
 
 Les types `video/*` ouvrent `VideoPage` via `App.PushPageAsync` sur desktop.
 Cette page contient un `LibVLCSharp.Avalonia.VideoView`, lecture/pause et
-une action d'ouverture externe. Le lecteur et ses ressources natives sont
+une action d'ouverture externe. Les commandes superposées servent aussi à la
+lecture/pause du direct ; la position et la durée sont réservées au replay.
+Android utilise des commandes natives équivalentes. Le lecteur et ses ressources natives sont
 arrêtés et libérés à la sortie de la page. La lecture utilise directement
 `new LibVLC()`, `new MediaPlayer(libVlc)` et `Play(media)`, sans options
 spécifiques à Linux ni détection VAAPI/VDPAU. Le média est libéré après
@@ -298,7 +300,7 @@ Après la navigation, `TryUpdateNativeControlPosition()` synchronise la surface
 native à la priorité `Loaded`, une fois la mise en page effectuée :
 les transformations de transition ne déclenchent pas de changement de `Bounds`.
 Le rappel est ignoré si le lecteur a été libéré ou remplacé entre-temps.
-Sur Android et Browser, où ce contrôle natif desktop n'est pas disponible,
+Sur Android, une surface native remplace le contrôle desktop. Sur Browser,
 les vidéos sont ouvertes dans le navigateur, comme les autres fichiers
 (images liées, PDF, téléchargements) et les liens externes.
 

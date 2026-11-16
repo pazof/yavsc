@@ -441,7 +441,7 @@ public class BlogReaderTests
         var vm = new VideoPageViewModel(new Uri("https://org.example.test/files/paul/clip.mp4"), "video/mp4");
         var page = Assert.IsType<VideoPage>(new ViewLocator().Build(vm));
         Assert.NotNull(page.FindControl<ContentControl>("VideoSurface"));
-        Assert.NotNull(page.FindControl<Button>("PlayButton"));
+        Assert.Null(page.FindControl<Button>("PlayButton"));
     }
 
     [AvaloniaFact]
@@ -454,7 +454,7 @@ public class BlogReaderTests
         var status = page.FindControl<TextBlock>("PlaybackStatus")!;
         Platform.SuspendPlayback();
         Assert.Equal("Lecture suspendue.", status.Text);
-        Assert.False(page.FindControl<Button>("PlayButton")!.IsEnabled);
+        Assert.Null(page.FindControl<ContentControl>("VideoSurface")!.Content);
         Platform.ResumePlayback();
         Assert.Null(page.FindControl<ContentControl>("VideoSurface")!.Content);
         await nav.PopAsync();

@@ -16,6 +16,8 @@
 
 ### Fixed
 
+* [PostIt/Podcasts] Reuse the replay playback controls for live video on desktop and Android, remove the duplicate play/pause button, and retain seeking only for replays. Report resume failures and cover playback controls with targeted tests.
+
 * [PostIt] Restore selectable error notification messages and update blog and rendez-vous tests for the current layouts and address editor.
 
 * [PostIt] Set a custom OpenStreetMap User-Agent for the address editor map tiles to satisfy the OSM tile usage policy.
