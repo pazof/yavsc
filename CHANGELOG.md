@@ -6,6 +6,8 @@
 
 ### Fixed
 
+* [PostIt] Restore selectable error notification messages and update blog and rendez-vous tests for the current layouts and address editor.
+
 * [PostIt] Set a custom OpenStreetMap User-Agent for the address editor map tiles to satisfy the OSM tile usage policy.
 
 ## [1.0.8-rc37] - unstable

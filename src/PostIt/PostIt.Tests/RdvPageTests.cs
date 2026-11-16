@@ -1,4 +1,4 @@
-using PostIt.Views.Commands;
+using PostIt.ViewModels.Commands;
 
 namespace PostIt.Tests;
 
@@ -8,7 +8,7 @@ public class RdvPageTests
     [Fact]
     public void AreCoordinatesClose_returns_true_for_nearby_points_within_cache_tolerance()
     {
-        var result = RdvPage.AreCoordinatesClose(
+        var result = PhysicalAddressViewModel.AreCoordinatesClose(
             48.8566,
             2.3522,
             48.85665,
@@ -20,7 +20,7 @@ public class RdvPageTests
     [Fact]
     public void AreCoordinatesClose_returns_false_for_points_outside_cache_tolerance()
     {
-        var result = RdvPage.AreCoordinatesClose(
+        var result = PhysicalAddressViewModel.AreCoordinatesClose(
             48.8566,
             2.3522,
             48.85685,

@@ -16,7 +16,7 @@ public class RdvPageHeadlessTests
     {
         var page = CreatePage(out _);
 
-        var panel = page.FindControl<Grid>("SuggestedAddressPanel");
+        var panel = page.FindControl<StackPanel>("SuggestedAddressPanel");
         var progress = page.FindControl<ProgressBar>("SuggestedAddressProgress");
 
         Assert.NotNull(panel);
@@ -29,7 +29,7 @@ public class RdvPageHeadlessTests
     public async Task Suggested_address_panel_and_spinner_follow_viewmodel_state()
     {
         var page = CreatePage(out var vm);
-        var panel = page.FindControl<Grid>("SuggestedAddressPanel")!;
+        var panel = page.FindControl<StackPanel>("SuggestedAddressPanel")!;
         var progress = page.FindControl<ProgressBar>("SuggestedAddressProgress")!;
         var applyButton = page.FindControl<Button>("ApplySuggestedAddressButton")!;
 
@@ -49,15 +49,16 @@ public class RdvPageHeadlessTests
         Assert.True(applyButton.IsVisible);
     }
 
-    private static RdvPage CreatePage(out RdvViewModel vm)
+    private static AddressEditorPage CreatePage(out PhysicalAddressViewModel vm)
     {
-        vm = new RdvViewModel(
+        var rdv = new RdvViewModel(
             new ActivityInfo { Code = "dev", Name = "Développement" },
             new ActivityUserDisplayItem { PerformerId = "perf-1", UserName = "Alice" },
             new CommandFormSummary { Id = 12, ActionName = "Rdv", Title = "Rendez-vous" },
             new BillingApiClient(new RecordingApi(), "https://business.example/api/v1/"));
+        vm = rdv.PhysicalAddress;
 
-        var page = new RdvPage { DataContext = vm };
+        var page = new AddressEditorPage { DataContext = vm };
         var nav = new NavigationPage();
         _ = nav.PushAsync(page);
         var window = new Window { Content = nav };

@@ -47,8 +47,6 @@ public class MarkdownEditorScrollTests
             Assert.False(root.AuthenticationModal.IsVisible);
             Assert.Equal(1, Grid.GetColumn(page.DraftTitleTextBox));
             Assert.Equal(1, Grid.GetColumn(page.AttachmentsBorder));
-            Assert.True(page.StatusBar.IsVisible);
-            Assert.Equal(2, Grid.GetColumn(page.StatusBar));
             Assert.Same(page.BlogsCommandBar, NavigationPage.GetTopCommandBar(page));
             Assert.True(source.TextArea.Bounds.Height >= source.TextArea.TextView.DefaultLineHeight * 3);
             var bottom = source.TranslatePoint(new Point(0, source.Bounds.Height), window)!.Value.Y;

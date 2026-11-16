@@ -170,7 +170,7 @@ public class BlogReaderTests
             var list = page.FindControl<Border>("PostsListBorder")!;
             var splitter = page.FindControl<GridSplitter>("PostsSplitter")!;
             Assert.Equal(wide ? GridResizeDirection.Columns : GridResizeDirection.Rows, splitter.ResizeDirection);
-            Assert.Equal(wide ? 36d : (double?)null, NavigationPage.GetBarHeightOverride(page));
+            Assert.Null(NavigationPage.GetBarHeightOverride(page));
             Assert.True(nav.IsBackButtonEffectivelyVisible);
             Assert.True(reader.Bounds.Width > 0 && reader.Bounds.Height > 0);
             Assert.True(list.Bounds.Width > 0 && list.Bounds.Height > 0);
@@ -179,8 +179,8 @@ public class BlogReaderTests
                 Assert.True(reader.Bounds.Right <= list.Bounds.Left);
                 Assert.Equal(2, Grid.GetColumn(page.BlogsHeaderPanel));
                 Assert.Equal(reader.Margin.Top, reader.Bounds.Top);
-                Assert.Equal(page.StatusBar.Bounds.Top - reader.Margin.Bottom, reader.Bounds.Bottom);
-                Assert.Equal(36, page.TranslatePoint(new Point(), nav)!.Value.Y);
+                Assert.Equal(page.MainGrid.Bounds.Height - reader.Margin.Bottom, reader.Bounds.Bottom);
+                Assert.True(page.TranslatePoint(new Point(), nav)!.Value.Y > 0);
             }
             else
             {
@@ -256,7 +256,7 @@ public class BlogReaderTests
                 var wide = size.Width >= size.Height;
                 Assert.Equal(wide ? 0 : 4, Grid.GetRow(editor));
                 Assert.Equal(wide ? 3 : 1, Grid.GetRowSpan(editor));
-                Assert.Equal(wide ? 36d : (double?)null, NavigationPage.GetBarHeightOverride(page));
+                Assert.Null(NavigationPage.GetBarHeightOverride(page));
                 Assert.Same(editor, page.FindControl<Grid>("PostEditor"));
                 Assert.True(editor.IsVisible);
                 Assert.False(page.FindControl<Grid>("PostReader")!.IsVisible);

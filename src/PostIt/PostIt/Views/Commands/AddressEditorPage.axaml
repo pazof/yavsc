@@ -15,15 +15,17 @@
               Click="OnUseCurrentLocationClicked"
               IsEnabled="{Binding CanUseCurrentLocation}" />
 
-      <StackPanel Spacing="8" IsVisible="{Binding HasSuggestedAddressPanel}">
+      <StackPanel x:Name="SuggestedAddressPanel" Spacing="8" IsVisible="{Binding HasSuggestedAddressPanel}">
         <TextBlock Text="{Binding SuggestedAddress, StringFormat='Adresse suggérée: {0}'}"
                    TextWrapping="Wrap"
                    Opacity="0.8" />
-        <Button Content="Utiliser"
+        <Button x:Name="ApplySuggestedAddressButton"
+                Content="Utiliser"
                 HorizontalAlignment="Stretch"
                 IsVisible="{Binding HasSuggestedAddress}"
                 Command="{Binding ApplySuggestedAddressCommand}" />
-        <ProgressBar Height="4"
+        <ProgressBar x:Name="SuggestedAddressProgress"
+                     Height="4"
                      IsIndeterminate="True"
                      IsVisible="{Binding IsResolvingAddress}" />
       </StackPanel>
