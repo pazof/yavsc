@@ -365,17 +365,11 @@ namespace Yavsc.Server.Hubs
                 }
 
             _logger.LogInformation("getting cx id´s");
-            var cxIds = _cxManager.GetConnexionIds(userName);
-            if (cxIds == null || cxIds.Count() == 0)
+            var cxIds = _cxManager.GetConnexionIds(userName)?.Distinct().ToArray() ?? [];
+            if (cxIds.Length == 0)
                 _logger.LogError($"No such connected user : {userName}");
-            else foreach (var connectionId in cxIds)
-            {
-                _logger.LogInformation($"cx: {connectionId}");
-                var cli = Clients.Client(connectionId);
-                _logger.LogInformation($"cli: {cli.ToString()}");
-                await cli.SendAsync("addPV", identityUserName, message);
-                _logger.LogInformation($"Sent pv to cx {connectionId}");
-            }
+            else
+                await _calls.SendPrivateMessageAsync(Context.ConnectionId, identityUserName, cxIds, message);
         }
 
         public async Task SendStream(string connectionId, long streamId, string message)

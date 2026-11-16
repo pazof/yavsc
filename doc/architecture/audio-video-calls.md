@@ -7,8 +7,11 @@ l'historique du transport direct.
 La préférence de confidentialité est persistée et éditable dans le profil.
 PostIt conserve aussi trois activations de contact locales (audio, audio-video,
 messages prives) et les annonce pour chaque connexion ChatHub, y compris apres
-reconnexion. Ces activations ne filtrent pas encore les appels ni les messages :
-elles ne constituent pas encore une protection de la vie privee.
+reconnexion. Les modifications prennent effet a la prochaine connexion. Le
+serveur filtre les invitations video et les messages prives par appareil ;
+une autre connexion peut avoir des preferences differentes et les anciens
+clients sans annonce restent autorises. Le mode audio seul n'est pas encore
+implemente.
 La signalisation est intégrée au chat, désactivée par défaut. Une page d'appel
 separee propose **WebRTC natif** et le transport direct VLC/SRTP sur Android et
 Desktop Linux. WebRTC utilise ICE/STUN/TURN et le masquage IP impose par la

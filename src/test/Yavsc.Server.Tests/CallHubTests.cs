@@ -67,14 +67,72 @@ public sealed class CallHubTests
         using var spoof = f.Hub("bob", "alice-1");
         var preferences = new ContactPreferences(true, false, false);
 
-        Assert.Throws<HubException>(() => spoof.SetContactPreferences(preferences));
-        Assert.Throws<HubException>(() => alice.SetContactPreferences(null!));
-        alice.SetContactPreferences(preferences);
+        await Assert.ThrowsAsync<HubException>(() => spoof.SetContactPreferences(preferences));
+        await Assert.ThrowsAsync<HubException>(() => alice.SetContactPreferences(null!));
+        await alice.SetContactPreferences(preferences);
         Assert.Equal(preferences, f.Calls.GetContactPreferences("alice-1"));
         Assert.Null(f.Calls.GetContactPreferences("bob-1"));
 
         await f.Calls.DisconnectAsync("alice-1");
         Assert.Null(f.Calls.GetContactPreferences("alice-1"));
+    }
+
+    [Fact]
+    public async Task Video_invitation_targets_only_devices_that_allow_it_and_rejects_disabled_caller()
+    {
+        using var f = new Fixture();
+        f.Connections.OnConnected("bob-2", "bob", false);
+        using var caller = f.Hub("alice", "alice-1");
+        using var blocked = f.Hub("bob", "bob-1");
+        await blocked.SetContactPreferences(new(true, false, true));
+
+        var call = await caller.InviteCall("General", "bob");
+        Assert.Equal(["bob-2"], Assert.Single(f.Delivery.Messages).Targets);
+        await Assert.ThrowsAsync<HubException>(() => blocked.AcceptCall(call.Id));
+        await caller.EndCall(call.Id);
+
+        await caller.SetContactPreferences(new(true, false, true));
+        await Assert.ThrowsAsync<HubException>(() => caller.InviteCall("General", "bob"));
+    }
+
+    [Fact]
+    public async Task Disabling_video_removes_pending_invitation_or_ends_accepted_call()
+    {
+        using var f = new Fixture();
+        using var caller = f.Hub("alice", "alice-1");
+        using var callee = f.Hub("bob", "bob-1");
+        var pending = await caller.InviteCall("General", "bob");
+        await callee.SetContactPreferences(new(true, false, true));
+        await Assert.ThrowsAsync<HubException>(() => callee.AcceptCall(pending.Id));
+        Assert.Contains(f.Delivery.Messages, m => m.Targets.Contains("alice-1") &&
+            m.Arguments[0] is CallEnded { Reason: "contact-preference-changed" });
+
+        await callee.SetContactPreferences(new(true, true, true));
+        var active = await caller.InviteCall("General", "bob");
+        await callee.AcceptCall(active.Id);
+        await caller.SetContactPreferences(new(true, false, true));
+        await Assert.ThrowsAsync<HubException>(() => callee.AcceptCall(active.Id));
+        Assert.Contains(f.Delivery.Messages, m => m.Targets.Contains("bob-1") &&
+            m.Arguments[0] is CallEnded { Reason: "contact-preference-changed" });
+    }
+
+    [Fact]
+    public async Task Private_messages_are_delivered_only_to_enabled_devices()
+    {
+        using var f = new Fixture();
+        f.Connections.OnConnected("bob-2", "bob", false);
+        using var caller = f.Hub("alice", "alice-1");
+        using var blocked = f.Hub("bob", "bob-1");
+        using var other = f.Hub("bob", "bob-2");
+        caller.Clients = new RoomClients(f.Delivery);
+        await blocked.SetContactPreferences(new(true, true, false));
+
+        await caller.SendPV("bob", "hello");
+        Assert.Equal(["bob-2"], Assert.Single(f.Delivery.Messages, m => m.Method == "addPV").Targets);
+        await other.SetContactPreferences(new(true, true, false));
+        await Assert.ThrowsAsync<HubException>(() => caller.SendPV("bob", "hello"));
+        await caller.SetContactPreferences(new(true, true, false));
+        await Assert.ThrowsAsync<HubException>(() => caller.SendPV("bob", "hello"));
     }
 
     [Fact]
@@ -142,7 +200,7 @@ public sealed class CallHubTests
         public IClientProxy All => throw new NotSupportedException();
         public IClientProxy Others => throw new NotSupportedException();
         public IClientProxy AllExcept(IReadOnlyList<string> ids) => throw new NotSupportedException();
-        public IClientProxy Client(string id) => throw new NotSupportedException();
+        public IClientProxy Client(string id) => delivery.Client(id);
         public IClientProxy Clients(IReadOnlyList<string> ids) => throw new NotSupportedException();
         public IClientProxy Group(string name) => throw new NotSupportedException();
         public IClientProxy GroupExcept(string name, IReadOnlyList<string> ids) => throw new NotSupportedException();

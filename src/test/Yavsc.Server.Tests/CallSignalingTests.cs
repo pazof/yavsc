@@ -56,6 +56,29 @@ public sealed class CallSignalingTests
     }
 
     [Fact]
+    public async Task Audio_mode_reaches_only_devices_that_announced_audio_and_is_preserved_on_acceptance()
+    {
+        using var f = new Fixture();
+        await f.Service.SetContactPreferencesAsync("alice-device", new(true, true, true));
+        await f.Service.SetContactPreferencesAsync("bob-1", new(true, false, true));
+        await Assert.ThrowsAsync<HubException>(() => f.Service.InviteAsync(
+            "General", "alice", "bob", "alice-device", ["bob-2"], false,
+            displayMode: CallDisplayMode.AudioOnly));
+        var call = await f.Service.InviteAsync("General", "alice", "bob", "alice-device", ["bob-1", "bob-2"],
+            false, displayMode: CallDisplayMode.AudioOnly);
+        Assert.Equal(CallDisplayMode.AudioOnly, call.DisplayMode);
+        Assert.Equal(["bob-1"], Assert.Single(f.Hub.Messages).Targets);
+        await f.Service.AcceptAsync(call.Id, "bob", "bob-1", false);
+        var accepted = Assert.IsType<CallAccepted>(f.Hub.Messages.Last().Arguments[0]);
+        Assert.Equal(CallDisplayMode.AudioOnly, accepted.Session.DisplayMode);
+        await f.Service.SetContactPreferencesAsync("bob-1", new(false, true, true));
+        Assert.Equal("contact-preference-changed", Assert.IsType<CallEnded>(f.Hub.Messages.Last().Arguments[0]).Reason);
+        await Assert.ThrowsAsync<HubException>(() => f.Service.InviteAsync(
+            "General", "alice", "bob", "alice-device", ["bob-1"], false,
+            displayMode: (CallDisplayMode)42));
+    }
+
+    [Fact]
     public async Task Invitation_does_not_grant_media_signaling_or_disclose_turn_credentials()
     {
         using var f = new Fixture();

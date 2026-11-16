@@ -37,31 +37,83 @@ public sealed class CallSignalingService(
     private readonly ConcurrentDictionary<string, ContactPreferences> _contactPreferences = new();
     private readonly AudioVideoCallOptions _options = options.Value;
 
-    public void SetContactPreferences(string connection, ContactPreferences preferences) =>
-        _contactPreferences[connection] = preferences;
+    public async Task SetContactPreferencesAsync(string connection, ContactPreferences preferences)
+    {
+        await _gate.WaitAsync();
+        try
+        {
+            _contactPreferences[connection] = preferences;
+            foreach (var call in _calls.Values.Where(c => !AllowsCallMode(connection, c.Session.DisplayMode)).ToArray())
+            {
+                if (call.CallerConnection == connection || call.AcceptedConnection == connection)
+                    await FinishCoreAsync(call, "contact-preference-changed");
+                else if (call.AcceptedConnection == null && call.CalleeConnections.Remove(connection))
+                {
+                    await hub.Clients.Client(connection).SendAsync(
+                        CallHubMethods.Ended, new CallEnded(call.Session.Id, "contact-preference-changed"));
+                    if (call.CalleeConnections.Count == 0)
+                        await FinishCoreAsync(call, "contact-preference-changed");
+                }
+            }
+        }
+        finally { _gate.Release(); }
+    }
 
     public ContactPreferences? GetContactPreferences(string connection) =>
         _contactPreferences.TryGetValue(connection, out var preferences) ? preferences : null;
 
+    private bool AllowsCallMode(string connection, CallDisplayMode mode) => mode switch
+    {
+        CallDisplayMode.AudioVideo => GetContactPreferences(connection)?.AllowVideoCalls != false,
+        CallDisplayMode.AudioOnly => GetContactPreferences(connection)?.AllowAudioCalls == true,
+        _ => false
+    };
+
+    public async Task SendPrivateMessageAsync(
+        string senderConnection, string sender, string[] recipients, string message)
+    {
+        await _gate.WaitAsync();
+        try
+        {
+            if (GetContactPreferences(senderConnection)?.AllowPrivateMessages == false)
+                throw new HubException("Private messages are disabled on this connection.");
+            var allowed = recipients.Where(id =>
+                GetContactPreferences(id)?.AllowPrivateMessages != false).ToArray();
+            if (allowed.Length == 0)
+                throw new HubException("The participant has no device accepting private messages.");
+            await hub.Clients.Clients(allowed).SendAsync("addPV", sender, message);
+        }
+        finally { _gate.Release(); }
+    }
+
     public async Task<CallSession> InviteAsync(
         string room, string caller, string callee, string callerConnection,
-        string[] calleeConnections, bool relayOnly, string transport = CallTransports.WebRtc)
+        string[] calleeConnections, bool relayOnly, string transport = CallTransports.WebRtc,
+        CallDisplayMode displayMode = CallDisplayMode.AudioVideo)
     {
         EnsureEnabled();
         if (caller == callee || calleeConnections.Length == 0 ||
             calleeConnections.Contains(callerConnection))
             throw new HubException("Call participants are unavailable.");
         ValidateTransport(transport, relayOnly);
+        if (displayMode is not (CallDisplayMode.AudioVideo or CallDisplayMode.AudioOnly))
+            throw new HubException("Unknown call mode.");
         await _gate.WaitAsync();
         try
         {
             await ExpireCoreAsync();
+            if (!AllowsCallMode(callerConnection, displayMode))
+                throw new HubException("This call mode is unavailable on the calling connection.");
+            calleeConnections = calleeConnections
+                .Where(connection => AllowsCallMode(connection, displayMode)).ToArray();
+            if (calleeConnections.Length == 0)
+                throw new HubException("The participant has no device accepting this call mode.");
             if (_calls.Count >= 128 || _calls.Values.Any(c =>
                 c.Session.Caller == caller || c.Session.Callee == caller ||
                 c.Session.Caller == callee || c.Session.Callee == callee))
                 throw new HubException("A participant is already in a call.");
             var session = new CallSession(Guid.NewGuid(), room, caller, callee, relayOnly,
-                clock.GetUtcNow().AddSeconds(45), transport);
+                clock.GetUtcNow().AddSeconds(45), transport, displayMode);
             var call = new PendingCall(session, callerConnection, calleeConnections);
             _calls.Add(session.Id, call);
             try
@@ -215,10 +267,10 @@ public sealed class CallSignalingService(
 
     public async Task DisconnectAsync(string connection)
     {
-        _contactPreferences.TryRemove(connection, out _);
         await _gate.WaitAsync();
         try
         {
+            _contactPreferences.TryRemove(connection, out _);
             foreach (var call in _calls.Values.ToArray())
             {
                 if (call.CallerConnection == connection || call.AcceptedConnection == connection)

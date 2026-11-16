@@ -56,7 +56,7 @@
                       IsChecked="{Binding AllowVideoCalls, Mode=TwoWay}" />
             <CheckBox Content="Autoriser les messages prives"
                       IsChecked="{Binding AllowPrivateMessages, Mode=TwoWay}" />
-            <TextBlock Text="Ces preferences sont annoncees au serveur a la connexion et a la reconnexion. Leur application aux appels et aux messages n'est pas encore implementee ; elles ne bloquent donc pas les contacts."
+            <TextBlock Text="Les changements prennent effet a la prochaine connexion au chat. Les autres appareils conservent leurs propres preferences ; les anciens clients sans preferences restent joignables. Les appels audio seuls ne sont pas encore disponibles."
                        TextWrapping="Wrap" />
             <StackPanel IsVisible="{Binding SupportsBackgroundChatService}" Spacing="6">
                 <CheckBox x:Name="BackgroundChatCheckBox"
