@@ -9,8 +9,12 @@ UNITTESTEXTRA= --long-running 8 --filter-trait Category=non-reg --filter-not-tra
 all:
 	dotnet build --nologo
 
-clean:
+clean: clean-test-results
 	dotnet clean -c $(CONFIG)
+
+clean-test-results:
+	rm -rf test-reports/*
+
 
 brutal_clean:
 	@find -name "obj" -exec rm -rf {} \;
