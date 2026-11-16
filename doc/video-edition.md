@@ -277,8 +277,16 @@ Le brouillon privé est implémenté côté serveur ; l'éditeur PostIt reste à
   authentifiée par plages de 256 Kio au plus de la source du brouillon, avec
   les mêmes contrôles que le MP4 publié. `PodcastReplayMediaInput` lit cette
   source avec `draftSource: true` pour l'éditeur.
-- **Reste à faire** : chapitres, interface et éditeur PostIt (réglage de
-  conservation, échéance affichée, proposition de suppression après publication).
+- **Interface PostIt** : la page podcasts propose « Raffiner le replay avant
+  publication » et la durée de conservation (0 à 365 jours) pour une émission
+  préparée comme pour un direct immédiat. Pour l'auteur, elle affiche l'état du
+  brouillon, l'échéance des originaux (avec l'avertissement de suppression d'une
+  émission jamais publiée), puis permet de publier le brouillon tel quel et,
+  après publication et confirmation, de supprimer les originaux. La lecture
+  choisit le MP4 publié dès qu'il existe ; sinon l'auteur lit les originaux et
+  les autres utilisateurs voient « Le replay est en cours de finalisation par
+  son auteur. ».
+- **Reste à faire** : chapitres et éditeur PostIt des marques et plages.
 
 Une émission interrompue doit rester récupérable par son auteur. Lorsqu'un
 direct programmé s'arrête après le délai « Direct interrompu », ou qu'un

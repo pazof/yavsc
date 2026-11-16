@@ -49,20 +49,17 @@ public partial class VideoPage : ContentPage
                     var manifest = await replayClient.GetAsync(podcast.Id, ct);
                     ct.ThrowIfCancellationRequested();
                     podcast = manifest.Podcast;
-                    if (podcast.State != PodcastState.Completed) break;
-                    PlaybackStatus.Text = "Preparation du replay MP4...";
-                    if (manifest.Podcast.Replay is { State: PodcastReplayState.Ready, Bytes: > 0 } ready)
+                    var choice = PodcastPlayback.Choose(podcast);
+                    if (choice.Source == PodcastPlaybackSource.Originals) break;
+                    if (choice.Source == PodcastPlaybackSource.PublishedReplay)
                     {
-                        _replayInput = new PodcastReplayMediaInput(replayClient, podcast.Id, ready.Bytes);
+                        _replayInput = new PodcastReplayMediaInput(replayClient, podcast.Id, podcast.Replay!.Bytes);
                         _replayInput.Failed += PodcastFailed;
                         replay = true;
                         break;
                     }
-                    if (manifest.Podcast.Replay is { State: PodcastReplayState.Failed } failed)
-                    {
-                        PlaybackStatus.Text = failed.Error ?? "Preparation du MP4 en echec.";
-                        return;
-                    }
+                    PlaybackStatus.Text = choice.Message;
+                    if (choice.Source == PodcastPlaybackSource.Unavailable) return;
                     await Task.Delay(1000, ct);
                 }
             }

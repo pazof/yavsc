@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
@@ -131,6 +132,39 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public partial bool PublishAnnouncement { get; set; }
     [ObservableProperty]
     public partial string Announcement { get; set; } = "";
+    /// <summary>Keeps the replay private until the owner refines and publishes it.</summary>
+    [ObservableProperty]
+    public partial bool RefineReplay { get; set; }
+    [ObservableProperty]
+    public partial decimal RetentionDays { get; set; } = PodcastRetention.DefaultDays;
+    public int MaxRetentionDays => PodcastRetention.MaxDays;
+
+    public bool HasDraftSummary => DraftSummary.Length > 0;
+    /// <summary>Owner-only state of the refined replay of the selected emission.</summary>
+    public string DraftSummary
+    {
+        get
+        {
+            if (SelectedPodcast is not { RefineReplay: true } p || p.OwnerId != _ownerId || p.State is PodcastState.Planned or PodcastState.Live)
+                return "";
+            var lines = new List<string>();
+            lines.Add(p.Draft switch
+            {
+                null => "Brouillon : non disponible.",
+                { State: PodcastDraftState.Preparing } => "Brouillon : preparation de la source en cours.",
+                { State: PodcastDraftState.Failed } d => $"Brouillon en echec : {d.Error}",
+                { State: PodcastDraftState.Publishing } d => $"Publication de la revision {d.Revision} en cours.",
+                { PublishedRevision: { } published } d when published == d.Revision => $"Revision {d.Revision} publiee.",
+                var d => $"Brouillon pret (revision {d.Revision}, {d.RemovedRanges.Count} plage(s) supprimee(s)), non publie."
+            });
+            if (p.OriginalsDeleted) lines.Add("Originaux supprimes : seul le MP4 publie reste disponible.");
+            else if (p.OriginalsExpireAt is { } expiry)
+                lines.Add($"Originaux conserves jusqu'au {expiry.ToLocalTime():g}"
+                    + (p.Replay?.State == PodcastReplayState.Ready ? "." : " ; sans publication d'ici la, l'emission sera supprimee."));
+            else if (p.RetentionDays == 0) lines.Add("Originaux supprimes des la publication.");
+            return string.Join(Environment.NewLine, lines);
+        }
+    }
 
     public string Status { get => _status; private set => SetProperty(ref _status, value); }
     public bool IsBroadcasting
@@ -203,7 +237,11 @@ public partial class PodcastsPageViewModel : ViewModelBase
                 PlannedDurationMinutes = value.PlannedDurationMinutes ?? 60;
                 Announcement = value.PublicAnnouncement ?? "";
                 PublishAnnouncement = !string.IsNullOrEmpty(Announcement);
+                RefineReplay = value.RefineReplay;
+                RetentionDays = value.RetentionDays;
             }
+            OnPropertyChanged(nameof(DraftSummary));
+            OnPropertyChanged(nameof(HasDraftSummary));
             UpdateCommands();
         }
     }
@@ -221,6 +259,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public IAsyncRelayCommand FinishCommand { get; }
     public IAsyncRelayCommand DeleteCommand { get; }
     public IAsyncRelayCommand RetryReplayCommand { get; }
+    public IAsyncRelayCommand PublishDraftCommand { get; }
+    public IAsyncRelayCommand DeleteOriginalsCommand { get; }
     public IAsyncRelayCommand ActivateObsCommand { get; }
     public IAsyncRelayCommand DeactivateObsCommand { get; }
     public override bool CanNavigateNext { get => false; protected set { } }
@@ -265,6 +305,12 @@ public partial class PodcastsPageViewModel : ViewModelBase
                 && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
         RetryReplayCommand = new AsyncRelayCommand(RetryReplayAsync,
             () => SelectedPodcast is { State: PodcastState.Completed, Replay.State: PodcastReplayState.Failed } p
+                && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
+        PublishDraftCommand = new AsyncRelayCommand(PublishDraftAsync,
+            () => SelectedPodcast is { RefineReplay: true, Draft: { State: PodcastDraftState.Ready } d } p
+                && d.PublishedRevision != d.Revision && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
+        DeleteOriginalsCommand = new AsyncRelayCommand(DeleteOriginalsAsync,
+            () => SelectedPodcast is { RefineReplay: true, OriginalsDeleted: false, Replay.State: PodcastReplayState.Ready } p
                 && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
         _title = _api.Settings.PodcastDefaultTitle;
         _keepScreenOnDuringCapture = _api.Settings.PodcastKeepScreenOn;
@@ -311,6 +357,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
         FinishCommand.NotifyCanExecuteChanged();
         DeleteCommand.NotifyCanExecuteChanged();
         RetryReplayCommand.NotifyCanExecuteChanged();
+        PublishDraftCommand.NotifyCanExecuteChanged();
+        DeleteOriginalsCommand.NotifyCanExecuteChanged();
         ActivateObsCommand.NotifyCanExecuteChanged();
         DeactivateObsCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(CanNavigatePrevious));
@@ -348,6 +396,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
             if (ScheduledDate == null || ScheduledTime == null || PlannedDurationMinutes != decimal.Truncate(PlannedDurationMinutes)
                 || PlannedDurationMinutes is < 1 or > int.MaxValue)
                 throw new InvalidOperationException("Choisissez un debut et une duree entiere positive en minutes.");
+            var retentionDays = ValidRetentionDays();
             if (PublishAnnouncement && string.IsNullOrWhiteSpace(Announcement))
                 throw new InvalidOperationException("Saisissez le texte de l'annonce publique ou desactivez sa publication.");
             var local = DateTime.SpecifyKind(ScheduledDate.Value.Date + ScheduledTime.Value, DateTimeKind.Unspecified);
@@ -358,7 +407,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
             {
                 Title = Title, ScheduledStartAt = start,
                 PlannedDurationMinutes = (int)PlannedDurationMinutes,
-                PublicAnnouncement = PublishAnnouncement ? Announcement : null
+                PublicAnnouncement = PublishAnnouncement ? Announcement : null,
+                RefineReplay = RefineReplay, RetentionDays = retentionDays
             }, update ? SelectedPodcast?.Id : null, _pageCancellation.Token);
             await RefreshAsync();
             SelectedPodcast = plan;
@@ -367,6 +417,11 @@ public partial class PodcastsPageViewModel : ViewModelBase
         catch (Exception ex) { Status = $"Preparation impossible : {ex.Message}"; }
         finally { IsBusy = false; }
     }
+
+    private int ValidRetentionDays()
+        => RetentionDays == decimal.Truncate(RetentionDays) && RetentionDays is >= 0 and <= PodcastRetention.MaxDays
+            ? (int)RetentionDays
+            : throw new InvalidOperationException($"Choisissez une conservation des originaux entiere, de 0 a {PodcastRetention.MaxDays} jours.");
 
     public async Task ActivateAsync()
     {
@@ -580,6 +635,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
             _pageCancellation.Token.ThrowIfCancellationRequested();
             if (SelectedCamera is null) throw new InvalidOperationException("Choisissez une camera.");
             var camera = SelectedCamera.Value;
+            var request = new CreatePodcastRequest { Title = Title, RefineReplay = RefineReplay, RetentionDays = ValidRetentionDays() };
             var microphone = string.IsNullOrWhiteSpace(SelectedMicrophone?.Value) ? null : SelectedMicrophone.Value;
             if (Platform.RequestPodcastPermissionsAsync is { } requestPermissions)
                 await requestPermissions(microphone, _pageCancellation.Token);
@@ -588,9 +644,9 @@ public partial class PodcastsPageViewModel : ViewModelBase
                     ?? throw new InvalidOperationException("Le flou d'arriere-plan n'est pas disponible sur cet appareil.")
                 : Platform.CreatePodcastCaptureAsync;
             _broadcaster = captureFactory is { } createCapture
-                ? await PodcastBroadcaster.StartAsync(_client, Title,
+                ? await PodcastBroadcaster.StartAsync(_client, request,
                     (directory, ct) => createCapture(camera, microphone, directory, ct), _pageCancellation.Token, SelectedPodcast?.Id)
-                : await PodcastBroadcaster.StartAsync(_client, Title, camera, microphone, _pageCancellation.Token, SelectedPodcast?.Id);
+                : await PodcastBroadcaster.StartAsync(_client, request, camera, microphone, _pageCancellation.Token, SelectedPodcast?.Id);
             _broadcaster.Progress += OnProgress;
             CapturePreview = _broadcaster.Preview;
             _session.LogoutCompleted += OnLogout;
@@ -657,6 +713,8 @@ public partial class PodcastsPageViewModel : ViewModelBase
         try
         {
             var podcast = SelectedPodcast ?? throw new InvalidOperationException("Selectionnez un podcast.");
+            if (PodcastPlayback.Choose(podcast) is { Source: PodcastPlaybackSource.Unavailable } unavailable)
+                throw new InvalidOperationException(unavailable.Message);
             var app = Application.Current as App ?? throw new InvalidOperationException("Application indisponible.");
             var manifestUrl = new Uri(new Uri(_api.Settings.ApiUrl.TrimEnd('/') + "/"), $"podcasts/{podcast.Id}/index.m3u8");
             var catalogueUrl = new Uri(new Uri(_api.Settings.Authentication.Authority.TrimEnd('/') + "/"), "Podcast");
@@ -706,5 +764,41 @@ public partial class PodcastsPageViewModel : ViewModelBase
         }
         catch (Exception ex) { Status = $"Relance du MP4 impossible : {ex.Message}"; }
         finally { IsBusy = false; }
+    }
+
+    private async Task PublishDraftAsync()
+    {
+        IsBusy = true;
+        try
+        {
+            var podcast = SelectedPodcast ?? throw new InvalidOperationException("Selectionnez un podcast.");
+            var draft = podcast.Draft ?? throw new InvalidOperationException("Aucun brouillon a publier.");
+            await _client.PublishDraftAsync(podcast.Id, draft.Revision, _pageCancellation.Token);
+            await RefreshSelectionAsync(podcast.Id);
+            Status = "Publication du replay demandee ; le MP4 sera visible une fois prepare.";
+        }
+        catch (Exception ex) { Status = $"Publication impossible : {ex.Message}"; }
+        finally { IsBusy = false; }
+    }
+
+    private async Task DeleteOriginalsAsync()
+    {
+        IsBusy = true;
+        try
+        {
+            var podcast = SelectedPodcast ?? throw new InvalidOperationException("Selectionnez un podcast.");
+            await _client.DeleteOriginalsAsync(podcast.Id, _pageCancellation.Token);
+            await RefreshSelectionAsync(podcast.Id);
+            Status = "Originaux et brouillon supprimes ; le MP4 publie reste disponible.";
+        }
+        catch (Exception ex) { Status = $"Suppression des originaux impossible : {ex.Message}"; }
+        finally { IsBusy = false; }
+    }
+
+    private async Task RefreshSelectionAsync(Guid id)
+    {
+        await RefreshAsync();
+        IsBusy = true;
+        SelectedPodcast = Podcasts.FirstOrDefault(p => p.Id == id);
     }
 }

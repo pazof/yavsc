@@ -143,10 +143,120 @@ public sealed class PodcastScheduleTests(AvaloniaUiFixture ui)
         finally { File.Delete(tokenPath); File.Delete(tokenPath + ".settings"); }
     }, TestContext.Current.CancellationToken);
 
+    [Fact]
+    public Task Refinement_options_are_sent_with_the_plan_and_reloaded_on_selection()
+        => ui.RunAsync(async () =>
+    {
+        var tokenPath = Path.Combine(Path.GetTempPath(), $"postit-refine-{Guid.NewGuid():N}.json");
+        var store = new TokenStore(tokenPath);
+        store.Save(new RefreshTokenRecord("test-access-token", "test-refresh-token", DateTimeOffset.UtcNow.AddHours(1), null));
+        try
+        {
+            await using var api = new ScheduleApi(store, tokenPath + ".settings");
+            var session = new SessionStatusViewModel { Api = api };
+            session.Refresh();
+            var vm = new PodcastsPageViewModel(new PodcastApiClient(api, () => "https://api.example/"), api, session)
+            {
+                Title = "Concert", RefineReplay = true, RetentionDays = 30
+            };
+            await vm.PrepareCommand.ExecuteAsync(null);
+            Assert.True(api.Saved?.RefineReplay);
+            Assert.Equal(30, api.Saved?.RetentionDays);
+            vm.RefineReplay = false;
+            vm.RetentionDays = 0;
+            vm.SelectedPodcast = null;
+            vm.SelectedPodcast = api.Plan;
+            Assert.True(vm.RefineReplay);
+            Assert.Equal(30, vm.RetentionDays);
+            vm.RetentionDays = 366;
+            api.Saved = null;
+            await vm.UpdatePlanCommand.ExecuteAsync(null);
+            Assert.Null(api.Saved);
+            Assert.Contains("conservation des originaux", vm.Status);
+        }
+        finally { File.Delete(tokenPath); File.Delete(tokenPath + ".settings"); }
+    }, TestContext.Current.CancellationToken);
+
+    [Fact]
+    public Task Owner_publishes_an_unchanged_draft_then_deletes_the_originals()
+        => ui.RunAsync(async () =>
+    {
+        var tokenPath = Path.Combine(Path.GetTempPath(), $"postit-draft-{Guid.NewGuid():N}.json");
+        var store = new TokenStore(tokenPath);
+        store.Save(new RefreshTokenRecord("test-access-token", "test-refresh-token", DateTimeOffset.UtcNow.AddHours(1), null));
+        try
+        {
+            await using var api = new ScheduleApi(store, tokenPath + ".settings");
+            api.Plan = api.Plan with
+            {
+                State = PodcastState.Completed, SegmentCount = 3, RefineReplay = true, FlowId = null,
+                Replay = new(PodcastReplayState.Pending), Draft = new(PodcastDraftState.Ready, 2, [], []),
+                OriginalsExpireAt = DateTimeOffset.UtcNow.AddDays(7)
+            };
+            var session = new SessionStatusViewModel { Api = api };
+            session.Refresh();
+            var vm = new PodcastsPageViewModel(new PodcastApiClient(api, () => "https://api.example/"), api, session);
+            await vm.ActivateAsync();
+            vm.SelectedPodcast = api.Plan;
+            Assert.Contains("non publie", vm.DraftSummary);
+            Assert.Contains("sera supprimee", vm.DraftSummary);
+            Assert.False(vm.DeleteOriginalsCommand.CanExecute(null));
+            await vm.PublishDraftCommand.ExecuteAsync(null);
+            var publish = Assert.Single(api.DraftCalls);
+            Assert.Equal(2, Assert.IsType<PublishPodcastDraftRequest>(publish.Body).Revision);
+            Assert.Equal(PodcastDraftState.Publishing, vm.SelectedPodcast?.Draft?.State);
+            Assert.False(vm.PublishDraftCommand.CanExecute(null));
+
+            api.Plan = api.Plan with
+            {
+                Replay = new(PodcastReplayState.Ready, 100),
+                Draft = api.Plan.Draft! with { State = PodcastDraftState.Ready, PublishedRevision = 2 }
+            };
+            await vm.RefreshCommand.ExecuteAsync(null);
+            vm.SelectedPodcast = api.Plan;
+            Assert.Contains("Revision 2 publiee", vm.DraftSummary);
+            Assert.False(vm.PublishDraftCommand.CanExecute(null));
+            await vm.DeleteOriginalsCommand.ExecuteAsync(null);
+            Assert.Equal(HttpMethod.Delete, api.DraftCalls[^1].Method);
+            Assert.EndsWith($"/podcasts/{api.Plan.Id}/originals", api.DraftCalls[^1].Path);
+            Assert.True(vm.SelectedPodcast?.OriginalsDeleted);
+            Assert.Contains("Originaux supprimes", vm.DraftSummary);
+            Assert.False(vm.DeleteOriginalsCommand.CanExecute(null));
+            Assert.Equal(PodcastPlaybackSource.PublishedReplay, PodcastPlayback.Choose(vm.SelectedPodcast!).Source);
+
+            vm.SelectedPodcast = api.Plan with { OwnerId = "other" };
+            Assert.Empty(vm.DraftSummary);
+            await vm.DeactivateAsync();
+        }
+        finally { File.Delete(tokenPath); File.Delete(tokenPath + ".settings"); }
+    }, TestContext.Current.CancellationToken);
+
+    [Theory]
+    [InlineData(PodcastState.Live, true, false, false, PodcastPlaybackSource.Originals)]
+    [InlineData(PodcastState.Completed, false, false, false, PodcastPlaybackSource.Pending)]
+    [InlineData(PodcastState.Completed, false, false, true, PodcastPlaybackSource.PublishedReplay)]
+    [InlineData(PodcastState.Completed, true, true, false, PodcastPlaybackSource.Originals)]
+    [InlineData(PodcastState.Completed, true, false, false, PodcastPlaybackSource.Unavailable)]
+    [InlineData(PodcastState.Interrupted, true, false, false, PodcastPlaybackSource.Unavailable)]
+    [InlineData(PodcastState.Interrupted, true, false, true, PodcastPlaybackSource.PublishedReplay)]
+    [InlineData(PodcastState.Interrupted, false, false, false, PodcastPlaybackSource.Originals)]
+    public void Playback_hides_unpublished_refined_originals_from_other_viewers(
+        PodcastState state, bool refine, bool owner, bool published, PodcastPlaybackSource expected)
+    {
+        var podcast = new PodcastResponse(Guid.NewGuid(), "Concert", "owner", "Owner",
+            DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, state, 3, 300, 6)
+        {
+            RefineReplay = refine,
+            Draft = owner ? new(PodcastDraftState.Ready, 0, [], []) : null,
+            Replay = published ? new(PodcastReplayState.Ready, 100) : new(PodcastReplayState.Pending)
+        };
+        Assert.Equal(expected, PodcastPlayback.Choose(podcast).Source);
+    }
+
     private sealed class ScheduleApi(TokenStore store, string settingsPath)
         : YavscApiClient(new Settings(settingsPath), store), IYavscApiClient
     {
-        public PodcastResponse Plan { get; private set; } = new(Guid.NewGuid(), "Concert", "owner", "Owner",
+        public PodcastResponse Plan { get; set; } = new(Guid.NewGuid(), "Concert", "owner", "Owner",
             DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, PodcastState.Planned, 0, 0, 0) { FlowId = 1 };
         public bool ObsEnabled { get; private set; }
         public string? RevokedPath { get; private set; }
@@ -154,6 +264,7 @@ public sealed class PodcastScheduleTests(AvaloniaUiFixture ui)
         public string? SavedPath { get; private set; }
         public HttpMethod? SavedMethod { get; private set; }
         public TaskCompletionSource<PodcastObsCredentials>? PendingActivation { get; set; }
+        public List<(HttpMethod Method, string Path, object? Body)> DraftCalls { get; } = [];
 
         public override async Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
         {
@@ -170,6 +281,14 @@ public sealed class PodcastScheduleTests(AvaloniaUiFixture ui)
                 }
                 else response = new PodcastObsStatus(ObsEnabled, DateTimeOffset.UtcNow.AddMinutes(30), null);
             }
+            else if (path.EndsWith("/draft/publish", StringComparison.Ordinal) || path.EndsWith("/originals", StringComparison.Ordinal))
+            {
+                DraftCalls.Add((method, path, body));
+                Plan = method == HttpMethod.Delete
+                    ? Plan with { OriginalsDeleted = true, OriginalsExpireAt = null, Draft = null }
+                    : Plan with { Draft = Plan.Draft! with { State = PodcastDraftState.Publishing } };
+                response = Plan;
+            }
             else if (method == HttpMethod.Get) response = new List<PodcastResponse> { Plan };
             else
             {
@@ -179,7 +298,8 @@ public sealed class PodcastScheduleTests(AvaloniaUiFixture ui)
                 Plan = Plan with
                 {
                     Title = Saved.Title, ScheduledStartAt = Saved.ScheduledStartAt,
-                    PlannedDurationMinutes = Saved.PlannedDurationMinutes, PublicAnnouncement = Saved.PublicAnnouncement
+                    PlannedDurationMinutes = Saved.PlannedDurationMinutes, PublicAnnouncement = Saved.PublicAnnouncement,
+                    RefineReplay = Saved.RefineReplay, RetentionDays = Saved.RetentionDays
                 };
                 response = Plan;
             }

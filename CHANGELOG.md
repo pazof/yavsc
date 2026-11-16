@@ -6,6 +6,8 @@
 
 ### Added
 
+* [PostIt/Podcasts] Add the refined replay options and owner controls to the podcasts page: opt into refinement and choose the originals retention (0–365 days) for planned and immediate lives, see the draft state and originals deadline, publish the draft unchanged, and delete the originals after publication with confirmation. Playback now prefers the published MP4, lets the owner play unpublished originals, and tells other viewers the replay is being finalized instead of failing.
+
 * [Yavsc.Api.Client/Podcasts] Add the refined replay client: create a live with `RefineReplay` and `RetentionDays`, save and publish drafts, delete published originals, and read the owner-only draft source by bounded, verified byte ranges. `PodcastReplayMediaInput` can stream the draft source for the upcoming PostIt editor.
 
 * [Yavsc.Server/Podcasts] Apply the retention of refined replays: `RetentionDays` (0–365, default 7; migration `PodcastReplayRetention` adds `LiveFlow.RetentionDays`) sets `OriginalsExpireAt` from the end of the live, or from publication with 0 days. The replay worker then deletes the segments, source and draft of published emissions (`OriginalsDeleted`, the MP4 stays playable but no longer re-editable) and deletes emissions never published by the deadline, marking their flow deleted. The owner can purge published originals early with `DELETE podcasts/{id}/originals`. The web catalogue keeps showing the published MP4 after the purge.

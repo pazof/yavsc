@@ -62,6 +62,15 @@
                           IsChecked="{Binding PublishAnnouncement, Mode=TwoWay}" />
                 <TextBox Text="{Binding Announcement, Mode=TwoWay}" MaxLength="1023" AcceptsReturn="True"
                          IsVisible="{Binding PublishAnnouncement}" PlaceholderText="Annonce publique (ne pas inclure d'informations privees)" />
+                <CheckBox Content="Raffiner le replay avant publication (desktop et Android, pas OBS)"
+                          IsChecked="{Binding RefineReplay, Mode=TwoWay}" />
+                <StackPanel Spacing="4" IsVisible="{Binding RefineReplay}">
+                    <TextBlock Text="Le replay reste prive jusqu'a votre publication. Conservation des originaux apres la fin du direct, en jours (0 : suppression des la publication) :"
+                               TextWrapping="Wrap" />
+                    <NumericUpDown Value="{Binding RetentionDays, Mode=TwoWay}" Minimum="0" Maximum="{Binding MaxRetentionDays}"
+                                   Increment="1" FormatString="0" />
+                    <TextBlock Text="Une emission jamais publiee a l'echeance est supprimee." TextWrapping="Wrap" />
+                </StackPanel>
                 <TextBlock Text="Sans annonce, la preparation est privee. Les horaires sont previsionnels : demarrage et arret manuels. L'ecoute reste reservee aux utilisateurs connectes."
                            TextWrapping="Wrap" />
                 <WrapPanel>
@@ -146,6 +155,15 @@
                 <Button Content="Terminer mon direct selectionne" Command="{Binding FinishCommand}" Margin="0,0,8,8" />
                 <Button Content="Relancer la preparation MP4" Command="{Binding RetryReplayCommand}" Margin="0,0,8,8" />
             </WrapPanel>
+            <StackPanel Spacing="8" IsVisible="{Binding HasDraftSummary}">
+                <TextBlock Text="Raffinage du replay" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding DraftSummary}" TextWrapping="Wrap" />
+                <Button Content="Publier le brouillon" Command="{Binding PublishDraftCommand}" />
+                <CheckBox x:Name="ConfirmDeleteOriginals"
+                          Content="Je confirme la suppression definitive des originaux et du brouillon (le MP4 publie est conserve)" />
+                <Button Content="Supprimer les originaux" Command="{Binding DeleteOriginalsCommand}"
+                        IsEnabled="{Binding #ConfirmDeleteOriginals.IsChecked}" />
+            </StackPanel>
              <Border Classes="warning-danger">
                 <StackPanel Spacing="8">
                     <TextBlock Classes="warning-title" Text="⚠ Suppression du podcast / emission preparee" />

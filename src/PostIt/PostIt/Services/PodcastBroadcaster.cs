@@ -51,9 +51,9 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         media.AddOption(":sout=#" + (preview ? $"duplicate{{dst=display{{noaudio}},dst=\"{destination}\"}}" : encoding));
     }
 
-    public static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
+    public static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, CreatePodcastRequest request,
         string camera, string? microphone, CancellationToken ct, Guid? plannedId = null)
-        => await StartAsync(api, title,
+        => await StartAsync(api, request,
             (directory, _) => Task.FromResult<IPodcastCapture>(new LibVlcPodcastCapture(
                 vlc => new CameraStreamer(vlc).CreateCaptureMedia(camera, microphone), directory, preview: true)), ct, plannedId);
 
@@ -62,7 +62,12 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         => await StartAsync(api, title,
             (directory, _) => Task.FromResult<IPodcastCapture>(new LibVlcPodcastCapture(createMedia, directory)), ct);
 
-    public static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
+    public static Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, string title,
+        Func<string, CancellationToken, Task<IPodcastCapture>> createCapture, CancellationToken ct, Guid? plannedId = null)
+        => StartAsync(api, new CreatePodcastRequest { Title = title }, createCapture, ct, plannedId);
+
+    /// <summary>Starts a planned emission, or creates an immediate live with the options of <paramref name="request"/>.</summary>
+    public static async Task<PodcastBroadcaster> StartAsync(PodcastApiClient api, CreatePodcastRequest request,
         Func<string, CancellationToken, Task<IPodcastCapture>> createCapture, CancellationToken ct, Guid? plannedId = null)
     {
         IPodcastCapture? capture = null;
@@ -73,7 +78,7 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         try
         {
             Directory.CreateDirectory(directory);
-            podcast = plannedId.HasValue ? await api.StartAsync(plannedId.Value, ct) : await api.CreateAsync(title, ct);
+            podcast = plannedId.HasValue ? await api.StartAsync(plannedId.Value, ct) : await api.CreateAsync(request, ct);
             if (podcast.State != PodcastState.Live)
                 throw new InvalidOperationException("Cette emission est deja terminee. Preparez une nouvelle emission.");
             await File.WriteAllTextAsync(Path.Combine(directory, "podcast.json"), JsonSerializer.Serialize(podcast), ct);
