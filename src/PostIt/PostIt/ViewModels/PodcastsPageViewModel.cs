@@ -260,6 +260,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
     public IAsyncRelayCommand DeleteCommand { get; }
     public IAsyncRelayCommand RetryReplayCommand { get; }
     public IAsyncRelayCommand PublishDraftCommand { get; }
+    public IAsyncRelayCommand EditDraftCommand { get; }
     public IAsyncRelayCommand DeleteOriginalsCommand { get; }
     public IAsyncRelayCommand ActivateObsCommand { get; }
     public IAsyncRelayCommand DeactivateObsCommand { get; }
@@ -309,6 +310,9 @@ public partial class PodcastsPageViewModel : ViewModelBase
         PublishDraftCommand = new AsyncRelayCommand(PublishDraftAsync,
             () => SelectedPodcast is { RefineReplay: true, Draft: { State: PodcastDraftState.Ready } d } p
                 && d.PublishedRevision != d.Revision && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
+        EditDraftCommand = new AsyncRelayCommand(EditDraftAsync,
+            () => SelectedPodcast is { RefineReplay: true, OriginalsDeleted: false, Draft: { State: PodcastDraftState.Ready, SourceBytes: > 0 } } p
+                && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
         DeleteOriginalsCommand = new AsyncRelayCommand(DeleteOriginalsAsync,
             () => SelectedPodcast is { RefineReplay: true, OriginalsDeleted: false, Replay.State: PodcastReplayState.Ready } p
                 && p.OwnerId == _ownerId && !IsBroadcasting && !IsBusy);
@@ -358,6 +362,7 @@ public partial class PodcastsPageViewModel : ViewModelBase
         DeleteCommand.NotifyCanExecuteChanged();
         RetryReplayCommand.NotifyCanExecuteChanged();
         PublishDraftCommand.NotifyCanExecuteChanged();
+        EditDraftCommand.NotifyCanExecuteChanged();
         DeleteOriginalsCommand.NotifyCanExecuteChanged();
         ActivateObsCommand.NotifyCanExecuteChanged();
         DeactivateObsCommand.NotifyCanExecuteChanged();
@@ -779,6 +784,17 @@ public partial class PodcastsPageViewModel : ViewModelBase
         }
         catch (Exception ex) { Status = $"Publication impossible : {ex.Message}"; }
         finally { IsBusy = false; }
+    }
+
+    private async Task EditDraftAsync()
+    {
+        try
+        {
+            var podcast = SelectedPodcast ?? throw new InvalidOperationException("Selectionnez un podcast.");
+            var app = Application.Current as App ?? throw new InvalidOperationException("Application indisponible.");
+            await app.PushPageAsync(new ReplayEditorPageViewModel(_client, podcast));
+        }
+        catch (Exception ex) { Status = $"Ouverture de l'editeur impossible : {ex.Message}"; }
     }
 
     private async Task DeleteOriginalsAsync()

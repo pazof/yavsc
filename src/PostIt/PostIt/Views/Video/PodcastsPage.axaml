@@ -158,7 +158,10 @@
             <StackPanel Spacing="8" IsVisible="{Binding HasDraftSummary}">
                 <TextBlock Text="Raffinage du replay" FontWeight="SemiBold" />
                 <TextBlock Text="{Binding DraftSummary}" TextWrapping="Wrap" />
-                <Button Content="Publier le brouillon" Command="{Binding PublishDraftCommand}" />
+                <WrapPanel>
+                    <Button Content="Editer les marques et plages" Command="{Binding EditDraftCommand}" Margin="0,0,8,8" />
+                    <Button Content="Publier le brouillon sans modification" Command="{Binding PublishDraftCommand}" Margin="0,0,8,8" />
+                </WrapPanel>
                 <CheckBox x:Name="ConfirmDeleteOriginals"
                           Content="Je confirme la suppression definitive des originaux et du brouillon (le MP4 publie est conserve)" />
                 <Button Content="Supprimer les originaux" Command="{Binding DeleteOriginalsCommand}"

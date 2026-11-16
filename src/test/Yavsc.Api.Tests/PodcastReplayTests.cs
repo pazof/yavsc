@@ -212,6 +212,9 @@ public sealed class PodcastReplayTests : IDisposable
         Assert.Throws<ArgumentException>(() => ReplayEditPlan.KeptRanges([new(5000, 6000)], 5000));
         Assert.Throws<ArgumentException>(() => ReplayEditPlan.KeptRanges(
             Enumerable.Range(0, ReplayEditPlan.MaxRemovedRanges + 1).Select(i => new ReplayRange(i * 10, i * 10 + 5)), 5000));
+        Assert.Equal([new ReplayRange(0, 3000), new ReplayRange(4000, 5000)],
+            ReplayEditPlan.RemovedRanges([new(2000, 3000), new(1000, 2500), new(-500, 1000), new(4000, 9000)], 5000));
+        Assert.Throws<ArgumentException>(() => ReplayEditPlan.RemovedRanges([new(0, 2000), new(2000, 5000)], 5000));
     }
 
     [Theory]

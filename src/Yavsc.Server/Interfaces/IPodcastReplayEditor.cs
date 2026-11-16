@@ -1,3 +1,5 @@
+using Yavsc.Abstract.Streaming;
+
 namespace Yavsc.Services;
 
 public interface IPodcastReplayEditor

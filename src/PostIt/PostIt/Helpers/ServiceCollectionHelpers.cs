@@ -48,6 +48,7 @@ public static class ServiceCollectionHelpers
         services.AddTransient<MainView>();
         services.AddTransient<BlogsPage>();
         services.AddTransient<VideoPage>();
+        services.AddTransient<ReplayEditorPage>();
         services.AddTransient<PodcastsPage>();
 
 

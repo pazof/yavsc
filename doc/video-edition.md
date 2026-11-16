@@ -223,7 +223,7 @@ supprimer le brouillon et les originaux.
 
 #### Implémentation serveur du brouillon
 
-Le brouillon privé est implémenté côté serveur ; l'éditeur PostIt reste à faire.
+Le brouillon privé est implémenté côté serveur, et son éditeur sur PostIt desktop.
 
 - **Option** : `RefineReplay` est accepté à la création d'un direct immédiat
   et à la préparation d'une émission programmée (colonne `LiveFlow.RefineReplay`).
@@ -286,7 +286,19 @@ Le brouillon privé est implémenté côté serveur ; l'éditeur PostIt reste à
   choisit le MP4 publié dès qu'il existe ; sinon l'auteur lit les originaux et
   les autres utilisateurs voient « Le replay est en cours de finalisation par
   son auteur. ».
-- **Reste à faire** : chapitres et éditeur PostIt des marques et plages.
+- **Éditeur desktop** : « Éditer les marques et plages » ouvre le brouillon
+  dans un lecteur qui lit la source privée. L'auteur avance image par image,
+  pose une marque au temps courant (Ctrl+M) avec une miniature locale, choisit
+  une marque de début et une de fin, et ajoute la plage aux suppressions. Les
+  plages sont fusionnées et bornées par `ReplayEditPlan` (désormais partagé
+  dans `Yavsc.Abstract`), comme sur le serveur ; une suppression totale est
+  refusée. Les marques contenues dans une plage sont signalées puis retirées
+  par le serveur à l'enregistrement. L'enregistrement envoie la révision lue ;
+  un conflit conserve les modifications locales et invite à recharger. La
+  publication enregistre d'abord les modifications en attente.
+- **Reste à faire** : chapitres nommés, miniatures des marques rechargées
+  depuis le serveur (elles ne sont créées qu'à la pose), éditeur Android et
+  validation sur de vrais médias.
 
 Une émission interrompue doit rester récupérable par son auteur. Lorsqu'un
 direct programmé s'arrête après le délai « Direct interrompu », ou qu'un
@@ -386,7 +398,7 @@ différent de celui annoncé à l'auteur.
    prototype serveur »).
 3. Ajouter le brouillon privé et ses états, les autorisations, les limites et
    la reprise après incident (fait côté serveur, voir « Implémentation serveur
-   du brouillon »), puis l'éditeur de marques et plages desktop.
+   du brouillon »), puis l'éditeur de marques et plages desktop (fait).
 4. Valider la finalisation sur de vrais médias synthétiques et conserver le
    comportement existant pour les émissions sans raffinage.
 5. Porter l'éditeur sur Android (surface native), en réutilisant l'API et le

@@ -6,6 +6,8 @@
 
 ### Added
 
+* [PostIt/Podcasts] Add the desktop replay draft editor: from the refinement panel, the owner plays the private draft source, steps frame by frame, adds marks at the current time (Ctrl+M) with local thumbnails, picks start and end marks to remove ranges, restores ranges, then saves with the read revision (a conflict keeps local edits and asks for a reload) or publishes after saving pending edits. `ReplayEditPlan` moves to `Yavsc.Abstract` so the editor merges and validates ranges like the server.
+
 * [PostIt/Podcasts] Add the refined replay options and owner controls to the podcasts page: opt into refinement and choose the originals retention (0–365 days) for planned and immediate lives, see the draft state and originals deadline, publish the draft unchanged, and delete the originals after publication with confirmation. Playback now prefers the published MP4, lets the owner play unpublished originals, and tells other viewers the replay is being finalized instead of failing.
 
 * [Yavsc.Api.Client/Podcasts] Add the refined replay client: create a live with `RefineReplay` and `RetentionDays`, save and publish drafts, delete published originals, and read the owner-only draft source by bounded, verified byte ranges. `PodcastReplayMediaInput` can stream the draft source for the upcoming PostIt editor.

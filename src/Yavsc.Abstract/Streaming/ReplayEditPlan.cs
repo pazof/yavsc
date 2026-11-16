@@ -1,4 +1,4 @@
-namespace Yavsc.Services;
+namespace Yavsc.Abstract.Streaming;
 
 /// <summary>A half-open time range [StartMs, EndMs) in the original replay timeline.</summary>
 public readonly record struct ReplayRange(long StartMs, long EndMs)
@@ -8,6 +8,7 @@ public readonly record struct ReplayRange(long StartMs, long EndMs)
     public long DurationMs => EndMs - StartMs;
 }
 
+/// <summary>Validation and planning of replay cuts, shared by the server and the PostIt editor.</summary>
 public static class ReplayEditPlan
 {
     public const int MaxRemovedRanges = 200;
@@ -42,5 +43,23 @@ public static class ReplayEditPlan
         if (kept.Count == 0)
             throw new ArgumentException("Ces suppressions retireraient toute la vidéo.", nameof(removed));
         return kept;
+    }
+
+    /// <summary>
+    /// Normalizes removals as the server applies them: clamped to the source, merged when they overlap or touch,
+    /// and ordered. Throws like <see cref="KeptRanges"/> for invalid or total removals.
+    /// </summary>
+    public static IReadOnlyList<ReplayRange> RemovedRanges(IEnumerable<ReplayRange> removed, long durationMs)
+    {
+        var kept = KeptRanges(removed, durationMs);
+        var result = new List<ReplayRange>();
+        var position = 0L;
+        foreach (var range in kept)
+        {
+            if (range.StartMs > position) result.Add(new ReplayRange(position, range.StartMs));
+            position = range.EndMs;
+        }
+        if (position < durationMs) result.Add(new ReplayRange(position, durationMs));
+        return result;
     }
 }

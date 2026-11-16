@@ -34,4 +34,12 @@ public sealed class ReplayControlsState(TimeProvider? clock = null)
         return time.TotalHours >= 1 ? $"{(int)time.TotalHours}:{time.Minutes:00}:{time.Seconds:00}"
             : $"{(int)time.TotalMinutes}:{time.Seconds:00}";
     }
+
+    /// <summary>Formats a source time to the millisecond, as used by edit marks.</summary>
+    public static string FormatPreciseTime(long milliseconds)
+    {
+        var time = TimeSpan.FromMilliseconds(Math.Max(0, milliseconds));
+        return time.TotalHours >= 1 ? $"{(int)time.TotalHours}:{time.Minutes:00}:{time.Seconds:00}.{time.Milliseconds:000}"
+            : $"{(int)time.TotalMinutes}:{time.Seconds:00}.{time.Milliseconds:000}";
+    }
 }
