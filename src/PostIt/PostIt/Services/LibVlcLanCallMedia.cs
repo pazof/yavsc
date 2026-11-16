@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
@@ -98,6 +99,28 @@ public sealed class LibVlcLanCallMedia : IAsyncDisposable
 
     public Task StartSendingAsync(LanCallEndpoint remote, string camera, string microphone, CancellationToken ct) =>
         StartSendingAsync(remote, vlc => new CameraStreamer(vlc).CreateCaptureMedia(camera, microphone), true, ct);
+
+    public Task StartAvatarSendingAsync(LanCallEndpoint remote, string imagePath, string audioSource, CancellationToken ct) =>
+        StartSendingAsync(remote, vlc => CreateAvatarMedia(vlc, imagePath, audioSource), false, ct);
+
+    internal static Media CreateAvatarMedia(LibVLC vlc, string imagePath, string audioSource)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(imagePath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(audioSource);
+        if (!File.Exists(imagePath)) throw new FileNotFoundException("Avatar d'appel introuvable.", imagePath);
+        var uri = new Uri(Path.GetFullPath(imagePath)).AbsoluteUri;
+        var imageSource = "file/image:" + uri["file:".Length..];
+        // Pulse uses wall-clock timestamps; ADTS/file inputs start at zero and clock the image slave.
+        var realtime = audioSource.StartsWith("pulse://", StringComparison.Ordinal);
+        var media = new Media(vlc, realtime ? imageSource : audioSource, FromType.FromLocation);
+        media.AddOption(":image-duration=-1");
+        media.AddOption(":image-fps=30/1");
+        media.AddOption(":image-chroma=I420");
+        if (realtime) media.AddOption(":image-realtime");
+        media.AddOption(":input-slave=" + (realtime ? audioSource : imageSource));
+        media.AddOption(":live-caching=200");
+        return media;
+    }
 
     internal async Task StartSendingAsync(LanCallEndpoint remote, Func<LibVLC, Media> source,
         bool preview, CancellationToken ct, bool transcode = true)

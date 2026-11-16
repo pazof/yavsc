@@ -43,7 +43,7 @@ public sealed class CallSignalingService(
         try
         {
             _contactPreferences[connection] = preferences;
-            foreach (var call in _calls.Values.Where(c => !AllowsCallMode(connection, c.Session.DisplayMode)).ToArray())
+            foreach (var call in _calls.Values.Where(c => !AllowsCallMode(connection, c.Session.DisplayMode, c.Session.Transport)).ToArray())
             {
                 if (call.CallerConnection == connection || call.AcceptedConnection == connection)
                     await FinishCoreAsync(call, "contact-preference-changed");
@@ -62,9 +62,11 @@ public sealed class CallSignalingService(
     public ContactPreferences? GetContactPreferences(string connection) =>
         _contactPreferences.TryGetValue(connection, out var preferences) ? preferences : null;
 
-    private bool AllowsCallMode(string connection, CallDisplayMode mode) => mode switch
+    private bool AllowsCallMode(string connection, CallDisplayMode mode, string transport) => mode switch
     {
         CallDisplayMode.AudioVideo => GetContactPreferences(connection)?.AllowVideoCalls != false,
+        CallDisplayMode.AudioOnly when transport == CallTransports.LanSrtp => GetContactPreferences(connection) is
+            { AllowAudioCalls: true, SupportsLanAudioOnly: true },
         CallDisplayMode.AudioOnly => GetContactPreferences(connection) is
             { AllowAudioCalls: true, SupportsAudioOnly: true },
         _ => false
@@ -99,16 +101,14 @@ public sealed class CallSignalingService(
         ValidateTransport(transport, relayOnly);
         if (displayMode is not (CallDisplayMode.AudioVideo or CallDisplayMode.AudioOnly))
             throw new HubException("Unknown call mode.");
-        if (transport == CallTransports.LanSrtp && displayMode == CallDisplayMode.AudioOnly)
-            throw new HubException("Audio-only calls require WebRTC.");
         await _gate.WaitAsync();
         try
         {
             await ExpireCoreAsync();
-            if (!AllowsCallMode(callerConnection, displayMode))
+            if (!AllowsCallMode(callerConnection, displayMode, transport))
                 throw new HubException("This call mode is unavailable on the calling connection.");
             calleeConnections = calleeConnections
-                .Where(connection => AllowsCallMode(connection, displayMode)).ToArray();
+                .Where(connection => AllowsCallMode(connection, displayMode, transport)).ToArray();
             if (calleeConnections.Length == 0)
                 throw new HubException("The participant has no device accepting this call mode.");
             if (_calls.Count >= 128 || _calls.Values.Any(c =>

@@ -38,6 +38,31 @@ public sealed class CallTransportRoutingTests
     }
 
     [AvaloniaFact]
+    public async Task Audio_page_keeps_srtp_avatar_call_and_received_video_available_without_camera_controls()
+    {
+        var signaling = new Signaling();
+        await using var lan = new LanCallViewModel(signaling, loadAvatar: (_, _) => Task.FromResult<Bitmap?>(null))
+        {
+            RemoteVideo = new Border()
+        };
+        var chat = new ChatViewModel(settings: new Settings()) { LanCall = lan, IsConnected = true };
+        var page = new CallPage { DataContext = new AudioCallPageViewModel(chat) };
+        var window = new Window { Content = page };
+        try
+        {
+            window.Show();
+            Assert.True(page.FindControl<StackPanel>("LanCallPanel")!.IsVisible);
+            Assert.False(page.FindControl<ComboBox>("LanCamera")!.IsVisible);
+            Assert.False(page.FindControl<Button>("LanVideoInvite")!.IsVisible);
+            Assert.True(page.FindControl<Button>("LanAudioInvite")!.IsEffectivelyVisible);
+            var video = page.FindControl<ContentControl>("LanRemoteVideo")!;
+            Assert.True(video.IsEffectivelyVisible);
+            Assert.Same(lan.RemoteVideo, video.Content);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
     public async Task Audio_page_shows_static_image_and_hides_video_and_srtp_controls()
     {
         var signaling = new Signaling();
@@ -203,6 +228,8 @@ public sealed class CallTransportRoutingTests
         public Task<CallSession> InviteAudioAsync(string room, string user, CancellationToken ct = default) =>
             throw new NotSupportedException();
         public Task<CallSession> InviteLanAsync(string room, string user, CancellationToken ct = default) =>
+            throw new NotSupportedException();
+        public Task<CallSession> InviteLanAudioAsync(string room, string user, CancellationToken ct = default) =>
             throw new NotSupportedException();
         public Task AcceptAsync(Guid callId, CancellationToken ct = default) => throw new NotSupportedException();
         public Task EndAsync(Guid callId, CancellationToken ct = default)

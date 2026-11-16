@@ -6,6 +6,8 @@
 
 ### Added
 
+* [PostIt/Calls] Allow direct SRTP calls without a camera on Linux and Android by transmitting the user's avatar as repeating video with microphone audio through the existing LibVLC H.264/AAC pipeline. Announce transport-specific support, retain video reception and address-disclosure consent, and capture only microphone audio on Android in avatar mode. Add avatar lifecycle, UI, signaling and real IPv4/IPv6 media regressions; document validation and remaining Android device testing.
+
 * [PostIt/Chat] Add audio-only WebRTC calls on Linux and Android with the user's avatar as a static image, microphone-only capture, dedicated navigation and capability-aware invitations. Keep direct SRTP audio-video only; add signaling, UI and Linux native-media regressions.
 
 * [PostIt/Chat] Filter video invitations and private messages by announced per-connection preferences, stop affected calls when preferences change, and prepare mode-aware audio signaling. Audio-only calls and static images are not implemented yet; legacy clients without preferences remain reachable.

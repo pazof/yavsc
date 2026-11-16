@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -16,13 +17,13 @@ public static class ImageHelper
         return new Bitmap(AssetLoader.Open(resourceUri));
     }
 
-    public static async Task<Bitmap?> LoadFromWeb(Uri url)
+    public static async Task<Bitmap?> LoadFromWeb(Uri url, CancellationToken ct = default)
     {
         try
         {
-            var response = await HttpClient.GetAsync(url).ConfigureAwait(false);
+            using var response = await HttpClient.GetAsync(url, ct).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            var data = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+            var data = await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
             return new Bitmap(new MemoryStream(data));
         }
         catch (HttpRequestException ex)

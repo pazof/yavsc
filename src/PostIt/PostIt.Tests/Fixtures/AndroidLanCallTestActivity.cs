@@ -34,14 +34,15 @@ public sealed class AndroidLanCallTestActivity : Activity
         try
         {
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(55));
-            var outcome = await RunAsync(result, Intent?.GetStringExtra("wrongKey") == "true", timeout.Token);
+            var outcome = await RunAsync(result, Intent?.GetStringExtra("wrongKey") == "true",
+                Intent?.GetStringExtra("avatar") == "true", timeout.Token);
             File.WriteAllText(result, outcome);
         }
         catch (Exception error) { File.WriteAllText(result, "FAIL\n" + error); }
         finally { Finish(); }
     }
 
-    private async Task<string> RunAsync(string result, bool wrongKey, CancellationToken ct)
+    private async Task<string> RunAsync(string result, bool wrongKey, bool avatar, CancellationToken ct)
     {
         StartActivity(new Intent(this, typeof(MainActivity)).AddFlags(ActivityFlags.NewTask));
         while (!MainActivity.IsForeground || (Avalonia.Application.Current as App)?.View == null)
@@ -60,6 +61,7 @@ public sealed class AndroidLanCallTestActivity : Activity
         var navigation = app.View!.FindControl<NavigationPage>("NavRoot")
             ?? throw new InvalidOperationException("Main navigation unavailable.");
         var attached = false;
+        var imagePath = Path.Combine(CacheDir!.AbsolutePath, $"lan-call-avatar-{Guid.NewGuid():N}.png");
         try
         {
             await peer.StartReceivingAsync(ct);
@@ -87,20 +89,30 @@ public sealed class AndroidLanCallTestActivity : Activity
             File.WriteAllText(result, "RUNNING\nstage=return SRTP sender");
             await peer.StartEncodedSendingAsync(call.Endpoint,
                 pipe.ClientSafePipeHandle.DangerousGetHandle().ToInt32(), ct);
-            File.WriteAllText(result, "RUNNING\nstage=enumerating cameras");
-            var devices = AndroidLanCallMedia.GetDevices();
-            var front = devices.Cameras.FirstOrDefault(c => c.Name == "Camera avant")
-                ?? throw new InvalidOperationException("Front camera required; no rear-camera fallback.");
             var endpoint = wrongKey ? peer.Endpoint with { Key = new string('0', 32) } : peer.Endpoint;
-            File.WriteAllText(result, "RUNNING\nstage=front camera and SRTP");
-            await Dispatcher.UIThread.InvokeAsync(() => call.StartSendingAsync(endpoint, front.Value, "microphone", ct));
+            if (avatar)
+            {
+                using var image = PostIt.Helpers.ImageHelper.LoadFromResource(new Uri("avares://PostIt/Assets/Icon.png"));
+                image.Save(imagePath, Avalonia.Media.Imaging.PngBitmapEncoderOptions.Default);
+                File.WriteAllText(result, "RUNNING\nstage=avatar, microphone and SRTP without camera");
+                await Dispatcher.UIThread.InvokeAsync(() => call.StartAvatarSendingAsync(endpoint, imagePath, "microphone", ct));
+            }
+            else
+            {
+                File.WriteAllText(result, "RUNNING\nstage=enumerating cameras");
+                var devices = AndroidLanCallMedia.GetDevices();
+                var front = devices.Cameras.FirstOrDefault(c => c.Name == "Camera avant")
+                    ?? throw new InvalidOperationException("Front camera required; no rear-camera fallback.");
+                File.WriteAllText(result, "RUNNING\nstage=front camera and SRTP");
+                await Dispatcher.UIThread.InvokeAsync(() => call.StartSendingAsync(endpoint, front.Value, "microphone", ct));
+            }
             File.WriteAllText(result, "RUNNING\nstage=receiving camera and return media");
             var elapsed = Stopwatch.StartNew();
             while (elapsed.Elapsed < TimeSpan.FromSeconds(wrongKey ? 10 : 25))
             {
                 if (call.Completion.IsCompleted) await call.Completion;
                 if (peer.Completion.IsCompleted) await peer.Completion;
-                if (!wrongKey && elapsed.Elapsed >= TimeSpan.FromSeconds(10) &&
+                if (!wrongKey && elapsed.Elapsed >= TimeSpan.FromSeconds(12) &&
                     decoded.Frames >= 100 && decoded.Samples > 144000 && call.HasRemoteMedia) break;
                 await Task.Delay(100, ct);
             }
@@ -108,9 +120,9 @@ public sealed class AndroidLanCallTestActivity : Activity
             if (wrongKey ? decoded.Frames != 0 || decoded.Samples != 0
                 : decoded.Frames < 100 || decoded.Samples <= 144000)
                 throw new IOException($"Unexpected camera decode: frames={decoded.Frames}, samples={decoded.Samples}.");
-            return $"PASS\nfrontCamera=true\nwrongKey={wrongKey}\n" +
+            return $"PASS\nfrontCamera={!avatar}\navatar={avatar}\nwrongKey={wrongKey}\n" +
                 $"cameraFrames={decoded.Frames}\ncameraAudioSamples={decoded.Samples}\nelapsedMs={elapsed.ElapsedMilliseconds}\nreturnAudioVideo=true\n" +
-                "transport=SRTP/UDP loopback\npreview=attached\nsource=camera+microphone,return=explicit fixture\ncleanup=complete";
+                $"transport=SRTP/UDP loopback\npreview=attached\nsource={(avatar ? "avatar" : "camera")}+microphone,return=explicit fixture\ncleanup=complete";
         }
         finally
         {
@@ -123,6 +135,7 @@ public sealed class AndroidLanCallTestActivity : Activity
             }
             File.WriteAllText(result, "RUNNING\nstage=dispose call");
             if (call != null) await Dispatcher.UIThread.InvokeAsync(async () => await call.DisposeAsync());
+            File.Delete(imagePath);
             File.WriteAllText(result, "RUNNING\nstage=stop return peer");
             await peer.StopAsync();
             source.Dispose();

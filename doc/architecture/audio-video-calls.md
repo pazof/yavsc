@@ -21,7 +21,7 @@ que cette preference soit desactivee pour les deux participants. Les groupes
 et les clients navigateur ne sont pas implementes.
 Depuis le chat textuel, selectionner un membre present puis « Ouvrir l'appel »
 ou « Ouvrir l'appel audio » prepare le pair sans demarrer les medias. La page
-WebRTC propose les deux modes : un utilisateur autorisant l'audio et la video
+WebRTC et le panneau SRTP proposent les deux modes : un utilisateur autorisant l'audio et la video
 peut appeler en audio seul. Les invitations entrantes disposent
 d'un bouton pour ouvrir cette meme page sans selection de membre. Passer du
 chat a la page d'appel ne raccroche pas ; quitter la page d'appel termine les
@@ -74,8 +74,13 @@ La cible couvre :
   automatique ni de migration transparente d'un appel existant.
 
 Le panneau WebRTC ne demande pas d'adresse ni de port RTP manuel. Le panneau
-SRTP direct ne prend en charge que l'audio-video. Il demande une adresse locale, un port UDP pair et le consentement au
+SRTP direct demande une adresse locale, un port UDP pair et le consentement au
 partage d'adresse ; il requiert HTTPS pour proteger les cles de signalisation.
+Son flux reste toujours audio-video H.264/AAC, sur Linux comme sur Android :
+le mode « audio » remplace seulement la camera par l'avatar de l'emetteur,
+repete en video pendant tout l'appel. Il ne supprime pas la piste video.
+La capacite `SupportsLanAudioOnly`, distincte de celle de WebRTC, annonce
+ce mode sans camera et exclut les anciens clients qui ne savent pas le lancer.
 Les invitations sont dirigees vers le panneau correspondant, sans bascule
 automatique entre transports. Sans masquage,
 un consentement explicite au partage IP reste requis. Activer le masquage
@@ -186,6 +191,24 @@ L'implémentation est dans
 Android utilise
 [AndroidLanCallMedia](../../src/PostIt/PostIt.Android/Services/AndroidLanCallMedia.cs)
 avec les mêmes contrats et clés SRTP.
+
+### Source video : camera ou avatar
+
+« Appeler en audio » ne requiert aucune camera. Apres acceptation, PostIt
+charge le propre avatar du participant depuis son profil, le normalise en
+PNG 320 x 320 dans un fichier temporaire propre a l'appel et transmet cette
+image avec son microphone via le meme moteur LibVLC. Le correspondant affiche
+la video decodee, pas une image telechargee separement. Un avatar indisponible
+termine explicitement l'appel, sans ouvrir la camera ni substituer une image
+generique. Le fichier temporaire est supprime apres liberation des medias.
+
+Le demultiplexeur `image` de LibVLC genere des trames pendant une duree
+illimitee (`image-duration=-1`, 30 images/s), plutot qu'un clip de dix secondes.
+L'horloge differe selon la source microphone : sur Linux, l'image en temps reel
+pilote l'entree PulseAudio esclave ; pour le pipe ADTS Android, l'audio pilote
+l'image esclave sur sa propre chronologie. Encodage H.264/AAC, reception video
+et audio, controles de reception et chiffrement SRTP restent communs.
+WebRTC conserve son implementation audio seule distincte, sans piste video.
 Les contrôles et les deux surfaces vidéo sont intégrés à la page du chat.
 Il n'y a pas de service de salles supplémentaire, d'enregistrement,
 de fichier média temporaire ou de moteur WebRTC Android ajouté.
@@ -244,11 +267,18 @@ de fichier média temporaire ou de moteur WebRTC Android ajouté.
 - Les permissions caméra, microphone et notifications sont demandées
   après acceptation et réception de l'endpoint distant, avant la capture.
   Un refus termine explicitement l'appel, sans tentative de capture de repli.
+  En mode avatar, seules les permissions microphone et notifications sont
+  demandees ; le service de premier plan active uniquement le type microphone.
+  Aucune camera ni surface d'encodage video Android n'est ouverte.
 - Camera2, MediaRecorder et la rotation EGL sont ceux des Podcasts.
   Le descripteur du pipe MPEG-TS est lu directement par LibVLC (`fd://`)
   puis remultiplexé vers SRTP, **sans réencodage**, HLS ou fichier média.
   Le pipe système assure une mémoire bornée ; il n'y a pas de file de
   segments ni de lecture de capture par callbacks managés.
+  En mode avatar, MediaRecorder fournit uniquement le microphone AAC/ADTS
+  dans un pipe ; LibVLC lit ce pipe et l'image, puis encode le flux audio-video
+  commun. La preview locale est l'avatar, le retour distant reste une surface
+  video LibVLC.
 - La prévisualisation réutilise la surface EGL existante. Le retour
   distant utilise la surface Android LibVLC déjà employée pour les Podcasts.
   La rotation capteur/écran tient compte de celle déjà portée par la matrice
@@ -304,6 +334,9 @@ l'ajout d'un moteur WebRTC ou d'une cryptographie propre au projet.
   pas ici de diagnostiquer précisément une panne média silencieuse :
   l'utilisateur peut raccrocher, et la perte de SignalR arrête toujours
   la capture. Pas encore de mesure de qualité ou de latence affichée.
+  Une regression avec preview a aussi observe des compteurs nuls malgre
+  les callbacks audio/video actifs ; son retest a reussi. Cette limite
+  intermittente des statistiques natives n'est pas corrigee par le mode avatar.
 
 ### Validation effectuée et restante
 
@@ -315,6 +348,10 @@ synthétique fourni explicitement et de vrais sockets UDP de bouclage :
 - même échange avec la branche de prévisualisation locale activée
   (sortie factice dans ce test sans fenêtre).
 - entrée MPEG-TS déjà encodée à travers un pipe, sans transcodage.
+- avatar fourni comme image a LibVLC, avec audio bidirectionnel et progression
+  audio/video apres douze secondes, en IPv4/IPv6, y compris avec mauvaise cle ;
+- meme chemin avec une source PulseAudio synthetique isolee et avec un pipe
+  AAC/ADTS cadence simulant la capture microphone Android.
 
 Les tests de signalisation couvrent consentement, sélection d'un seul
 appareil, confidentialité, HTTPS, validation des endpoints et arrêt.
@@ -335,14 +372,24 @@ dotnet test --project src/PostIt/PostIt.Tests/PostIt.Tests.csproj \
 Sans cette entrée explicite, ces tests sont ignorés, pas remplacés par un
 succès fictif. Les tests de contrôle s'exécutent sans caméra.
 Le test de pipe utilise `POSTIT_TEST_TS`, un MPEG-TS H.264/AAC explicite.
+Les tests avatar utilisent `POSTIT_TEST_IMAGE` et `POSTIT_TEST_AUDIO`
+(fichier WAV d'au moins vingt secondes), ou `POSTIT_TEST_AUDIO_SOURCE`
+(URI d'une source de test, notamment un moniteur PulseAudio isole).
+Le test de pipe microphone utilise `POSTIT_TEST_AAC` (AAC/ADTS explicite d'au
+moins vingt secondes). Ces tests n'ouvrent aucune camera.
 
 Une activité **Debug uniquement**,
-[AndroidLanCallTestActivity](../../src/PostIt/PostIt.Tests/AndroidLanCallTestActivity.cs),
+[AndroidLanCallTestActivity](../../src/PostIt/PostIt.Tests/Fixtures/AndroidLanCallTestActivity.cs),
 teste l'adaptateur réel sur téléphone : caméra avant/microphone, surfaces
 de retour et prévisualisation attachées, deux moteurs SRTP en UDP de
 bouclage, retour synthétique et rejet d'une mauvaise clé. Elle n'utilise
 ni compte ni API ; elle ne valide donc pas à elle seule un appel SignalR
 entre deux comptes. L'activité n'est pas compilée dans l'APK Release.
+L'extra chaine `avatar=true` selectionne l'image de test et le microphone
+sans enumerer ni ouvrir de camera. Le chemin avatar Android est compile et
+son entree AAC/ADTS est testee avec LibVLC sous Linux ; l'execution de cette
+variante sur telephone reste a effectuer. Aucun deploiement automatique n'est
+necessaire pour les tests Linux.
 
 Pour la lancer sur un appareil de développement dont les permissions
 ont été accordées, installer l'APK Debug et ses assemblies via

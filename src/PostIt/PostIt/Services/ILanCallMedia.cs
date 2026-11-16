@@ -14,4 +14,5 @@ public interface ILanCallMedia : IAsyncDisposable
     Task Completion { get; }
     bool HasRemoteMedia { get; }
     Task StartSendingAsync(LanCallEndpoint remote, string camera, string microphone, CancellationToken ct);
+    Task StartAvatarSendingAsync(LanCallEndpoint remote, string imagePath, string microphone, CancellationToken ct);
 }

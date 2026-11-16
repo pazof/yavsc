@@ -17,6 +17,120 @@ public sealed class LinuxLanCallMediaTests(ITestOutputHelper output)
         File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_MEDIA"));
     public static bool HasTsFixture => OperatingSystem.IsLinux() &&
         File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_TS"));
+    public static bool HasAudioFixture => OperatingSystem.IsLinux() &&
+        (File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_AUDIO")) ||
+         !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("POSTIT_TEST_AUDIO_SOURCE"))) &&
+        File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_IMAGE"));
+    public static bool HasAacFixture => OperatingSystem.IsLinux() &&
+        File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_AAC")) &&
+        File.Exists(Environment.GetEnvironmentVariable("POSTIT_TEST_IMAGE"));
+
+    [Theory(Skip = "Set POSTIT_TEST_AAC to ADTS and POSTIT_TEST_IMAGE to an avatar; requires Linux LibVLC SRTP.",
+        SkipUnless = nameof(HasAacFixture))]
+    [InlineData("127.0.0.1")]
+    [InlineData("::1")]
+    public async Task Avatar_video_and_live_aac_pipe_use_the_same_libvlc_pipeline(string address)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var port = FreePort(address: address);
+        await using var sender = new LibVlcLanCallMedia(address, port, headless: true);
+        await using var receiver = new LibVlcLanCallMedia(address, FreePort(port, address), headless: true);
+        using var decoded = new DecodedVideo(receiver.Receiver);
+        using var pipe = new AnonymousPipeServerStream(PipeDirection.Out);
+        await using var source = File.OpenRead(Environment.GetEnvironmentVariable("POSTIT_TEST_AAC")!);
+        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        var pump = Task.Run(async () =>
+        {
+            var buffer = new byte[512];
+            while (await source.ReadAsync(buffer, lifetime.Token) is var count && count > 0)
+            {
+                await pipe.WriteAsync(buffer.AsMemory(0, count), lifetime.Token);
+                await Task.Delay(40, lifetime.Token);
+            }
+        }, ct);
+        try
+        {
+            await receiver.StartReceivingAsync(ct);
+            await sender.StartAvatarSendingAsync(receiver.Endpoint,
+                Environment.GetEnvironmentVariable("POSTIT_TEST_IMAGE")!,
+                $"fd/aac://{pipe.ClientSafePipeHandle.DangerousGetHandle().ToInt32()}", ct);
+            await Task.Delay(TimeSpan.FromSeconds(12), ct);
+            if (sender.Completion.IsCompleted) await sender.Completion;
+            if (receiver.Completion.IsCompleted) await receiver.Completion;
+            Assert.True(receiver.HasRemoteMedia);
+            var frames = decoded.Frames;
+            var samples = decoded.AudioSamples;
+            await Task.Delay(1500, ct);
+            Assert.True(decoded.Frames > frames);
+            Assert.True(decoded.AudioSamples > samples);
+        }
+        finally
+        {
+            lifetime.Cancel();
+            await sender.StopAsync();
+            try { await pump; }
+            catch (OperationCanceledException) when (lifetime.IsCancellationRequested) { }
+        }
+    }
+
+    [Theory(Skip = "Set POSTIT_TEST_AUDIO to WAV and POSTIT_TEST_IMAGE to an avatar; requires Linux LibVLC SRTP.",
+        SkipUnless = nameof(HasAudioFixture))]
+    [InlineData("127.0.0.1", false)]
+    [InlineData("::1", false)]
+    [InlineData("127.0.0.1", true)]
+    [InlineData("::1", true)]
+    public async Task Two_peers_receive_avatar_video_and_audio_beyond_default_image_duration_and_reject_wrong_keys(
+        string address, bool wrongKey)
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var port = FreePort(address: address);
+        await using var first = new LibVlcLanCallMedia(address, port, headless: true);
+        await using var second = new LibVlcLanCallMedia(address, FreePort(port, address), headless: true);
+        using var firstDecoded = new DecodedVideo(first.Receiver);
+        using var secondDecoded = new DecodedVideo(second.Receiver);
+        await first.StartReceivingAsync(ct);
+        await second.StartReceivingAsync(ct);
+        var image = Environment.GetEnvironmentVariable("POSTIT_TEST_IMAGE")!;
+        var audio = Environment.GetEnvironmentVariable("POSTIT_TEST_AUDIO_SOURCE");
+        if (string.IsNullOrEmpty(audio))
+        {
+            var uri = new Uri(Path.GetFullPath(Environment.GetEnvironmentVariable("POSTIT_TEST_AUDIO")!)).AbsoluteUri;
+            audio = "file/wav:" + uri["file:".Length..];
+        }
+        await first.StartAvatarSendingAsync(wrongKey ? second.Endpoint with { Key = new string('0', 32) }
+            : second.Endpoint, image, audio, ct);
+        await second.StartAvatarSendingAsync(first.Endpoint, image, audio, ct);
+        var elapsed = Stopwatch.StartNew();
+        while (elapsed.Elapsed < TimeSpan.FromSeconds(12))
+        {
+            if (first.Completion.IsCompleted) await first.Completion;
+            if (second.Completion.IsCompleted) await second.Completion;
+            await Task.Delay(100, ct);
+        }
+        var frames = firstDecoded.Frames;
+        var samples = firstDecoded.AudioSamples;
+        var secondFrames = secondDecoded.Frames;
+        var secondSamples = secondDecoded.AudioSamples;
+        await Task.Delay(1500, ct);
+        output.WriteLine($"First: decoded={first.Statistics.DecodedAudio}, samples={firstDecoded.AudioSamples}; " +
+            $"second: decoded={second.Statistics.DecodedAudio}, samples={secondDecoded.AudioSamples}");
+        Assert.True(first.HasRemoteMedia);
+        Assert.True(firstDecoded.AudioSamples > 4800);
+        Assert.True(firstDecoded.Frames > frames);
+        Assert.True(firstDecoded.AudioSamples > samples);
+        if (wrongKey)
+        {
+            Assert.False(second.HasRemoteMedia);
+            Assert.Equal(0, secondDecoded.AudioSamples);
+            Assert.Equal(0, secondDecoded.Frames);
+        }
+        else
+        {
+            Assert.True(second.HasRemoteMedia);
+            Assert.True(secondDecoded.AudioSamples > secondSamples);
+            Assert.True(secondDecoded.Frames > secondFrames);
+        }
+    }
 
     [Theory(Skip = "Requires Linux LibVLC.", SkipUnless = nameof(HasFixture))]
     [InlineData("127.0.0.1")]

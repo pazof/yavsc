@@ -120,16 +120,29 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         Func<int, CancellationToken, Task> output, Func<Task> stopOutput, CancellationToken ct) =>
         StartCoreAsync(camera, microphone, null, output, stopOutput, ct, false);
 
-    private static async Task<IPodcastCapture> StartCoreAsync(string camera, string? microphone,
+    internal static Task<IPodcastCapture> StartAvatarCallAsync(
+        Func<int, CancellationToken, Task> output, Func<Task> stopOutput, CancellationToken ct) =>
+        StartCoreAsync(null, "microphone", null, output, stopOutput, ct, false);
+
+    private static async Task<IPodcastCapture> StartCoreAsync(string? camera, string? microphone,
         Func<Stream, CancellationToken, Task>? output,
         Func<int, CancellationToken, Task>? pipeOutput, Func<Task>? stopOutput, CancellationToken ct, bool blur)
     {
-        await RequestPermissionsAsync(microphone, ct);
+        if (camera != null)
+            await RequestPermissionsAsync(microphone, ct);
+        else
+        {
+            var current = MainActivity.Current ?? throw new InvalidOperationException("Activite Android indisponible.");
+            await PodcastPermissions.EnsureAsync(current, true, ct, camera: false);
+            if (!MainActivity.IsForeground)
+                throw new InvalidOperationException("Revenez dans PostIt pour demarrer le microphone.");
+        }
         var activity = MainActivity.Current ?? throw new InvalidOperationException("Activite Android indisponible.");
         if (!await CaptureGate.WaitAsync(0, ct))
-            throw new InvalidOperationException("La camera est deja utilisee par un apercu, un podcast ou un appel.");
+            throw new InvalidOperationException("La capture est deja utilisee par un apercu, un podcast ou un appel.");
         PodcastCaptureService service;
-        try { service = await PodcastCaptureService.StartAsync(activity, microphone is not null, ct, pipeOutput != null); }
+        try { service = await PodcastCaptureService.StartAsync(activity, microphone is not null, ct, pipeOutput != null,
+            camera: camera != null); }
         catch
         {
             CaptureGate.Release();
@@ -140,7 +153,11 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
         try
         {
             ct.ThrowIfCancellationRequested();
-            await capture.StartNativeAsync(camera, microphone is not null, output, pipeOutput, ct, blur);
+            if (camera != null)
+                await capture.StartNativeAsync(camera, microphone is not null, output, pipeOutput, ct, blur);
+            else
+                await capture.StartMicrophoneAsync(pipeOutput
+                    ?? throw new InvalidOperationException("Sortie microphone de l'appel indisponible."), ct);
             return capture;
         }
         catch
@@ -148,6 +165,42 @@ internal sealed class AndroidPodcastCapture : IPodcastCapture
             await capture.DisposeAsync();
             throw;
         }
+    }
+
+    private async Task StartMicrophoneAsync(Func<int, CancellationToken, Task> output, CancellationToken ct)
+    {
+        await _stopGate.WaitAsync(ct);
+        try
+        {
+            ct.ThrowIfCancellationRequested();
+            if (_stopRequested) throw new System.OperationCanceledException("Demarrage de la capture annule.");
+#pragma warning disable CS0618
+            _recorder = OperatingSystem.IsAndroidVersionAtLeast(31)
+                ? new MediaRecorder(_context) : new MediaRecorder();
+#pragma warning restore CS0618
+            _recorder.Error += OnRecorderError;
+            _recorder.SetAudioSource(AudioSource.Mic);
+            _recorder.SetOutputFormat(OutputFormat.AacAdts);
+            _recorder.SetAudioSamplingRate(48000);
+            _recorder.SetAudioChannels(1);
+            _recorder.SetAudioEncodingBitRate(96000);
+            _recorder.SetAudioEncoder(AudioEncoder.Aac);
+            var pipe = ParcelFileDescriptor.CreatePipe()
+                ?? throw new IOException("Creation du canal microphone impossible.");
+            _readPipe = pipe[0];
+            _writePipe = pipe[1];
+            _recorder.SetOutputFile(_writePipe.FileDescriptor);
+            await Task.Run(_recorder.Prepare, ct);
+            await output(_readPipe.Fd, ct);
+            ct.ThrowIfCancellationRequested();
+            if (_stopRequested) throw new System.OperationCanceledException("Demarrage de la capture annule.");
+            await Task.Run(_recorder.Start, ct);
+            _started = true;
+            _writePipe.Close();
+            _writePipe.Dispose();
+            _writePipe = null;
+        }
+        finally { _stopGate.Release(); }
     }
 
     private async Task StartNativeAsync(string cameraId, bool microphone,

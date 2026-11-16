@@ -13,6 +13,7 @@ public interface ILanCallSignaling
     event Action<Guid, CallSignal>? Signal;
     event Action? Interrupted;
     Task<CallSession> InviteLanAsync(string room, string user, CancellationToken ct = default);
+    Task<CallSession> InviteLanAudioAsync(string room, string user, CancellationToken ct = default);
     Task AcceptAsync(Guid callId, CancellationToken ct = default);
     Task EndAsync(Guid callId, CancellationToken ct = default);
     Task SendAsync(Guid callId, CallSignal signal, CancellationToken ct = default);

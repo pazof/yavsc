@@ -63,19 +63,20 @@
         </StackPanel>
       </StackPanel>
       <StackPanel x:Name="LanCallPanel" IsVisible="{Binding ShowLanCalls}">
-        <TextBlock Text="Appel audio-video direct IPv4/IPv6 SRTP (LAN/VPN ou IP publique)"
+        <TextBlock Text="Appel direct IPv4/IPv6 SRTP (LAN/VPN ou IP publique)"
                    FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,8" />
         <StackPanel DataContext="{Binding Chat.LanCall}" x:DataType="vm:LanCallViewModel"
                     IsEnabled="{Binding $parent[ContentPage].((vm:CallPageViewModel)DataContext).Chat.IsConnected}" Spacing="8">
-          <TextBlock Text="Connexion directe sans TURN ni traversee NAT : le pair connait votre IP. Le masquage IP doit etre desactive dans les profils des deux participants. Les medias sont chiffres par SRTP. Ouvrez le port UDP pair choisi et le suivant ; HTTPS est requis pour la signalisation. Casque recommande."
+          <TextBlock Text="Connexion directe sans TURN ni traversee NAT : le pair connait votre IP. Le masquage IP doit etre desactive dans les profils des deux participants. Les medias sont chiffres par SRTP. En mode audio, votre avatar remplace la camera dans le flux video et est transmis au pair avec le microphone. Ouvrez le port UDP pair choisi et le suivant ; HTTPS est requis pour la signalisation. Casque recommande."
                      TextWrapping="Wrap" />
           <WrapPanel IsEnabled="{Binding CanConfigure}" IsVisible="{Binding !RemoteVideo}">
             <Button Content="Actualiser les peripheriques" Command="{Binding RefreshDevicesCommand}" Margin="0,0,8,4" />
             <ComboBox Width="160" ItemsSource="{Binding Addresses}" SelectedItem="{Binding Address}"
                       PlaceholderText="Adresse IPv4/IPv6 de cette machine" Margin="0,0,8,4" />
             <TextBox Width="80" Text="{Binding Port}" PlaceholderText="Port pair" Margin="0,0,8,4" />
-            <ComboBox Width="190" ItemsSource="{Binding Cameras}" SelectedItem="{Binding Camera}"
-                      PlaceholderText="Camera" Margin="0,0,8,4">
+            <ComboBox x:Name="LanCamera" Width="190" ItemsSource="{Binding Cameras}" SelectedItem="{Binding Camera}"
+                      PlaceholderText="Camera" Margin="0,0,8,4"
+                      IsVisible="{Binding !$parent[ContentPage].((vm:CallPageViewModel)DataContext).IsAudioPage}">
               <ComboBox.ItemTemplate>
                 <DataTemplate x:DataType="services:CaptureDevice">
                   <TextBlock Text="{Binding Name}" />
@@ -96,14 +97,17 @@
                     IsChecked="{Binding AllowAddressDisclosure}" IsEnabled="{Binding CanConfigure}"
                     IsVisible="{Binding !RemoteVideo}" />
           <WrapPanel>
-            <Button Content="Appeler dans la salle active" Command="{Binding InviteCommand}" IsEnabled="{Binding !Busy}" Margin="0,0,8,4" />
+            <Button x:Name="LanVideoInvite" Content="Appeler en audio-video" Command="{Binding InviteCommand}" IsEnabled="{Binding !Busy}"
+                    IsVisible="{Binding !$parent[ContentPage].((vm:CallPageViewModel)DataContext).IsAudioPage}" Margin="0,0,8,4" />
+            <Button x:Name="LanAudioInvite" Content="Appeler en audio" Command="{Binding InviteAudioCommand}" IsEnabled="{Binding !Busy}"
+                    IsVisible="{Binding SupportsAudioOnly}" Margin="0,0,8,4" />
             <Button Content="Accepter" Command="{Binding AcceptCommand}" IsEnabled="{Binding Incoming}" Margin="0,0,8,4" />
             <Button Content="Refuser / Raccrocher" Command="{Binding HangupCommand}" IsEnabled="{Binding Busy}" Margin="0,0,8,4" />
           </WrapPanel>
           <TextBlock Text="{Binding Status}" TextWrapping="Wrap" />
           <Grid ColumnDefinitions="*,2*" Height="280" IsVisible="{Binding !!RemoteVideo}">
             <ContentControl Content="{Binding LocalVideo}" Margin="0,0,8,0" />
-            <ContentControl Grid.Column="1" Content="{Binding RemoteVideo}" />
+            <ContentControl x:Name="LanRemoteVideo" Grid.Column="1" Content="{Binding RemoteVideo}" />
           </Grid>
         </StackPanel>
       </StackPanel>

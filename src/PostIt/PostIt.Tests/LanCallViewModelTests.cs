@@ -1,5 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
+using Avalonia.Media.Imaging;
+using PostIt.Helpers;
 using PostIt.Services;
 using PostIt.ViewModels.Chat;
 using PostIt.ViewModels;
@@ -115,21 +117,102 @@ public sealed class LanCallViewModelTests
         return vm;
     }
 
+    [AvaloniaTheory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Call_without_camera_sends_own_avatar_and_microphone_and_cleans_up(bool caller)
+    {
+        var signaling = new Signaling();
+        var media = new FakeMedia();
+        string? avatarUser = null;
+        await using var vm = new LanCallViewModel(signaling, (_, _) => media, loadAvatar: (user, _) =>
+        {
+            avatarUser = user;
+            return Task.FromResult<Bitmap?>(ImageHelper.LoadFromResource(new Uri("avares://PostIt/Assets/Icon.png")));
+        })
+        {
+            Address = "127.0.0.1", Microphone = new("Mic", "default"),
+            AllowAddressDisclosure = true, Room = "General", Target = "bob"
+        };
+        vm.Addresses.Add("127.0.0.1");
+        if (caller) await vm.InviteAudioCommand.ExecuteAsync(null);
+        else
+        {
+            signaling.Invite(vm, signaling.Call with { DisplayMode = CallDisplayMode.AudioOnly });
+            await WaitAsync(() => vm.Incoming);
+            await vm.AcceptCommand.ExecuteAsync(null);
+        }
+        Assert.True(vm.AudioOnly);
+        Assert.Null(vm.Camera);
+        if (caller) signaling.Ready();
+        await WaitAsync(() => signaling.Sent.Count > 0);
+        Assert.Equal(caller ? "alice" : "bob", avatarUser);
+        Assert.Same(media.LocalVideo, vm.LocalVideo);
+        Assert.Same(media.RemoteVideo, vm.RemoteVideo);
+        Assert.False(media.Sending);
+        signaling.RemoteEndpoint(signaling.Call.Id);
+        await WaitAsync(() => media.Sending);
+        Assert.Null(media.Camera);
+        var imagePath = Assert.IsType<string>(media.AvatarPath);
+        Assert.True(File.Exists(imagePath));
+        await vm.HangupAsync();
+        Assert.True(media.Disposed);
+        Assert.False(File.Exists(imagePath));
+    }
+
     [AvaloniaFact]
-    public async Task Audio_only_invitation_on_srtp_is_rejected_without_opening_media()
+    public async Task Unavailable_own_avatar_ends_call_without_opening_media_or_camera()
     {
         var signaling = new Signaling();
         var created = false;
-        await using var vm = Configure(signaling, (_, _) =>
+        await using var vm = new LanCallViewModel(signaling, (_, _) =>
         {
             created = true;
             return new FakeMedia();
-        });
-        signaling.Invite(vm, signaling.Call with { DisplayMode = CallDisplayMode.AudioOnly });
-        await WaitAsync(() => signaling.EndedCalls.Count != 0);
+        }, loadAvatar: (_, _) => Task.FromResult<Bitmap?>(null))
+        {
+            Address = "127.0.0.1", Microphone = new("Mic", "default"),
+            AllowAddressDisclosure = true, Room = "General", Target = "bob"
+        };
+        vm.Addresses.Add("127.0.0.1");
+        await vm.InviteAudioCommand.ExecuteAsync(null);
+        signaling.Ready();
+        await WaitAsync(() => !vm.Busy);
+        Assert.False(created);
+        Assert.Empty(signaling.Sent);
+        Assert.Contains("avatar est indisponible", vm.Status);
+        Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
+    }
+
+    [AvaloniaFact]
+    public async Task Hangup_cancels_pending_avatar_download_without_opening_media()
+    {
+        var signaling = new Signaling();
+        var loading = false;
+        var created = false;
+        await using var vm = new LanCallViewModel(signaling, (_, _) =>
+        {
+            created = true;
+            return new FakeMedia();
+        }, loadAvatar: async (_, ct) =>
+        {
+            loading = true;
+            await Task.Delay(Timeout.Infinite, ct);
+            return null;
+        })
+        {
+            Address = "127.0.0.1", Microphone = new("Mic", "default"),
+            AllowAddressDisclosure = true, Room = "General", Target = "bob"
+        };
+        vm.Addresses.Add("127.0.0.1");
+        await vm.InviteAudioCommand.ExecuteAsync(null);
+        signaling.Ready();
+        await WaitAsync(() => loading);
+        await vm.HangupAsync().WaitAsync(TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken);
         Assert.False(created);
         Assert.False(vm.Busy);
-        Assert.Contains("audio seul", vm.Status);
+        Assert.Empty(signaling.Sent);
+        Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
     }
 
     [AvaloniaTheory]
@@ -331,10 +414,19 @@ public sealed class LanCallViewModelTests
         public bool Sending { get; private set; }
         public bool Disposed { get; private set; }
         public bool DelayStartup { get; init; }
+        public string? Camera { get; private set; }
+        public string? AvatarPath { get; private set; }
         public async Task StartSendingAsync(LanCallEndpoint remote, string camera, string microphone, CancellationToken ct)
         {
             Sending = true;
+            Camera = camera;
             if (DelayStartup) await Task.Delay(Timeout.Infinite, ct);
+        }
+        public Task StartAvatarSendingAsync(LanCallEndpoint remote, string imagePath, string microphone, CancellationToken ct)
+        {
+            Sending = true;
+            AvatarPath = imagePath;
+            return Task.CompletedTask;
         }
         public void Fail() => _completion.TrySetException(new IOException("test media failure"));
         public ValueTask DisposeAsync() { Disposed = true; _completion.TrySetResult(); return ValueTask.CompletedTask; }
@@ -347,18 +439,24 @@ public sealed class LanCallViewModelTests
         public event Action<CallEnded>? Ended;
         public event Action<Guid, CallSignal>? Signal;
         public event Action? Interrupted;
-        public CallSession Call { get; } = Session();
+        public CallSession Call { get; private set; } = Session();
         public List<CallSignal> Sent { get; } = [];
         public List<Guid> EndedCalls { get; } = [];
         public int Invites { get; private set; }
         public Task<CallSession> InviteLanAsync(string room, string user, CancellationToken ct = default)
         { Invites++; return Task.FromResult(Call); }
+        public Task<CallSession> InviteLanAudioAsync(string room, string user, CancellationToken ct = default)
+        {
+            Invites++;
+            Call = Call with { DisplayMode = CallDisplayMode.AudioOnly };
+            return Task.FromResult(Call);
+        }
         public Task AcceptAsync(Guid id, CancellationToken ct = default) { Ready(); return Task.CompletedTask; }
         public Task EndAsync(Guid id, CancellationToken ct = default)
         { EndedCalls.Add(id); Ended?.Invoke(new(id, "hangup")); return Task.CompletedTask; }
         public Task SendAsync(Guid id, CallSignal signal, CancellationToken ct = default)
         { Sent.Add(signal); return Task.CompletedTask; }
-        public void Invite(LanCallViewModel _, CallSession call) => Invitation?.Invoke(call);
+        public void Invite(LanCallViewModel _, CallSession call) { Call = call; Invitation?.Invoke(call); }
         public void Ready() => Accepted?.Invoke(new(Call, []));
         public void RemoteEndpoint(Guid id) => Signal?.Invoke(id, new("rtp-endpoint",
             Endpoint: new("127.0.0.1", 5006, new string('c', 32), new string('d', 28))));

@@ -4,6 +4,7 @@ using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using PostIt.Services;
 using Yavsc.Abstract.Chat.Calls;
 
@@ -19,6 +20,7 @@ internal sealed class AndroidLanCallMedia : ILanCallMedia
     private readonly TaskCompletionSource _captureEnded = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly Task _receiving;
     private IPodcastCapture? _capture;
+    private Bitmap? _avatar;
     private bool _disposed;
 
     public Control LocalVideo => _local;
@@ -70,6 +72,20 @@ internal sealed class AndroidLanCallMedia : ILanCallMedia
         _ = ObserveCaptureAsync(_capture);
     }
 
+    public async Task StartAvatarSendingAsync(LanCallEndpoint remote, string imagePath, string microphone, CancellationToken ct)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_capture != null) throw new InvalidOperationException("La capture de cet appel est deja demarree.");
+        if (microphone != "microphone") throw new ArgumentException("Microphone Android invalide.", nameof(microphone));
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, _lifetime.Token);
+        _avatar = new Bitmap(imagePath);
+        _local.Content = new Image { Source = _avatar, Height = 140 };
+        _capture = await AndroidPodcastCapture.StartAvatarCallAsync(
+            (fd, token) => _media.StartAvatarSendingAsync(remote, imagePath, $"fd/aac://{fd}", token),
+            _media.StopAsync, linked.Token);
+        _ = ObserveCaptureAsync(_capture);
+    }
+
     private async Task ObserveCaptureAsync(IPodcastCapture capture)
     {
         try
@@ -100,6 +116,7 @@ internal sealed class AndroidLanCallMedia : ILanCallMedia
             finally
             {
                 _local.Content = null;
+                _avatar?.Dispose();
                 try { await _media.StopAsync(); }
                 finally
                 {

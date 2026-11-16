@@ -1,12 +1,15 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -19,6 +22,8 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly ILanCallSignaling _signaling;
     private readonly Func<string, int, ILanCallMedia> _createMedia;
+    private readonly Func<string, CancellationToken, Task<Bitmap?>>? _loadAvatar;
+    private string? _avatarPath;
     private readonly SemaphoreSlim _events = new(1);
     private readonly CancellationTokenSource _lifetime = new();
     private CancellationTokenSource? _callLifetime;
@@ -26,6 +31,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
     private CallSession? _call;
     private bool _disposed;
     private bool _accepting;
+    private bool _caller;
     private bool _endpointReceived;
     private string? _activeCamera;
     private string? _activeMicrophone;
@@ -48,18 +54,23 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
     [ObservableProperty] public partial string Status { get; set; } = "Appel LAN/VPN : aucun appel.";
     [ObservableProperty, NotifyPropertyChangedFor(nameof(CanConfigure))]
     public partial bool Incoming { get; set; }
-    [ObservableProperty, NotifyPropertyChangedFor(nameof(CanConfigure))]
+    [ObservableProperty, NotifyPropertyChangedFor(nameof(CanConfigure)), NotifyPropertyChangedFor(nameof(IsAudioCall))]
     public partial bool Busy { get; set; }
     [ObservableProperty] public partial bool Preparing { get; set; }
     [ObservableProperty] public partial Control? LocalVideo { get; set; }
     [ObservableProperty] public partial Control? RemoteVideo { get; set; }
+    [ObservableProperty, NotifyPropertyChangedFor(nameof(IsAudioCall))]
+    public partial bool AudioOnly { get; set; }
+    public bool IsAudioCall => Busy && AudioOnly;
+    public bool SupportsAudioOnly => _loadAvatar != null;
     public bool CanConfigure => !Busy || Incoming;
 
     public LanCallViewModel(ILanCallSignaling signaling, Func<string, int, ILanCallMedia>? createMedia = null,
-        Settings? settings = null)
+        Settings? settings = null, Func<string, CancellationToken, Task<Bitmap?>>? loadAvatar = null)
     {
         _signaling = signaling;
         _settings = settings;
+        _loadAvatar = loadAvatar;
         _createMedia = createMedia ?? Platform.CreateLanCallMedia ??
             ((address, port) => new LinuxLanCallVideo(address, port));
         signaling.Invitation += OnInvitation;
@@ -178,7 +189,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
                 foreach (var device in streamer.GetAudioCaptureDevices()) Microphones.Add(new(device.Key, device.Value));
             }
             RestoreDevices();
-            Status = Cameras.Count == 0 ? "Aucune camera detectee. Verifiez les peripheriques puis actualisez."
+            Status = Cameras.Count == 0 ? "Aucune camera detectee ; un appel audio seul reste possible si disponible."
                 : Incoming && _call != null
                     ? $"{_call.Caller} propose un appel dans {_call.RoomName}. Selectionnez vos peripheriques puis acceptez ou refusez."
                 : "Selectionnez le pair, l'adresse IPv4/IPv6 locale ou publique et les peripheriques. Utilisez un casque.";
@@ -197,31 +208,44 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         finally { _restoringPreferences = false; }
     }
 
-    private void ValidateSelection()
+    private void ValidateSelection(bool audioOnly)
     {
         if (!AllowAddressDisclosure)
             throw new InvalidOperationException("Confirmez le partage de votre adresse IP avec le pair.");
-        if (Camera == null || Microphone == null)
-            throw new InvalidOperationException("Une camera et un microphone sont requis.");
+        if (Microphone == null || (!audioOnly && Camera == null))
+            throw new InvalidOperationException(audioOnly ? "Un microphone est requis."
+                : "Une camera et un microphone sont requis.");
+        if (audioOnly && !SupportsAudioOnly)
+            throw new InvalidOperationException("Le chargement de l'avatar est indisponible pour cet appel SRTP.");
         if (Address == null || !Addresses.Contains(Address) || !LanCallNetwork.IsUnicastAddress(Address) ||
             !int.TryParse(Port, out var port) || port is < 1024 or > 65534 || port % 2 != 0)
             throw new InvalidOperationException("Selectionnez une adresse locale et un port UDP pair (1024-65534).");
-        _activeCamera = Camera.Value;
+        _activeCamera = audioOnly ? null : Camera!.Value;
         _activeMicrophone = Microphone.Value;
         _activeAddress = Address;
         _activePort = port;
     }
 
     [RelayCommand]
-    private Task InviteAsync() => RunAsync(async () =>
+    private Task InviteAsync() => InviteCoreAsync(false);
+
+    [RelayCommand]
+    private Task InviteAudioAsync() => InviteCoreAsync(true);
+
+    private Task InviteCoreAsync(bool audioOnly) => RunAsync(async () =>
     {
         if (Busy) throw new InvalidOperationException("Un appel est deja en cours.");
-        ValidateSelection();
+        ValidateSelection(audioOnly);
         if (string.IsNullOrWhiteSpace(Target) || string.IsNullOrWhiteSpace(Room))
             throw new InvalidOperationException("Selectionnez une salle jointe et un autre utilisateur.");
         Busy = true;
-        _call = await _signaling.InviteLanAsync(Room, Target.Trim(), _lifetime.Token);
-        if (_call.Transport != CallTransports.LanSrtp || _call.DisplayMode != CallDisplayMode.AudioVideo)
+        AudioOnly = audioOnly;
+        _caller = true;
+        _call = audioOnly
+            ? await _signaling.InviteLanAudioAsync(Room, Target.Trim(), _lifetime.Token)
+            : await _signaling.InviteLanAsync(Room, Target.Trim(), _lifetime.Token);
+        if (_call.Transport != CallTransports.LanSrtp ||
+            _call.DisplayMode != (audioOnly ? CallDisplayMode.AudioOnly : CallDisplayMode.AudioVideo))
             throw new InvalidOperationException("Mode d'appel SRTP incompatible.");
         Status = $"Invitation envoyee a {_call.Callee} ; attente du consentement.";
     });
@@ -231,7 +255,7 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
     {
         if (_call == null || !Incoming)
             throw new InvalidOperationException("Aucune invitation a accepter.");
-        ValidateSelection();
+        ValidateSelection(_call.DisplayMode == CallDisplayMode.AudioOnly);
         Incoming = false;
         _accepting = true;
         await _signaling.AcceptAsync(_call.Id, _lifetime.Token);
@@ -250,7 +274,8 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         if (call.Transport != CallTransports.LanSrtp) return;
         Queue(async () =>
         {
-            if (call.DisplayMode != CallDisplayMode.AudioVideo)
+            if (call.DisplayMode is not (CallDisplayMode.AudioVideo or CallDisplayMode.AudioOnly) ||
+                (call.DisplayMode == CallDisplayMode.AudioOnly && !SupportsAudioOnly))
             {
                 await _signaling.EndAsync(call.Id, _lifetime.Token);
                 Status = "Le mode audio seul n'est pas disponible en SRTP.";
@@ -259,11 +284,13 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
             if (_call != null) throw new InvalidOperationException("Invitation concurrente inattendue.");
             if (call.RelayOnly) throw new InvalidOperationException("Le mode LAN ne peut pas masquer les adresses IP.");
             _call = call;
+            _caller = false;
+            AudioOnly = call.DisplayMode == CallDisplayMode.AudioOnly;
             Room = call.RoomName;
             Target = call.Caller;
             Busy = true;
             Incoming = true;
-            Status = $"{call.Caller} propose un appel SRTP dans {call.RoomName}. Acceptez ou refusez.";
+            Status = $"{call.Caller} propose un appel {(AudioOnly ? "audio " : "")}SRTP dans {call.RoomName}. Acceptez ou refusez.";
             await Task.CompletedTask;
         });
     }
@@ -273,13 +300,24 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         if (_call?.Id != accepted.Session.Id) return;
         if (_media != null) throw new InvalidOperationException("Acceptation repetee.");
         if (accepted.Session.Transport != CallTransports.LanSrtp || accepted.Session.RelayOnly ||
-            accepted.Session.DisplayMode != CallDisplayMode.AudioVideo ||
+            accepted.Session.DisplayMode != _call.DisplayMode ||
             (Incoming && !_accepting))
             throw new InvalidOperationException("Acceptation ou politique de transport inattendue.");
         _call = accepted.Session;
         Incoming = false;
         _accepting = false;
         _callLifetime = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        if (AudioOnly)
+        {
+            var user = _caller ? _call.Caller : _call.Callee;
+            using var avatar = await _loadAvatar!(user, _callLifetime.Token)
+                ?? throw new InvalidOperationException("Votre avatar est indisponible. Verifiez votre profil et reessayez.");
+            _callLifetime.Token.ThrowIfCancellationRequested();
+            _avatarPath = Path.Combine(Path.GetTempPath(), $"postit-call-avatar-{Guid.NewGuid():N}.png");
+            using var scaled = avatar.CreateScaledBitmap(new PixelSize(320, 320), BitmapInterpolationMode.HighQuality);
+            using var file = new FileStream(_avatarPath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+            scaled.Save(file, PngBitmapEncoderOptions.Default);
+        }
         _media = _createMedia(_activeAddress!, _activePort);
         LocalVideo = _media.LocalVideo;
         RemoteVideo = _media.RemoteVideo;
@@ -295,8 +333,12 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
             signal.Endpoint?.IsValid() != true || _endpointReceived)
             throw new InvalidOperationException("Destination SRTP manquante, invalide ou repetee.");
         _endpointReceived = true;
-        await _media.StartSendingAsync(signal.Endpoint, _activeCamera!, _activeMicrophone!, _callLifetime.Token);
-        Status = "Emission SRTP demarree ; verification de la reception audio-video.";
+        if (AudioOnly)
+            await _media.StartAvatarSendingAsync(signal.Endpoint, _avatarPath!, _activeMicrophone!, _callLifetime.Token);
+        else
+            await _media.StartSendingAsync(signal.Endpoint, _activeCamera!, _activeMicrophone!, _callLifetime.Token);
+        Status = AudioOnly ? "Emission avatar et microphone SRTP demarree ; verification de la reception audio-video."
+            : "Emission SRTP demarree ; verification de la reception audio-video.";
     });
 
     private void OnEnded(CallEnded ended) => QueueStop(ended.CallId, async () =>
@@ -331,7 +373,9 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
                     received = true;
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        if (_call?.Id == id) Status = "Reception audio-video SRTP etablie (LAN/VPN).";
+                        if (_call?.Id == id) Status = AudioOnly
+                            ? "Reception audio-video SRTP etablie, camera remplacee par votre avatar (LAN/VPN)."
+                            : "Reception audio-video SRTP etablie (LAN/VPN).";
                     });
                 }
                 if (!received && start.Elapsed > TimeSpan.FromSeconds(30))
@@ -397,14 +441,26 @@ public partial class LanCallViewModel : ObservableObject, IAsyncDisposable
         {
             LocalVideo = null;
             RemoteVideo = null;
+            AudioOnly = false;
             _callLifetime?.Dispose();
             _callLifetime = null;
             Status = status;
-        }
-        if (notify && call != null)
-        {
-            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-            await _signaling.EndAsync(call.Id, timeout.Token);
+            try
+            {
+                if (_avatarPath != null)
+                {
+                    File.Delete(_avatarPath);
+                    _avatarPath = null;
+                }
+            }
+            finally
+            {
+                if (notify && call != null)
+                {
+                    using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                    await _signaling.EndAsync(call.Id, timeout.Token);
+                }
+            }
         }
     }
 

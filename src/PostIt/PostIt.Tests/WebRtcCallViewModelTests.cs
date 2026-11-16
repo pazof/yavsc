@@ -354,6 +354,8 @@ public sealed class WebRtcCallViewModelTests
         }
         public Task<CallSession> InviteLanAsync(string room, string user, CancellationToken ct = default) =>
             throw new InvalidOperationException("Legacy LAN transport must not be used");
+        public Task<CallSession> InviteLanAudioAsync(string room, string user, CancellationToken ct = default) =>
+            throw new InvalidOperationException("Legacy LAN transport must not be used");
         public Task AcceptAsync(Guid callId, CancellationToken ct = default) { Ready(); return Task.CompletedTask; }
         public Task EndAsync(Guid callId, CancellationToken ct = default)
         { EndedCalls.Add(callId); return Task.CompletedTask; }

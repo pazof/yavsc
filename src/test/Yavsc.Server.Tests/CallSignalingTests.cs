@@ -63,9 +63,6 @@ public sealed class CallSignalingTests
         await f.Service.SetContactPreferencesAsync("bob-1", new(true, false, true, true));
         await f.Service.SetContactPreferencesAsync("bob-2", new(true, true, true));
         await Assert.ThrowsAsync<HubException>(() => f.Service.InviteAsync(
-            "General", "alice", "bob", "alice-device", ["bob-1"], false,
-            transport: CallTransports.LanSrtp, displayMode: CallDisplayMode.AudioOnly));
-        await Assert.ThrowsAsync<HubException>(() => f.Service.InviteAsync(
             "General", "alice", "bob", "alice-device", ["bob-2"], false,
             displayMode: CallDisplayMode.AudioOnly));
         var call = await f.Service.InviteAsync("General", "alice", "bob", "alice-device", ["bob-1", "bob-2"],
@@ -80,6 +77,23 @@ public sealed class CallSignalingTests
         await Assert.ThrowsAsync<HubException>(() => f.Service.InviteAsync(
             "General", "alice", "bob", "alice-device", ["bob-1"], false,
             displayMode: (CallDisplayMode)42));
+    }
+
+    [Fact]
+    public async Task Srtp_audio_only_requires_its_own_capability_and_audio_preference()
+    {
+        using var f = new Fixture();
+        f.Options.EnableLanCalls = true;
+        await f.Service.SetContactPreferencesAsync("alice-device", new(true, true, true, true, true));
+        await f.Service.SetContactPreferencesAsync("bob-1", new(true, true, true, true));
+        await f.Service.SetContactPreferencesAsync("bob-2", new(true, false, true, false, true));
+        var call = await f.Service.InviteAsync("General", "alice", "bob", "alice-device",
+            ["bob-1", "bob-2"], false, CallTransports.LanSrtp, CallDisplayMode.AudioOnly);
+        Assert.Equal(["bob-2"], Assert.Single(f.Hub.Messages).Targets);
+        await f.Service.AcceptAsync(call.Id, "bob", "bob-2", false);
+        Assert.Equal(CallDisplayMode.AudioOnly, Assert.IsType<CallAccepted>(f.Hub.Messages.Last().Arguments[0]).Session.DisplayMode);
+        await f.Service.SetContactPreferencesAsync("bob-2", new(false, true, true, false, true));
+        Assert.Equal("contact-preference-changed", Assert.IsType<CallEnded>(f.Hub.Messages.Last().Arguments[0]).Reason);
     }
 
     [Fact]

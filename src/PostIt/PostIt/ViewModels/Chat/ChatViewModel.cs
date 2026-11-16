@@ -70,7 +70,7 @@ namespace PostIt.ViewModels.Chat
         public partial WebRtcCallViewModel? VideoCall { get; set; }
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(ShowCallCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenCallCommand), nameof(OpenAudioCallCommand), nameof(ShowCallCommand))]
         public partial LanCallViewModel? LanCall { get; set; }
 
         [ObservableProperty]
@@ -191,7 +191,7 @@ namespace PostIt.ViewModels.Chat
         [RelayCommand(CanExecute = nameof(CanOpenAudioCall))]
         private Task OpenAudioCallAsync() => NavigateToCallAsync(configureTarget: true, audio: true);
 
-        private bool CanOpenAudioCall() => CanOpenCall() && VideoCall != null;
+        private bool CanOpenAudioCall() => CanOpenCall() && (VideoCall != null || LanCall?.SupportsAudioOnly == true);
 
         [RelayCommand(CanExecute = nameof(CanShowCall))]
         private Task ShowCallAsync() => NavigateToCallAsync(configureTarget: false);
@@ -202,7 +202,8 @@ namespace PostIt.ViewModels.Chat
             {
                 var app = App.Current as App ?? throw new InvalidOperationException("Application indisponible.");
                 var page = configureTarget ? PrepareCallPage() : new CallPageViewModel(this);
-                if (VideoCall?.Busy == true ? VideoCall.AudioOnly : audio && LanCall?.Busy != true)
+                if (VideoCall?.Busy == true ? VideoCall.AudioOnly :
+                    LanCall?.Busy == true ? LanCall.AudioOnly : audio)
                     page = new AudioCallPageViewModel(this);
                 await app.PushPageAsync(page);
             }
@@ -411,16 +412,20 @@ namespace PostIt.ViewModels.Chat
                 // Le hub est [Authorize] : on attache le Bearer OIDC.
 
                 Calls = new CallSignalingClient(_connection);
+                var avatars = new ActivityApiClient(_api, () => _settings.ApiUrl,
+                    () => _settings.Authentication.Authority);
+                Task<Avalonia.Media.Imaging.Bitmap?> LoadAvatar(string user) =>
+                    ImageHelper.LoadFromWeb(new Uri(avatars.BuildAvatarXsUrl(user)));
                 if (SupportsVideoCalls)
                 {
-                    var avatars = new ActivityApiClient(_api, () => _settings.ApiUrl,
-                        () => _settings.Authentication.Authority);
                     VideoCall = new WebRtcCallViewModel(Calls, settings: _settings,
-                        loadAvatar: user => ImageHelper.LoadFromWeb(new Uri(avatars.BuildAvatarXsUrl(user))))
+                        loadAvatar: LoadAvatar)
                         { Room = SelectedRoom ?? "" };
                 }
                 if (SupportsLanCalls)
-                    LanCall = new LanCallViewModel(Calls, settings: _settings) { Room = SelectedRoom ?? "" };
+                    LanCall = new LanCallViewModel(Calls, settings: _settings,
+                        loadAvatar: (user, token) => ImageHelper.LoadFromWeb(new Uri(avatars.BuildAvatarXsUrl(user)), token))
+                        { Room = SelectedRoom ?? "" };
                 Calls.Invitation += call =>
                 {
                     if ((call.Transport == Yavsc.Abstract.Chat.Calls.CallTransports.LanSrtp && !SupportsLanCalls) ||

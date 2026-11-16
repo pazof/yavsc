@@ -2,6 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Layout;
 using Avalonia.Threading;
 using LibVLCSharp.Avalonia;
 using Yavsc.Abstract.Chat.Calls;
@@ -12,6 +14,8 @@ public sealed class LinuxLanCallVideo : ILanCallMedia
 {
     private readonly LibVlcLanCallMedia _media;
     private readonly VideoView _local;
+    private readonly ContentControl _localContent;
+    private Bitmap? _avatar;
     private readonly VideoView _remote;
     private readonly TaskCompletionSource _localReady = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly CancellationTokenSource _lifetime = new();
@@ -20,7 +24,7 @@ public sealed class LinuxLanCallVideo : ILanCallMedia
     private bool _disposed;
     private readonly TaskCompletionSource _failure = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-    public Control LocalVideo => _local;
+    public Control LocalVideo => _localContent;
     public Control RemoteVideo => _remote;
     public LanCallEndpoint Endpoint => _media.Endpoint;
     public Task Completion { get; }
@@ -30,6 +34,12 @@ public sealed class LinuxLanCallVideo : ILanCallMedia
     {
         _media = new LibVlcLanCallMedia(localAddress, port);
         _local = new VideoView { MediaPlayer = _media.Sender, MinHeight = 140 };
+        _localContent = new ContentControl
+        {
+            Content = _local,
+            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+            VerticalContentAlignment = VerticalAlignment.Stretch
+        };
         _remote = new VideoView { MediaPlayer = _media.Receiver, MinHeight = 260 };
         _local.LayoutUpdated += OnLocalLayout;
         _remote.LayoutUpdated += OnRemoteLayout;
@@ -81,6 +91,16 @@ public sealed class LinuxLanCallVideo : ILanCallMedia
         await _media.StartSendingAsync(remote, camera, microphone, ct);
     }
 
+    public async Task StartAvatarSendingAsync(LanCallEndpoint remote, string imagePath, string microphone, CancellationToken ct)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_avatar != null) throw new InvalidOperationException("La capture de cet appel est deja demarree.");
+        _avatar = new Bitmap(imagePath);
+        _local.MediaPlayer = null;
+        _localContent.Content = new Image { Source = _avatar, Height = 140 };
+        await _media.StartAvatarSendingAsync(remote, imagePath, $"pulse://{microphone}", ct);
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (_disposed) return;
@@ -94,6 +114,8 @@ public sealed class LinuxLanCallVideo : ILanCallMedia
         {
             _local.MediaPlayer = null;
             _remote.MediaPlayer = null;
+            _localContent.Content = null;
+            _avatar?.Dispose();
             try { await _media.DisposeAsync(); }
             finally
             {

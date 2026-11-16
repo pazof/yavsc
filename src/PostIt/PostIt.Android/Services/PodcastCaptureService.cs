@@ -22,7 +22,7 @@ public sealed class PodcastCaptureService : Service
     internal AndroidPodcastCapture? Capture { get; set; }
 
     public static async Task<PodcastCaptureService> StartAsync(Activity activity, bool microphone,
-        CancellationToken ct, bool call = false)
+        CancellationToken ct, bool call = false, bool camera = true)
     {
         if (_pending is not null) throw new InvalidOperationException("Un direct Android est deja en cours.");
         var pending = new TaskCompletionSource<PodcastCaptureService>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -30,7 +30,7 @@ public sealed class PodcastCaptureService : Service
         try
         {
             var intent = new Intent(activity, typeof(PodcastCaptureService))
-                .PutExtra("microphone", microphone).PutExtra("call", call);
+                .PutExtra("microphone", microphone).PutExtra("call", call).PutExtra("camera", camera);
             activity.StartForegroundService(intent);
             return await pending.Task.WaitAsync(TimeSpan.FromSeconds(10), ct);
         }
@@ -68,8 +68,10 @@ public sealed class PodcastCaptureService : Service
             var builder = new NotificationCompat.Builder(this, Channel);
             builder.SetSmallIcon(global::Android.Resource.Drawable.IcMenuCamera);
             var call = intent?.GetBooleanExtra("call", false) == true;
-            builder.SetContentTitle(call ? "Appel audio-video LAN/VPN" : "Podcast en direct");
-            builder.SetContentText(call ? "Camera et microphone actifs. Toucher pour revenir a l'appel."
+            var camera = intent?.GetBooleanExtra("camera", true) != false;
+            builder.SetContentTitle(call ? camera ? "Appel audio-video LAN/VPN" : "Appel audio LAN/VPN" : "Podcast en direct");
+            builder.SetContentText(call ? camera ? "Camera et microphone actifs. Toucher pour revenir a l'appel."
+                : "Avatar et microphone actifs. Toucher pour revenir a l'appel."
                 : "Camera active. Toucher pour revenir au direct.");
             builder.SetContentIntent(open);
             builder.SetOngoing(true);
@@ -78,7 +80,7 @@ public sealed class PodcastCaptureService : Service
             var type = (ForegroundService)0;
             if (OperatingSystem.IsAndroidVersionAtLeast(30))
             {
-                type = ForegroundService.TypeCamera;
+                if (camera) type = ForegroundService.TypeCamera;
                 if (intent?.GetBooleanExtra("microphone", false) == true) type |= ForegroundService.TypeMicrophone;
             }
             ServiceCompat.StartForeground(this, NotificationId, notification, (int)type);

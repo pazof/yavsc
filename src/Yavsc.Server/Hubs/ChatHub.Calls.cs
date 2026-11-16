@@ -26,6 +26,9 @@ public partial class ChatHub
     public Task<CallSession> InviteLanCall(string roomName, string callee) =>
         InviteCoreAsync(roomName, callee, CallTransports.LanSrtp);
 
+    public Task<CallSession> InviteLanAudioCall(string roomName, string callee) =>
+        InviteCoreAsync(roomName, callee, CallTransports.LanSrtp, CallDisplayMode.AudioOnly);
+
     private async Task<CallSession> InviteCoreAsync(string roomName, string callee, string transport,
         CallDisplayMode mode = CallDisplayMode.AudioVideo)
     {

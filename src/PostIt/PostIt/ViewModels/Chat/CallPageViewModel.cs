@@ -6,7 +6,7 @@ public class CallPageViewModel(ChatViewModel chat) : ViewModelBase
 {
     public virtual string Header => "Appel audio-video";
     public virtual bool IsAudioPage => false;
-    public bool ShowLanCalls => !IsAudioPage && Chat.SupportsLanCalls;
+    public bool ShowLanCalls => Chat.SupportsLanCalls && (!IsAudioPage || Chat.LanCall?.SupportsAudioOnly == true);
     public virtual string Description => "Choisissez WebRTC ou SRTP direct. Les deux participants doivent etre presents dans le meme salon. Quitter cette page termine l'appel.";
     public ChatViewModel Chat { get; } = chat;
     public override bool CanNavigateNext { get; protected set; } = false;

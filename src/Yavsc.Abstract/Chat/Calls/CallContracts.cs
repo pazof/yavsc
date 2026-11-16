@@ -8,6 +8,7 @@ public static class CallHubMethods
     public const string Invite = "InviteCall";
     public const string InviteAudio = "InviteAudioCall";
     public const string InviteLan = "InviteLanCall";
+    public const string InviteLanAudio = "InviteLanAudioCall";
     public const string Accept = "AcceptCall";
     public const string End = "EndCall";
     public const string Signal = "SendCallSignal";
@@ -18,7 +19,7 @@ public static class CallHubMethods
 }
 
 public sealed record ContactPreferences(bool AllowAudioCalls, bool AllowVideoCalls, bool AllowPrivateMessages,
-    bool SupportsAudioOnly = false);
+    bool SupportsAudioOnly = false, bool SupportsLanAudioOnly = false);
 
 public enum CallDisplayMode
 {

@@ -32,9 +32,11 @@ internal static class PodcastPermissions
         _pending = pending;
         ActivityCompat.RequestPermissions(activity, permissions, RequestCode);
         if (!await pending.Task.WaitAsync(ct))
-            throw new UnauthorizedAccessException(notifications
+            throw new UnauthorizedAccessException(!camera && microphone
+                ? notifications ? "Autorisez le microphone et les notifications pour l'appel."
+                    : "Autorisez le microphone pour l'appel."
+                : notifications
                 ? "Autorisez la camera, les notifications et, si selectionne, le microphone pour diffuser."
-                : microphone && !camera ? "Autorisez le microphone pour l'appel."
                 : microphone ? "Autorisez la camera et le microphone pour l'appel."
                 : "Autorisez la camera pour la previsualisation.");
     }

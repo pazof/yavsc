@@ -144,6 +144,8 @@ public sealed class ChatHubConnection : IAsyncDisposable
         connection.InvokeAsync(CallHubMethods.SetContactPreferences,
             new ContactPreferences(_api.Settings.AllowAudioCalls, _api.Settings.AllowVideoCalls,
                 _api.Settings.AllowPrivateMessages, Platform.CreateWebRtcMedia != null ||
+                (OperatingSystem.IsLinux() && !OperatingSystem.IsAndroid()),
+                Platform.CreateLanCallMedia != null ||
                 (OperatingSystem.IsLinux() && !OperatingSystem.IsAndroid())), ct);
 
     public async Task StopAsync(CancellationToken ct = default)
