@@ -45,10 +45,12 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
     }
 
     public async Task<PodcastResponse> CreateAsync(string ownerId, string ownerName, string title, CancellationToken ct,
-        Guid? id = null, bool refineReplay = false)
+        Guid? id = null, bool refineReplay = false, int retentionDays = PodcastRetention.DefaultDays)
     {
         if (string.IsNullOrWhiteSpace(ownerId) || string.IsNullOrWhiteSpace(title) || title.Trim().Length > 160)
             throw new PodcastException(400, "Un titre de 1 a 160 caracteres et un utilisateur sont requis.");
+        if (retentionDays is < 0 or > PodcastRetention.MaxDays)
+            throw new PodcastException(400, $"La conservation des originaux va de 0 a {PodcastRetention.MaxDays} jours.");
         await _gate.WaitAsync(ct);
         try
         {
@@ -68,7 +70,7 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
                 throw new PodcastException(413, "Nombre maximal de podcasts atteint. Supprimez un ancien replay.");
             var now = _clock.GetUtcNow();
             var podcast = new PodcastResponse(id ?? Guid.NewGuid(), title.Trim(), ownerId, ownerName,
-                now, now, PodcastState.Live, 0, 0, 0) { RefineReplay = refineReplay };
+                now, now, PodcastState.Live, 0, 0, 0) { RefineReplay = refineReplay, RetentionDays = retentionDays };
             var document = new Document(new(podcast, Array.Empty<PodcastSegmentResponse>()), Array.Empty<string>());
             Directory.CreateDirectory(DirectoryFor(podcast.Id));
             await SaveAsync(document, ct);
@@ -197,11 +199,13 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             var podcast = document.Manifest.Podcast;
             if (podcast.State == PodcastState.Completed)
                 return podcast;
+            var now = _clock.GetUtcNow();
             var updated = podcast with
             {
-                State = PodcastState.Completed, UpdatedAt = _clock.GetUtcNow(),
+                State = PodcastState.Completed, UpdatedAt = now,
                 Replay = podcast.Replay ?? new(PodcastReplayState.Pending),
-                Draft = podcast.RefineReplay ? podcast.Draft ?? NewDraft() : null
+                Draft = podcast.RefineReplay ? podcast.Draft ?? NewDraft() : null,
+                OriginalsExpireAt = podcast.OriginalsExpireAt ?? EndExpiry(podcast, now)
             };
             await SaveAsync(document with { Manifest = document.Manifest with { Podcast = updated } }, ct);
             _logger.LogInformation("Podcast {PodcastId} completed with {Segments} segments", id, updated.SegmentCount);
@@ -364,6 +368,10 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
 
     private static PodcastDraftResponse NewDraft() => new(PodcastDraftState.Preparing, 0, [], []);
 
+    /// <summary>The retention delay runs from the end of the live; with 0 days it starts on publication.</summary>
+    private static DateTimeOffset? EndExpiry(PodcastResponse podcast, DateTimeOffset endedAt)
+        => podcast.RefineReplay && podcast.RetentionDays > 0 ? endedAt.AddDays(podcast.RetentionDays) : null;
+
     private static bool IsRemuxQueued(PodcastResponse podcast) => podcast.RefineReplay
         ? podcast.Draft?.State == PodcastDraftState.Preparing
         : podcast.State == PodcastState.Completed && podcast.Replay?.State == PodcastReplayState.Pending;
@@ -375,6 +383,8 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
     {
         var document = Owned(id, ownerId);
         var draft = document.Manifest.Podcast.Draft;
+        if (document.Manifest.Podcast.OriginalsDeleted)
+            throw new PodcastException(409, "Les originaux ont ete supprimes : ce replay ne peut plus etre reedite.");
         if (!document.Manifest.Podcast.RefineReplay || draft is null)
             throw new PodcastException(409, "Ce replay n'est pas en cours de raffinage.");
         if (draft.State != PodcastDraftState.Ready)
@@ -519,7 +529,9 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
                     Draft = latest.Draft! with
                     {
                         State = PodcastDraftState.Ready, PublishedRevision = draft.Revision, Error = null
-                    }
+                    },
+                    OriginalsExpireAt = latest.OriginalsExpireAt
+                        ?? (latest.RetentionDays == 0 ? _clock.GetUtcNow() : null)
                 };
                 await SaveAsync(current with { Manifest = current.Manifest with { Podcast = updated } }, ct);
                 _logger.LogInformation("Podcast {PodcastId} draft revision {Revision} published ({Bytes} bytes)",
@@ -593,6 +605,73 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         finally { _gate.Release(); }
     }
 
+    public async Task<PodcastResponse> DeleteOriginalsAsync(Guid id, string ownerId, CancellationToken ct)
+    {
+        await _gate.WaitAsync(ct);
+        try
+        {
+            await LoadAsync(ct);
+            var document = Owned(id, ownerId);
+            var podcast = document.Manifest.Podcast;
+            if (podcast.OriginalsDeleted) return podcast;
+            if (!podcast.RefineReplay || PublishedBytes(podcast) == 0)
+                throw new PodcastException(409, "Les originaux ne peuvent etre supprimes qu'apres la publication du replay.");
+            if (!CanPurge(document))
+                throw new PodcastException(409, "Publication en cours. Reessayez apres sa finalisation.");
+            return await PurgeOriginalsAsync(document, ct);
+        }
+        finally { _gate.Release(); }
+    }
+
+    public async Task<IReadOnlyList<PodcastResponse>> PurgeExpiredOriginalsAsync(CancellationToken ct)
+    {
+        await _gate.WaitAsync(ct);
+        try
+        {
+            await LoadAsync(ct);
+            var now = _clock.GetUtcNow();
+            var removed = new List<PodcastResponse>();
+            foreach (var document in _documents.Values.Where(d => d.Manifest.Podcast is
+                { RefineReplay: true, OriginalsDeleted: false, OriginalsExpireAt: { } expiry } && expiry <= now
+                && CanPurge(d)).ToArray())
+            {
+                var podcast = document.Manifest.Podcast;
+                if (PublishedBytes(podcast) > 0)
+                {
+                    await PurgeOriginalsAsync(document, ct);
+                    continue;
+                }
+                // Nothing was published before the deadline: the whole emission expires.
+                Directory.Delete(DirectoryFor(podcast.Id), recursive: true);
+                _documents.Remove(podcast.Id);
+                removed.Add(podcast);
+                _logger.LogInformation("Unpublished refined podcast {PodcastId} expired and was deleted", podcast.Id);
+            }
+            return removed;
+        }
+        finally { _gate.Release(); }
+    }
+
+    private bool CanPurge(Document document) => _preparingReplay != document.Manifest.Podcast.Id
+        && document.Manifest.Podcast.Draft?.State is not (PodcastDraftState.Preparing or PodcastDraftState.Publishing);
+
+    private async Task<PodcastResponse> PurgeOriginalsAsync(Document document, CancellationToken ct)
+    {
+        var podcast = document.Manifest.Podcast;
+        var directory = DirectoryFor(podcast.Id);
+        foreach (var segment in document.Manifest.Segments) File.Delete(SegmentPath(podcast.Id, segment.Sequence));
+        File.Delete(Path.Combine(directory, SourceFileName));
+        File.Delete(Path.Combine(directory, "source.tmp.mp4"));
+        var updated = podcast with
+        {
+            SegmentCount = 0, Bytes = PublishedBytes(podcast), Draft = null,
+            OriginalsExpireAt = null, OriginalsDeleted = true
+        };
+        await SaveAsync(new(new(updated, []), []), ct);
+        _logger.LogInformation("Podcast {PodcastId} originals and draft deleted; the published MP4 remains", podcast.Id);
+        return updated;
+    }
+
     private async Task LoadAsync(CancellationToken ct)
     {
         if (_loaded) return;
@@ -633,7 +712,8 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         if (podcast.RefineReplay)
             podcast = podcast with
             {
-                Replay = podcast.Replay ?? new(PodcastReplayState.Pending), Draft = podcast.Draft ?? NewDraft()
+                Replay = podcast.Replay ?? new(PodcastReplayState.Pending), Draft = podcast.Draft ?? NewDraft(),
+                OriginalsExpireAt = podcast.OriginalsExpireAt ?? EndExpiry(podcast, podcast.UpdatedAt)
             };
         await SaveAsync(document with { Manifest = document.Manifest with { Podcast = podcast } }, ct);
         _logger.LogWarning("Podcast {PodcastId} interrupted; committed segments remain playable", podcast.Id);

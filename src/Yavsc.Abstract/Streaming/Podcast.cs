@@ -62,6 +62,16 @@ public sealed record CreatePodcastRequest
     public required string Title { get; init; }
     /// <summary>Keeps the replay private until its owner edits and publishes it.</summary>
     public bool RefineReplay { get; init; }
+    /// <summary>Days the originals and draft of a refined replay are kept after the live; 0 deletes them on publication.</summary>
+    [Range(0, PodcastRetention.MaxDays)]
+    public int RetentionDays { get; init; } = PodcastRetention.DefaultDays;
+}
+
+/// <summary>Retention bounds of the originals and draft of a refined replay.</summary>
+public static class PodcastRetention
+{
+    public const int DefaultDays = 7;
+    public const int MaxDays = 365;
 }
 
 /// <summary>Prepares or edits an emission before its manual start.</summary>
@@ -76,6 +86,9 @@ public sealed record PreparePodcastRequest
     public string? PublicAnnouncement { get; init; }
     /// <summary>Keeps the replay private until its owner edits and publishes it. Ignored for OBS.</summary>
     public bool RefineReplay { get; init; }
+    /// <summary>Days the originals and draft of a refined replay are kept after the live; 0 deletes them on publication.</summary>
+    [Range(0, PodcastRetention.MaxDays)]
+    public int RetentionDays { get; init; } = PodcastRetention.DefaultDays;
 }
 
 /// <summary>Public presentation only; never includes playback addresses or private metadata.</summary>
@@ -98,6 +111,15 @@ public sealed record PodcastResponse(
     public bool RefineReplay { get; init; }
     /// <summary>Private draft of a refined replay; present for its owner only.</summary>
     public PodcastDraftResponse? Draft { get; init; }
+    /// <summary>Days the originals and draft of a refined replay are kept after the live.</summary>
+    public int RetentionDays { get; init; } = PodcastRetention.DefaultDays;
+    /// <summary>
+    /// When the originals and draft of a refined replay will be deleted; an emission never published by then
+    /// is deleted entirely.
+    /// </summary>
+    public DateTimeOffset? OriginalsExpireAt { get; init; }
+    /// <summary>The originals and draft were deleted; only the published MP4 remains and it cannot be re-edited.</summary>
+    public bool OriginalsDeleted { get; init; }
 }
 
 /// <summary>An independently decodable MPEG-TS HLS segment.</summary>

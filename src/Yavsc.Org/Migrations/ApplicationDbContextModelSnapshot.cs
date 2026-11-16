@@ -3247,6 +3247,9 @@ namespace Yavsc.Migrations
                     b.Property<bool>("RefineReplay")
                         .HasColumnType("boolean");
 
+                    b.Property<int>("RetentionDays")
+                        .HasColumnType("integer");
+
                     b.Property<DateTimeOffset?>("ScheduledStartAt")
                         .HasColumnType("timestamp with time zone");
 

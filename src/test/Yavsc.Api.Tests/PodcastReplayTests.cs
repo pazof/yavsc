@@ -16,10 +16,13 @@ public sealed class PodcastReplayTests : IDisposable
     private readonly List<LiveProcessor> _processors = [];
     private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
 
+    private readonly Clock _clock = new();
+
     private LiveProcessor New(long quota = 1024 * 1024)
     {
         var processor = new LiveProcessor(NullLoggerFactory.Instance,
-            Options.Create(new PodcastOptions { RootPath = _root, MaxSegmentBytes = 1024 * 1024, MaxOwnerBytes = quota }));
+            Options.Create(new PodcastOptions { RootPath = _root, MaxSegmentBytes = 1024 * 1024, MaxOwnerBytes = quota }),
+            _clock);
         _processors.Add(processor);
         return processor;
     }
@@ -274,9 +277,11 @@ public sealed class PodcastReplayTests : IDisposable
         Assert.Equal("video", probe.Trim());
     }
 
-    private async Task<PodcastResponse> Refined(LiveProcessor processor, int sourceBytes = 10)
+    private async Task<PodcastResponse> Refined(LiveProcessor processor, int sourceBytes = 10,
+        int retentionDays = PodcastRetention.DefaultDays)
     {
-        var podcast = await processor.CreateAsync("alice", "alice", "Refined", _ct, refineReplay: true);
+        var podcast = await processor.CreateAsync("alice", "alice", "Refined", _ct, refineReplay: true,
+            retentionDays: retentionDays);
         await processor.AppendAsync(podcast.Id, "alice", 0, 2, new MemoryStream(LiveProcessorTests.Packets()), _ct);
         await processor.AppendAsync(podcast.Id, "alice", 1, 2, new MemoryStream(LiveProcessorTests.Packets()), _ct);
         var completed = await processor.CompleteAsync(podcast.Id, "alice", _ct);
@@ -421,12 +426,95 @@ public sealed class PodcastReplayTests : IDisposable
         Assert.Equal(3, completed.Draft!.SourceBytes);
     }
 
+    private async Task<PodcastResponse> Publish(LiveProcessor processor, PodcastResponse podcast)
+    {
+        await processor.PublishDraftAsync(podcast.Id, "alice", podcast.Draft!.Revision, _ct);
+        Assert.True(await processor.PublishNextDraftAsync(new Editor((_, _, _, _, _) => Task.CompletedTask), _ct));
+        return (await processor.GetAsync(podcast.Id, _ct)).Podcast;
+    }
+
+    [Fact]
+    public async Task Retention_purges_published_originals_at_the_deadline_and_deletes_unpublished_emissions()
+    {
+        var processor = New();
+        var ended = _clock.Now;
+        var published = await Publish(processor, await Refined(processor));
+        var unpublished = await Refined(processor);
+        var publishing = await Refined(processor);
+        Assert.Equal(ended.AddDays(7), published.OriginalsExpireAt);
+        Assert.Null(PodcastVisibility.ForViewer(published, "bob").OriginalsExpireAt);
+        await processor.PublishDraftAsync(publishing.Id, "alice", 0, _ct);
+
+        _clock.Now = ended.AddDays(7).AddTicks(-1);
+        Assert.Empty(await processor.PurgeExpiredOriginalsAsync(_ct));
+        Assert.False((await processor.GetAsync(published.Id, _ct)).Podcast.OriginalsDeleted);
+
+        _clock.Now = ended.AddDays(7);
+        processor = New(); // The deadlines survive a restart.
+        Assert.Equal([unpublished.Id], (await processor.PurgeExpiredOriginalsAsync(_ct)).Select(p => p.Id));
+        Assert.False(Directory.Exists(Path.Combine(_root, unpublished.Id.ToString("N"))));
+        Assert.Equal(404, (await Assert.ThrowsAsync<PodcastException>(
+            () => processor.GetAsync(unpublished.Id, _ct))).StatusCode);
+
+        var purged = await processor.GetAsync(published.Id, _ct);
+        Assert.True(purged.Podcast.OriginalsDeleted);
+        Assert.Null(purged.Podcast.Draft);
+        Assert.Null(purged.Podcast.OriginalsExpireAt);
+        Assert.Empty(purged.Segments);
+        Assert.Equal(0, purged.Podcast.SegmentCount);
+        Assert.Equal(10, purged.Podcast.Bytes); // Only the published MP4 is still counted.
+        var directory = Path.Combine(_root, published.Id.ToString("N"));
+        Assert.Equal(["index.json", "replay.mp4"], Directory.GetFiles(directory).Select(Path.GetFileName).Order());
+        await using (var replay = await processor.OpenReplayAsync(published.Id, _ct)) Assert.Equal(10, replay.Length);
+        Assert.Equal(409, (await Assert.ThrowsAsync<PodcastException>(() => processor.SaveDraftAsync(
+            published.Id, "alice", Save(0, []), _ct))).StatusCode);
+        Assert.Equal(409, (await Assert.ThrowsAsync<PodcastException>(
+            () => processor.OpenDraftSourceAsync(published.Id, "alice", _ct))).StatusCode);
+
+        // A queued publication finishes before its originals are purged.
+        Assert.False((await processor.GetAsync(publishing.Id, _ct)).Podcast.OriginalsDeleted);
+        Assert.True(await processor.PublishNextDraftAsync(new Editor((_, _, _, _, _) => Task.CompletedTask), _ct));
+        Assert.Empty(await processor.PurgeExpiredOriginalsAsync(_ct));
+        Assert.True((await processor.GetAsync(publishing.Id, _ct)).Podcast.OriginalsDeleted);
+    }
+
+    [Fact]
+    public async Task Zero_day_retention_starts_on_publication_and_owner_can_delete_published_originals()
+    {
+        var processor = New();
+        Assert.Equal(400, (await Assert.ThrowsAsync<PodcastException>(() => processor.CreateAsync(
+            "alice", "alice", "Too long", _ct, refineReplay: true, retentionDays: 366))).StatusCode);
+        var immediate = await Refined(processor, retentionDays: 0);
+        Assert.Null(immediate.OriginalsExpireAt);
+        _clock.Now = _clock.Now.AddYears(1);
+        Assert.Empty(await processor.PurgeExpiredOriginalsAsync(_ct));
+        Assert.Equal(409, (await Assert.ThrowsAsync<PodcastException>(
+            () => processor.DeleteOriginalsAsync(immediate.Id, "alice", _ct))).StatusCode);
+        Assert.Equal(_clock.Now, (await Publish(processor, immediate)).OriginalsExpireAt);
+        Assert.Empty(await processor.PurgeExpiredOriginalsAsync(_ct));
+        Assert.True((await processor.GetAsync(immediate.Id, _ct)).Podcast.OriginalsDeleted);
+
+        var kept = await Publish(processor, await Refined(processor));
+        Assert.Equal(403, (await Assert.ThrowsAsync<PodcastException>(
+            () => processor.DeleteOriginalsAsync(kept.Id, "bob", _ct))).StatusCode);
+        var deleted = await processor.DeleteOriginalsAsync(kept.Id, "alice", _ct);
+        Assert.True(deleted.OriginalsDeleted);
+        Assert.Equal(deleted, await processor.DeleteOriginalsAsync(kept.Id, "alice", _ct));
+        Assert.False(File.Exists(Path.Combine(_root, kept.Id.ToString("N"), "source.mp4")));
+    }
+
     private static Remuxer Bytes(int count) => new((_, _, output, _, ct) => File.WriteAllBytesAsync(output, new byte[count], ct));
     private sealed class Editor(Func<string, IReadOnlyList<ReplayRange>, string, long, CancellationToken, Task> render)
         : IPodcastReplayEditor
     {
         public Task RenderAsync(string source, IReadOnlyList<ReplayRange> kept, string output, long max, CancellationToken ct)
             => render(source, kept, output, max, ct);
+    }
+
+    private sealed class Clock : TimeProvider
+    {
+        public DateTimeOffset Now { get; set; } = DateTimeOffset.UtcNow;
+        public override DateTimeOffset GetUtcNow() => Now;
     }
 
     private sealed class Remuxer(Func<string, int, string, long, CancellationToken, Task> remux) : IPodcastReplayRemuxer

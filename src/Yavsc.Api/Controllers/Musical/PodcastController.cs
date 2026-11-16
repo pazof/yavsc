@@ -61,7 +61,7 @@ public sealed class PodcastController(ILiveProcessor processor, IPodcastSchedule
         var ownerId = User.GetUserId();
         if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
         var response = await processor.CreateAsync(ownerId, User.Identity?.Name ?? ownerId, request.Title, ct,
-            refineReplay: request.RefineReplay);
+            refineReplay: request.RefineReplay, retentionDays: request.RetentionDays);
         return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
     }
 
@@ -196,6 +196,21 @@ public sealed class PodcastController(ILiveProcessor processor, IPodcastSchedule
         if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
         Response.Headers.CacheControl = "private, no-store";
         return File(await processor.OpenDraftSourceAsync(id, ownerId, ct), "video/mp4", enableRangeProcessing: true);
+    }
+
+    /// <summary>
+    /// Deletes the original segments, source and draft of a published refined replay. The published MP4
+    /// remains but can no longer be re-edited. Repeating the request is harmless.
+    /// </summary>
+    [HttpDelete("{id:guid}/originals")]
+    [ProducesResponseType<PodcastResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<PodcastResponse>> DeleteOriginals(Guid id, CancellationToken ct)
+    {
+        var ownerId = User.GetUserId();
+        if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
+        await processor.DeleteOriginalsAsync(id, ownerId, ct);
+        return Ok((await schedule.GetAsync(id, ownerId, ct)).Podcast);
     }
 
     /// <summary>Deletes an ended broadcast and releases its owner's podcast quota.</summary>

@@ -12,7 +12,7 @@ public static class PodcastVisibility
         => podcast.RefineReplay && podcast.State != PodcastState.Live;
 
     public static PodcastResponse ForViewer(PodcastResponse podcast, string? viewerId)
-        => podcast.OwnerId == viewerId ? podcast : podcast with { Draft = null };
+        => podcast.OwnerId == viewerId ? podcast : podcast with { Draft = null, OriginalsExpireAt = null };
 
     public static PodcastManifestResponse ForViewer(PodcastManifestResponse manifest, string? viewerId)
         => manifest.Podcast.OwnerId == viewerId ? manifest : manifest with

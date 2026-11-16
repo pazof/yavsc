@@ -17,6 +17,8 @@ public interface IPodcastScheduleService
     Task<PodcastManifestResponse> GetAsync(Guid id, string ownerId, CancellationToken ct);
     Task<IReadOnlyList<PodcastAnnouncementResponse>> AnnouncementsAsync(CancellationToken ct);
     Task DeleteAsync(Guid id, string ownerId, CancellationToken ct);
+    /// <summary>Marks the emissions whose media expired unpublished as deleted.</summary>
+    Task MarkExpiredAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct);
 }
 
 public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcessor processor,
@@ -29,8 +31,9 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
     {
         if (string.IsNullOrWhiteSpace(request.Title) || request.Title.Trim().Length > 160
             || request.ScheduledStartAt == default || request.PlannedDurationMinutes < 1
-            || request.PublicAnnouncement?.Length > 1023)
-            throw new PodcastException(400, "Titre, debut et duree positive en minutes requis.");
+            || request.PublicAnnouncement?.Length > 1023
+            || request.RetentionDays is < 0 or > PodcastRetention.MaxDays)
+            throw new PodcastException(400, "Titre, debut, duree positive en minutes et conservation de 0 a 365 jours requis.");
         await Gate.WaitAsync(ct);
         try
         {
@@ -59,6 +62,7 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
             flow.PlannedDurationMinutes = request.PlannedDurationMinutes;
             flow.PublicAnnouncement = request.PublicAnnouncement?.Trim() ?? "";
             flow.RefineReplay = request.RefineReplay;
+            flow.RetentionDays = request.RetentionDays;
             await db.SaveChangesAsync(ct);
             await db.Entry(flow).Reference(f => f.Owner).LoadAsync(ct);
             return Planned(flow);
@@ -90,7 +94,7 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
                     throw new PodcastException(404, "Les medias de cette emission sont introuvables.");
                 // OBS composes and finalizes its own content: refinement only applies to PostIt captures.
                 var podcast = await processor.CreateAsync(ownerId, flow.Owner.UserName ?? ownerId, flow.Title, ct, id,
-                    refineReplay: flow.RefineReplay && !obsConnectionId.HasValue);
+                    refineReplay: flow.RefineReplay && !obsConnectionId.HasValue, retentionDays: flow.RetentionDays);
                 flow.StartedAt ??= podcast.CreatedAt;
                 await db.SaveChangesAsync(ct);
                 return Enrich(podcast, flow);
@@ -172,6 +176,20 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
         finally { Gate.Release(); }
     }
 
+    public async Task MarkExpiredAsync(IReadOnlyCollection<Guid> ids, CancellationToken ct)
+    {
+        if (ids.Count == 0) return;
+        await Gate.WaitAsync(ct);
+        try
+        {
+            foreach (var flow in await db.LiveFlow.Where(f => f.PodcastId != null && ids.Contains(f.PodcastId.Value))
+                .ToListAsync(ct))
+                flow.PodcastDeleted = true;
+            await db.SaveChangesAsync(ct);
+        }
+        finally { Gate.Release(); }
+    }
+
     private async Task<LiveFlow> OwnedAsync(Guid id, string ownerId, CancellationToken ct)
     {
         var flow = await db.LiveFlow.Include(f => f.Owner).SingleOrDefaultAsync(f => f.PodcastId == id, ct);
@@ -184,7 +202,7 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
         flow.PodcastId!.Value, flow.Title, flow.OwnerId, flow.Owner.UserName ?? flow.OwnerId,
         flow.PreparedAt!.Value, flow.PreparedAt.Value, PodcastState.Planned, 0, 0, 0)
     {
-        RefineReplay = flow.RefineReplay && flow.ObsKeyHash is null
+        RefineReplay = flow.RefineReplay && flow.ObsKeyHash is null, RetentionDays = flow.RetentionDays
     }, flow);
 
     private static PodcastResponse Enrich(PodcastResponse podcast, LiveFlow flow) => podcast with

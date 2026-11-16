@@ -21,7 +21,7 @@ namespace Yavsc.Services
         Task<bool> AcceptStream (HttpContext context, ApplicationUser user, string destDir, string fileName);
 
         Task<PodcastResponse> CreateAsync(string ownerId, string ownerName, string title, CancellationToken ct,
-            Guid? id = null, bool refineReplay = false);
+            Guid? id = null, bool refineReplay = false, int retentionDays = PodcastRetention.DefaultDays);
         Task<IReadOnlyList<PodcastResponse>> ListAsync(CancellationToken ct);
         Task<PodcastManifestResponse> GetAsync(Guid id, CancellationToken ct);
         Task<PodcastResponse> AppendAsync(Guid id, string ownerId, int sequence,
@@ -36,6 +36,13 @@ namespace Yavsc.Services
         Task<PodcastResponse> PublishDraftAsync(Guid id, string ownerId, int revision, CancellationToken ct);
         Task<Stream> OpenDraftSourceAsync(Guid id, string ownerId, CancellationToken ct);
         Task<bool> PublishNextDraftAsync(IPodcastReplayEditor editor, CancellationToken ct);
+        /// <summary>Deletes the originals and draft of a published refined replay; the MP4 remains.</summary>
+        Task<PodcastResponse> DeleteOriginalsAsync(Guid id, string ownerId, CancellationToken ct);
+        /// <summary>
+        /// Applies the retention of refined replays: purges the originals of published ones and deletes
+        /// the emissions never published before their deadline, which are returned.
+        /// </summary>
+        Task<IReadOnlyList<PodcastResponse>> PurgeExpiredOriginalsAsync(CancellationToken ct);
         Task DeleteAsync(Guid id, string ownerId, CancellationToken ct);
     }
 

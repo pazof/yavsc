@@ -212,13 +212,14 @@ définis pour chaque état.
 Un brouillon et les originaux de l'émission sont conservés 7 jours par défaut ;
 la durée est un réglage de l'auteur, de 0 à 365 jours. Une tâche de fond
 supprime les brouillons et originaux expirés et prévient l'auteur dans
-l'interface. Avec une durée de 0 jour, ils sont supprimés dès la publication du
-MP4. Le MP4 publié n'est pas concerné, mais il ne peut plus être
-réédité ensuite. Le délai court à partir de la fin du direct (ou de son
-interruption), même si aucun replay n'a été publié : un brouillon jamais publié
-expire donc sans replay. À l'expiration, les segments originaux, la source
-`source.mp4` et le brouillon sont tous supprimés. Après publication, PostIt propose explicitement de supprimer
-le brouillon et les originaux.
+l'interface. Le délai court à partir de la fin du direct (ou de son
+interruption), même si aucun replay n'a été publié. Avec une durée de 0 jour,
+il commence à la première publication : les originaux sont supprimés dès la
+publication du MP4. À l'expiration, les segments originaux, la source
+`source.mp4` et le brouillon sont tous supprimés ; le MP4 publié est conservé
+mais ne peut plus être réédité. Une émission jamais publiée à l'échéance est
+supprimée entièrement. Après publication, PostIt propose explicitement de
+supprimer le brouillon et les originaux.
 
 #### Implémentation serveur du brouillon
 
@@ -259,8 +260,19 @@ Le brouillon privé est implémenté côté serveur ; l'éditeur PostIt reste à
   affiche « Replay en préparation » jusqu'à la publication.
 - **Limite connue** : la durée éditable est celle déclarée par les segments
   (arrondie à la milliseconde supérieure).
-- **Reste à faire** : rétention et suppression explicite des brouillons et
-  originaux, chapitres, client et éditeur PostIt.
+- **Rétention** : `RetentionDays` (0 à 365, 7 par défaut) accompagne
+  `RefineReplay` à la création ou à la préparation (colonne
+  `LiveFlow.RetentionDays`). `PodcastResponse.OriginalsExpireAt`, visible de
+  l'auteur seul, donne l'échéance : fin du direct + durée, ou date de
+  publication pour 0 jour. Le worker des replays applique l'échéance quand il
+  n'a rien d'autre à traiter, sans toucher une émission en préparation ou en
+  publication. Une émission publiée perd ses segments, sa source et son
+  brouillon (`OriginalsDeleted`, seul le MP4 reste compté dans le quota) ; une
+  émission jamais publiée est supprimée et son `LiveFlow` marqué supprimé.
+  `DELETE podcasts/{id}/originals` permet à l'auteur la même purge dès qu'un
+  MP4 est publié (409 sinon, sans effet si déjà faite).
+- **Reste à faire** : chapitres, client et éditeur PostIt (réglage de
+  conservation, échéance affichée, proposition de suppression après publication).
 
 Une émission interrompue doit rester récupérable par son auteur. Lorsqu'un
 direct programmé s'arrête après le délai « Direct interrompu », ou qu'un

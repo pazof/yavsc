@@ -221,6 +221,21 @@ public sealed class PodcastControllerTests(ApiWebServerFixture fixture) : IClass
             var published = (await owner.GetFromJsonAsync<PodcastManifestResponse>(path, _ct))!.Podcast;
             Assert.Equal(1, published.Draft!.PublishedRevision);
             Assert.Equal([2500L], published.Draft.Marks);
+
+            using (var denied = await listener.DeleteAsync($"{path}/originals", _ct))
+                Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+            using (var purged = await owner.DeleteAsync($"{path}/originals", _ct))
+            {
+                Assert.Equal(HttpStatusCode.OK, purged.StatusCode);
+                var podcastAfter = (await purged.Content.ReadFromJsonAsync<PodcastResponse>(_ct))!;
+                Assert.True(podcastAfter.OriginalsDeleted);
+                Assert.Null(podcastAfter.Draft);
+            }
+            using (var source = await owner.GetAsync($"{path}/draft/source.mp4", _ct))
+                Assert.Equal(HttpStatusCode.Conflict, source.StatusCode);
+            using (var segment = await owner.GetAsync($"{path}/segments/0.ts", _ct))
+                Assert.Equal(HttpStatusCode.NotFound, segment.StatusCode);
+            Assert.Equal(mp4, await listener.GetByteArrayAsync($"{path}/replay.mp4", _ct));
         }
         finally
         {

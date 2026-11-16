@@ -57,7 +57,7 @@ else
                         {
                             <p class="alert alert-info">@Localizer["Replay en préparation."]</p>
                         }
-                        else if (podcast.SegmentCount > 0)
+                        else if (ready || podcast.SegmentCount > 0)
                         {
                             <video controls playsinline preload="none" class="w-100"
                                    aria-label="@podcast.Title" data-podcast-player

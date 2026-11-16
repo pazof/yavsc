@@ -17,6 +17,8 @@ namespace Yavsc.Models.Streaming
       public bool PodcastDeleted { get; set; }
       /// <summary>Keeps the replay private until its owner edits and publishes it; ignored for OBS.</summary>
       public bool RefineReplay { get; set; }
+      /// <summary>Days the originals and draft of a refined replay are kept after the live (0 to 365).</summary>
+      public int RetentionDays { get; set; } = PodcastRetention.DefaultDays;
       [MaxLength(64), System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]
       public string? ObsKeyHash { get; set; }
       [System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]

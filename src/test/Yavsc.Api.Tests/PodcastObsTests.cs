@@ -72,6 +72,45 @@ public sealed class PodcastObsTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Planned_retention_is_kept_and_an_unpublished_expired_emission_is_forgotten()
+    {
+        using var scope = provider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Users.Add(new() { Id = "owner", UserName = "owner", Email = "owner@example.test" });
+        await db.SaveChangesAsync(Ct);
+        var schedule = scope.ServiceProvider.GetRequiredService<IPodcastScheduleService>();
+        PreparePodcastRequest Request(int days) => new()
+        {
+            Title = "Raffinee", ScheduledStartAt = clock.Now.AddDays(1), PlannedDurationMinutes = 1,
+            RefineReplay = true, RetentionDays = days
+        };
+        Assert.Equal(400, (await Assert.ThrowsAsync<PodcastException>(
+            () => schedule.PrepareAsync("owner", Request(366), null, Ct))).StatusCode);
+        var plan = await schedule.PrepareAsync("owner", Request(3), null, Ct);
+        Assert.Equal(3, plan.RetentionDays);
+        var started = await schedule.StartAsync(plan.Id, "owner", Ct);
+        Assert.Equal(3, started.RetentionDays);
+        var processor = provider.GetRequiredService<ILiveProcessor>();
+        var completed = await processor.CompleteAsync(plan.Id, "owner", Ct);
+        Assert.Equal(clock.Now.AddDays(3), completed.OriginalsExpireAt);
+        Assert.True(await processor.PrepareNextReplayAsync(new SourceRemuxer(), Ct));
+
+        clock.Now = clock.Now.AddDays(3);
+        var expired = await processor.PurgeExpiredOriginalsAsync(Ct);
+        await schedule.MarkExpiredAsync(expired.Select(p => p.Id).ToArray(), Ct);
+        Assert.True((await db.LiveFlow.AsNoTracking().SingleAsync(Ct)).PodcastDeleted);
+        Assert.Empty(await schedule.ListAsync("owner", Ct));
+        Assert.Equal(404, (await Assert.ThrowsAsync<PodcastException>(
+            () => schedule.GetAsync(plan.Id, "owner", Ct))).StatusCode);
+    }
+
+    private sealed class SourceRemuxer : IPodcastReplayRemuxer
+    {
+        public Task RemuxAsync(string directory, int count, string output, long max, CancellationToken ct)
+            => File.WriteAllBytesAsync(output, [1], ct);
+    }
+
+    [Fact]
     public async Task Activation_is_owned_rotatable_expiring_and_keeps_secrets_only_in_memory()
     {
         using var scope = provider.CreateScope();
