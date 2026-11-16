@@ -15,6 +15,8 @@ namespace Yavsc.Models.Streaming
       public DateTimeOffset? PreparedAt { get; set; }
       public DateTimeOffset? StartedAt { get; set; }
       public bool PodcastDeleted { get; set; }
+      /// <summary>Keeps the replay private until its owner edits and publishes it; ignored for OBS.</summary>
+      public bool RefineReplay { get; set; }
       [MaxLength(64), System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]
       public string? ObsKeyHash { get; set; }
       [System.Text.Json.Serialization.JsonIgnore, Newtonsoft.Json.JsonIgnore]

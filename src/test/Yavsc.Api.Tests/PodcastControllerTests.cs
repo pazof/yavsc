@@ -141,6 +141,107 @@ public sealed class PodcastControllerTests(ApiWebServerFixture fixture) : IClass
         }
     }
 
+    [Fact]
+    public async Task Refined_replay_originals_and_draft_are_owner_only_until_the_edited_MP4_is_published()
+    {
+        using var owner = Client($"refine-owner-{Guid.NewGuid():N}");
+        using var listener = Client("refine-listener");
+        var directory = Path.Combine(Path.GetTempPath(), $"yavsc-http-refine-{Guid.NewGuid():N}");
+        string? path = null;
+        try
+        {
+            var files = await PodcastMediaFixture.CreateAsync(directory, _ct);
+            using var created = await owner.PostAsJsonAsync("/api/v1/podcasts",
+                new CreatePodcastRequest { Title = "Refined", RefineReplay = true }, _ct);
+            var podcast = await created.Content.ReadFromJsonAsync<PodcastResponse>(_ct);
+            Assert.True(podcast!.RefineReplay);
+            path = $"/api/v1/podcasts/{podcast.Id}";
+            for (var i = 0; i < files.Length; i++)
+            {
+                using var content = new ByteArrayContent(await File.ReadAllBytesAsync(files[i], _ct));
+                content.Headers.ContentType = new MediaTypeHeaderValue("video/mp2t");
+                using var appended = await owner.PutAsync($"{path}/segments/{i}?duration=1", content, _ct);
+                appended.EnsureSuccessStatusCode();
+            }
+            Assert.Contains("segments/0.ts", await listener.GetStringAsync($"{path}/index.m3u8", _ct));
+            using (var completed = await owner.PostAsync($"{path}/complete", null, _ct))
+                completed.EnsureSuccessStatusCode();
+            var draft = await WaitDraftAsync(owner, path, PodcastDraftState.Ready);
+
+            var seen = await listener.GetFromJsonAsync<PodcastManifestResponse>(path, _ct);
+            Assert.Equal(PodcastReplayState.Pending, seen!.Podcast.Replay?.State);
+            Assert.Null(seen.Podcast.Draft);
+            Assert.Empty(seen.Segments);
+            Assert.Null((await listener.GetFromJsonAsync<PodcastResponse[]>("/api/v1/podcasts", _ct))!
+                .Single(p => p.Id == podcast.Id).Draft);
+            foreach (var hidden in new[] { "index.m3u8", "segments/0.ts", "draft/source.mp4" })
+            {
+                using var denied = await listener.GetAsync($"{path}/{hidden}", _ct);
+                Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+            }
+            using (var replay = await listener.GetAsync($"{path}/replay.mp4", _ct))
+                Assert.Equal(HttpStatusCode.Conflict, replay.StatusCode);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"{path}/draft/source.mp4"))
+            {
+                request.Headers.Range = new RangeHeaderValue(0, 7);
+                using var source = await owner.SendAsync(request, _ct);
+                Assert.Equal(HttpStatusCode.PartialContent, source.StatusCode);
+                Assert.Equal($"bytes 0-7/{draft.Draft!.SourceBytes}", source.Content.Headers.ContentRange?.ToString());
+            }
+            using (var denied = await listener.PutAsJsonAsync($"{path}/draft",
+                new SavePodcastDraftRequest { Revision = 0 }, _ct))
+                Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+            using (var invalid = await owner.PutAsJsonAsync($"{path}/draft", new SavePodcastDraftRequest
+                { Revision = 0, RemovedRanges = [new(2000, 1000)] }, _ct))
+                Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
+            using (var saved = await owner.PutAsJsonAsync($"{path}/draft", new SavePodcastDraftRequest
+                { Revision = 0, Marks = [1000, 2500], RemovedRanges = [new(1000, 2000)] }, _ct))
+            {
+                Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+                Assert.Equal(1, (await saved.Content.ReadFromJsonAsync<PodcastResponse>(_ct))!.Draft!.Revision);
+            }
+            using (var stale = await owner.PutAsJsonAsync($"{path}/draft", new SavePodcastDraftRequest { Revision = 0 }, _ct))
+                Assert.Equal(HttpStatusCode.Conflict, stale.StatusCode);
+            using (var publish = await owner.PostAsJsonAsync($"{path}/draft/publish",
+                new PublishPodcastDraftRequest { Revision = 1 }, _ct))
+                Assert.Equal(HttpStatusCode.Accepted, publish.StatusCode);
+
+            var ready = await WaitReplayAsync(listener, path, PodcastReplayState.Ready);
+            Assert.Null(ready.Draft);
+            var mp4 = await listener.GetByteArrayAsync($"{path}/replay.mp4", _ct);
+            Assert.Equal(ready.Replay!.Bytes, mp4.LongLength);
+            var mp4Path = Path.Combine(directory, "published.mp4");
+            await File.WriteAllBytesAsync(mp4Path, mp4, _ct);
+            var duration = double.Parse((await PodcastMediaFixture.RunAsync("ffprobe", ["-v", "error",
+                "-show_entries", "format=duration", "-of", "csv=p=0", mp4Path], _ct)).Trim(),
+                System.Globalization.CultureInfo.InvariantCulture);
+            Assert.InRange(duration, 2.8, 3.2); // One of the four seconds was removed.
+            using (var denied = await listener.GetAsync($"{path}/segments/0.ts", _ct))
+                Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+            var published = (await owner.GetFromJsonAsync<PodcastManifestResponse>(path, _ct))!.Podcast;
+            Assert.Equal(1, published.Draft!.PublishedRevision);
+            Assert.Equal([2500L], published.Draft.Marks);
+        }
+        finally
+        {
+            if (path is not null) using (await owner.DeleteAsync(path, _ct)) { }
+            if (Directory.Exists(directory)) Directory.Delete(directory, true);
+        }
+    }
+
+    private async Task<PodcastResponse> WaitDraftAsync(HttpClient client, string path, PodcastDraftState expected)
+    {
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(_ct);
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
+        while (true)
+        {
+            var manifest = await client.GetFromJsonAsync<PodcastManifestResponse>(path, timeout.Token);
+            if (manifest!.Podcast.Draft?.State == expected) return manifest.Podcast;
+            Assert.NotEqual(PodcastDraftState.Failed, manifest.Podcast.Draft?.State);
+            await Task.Delay(100, timeout.Token);
+        }
+    }
+
     private async Task<PodcastResponse> WaitReplayAsync(HttpClient client, string path, PodcastReplayState expected)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(_ct);

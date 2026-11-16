@@ -3,6 +3,8 @@ namespace Yavsc.Services;
 /// <summary>A half-open time range [StartMs, EndMs) in the original replay timeline.</summary>
 public readonly record struct ReplayRange(long StartMs, long EndMs)
 {
+    /// <summary>End of a kept range that runs to the end of the source.</summary>
+    public const long OpenEnd = long.MaxValue;
     public long DurationMs => EndMs - StartMs;
 }
 

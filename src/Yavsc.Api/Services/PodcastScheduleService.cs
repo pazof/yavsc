@@ -58,6 +58,7 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
             flow.ScheduledStartAt = request.ScheduledStartAt.ToUniversalTime();
             flow.PlannedDurationMinutes = request.PlannedDurationMinutes;
             flow.PublicAnnouncement = request.PublicAnnouncement?.Trim() ?? "";
+            flow.RefineReplay = request.RefineReplay;
             await db.SaveChangesAsync(ct);
             await db.Entry(flow).Reference(f => f.Owner).LoadAsync(ct);
             return Planned(flow);
@@ -87,7 +88,9 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
                     throw new PodcastException(409, "Cette emission est terminee. Preparez une nouvelle emission.");
                 if (flow.StartedAt != null && existing == null)
                     throw new PodcastException(404, "Les medias de cette emission sont introuvables.");
-                var podcast = await processor.CreateAsync(ownerId, flow.Owner.UserName ?? ownerId, flow.Title, ct, id);
+                // OBS composes and finalizes its own content: refinement only applies to PostIt captures.
+                var podcast = await processor.CreateAsync(ownerId, flow.Owner.UserName ?? ownerId, flow.Title, ct, id,
+                    refineReplay: flow.RefineReplay && !obsConnectionId.HasValue);
                 flow.StartedAt ??= podcast.CreatedAt;
                 await db.SaveChangesAsync(ct);
                 return Enrich(podcast, flow);
@@ -103,7 +106,8 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
             .Where(f => f.PodcastId != null).ToListAsync(ct);
         var byId = flows.ToDictionary(f => f.PodcastId!.Value);
         var result = media.Where(p => !byId.TryGetValue(p.Id, out var f) || !f.PodcastDeleted)
-            .Select(p => byId.TryGetValue(p.Id, out var f) ? Enrich(p, f) : p).ToList();
+            .Select(p => PodcastVisibility.ForViewer(byId.TryGetValue(p.Id, out var f) ? Enrich(p, f) : p, ownerId))
+            .ToList();
         var mediaIds = media.Select(p => p.Id).ToHashSet();
         result.AddRange(flows.Where(f => !f.PodcastDeleted && f.StartedAt == null && f.OwnerId == ownerId
             && !mediaIds.Contains(f.PodcastId!.Value)).Select(Planned));
@@ -113,13 +117,13 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
     public async Task<PodcastManifestResponse> GetAsync(Guid id, string ownerId, CancellationToken ct)
     {
         var flow = await db.LiveFlow.AsNoTracking().Include(f => f.Owner).SingleOrDefaultAsync(f => f.PodcastId == id, ct);
-        if (flow == null) return await processor.GetAsync(id, ct);
+        if (flow == null) return PodcastVisibility.ForViewer(await processor.GetAsync(id, ct), ownerId);
         if (flow.PodcastDeleted) throw new PodcastException(404, "Podcast introuvable.");
         var podcast = (await processor.ListAsync(ct)).SingleOrDefault(p => p.Id == id);
         if (podcast != null)
         {
             var manifest = await processor.GetAsync(id, ct);
-            return manifest with { Podcast = Enrich(manifest.Podcast, flow) };
+            return PodcastVisibility.ForViewer(manifest with { Podcast = Enrich(manifest.Podcast, flow) }, ownerId);
         }
         if (flow.OwnerId != ownerId || flow.StartedAt != null)
             throw new PodcastException(404, "Podcast introuvable.");
@@ -178,7 +182,10 @@ public sealed class PodcastScheduleService(ApplicationDbContext db, ILiveProcess
 
     private static PodcastResponse Planned(LiveFlow flow) => Enrich(new(
         flow.PodcastId!.Value, flow.Title, flow.OwnerId, flow.Owner.UserName ?? flow.OwnerId,
-        flow.PreparedAt!.Value, flow.PreparedAt.Value, PodcastState.Planned, 0, 0, 0), flow);
+        flow.PreparedAt!.Value, flow.PreparedAt.Value, PodcastState.Planned, 0, 0, 0)
+    {
+        RefineReplay = flow.RefineReplay && flow.ObsKeyHash is null
+    }, flow);
 
     private static PodcastResponse Enrich(PodcastResponse podcast, LiveFlow flow) => podcast with
     {

@@ -53,7 +53,11 @@ else
                         {
                             <p>@Localizer["Debut prevu : {0} ; duree prevue : {1} min", podcast.ScheduledStartAt.Value.ToString("u"), podcast.PlannedDurationMinutes]</p>
                         }
-                        @if (podcast.SegmentCount > 0)
+                        @if (!ready && podcast.RefineReplay && podcast.State != PodcastState.Live)
+                        {
+                            <p class="alert alert-info">@Localizer["Replay en préparation."]</p>
+                        }
+                        else if (podcast.SegmentCount > 0)
                         {
                             <video controls playsinline preload="none" class="w-100"
                                    aria-label="@podcast.Title" data-podcast-player

@@ -50,6 +50,36 @@ internal static class FfmpegProcess
         }
     }
 
+    /// <summary>Reports whether a local media file has an audio stream, by decoding one audio frame.</summary>
+    public static async Task<bool> HasAudioAsync(string ffmpegPath, string sourcePath, CancellationToken ct)
+    {
+        var start = new ProcessStartInfo(ffmpegPath)
+        {
+            UseShellExecute = false,
+            RedirectStandardError = true,
+            CreateNoWindow = true
+        };
+        foreach (var argument in new[] { "-nostdin", "-hide_banner", "-loglevel", "error", "-i", sourcePath,
+            "-map", "0:a:0", "-frames:a", "1", "-f", "null", "-" })
+            start.ArgumentList.Add(argument);
+        using var process = Process.Start(start)
+            ?? throw new IOException("Impossible de demarrer FFmpeg.");
+        var errors = DrainErrorsAsync(process.StandardError, CancellationToken.None);
+        try
+        {
+            await process.WaitForExitAsync(ct);
+            await errors;
+            return process.ExitCode == 0;
+        }
+        catch
+        {
+            if (!process.HasExited) process.Kill(entireProcessTree: true);
+            await process.WaitForExitAsync(CancellationToken.None);
+            await errors;
+            throw;
+        }
+    }
+
     private static async Task<string> DrainErrorsAsync(StreamReader reader, CancellationToken ct)
     {
         var text = new System.Text.StringBuilder();

@@ -3,7 +3,8 @@ using Yavsc.Services;
 namespace Yavsc.Api.Services;
 
 public sealed class PodcastReplayWorker(
-    ILiveProcessor processor, IPodcastReplayRemuxer remuxer, ILogger<PodcastReplayWorker> logger) : BackgroundService
+    ILiveProcessor processor, IPodcastReplayRemuxer remuxer, IPodcastReplayEditor editor,
+    ILogger<PodcastReplayWorker> logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -12,6 +13,7 @@ public sealed class PodcastReplayWorker(
             try
             {
                 if (await processor.PrepareNextReplayAsync(remuxer, stoppingToken)) continue;
+                if (await processor.PublishNextDraftAsync(editor, stoppingToken)) continue;
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { break; }
             catch (Exception ex)

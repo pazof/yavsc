@@ -54,7 +54,7 @@ public sealed class LiveProcessorTests : IDisposable
         Assert.Equal("Concert", manifest.Podcast.Title);
         Assert.Equal(PodcastState.Completed, manifest.Podcast.State);
         Assert.Equal(new[] { 0, 1 }, manifest.Segments.Select(s => s.Sequence));
-        await using var stream = await restored.OpenSegmentAsync(podcast.Id, 1, _ct);
+        await using var stream = await restored.OpenSegmentAsync(podcast.Id, 1, null, _ct);
         using var actual = new MemoryStream();
         await stream.CopyToAsync(actual, _ct);
         Assert.Equal(second, actual.ToArray());
@@ -165,7 +165,7 @@ public sealed class LiveProcessorTests : IDisposable
         var replay = await restarted.GetAsync(second.Id, _ct);
         Assert.Equal(PodcastState.Interrupted, replay.Podcast.State);
         Assert.Single(replay.Segments);
-        await using var segment = await restarted.OpenSegmentAsync(second.Id, 0, _ct);
+        await using var segment = await restarted.OpenSegmentAsync(second.Id, 0, null, _ct);
         Assert.Equal(376, segment.Length);
     }
 

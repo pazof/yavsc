@@ -16,6 +16,9 @@ namespace Yavsc.Services;
 public sealed class LiveProcessor : ILiveProcessor, IDisposable
 {
     private sealed record Document(PodcastManifestResponse Manifest, string[] Hashes);
+    private const string ReplayFileName = "replay.mp4";
+    private const string SourceFileName = "source.mp4";
+    public const int MaxDraftMarks = 500;
     private readonly ILogger<LiveProcessor> _logger;
     private readonly PodcastOptions _options;
     private readonly TimeProvider _clock;
@@ -41,7 +44,8 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             throw new InvalidOperationException("Invalid Podcast storage options.");
     }
 
-    public async Task<PodcastResponse> CreateAsync(string ownerId, string ownerName, string title, CancellationToken ct, Guid? id = null)
+    public async Task<PodcastResponse> CreateAsync(string ownerId, string ownerName, string title, CancellationToken ct,
+        Guid? id = null, bool refineReplay = false)
     {
         if (string.IsNullOrWhiteSpace(ownerId) || string.IsNullOrWhiteSpace(title) || title.Trim().Length > 160)
             throw new PodcastException(400, "Un titre de 1 a 160 caracteres et un utilisateur sont requis.");
@@ -64,7 +68,7 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
                 throw new PodcastException(413, "Nombre maximal de podcasts atteint. Supprimez un ancien replay.");
             var now = _clock.GetUtcNow();
             var podcast = new PodcastResponse(id ?? Guid.NewGuid(), title.Trim(), ownerId, ownerName,
-                now, now, PodcastState.Live, 0, 0, 0);
+                now, now, PodcastState.Live, 0, 0, 0) { RefineReplay = refineReplay };
             var document = new Document(new(podcast, Array.Empty<PodcastSegmentResponse>()), Array.Empty<string>());
             Directory.CreateDirectory(DirectoryFor(podcast.Id));
             await SaveAsync(document, ct);
@@ -196,7 +200,8 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             var updated = podcast with
             {
                 State = PodcastState.Completed, UpdatedAt = _clock.GetUtcNow(),
-                Replay = new(PodcastReplayState.Pending)
+                Replay = podcast.Replay ?? new(PodcastReplayState.Pending),
+                Draft = podcast.RefineReplay ? podcast.Draft ?? NewDraft() : null
             };
             await SaveAsync(document with { Manifest = document.Manifest with { Podcast = updated } }, ct);
             _logger.LogInformation("Podcast {PodcastId} completed with {Segments} segments", id, updated.SegmentCount);
@@ -214,7 +219,7 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             var podcast = Find(id).Manifest.Podcast;
             if (podcast.State != PodcastState.Completed || podcast.Replay?.State != PodcastReplayState.Ready)
                 throw new PodcastException(409, "Le replay MP4 n'est pas disponible.");
-            return new FileStream(Path.Combine(DirectoryFor(id), "replay.mp4"), FileMode.Open, FileAccess.Read,
+            return new FileStream(Path.Combine(DirectoryFor(id), ReplayFileName), FileMode.Open, FileAccess.Read,
                 FileShare.Read | FileShare.Delete, 64 * 1024, FileOptions.Asynchronous | FileOptions.RandomAccess);
         }
         finally { _gate.Release(); }
@@ -227,7 +232,15 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         {
             await LoadAsync(ct);
             var document = Owned(id, ownerId);
-            if (document.Manifest.Podcast.Replay?.State != PodcastReplayState.Failed)
+            var podcast = document.Manifest.Podcast;
+            if (podcast.RefineReplay)
+            {
+                if (podcast.Draft?.State != PodcastDraftState.Failed)
+                    throw new PodcastException(409, "Seule une source de brouillon en echec peut etre relancee.");
+                await SetDraftAsync(document, podcast.Draft with { State = PodcastDraftState.Preparing, Error = null }, ct);
+                return;
+            }
+            if (podcast.Replay?.State != PodcastReplayState.Failed)
                 throw new PodcastException(409, "Seul un replay en echec peut etre relance.");
             await SetReplayAsync(document, new(PodcastReplayState.Pending), ct);
         }
@@ -249,20 +262,23 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         try
         {
             await LoadAsync(ct);
-            var next = _documents.Values.Where(d => d.Manifest.Podcast.State == PodcastState.Completed
-                && d.Manifest.Podcast.Replay?.State == PodcastReplayState.Pending)
+            var next = _documents.Values.Where(d => IsRemuxQueued(d.Manifest.Podcast))
                 .OrderBy(d => d.Manifest.Podcast.CreatedAt).FirstOrDefault();
             if (next is null) return false;
             document = next;
             allowance = _options.MaxOwnerBytes - OwnerBytes(document.Manifest.Podcast.OwnerId);
-            await SetReplayAsync(document, new(PodcastReplayState.Processing), ct);
+            if (!document.Manifest.Podcast.RefineReplay)
+                await SetReplayAsync(document, new(PodcastReplayState.Processing), ct);
             _preparingReplay = document.Manifest.Podcast.Id;
         }
         finally { _gate.Release(); }
 
         var id = document.Manifest.Podcast.Id;
         var directory = DirectoryFor(id);
-        var temporary = Path.Combine(directory, "replay.tmp.mp4");
+        // A refined replay is first remuxed into a private, seekable editing source.
+        var refine = document.Manifest.Podcast.RefineReplay;
+        var target = Path.Combine(directory, refine ? SourceFileName : ReplayFileName);
+        var temporary = Path.Combine(directory, refine ? "source.tmp.mp4" : "replay.tmp.mp4");
         try
         {
             if (allowance <= 1) throw new IOException("Quota de stockage des podcasts atteint.");
@@ -278,10 +294,20 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
                 var podcast = current.Manifest.Podcast;
                 if (OwnerBytes(podcast.OwnerId) + bytes > _options.MaxOwnerBytes)
                     throw new IOException("Quota de stockage des podcasts atteint.");
-                File.Move(temporary, Path.Combine(directory, "replay.mp4"), overwrite: true);
-                var updated = podcast with { Bytes = podcast.Bytes + bytes, Replay = new(PodcastReplayState.Ready, bytes) };
+                File.Move(temporary, target, overwrite: true);
+                var updated = refine
+                    ? podcast with
+                    {
+                        Bytes = podcast.Bytes + bytes,
+                        Draft = (podcast.Draft ?? NewDraft()) with
+                        {
+                            State = PodcastDraftState.Ready, SourceBytes = bytes, Error = null
+                        }
+                    }
+                    : podcast with { Bytes = podcast.Bytes + bytes, Replay = new(PodcastReplayState.Ready, bytes) };
                 await SaveAsync(current with { Manifest = current.Manifest with { Podcast = updated } }, ct);
-                _logger.LogInformation("Podcast {PodcastId} MP4 ready ({Bytes} bytes)", id, bytes);
+                _logger.LogInformation("Podcast {PodcastId} {Kind} ready ({Bytes} bytes)", id,
+                    refine ? "draft source" : "MP4", bytes);
             }
             finally { _gate.Release(); }
         }
@@ -289,11 +315,23 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         {
             _logger.LogError(ex, "Podcast {PodcastId} MP4 preparation failed", id);
             File.Delete(temporary);
-            File.Delete(Path.Combine(directory, "replay.mp4"));
+            File.Delete(target);
             await _gate.WaitAsync(CancellationToken.None);
             try
             {
                 var current = Find(id);
+                if (refine)
+                {
+                    var draft = current.Manifest.Podcast.Draft ?? NewDraft();
+                    if (!ct.IsCancellationRequested)
+                        await SetDraftAsync(current, draft with
+                        {
+                            State = PodcastDraftState.Failed, Error =
+                                "Preparation de la source impossible. L'auteur peut relancer la preparation."
+                        }, CancellationToken.None);
+                    if (ct.IsCancellationRequested) throw;
+                    return true;
+                }
                 var replay = ct.IsCancellationRequested
                     ? new PodcastReplayResponse(PodcastReplayState.Pending)
                     : new PodcastReplayResponse(PodcastReplayState.Failed, Error:
@@ -318,13 +356,217 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             Manifest = document.Manifest with { Podcast = document.Manifest.Podcast with { Replay = replay } }
         }, ct);
 
-    public async Task<Stream> OpenSegmentAsync(Guid id, int sequence, CancellationToken ct)
+    private Task SetDraftAsync(Document document, PodcastDraftResponse draft, CancellationToken ct)
+        => SaveAsync(document with
+        {
+            Manifest = document.Manifest with { Podcast = document.Manifest.Podcast with { Draft = draft } }
+        }, ct);
+
+    private static PodcastDraftResponse NewDraft() => new(PodcastDraftState.Preparing, 0, [], []);
+
+    private static bool IsRemuxQueued(PodcastResponse podcast) => podcast.RefineReplay
+        ? podcast.Draft?.State == PodcastDraftState.Preparing
+        : podcast.State == PodcastState.Completed && podcast.Replay?.State == PodcastReplayState.Pending;
+
+    private static long SourceDurationMs(PodcastResponse podcast)
+        => (long)Math.Ceiling(podcast.DurationSeconds * 1000);
+
+    private Document EditableDraft(Guid id, string ownerId, int revision)
+    {
+        var document = Owned(id, ownerId);
+        var draft = document.Manifest.Podcast.Draft;
+        if (!document.Manifest.Podcast.RefineReplay || draft is null)
+            throw new PodcastException(409, "Ce replay n'est pas en cours de raffinage.");
+        if (draft.State != PodcastDraftState.Ready)
+            throw new PodcastException(409, "Le brouillon n'est pas modifiable pendant la preparation ou la publication.");
+        if (draft.Revision != revision)
+            throw new PodcastException(409, "Le brouillon a ete modifie ailleurs. Rechargez-le avant de continuer.");
+        return document;
+    }
+
+    public async Task<PodcastResponse> SaveDraftAsync(Guid id, string ownerId, SavePodcastDraftRequest request, CancellationToken ct)
+    {
+        if (request.Marks.Count > MaxDraftMarks)
+            throw new PodcastException(400, $"Au plus {MaxDraftMarks} marques sont autorisees.");
+        await _gate.WaitAsync(ct);
+        try
+        {
+            await LoadAsync(ct);
+            var document = EditableDraft(id, ownerId, request.Revision);
+            var podcast = document.Manifest.Podcast;
+            var duration = SourceDurationMs(podcast);
+            var removed = request.RemovedRanges.Select(r => new ReplayRange(r.StartMs, r.EndMs)).ToArray();
+            try { _ = ReplayEditPlan.KeptRanges(removed, duration); }
+            catch (ArgumentException ex) { throw new PodcastException(400, ex.Message.Split(" (Parameter")[0]); }
+            if (request.Marks.Any(m => m < 0 || m > duration))
+                throw new PodcastException(400, "Une marque est en dehors de la video.");
+            // A mark inside a removed passage disappears with it.
+            var marks = request.Marks.Distinct().Order()
+                .Where(m => !removed.Any(r => m >= r.StartMs && m < r.EndMs)).ToArray();
+            var ranges = request.RemovedRanges.OrderBy(r => r.StartMs).ThenBy(r => r.EndMs).ToArray();
+            var draft = podcast.Draft! with
+            {
+                Revision = podcast.Draft!.Revision + 1, Marks = marks, RemovedRanges = ranges, Error = null
+            };
+            await SetDraftAsync(document, draft, ct);
+            return _documents[id].Manifest.Podcast;
+        }
+        finally { _gate.Release(); }
+    }
+
+    public async Task<PodcastResponse> PublishDraftAsync(Guid id, string ownerId, int revision, CancellationToken ct)
+    {
+        await _gate.WaitAsync(ct);
+        try
+        {
+            await LoadAsync(ct);
+            var current = Owned(id, ownerId).Manifest.Podcast;
+            if (current.Draft is { State: PodcastDraftState.Publishing } publishing && publishing.Revision == revision)
+                return current;
+            var document = EditableDraft(id, ownerId, revision);
+            var podcast = document.Manifest.Podcast;
+            if (podcast.Draft!.PublishedRevision == revision && podcast.Replay?.State == PodcastReplayState.Ready)
+                return podcast;
+            await SetDraftAsync(document, podcast.Draft with { State = PodcastDraftState.Publishing, Error = null }, ct);
+            _logger.LogInformation("Podcast {PodcastId} draft revision {Revision} queued for publication", id, revision);
+            return _documents[id].Manifest.Podcast;
+        }
+        finally { _gate.Release(); }
+    }
+
+    public async Task<Stream> OpenDraftSourceAsync(Guid id, string ownerId, CancellationToken ct)
+    {
+        await _gate.WaitAsync(ct);
+        try
+        {
+            await LoadAsync(ct);
+            var draft = Owned(id, ownerId).Manifest.Podcast.Draft;
+            if (draft is null || draft.SourceBytes <= 0)
+                throw new PodcastException(409, "La source du brouillon n'est pas disponible.");
+            return new FileStream(Path.Combine(DirectoryFor(id), SourceFileName), FileMode.Open, FileAccess.Read,
+                FileShare.Read | FileShare.Delete, 64 * 1024, FileOptions.Asynchronous | FileOptions.RandomAccess);
+        }
+        finally { _gate.Release(); }
+    }
+
+    public async Task<bool> PublishNextDraftAsync(IPodcastReplayEditor editor, CancellationToken ct)
+    {
+        await _replays.WaitAsync(ct);
+        try { return await PublishDraftAsync(editor, ct); }
+        finally { _replays.Release(); }
+    }
+
+    private async Task<bool> PublishDraftAsync(IPodcastReplayEditor editor, CancellationToken ct)
+    {
+        PodcastResponse podcast;
+        long allowance;
+        await _gate.WaitAsync(ct);
+        try
+        {
+            await LoadAsync(ct);
+            var next = _documents.Values.Where(d => d.Manifest.Podcast.Draft?.State == PodcastDraftState.Publishing)
+                .OrderBy(d => d.Manifest.Podcast.CreatedAt).FirstOrDefault();
+            if (next is null) return false;
+            podcast = next.Manifest.Podcast;
+            // The published MP4 is replaced, so its bytes are available for the new version.
+            allowance = _options.MaxOwnerBytes - OwnerBytes(podcast.OwnerId) + PublishedBytes(podcast);
+            _preparingReplay = podcast.Id;
+        }
+        finally { _gate.Release(); }
+
+        var id = podcast.Id;
+        var draft = podcast.Draft!;
+        var directory = DirectoryFor(id);
+        var source = Path.Combine(directory, SourceFileName);
+        var temporary = Path.Combine(directory, "replay.tmp.mp4");
+        try
+        {
+            if (allowance <= 1) throw new IOException("Quota de stockage des podcasts atteint.");
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            timeout.CancelAfter(TimeSpan.FromSeconds(_options.ReplayTimeoutSeconds));
+            if (draft.RemovedRanges.Count == 0)
+            {
+                if (draft.SourceBytes > allowance) throw new IOException("Quota de stockage des podcasts atteint.");
+                await using var input = File.OpenRead(source);
+                await using var output = File.Create(temporary);
+                await input.CopyToAsync(output, timeout.Token);
+            }
+            else
+            {
+                var duration = SourceDurationMs(podcast);
+                var kept = ReplayEditPlan.KeptRanges(
+                    draft.RemovedRanges.Select(r => new ReplayRange(r.StartMs, r.EndMs)), duration).ToArray();
+                // The declared segment durations may be slightly shorter than the media: keep its tail.
+                if (kept[^1].EndMs == duration) kept[^1] = kept[^1] with { EndMs = ReplayRange.OpenEnd };
+                await editor.RenderAsync(source, kept, temporary, allowance, timeout.Token);
+            }
+            var bytes = new FileInfo(temporary).Length;
+            if (bytes <= 0 || bytes > allowance) throw new IOException("Taille du MP4 invalide ou quota atteint.");
+            await _gate.WaitAsync(ct);
+            try
+            {
+                var current = Find(id);
+                var latest = current.Manifest.Podcast;
+                var previous = PublishedBytes(latest);
+                if (OwnerBytes(latest.OwnerId) - previous + bytes > _options.MaxOwnerBytes)
+                    throw new IOException("Quota de stockage des podcasts atteint.");
+                // Readers of the previous version keep their open file; new requests get the new one.
+                File.Move(temporary, Path.Combine(directory, ReplayFileName), overwrite: true);
+                var updated = latest with
+                {
+                    Bytes = latest.Bytes - previous + bytes,
+                    Replay = new(PodcastReplayState.Ready, bytes),
+                    Draft = latest.Draft! with
+                    {
+                        State = PodcastDraftState.Ready, PublishedRevision = draft.Revision, Error = null
+                    }
+                };
+                await SaveAsync(current with { Manifest = current.Manifest with { Podcast = updated } }, ct);
+                _logger.LogInformation("Podcast {PodcastId} draft revision {Revision} published ({Bytes} bytes)",
+                    id, draft.Revision, bytes);
+            }
+            finally { _gate.Release(); }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Podcast {PodcastId} draft publication failed", id);
+            File.Delete(temporary);
+            if (!ct.IsCancellationRequested)
+            {
+                await _gate.WaitAsync(CancellationToken.None);
+                try
+                {
+                    var current = Find(id);
+                    await SetDraftAsync(current, current.Manifest.Podcast.Draft! with
+                    {
+                        State = PodcastDraftState.Ready, Error =
+                            "Publication impossible. Le brouillon est conserve ; corrigez-le ou relancez la publication."
+                    }, CancellationToken.None);
+                }
+                finally { _gate.Release(); }
+            }
+            if (ct.IsCancellationRequested) throw;
+        }
+        finally
+        {
+            await _gate.WaitAsync(CancellationToken.None);
+            try { _preparingReplay = null; }
+            finally { _gate.Release(); }
+        }
+        return true;
+    }
+
+    private static long PublishedBytes(PodcastResponse podcast)
+        => podcast.Replay?.State == PodcastReplayState.Ready ? podcast.Replay.Bytes : 0;
+
+    public async Task<Stream> OpenSegmentAsync(Guid id, int sequence, string? viewerId, CancellationToken ct)
     {
         await _gate.WaitAsync(ct);
         try
         {
             await LoadAsync(ct);
             var document = Find(id);
+            PodcastVisibility.EnsureOriginalsVisible(document.Manifest.Podcast, viewerId);
             if (sequence < 0 || sequence >= document.Manifest.Segments.Count)
                 throw new PodcastException(404, "Segment introuvable.");
             return new FileStream(SegmentPath(id, sequence), FileMode.Open, FileAccess.Read,
@@ -387,6 +629,12 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
     private async Task InterruptAsync(Document document, CancellationToken ct)
     {
         var podcast = document.Manifest.Podcast with { State = PodcastState.Interrupted, UpdatedAt = _clock.GetUtcNow() };
+        // A refined emission stays recoverable by its owner: prepare its private draft as after a normal end.
+        if (podcast.RefineReplay)
+            podcast = podcast with
+            {
+                Replay = podcast.Replay ?? new(PodcastReplayState.Pending), Draft = podcast.Draft ?? NewDraft()
+            };
         await SaveAsync(document with { Manifest = document.Manifest with { Podcast = podcast } }, ct);
         _logger.LogWarning("Podcast {PodcastId} interrupted; committed segments remain playable", podcast.Id);
     }

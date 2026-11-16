@@ -60,7 +60,8 @@ public sealed class PodcastController(ILiveProcessor processor, IPodcastSchedule
     {
         var ownerId = User.GetUserId();
         if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
-        var response = await processor.CreateAsync(ownerId, User.Identity?.Name ?? ownerId, request.Title, ct);
+        var response = await processor.CreateAsync(ownerId, User.Identity?.Name ?? ownerId, request.Title, ct,
+            refineReplay: request.RefineReplay);
         return CreatedAtAction(nameof(Get), new { id = response.Id }, response);
     }
 
@@ -131,7 +132,9 @@ public sealed class PodcastController(ILiveProcessor processor, IPodcastSchedule
     [Produces("application/vnd.apple.mpegurl")]
     public async Task<IActionResult> Playlist(Guid id, CancellationToken ct)
     {
-        var manifest = await processor.GetAsync(id, ct);
+        var viewerId = User.GetUserId();
+        var manifest = await schedule.GetAsync(id, viewerId, ct);
+        PodcastVisibility.EnsureOriginalsVisible(manifest.Podcast, viewerId);
         Response.Headers.CacheControl = "no-store";
         var text = new StringBuilder("#EXTM3U\n#EXT-X-VERSION:3\n#EXT-X-TARGETDURATION:15\n");
         text.Append("#EXT-X-MEDIA-SEQUENCE:0\n#EXT-X-PLAYLIST-TYPE:EVENT\n");
@@ -150,7 +153,49 @@ public sealed class PodcastController(ILiveProcessor processor, IPodcastSchedule
     public async Task<IActionResult> Segment(Guid id, int sequence, CancellationToken ct)
     {
         Response.Headers.CacheControl = "private, no-store";
-        return File(await processor.OpenSegmentAsync(id, sequence, ct), "video/mp2t");
+        return File(await processor.OpenSegmentAsync(id, sequence, User.GetUserId(), ct), "video/mp2t");
+    }
+
+    /// <summary>Saves the marks and removed ranges of an owned refined replay draft.</summary>
+    /// <remarks>The request revision must match the current draft revision; otherwise 409 is returned.</remarks>
+    [HttpPut("{id:guid}/draft")]
+    [ProducesResponseType<PodcastResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<PodcastResponse>> SaveDraft(Guid id, SavePodcastDraftRequest request, CancellationToken ct)
+    {
+        var ownerId = User.GetUserId();
+        if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
+        await processor.SaveDraftAsync(id, ownerId, request, ct);
+        return Ok((await schedule.GetAsync(id, ownerId, ct)).Podcast);
+    }
+
+    /// <summary>Queues the saved draft revision for rendering; the published MP4 is replaced atomically.</summary>
+    [HttpPost("{id:guid}/draft/publish")]
+    [ProducesResponseType<PodcastResponse>(StatusCodes.Status202Accepted)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> PublishDraft(Guid id, PublishPodcastDraftRequest request, CancellationToken ct)
+    {
+        var ownerId = User.GetUserId();
+        if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
+        await processor.PublishDraftAsync(id, ownerId, request.Revision, ct);
+        return AcceptedAtAction(nameof(Get), new { id }, (await schedule.GetAsync(id, ownerId, ct)).Podcast);
+    }
+
+    /// <summary>Serves the private seekable source of a refined replay to its owner, with byte ranges.</summary>
+    [HttpGet("{id:guid}/draft/source.mp4")]
+    [HttpHead("{id:guid}/draft/source.mp4")]
+    [Produces("video/mp4")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status206PartialContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> DraftSource(Guid id, CancellationToken ct)
+    {
+        var ownerId = User.GetUserId();
+        if (string.IsNullOrWhiteSpace(ownerId)) return Unauthorized();
+        Response.Headers.CacheControl = "private, no-store";
+        return File(await processor.OpenDraftSourceAsync(id, ownerId, ct), "video/mp4", enableRangeProcessing: true);
     }
 
     /// <summary>Deletes an ended broadcast and releases its owner's podcast quota.</summary>

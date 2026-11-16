@@ -62,7 +62,7 @@ public sealed class PodcastReplayTests : IDisposable
             mp4.Position = 2;
             Assert.Equal(3, mp4.ReadByte());
         }
-        await using (var ts = await restored.OpenSegmentAsync(podcast.Id, 0, _ct))
+        await using (var ts = await restored.OpenSegmentAsync(podcast.Id, 0, "alice", _ct))
             Assert.Equal(podcast.Bytes, ts.Length);
         await restored.DeleteAsync(podcast.Id, "alice", _ct);
         Assert.False(Directory.Exists(Path.Combine(_root, podcast.Id.ToString("N"))));
@@ -224,11 +224,12 @@ public sealed class PodcastReplayTests : IDisposable
             "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000:duration=4",
             "-c:v", "libx264", "-qp", "0", "-g", "20", "-c:a", "aac", "-shortest",
             "-output_ts_offset", startOffset, source], _ct);
-        var kept = ReplayEditPlan.KeptRanges([new(1000, 1600), new(2400, 3000)], 4000);
+        var kept = ReplayEditPlan.KeptRanges([new(1000, 1600), new(2400, 3000)], 4000).ToArray();
+        kept[^1] = kept[^1] with { EndMs = ReplayRange.OpenEnd };
         var output = Path.Combine(_root, "edited.mp4");
         var editor = new FfmpegPodcastReplayEditor(Options.Create(new PodcastOptions()));
 
-        await editor.RenderAsync(source, kept, hasAudio: true, output, 10_000_000, _ct);
+        await editor.RenderAsync(source, kept, output, 10_000_000, _ct);
 
         var frames = Path.Combine(_root, "edited.yuv");
         await PodcastMediaFixture.RunAsync("ffmpeg",
@@ -252,11 +253,182 @@ public sealed class PodcastReplayTests : IDisposable
         Assert.InRange(Math.Abs(durations["video"] - durations["audio"]), 0, 0.1);
         var ascii = Encoding.Latin1.GetString(await File.ReadAllBytesAsync(output, _ct));
         Assert.True(ascii.IndexOf("moov", StringComparison.Ordinal) < ascii.IndexOf("mdat", StringComparison.Ordinal));
-        await Assert.ThrowsAsync<IOException>(() => editor.RenderAsync(source, kept, true,
+        await Assert.ThrowsAsync<IOException>(() => editor.RenderAsync(source, kept,
             Path.Combine(_root, "too-big.mp4"), 10, _ct));
     }
 
+    [Fact]
+    public async Task Ffmpeg_editor_detects_a_source_without_audio()
+    {
+        Directory.CreateDirectory(_root);
+        var source = Path.Combine(_root, "silent.mp4");
+        await PodcastMediaFixture.RunAsync("ffmpeg", ["-v", "error", "-f", "lavfi", "-i", "testsrc2=s=32x32:r=10:d=2",
+            "-c:v", "libx264", source], _ct);
+        var output = Path.Combine(_root, "silent-edited.mp4");
+
+        await new FfmpegPodcastReplayEditor(Options.Create(new PodcastOptions())).RenderAsync(source,
+            [new(0, 500), new(1000, ReplayRange.OpenEnd)], output, 10_000_000, _ct);
+
+        var probe = await PodcastMediaFixture.RunAsync("ffprobe",
+            ["-v", "error", "-show_entries", "stream=codec_type", "-of", "csv=p=0", output], _ct);
+        Assert.Equal("video", probe.Trim());
+    }
+
+    private async Task<PodcastResponse> Refined(LiveProcessor processor, int sourceBytes = 10)
+    {
+        var podcast = await processor.CreateAsync("alice", "alice", "Refined", _ct, refineReplay: true);
+        await processor.AppendAsync(podcast.Id, "alice", 0, 2, new MemoryStream(LiveProcessorTests.Packets()), _ct);
+        await processor.AppendAsync(podcast.Id, "alice", 1, 2, new MemoryStream(LiveProcessorTests.Packets()), _ct);
+        var completed = await processor.CompleteAsync(podcast.Id, "alice", _ct);
+        Assert.Equal(PodcastReplayState.Pending, completed.Replay?.State);
+        Assert.Equal(PodcastDraftState.Preparing, completed.Draft?.State);
+        Assert.True(await processor.PrepareNextReplayAsync(Bytes(sourceBytes), _ct));
+        return (await processor.GetAsync(podcast.Id, _ct)).Podcast;
+    }
+
+    private static SavePodcastDraftRequest Save(int revision, long[] marks, params PodcastDraftRange[] removed)
+        => new() { Revision = revision, Marks = marks, RemovedRanges = removed };
+
+    [Fact]
+    public async Task Refined_replay_stays_private_until_the_saved_draft_is_published_and_republished()
+    {
+        var processor = New();
+        var podcast = await Refined(processor);
+        var directory = Path.Combine(_root, podcast.Id.ToString("N"));
+        Assert.Equal(PodcastDraftState.Ready, podcast.Draft?.State);
+        Assert.Equal(10, podcast.Draft!.SourceBytes);
+        Assert.True(File.Exists(Path.Combine(directory, "source.mp4")));
+        Assert.False(File.Exists(Path.Combine(directory, "replay.mp4")));
+        var segmentsBytes = podcast.Bytes - 10;
+        Assert.False(await processor.PrepareNextReplayAsync(Bytes(4), _ct));
+        Assert.False(await processor.PublishNextDraftAsync(new Editor((_, _, _, _, _) => Task.CompletedTask), _ct));
+        Assert.Equal(409, (await Assert.ThrowsAsync<PodcastException>(
+            () => processor.OpenReplayAsync(podcast.Id, _ct))).StatusCode);
+        Assert.Equal(403, (await Assert.ThrowsAsync<PodcastException>(
+            () => processor.OpenSegmentAsync(podcast.Id, 0, "bob", _ct))).StatusCode);
+        Assert.Equal(403, (await Assert.ThrowsAsync<PodcastException>(
+            () => processor.OpenDraftSourceAsync(podcast.Id, "bob", _ct))).StatusCode);
+        var hidden = PodcastVisibility.ForViewer(await processor.GetAsync(podcast.Id, _ct), "bob");
+        Assert.Null(hidden.Podcast.Draft);
+        Assert.Empty(hidden.Segments);
+        await using (await processor.OpenSegmentAsync(podcast.Id, 0, "alice", _ct)) { }
+        await using (var source = await processor.OpenDraftSourceAsync(podcast.Id, "alice", _ct))
+            Assert.Equal(10, source.Length);
+
+        Assert.Equal(403, (await Assert.ThrowsAsync<PodcastException>(
+            () => processor.SaveDraftAsync(podcast.Id, "bob", Save(0, []), _ct))).StatusCode);
+        Assert.Equal(400, (await Assert.ThrowsAsync<PodcastException>(() => processor.SaveDraftAsync(
+            podcast.Id, "alice", Save(0, [], new PodcastDraftRange(0, 4000)), _ct))).StatusCode);
+        Assert.Equal(400, (await Assert.ThrowsAsync<PodcastException>(() => processor.SaveDraftAsync(
+            podcast.Id, "alice", Save(0, [-1]), _ct))).StatusCode);
+        var saved = await processor.SaveDraftAsync(podcast.Id, "alice",
+            Save(0, [3500, 500, 1500, 500], new PodcastDraftRange(1000, 2000)), _ct);
+        Assert.Equal(1, saved.Draft!.Revision);
+        Assert.Equal([500L, 3500], saved.Draft.Marks); // The mark in the removed passage disappears.
+        Assert.Equal(409, (await Assert.ThrowsAsync<PodcastException>(() => processor.SaveDraftAsync(
+            podcast.Id, "alice", Save(0, []), _ct))).StatusCode);
+
+        Assert.Equal(PodcastDraftState.Publishing,
+            (await processor.PublishDraftAsync(podcast.Id, "alice", 1, _ct)).Draft?.State);
+        Assert.Equal(PodcastDraftState.Publishing,
+            (await processor.PublishDraftAsync(podcast.Id, "alice", 1, _ct)).Draft?.State);
+        Assert.Equal(409, (await Assert.ThrowsAsync<PodcastException>(() => processor.SaveDraftAsync(
+            podcast.Id, "alice", Save(1, []), _ct))).StatusCode);
+        // A restart keeps the queued publication.
+        processor = New();
+        Assert.True(await processor.PublishNextDraftAsync(new Editor(async (source, kept, output, allowance, ct) =>
+        {
+            Assert.Equal(Path.Combine(directory, "source.mp4"), source);
+            Assert.Equal([new ReplayRange(0, 1000), new ReplayRange(2000, ReplayRange.OpenEnd)], kept);
+            Assert.Equal(1024 * 1024 - podcast.Bytes, allowance);
+            await File.WriteAllBytesAsync(output, new byte[6], ct);
+        }), _ct));
+        var published = (await processor.GetAsync(podcast.Id, _ct)).Podcast;
+        Assert.Equal(new PodcastReplayResponse(PodcastReplayState.Ready, 6), published.Replay);
+        Assert.Equal(PodcastDraftState.Ready, published.Draft?.State);
+        Assert.Equal(1, published.Draft!.PublishedRevision);
+        Assert.Equal(segmentsBytes + 10 + 6, published.Bytes);
+        Assert.Equal(published, await processor.PublishDraftAsync(podcast.Id, "alice", 1, _ct));
+        Assert.Equal(403, (await Assert.ThrowsAsync<PodcastException>(
+            () => processor.OpenSegmentAsync(podcast.Id, 0, "bob", _ct))).StatusCode);
+
+        // Re-editing keeps the published MP4 served until its atomic replacement.
+        await processor.SaveDraftAsync(podcast.Id, "alice", Save(1, [500]), _ct);
+        await processor.PublishDraftAsync(podcast.Id, "alice", 2, _ct);
+        await using var previous = await processor.OpenReplayAsync(podcast.Id, _ct);
+        Assert.True(await processor.PublishNextDraftAsync(new Editor((_, _, _, _, _) =>
+            throw new InvalidOperationException("Without removals the source is copied.")), _ct));
+        Assert.Equal(6, previous.Length);
+        var replaced = (await processor.GetAsync(podcast.Id, _ct)).Podcast;
+        Assert.Equal(new PodcastReplayResponse(PodcastReplayState.Ready, 10), replaced.Replay);
+        Assert.Equal(segmentsBytes + 10 + 10, replaced.Bytes);
+        await using (var replay = await processor.OpenReplayAsync(podcast.Id, _ct))
+            Assert.Equal(10, replay.Length);
+    }
+
+    [Fact]
+    public async Task Failed_publication_keeps_the_draft_and_the_published_replay()
+    {
+        var processor = New();
+        var podcast = await Refined(processor);
+        await processor.PublishDraftAsync(podcast.Id, "alice", 0, _ct);
+        Assert.True(await processor.PublishNextDraftAsync(new Editor((_, _, _, _, _) => Task.CompletedTask), _ct));
+        await processor.SaveDraftAsync(podcast.Id, "alice", Save(0, [], new PodcastDraftRange(0, 1000)), _ct);
+        await processor.PublishDraftAsync(podcast.Id, "alice", 1, _ct);
+        Assert.True(await processor.PublishNextDraftAsync(new Editor(async (_, _, output, _, ct) =>
+        {
+            await File.WriteAllBytesAsync(output, [1, 2], ct);
+            throw new InvalidDataException("Synthetic failure");
+        }), _ct));
+        var failed = (await processor.GetAsync(podcast.Id, _ct)).Podcast;
+        Assert.Equal(PodcastDraftState.Ready, failed.Draft?.State);
+        Assert.NotEmpty(failed.Draft!.Error!);
+        Assert.Equal(1, failed.Draft.Revision);
+        Assert.Equal(0, failed.Draft.PublishedRevision);
+        Assert.Equal(new PodcastReplayResponse(PodcastReplayState.Ready, 10), failed.Replay);
+        Assert.False(File.Exists(Path.Combine(_root, podcast.Id.ToString("N"), "replay.tmp.mp4")));
+    }
+
+    [Fact]
+    public async Task Interrupted_refined_emission_prepares_a_private_draft_and_failed_sources_can_be_retried()
+    {
+        var processor = New();
+        var podcast = await processor.CreateAsync("alice", "alice", "Interrupted", _ct, refineReplay: true);
+        await processor.AppendAsync(podcast.Id, "alice", 0, 2, new MemoryStream(LiveProcessorTests.Packets()), _ct);
+        await using (await processor.OpenSegmentAsync(podcast.Id, 0, "bob", _ct)) { }
+        var restarted = New();
+        var interrupted = (await restarted.GetAsync(podcast.Id, _ct)).Podcast;
+        Assert.Equal(PodcastState.Interrupted, interrupted.State);
+        Assert.Equal(PodcastDraftState.Preparing, interrupted.Draft?.State);
+        Assert.Equal(403, (await Assert.ThrowsAsync<PodcastException>(
+            () => restarted.OpenSegmentAsync(podcast.Id, 0, "bob", _ct))).StatusCode);
+        Assert.True(await restarted.PrepareNextReplayAsync(new Remuxer(async (_, _, output, _, ct) =>
+        {
+            await File.WriteAllBytesAsync(output, [1], ct);
+            throw new InvalidDataException("Synthetic failure");
+        }), _ct));
+        var failed = (await restarted.GetAsync(podcast.Id, _ct)).Podcast;
+        Assert.Equal(PodcastDraftState.Failed, failed.Draft?.State);
+        Assert.Equal(PodcastReplayState.Pending, failed.Replay?.State);
+        Assert.Equal(interrupted.Bytes, failed.Bytes);
+        Assert.False(File.Exists(Path.Combine(_root, podcast.Id.ToString("N"), "source.mp4")));
+        Assert.Equal(403, (await Assert.ThrowsAsync<PodcastException>(
+            () => restarted.RetryReplayAsync(podcast.Id, "bob", _ct))).StatusCode);
+        await restarted.RetryReplayAsync(podcast.Id, "alice", _ct);
+        Assert.True(await restarted.PrepareNextReplayAsync(Bytes(3), _ct));
+        var completed = await restarted.CompleteAsync(podcast.Id, "alice", _ct);
+        Assert.Equal(PodcastDraftState.Ready, completed.Draft?.State);
+        Assert.Equal(3, completed.Draft!.SourceBytes);
+    }
+
     private static Remuxer Bytes(int count) => new((_, _, output, _, ct) => File.WriteAllBytesAsync(output, new byte[count], ct));
+    private sealed class Editor(Func<string, IReadOnlyList<ReplayRange>, string, long, CancellationToken, Task> render)
+        : IPodcastReplayEditor
+    {
+        public Task RenderAsync(string source, IReadOnlyList<ReplayRange> kept, string output, long max, CancellationToken ct)
+            => render(source, kept, output, max, ct);
+    }
+
     private sealed class Remuxer(Func<string, int, string, long, CancellationToken, Task> remux) : IPodcastReplayRemuxer
     {
         public Task RemuxAsync(string directory, int count, string output, long max, CancellationToken ct)

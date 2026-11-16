@@ -214,8 +214,53 @@ la durée est un réglage de l'auteur, de 0 à 365 jours. Une tâche de fond
 supprime les brouillons et originaux expirés et prévient l'auteur dans
 l'interface. Avec une durée de 0 jour, ils sont supprimés dès la publication du
 MP4. Le MP4 publié n'est pas concerné, mais il ne peut plus être
-réédité ensuite. Après publication, PostIt propose explicitement de supprimer
+réédité ensuite. Le délai court à partir de la fin du direct (ou de son
+interruption), même si aucun replay n'a été publié : un brouillon jamais publié
+expire donc sans replay. À l'expiration, les segments originaux, la source
+`source.mp4` et le brouillon sont tous supprimés. Après publication, PostIt propose explicitement de supprimer
 le brouillon et les originaux.
+
+#### Implémentation serveur du brouillon
+
+Le brouillon privé est implémenté côté serveur ; l'éditeur PostIt reste à faire.
+
+- **Option** : `RefineReplay` est accepté à la création d'un direct immédiat
+  et à la préparation d'une émission programmée (colonne `LiveFlow.RefineReplay`).
+  Il est ignoré pour une émission OBS.
+- **États** (`PodcastResponse.Draft.State`) : `Preparing` (remux des segments
+  vers une source privée `source.mp4`), `Ready` (éditable), `Publishing`
+  (rendu en file), `Failed` (préparation de la source en échec, relançable par
+  `POST {id}/replay/retry`). Tant qu'aucune version n'est publiée,
+  `Replay.State` reste `Pending` : les auditeurs voient « Replay en préparation ».
+- **Routes réservées à l'auteur** :
+  - `PUT podcasts/{id}/draft` enregistre marques (500 au plus) et plages
+    supprimées (200 au plus) pour la révision courante ; une révision périmée
+    renvoie 409, des plages ou marques hors de la durée renvoient 400.
+    Les marques sont dédoublonnées et triées ; celles situées dans une plage
+    supprimée disparaissent.
+  - `POST podcasts/{id}/draft/publish` (202) met en file la publication d'une
+    révision ; répéter la demande pour la même révision est sans effet.
+  - `GET`/`HEAD podcasts/{id}/draft/source.mp4` sert la source navigable, avec
+    requêtes de plages.
+- **Publication** : sans plage supprimée, la source est copiée ; sinon elle est
+  découpée comme dans le prototype, la dernière plage conservée restant ouverte
+  jusqu'à la fin réelle du média. Le quota est vérifié en déduisant le MP4
+  précédemment publié ; le résultat est écrit en fichier temporaire puis
+  déplacé atomiquement sur `replay.mp4`. Un échec laisse le brouillon `Ready`
+  avec son erreur et l'éventuel replay publié intact. Une réédition sert
+  l'ancien MP4 jusqu'au remplacement ; `PublishedRevision` indique la
+  révision publiée.
+- **Reprise** : préparations et publications en file reprennent après un
+  redémarrage du serveur. Une émission raffinée interrompue prépare
+  automatiquement son brouillon.
+- **Visibilité** : après le direct, playlist et segments d'une émission
+  raffinée renvoient 403 aux autres utilisateurs, et le brouillon n'est
+  jamais exposé dans les listes ou détails destinés aux auditeurs. Le site web
+  affiche « Replay en préparation » jusqu'à la publication.
+- **Limite connue** : la durée éditable est celle déclarée par les segments
+  (arrondie à la milliseconde supérieure).
+- **Reste à faire** : rétention et suppression explicite des brouillons et
+  originaux, chapitres, client et éditeur PostIt.
 
 Une émission interrompue doit rester récupérable par son auteur. Lorsqu'un
 direct programmé s'arrête après le délai « Direct interrompu », ou qu'un
@@ -314,7 +359,8 @@ différent de celui annoncé à l'auteur.
    l'assemblage audio/vidéo précis côté serveur (fait, voir « Résultat du
    prototype serveur »).
 3. Ajouter le brouillon privé et ses états, les autorisations, les limites et
-   la reprise après incident, puis l'éditeur de marques et plages desktop.
+   la reprise après incident (fait côté serveur, voir « Implémentation serveur
+   du brouillon »), puis l'éditeur de marques et plages desktop.
 4. Valider la finalisation sur de vrais médias synthétiques et conserver le
    comportement existant pour les émissions sans raffinage.
 5. Porter l'éditeur sur Android (surface native), en réutilisant l'API et le

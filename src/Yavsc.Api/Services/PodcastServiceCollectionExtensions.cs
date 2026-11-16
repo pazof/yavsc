@@ -14,6 +14,7 @@ public static class PodcastServiceCollectionExtensions
         services.AddSingleton<ILiveProcessor, LiveProcessor>();
         services.AddScoped<IPodcastScheduleService, PodcastScheduleService>();
         services.AddSingleton<IPodcastReplayRemuxer, FfmpegPodcastReplayRemuxer>();
+        services.AddSingleton<IPodcastReplayEditor, FfmpegPodcastReplayEditor>();
         services.AddHostedService<PodcastReplayWorker>();
         services.AddOpenApi("podcasts", options => options.ShouldInclude = description => description.GroupName == "podcasts");
         return services;

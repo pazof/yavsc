@@ -3244,6 +3244,9 @@ namespace Yavsc.Migrations
                         .HasMaxLength(1023)
                         .HasColumnType("character varying(1023)");
 
+                    b.Property<bool>("RefineReplay")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTimeOffset?>("ScheduledStartAt")
                         .HasColumnType("timestamp with time zone");
 
