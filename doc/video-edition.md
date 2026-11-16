@@ -238,7 +238,10 @@ Le brouillon privé est implémenté côté serveur, et son éditeur sur PostIt 
     supprimées (200 au plus) pour la révision courante ; une révision périmée
     renvoie 409, des plages ou marques hors de la durée renvoient 400.
     Les marques sont dédoublonnées et triées ; celles situées dans une plage
-    supprimée disparaissent.
+    supprimée disparaissent. `Chapters` donne un titre (120 caractères au
+    plus, caractères de contrôle remplacés, titre vide ignoré) à une marque ;
+    son temps est ajouté aux marques s'il manque, et deux titres au même temps
+    renvoient 400. Le titre d'une marque supprimée disparaît avec elle.
   - `POST podcasts/{id}/draft/publish` (202) met en file la publication d'une
     révision ; répéter la demande pour la même révision est sans effet.
   - `GET`/`HEAD podcasts/{id}/draft/source.mp4` sert la source navigable, avec
@@ -296,9 +299,18 @@ Le brouillon privé est implémenté côté serveur, et son éditeur sur PostIt 
   par le serveur à l'enregistrement. L'enregistrement envoie la révision lue ;
   un conflit conserve les modifications locales et invite à recharger. La
   publication enregistre d'abord les modifications en attente.
-- **Reste à faire** : chapitres nommés, miniatures des marques rechargées
-  depuis le serveur (elles ne sont créées qu'à la pose), éditeur Android et
-  validation sur de vrais médias.
+- **Chapitres** : seules les marques nommées deviennent des chapitres. Dans
+  l'éditeur, chaque marque a un champ « Titre du chapitre (facultatif) ». À la
+  publication, leurs temps sont convertis vers la durée du MP4 (cumul des
+  plages conservées) ; FFmpeg les intègre au MP4 par copie sans réencodage, à
+  partir d'un fichier de métadonnées où les titres sont échappés (ils ne sont
+  jamais passés en argument). Sans plage supprimée, ils sont ajoutés à une
+  copie de la source. `PodcastResponse.Chapters` expose les chapitres publiés
+  à tous les auditeurs ; le site web les affiche en boutons sous le lecteur du
+  MP4 et PostIt dans le lecteur du replay, chacun positionnant la lecture.
+- **Reste à faire** : miniatures des marques rechargées depuis le serveur
+  (elles ne sont créées qu'à la pose), éditeur Android et validation sur de
+  vrais médias.
 
 Une émission interrompue doit rester récupérable par son auteur. Lorsqu'un
 direct programmé s'arrête après le délai « Direct interrompu », ou qu'un

@@ -19,6 +19,7 @@ public partial class VideoPage : ContentPage
     private PodcastMediaInput? _podcastInput;
     private PodcastReplayMediaInput? _replayInput;
     private CancellationTokenSource? _initialization;
+    private VideoPageViewModel? _chaptersOwner;
 
     public VideoPage() => InitializeComponent();
 
@@ -35,6 +36,9 @@ public partial class VideoPage : ContentPage
         ReleasePlayer();
         if (Design.IsDesignMode || DataContext is not VideoPageViewModel vm)
             return;
+        vm.ShowChapters([]);
+        vm.SeekRequested += SeekToChapter;
+        _chaptersOwner = vm;
         var cancellation = new CancellationTokenSource();
         _initialization = cancellation;
         var ct = cancellation.Token;
@@ -55,6 +59,7 @@ public partial class VideoPage : ContentPage
                     {
                         _replayInput = new PodcastReplayMediaInput(replayClient, podcast.Id, podcast.Replay!.Bytes);
                         _replayInput.Failed += PodcastFailed;
+                        vm.ShowChapters(podcast.Chapters);
                         replay = true;
                         break;
                     }
@@ -122,8 +127,18 @@ public partial class VideoPage : ContentPage
         base.OnDetachedFromVisualTree(e);
     }
 
+    private void SeekToChapter(long timeMs)
+    {
+        if (_player is { IsSeekable: true } player) player.Time = timeMs;
+    }
+
     private void ReleasePlayer()
     {
+        if (_chaptersOwner is not null)
+        {
+            _chaptersOwner.SeekRequested -= SeekToChapter;
+            _chaptersOwner = null;
+        }
         _initialization?.Cancel();
         _initialization?.Dispose();
         _initialization = null;

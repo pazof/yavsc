@@ -11,4 +11,11 @@ public interface IPodcastReplayEditor
     /// </summary>
     Task RenderAsync(string sourcePath, IReadOnlyList<ReplayRange> kept,
         string outputPath, long maxBytes, CancellationToken ct);
+
+    /// <summary>
+    /// Copies <paramref name="inputPath"/> without re-encoding into a new MP4 carrying these chapters,
+    /// given in its timeline and ordered. The last chapter ends at <paramref name="durationMs"/>.
+    /// </summary>
+    Task AddChaptersAsync(string inputPath, IReadOnlyList<PodcastChapter> chapters, long durationMs,
+        string outputPath, long maxBytes, CancellationToken ct);
 }

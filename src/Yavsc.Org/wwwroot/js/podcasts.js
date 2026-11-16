@@ -29,4 +29,10 @@ document.querySelectorAll("[data-podcast-player]").forEach(player => {
         source.addEventListener("error", showError);
     }
     player.addEventListener("error", showError);
+    player.parentElement.querySelectorAll("[data-chapter-time]").forEach(chapter => {
+        chapter.addEventListener("click", () => {
+            player.currentTime = Number(chapter.dataset.chapterTime);
+            player.play().catch(showError);
+        });
+    });
 });

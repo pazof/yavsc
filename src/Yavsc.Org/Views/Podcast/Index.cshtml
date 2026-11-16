@@ -66,6 +66,25 @@ else
                                         type="@(ready ? "video/mp4" : "application/vnd.apple.mpegurl")" />
                                 @Localizer["Votre navigateur ne prend pas en charge la lecture vidéo."]
                             </video>
+                            @if (ready && podcast.Chapters.Count > 0)
+                            {
+                                <nav class="mt-2" aria-label="@Localizer["Chapitres de {0}", podcast.Title]">
+                                    <h3 class="h6">@Localizer["Chapitres"]</h3>
+                                    <ol class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+                                        @foreach (var chapter in podcast.Chapters)
+                                        {
+                                            var time = TimeSpan.FromMilliseconds(chapter.TimeMs);
+                                            <li>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                        data-chapter-time="@((chapter.TimeMs / 1000d).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture))">
+                                                    <time datetime="@System.Xml.XmlConvert.ToString(time)">@(time.TotalHours >= 1 ? time.ToString(@"h\:mm\:ss") : time.ToString(@"m\:ss"))</time>
+                                                    @chapter.Title
+                                                </button>
+                                            </li>
+                                        }
+                                    </ol>
+                                </nav>
+                            }
                             @if (!ready)
                             {
                                 <button type="button" class="btn btn-outline-primary mt-2 d-none" data-start-playback>

@@ -215,6 +215,11 @@ public sealed class PodcastReplayTests : IDisposable
         Assert.Equal([new ReplayRange(0, 3000), new ReplayRange(4000, 5000)],
             ReplayEditPlan.RemovedRanges([new(2000, 3000), new(1000, 2500), new(-500, 1000), new(4000, 9000)], 5000));
         Assert.Throws<ArgumentException>(() => ReplayEditPlan.RemovedRanges([new(0, 2000), new(2000, 5000)], 5000));
+        Assert.Equal([new PodcastChapter(0, "a"), new PodcastChapter(1000, "c"), new PodcastChapter(2000, "d")],
+            ReplayEditPlan.PublishedChapters([new(4500, "d"), new(0, "a"), new(1000, "b"), new(3000, "c"), new(5000, "e")],
+                ReplayEditPlan.KeptRanges([new(1000, 3000), new(4000, 4500)], 5000)));
+        Assert.Equal("Titre a  b", ReplayEditPlan.ChapterTitle(" Titre\ta\r\nb "));
+        Assert.Null(ReplayEditPlan.ChapterTitle(" \n "));
     }
 
     [Theory]
@@ -375,6 +380,81 @@ public sealed class PodcastReplayTests : IDisposable
     }
 
     [Fact]
+    public async Task Named_marks_are_saved_and_published_as_chapters_in_the_mp4_timeline()
+    {
+        var processor = New();
+        var podcast = await Refined(processor);
+        var directory = Path.Combine(_root, podcast.Id.ToString("N"));
+        Assert.Equal(400, (await Assert.ThrowsAsync<PodcastException>(() => processor.SaveDraftAsync(podcast.Id, "alice",
+            Save(0, []) with { Chapters = [new(500, "A"), new(500, "B")] }, _ct))).StatusCode);
+        Assert.Equal(400, (await Assert.ThrowsAsync<PodcastException>(() => processor.SaveDraftAsync(podcast.Id, "alice",
+            Save(0, []) with { Chapters = [new(500, new string('x', ReplayEditPlan.MaxChapterTitleLength + 1))] }, _ct))).StatusCode);
+
+        var saved = await processor.SaveDraftAsync(podcast.Id, "alice", Save(0, [500], new PodcastDraftRange(1000, 2000))
+            with { Chapters = [new(2500, "Fin = ;#"), new(1500, "Coupé"), new(500, "  Intro\n"), new(3000, "  ")] }, _ct);
+        // Named marks are marks; a blank title leaves no mark and a removed mark loses its title.
+        Assert.Equal([500L, 2500], saved.Draft!.Marks);
+        Assert.Equal([new PodcastChapter(500, "Intro"), new PodcastChapter(2500, "Fin = ;#")], saved.Draft.Chapters);
+
+        await processor.PublishDraftAsync(podcast.Id, "alice", 1, _ct);
+        string? rendered = null;
+        Assert.True(await processor.PublishNextDraftAsync(new Editor(async (_, _, output, _, ct) =>
+        {
+            rendered = output;
+            await File.WriteAllBytesAsync(output, new byte[6], ct);
+        }, async (input, chapters, duration, output, ct) =>
+        {
+            Assert.Equal(rendered, input);
+            Assert.Equal([new PodcastChapter(500, "Intro"), new PodcastChapter(1500, "Fin = ;#")], chapters);
+            Assert.Equal(3000, duration);
+            await File.WriteAllBytesAsync(output, new byte[7], ct);
+        }), _ct));
+        var published = PodcastVisibility.ForViewer(await processor.GetAsync(podcast.Id, _ct), "bob").Podcast;
+        Assert.Equal(new PodcastReplayResponse(PodcastReplayState.Ready, 7), published.Replay);
+        Assert.Equal([new PodcastChapter(500, "Intro"), new PodcastChapter(1500, "Fin = ;#")], published.Chapters);
+        Assert.False(File.Exists(rendered));
+
+        // Without removal, chapters are added to the source itself.
+        await processor.SaveDraftAsync(podcast.Id, "alice", Save(1, []) with { Chapters = [new(2500, "Fin")] }, _ct);
+        await processor.PublishDraftAsync(podcast.Id, "alice", 2, _ct);
+        Assert.True(await processor.PublishNextDraftAsync(new Editor((_, _, _, _, _) =>
+            throw new InvalidOperationException("Without removals the source is not rendered."),
+            async (input, chapters, duration, output, ct) =>
+            {
+                Assert.Equal(Path.Combine(directory, "source.mp4"), input);
+                Assert.Equal(4000, duration);
+                await File.WriteAllBytesAsync(output, new byte[8], ct);
+            }), _ct));
+        Assert.Equal([new PodcastChapter(2500, "Fin")], (await processor.GetAsync(podcast.Id, _ct)).Podcast.Chapters);
+    }
+
+    [Fact]
+    public async Task Ffmpeg_editor_adds_escaped_chapters_without_reencoding()
+    {
+        Directory.CreateDirectory(_root);
+        var source = Path.Combine(_root, "plain.mp4");
+        await PodcastMediaFixture.RunAsync("ffmpeg", ["-v", "error", "-f", "lavfi", "-i", "testsrc2=s=32x32:r=10:d=3",
+            "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000:duration=3", "-c:v", "libx264", "-c:a", "aac",
+            "-shortest", source], _ct);
+        var output = Path.Combine(_root, "chapters.mp4");
+
+        await new FfmpegPodcastReplayEditor(Options.Create(new PodcastOptions())).AddChaptersAsync(source,
+            [new(0, "Intro"), new(1500, "Fin = ;#\\ !")], 3000, output, 10_000_000, _ct);
+
+        var probe = await PodcastMediaFixture.RunAsync("ffprobe",
+            ["-v", "error", "-show_chapters", "-show_streams", "-of", "json", output], _ct);
+        using var json = JsonDocument.Parse(probe);
+        var chapters = json.RootElement.GetProperty("chapters").EnumerateArray().Select(c =>
+            (c.GetProperty("start_time").GetString(), c.GetProperty("tags").GetProperty("title").GetString())).ToArray();
+        Assert.Equal([("0.000000", "Intro"), ("1.500000", "Fin = ;#\\ !")], chapters);
+        var codecs = json.RootElement.GetProperty("streams").EnumerateArray()
+            .Select(s => s.GetProperty("codec_name").GetString()).ToArray();
+        Assert.Contains("h264", codecs);
+        Assert.Contains("aac", codecs);
+        Assert.False(File.Exists(output + ".chapters.txt"));
+    }
+
+    [Fact]
     public async Task Failed_publication_keeps_the_draft_and_the_published_replay()
     {
         var processor = New();
@@ -507,11 +587,16 @@ public sealed class PodcastReplayTests : IDisposable
     }
 
     private static Remuxer Bytes(int count) => new((_, _, output, _, ct) => File.WriteAllBytesAsync(output, new byte[count], ct));
-    private sealed class Editor(Func<string, IReadOnlyList<ReplayRange>, string, long, CancellationToken, Task> render)
+    private sealed class Editor(Func<string, IReadOnlyList<ReplayRange>, string, long, CancellationToken, Task> render,
+        Func<string, IReadOnlyList<PodcastChapter>, long, string, CancellationToken, Task>? chapters = null)
         : IPodcastReplayEditor
     {
         public Task RenderAsync(string source, IReadOnlyList<ReplayRange> kept, string output, long max, CancellationToken ct)
             => render(source, kept, output, max, ct);
+
+        public Task AddChaptersAsync(string input, IReadOnlyList<PodcastChapter> list, long duration, string output,
+            long max, CancellationToken ct)
+            => chapters is null ? throw new InvalidOperationException("No chapter expected.") : chapters(input, list, duration, output, ct);
     }
 
     private sealed class Clock : TimeProvider

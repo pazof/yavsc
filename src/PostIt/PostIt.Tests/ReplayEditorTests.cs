@@ -130,6 +130,54 @@ public sealed class ReplayEditorTests(AvaloniaUiFixture ui)
         Assert.False(vm.AddMarkCommand.CanExecute(null));
     }, TestContext.Current.CancellationToken);
 
+    [Fact]
+    public Task Mark_titles_are_loaded_edited_and_saved_as_chapters()
+        => ui.RunAsync(async () =>
+    {
+        var api = new DraftApi();
+        api.Podcast = api.Podcast with
+        {
+            Draft = api.Podcast.Draft! with { Marks = [5_000, 15_000, 25_000], Chapters = [new(15_000, "Invite")] }
+        };
+        var vm = Editor(api);
+        Assert.Equal([null, "Invite", null], vm.Marks.Select(m => m.Title));
+        Assert.False(vm.IsDirty);
+
+        vm.Marks[0].Title = "  Ouverture\t";
+        Assert.True(vm.IsDirty);
+        vm.Marks[1].Title = "Coupee";
+        vm.Marks[2].Title = " ";
+        // [15 s, 25 s) removes the start mark and keeps the end mark.
+        RemoveBetween(vm, 25_000, 15_000);
+        Assert.True(await vm.SaveAsync());
+
+        Assert.Equal([new PodcastChapter(5_000, "Ouverture"), new PodcastChapter(15_000, "Coupee")], api.Saved!.Chapters);
+        // The server drops the title of a removed mark.
+        Assert.Equal([5_000L, 25_000], vm.Marks.Select(m => m.TimeMs));
+        Assert.Equal(["Ouverture", null], vm.Marks.Select(m => m.Title));
+        Assert.False(vm.IsDirty);
+    }, TestContext.Current.CancellationToken);
+
+    [Fact]
+    public Task Published_chapters_seek_the_replay_player()
+        => ui.RunAsync(() =>
+    {
+        var vm = new VideoPageViewModel(new Uri("https://api.example/replay.mp4"), "video/mp4");
+        long? seek = null;
+        vm.SeekRequested += t => seek = t;
+        Assert.False(vm.HasChapters);
+
+        vm.ShowChapters([new(0, "Intro"), new(61_500, "Fin")]);
+        Assert.True(vm.HasChapters);
+        Assert.Equal("1:01  Fin", vm.Chapters[1].Label);
+        vm.GoToChapterCommand.Execute(vm.Chapters[1]);
+        Assert.Equal(61_500, seek);
+
+        vm.ShowChapters([]);
+        Assert.False(vm.HasChapters);
+        return Task.CompletedTask;
+    }, TestContext.Current.CancellationToken);
+
     private static ReplayEditorPageViewModel Editor(DraftApi api)
         => new(new PodcastApiClient(api, () => "https://api.example/"), api.Podcast);
 
@@ -142,7 +190,7 @@ public sealed class ReplayEditorTests(AvaloniaUiFixture ui)
 
     private sealed class DraftApi : IYavscApiClient
     {
-        public PodcastResponse Podcast { get; private set; } = new(Guid.NewGuid(), "Concert", "owner", "Owner",
+        public PodcastResponse Podcast { get; set; } = new(Guid.NewGuid(), "Concert", "owner", "Owner",
             DateTimeOffset.UtcNow, DateTimeOffset.UtcNow, PodcastState.Completed, 1, 1024, 60)
         {
             RefineReplay = true,
@@ -162,13 +210,13 @@ public sealed class ReplayEditorTests(AvaloniaUiFixture ui)
             {
                 Saved = Assert.IsType<SavePodcastDraftRequest>(body);
                 var ranges = Saved.RemovedRanges;
+                var marks = Saved.Marks.Where(m => !ranges.Any(r => m >= r.StartMs && m < r.EndMs)).ToArray();
                 Podcast = Podcast with
                 {
                     Draft = draft with
                     {
-                        Revision = draft.Revision + 1,
-                        Marks = Saved.Marks.Where(m => !ranges.Any(r => m >= r.StartMs && m < r.EndMs)).ToArray(),
-                        RemovedRanges = ranges
+                        Revision = draft.Revision + 1, Marks = marks, RemovedRanges = ranges,
+                        Chapters = Saved.Chapters.Where(c => marks.Contains(c.TimeMs)).ToArray()
                     }
                 };
             }

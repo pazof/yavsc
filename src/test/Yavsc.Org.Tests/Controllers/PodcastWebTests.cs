@@ -98,6 +98,10 @@ public sealed class PodcastWebTests : IClassFixture<PodcastWebTests.Factory>
         Assert.DoesNotContain("<script>unsafe-title</script>", html);
         Assert.Contains("&lt;script&gt;unsafe-title&lt;/script&gt;", html);
         Assert.Contains("hls.light.min.js", html);
+        Assert.Contains("data-chapter-time=\"0\"", html);
+        Assert.Contains("data-chapter-time=\"1.5\"", html);
+        Assert.Contains("<time datetime=\"PT1.5S\">0:01</time>", html);
+        Assert.Contains("&lt;b&gt;Fin&lt;/b&gt;", html);
         Assert.True(response.Headers.CacheControl?.NoStore);
         var requests = _factory.Api.Requests.ToArray();
         var request = Assert.Single(requests);
@@ -154,6 +158,7 @@ public sealed class PodcastWebTests : IClassFixture<PodcastWebTests.Factory>
         using var client = SignedInClient();
         var html = await client.GetStringAsync("/Podcast", Ct);
         Assert.Contains($"/Podcast/{PodcastId}/index.m3u8", html);
+        Assert.DoesNotContain("data-chapter-time", html); // Chapters belong to the published MP4.
         Assert.DoesNotContain("/Donation/Create/other-author", html);
         Assert.Contains("PayPal", html);
         var playlist = await client.GetStringAsync($"/Podcast/{PodcastId}/index.m3u8", Ct);
@@ -315,7 +320,8 @@ public sealed class PodcastWebTests : IClassFixture<PodcastWebTests.Factory>
                 Live ? "other-author" : "author", "Author", DateTimeOffset.UtcNow,
                 DateTimeOffset.UtcNow, Live ? PodcastState.Live : PodcastState.Completed, 1, 188, 2.5)
             {
-                Replay = Live ? null : new(PodcastReplayState.Ready, 10)
+                Replay = Live ? null : new(PodcastReplayState.Ready, 10),
+                Chapters = [new(0, "Intro"), new(1500, "<b>Fin</b>")]
             };
             if (path == "/api/v1/podcasts/")
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)

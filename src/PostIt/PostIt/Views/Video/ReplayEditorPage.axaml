@@ -3,6 +3,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="using:PostIt.ViewModels"
+    xmlns:abs="using:Yavsc.Abstract.Streaming"
     x:DataType="vm:ReplayEditorPageViewModel">
     <Grid ColumnDefinitions="2*,*" RowDefinitions="Auto,*,Auto,Auto" Margin="16" ColumnSpacing="16" RowSpacing="8">
         <TextBlock Grid.ColumnSpan="2" Text="{Binding Title}" FontSize="22" TextWrapping="Wrap" />
@@ -23,7 +24,7 @@
                 <TextBlock Text="{Binding DraftState}" TextWrapping="Wrap" />
                 <TextBlock Text="{Binding DurationSummary}" TextWrapping="Wrap" />
                 <TextBlock Text="Marques" FontWeight="SemiBold" />
-                <TextBlock Text="Les temps sont ceux de la source originale. Les miniatures restent locales et sont effacees en quittant l'editeur."
+                <TextBlock Text="Les temps sont ceux de la source originale. Les miniatures restent locales et sont effacees en quittant l'editeur. Une marque nommee devient un chapitre du replay publie."
                            TextWrapping="Wrap" />
                 <ItemsControl ItemsSource="{Binding Marks}">
                     <ItemsControl.ItemTemplate>
@@ -37,6 +38,9 @@
                                             <TextBlock Text="(supprimee)" IsVisible="{Binding IsRemoved}" />
                                             <TextBlock Text="✓ selectionnee" IsVisible="{Binding IsSelected}" />
                                         </StackPanel>
+                                        <TextBox Text="{Binding Title}" Watermark="Titre du chapitre (facultatif)"
+                                                 MaxLength="{x:Static abs:ReplayEditPlan.MaxChapterTitleLength}"
+                                                 IsEnabled="{Binding $parent[ContentPage].((vm:ReplayEditorPageViewModel)DataContext).CanEdit}" />
                                         <WrapPanel>
                                             <Button Content="Aller" Margin="0,0,4,4"
                                                     Command="{Binding $parent[ContentPage].((vm:ReplayEditorPageViewModel)DataContext).GoToMarkCommand}"

@@ -27,6 +27,9 @@ public sealed partial class ReplayMarkItem(long timeMs) : ObservableObject
     public partial bool IsRemoved { get; set; }
     [ObservableProperty]
     public partial bool IsSelected { get; set; }
+    /// <summary>Optional title; a named mark is published as a chapter.</summary>
+    [ObservableProperty]
+    public partial string? Title { get; set; }
 }
 
 public sealed record ReplayRangeItem(long StartMs, long EndMs)
@@ -167,7 +170,7 @@ public sealed partial class ReplayEditorPageViewModel : ViewModelBase
             Status = $"Une marque existe deja a {ReplayControlsState.FormatPreciseTime(time)}.";
             return;
         }
-        var mark = new ReplayMarkItem(time);
+        var mark = Track(new ReplayMarkItem(time));
         var index = Marks.TakeWhile(m => m.TimeMs < time).Count();
         Marks.Insert(index, mark);
         UpdateRemovedMarks();
@@ -179,6 +182,15 @@ public sealed partial class ReplayEditorPageViewModel : ViewModelBase
             try { mark.Thumbnail = await capture(CancellationToken.None); }
             catch (Exception ex) { Status = $"Marque ajoutee a {mark.Time}, sans miniature : {ex.Message}"; }
         }
+    }
+
+    private ReplayMarkItem Track(ReplayMarkItem mark)
+    {
+        mark.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(ReplayMarkItem.Title) && Marks.Contains(mark)) IsDirty = true;
+        };
+        return mark;
     }
 
     private void RemoveMark(ReplayMarkItem? mark)
@@ -261,7 +273,9 @@ public sealed partial class ReplayEditorPageViewModel : ViewModelBase
             {
                 Revision = draft.Revision,
                 Marks = Marks.Select(m => m.TimeMs).ToArray(),
-                RemovedRanges = RemovedRanges.Select(r => new PodcastDraftRange(r.StartMs, r.EndMs)).ToArray()
+                RemovedRanges = RemovedRanges.Select(r => new PodcastDraftRange(r.StartMs, r.EndMs)).ToArray(),
+                Chapters = Marks.Select(m => (m.TimeMs, Title: ReplayEditPlan.ChapterTitle(m.Title)))
+                    .Where(c => c.Title is not null).Select(c => new PodcastChapter(c.TimeMs, c.Title!)).ToArray()
             });
             Load(saved, keepThumbnails: true);
             Status = $"Brouillon enregistre (revision {saved.Draft?.Revision}).";
@@ -318,8 +332,12 @@ public sealed partial class ReplayEditorPageViewModel : ViewModelBase
         RangeStart = null;
         RangeEnd = null;
         Marks.Clear();
+        var titles = (podcast.Draft?.Chapters ?? []).ToDictionary(c => c.TimeMs, c => c.Title);
         foreach (var time in marks.Order())
-            Marks.Add(new ReplayMarkItem(time) { Thumbnail = thumbnails.GetValueOrDefault(time) });
+            Marks.Add(Track(new ReplayMarkItem(time)
+            {
+                Thumbnail = thumbnails.GetValueOrDefault(time), Title = titles.GetValueOrDefault(time)
+            }));
         RemovedRanges.Clear();
         foreach (var range in (podcast.Draft?.RemovedRanges ?? []).OrderBy(r => r.StartMs))
             RemovedRanges.Add(new(range.StartMs, range.EndMs));

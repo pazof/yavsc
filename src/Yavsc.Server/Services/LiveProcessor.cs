@@ -396,8 +396,19 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
 
     public async Task<PodcastResponse> SaveDraftAsync(Guid id, string ownerId, SavePodcastDraftRequest request, CancellationToken ct)
     {
-        if (request.Marks.Count > MaxDraftMarks)
+        if (request.Marks.Count > MaxDraftMarks || request.Chapters.Count > MaxDraftMarks)
             throw new PodcastException(400, $"Au plus {MaxDraftMarks} marques sont autorisees.");
+        var chapters = new List<PodcastChapter>();
+        foreach (var chapter in request.Chapters)
+        {
+            var title = ReplayEditPlan.ChapterTitle(chapter.Title);
+            if (title is null) continue;
+            if (title.Length > ReplayEditPlan.MaxChapterTitleLength)
+                throw new PodcastException(400, $"Un titre de chapitre depasse {ReplayEditPlan.MaxChapterTitleLength} caracteres.");
+            chapters.Add(chapter with { Title = title });
+        }
+        if (chapters.DistinctBy(c => c.TimeMs).Count() != chapters.Count)
+            throw new PodcastException(400, "Une marque ne peut porter qu'un titre de chapitre.");
         await _gate.WaitAsync(ct);
         try
         {
@@ -408,15 +419,18 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
             var removed = request.RemovedRanges.Select(r => new ReplayRange(r.StartMs, r.EndMs)).ToArray();
             try { _ = ReplayEditPlan.KeptRanges(removed, duration); }
             catch (ArgumentException ex) { throw new PodcastException(400, ex.Message.Split(" (Parameter")[0]); }
-            if (request.Marks.Any(m => m < 0 || m > duration))
+            var requested = request.Marks.Concat(chapters.Select(c => c.TimeMs)).Distinct().ToArray();
+            if (requested.Length > MaxDraftMarks)
+                throw new PodcastException(400, $"Au plus {MaxDraftMarks} marques sont autorisees.");
+            if (requested.Any(m => m < 0 || m > duration))
                 throw new PodcastException(400, "Une marque est en dehors de la video.");
-            // A mark inside a removed passage disappears with it.
-            var marks = request.Marks.Distinct().Order()
-                .Where(m => !removed.Any(r => m >= r.StartMs && m < r.EndMs)).ToArray();
+            // A mark inside a removed passage disappears with it, and so does its chapter title.
+            var marks = requested.Order().Where(m => !removed.Any(r => m >= r.StartMs && m < r.EndMs)).ToArray();
             var ranges = request.RemovedRanges.OrderBy(r => r.StartMs).ThenBy(r => r.EndMs).ToArray();
             var draft = podcast.Draft! with
             {
-                Revision = podcast.Draft!.Revision + 1, Marks = marks, RemovedRanges = ranges, Error = null
+                Revision = podcast.Draft!.Revision + 1, Marks = marks, RemovedRanges = ranges, Error = null,
+                Chapters = chapters.Where(c => marks.Contains(c.TimeMs)).OrderBy(c => c.TimeMs).ToArray()
             };
             await SetDraftAsync(document, draft, ct);
             return _documents[id].Manifest.Podcast;
@@ -489,27 +503,39 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         var directory = DirectoryFor(id);
         var source = Path.Combine(directory, SourceFileName);
         var temporary = Path.Combine(directory, "replay.tmp.mp4");
+        var rendered = Path.Combine(directory, "replay.render.tmp.mp4");
+        IReadOnlyList<PodcastChapter> chapters = [];
         try
         {
             if (allowance <= 1) throw new IOException("Quota de stockage des podcasts atteint.");
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
             timeout.CancelAfter(TimeSpan.FromSeconds(_options.ReplayTimeoutSeconds));
-            if (draft.RemovedRanges.Count == 0)
+            if (draft.RemovedRanges.Count > 0 || draft.Chapters.Count > 0)
+            {
+                var duration = SourceDurationMs(podcast);
+                var kept = ReplayEditPlan.KeptRanges(
+                    draft.RemovedRanges.Select(r => new ReplayRange(r.StartMs, r.EndMs)), duration).ToArray();
+                var publishedDuration = kept.Sum(r => r.DurationMs);
+                chapters = ReplayEditPlan.PublishedChapters(draft.Chapters, kept);
+                var media = source;
+                if (draft.RemovedRanges.Count > 0)
+                {
+                    // The declared segment durations may be slightly shorter than the media: keep its tail.
+                    if (kept[^1].EndMs == duration) kept[^1] = kept[^1] with { EndMs = ReplayRange.OpenEnd };
+                    media = chapters.Count == 0 ? temporary : rendered;
+                    await editor.RenderAsync(source, kept, media, allowance, timeout.Token);
+                }
+                if (chapters.Count > 0)
+                    await editor.AddChaptersAsync(media, chapters, publishedDuration, temporary, allowance, timeout.Token);
+            }
+            if (draft.RemovedRanges.Count == 0 && chapters.Count == 0)
             {
                 if (draft.SourceBytes > allowance) throw new IOException("Quota de stockage des podcasts atteint.");
                 await using var input = File.OpenRead(source);
                 await using var output = File.Create(temporary);
                 await input.CopyToAsync(output, timeout.Token);
             }
-            else
-            {
-                var duration = SourceDurationMs(podcast);
-                var kept = ReplayEditPlan.KeptRanges(
-                    draft.RemovedRanges.Select(r => new ReplayRange(r.StartMs, r.EndMs)), duration).ToArray();
-                // The declared segment durations may be slightly shorter than the media: keep its tail.
-                if (kept[^1].EndMs == duration) kept[^1] = kept[^1] with { EndMs = ReplayRange.OpenEnd };
-                await editor.RenderAsync(source, kept, temporary, allowance, timeout.Token);
-            }
+            File.Delete(rendered);
             var bytes = new FileInfo(temporary).Length;
             if (bytes <= 0 || bytes > allowance) throw new IOException("Taille du MP4 invalide ou quota atteint.");
             await _gate.WaitAsync(ct);
@@ -526,6 +552,7 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
                 {
                     Bytes = latest.Bytes - previous + bytes,
                     Replay = new(PodcastReplayState.Ready, bytes),
+                    Chapters = chapters,
                     Draft = latest.Draft! with
                     {
                         State = PodcastDraftState.Ready, PublishedRevision = draft.Revision, Error = null
@@ -543,6 +570,7 @@ public sealed class LiveProcessor : ILiveProcessor, IDisposable
         {
             _logger.LogError(ex, "Podcast {PodcastId} draft publication failed", id);
             File.Delete(temporary);
+            File.Delete(rendered);
             if (!ct.IsCancellationRequested)
             {
                 await _gate.WaitAsync(CancellationToken.None);

@@ -4,12 +4,31 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="using:PostIt.ViewModels"
     x:DataType="vm:VideoPageViewModel">
-    <Grid RowDefinitions="Auto,*,Auto,Auto" Margin="16" RowSpacing="12">
+    <Grid RowDefinitions="Auto,*,Auto,Auto,Auto" Margin="16" RowSpacing="12">
         <TextBlock Text="{Binding Title}" FontSize="22" TextWrapping="Wrap" />
         <Border Grid.Row="1" Background="Black" BorderThickness="1" BorderBrush="Green">
             <ContentControl x:Name="VideoSurface" />
         </Border>
-        <Button Grid.Row="2" Content="Ouvrir dans le navigateur" Click="OpenExternal_Click" IsVisible="{Binding CanOpenExternal}" />
-        <TextBlock x:Name="PlaybackStatus" Grid.Row="3" TextWrapping="Wrap" />
+        <StackPanel Grid.Row="2" Spacing="4" IsVisible="{Binding HasChapters}">
+            <TextBlock Text="Chapitres" FontWeight="SemiBold" />
+            <ScrollViewer MaxHeight="160">
+                <ItemsControl ItemsSource="{Binding Chapters}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:PodcastChapterItem">
+                            <Button Content="{Binding Label}" Margin="0,0,6,6"
+                                    Command="{Binding $parent[ContentPage].((vm:VideoPageViewModel)DataContext).GoToChapterCommand}"
+                                    CommandParameter="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </StackPanel>
+        <Button Grid.Row="3" Content="Ouvrir dans le navigateur" Click="OpenExternal_Click" IsVisible="{Binding CanOpenExternal}" />
+        <TextBlock x:Name="PlaybackStatus" Grid.Row="4" TextWrapping="Wrap" />
     </Grid>
 </ContentPage>

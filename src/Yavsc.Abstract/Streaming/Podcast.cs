@@ -25,6 +25,12 @@ public enum PodcastDraftState { Preparing, Ready, Publishing, Failed }
 public sealed record PodcastDraftRange(long StartMs, long EndMs);
 
 /// <summary>
+/// A named position of a replay. In a draft, it names a mark of the original timeline; in a published
+/// replay, it is converted to the timeline of the published MP4.
+/// </summary>
+public sealed record PodcastChapter(long TimeMs, string Title);
+
+/// <summary>
 /// Private editing state of a refined replay, visible to its owner only. Marks and ranges use the
 /// timeline of the original source. <c>Revision</c> detects concurrent edits.
 /// </summary>
@@ -34,6 +40,8 @@ public sealed record PodcastDraftResponse(
 {
     /// <summary>Revision of the currently published MP4, if any.</summary>
     public int? PublishedRevision { get; init; }
+    /// <summary>Named marks, published as chapters; each time is also one of the marks.</summary>
+    public IReadOnlyList<PodcastChapter> Chapters { get; init; } = [];
 }
 
 /// <summary>Replaces the marks and removed ranges of a refined replay draft.</summary>
@@ -46,6 +54,9 @@ public sealed record SavePodcastDraftRequest
     public IReadOnlyList<long> Marks { get; init; } = [];
     [MaxLength(200)]
     public IReadOnlyList<PodcastDraftRange> RemovedRanges { get; init; } = [];
+    /// <summary>Titles of named marks; their times are added to the marks if missing.</summary>
+    [MaxLength(500)]
+    public IReadOnlyList<PodcastChapter> Chapters { get; init; } = [];
 }
 
 /// <summary>Publishes the saved draft revision as the replay MP4.</summary>
@@ -120,6 +131,8 @@ public sealed record PodcastResponse(
     public DateTimeOffset? OriginalsExpireAt { get; init; }
     /// <summary>The originals and draft were deleted; only the published MP4 remains and it cannot be re-edited.</summary>
     public bool OriginalsDeleted { get; init; }
+    /// <summary>Chapters of the published refined replay, in the timeline of its MP4.</summary>
+    public IReadOnlyList<PodcastChapter> Chapters { get; init; } = [];
 }
 
 /// <summary>An independently decodable MPEG-TS HLS segment.</summary>

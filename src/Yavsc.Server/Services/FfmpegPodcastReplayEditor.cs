@@ -44,6 +44,48 @@ public sealed class FfmpegPodcastReplayEditor(IOptions<PodcastOptions> options) 
         await FfmpegProcess.RunAsync(options.Value.FfmpegPath, arguments, null, outputPath, maxBytes, ct);
     }
 
+    public async Task AddChaptersAsync(string inputPath, IReadOnlyList<PodcastChapter> chapters, long durationMs,
+        string outputPath, long maxBytes, CancellationToken ct)
+    {
+        if (chapters.Count == 0) throw new ArgumentException("Aucun chapitre.", nameof(chapters));
+        var metadata = new StringBuilder(";FFMETADATA1\n");
+        for (var i = 0; i < chapters.Count; i++)
+        {
+            var start = chapters[i].TimeMs;
+            var end = i + 1 < chapters.Count ? chapters[i + 1].TimeMs : Math.Max(durationMs, start + 1);
+            if (start < 0 || end <= start)
+                throw new ArgumentException("Les chapitres doivent etre ordonnes et distincts.", nameof(chapters));
+            metadata.Append(CultureInfo.InvariantCulture,
+                $"[CHAPTER]\nTIMEBASE=1/1000\nSTART={start}\nEND={end}\ntitle={MetadataValue(chapters[i].Title)}\n");
+        }
+        // Titles are user text: they only reach FFmpeg through this escaped metadata file.
+        var metadataPath = outputPath + ".chapters.txt";
+        await File.WriteAllTextAsync(metadataPath, metadata.ToString(), new UTF8Encoding(false), ct);
+        try
+        {
+            await FfmpegProcess.RunAsync(options.Value.FfmpegPath,
+            [
+                "-nostdin", "-hide_banner", "-loglevel", "error", "-y", "-i", inputPath,
+                "-f", "ffmetadata", "-i", metadataPath, "-map", "0:v", "-map", "0:a?",
+                "-map_metadata", "0", "-map_chapters", "1", "-c", "copy",
+                "-movflags", "+faststart", "-f", "mp4", outputPath
+            ], null, outputPath, maxBytes, ct);
+        }
+        finally { File.Delete(metadataPath); }
+    }
+
+    private static string MetadataValue(string value)
+    {
+        var escaped = new StringBuilder(value.Length);
+        foreach (var c in value)
+        {
+            if (char.IsControl(c)) { escaped.Append(' '); continue; }
+            if (c is '=' or ';' or '#' or '\\') escaped.Append('\\');
+            escaped.Append(c);
+        }
+        return escaped.ToString();
+    }
+
     private static string Seconds(long milliseconds)
         => (milliseconds / 1000m).ToString("0.###", CultureInfo.InvariantCulture);
 }

@@ -12,6 +12,42 @@ public readonly record struct ReplayRange(long StartMs, long EndMs)
 public static class ReplayEditPlan
 {
     public const int MaxRemovedRanges = 200;
+    public const int MaxChapterTitleLength = 120;
+
+    /// <summary>
+    /// Normalizes a chapter title: control characters become spaces and surrounding spaces are removed.
+    /// Returns null for an empty title, which leaves the mark unnamed.
+    /// </summary>
+    public static string? ChapterTitle(string? title)
+    {
+        if (title is null) return null;
+        var normalized = new string(title.Select(c => char.IsControl(c) ? ' ' : c).ToArray()).Trim();
+        return normalized.Length == 0 ? null : normalized;
+    }
+
+    /// <summary>
+    /// Converts source times to the published timeline, where the kept ranges are concatenated.
+    /// Chapters inside a removed range, or at the end of the source, are dropped.
+    /// </summary>
+    public static IReadOnlyList<PodcastChapter> PublishedChapters(IEnumerable<PodcastChapter> chapters,
+        IReadOnlyList<ReplayRange> kept)
+    {
+        var result = new List<PodcastChapter>();
+        foreach (var chapter in chapters.OrderBy(c => c.TimeMs))
+        {
+            var offset = 0L;
+            foreach (var range in kept)
+            {
+                if (chapter.TimeMs >= range.StartMs && chapter.TimeMs < range.EndMs)
+                {
+                    result.Add(chapter with { TimeMs = offset + chapter.TimeMs - range.StartMs });
+                    break;
+                }
+                offset += range.DurationMs;
+            }
+        }
+        return result;
+    }
 
     /// <summary>
     /// Converts ranges removed by the author into the ordered ranges kept in the final replay.
