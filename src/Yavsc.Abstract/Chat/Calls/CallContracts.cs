@@ -4,6 +4,7 @@ namespace Yavsc.Abstract.Chat.Calls;
 
 public static class CallHubMethods
 {
+    public const string SetContactPreferences = "SetContactPreferences";
     public const string Invite = "InviteCall";
     public const string InviteLan = "InviteLanCall";
     public const string Accept = "AcceptCall";
@@ -15,9 +16,18 @@ public static class CallHubMethods
     public const string SignalReceived = "CallSignal";
 }
 
+public sealed record ContactPreferences(bool AllowAudioCalls, bool AllowVideoCalls, bool AllowPrivateMessages);
+
+public enum CallDisplayMode
+{
+    AudioVideo,
+    AudioOnly
+}
+
 public sealed record CallSession(
     Guid Id, string RoomName, string Caller, string Callee, bool RelayOnly,
-    DateTimeOffset ExpiresAt, string Transport = CallTransports.WebRtc);
+    DateTimeOffset ExpiresAt, string Transport = CallTransports.WebRtc,
+    CallDisplayMode DisplayMode = CallDisplayMode.AudioVideo);
 
 public static class CallTransports
 {

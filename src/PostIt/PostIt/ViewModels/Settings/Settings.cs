@@ -67,6 +67,12 @@ public partial class Settings : ViewModelBase
     [ObservableProperty]
     public partial string? LanCallAddress { get; set; }
     [ObservableProperty]
+    public partial bool AllowAudioCalls { get; set; } = true;
+    [ObservableProperty]
+    public partial bool AllowVideoCalls { get; set; } = true;
+    [ObservableProperty]
+    public partial bool AllowPrivateMessages { get; set; } = true;
+    [ObservableProperty]
     public partial bool AndroidKeepChatConnected { get; set; }
     [ObservableProperty]
     public partial bool ShareExceptionReports { get; set; }
@@ -177,6 +183,9 @@ public partial class Settings : ViewModelBase
     partial void OnPodcastKeepScreenOnChanged(bool value) => MarkDirty();
     partial void OnPodcastBlurBackgroundChanged(bool value) => MarkDirty();
     partial void OnLanCallAddressChanged(string? value) => MarkDirty();
+    partial void OnAllowAudioCallsChanged(bool value) => MarkDirty();
+    partial void OnAllowVideoCallsChanged(bool value) => MarkDirty();
+    partial void OnAllowPrivateMessagesChanged(bool value) => MarkDirty();
     partial void OnAndroidKeepChatConnectedChanged(bool value) => MarkDirty();
     partial void OnShareExceptionReportsChanged(bool value) => MarkDirty();
     partial void OnChatRoomsByAccountChanged(Dictionary<string, string[]> value) => MarkDirty();
@@ -445,6 +454,9 @@ public partial class Settings : ViewModelBase
                 PodcastKeepScreenOn = settings.PodcastKeepScreenOn;
                 PodcastBlurBackground = settings.PodcastBlurBackground;
                 LanCallAddress = settings.LanCallAddress;
+                AllowAudioCalls = settings.AllowAudioCalls;
+                AllowVideoCalls = settings.AllowVideoCalls;
+                AllowPrivateMessages = settings.AllowPrivateMessages;
                 AndroidKeepChatConnected = settings.AndroidKeepChatConnected;
                 ShareExceptionReports = settings.ShareExceptionReports;
                 ChatRoomsByAccount = settings.ChatRoomsByAccount ?? new();

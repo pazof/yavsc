@@ -4,6 +4,10 @@
 
 ## [1.0.8-rc38] - unstable
 
+### Added
+
+* [PostIt/Chat] Persist audio, audio-video and private-message contact preferences and announce them to ChatHub on connection and reconnection. Add the audio-only call display contract; filtering contacts and audio-only media are not implemented yet.
+
 ### Fixed
 
 * [PostIt] Restore selectable error notification messages and update blog and rendez-vous tests for the current layouts and address editor.

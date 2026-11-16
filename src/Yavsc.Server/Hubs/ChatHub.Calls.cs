@@ -9,6 +9,14 @@ namespace Yavsc.Server.Hubs;
 
 public partial class ChatHub
 {
+    public void SetContactPreferences(ContactPreferences preferences)
+    {
+        CallUser();
+        if (preferences is null)
+            throw new HubException("Contact preferences are required.");
+        _calls.SetContactPreferences(Context.ConnectionId, preferences);
+    }
+
     public Task<CallSession> InviteCall(string roomName, string callee) =>
         InviteCoreAsync(roomName, callee, CallTransports.WebRtc);
 

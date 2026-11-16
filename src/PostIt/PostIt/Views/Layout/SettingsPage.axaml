@@ -49,6 +49,15 @@
         <CheckBox Grid.Row="11" x:Name="DarkModeCheckBox" IsChecked="{Binding DarkMode, Mode=TwoWay}"/>
 
         <StackPanel Grid.Row="12" Spacing="8">
+            <TextBlock Text="Moyens de contact" FontWeight="SemiBold" />
+            <CheckBox Content="Autoriser les appels audio"
+                      IsChecked="{Binding AllowAudioCalls, Mode=TwoWay}" />
+            <CheckBox Content="Autoriser les appels audio-video"
+                      IsChecked="{Binding AllowVideoCalls, Mode=TwoWay}" />
+            <CheckBox Content="Autoriser les messages prives"
+                      IsChecked="{Binding AllowPrivateMessages, Mode=TwoWay}" />
+            <TextBlock Text="Ces preferences sont annoncees au serveur a la connexion et a la reconnexion. Leur application aux appels et aux messages n'est pas encore implementee ; elles ne bloquent donc pas les contacts."
+                       TextWrapping="Wrap" />
             <StackPanel IsVisible="{Binding SupportsBackgroundChatService}" Spacing="6">
                 <CheckBox x:Name="BackgroundChatCheckBox"
                           Content="Garder la connexion au serveur active et la reprendre au demarrage du telephone"

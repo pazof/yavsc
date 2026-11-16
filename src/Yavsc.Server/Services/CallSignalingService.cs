@@ -2,6 +2,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
+using System.Collections.Concurrent;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -33,7 +34,14 @@ public sealed class CallSignalingService(
 
     private readonly SemaphoreSlim _gate = new(1);
     private readonly Dictionary<Guid, PendingCall> _calls = [];
+    private readonly ConcurrentDictionary<string, ContactPreferences> _contactPreferences = new();
     private readonly AudioVideoCallOptions _options = options.Value;
+
+    public void SetContactPreferences(string connection, ContactPreferences preferences) =>
+        _contactPreferences[connection] = preferences;
+
+    public ContactPreferences? GetContactPreferences(string connection) =>
+        _contactPreferences.TryGetValue(connection, out var preferences) ? preferences : null;
 
     public async Task<CallSession> InviteAsync(
         string room, string caller, string callee, string callerConnection,
@@ -207,6 +215,7 @@ public sealed class CallSignalingService(
 
     public async Task DisconnectAsync(string connection)
     {
+        _contactPreferences.TryRemove(connection, out _);
         await _gate.WaitAsync();
         try
         {

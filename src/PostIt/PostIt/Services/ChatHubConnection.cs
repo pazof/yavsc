@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using PostIt.ViewModels.Chat;
 using PostIt.Models;
+using Yavsc.Abstract.Chat.Calls;
 
 namespace PostIt.Services;
 
@@ -76,8 +77,20 @@ public sealed class ChatHubConnection : IAsyncDisposable
             RememberMessage(connection, message.Room, message.Name ?? "", message.Message ?? ""));
         connection.On<string, string>("addPV", (sender, message) =>
             RememberMessage(connection, null, sender, message));
-        connection.Reconnected += _ => ReferenceEquals(Connection, connection) && IsCurrentConfiguration
-            ? RestoreRoomsAsync(connection, CancellationToken.None) : Task.CompletedTask;
+        connection.Reconnected += async _ =>
+        {
+            if (!ReferenceEquals(Connection, connection) || !IsCurrentConfiguration) return;
+            try
+            {
+                await AnnounceContactPreferencesAsync(connection, CancellationToken.None);
+                await RestoreRoomsAsync(connection, CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                ReportError($"Impossible d'annoncer les preferences de contact : {ex.Message}");
+                await connection.StopAsync();
+            }
+        };
         return connection;
     }
 
@@ -112,11 +125,25 @@ public sealed class ChatHubConnection : IAsyncDisposable
             if (Connection.State == HubConnectionState.Disconnected)
             {
                 await Connection.StartAsync(ct);
-                await RestoreRoomsAsync(Connection, ct);
+                try
+                {
+                    await AnnounceContactPreferencesAsync(Connection, ct);
+                    await RestoreRoomsAsync(Connection, ct);
+                }
+                catch
+                {
+                    await Connection.StopAsync(CancellationToken.None);
+                    throw;
+                }
             }
         }
         finally { _gate.Release(); }
     }
+
+    private Task AnnounceContactPreferencesAsync(HubConnection connection, CancellationToken ct) =>
+        connection.InvokeAsync(CallHubMethods.SetContactPreferences,
+            new ContactPreferences(_api.Settings.AllowAudioCalls, _api.Settings.AllowVideoCalls,
+                _api.Settings.AllowPrivateMessages), ct);
 
     public async Task StopAsync(CancellationToken ct = default)
     {

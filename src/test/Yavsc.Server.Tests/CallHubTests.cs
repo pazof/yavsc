@@ -60,6 +60,24 @@ public sealed class CallHubTests
     }
 
     [Fact]
+    public async Task Contact_preferences_are_scoped_to_the_authenticated_connection_and_removed_on_disconnect()
+    {
+        using var f = new Fixture();
+        using var alice = f.Hub("alice", "alice-1");
+        using var spoof = f.Hub("bob", "alice-1");
+        var preferences = new ContactPreferences(true, false, false);
+
+        Assert.Throws<HubException>(() => spoof.SetContactPreferences(preferences));
+        Assert.Throws<HubException>(() => alice.SetContactPreferences(null!));
+        alice.SetContactPreferences(preferences);
+        Assert.Equal(preferences, f.Calls.GetContactPreferences("alice-1"));
+        Assert.Null(f.Calls.GetContactPreferences("bob-1"));
+
+        await f.Calls.DisconnectAsync("alice-1");
+        Assert.Null(f.Calls.GetContactPreferences("alice-1"));
+    }
+
+    [Fact]
     public async Task Lan_requires_https_at_invitation_acceptance_and_key_exchange()
     {
         using var f = new Fixture();

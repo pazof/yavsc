@@ -5,6 +5,34 @@ namespace PostIt.Tests;
 [Trait("Category", "non-reg")]
 public class SettingsLoadTests
 {
+    [Fact]
+    public void Contact_options_survive_save_and_load_and_legacy_settings_keep_defaults()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"postit-contact-{Guid.NewGuid():N}.json");
+        try
+        {
+            File.WriteAllText(path, "{}");
+            var settings = new PostIt.ViewModels.Settings(path);
+            settings.Load();
+            Assert.True(settings.AllowAudioCalls);
+            Assert.True(settings.AllowVideoCalls);
+            Assert.True(settings.AllowPrivateMessages);
+
+            settings.AllowAudioCalls = false;
+            settings.AllowPrivateMessages = false;
+            Assert.True(settings.IsDirty);
+            settings.Save();
+
+            var restored = new PostIt.ViewModels.Settings(path);
+            restored.Load();
+            Assert.False(restored.AllowAudioCalls);
+            Assert.True(restored.AllowVideoCalls);
+            Assert.False(restored.AllowPrivateMessages);
+            Assert.False(restored.IsDirty);
+        }
+        finally { File.Delete(path); }
+    }
+
     /// <summary>
     /// On the dev machine, the user-level settings file
     /// (~/.config/PostIt/postit-settings.json) does not exist, so Load()

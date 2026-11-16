@@ -14,6 +14,7 @@ using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.ViewModels.Chat;
 using PostIt.Views;
+using Yavsc.Abstract.Chat.Calls;
 
 namespace PostIt.Tests;
 
@@ -308,6 +309,8 @@ public sealed class MessagingSessionTests
             await chat.JoinRoomCommand();
             Assert.Equal(new[] { "first", "second" }, chat.JoinedRooms);
             var counter = server.Services.GetRequiredService<ConnectionCounter>();
+            settings.AllowVideoCalls = false;
+            counter.ContactPreferences = null;
             counter.Context!.Abort();
             var deadline = DateTime.UtcNow.AddSeconds(40);
             while (!counter.RoomsRejoined.Task.IsCompleted && DateTime.UtcNow < deadline)
@@ -319,6 +322,7 @@ public sealed class MessagingSessionTests
                 $"Connections={counter.Count}, transport={transport.Connection.State}, chat={chat.Status.Message}");
             Assert.Equal(2, await transport.Connection.InvokeAsync<int>("ConnectionCount"));
             Assert.Equal(new[] { "first", "second" }, counter.RejoinedRooms);
+            Assert.Equal(new ContactPreferences(true, false, true), counter.ContactPreferences);
 
             Platform.SuspendPlayback();
             Assert.True(chat.IsConnected);
@@ -366,7 +370,13 @@ public sealed class MessagingSessionTests
         var path = Path.Combine(Path.GetTempPath(), $"postit-chat-rooms-{Guid.NewGuid():N}");
         try
         {
-            var settings = new Settings(path + ".settings") { ApiUrl = server.Urls.Single() + "/api/v1/" };
+            var settings = new Settings(path + ".settings")
+            {
+                ApiUrl = server.Urls.Single() + "/api/v1/",
+                AllowAudioCalls = true,
+                AllowVideoCalls = false,
+                AllowPrivateMessages = false
+            };
             settings.Authentication.Authority = "https://login.example.test";
             var store = CreateStore(path);
             var jwt = "e30." + Convert.ToBase64String(Encoding.UTF8.GetBytes("{\"sub\":\"alice\"}")).TrimEnd('=')
@@ -376,6 +386,8 @@ public sealed class MessagingSessionTests
             await using (var transport = new ChatHubConnection(api))
             {
                 await transport.StartAsync(TestContext.Current.CancellationToken);
+                Assert.Equal(new ContactPreferences(true, false, false),
+                    server.Services.GetRequiredService<ConnectionCounter>().ContactPreferences);
                 await transport.JoinAsync("SavedRoom", TestContext.Current.CancellationToken);
                 Assert.Single(settings.ChatRoomsByAccount);
             }
@@ -385,6 +397,8 @@ public sealed class MessagingSessionTests
             await using var resumedApi = new YavscApiClient(restored, store);
             await using var resumed = new ChatHubConnection(resumedApi);
             await resumed.StartAsync(TestContext.Current.CancellationToken);
+            Assert.Equal(new ContactPreferences(true, false, false),
+                server.Services.GetRequiredService<ConnectionCounter>().ContactPreferences);
             Assert.Equal(2, await resumed.Connection.InvokeAsync<int>("ConnectionCount"));
             Assert.Equal("SavedRoom", Assert.Single(resumed.JoinedRooms).Name);
             Assert.Equal(new[] { "SavedRoom" }, server.Services.GetRequiredService<ConnectionCounter>().RejoinedRooms);
@@ -437,12 +451,14 @@ public sealed class MessagingSessionTests
     {
         public int Count;
         public HubCallerContext? Context;
+        public ContactPreferences? ContactPreferences;
         public List<string> RejoinedRooms { get; } = [];
         public TaskCompletionSource RoomsRejoined { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     }
 
     public sealed class TestChatHub(ConnectionCounter counter) : Hub
     {
+        public void SetContactPreferences(ContactPreferences preferences) => counter.ContactPreferences = preferences;
         public int ConnectionCount() => counter.Count;
         public ChatRoomInfo Join(string room)
         {
