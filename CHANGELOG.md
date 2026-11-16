@@ -6,6 +6,8 @@
 
 ### Added
 
+* [PostIt/Android] Port the replay draft editor to Android: the page stacks the mark and range panel under the native video in portrait, the native replay seek bar previews the dragged position (latest position only, at most every 60 ms, shared `ReplayControlsState`), and mark thumbnails are copied from the native surface with `PixelCopy` through the new `IVideoFrameCapture`, since the LibVLC snapshot cannot read hardware-decoded output.
+
 * [Podcasts] Publish named marks as replay chapters: the draft stores optional mark titles (`Chapters`, at most 120 characters, a title's time is also a mark, titles of removed marks are dropped). Publication converts their times to the published timeline, embeds them in the MP4 with an FFmpeg stream copy (titles only go through an escaped metadata file) and exposes them in `PodcastResponse.Chapters`. The PostIt editor names marks, and the PostIt replay player and the web podcasts page list the chapters as buttons that seek the replay.
 
 * [PostIt/Podcasts] Add the desktop replay draft editor: from the refinement panel, the owner plays the private draft source, steps frame by frame, adds marks at the current time (Ctrl+M) with local thumbnails, picks start and end marks to remove ranges, restores ranges, then saves with the read revision (a conflict keeps local edits and asks for a reload) or publishes after saving pending edits. `ReplayEditPlan` moves to `Yavsc.Abstract` so the editor merges and validates ranges like the server.

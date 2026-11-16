@@ -1,5 +1,8 @@
 using System.Net;
+using Avalonia.Controls;
+using Avalonia.Threading;
 using PostIt.ViewModels;
+using PostIt.Views.Blogs;
 using Yavsc.Abstract.Streaming;
 using Yavsc.Api.Client;
 
@@ -176,6 +179,40 @@ public sealed class ReplayEditorTests(AvaloniaUiFixture ui)
         vm.ShowChapters([]);
         Assert.False(vm.HasChapters);
         return Task.CompletedTask;
+    }, TestContext.Current.CancellationToken);
+
+    [Fact]
+    public Task The_editor_stacks_its_panel_under_the_video_in_portrait()
+        => ui.RunAsync(async () =>
+    {
+        var api = new DraftApi();
+        // Without a draft source the page skips the native player.
+        api.Podcast = api.Podcast with { Draft = api.Podcast.Draft! with { SourceBytes = 0 } };
+        var page = new ReplayEditorPage { DataContext = Editor(api) };
+        var nav = new NavigationPage();
+        await nav.PushAsync(page);
+        var window = new Window { Width = 360, Height = 800, Content = nav };
+        try
+        {
+            window.Show();
+            foreach (var (width, height) in new[] { (360, 800), (1000, 500), (360, 800) })
+            {
+                window.Width = width;
+                window.Height = height;
+                Dispatcher.UIThread.RunJobs();
+                window.UpdateLayout();
+
+                var wide = width >= height;
+                var grid = page.FindControl<Grid>("EditorGrid")!;
+                var panel = page.FindControl<ScrollViewer>("EditPanel")!;
+                Assert.Equal(wide ? 2 : 1, grid.ColumnDefinitions.Count);
+                Assert.Equal(wide ? 1 : 0, Grid.GetColumn(panel));
+                Assert.Equal(wide ? 1 : 4, Grid.GetRow(panel));
+                Assert.True(panel.Bounds.Top >= (wide ? 0 : page.FindControl<Border>("VideoBorder")!.Bounds.Bottom));
+            }
+            Assert.Contains("source du brouillon", page.FindControl<TextBlock>("PlaybackStatus")!.Text);
+        }
+        finally { window.Close(); }
     }, TestContext.Current.CancellationToken);
 
     private static ReplayEditorPageViewModel Editor(DraftApi api)

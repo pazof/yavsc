@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
@@ -22,10 +23,13 @@ public partial class ReplayEditorPage : ContentPage
     private ReplayEditorPageViewModel? _vm;
     private string? _snapshotDirectory;
     private Task _snapshot = Task.CompletedTask;
+    private bool? _isWideLayout;
 
     public ReplayEditorPage()
     {
         InitializeComponent();
+        if (OperatingSystem.IsAndroid()) AddMarkButton.Content = "Ajouter une marque";
+        SizeChanged += (_, _) => UpdateResponsiveLayout();
         _positionTimer.Tick += (_, _) =>
         {
             if (_player is { } player && _vm is { } vm) vm.CurrentTimeMs = Math.Max(0, player.Time);
@@ -35,7 +39,28 @@ public partial class ReplayEditorPage : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs e)
     {
         base.OnNavigatedTo(e);
+        UpdateResponsiveLayout();
         InitializePlayer();
+    }
+
+    /// <summary>Keeps the video and the edit panel side by side in landscape, and stacks them on a portrait phone.</summary>
+    private void UpdateResponsiveLayout()
+    {
+        var size = TopLevel.GetTopLevel(this)?.ClientSize ?? Bounds.Size;
+        if (size.Width <= 0 || size.Height <= 0) return;
+        var isWide = size.Width >= size.Height;
+        if (_isWideLayout == isWide) return;
+        _isWideLayout = isWide;
+        EditorGrid.ColumnDefinitions = new ColumnDefinitions(isWide ? "2*,*" : "*");
+        // The native video surface stays out of the scroll viewer: only the edit panel scrolls.
+        EditorGrid.RowDefinitions = new RowDefinitions(isWide ? "Auto,*,Auto,Auto" : "Auto,2*,Auto,Auto,3*");
+        EditorGrid.Margin = new Thickness(isWide ? 16 : 8);
+        EditorTitle.FontSize = isWide ? 22 : 18;
+        VideoBorder.MinHeight = isWide ? 240 : 160;
+        Grid.SetColumnSpan(EditorTitle, isWide ? 2 : 1);
+        Grid.SetColumn(EditPanel, isWide ? 1 : 0);
+        Grid.SetRow(EditPanel, isWide ? 1 : 4);
+        Grid.SetRowSpan(EditPanel, isWide ? 3 : 1);
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs e)
@@ -148,11 +173,13 @@ public partial class ReplayEditorPage : ContentPage
     private void NextFrame_Click(object? sender, RoutedEventArgs e) => _player?.NextFrame();
 
     /// <summary>
-    /// Snapshots the displayed frame into a private temporary file, loads it in memory and deletes the file:
+    /// Copies the frame from a native surface able to do it (Android), otherwise
+    /// snapshots the displayed frame into a private temporary file, loads it in memory and deletes the file:
     /// thumbnails of the private source never reach a shared cache.
     /// </summary>
     private async Task<Bitmap?> CaptureThumbnailAsync(CancellationToken ct)
     {
+        if (VideoSurface.Content is IVideoFrameCapture surface) return await surface.CaptureFrameAsync(160, ct);
         if (_player is not { } player || _snapshotDirectory is not { } directory) return null;
         Directory.CreateDirectory(directory);
         var path = Path.Combine(directory, Guid.NewGuid().ToString("N") + ".png");

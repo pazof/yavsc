@@ -5,21 +5,21 @@
     xmlns:vm="using:PostIt.ViewModels"
     xmlns:abs="using:Yavsc.Abstract.Streaming"
     x:DataType="vm:ReplayEditorPageViewModel">
-    <Grid ColumnDefinitions="2*,*" RowDefinitions="Auto,*,Auto,Auto" Margin="16" ColumnSpacing="16" RowSpacing="8">
-        <TextBlock Grid.ColumnSpan="2" Text="{Binding Title}" FontSize="22" TextWrapping="Wrap" />
-        <Border Grid.Row="1" Background="Black" BorderThickness="1" BorderBrush="Green" MinHeight="240">
+    <Grid x:Name="EditorGrid" ColumnDefinitions="2*,*" RowDefinitions="Auto,*,Auto,Auto" Margin="16" ColumnSpacing="16" RowSpacing="8">
+        <TextBlock x:Name="EditorTitle" Grid.ColumnSpan="2" Text="{Binding Title}" FontSize="22" TextWrapping="Wrap" />
+        <Border x:Name="VideoBorder" Grid.Row="1" Background="Black" BorderThickness="1" BorderBrush="Green" MinHeight="240">
             <ContentControl x:Name="VideoSurface" />
         </Border>
-        <WrapPanel Grid.Row="2">
+        <WrapPanel x:Name="PlaybackCommands" Grid.Row="2">
             <Button Content="◀ Image precedente" Click="PreviousFrame_Click" Margin="0,0,8,8"
                     AutomationProperties.Name="Reculer d'une image" />
             <Button Content="Image suivante ▶" Click="NextFrame_Click" Margin="0,0,8,8"
                     AutomationProperties.Name="Avancer d'une image" />
-            <Button Content="Ajouter une marque (Ctrl+M)" Command="{Binding AddMarkCommand}" HotKey="Ctrl+M" Margin="0,0,8,8" />
+            <Button x:Name="AddMarkButton" Content="Ajouter une marque (Ctrl+M)" Command="{Binding AddMarkCommand}" HotKey="Ctrl+M" Margin="0,0,8,8" />
             <TextBlock Text="{Binding CurrentTime, StringFormat='Position : {0}'}" VerticalAlignment="Center" />
         </WrapPanel>
         <TextBlock x:Name="PlaybackStatus" Grid.Row="3" TextWrapping="Wrap" />
-        <ScrollViewer Grid.Row="1" Grid.RowSpan="3" Grid.Column="1">
+        <ScrollViewer x:Name="EditPanel" Grid.Row="1" Grid.RowSpan="3" Grid.Column="1">
             <StackPanel Spacing="8">
                 <TextBlock Text="{Binding DraftState}" TextWrapping="Wrap" />
                 <TextBlock Text="{Binding DurationSummary}" TextWrapping="Wrap" />

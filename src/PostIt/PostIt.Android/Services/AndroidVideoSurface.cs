@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Android;
 using Avalonia.Controls;
@@ -14,7 +16,8 @@ using Button = Android.Widget.Button;
 
 namespace PostIt.Android.Services;
 
-internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay, bool showControls = false, Action? playbackFailed = null) : NativeControlHost, IDisposable
+internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay, bool showControls = false, Action? playbackFailed = null)
+    : NativeControlHost, IDisposable, IVideoFrameCapture
 {
     private VideoView? _video;
     private ReplayLayout? _layout;
@@ -71,6 +74,30 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay, bool 
         if (_video is not null) _video.MediaPlayer = null;
     }
 
+    /// <summary>Copies the displayed frame with <see cref="PixelCopy"/>, which also reads hardware-decoded video.</summary>
+    public async Task<Avalonia.Media.Imaging.Bitmap?> CaptureFrameAsync(int width, CancellationToken ct)
+    {
+        if (!OperatingSystem.IsAndroidVersionAtLeast(24) || _disposed
+            || _video is not { Width: > 0, Height: > 0, Holder.Surface.IsValid: true } video) return null;
+        var height = Math.Max(1, (int)Math.Round(width * (double)video.Height / video.Width));
+        using var bitmap = global::Android.Graphics.Bitmap.CreateBitmap(width, height, global::Android.Graphics.Bitmap.Config.Argb8888!);
+        using var listener = new PixelCopyListener();
+        using var registration = ct.Register(() => listener.Result.TrySetCanceled(ct));
+        using var handler = new Handler(Looper.MainLooper!);
+        PixelCopy.Request(video, bitmap, listener, handler);
+        if (await listener.Result.Task != (int)PixelCopyResult.Success) return null;
+        using var png = new MemoryStream();
+        if (!bitmap.Compress(global::Android.Graphics.Bitmap.CompressFormat.Png!, 100, png)) return null;
+        png.Position = 0;
+        return new Avalonia.Media.Imaging.Bitmap(png);
+    }
+
+    private sealed class PixelCopyListener : Java.Lang.Object, PixelCopy.IOnPixelCopyFinishedListener
+    {
+        public TaskCompletionSource<int> Result { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public void OnPixelCopyFinished(int copyResult) => Result.TrySetResult(copyResult);
+    }
+
     private void OnPlaybackChanged(object? sender, EventArgs e)
         => Avalonia.Threading.Dispatcher.UIThread.Post(UpdateScreenAwake);
 
@@ -106,6 +133,7 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay, bool 
         private readonly ReplayControlsState _state = new();
         private readonly Handler _handler = new(Looper.MainLooper!);
         private readonly Java.Lang.Runnable _tick;
+        private readonly Java.Lang.Runnable _preview;
         private readonly LinearLayout _bar;
         private readonly Button _toggle;
         private readonly SeekBar _seek;
@@ -137,6 +165,7 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay, bool 
             _seek.StopTrackingTouch += EndSeek;
             _seek.ProgressChanged += ProgressChanged;
             _tick = new Java.Lang.Runnable(Update);
+            _preview = new Java.Lang.Runnable(ApplyPreview);
             _handler.Post(_tick);
         }
 
@@ -168,19 +197,37 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay, bool 
             _state.Show();
         }
 
-        private void BeginSeek(object? sender, SeekBar.StartTrackingTouchEventArgs e) => _state.IsInteracting = true;
+        private void BeginSeek(object? sender, SeekBar.StartTrackingTouchEventArgs e)
+        {
+            _state.IsInteracting = true;
+            _handler.PostDelayed(_preview, 60);
+        }
         private void EndSeek(object? sender, SeekBar.StopTrackingTouchEventArgs e)
         {
+            _handler.RemoveCallbacks(_preview);
+            _state.EndPreview();
             Seek();
             _state.IsInteracting = false;
         }
         private void ProgressChanged(object? sender, SeekBar.ProgressChangedEventArgs e)
         {
-            if (e.FromUser && !_state.IsInteracting) Seek();
+            if (!e.FromUser) return;
+            if (_state.IsInteracting) _state.RequestPreview(PositionOf(_seek.Progress));
+            else Seek();
         }
+
+        /// <summary>Shows the frame under the thumb while dragging: only the latest position is sent, at most every 60 ms.</summary>
+        private void ApplyPreview()
+        {
+            if (_stopped || !_state.IsInteracting) return;
+            if (_player.IsSeekable && _state.TryTakePreview(out var time)) _player.Time = time;
+            _handler.PostDelayed(_preview, 60);
+        }
+
+        private long PositionOf(int progress) => (long)(_player.Length * (progress / 10000d));
         private void Seek()
         {
-            if (_player.IsSeekable) _player.Time = (long)(_player.Length * (_seek.Progress / 10000d));
+            if (_player.IsSeekable) _player.Time = PositionOf(_seek.Progress);
             _state.Show();
         }
 
@@ -189,11 +236,13 @@ internal sealed class AndroidVideoSurface(MediaPlayer player, bool replay, bool 
             if (_stopped) return;
             _stopped = true;
             _handler.RemoveCallbacks(_tick);
+            _handler.RemoveCallbacks(_preview);
             _toggle.Click -= Toggle;
             _seek.StartTrackingTouch -= BeginSeek;
             _seek.StopTrackingTouch -= EndSeek;
             _seek.ProgressChanged -= ProgressChanged;
             _tick.Dispose();
+            _preview.Dispose();
             _handler.Dispose();
         }
     }

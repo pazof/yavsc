@@ -65,8 +65,8 @@ Le lecteur de direct utilise les segments et rejoint le flux près du direct.
 Sur ordinateur, les contrôles du lecteur sont des contrôles Avalonia. Sur
 Android, la surface vidéo et ses commandes sont natives. Sur desktop, le
 curseur de replay met à jour l'image pendant son déplacement (voir le résultat
-du prototype ci-dessous) ; sur Android, la recherche n'est encore validée qu'au
-relâchement.
+du prototype ci-dessous) ; la barre native Android fait de même, avec la même
+coalescence des positions (voir « Éditeur Android »).
 
 
 Les captures PostIt desktop et Android n'utilisent pas le même pipeline média.
@@ -308,9 +308,20 @@ Le brouillon privé est implémenté côté serveur, et son éditeur sur PostIt 
   copie de la source. `PodcastResponse.Chapters` expose les chapitres publiés
   à tous les auditeurs ; le site web les affiche en boutons sous le lecteur du
   MP4 et PostIt dans le lecteur du replay, chacun positionnant la lecture.
+- **Éditeur Android** : la même page et le même modèle de vue s'ouvrent
+  depuis les podcasts Android, sur la surface vidéo native. En portrait, le
+  panneau des marques et des plages passe sous la vidéo et défile seul (la
+  surface native reste hors du défilement) ; en paysage, il reste à droite.
+  Pendant le glissement, la barre native n'envoie au lecteur que la dernière
+  position demandée, au plus toutes les 60 ms (`ReplayControlsState`, partagé
+  avec desktop), et applique la position finale au relâchement. L'instantané
+  LibVLC ne lit pas la sortie du décodage matériel : la surface Android
+  implémente `IVideoFrameCapture` et copie l'image affichée avec `PixelCopy`
+  (Android 7 et plus ; sans miniature avant), directement en mémoire.
 - **Reste à faire** : miniatures des marques rechargées depuis le serveur
-  (elles ne sont créées qu'à la pose), éditeur Android et validation sur de
-  vrais médias.
+  (elles ne sont créées qu'à la pose), validation sur de vrais médias et
+  essais de l'éditeur Android sur appareil (réactivité du glissement sur un
+  long replay distant, précision du pas image par image).
 
 Une émission interrompue doit rester récupérable par son auteur. Lorsqu'un
 direct programmé s'arrête après le délai « Direct interrompu », ou qu'un
@@ -414,7 +425,7 @@ différent de celui annoncé à l'auteur.
 4. Valider la finalisation sur de vrais médias synthétiques et conserver le
    comportement existant pour les émissions sans raffinage.
 5. Porter l'éditeur sur Android (surface native), en réutilisant l'API et le
-   traitement serveur.
+   traitement serveur (fait, essais sur appareil à mener).
 6. Étudier la composition live, d'abord sur desktop puis sur Android, avant
    d'engager les génériques et les incrustations.
 
