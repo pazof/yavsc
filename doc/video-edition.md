@@ -160,6 +160,33 @@ traitement doit couper aussi l'audio, rétablir des horodatages continus et
 MP4 final. La faisabilité et le coût doivent être mesurés sur des sources à
 cadence variable, sans audio et avec audio.
 
+**Résultat du prototype serveur** : `ReplayEditPlan` convertit les plages
+supprimées en plages conservées : il fusionne les plages qui se chevauchent ou
+se touchent, les borne à la durée, refuse les plages vides ou hors vidéo, la
+suppression totale et plus de 200 plages. `FfmpegPodcastReplayEditor` ouvre la
+source une fois par plage conservée, avec une recherche précise
+(`-ss`/`-to` en entrée), puis assemble les plages avec le filtre `concat` et
+réencode en H.264/AAC avec `+faststart`. Une plage [début, fin) conserve les
+images dont l'horodatage est dans l'intervalle ; l'audio est coupé aux mêmes
+temps. Seuls des nombres formatés et le chemin de la source, généré par le
+serveur, sont transmis à FFmpeg.
+
+- `trim` suivi de `setpts=PTS-STARTPTS` a été écarté : avec FFmpeg 7.1, la
+  durée de la dernière image est perdue et cette image disparaît du MP4.
+- **Origine des temps** : LibVLC et le `-ss` d'entrée de FFmpeg mesurent tous
+  deux le temps depuis le début du format, c'est-à-dire du premier flux, et non
+  depuis la première image vidéo. Mesuré : avec une vidéo qui commence 0,52 s
+  après l'audio, LibVLC affiche à 1 500 ms l'image vidéo de 980 ms. Les marques
+  prises dans le lecteur sont donc directement utilisables par le serveur.
+- Lorsque l'audio commence avant la vidéo (décalage d'encodage AAC, segments
+  live), chaque plage garde ce léger décalage. La vidéo finale peut ainsi
+  dépasser d'une image la somme des plages, sans désynchronisation.
+- Le test serveur vérifie, sur une source synthétique avec audio, la liste
+  exacte des images conservées, les durées audio et vidéo, `faststart` et le
+  refus d'un résultat dépassant le quota, avec et sans décalage de départ.
+- Restent à mesurer : le coût du réencodage sur un replay long, et les
+  sources à cadence variable issues des captures PostIt.
+
 ### États et persistance
 
 Proposition, à adapter aux états déjà exposés par l'API :
@@ -284,7 +311,8 @@ différent de celui annoncé à l'auteur.
 1. Valider le parcours, la politique de visibilité et les questions ci-dessous.
 2. Prototyper sur desktop la navigation précise et l'aperçu pendant le
    glissement (fait, voir « Résultat du prototype desktop »), puis
-   l'assemblage audio/vidéo précis côté serveur.
+   l'assemblage audio/vidéo précis côté serveur (fait, voir « Résultat du
+   prototype serveur »).
 3. Ajouter le brouillon privé et ses états, les autorisations, les limites et
    la reprise après incident, puis l'éditeur de marques et plages desktop.
 4. Valider la finalisation sur de vrais médias synthétiques et conserver le
@@ -323,6 +351,7 @@ différent de celui annoncé à l'auteur.
 
 Toutes les questions de conception posées jusqu'ici ont reçu une réponse.
 Les points encore ouverts sont techniques et seront tranchés par les
-prototypes : chaîne FFmpeg de découpe et d'incrustation, détection d'une
-interruption côté serveur et choix de composition live (PostIt ou serveur).
-L'aperçu à l'image près sur desktop est tranché : recherche directe LibVLC.
+prototypes : chaîne FFmpeg d'incrustation, détection d'une interruption côté
+serveur et choix de composition live (PostIt ou serveur). L'aperçu à l'image
+près sur desktop (recherche directe LibVLC) et la découpe côté serveur
+(une entrée FFmpeg par plage conservée, puis `concat`) sont tranchés.

@@ -6,6 +6,8 @@
 
 ### Added
 
+* [Yavsc.Server/Podcasts] Add the frame-accurate replay editing prototype: `ReplayEditPlan` turns removed ranges into kept ranges (merge, clamp, reject empty, out-of-range, total or excessive removals) and `FfmpegPodcastReplayEditor` renders them with one accurate-seek FFmpeg input per range, `concat` and H.264/AAC re-encoding. Share the FFmpeg runner with the replay remuxer. Tests check exact kept frames, audio/video durations, faststart and quota on synthetic sources with and without a start offset; the editor is not wired to the API yet.
+
 * [PostIt/Podcasts] Preview the replay frame while dragging the desktop position slider, coalescing seek requests to the latest position. A native LibVLC test checks frame-accurate paused seeking on a synthetic video; the video edition document records the prototype result.
 
 * [Docs/Podcasts] Add the video edition design document: optional author-only replay refinement (marks, frame-accurate cuts, chapters, timed overlays, re-edition and retention), live credits and overlays, end postponement and server-side "Direct interrompu" handling. Desktop first; OBS broadcasts are out of scope.

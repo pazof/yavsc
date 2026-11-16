@@ -196,6 +196,66 @@ public sealed class PodcastReplayTests : IDisposable
             Path.Combine(source, "too-big.mp4"), 10, _ct));
     }
 
+    [Fact]
+    public void Edit_plan_merges_clamps_and_rejects_invalid_or_total_removals()
+    {
+        Assert.Equal([new ReplayRange(0, 1000), new ReplayRange(3000, 3500), new ReplayRange(4000, 5000)],
+            ReplayEditPlan.KeptRanges([new(2000, 3000), new(1000, 2500), new(3500, 4000)], 5000));
+        Assert.Equal([new ReplayRange(1000, 4000)],
+            ReplayEditPlan.KeptRanges([new(-500, 1000), new(4000, 9000)], 5000));
+        Assert.Equal([new ReplayRange(0, 5000)], ReplayEditPlan.KeptRanges([], 5000));
+        Assert.Throws<ArgumentException>(() => ReplayEditPlan.KeptRanges([new(0, 2000), new(2000, 5000)], 5000));
+        Assert.Throws<ArgumentException>(() => ReplayEditPlan.KeptRanges([new(1000, 1000)], 5000));
+        Assert.Throws<ArgumentException>(() => ReplayEditPlan.KeptRanges([new(5000, 6000)], 5000));
+        Assert.Throws<ArgumentException>(() => ReplayEditPlan.KeptRanges(
+            Enumerable.Range(0, ReplayEditPlan.MaxRemovedRanges + 1).Select(i => new ReplayRange(i * 10, i * 10 + 5)), 5000));
+    }
+
+    [Theory]
+    [InlineData("0")]
+    [InlineData("1.4")] // Replays remuxed from live TS segments do not start at zero.
+    public async Task Ffmpeg_editor_cuts_at_exact_frames_and_keeps_audio_in_sync(string startOffset)
+    {
+        Directory.CreateDirectory(_root);
+        var source = Path.Combine(_root, "frames.mp4");
+        // 10 fps, frame N has luma 20 + 5N; keyframes every 2 s so cuts fall between keyframes.
+        await PodcastMediaFixture.RunAsync("ffmpeg", ["-v", "error",
+            "-f", "lavfi", "-i", "color=black:s=32x32:r=10:d=4,format=yuv420p,geq=lum='20+5*N':cb=128:cr=128",
+            "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000:duration=4",
+            "-c:v", "libx264", "-qp", "0", "-g", "20", "-c:a", "aac", "-shortest",
+            "-output_ts_offset", startOffset, source], _ct);
+        var kept = ReplayEditPlan.KeptRanges([new(1000, 1600), new(2400, 3000)], 4000);
+        var output = Path.Combine(_root, "edited.mp4");
+        var editor = new FfmpegPodcastReplayEditor(Options.Create(new PodcastOptions()));
+
+        await editor.RenderAsync(source, kept, hasAudio: true, output, 10_000_000, _ct);
+
+        var frames = Path.Combine(_root, "edited.yuv");
+        await PodcastMediaFixture.RunAsync("ffmpeg",
+            ["-v", "error", "-i", output, "-fps_mode", "passthrough", "-f", "rawvideo", "-pix_fmt", "yuv420p", frames], _ct);
+        var bytes = await File.ReadAllBytesAsync(frames, _ct);
+        const int FrameBytes = 32 * 32 * 3 / 2;
+        var indices = Enumerable.Range(0, bytes.Length / FrameBytes)
+            .Select(i => (int)Math.Round((bytes[i * FrameBytes + 16 * 32 + 16] - 20) / 5.0)).ToArray();
+        Assert.Equal(Enumerable.Range(0, 10).Concat(Enumerable.Range(16, 8)).Concat(Enumerable.Range(30, 10)), indices);
+
+        var probe = await PodcastMediaFixture.RunAsync("ffprobe",
+            ["-v", "error", "-show_streams", "-of", "json", output], _ct);
+        using var json = JsonDocument.Parse(probe);
+        var durations = json.RootElement.GetProperty("streams").EnumerateArray().ToDictionary(
+            s => s.GetProperty("codec_type").GetString()!,
+            s => double.Parse(s.GetProperty("duration").GetString()!, System.Globalization.CultureInfo.InvariantCulture));
+        // Ranges use the format timeline, like LibVLC and FFmpeg input seeking. When audio starts
+        // slightly before video, each range keeps that lead, so allow one frame (100 ms) of slack.
+        Assert.InRange(durations["video"], 2.7, 2.91);
+        Assert.InRange(durations["audio"], 2.7, 2.91);
+        Assert.InRange(Math.Abs(durations["video"] - durations["audio"]), 0, 0.1);
+        var ascii = Encoding.Latin1.GetString(await File.ReadAllBytesAsync(output, _ct));
+        Assert.True(ascii.IndexOf("moov", StringComparison.Ordinal) < ascii.IndexOf("mdat", StringComparison.Ordinal));
+        await Assert.ThrowsAsync<IOException>(() => editor.RenderAsync(source, kept, true,
+            Path.Combine(_root, "too-big.mp4"), 10, _ct));
+    }
+
     private static Remuxer Bytes(int count) => new((_, _, output, _, ct) => File.WriteAllBytesAsync(output, new byte[count], ct));
     private sealed class Remuxer(Func<string, int, string, long, CancellationToken, Task> remux) : IPodcastReplayRemuxer
     {
