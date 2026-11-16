@@ -11,17 +11,20 @@ public sealed class PodcastReplayMediaInput : MediaInput
     private readonly PodcastApiClient _api;
     private readonly Guid _id;
     private readonly long _length;
+    private readonly bool _draftSource;
     private readonly CancellationTokenSource _cancellation = new();
     private byte[] _buffer = [];
     private long _bufferStart;
     private long _position;
     public event Action<string>? Failed;
 
-    public PodcastReplayMediaInput(PodcastApiClient api, Guid id, long length)
+    /// <param name="draftSource">Reads the owner-only draft source instead of the published MP4.</param>
+    public PodcastReplayMediaInput(PodcastApiClient api, Guid id, long length, bool draftSource = false)
     {
         _api = api;
         _id = id;
         _length = length;
+        _draftSource = draftSource;
         CanSeek = true;
     }
 
@@ -50,7 +53,9 @@ public sealed class PodcastReplayMediaInput : MediaInput
             {
                 using var timeout = CancellationTokenSource.CreateLinkedTokenSource(_cancellation.Token);
                 timeout.CancelAfter(TimeSpan.FromSeconds(20));
-                _buffer = _api.DownloadReplayRangeAsync(_id, _position, 256 * 1024, _length, timeout.Token)
+                _buffer = (_draftSource
+                        ? _api.DownloadDraftSourceRangeAsync(_id, _position, 256 * 1024, _length, timeout.Token)
+                        : _api.DownloadReplayRangeAsync(_id, _position, 256 * 1024, _length, timeout.Token))
                     .GetAwaiter().GetResult();
                 _bufferStart = _position;
             }

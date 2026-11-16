@@ -7,6 +7,7 @@ using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Interactivity;
 using PostIt.Services;
+using Yavsc.Abstract.Streaming;
 using Yavsc.Api.Client;
 
 namespace PostIt.Tests;
@@ -136,6 +137,31 @@ public sealed class PodcastReplayTests
             await api.DownloadReplayRangeAsync(Id, transport.Bytes.Length - 2, 256 * 1024, transport.Bytes.Length, _ct));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
             api.DownloadReplayRangeAsync(Id, 0, 256 * 1024 + 1, transport.Bytes.Length, _ct));
+    }
+
+    [Fact]
+    public async Task Draft_client_targets_owner_routes_and_reads_the_draft_source_by_range()
+    {
+        await using var transport = new RangeTransport();
+        var api = new PodcastApiClient(transport, () => "https://api.example/");
+        var prefix = $"https://api.example/api/v1/podcasts";
+        await api.CreateAsync(new CreatePodcastRequest { Title = "Live", RefineReplay = true, RetentionDays = 0 }, _ct);
+        var save = new SavePodcastDraftRequest { Revision = 2, Marks = [1000], RemovedRanges = [new(0, 500)] };
+        await api.SaveDraftAsync(Id, save, _ct);
+        await api.PublishDraftAsync(Id, 3, _ct);
+        await api.DeleteOriginalsAsync(Id, _ct);
+        Assert.Equal([$"POST {prefix}", $"PUT {prefix}/{Id}/draft", $"POST {prefix}/{Id}/draft/publish",
+            $"DELETE {prefix}/{Id}/originals"], transport.Calls.Select(call => call.Call));
+        var create = Assert.IsType<CreatePodcastRequest>(transport.Calls[0].Body);
+        Assert.True(create.RefineReplay);
+        Assert.Equal(0, create.RetentionDays);
+        Assert.Same(save, transport.Calls[1].Body);
+        Assert.Equal(3, Assert.IsType<PublishPodcastDraftRequest>(transport.Calls[2].Body).Revision);
+        Assert.Null(transport.Calls[3].Body);
+
+        Assert.Equal(transport.Bytes.Skip(5).Take(4), await api.DownloadDraftSourceRangeAsync(Id, 5, 4, transport.Bytes.Length, _ct));
+        Assert.Equal($"{prefix}/{Id}/draft/source.mp4", transport.Url);
+        Assert.Equal("bytes=5-8", transport.Range);
     }
 
     [Theory]
@@ -315,7 +341,12 @@ public sealed class PodcastReplayTests
                 Failure == "range" ? from + 1 : from, to, Failure == "size" ? Bytes.Length + 1 : Bytes.Length);
             return Task.FromResult(response);
         }
-        public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default) => throw new NotSupportedException();
+        public List<(string Call, object? Body)> Calls { get; } = [];
+        public Task<T> CallAsync<T>(HttpMethod method, string path, object? body = null, CancellationToken ct = default)
+        {
+            Calls.Add(($"{method} {path}", body));
+            return Task.FromResult(default(T)!);
+        }
         public Task<T> CallAsync<T>(HttpMethod method, string path, Func<HttpContent> factory, CancellationToken ct = default) => throw new NotSupportedException();
         public Task CallAsync(HttpMethod method, string path, object? body = null, CancellationToken ct = default) => throw new NotSupportedException();
         public Task CallAsync(HttpMethod method, string path, Func<HttpContent> factory, CancellationToken ct = default) => throw new NotSupportedException();

@@ -271,7 +271,13 @@ Le brouillon privé est implémenté côté serveur ; l'éditeur PostIt reste à
   émission jamais publiée est supprimée et son `LiveFlow` marqué supprimé.
   `DELETE podcasts/{id}/originals` permet à l'auteur la même purge dès qu'un
   MP4 est publié (409 sinon, sans effet si déjà faite).
-- **Reste à faire** : chapitres, client et éditeur PostIt (réglage de
+- **Client d'API** : `PodcastApiClient` expose `CreateAsync(CreatePodcastRequest)`
+  (raffinage et conservation), `SaveDraftAsync`, `PublishDraftAsync`,
+  `DeleteOriginalsAsync` et `DownloadDraftSourceRangeAsync`, lecture
+  authentifiée par plages de 256 Kio au plus de la source du brouillon, avec
+  les mêmes contrôles que le MP4 publié. `PodcastReplayMediaInput` lit cette
+  source avec `draftSource: true` pour l'éditeur.
+- **Reste à faire** : chapitres, interface et éditeur PostIt (réglage de
   conservation, échéance affichée, proposition de suppression après publication).
 
 Une émission interrompue doit rester récupérable par son auteur. Lorsqu'un
