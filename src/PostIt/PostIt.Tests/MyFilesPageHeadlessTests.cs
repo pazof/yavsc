@@ -1,7 +1,6 @@
 using System.Net.Http;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
 using CommunityToolkit.Mvvm.Input;
 using PostIt.ViewModels;
@@ -48,7 +47,8 @@ namespace PostIt.Tests;
 /// (platform-dependent) picker.</para>
 /// </summary>
 [Trait("Category", "non-reg")]
-public class MyFilesPageHeadlessTests
+[Collection(AvaloniaUiCollection.Name)]
+public class MyFilesPageHeadlessTests(AvaloniaUiFixture ui)
 {
     private static (MyFilesPage page, MyFilesViewModel vm, StubFsApi api) CreatePage()
     {
@@ -94,8 +94,9 @@ public class MyFilesPageHeadlessTests
             .OfType<Button>()
             .FirstOrDefault(b => b.Content is string s && s == content);
 
-    [AvaloniaFact]
-    public async Task Download_button_on_a_file_row_is_bound_armed_and_fires_on_click()
+    [Fact]
+    public Task Download_button_on_a_file_row_is_bound_armed_and_fires_on_click()
+        => ui.RunAsync(async () =>
     {
         var (page, vm, api) = await MountAsync();
 
@@ -127,10 +128,11 @@ public class MyFilesPageHeadlessTests
         }
         Assert.True(recorded,
             "Clicking Télécharger must invoke GET fs/file/{id} on the API client.");
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Delete_button_on_a_file_row_is_bound_armed_and_fires_on_click()
+    [Fact]
+    public Task Delete_button_on_a_file_row_is_bound_armed_and_fires_on_click()
+        => ui.RunAsync(async () =>
     {
         var (page, vm, api) = await MountAsync();
 
@@ -157,7 +159,7 @@ public class MyFilesPageHeadlessTests
         }
         Assert.True(recorded,
             "Clicking Supprimer must invoke DELETE fs/{path} on the API client.");
-    }
+    }, TestContext.Current.CancellationToken);
 
     private sealed class StubFsApi : IYavscApiClient
     {

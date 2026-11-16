@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using PostIt.ViewModels;
 using PostIt.ViewModels.Commands;
 using PostIt.Views.Commands;
@@ -9,10 +8,12 @@ using Yavsc.Api.Client;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public class RdvPageHeadlessTests
+[Collection(AvaloniaUiCollection.Name)]
+public class RdvPageHeadlessTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaFact]
-    public void Suggested_address_panel_is_hidden_by_default()
+    [Fact]
+    public Task Suggested_address_panel_is_hidden_by_default()
+        => ui.RunAsync(() =>
     {
         var page = CreatePage(out _);
 
@@ -23,10 +24,11 @@ public class RdvPageHeadlessTests
         Assert.NotNull(progress);
         Assert.False(panel!.IsVisible);
         Assert.False(progress!.IsVisible);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Suggested_address_panel_and_spinner_follow_viewmodel_state()
+    [Fact]
+    public Task Suggested_address_panel_and_spinner_follow_viewmodel_state()
+        => ui.RunAsync(async () =>
     {
         var page = CreatePage(out var vm);
         var panel = page.FindControl<StackPanel>("SuggestedAddressPanel")!;
@@ -47,7 +49,7 @@ public class RdvPageHeadlessTests
         Assert.True(panel.IsVisible);
         Assert.False(progress.IsVisible);
         Assert.True(applyButton.IsVisible);
-    }
+    }, TestContext.Current.CancellationToken);
 
     private static AddressEditorPage CreatePage(out PhysicalAddressViewModel vm)
     {

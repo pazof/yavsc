@@ -1,4 +1,3 @@
-using Avalonia.Headless.XUnit;
 using PostIt.Services;
 using PostIt.ViewModels;
 using Yavsc.Abstract.Models.Messaging;
@@ -7,7 +6,8 @@ using Yavsc.Api.Client;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public class HomePageNotificationsTests
+[Collection(AvaloniaUiCollection.Name)]
+public class HomePageNotificationsTests(AvaloniaUiFixture ui)
 {
     [Fact]
     public async Task Refresh_loads_public_notifications_from_the_business_host()
@@ -70,8 +70,9 @@ public class HomePageNotificationsTests
         Assert.False(vm.IsLoadingNotifications);
     }
 
-    [AvaloniaFact]
-    public async Task Login_and_logout_reload_notifications_and_discard_in_flight_private_data()
+    [Fact]
+    public Task Login_and_logout_reload_notifications_and_discard_in_flight_private_data()
+        => ui.RunAsync(async () =>
     {
         var tokenPath = Path.Combine(Path.GetTempPath(), $"postit-notifications-{Guid.NewGuid():N}.json");
         var settings = new Settings();
@@ -123,7 +124,7 @@ public class HomePageNotificationsTests
         {
             File.Delete(tokenPath);
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task Anonymous_dismiss_removes_the_notification_without_an_api_call()

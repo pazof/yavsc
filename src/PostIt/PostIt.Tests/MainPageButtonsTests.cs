@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Yavsc.Api.Client;
@@ -50,10 +49,12 @@ namespace PostIt.Tests;
 /// </list>
 /// </summary>
 [Trait("Category", "non-reg")]
-public class MainPageButtonsTests
+[Collection(AvaloniaUiCollection.Name)]
+public class MainPageButtonsTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaFact]
-    public async Task Blog_toolbar_uses_page_view_model_in_home_navigation_and_tracks_changes()
+    [Fact]
+    public Task Blog_toolbar_uses_page_view_model_in_home_navigation_and_tracks_changes()
+        => ui.RunAsync(async () =>
     {
         var home = new HomePageViewModel();
         var root = new MainView { DataContext = home };
@@ -90,7 +91,7 @@ public class MainPageButtonsTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     /// <summary>
     /// Fake <see cref="YavscApiClient"/> that throws on any
@@ -190,8 +191,9 @@ public class MainPageButtonsTests
         return stackBefore;
     }
 
-    [AvaloniaFact]
-    public async Task Acl_button_click_pushes_a_page_onto_nav_stack()
+    [Fact]
+    public Task Acl_button_click_pushes_a_page_onto_nav_stack()
+        => ui.RunAsync(async () =>
     {
         // Arrange: a VM whose SelectedPost is non-null so
         // CanManageAcl evaluates to true and the button is
@@ -221,10 +223,11 @@ public class MainPageButtonsTests
         var pushed = window.NavRoot.NavigationStack.Last();
         Assert.NotNull(pushed);
         Assert.IsAssignableFrom<Page>(pushed);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Circles_button_click_pushes_a_page_onto_nav_stack()
+    [Fact]
+    public Task Circles_button_click_pushes_a_page_onto_nav_stack()
+        => ui.RunAsync(async () =>
     {
         // Arrange: OpenCircles has no CanExecute guard today —
         // any click should fire it and push the page.
@@ -243,10 +246,11 @@ public class MainPageButtonsTests
         var pushed = window.NavRoot.NavigationStack.Last();
         Assert.NotNull(pushed);
         Assert.IsAssignableFrom<Page>(pushed);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public void Signature_dev_button_click_pushes_a_page_onto_nav_stack()
+    [Fact]
+    public Task Signature_dev_button_click_pushes_a_page_onto_nav_stack()
+        => ui.RunAsync(() =>
     {
         // Arrange: the "[DEV] Signature" button is bound to the
         // BlogsViewModel.OpenSignatureDevCommand [RelayCommand].
@@ -272,5 +276,5 @@ public class MainPageButtonsTests
         var pushed = window.NavRoot.NavigationStack.Last();
         Assert.NotNull(pushed);
         Assert.IsAssignableFrom<Page>(pushed);
-    }
+    }, TestContext.Current.CancellationToken);
 }

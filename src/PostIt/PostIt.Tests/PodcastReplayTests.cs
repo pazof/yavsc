@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using LibVLCSharp.Shared;
 using Avalonia.Controls;
 using Avalonia.Headless;
-using Avalonia.Headless.XUnit;
 using Avalonia.Interactivity;
 using PostIt.Services;
 using Yavsc.Abstract.Streaming;
@@ -15,7 +14,8 @@ namespace PostIt.Tests;
 [Trait("DependsOn", "Native")]
 [Trait("Speed", "Slow")]
 [Trait("Category", "non-reg")]
-public sealed class PodcastReplayTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class PodcastReplayTests(AvaloniaUiFixture ui)
 {
     private static readonly Guid Id = Guid.NewGuid();
     private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
@@ -70,7 +70,7 @@ public sealed class PodcastReplayTests
 
     [Fact]
     public Task Desktop_overlay_has_real_position_pause_and_duration_controls()
-        => HeadlessUnitTestSession.GetOrStartForAssembly(typeof(PodcastReplayTests).Assembly).Dispatch(() =>
+        => ui.RunAsync(() =>
         {
             var overlay = new PostIt.Controls.ReplayControls();
             var window = new Window { Content = overlay, Width = 640, Height = 360 };
@@ -84,19 +84,21 @@ public sealed class PodcastReplayTests
             finally { window.Close(); }
         }, _ct);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void Desktop_controls_show_seeking_only_for_replay(bool replay)
+    public Task Desktop_controls_show_seeking_only_for_replay(bool replay)
+        => ui.RunAsync(() =>
     {
         var controls = new PostIt.Controls.ReplayControls(replay);
         Assert.NotNull(controls.FindControl<Button>("ToggleButton"));
         Assert.Equal(replay, controls.FindControl<Slider>("PositionSlider")!.IsVisible);
         Assert.Equal(replay, controls.FindControl<TextBlock>("TimeLabel")!.IsVisible);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact(Skip = "Set POSTIT_TEST_REPLAY to a local MP4 and install LibVLC.", SkipUnless = nameof(HasNativeFixture))]
-    public async Task Desktop_live_controls_pause_and_resume_the_player()
+    [Fact(Skip = "Set POSTIT_TEST_REPLAY to a local MP4 and install LibVLC.", SkipUnless = nameof(HasNativeFixture))]
+    public Task Desktop_live_controls_pause_and_resume_the_player()
+        => ui.RunAsync(async () =>
     {
         Core.Initialize();
         using var vlc = new LibVLC("--vout=dummy", "--aout=dummy", "--no-xlib");
@@ -123,7 +125,7 @@ public sealed class PodcastReplayTests
             await WaitForPlayback(true);
         }
         finally { player.Stop(); }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task Ranges_use_authenticated_factory_with_bounded_exact_content_and_no_token_in_URL()

@@ -38,6 +38,12 @@ public sealed class AvaloniaUiFixture : IAsyncLifetime
         }, ct);
     }
 
+    public Task RunAsync(Action action, CancellationToken ct) => RunAsync(() =>
+    {
+        action();
+        return Task.CompletedTask;
+    }, ct);
+
     public Task WithWindowAsync(Func<Control> createContent, Func<Window, Task> test, CancellationToken ct,
         double width = 800, double height = 600) => RunAsync(async () =>
     {

@@ -1,4 +1,3 @@
-using Avalonia.Headless.XUnit;
 using PostIt.Services;
 using PostIt.ViewModels;
 using Yavsc.Abstract.Identity;
@@ -8,10 +7,12 @@ using Yavsc.Api.Client;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public sealed class PodcastScheduleTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class PodcastScheduleTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaFact]
-    public async Task Late_obs_credentials_are_not_displayed_after_selection_changes_or_navigation()
+    [Fact]
+    public Task Late_obs_credentials_are_not_displayed_after_selection_changes_or_navigation()
+        => ui.RunAsync(async () =>
     {
         var path = Path.Combine(Path.GetTempPath(), $"postit-obs-late-{Guid.NewGuid():N}.json");
         var store = new TokenStore(path);
@@ -41,10 +42,11 @@ public sealed class PodcastScheduleTests
             Assert.Empty(vm.ObsStreamKey);
         }
         finally { File.Delete(path); File.Delete(path + ".settings"); }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Obs_activation_is_owned_displays_credentials_and_clears_them_on_navigation_and_revocation()
+    [Fact]
+    public Task Obs_activation_is_owned_displays_credentials_and_clears_them_on_navigation_and_revocation()
+        => ui.RunAsync(async () =>
     {
         var path = Path.Combine(Path.GetTempPath(), $"postit-obs-{Guid.NewGuid():N}.json");
         var store = new TokenStore(path);
@@ -85,10 +87,11 @@ public sealed class PodcastScheduleTests
             await vm.DeactivateAsync();
         }
         finally { File.Delete(path); File.Delete(path + ".settings"); }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Preparation_and_editing_send_schedule_and_optional_announcement_without_capture()
+    [Fact]
+    public Task Preparation_and_editing_send_schedule_and_optional_announcement_without_capture()
+        => ui.RunAsync(async () =>
     {
         var tokenPath = Path.Combine(Path.GetTempPath(), $"postit-plan-{Guid.NewGuid():N}.json");
         var store = new TokenStore(tokenPath);
@@ -138,7 +141,7 @@ public sealed class PodcastScheduleTests
             Assert.Equal("Nouveau titre", vm.Title);
         }
         finally { File.Delete(tokenPath); File.Delete(tokenPath + ".settings"); }
-    }
+    }, TestContext.Current.CancellationToken);
 
     private sealed class ScheduleApi(TokenStore store, string settingsPath)
         : YavscApiClient(new Settings(settingsPath), store), IYavscApiClient

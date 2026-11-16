@@ -1,4 +1,3 @@
-using Avalonia.Headless.XUnit;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -19,7 +18,8 @@ using Yavsc.Abstract.Chat.Calls;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public sealed class MessagingSessionTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class MessagingSessionTests(AvaloniaUiFixture ui)
 {
     [Fact]
     public void Only_explicit_settings_application_raises_Applied_after_successful_save()
@@ -79,8 +79,9 @@ public sealed class MessagingSessionTests
         => await PostIt.Android.Tests.ChatServiceEpochTests.VerifyAsync();
 #endif
 
-    [AvaloniaFact]
-    public void Settings_page_binds_opt_in_and_hides_it_on_other_platforms()
+    [Fact]
+    public Task Settings_page_binds_opt_in_and_hides_it_on_other_platforms()
+        => ui.RunAsync(() =>
     {
         var settings = new Settings();
         var page = new SettingsPage { DataContext = settings };
@@ -105,7 +106,7 @@ public sealed class MessagingSessionTests
             Assert.False(checkbox.IsChecked);
         }
         finally { window.Close(); }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public void Background_chat_service_are_opt_in_and_saved_only_after_persistence()
@@ -192,8 +193,9 @@ public sealed class MessagingSessionTests
         finally { File.Delete(path); }
     }
 
-    [AvaloniaFact]
-    public async Task Disconnect_cancels_an_in_flight_chat_handshake_instead_of_waiting_for_network_timeout()
+    [Fact]
+    public Task Disconnect_cancels_an_in_flight_chat_handshake_instead_of_waiting_for_network_timeout()
+        => ui.RunAsync(async () =>
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
@@ -234,7 +236,7 @@ public sealed class MessagingSessionTests
             File.Delete(path);
             await server.StopAsync();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Theory]
     [InlineData("alice", "https://api.example.test/api/v1/", true)]
@@ -262,10 +264,11 @@ public sealed class MessagingSessionTests
         finally { File.Delete(path); }
     }
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task Session_uses_one_chat_connection_and_logout_disables_service_before_token_purge(bool connectOnLogin)
+    public Task Session_uses_one_chat_connection_and_logout_disables_service_before_token_purge(bool connectOnLogin)
+        => ui.RunAsync(async () =>
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
@@ -322,7 +325,7 @@ public sealed class MessagingSessionTests
                 $"Connections={counter.Count}, transport={transport.Connection.State}, chat={chat.Status.Message}");
             Assert.Equal(2, await transport.Connection.InvokeAsync<int>("ConnectionCount"));
             Assert.Equal(new[] { "first", "second" }, counter.RejoinedRooms);
-            Assert.Equal(new ContactPreferences(true, false, true), counter.ContactPreferences);
+            Assert.Equal(Announced(true, false, true), counter.ContactPreferences);
 
             Platform.SuspendPlayback();
             Assert.True(chat.IsConnected);
@@ -354,10 +357,11 @@ public sealed class MessagingSessionTests
             File.Delete(path + ".settings");
             await server.StopAsync();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Headless_transport_restores_account_rooms_and_the_later_ui_reuses_its_socket()
+    [Fact]
+    public Task Headless_transport_restores_account_rooms_and_the_later_ui_reuses_its_socket()
+        => ui.RunAsync(async () =>
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
@@ -386,7 +390,7 @@ public sealed class MessagingSessionTests
             await using (var transport = new ChatHubConnection(api))
             {
                 await transport.StartAsync(TestContext.Current.CancellationToken);
-                Assert.Equal(new ContactPreferences(true, false, false),
+                Assert.Equal(Announced(true, false, false),
                     server.Services.GetRequiredService<ConnectionCounter>().ContactPreferences);
                 await transport.JoinAsync("SavedRoom", TestContext.Current.CancellationToken);
                 Assert.Single(settings.ChatRoomsByAccount);
@@ -397,7 +401,7 @@ public sealed class MessagingSessionTests
             await using var resumedApi = new YavscApiClient(restored, store);
             await using var resumed = new ChatHubConnection(resumedApi);
             await resumed.StartAsync(TestContext.Current.CancellationToken);
-            Assert.Equal(new ContactPreferences(true, false, false),
+            Assert.Equal(Announced(true, false, false),
                 server.Services.GetRequiredService<ConnectionCounter>().ContactPreferences);
             Assert.Equal(2, await resumed.Connection.InvokeAsync<int>("ConnectionCount"));
             Assert.Equal("SavedRoom", Assert.Single(resumed.JoinedRooms).Name);
@@ -438,7 +442,11 @@ public sealed class MessagingSessionTests
             File.Delete(path + ".settings");
             await server.StopAsync();
         }
-    }
+    }, TestContext.Current.CancellationToken);
+
+    // The Linux desktop also announces its audio-only WebRTC and SRTP call support.
+    private static ContactPreferences Announced(bool audio, bool video, bool messages) =>
+        new(audio, video, messages, OperatingSystem.IsLinux(), OperatingSystem.IsLinux());
 
     private static TokenStore CreateStore(string path)
     {

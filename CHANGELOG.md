@@ -28,6 +28,8 @@
 
 ### Fixed
 
+* [PostIt.Tests] Run every Avalonia UI test in the shared `AvaloniaUiCollection` fixture: replace `[AvaloniaFact]`/`[AvaloniaTheory]` and direct `GetOrStartForAssembly` dispatches, which started a second headless session alongside the fixture's and could hang `PodcastBroadcasterTests`, with `ui.RunAsync` (new synchronous overload). Update contact-preference assertions in `MessagingSessionTests` for the audio-only capabilities the Linux desktop announces.
+
 * [PostIt/Podcasts] Reuse the replay playback controls for live video on desktop and Android, remove the duplicate play/pause button, and retain seeking only for replays. Report resume failures and cover playback controls with targeted tests.
 
 * [PostIt] Restore selectable error notification messages and update blog and rendez-vous tests for the current layouts and address editor.

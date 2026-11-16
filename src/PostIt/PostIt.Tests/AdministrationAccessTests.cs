@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PostIt.Services;
@@ -14,7 +13,8 @@ using Yavsc.Api.Client;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public class AdministrationAccessTests
+[Collection(AvaloniaUiCollection.Name)]
+public class AdministrationAccessTests(AvaloniaUiFixture ui)
 {
     [Fact]
     public async Task Profile_quota_failure_keeps_the_consumption_visible_without_enabling_profile_changes()
@@ -119,8 +119,9 @@ public class AdministrationAccessTests
         Assert.Equal(1, vm.UserPage);
     }
 
-    [AvaloniaFact]
-    public async Task Administration_displays_both_tabs_and_selected_user_usage()
+    [Fact]
+    public Task Administration_displays_both_tabs_and_selected_user_usage()
+        => ui.RunAsync(async () =>
     {
         await using var api = new ProfileTransport("Administrator");
         var session = new SessionStatusViewModel { Api = api };
@@ -149,7 +150,7 @@ public class AdministrationAccessTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task Administration_denies_moderators_without_requesting_private_data()
@@ -220,8 +221,9 @@ public class AdministrationAccessTests
         Assert.True(vm.IsProfileLoaded);
     }
 
-    [AvaloniaFact]
-    public async Task My_profile_privacy_checkbox_is_two_way_and_disabled_before_loading()
+    [Fact]
+    public Task My_profile_privacy_checkbox_is_two_way_and_disabled_before_loading()
+        => ui.RunAsync(async () =>
     {
         await using var api = new ProfileTransport("Performer") { HideIpAddressInCalls = true };
         var vm = new UserProfilePageViewModel(api);
@@ -246,7 +248,7 @@ public class AdministrationAccessTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task Profile_read_failure_prevents_saving_a_default_call_privacy_preference()

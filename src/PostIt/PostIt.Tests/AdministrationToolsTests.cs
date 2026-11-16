@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PostIt.ViewModels;
@@ -13,7 +12,8 @@ using Yavsc.Api.Client;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public class AdministrationToolsTests
+[Collection(AvaloniaUiCollection.Name)]
+public class AdministrationToolsTests(AvaloniaUiFixture ui)
 {
     [Fact]
     public async Task Payment_purge_requires_confirmation_reports_counts_and_clears_on_logout()
@@ -40,10 +40,11 @@ public class AdministrationToolsTests
         Assert.Empty(vm.PaymentPurgeReport);
     }
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(400, 800)]
     [InlineData(800, 400)]
-    public void All_administration_tabs_and_typed_forms_are_accessible_in_portrait_and_landscape(int width, int height)
+    public Task All_administration_tabs_and_typed_forms_are_accessible_in_portrait_and_landscape(int width, int height)
+        => ui.RunAsync(() =>
     {
         var vm = new AdministrationPageViewModel();
         var page = new AdministrationPage { DataContext = vm };
@@ -71,7 +72,7 @@ public class AdministrationToolsTests
                 box => box.DataContext is AdministrationFieldViewModel field && field.Name == "ToSend");
         }
         finally { window.Close(); }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public void Client_form_retains_every_scalar_field_and_validates_numeric_input()

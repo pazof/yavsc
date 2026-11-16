@@ -1,5 +1,4 @@
 using System.Net;
-using Avalonia.Headless.XUnit;
 using Avalonia.Headless;
 using Avalonia.Controls;
 using PostIt.Services;
@@ -11,7 +10,8 @@ using Yavsc.Api.Client;
 namespace PostIt.Tests;
 
 [Trait("Category", "not-ending")]
-public sealed class PodcastBroadcasterTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class PodcastBroadcasterTests(AvaloniaUiFixture ui)
 {
     [Theory]
     [InlineData("stop")]
@@ -20,7 +20,7 @@ public sealed class PodcastBroadcasterTests
     [InlineData("failure")]
     [InlineData("broadcast")]
     public Task Camera_can_be_previewed_without_creating_a_broadcast_and_is_released_before_next_capture(string action)
-        => HeadlessUnitTestSession.GetOrStartForAssembly(typeof(PodcastBroadcasterTests).Assembly).Dispatch(async () =>
+        => ui.RunAsync(async () =>
     {
         var path = Path.Combine(Path.GetTempPath(), $"postit-local-preview-{Guid.NewGuid():N}");
         var previousDevices = Platform.GetPodcastCaptureDevices;
@@ -97,7 +97,6 @@ public sealed class PodcastBroadcasterTests
             Assert.Null(vm.CapturePreview);
             if (action == "failure") Assert.Contains("Camera disconnected", vm.Status);
             if (action != "broadcast") Assert.Equal(0, transport.CreateCount);
-            return true;
         }
         finally
         {
@@ -113,7 +112,7 @@ public sealed class PodcastBroadcasterTests
 
     [Fact]
     public Task Leaving_the_page_during_preview_start_disposes_the_late_camera_without_showing_it()
-        => HeadlessUnitTestSession.GetOrStartForAssembly(typeof(PodcastBroadcasterTests).Assembly).Dispatch(async () =>
+        => ui.RunAsync(async () =>
     {
         var path = Path.Combine(Path.GetTempPath(), $"postit-preview-race-{Guid.NewGuid():N}");
         var previous = Platform.CreatePodcastPreviewAsync;
@@ -140,7 +139,6 @@ public sealed class PodcastBroadcasterTests
             Assert.True(preview.Disposed);
             Assert.Null(vm.CapturePreview);
             Assert.False(vm.IsPreviewing);
-            return true;
         }
         finally
         {
@@ -181,7 +179,7 @@ public sealed class PodcastBroadcasterTests
 
     [Fact]
     public Task Shared_page_exposes_running_capture_preview_and_clears_it_before_disposal()
-        => HeadlessUnitTestSession.GetOrStartForAssembly(typeof(PodcastBroadcasterTests).Assembly).Dispatch(async () =>
+        => ui.RunAsync(async () =>
         {
             var tokenPath = Path.Combine(Path.GetTempPath(), $"postit-preview-{Guid.NewGuid():N}.json");
             var devices = Platform.GetPodcastCaptureDevices;
@@ -230,7 +228,6 @@ public sealed class PodcastBroadcasterTests
                 Assert.Null(vm.CapturePreview);
                 Assert.Null(host.Content);
                 Assert.True(capture!.Stopped);
-                return true;
             }
             finally
             {
@@ -243,8 +240,9 @@ public sealed class PodcastBroadcasterTests
             }
         }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Shared_page_uses_platform_devices_and_requests_permissions_before_creating_server_broadcast()
+    [Fact]
+    public Task Shared_page_uses_platform_devices_and_requests_permissions_before_creating_server_broadcast()
+        => ui.RunAsync(async () =>
     {
         var tokenPath = Path.Combine(Path.GetTempPath(), $"postit-podcast-{Guid.NewGuid():N}.json");
         var devices = Platform.GetPodcastCaptureDevices;
@@ -289,7 +287,7 @@ public sealed class PodcastBroadcasterTests
             File.Delete(tokenPath);
             File.Delete(tokenPath + ".settings");
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task Prepared_broadcast_starts_the_existing_emission_instead_of_creating_another()

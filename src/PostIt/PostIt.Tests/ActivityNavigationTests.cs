@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -8,10 +7,12 @@ using PostIt.Views;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public class ActivityNavigationTests
+[Collection(AvaloniaUiCollection.Name)]
+public class ActivityNavigationTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaFact]
-    public async Task Activity_recreation_restores_fresh_pages_and_back_navigation()
+    [Fact]
+    public Task Activity_recreation_restores_fresh_pages_and_back_navigation()
+        => ui.RunAsync(async () =>
     {
         var app = Assert.IsType<App>(Application.Current);
         var previousView = app.View;
@@ -57,5 +58,5 @@ public class ActivityNavigationTests
             window.Close();
             app.AttachMainWindow(previousView ?? new MainView());
         }
-    }
+    }, TestContext.Current.CancellationToken);
 }

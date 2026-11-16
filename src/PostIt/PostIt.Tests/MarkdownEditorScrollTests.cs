@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
-using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
@@ -17,13 +16,15 @@ using PostIt.Views.Blogs;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public class MarkdownEditorScrollTests
+[Collection(AvaloniaUiCollection.Name)]
+public class MarkdownEditorScrollTests(AvaloniaUiFixture ui)
 {
     private static readonly string LongArticle =
         string.Join("\n\n", Enumerable.Range(1, 100).Select(i => $"Paragraph {i}: article content."));
 
-    [AvaloniaFact]
-    public async Task Landscape_keyboard_preserves_controls_and_restores_editor_layout()
+    [Fact]
+    public Task Landscape_keyboard_preserves_controls_and_restores_editor_layout()
+        => ui.RunAsync(async () =>
     {
         var root = new MainView();
         var page = new BlogsPage { DataContext = new BlogsViewModel { IsEditing = true, DraftArticle = LongArticle } };
@@ -73,10 +74,11 @@ public class MarkdownEditorScrollTests
         {
             CloseWindow(window, page.ArticleEditor);
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public void Keyboard_padding_preserves_system_bar_insets_and_restores_them()
+    [Fact]
+    public Task Keyboard_padding_preserves_system_bar_insets_and_restores_them()
+        => ui.RunAsync(() =>
     {
         var root = new MainView();
         var window = new Window { Width = 600, Height = 800, Content = root };
@@ -105,12 +107,13 @@ public class MarkdownEditorScrollTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void Resizing_keeps_the_focused_caret_visible_without_changing_selection(bool focused)
+    public Task Resizing_keeps_the_focused_caret_visible_without_changing_selection(bool focused)
+        => ui.RunAsync(() =>
     {
         var editor = new MarkdownEditorControl { MarkdownText = LongArticle };
         var other = new TextBox();
@@ -164,10 +167,11 @@ public class MarkdownEditorScrollTests
         {
             CloseWindow(window, editor);
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public void Repeated_touch_requests_keyboard_without_losing_focus_and_read_only_does_not()
+    [Fact]
+    public Task Repeated_touch_requests_keyboard_without_losing_focus_and_read_only_does_not()
+        => ui.RunAsync(() =>
     {
         var editor = new MarkdownEditorControl { MarkdownText = LongArticle };
         var window = new Window { Width = 600, Height = 400, Content = editor };
@@ -213,12 +217,13 @@ public class MarkdownEditorScrollTests
             Platform.ShowSoftKeyboard = previous;
             CloseWindow(window, editor);
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Long_article_scrolls_to_the_end_and_adapts_to_resizing(bool preview)
+    public Task Long_article_scrolls_to_the_end_and_adapts_to_resizing(bool preview)
+        => ui.RunAsync(() =>
     {
         var editor = new MarkdownEditorControl
         {
@@ -247,12 +252,13 @@ public class MarkdownEditorScrollTests
         {
             CloseWindow(window, editor);
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Blog_page_bounds_the_article_viewport(bool preview)
+    public Task Blog_page_bounds_the_article_viewport(bool preview)
+        => ui.RunAsync(() =>
     {
         var page = new BlogsPage { DataContext = new PostIt.ViewModels.BlogsViewModel { IsEditing = true } };
         var editor = page.GetLogicalDescendants().OfType<MarkdownEditorControl>().Single();
@@ -282,12 +288,13 @@ public class MarkdownEditorScrollTests
         {
             CloseWindow(window, editor);
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Short_article_needs_no_vertical_scrollbar(bool preview)
+    public Task Short_article_needs_no_vertical_scrollbar(bool preview)
+        => ui.RunAsync(() =>
     {
         var editor = new MarkdownEditorControl
         {
@@ -310,7 +317,7 @@ public class MarkdownEditorScrollTests
         {
             CloseWindow(window, editor);
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     private static void CloseWindow(Window window, MarkdownEditorControl editor)
     {

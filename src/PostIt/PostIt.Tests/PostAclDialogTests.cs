@@ -2,7 +2,6 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using Avalonia;
-using Avalonia.Headless.XUnit;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Helpers;
 using PostIt.Services;
@@ -45,7 +44,8 @@ namespace PostIt.Tests;
 /// talking to it.</para>
 /// </summary>
 [Trait("Category", "non-reg")]
-public class PostAclDialogTests
+[Collection(AvaloniaUiCollection.Name)]
+public class PostAclDialogTests(AvaloniaUiFixture ui)
 {
     /// <summary>
     /// <see cref="HttpMessageHandler"/> that replies 200 with
@@ -157,8 +157,9 @@ public class PostAclDialogTests
     /// hence two HTTP requests total: GET /blogacl and GET
     /// /circle).
     /// </summary>
-    [AvaloniaFact]
-    public async Task LoadAsync_runs_once_on_DataContext_changed()
+    [Fact]
+    public Task LoadAsync_runs_once_on_DataContext_changed()
+        => ui.RunAsync(async () =>
     {
         // Arrange
         var (window, aclClient, circleClient, handler) = Mount();
@@ -197,7 +198,7 @@ public class PostAclDialogTests
 
         // And the VM's idempotency gate has flipped.
         Assert.True(vm.Loaded);
-    }
+    }, TestContext.Current.CancellationToken);
 
     /// <summary>
     /// The fix exposes a guard on the VM too: a second call to
@@ -206,8 +207,9 @@ public class PostAclDialogTests
     /// DataContextChanged-firing-twice case (DataContext
     /// overwritten mid-life, edge cases in dialog re-use).
     /// </summary>
-    [AvaloniaFact]
-    public async Task LoadAsync_is_idempotent()
+    [Fact]
+    public Task LoadAsync_is_idempotent()
+        => ui.RunAsync(async () =>
     {
         // Arrange
         var (_, aclClient, circleClient, handler) = Mount();
@@ -221,7 +223,7 @@ public class PostAclDialogTests
         // Assert: the second call short-circuited on _loaded.
         Assert.Equal(1, handler.RequestCount);
         Assert.True(vm.Loaded);
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task LoadAsync_keeps_acl_from_blogpostdto_and_only_loads_circles()

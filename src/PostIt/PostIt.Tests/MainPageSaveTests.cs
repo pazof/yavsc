@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using Avalonia.VisualTree;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
@@ -10,7 +9,7 @@ namespace PostIt.Tests;
 /// <summary>
 /// Headless UI tests for the "Save" flow in <see cref="BlogsPage"/>.
 /// The pattern is the one <c>SessionStatusBannerTests</c>
-/// established: <c>[AvaloniaFact]</c>, a <see cref="Window"/>
+/// established: the <see cref="AvaloniaUiFixture"/> collection, a <see cref="Window"/>
 /// hosting the page (via a <see cref="Frame"/> because
 /// <c>MainPage</c> is a <c>ContentPage</c>), then drive the
 /// controls through their public surface and assert on what
@@ -30,10 +29,12 @@ namespace PostIt.Tests;
 /// buffer that the XAML binds to and the Save command consumes.</para>
 /// </summary>
 [Trait("Category", "non-reg")]
-public class MainPageSaveTests
+[Collection(AvaloniaUiCollection.Name)]
+public class MainPageSaveTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaFact]
-    public async Task Typing_a_title_then_clicking_Save_sends_that_title_in_the_post_body()
+    [Fact]
+    public Task Typing_a_title_then_clicking_Save_sends_that_title_in_the_post_body()
+        => ui.RunAsync(async () =>
     {
         // Arrange: VM with a recording API client, mounted in a
         // headless window via a Frame (MainPage is a ContentPage,
@@ -84,5 +85,5 @@ public class MainPageSaveTests
         Assert.Equal("blogspot", path);
         var sent = Assert.IsType<BlogPostDto>(body);
         Assert.Equal(typed, sent.Title);
-    }
+    }, TestContext.Current.CancellationToken);
 }

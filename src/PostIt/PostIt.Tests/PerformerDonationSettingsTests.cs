@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -9,7 +8,8 @@ using Yavsc.Api.Client;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public sealed class PerformerDonationSettingsTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class PerformerDonationSettingsTests(AvaloniaUiFixture ui)
 {
     [Theory]
     [InlineData("performer@payments.example", "performer@payments.example")]
@@ -21,8 +21,9 @@ public sealed class PerformerDonationSettingsTests
         Assert.Equal(expected, vm.BuildPerformerProfileSettings().DonationPayPalEmail);
     }
 
-    [AvaloniaFact]
-    public async Task Performer_editor_loads_displays_edits_and_saves_the_private_recipient()
+    [Fact]
+    public Task Performer_editor_loads_displays_edits_and_saves_the_private_recipient()
+        => ui.RunAsync(async () =>
     {
         var tokenPath = Path.Combine(Path.GetTempPath(), "postit-donation-" + Guid.NewGuid().ToString("N") + ".json");
         try
@@ -46,7 +47,7 @@ public sealed class PerformerDonationSettingsTests
         {
             if (File.Exists(tokenPath)) File.Delete(tokenPath);
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     private sealed class PerformerApi(string tokenPath) : YavscApiClient(new Settings
     {

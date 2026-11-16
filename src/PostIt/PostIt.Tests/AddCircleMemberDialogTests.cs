@@ -1,6 +1,5 @@
 
 using Avalonia;
-using Avalonia.Headless.XUnit;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels;
@@ -29,7 +28,8 @@ namespace PostIt.Tests;
 /// any async command before asserting.</para>
 /// </summary>
 [Trait("Category", "non-reg")]
-public class AddCircleMemberDialogTests
+[Collection(AvaloniaUiCollection.Name)]
+public class AddCircleMemberDialogTests(AvaloniaUiFixture ui)
 {
     /// <summary>
     /// Stand-in <see cref="IUserDirectory"/> that returns an
@@ -120,8 +120,9 @@ public class AddCircleMemberDialogTests
     /// Click the "Fermer" button on the dialog and assert the
     /// nav stack shrinks by exactly one.
     /// </summary>
-    [AvaloniaFact]
-    public async Task Close_button_pops_dialog_off_nav_stack()
+    [Fact]
+    public Task Close_button_pops_dialog_off_nav_stack()
+        => ui.RunAsync(async () =>
     {
         // Arrange: stack starts at 2 (CirclesPage + dialog).
         var context = await Mount();
@@ -149,5 +150,5 @@ public class AddCircleMemberDialogTests
         Assert.True(window.NavRoot.NavigationStack.Count == stackBefore - 1,
             $"Click on 'Fermer' must shrink the nav stack by one. Before: {stackBefore}, after: {window.NavRoot.NavigationStack.Count}.");
         Assert.IsType<CirclesPage>(window.NavRoot.NavigationStack[^1]);
-    }
+    }, TestContext.Current.CancellationToken);
 }

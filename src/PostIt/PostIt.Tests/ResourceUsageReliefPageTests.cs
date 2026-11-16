@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http;
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using PostIt.ViewModels;
 using PostIt.Views;
@@ -11,7 +10,8 @@ using Yavsc.Api.Client;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public sealed class ResourceUsageReliefPageTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class ResourceUsageReliefPageTests(AvaloniaUiFixture ui)
 {
     private static ResourceUsageSummary Usage(string id, decimal consumption, decimal credits = 0m) => new()
     {
@@ -20,11 +20,12 @@ public sealed class ResourceUsageReliefPageTests
         RemainingConsumption = Math.Max(0m, 1000m - consumption)
     };
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData("Moderator")]
     [InlineData("administrator")]
     [InlineData("Performer")]
-    public async Task Nonadministrators_cannot_load_or_erase_or_open_the_page(string role)
+    public Task Nonadministrators_cannot_load_or_erase_or_open_the_page(string role)
+        => ui.RunAsync(async () =>
     {
         await using var profile = new AdministrationAccessTests.ProfileTransport(role);
         var session = new SessionStatusViewModel { Api = profile };
@@ -40,10 +41,11 @@ public sealed class ResourceUsageReliefPageTests
         var administration = new AdministrationPageViewModel(null, session: session);
         await administration.OpenResourceUsageReliefCommand.ExecuteAsync(null);
         Assert.Contains("Administrator", administration.StatusMessage);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Page_loads_only_exhausted_users_and_confirmed_remission_updates_the_result()
+    [Fact]
+    public Task Page_loads_only_exhausted_users_and_confirmed_remission_updates_the_result()
+        => ui.RunAsync(async () =>
     {
         await using var profile = new AdministrationAccessTests.ProfileTransport("Administrator");
         var session = new SessionStatusViewModel { Api = profile };
@@ -77,9 +79,9 @@ public sealed class ResourceUsageReliefPageTests
         Assert.Contains("alice", vm.StatusMessage);
         Assert.Contains("GET https://example.invalid/api/v1/resource-usage/admin", transport.Requests);
         Assert.Contains("POST https://example.invalid/api/v1/resource-usage/admin/alice/erase", transport.Requests);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData("")]
     [InlineData("0")]
     [InlineData("-1")]
@@ -88,7 +90,8 @@ public sealed class ResourceUsageReliefPageTests
     [InlineData("1,000.00")]
     [InlineData("NaN")]
     [InlineData("1e2")]
-    public async Task Invalid_amounts_never_reach_the_API(string amount)
+    public Task Invalid_amounts_never_reach_the_API(string amount)
+        => ui.RunAsync(async () =>
     {
         await using var profile = new AdministrationAccessTests.ProfileTransport("Administrator");
         var session = new SessionStatusViewModel { Api = profile };
@@ -102,10 +105,11 @@ public sealed class ResourceUsageReliefPageTests
         Assert.NotEmpty(vm.AmountError);
         await vm.EraseCommand.ExecuteAsync(null);
         Assert.Null(transport.Erasure);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Changing_target_or_amount_or_refreshing_invalidates_confirmation()
+    [Fact]
+    public Task Changing_target_or_amount_or_refreshing_invalidates_confirmation()
+        => ui.RunAsync(async () =>
     {
         await using var profile = new AdministrationAccessTests.ProfileTransport("Administrator");
         var session = new SessionStatusViewModel { Api = profile };
@@ -127,10 +131,11 @@ public sealed class ResourceUsageReliefPageTests
         Assert.False(vm.ConfirmErasure);
         Assert.Empty(vm.PointsText);
         Assert.Equal("bob", vm.SelectedUsage?.UserId);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Failure_requires_a_fresh_snapshot_before_retry()
+    [Fact]
+    public Task Failure_requires_a_fresh_snapshot_before_retry()
+        => ui.RunAsync(async () =>
     {
         await using var profile = new AdministrationAccessTests.ProfileTransport("Administrator");
         var session = new SessionStatusViewModel { Api = profile };
@@ -152,10 +157,11 @@ public sealed class ResourceUsageReliefPageTests
         vm.PointsText = "100";
         vm.ConfirmErasure = true;
         Assert.True(vm.EraseCommand.CanExecute(null));
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Logout_clears_private_data_and_a_late_response_cannot_restore_it()
+    [Fact]
+    public Task Logout_clears_private_data_and_a_late_response_cannot_restore_it()
+        => ui.RunAsync(async () =>
     {
         await using var profile = new AdministrationAccessTests.ProfileTransport("Administrator");
         var session = new SessionStatusViewModel { Api = profile };
@@ -171,12 +177,13 @@ public sealed class ResourceUsageReliefPageTests
         Assert.Null(vm.SelectedUsage);
         Assert.False(vm.IsAdministrator);
         Assert.False(vm.EraseCommand.CanExecute(null));
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(400, 800)]
     [InlineData(800, 400)]
-    public async Task Page_displays_target_preview_and_explicit_confirmation_and_disposes_on_exit(int width, int height)
+    public Task Page_displays_target_preview_and_explicit_confirmation_and_disposes_on_exit(int width, int height)
+        => ui.RunAsync(async () =>
     {
         await using var profile = new AdministrationAccessTests.ProfileTransport("Administrator");
         var session = new SessionStatusViewModel { Api = profile };
@@ -205,7 +212,7 @@ public sealed class ResourceUsageReliefPageTests
         Assert.False(vm.IsAdministrator);
         Assert.Empty(vm.Users);
         Assert.False(vm.ConfirmErasure);
-    }
+    }, TestContext.Current.CancellationToken);
 
     private sealed class Transport : IYavscApiClient
     {

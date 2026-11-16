@@ -69,8 +69,8 @@ CRUD creent et manipulent leurs propres commandes par identifiant.
 ## Isolation des tests PostIt
 
 L'assemblee `src/PostIt/PostIt.Tests` execute ses collections xUnit sans
-parallelisme. Les tests `[AvaloniaFact]`/`[AvaloniaTheory]` reinitialisent le
-runtime Avalonia entre tests ; des tests ordinaires utilisent aussi
+parallelisme. Les tests UI reinitialisent l'application Avalonia entre
+dispatchs ; des tests ordinaires utilisent aussi
 `App.Current` et les delegates statiques de `Platform`. Leur execution
 concurrente peut creer le dispatcher sur un autre thread ou utiliser une
 application appartenant a un test headless en cours, avec une erreur de
@@ -80,16 +80,31 @@ Conserver provisoirement cette isolation dans `Fixtures/TestApp.cs`. Les tests q
 intentionnellement plusieurs operations concurrentes peuvent toujours le faire
 dans leur propre methode ; les autres assemblees de tests ne sont pas affectees.
 
-### Migration progressive vers une fixture UI
+### Fixture UI partagee
 
-La collection `[Collection(AvaloniaUiCollection.Name)]` fournit
+Tous les tests UI de PostIt appartiennent a la collection
+`[Collection(AvaloniaUiCollection.Name)]`, qui fournit
 `AvaloniaUiFixture` par injection de constructeur. La fixture possede sa
 session `HeadlessUnitTestSession`, initialise le runtime sur son thread UI et
-arrete ce thread a la fin de la collection. Les tests migres utilisent `[Fact]`
-ou `[Theory]`, pas `[AvaloniaFact]` : la fixture assure elle-meme le dispatch.
+arrete ce thread a la fin de la collection. Les tests utilisent `[Fact]` ou
+`[Theory]`, jamais `[AvaloniaFact]`/`[AvaloniaTheory]` ni
+`HeadlessUnitTestSession.GetOrStartForAssembly` : ces deux mecanismes
+demarreraient une seconde session headless concurrente de celle de la fixture.
 
-`RunAsync` execute du code sur le thread UI. `WithWindowAsync` cree le contenu
-et la fenetre sur ce thread, affiche la fenetre, effectue le layout, puis la
+`RunAsync` execute du code sur le thread UI, avec un corps synchrone (`Action`)
+ou asynchrone (`Func<Task>`) ; un test UI enveloppe tout son corps dans un seul
+appel :
+
+```csharp
+[Fact]
+public Task Settings_page_binds() => ui.RunAsync(() =>
+{
+    var window = new Window { Content = new SettingsPage() };
+    // ...
+}, TestContext.Current.CancellationToken);
+```
+
+`WithWindowAsync` cree le contenu et la fenetre sur ce thread, affiche la fenetre, effectue le layout, puis la
 ferme et detache ses bindings en `finally`, meme si une assertion echoue :
 
 ```csharp
@@ -109,13 +124,12 @@ public sealed class ExampleTests(AvaloniaUiFixture ui)
 }
 ```
 
-Le pilote est `SubscriptionsPageTests`. Le thread est conserve pour la
-collection, mais l'application reste isolee **par dispatch** : conserver une
-application unique des maintenant changerait l'isolation des anciens tests
+Le thread est conserve pour la collection, mais l'application reste isolee
+**par dispatch** : conserver une application unique changerait l'isolation des tests
 et risquerait de partager navigation, services et preferences. Ne pas conserver
 de controles entre dispatchs dans les tests metier. La protection globale
-contre le parallelisme reste necessaire tant que les autres consommateurs
-d'Avalonia et de l'etat statique ne sont pas migres.
+contre le parallelisme reste necessaire : des tests ordinaires, hors de la
+collection, utilisent encore `App.Current` et l'etat statique de `Platform`.
 
 ## EF Core en test
 

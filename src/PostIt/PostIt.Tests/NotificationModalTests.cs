@@ -1,15 +1,16 @@
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using PostIt.Models;
 using PostIt.Views;
 
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public class NotificationModalTests
+[Collection(AvaloniaUiCollection.Name)]
+public class NotificationModalTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaFact]
-    public void Error_message_is_selectable_in_the_notification_modal()
+    [Fact]
+    public Task Error_message_is_selectable_in_the_notification_modal()
+        => ui.RunAsync(() =>
     {
         var root = new MainView();
         var window = new Window { Content = root };
@@ -27,5 +28,5 @@ public class NotificationModalTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 }

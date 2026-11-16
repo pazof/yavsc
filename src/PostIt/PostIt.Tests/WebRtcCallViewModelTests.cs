@@ -11,15 +11,17 @@ namespace PostIt.Tests;
 [Trait("DependsOn", "Native")]
 [Trait("Speed", "Slow")]
 [Trait("Category", "non-reg")]
-public sealed class WebRtcCallViewModelTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class WebRtcCallViewModelTests(AvaloniaUiFixture ui)
 {
     private static readonly CallIceServer[] Turn = [new(["turn:localhost:3478"], "temporary", "password")];
     private const string Sdp = "v=0\r\no=- 1 1 IN IP4 127.0.0.1\r\nc=IN IP4 0.0.0.0\r\nm=video 9 UDP/TLS/RTP/SAVPF 96\r\n";
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task Outgoing_waits_for_acceptance_and_passes_server_policy_to_native_engine(bool relay)
+    public Task Outgoing_waits_for_acceptance_and_passes_server_policy_to_native_engine(bool relay)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(relay);
         var media = new Media();
@@ -42,12 +44,13 @@ public sealed class WebRtcCallViewModelTests
         Assert.Null(vm.LocalVideo);
         Assert.False(vm.Busy);
         Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task Audio_call_uses_only_microphone_and_monitors_audio(bool outgoing)
+    public Task Audio_call_uses_only_microphone_and_monitors_audio(bool outgoing)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(true);
         var media = new Media();
@@ -71,10 +74,11 @@ public sealed class WebRtcCallViewModelTests
         Assert.Null(vm.RemoteVideo);
         media.Report(new("connected", "relay", 20, 0));
         await WaitAsync(() => vm.Status.Contains("Audio WebRTC etabli"));
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Accepted_mode_mismatch_ends_call_without_opening_media()
+    [Fact]
+    public Task Accepted_mode_mismatch_ends_call_without_opening_media()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(true);
         var media = new Media();
@@ -84,10 +88,11 @@ public sealed class WebRtcCallViewModelTests
         await WaitAsync(() => !vm.Busy);
         Assert.Null(media.Configuration);
         Assert.Single(signaling.EndedCalls);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Audio_call_loads_the_remote_avatar_without_blocking_hangup()
+    [Fact]
+    public Task Audio_call_loads_the_remote_avatar_without_blocking_hangup()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(true);
         var media = new Media();
@@ -109,10 +114,11 @@ public sealed class WebRtcCallViewModelTests
         Assert.False(vm.Busy);
         Assert.Null(vm.RemoteAvatar);
         Assert.Equal("", vm.AvatarStatus);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Incoming_relay_needs_acceptance_but_never_requires_IP_disclosure()
+    [Fact]
+    public Task Incoming_relay_needs_acceptance_but_never_requires_IP_disclosure()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(true);
         var media = new Media();
@@ -126,10 +132,11 @@ public sealed class WebRtcCallViewModelTests
         Assert.False(media.Configuration!.Caller);
         media.Report(new("connected", "relay", 20, 20));
         await WaitAsync(() => vm.Status.Contains("IP masquee"));
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Direct_call_without_consent_ends_before_any_capture()
+    [Fact]
+    public Task Direct_call_without_consent_ends_before_any_capture()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(false);
         var media = new Media();
@@ -139,12 +146,13 @@ public sealed class WebRtcCallViewModelTests
         Assert.False(vm.Busy);
         Assert.Contains("consentez", vm.Status);
         Assert.Single(signaling.EndedCalls);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task Missing_TURN_or_policy_downgrade_never_creates_a_native_engine(bool downgrade)
+    public Task Missing_TURN_or_policy_downgrade_never_creates_a_native_engine(bool downgrade)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(true);
         var created = false;
@@ -160,15 +168,16 @@ public sealed class WebRtcCallViewModelTests
         await WaitAsync(() => !vm.Busy);
         Assert.False(created);
         Assert.Single(signaling.EndedCalls);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData("hangup")]
     [InlineData("interrupted")]
     [InlineData("ended")]
     [InlineData("background")]
     [InlineData("dispose")]
-    public async Task All_termination_paths_cancel_in_progress_native_startup(string reason)
+    public Task All_termination_paths_cancel_in_progress_native_startup(string reason)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(true);
         var media = new Media { DelayStartup = true };
@@ -188,13 +197,14 @@ public sealed class WebRtcCallViewModelTests
         Assert.False(vm.Busy);
         Assert.Null(vm.RemoteVideo);
         Assert.True(media.StartupCancelled);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData("host")]
     [InlineData("srflx")]
     [InlineData(null)]
-    public async Task Nonrelay_selected_path_is_rejected_and_media_is_stopped(string? candidateType)
+    public Task Nonrelay_selected_path_is_rejected_and_media_is_stopped(string? candidateType)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(true);
         var media = new Media();
@@ -205,10 +215,11 @@ public sealed class WebRtcCallViewModelTests
         media.Report(new("connected", candidateType, 20, 20));
         await WaitAsync(() => media.Disposed);
         Assert.Contains("chemin ICE", vm.Status);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Leaking_candidate_is_not_sent_and_fails_closed()
+    [Fact]
+    public Task Leaking_candidate_is_not_sent_and_fails_closed()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling(true);
         var media = new Media();
@@ -221,7 +232,7 @@ public sealed class WebRtcCallViewModelTests
         await WaitAsync(() => media.Disposed);
         Assert.Empty(signaling.Sent);
         Assert.Contains("candidat", vm.Status);
-    }
+    }, TestContext.Current.CancellationToken);
 
     //[AvaloniaFact]
     public async Task Native_failure_is_visible_and_ends_the_server_call()
@@ -260,9 +271,10 @@ public sealed class WebRtcCallViewModelTests
     public static bool NativeMediaAvailable => OperatingSystem.IsLinux() &&
         Environment.GetEnvironmentVariable("POSTIT_TEST_NATIVE_WEBRTC") == "1";
 
-    [AvaloniaFact(Skip = "Requires Linux GStreamer/libnice and POSTIT_TEST_NATIVE_WEBRTC=1",
+    [Fact(Skip = "Requires Linux GStreamer/libnice and POSTIT_TEST_NATIVE_WEBRTC=1",
         SkipUnless = nameof(NativeMediaAvailable))]
-    public async Task Linux_native_adapters_render_remote_bitmaps_and_receive_audio_in_both_directions()
+    public Task Linux_native_adapters_render_remote_bitmaps_and_receive_audio_in_both_directions()
+        => ui.RunAsync(async () =>
     {
         await using var caller = new LinuxWebRtcMedia();
         await using var callee = new LinuxWebRtcMedia();
@@ -291,7 +303,7 @@ public sealed class WebRtcCallViewModelTests
         }
         Assert.Equal(640, ((Bitmap)((Image)caller.RemoteVideo).Source!).PixelSize.Width);
         Assert.Equal(360, ((Bitmap)((Image)callee.RemoteVideo).Source!).PixelSize.Height);
-    }
+    }, TestContext.Current.CancellationToken);
 
     private static WebRtcCallViewModel Configure(Signaling signaling, Media media) => new(signaling, () => media)
     { Camera = new("Camera", "camera"), Microphone = new("Mic", "default"), Target = "bob", Room = "General" };

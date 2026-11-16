@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using Avalonia.Media.Imaging;
 using PostIt.Helpers;
 using PostIt.Services;
@@ -10,10 +9,12 @@ using Yavsc.Abstract.Chat.Calls;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public sealed class LanCallViewModelTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class LanCallViewModelTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaFact]
-    public async Task Calls_restore_shared_devices_and_persist_choices_and_network_address()
+    [Fact]
+    public Task Calls_restore_shared_devices_and_persist_choices_and_network_address()
+        => ui.RunAsync(async () =>
     {
         var path = Path.Combine(Path.GetTempPath(), $"postit-call-preferences-{Guid.NewGuid():N}.json");
         var previousDevices = Platform.GetLanCallDevices;
@@ -67,10 +68,11 @@ public sealed class LanCallViewModelTests
             }
         }
         finally { Platform.GetLanCallDevices = previousDevices; File.Delete(path); }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Call_preference_save_failures_are_reported_without_losing_the_choice()
+    [Fact]
+    public Task Call_preference_save_failures_are_reported_without_losing_the_choice()
+        => ui.RunAsync(async () =>
     {
         var path = Path.Combine(Path.GetTempPath(), $"postit-call-preferences-{Guid.NewGuid():N}");
         Directory.CreateDirectory(path);
@@ -85,10 +87,11 @@ public sealed class LanCallViewModelTests
             Assert.True(settings.IsDirty);
         }
         finally { Directory.Delete(path); }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Missing_saved_network_address_requires_a_new_selection_and_does_not_restore_consent()
+    [Fact]
+    public Task Missing_saved_network_address_requires_a_new_selection_and_does_not_restore_consent()
+        => ui.RunAsync(async () =>
     {
         var path = Path.Combine(Path.GetTempPath(), $"postit-call-preferences-{Guid.NewGuid():N}.json");
         try
@@ -100,7 +103,7 @@ public sealed class LanCallViewModelTests
             Assert.Equal("not-a-local-address", settings.LanCallAddress);
         }
         finally { File.Delete(path); }
-    }
+    }, TestContext.Current.CancellationToken);
 
     private static CallSession Session() => new(Guid.NewGuid(), "General", "alice", "bob", false,
         DateTimeOffset.UtcNow.AddMinutes(1), CallTransports.LanSrtp);
@@ -117,10 +120,11 @@ public sealed class LanCallViewModelTests
         return vm;
     }
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task Call_without_camera_sends_own_avatar_and_microphone_and_cleans_up(bool caller)
+    public Task Call_without_camera_sends_own_avatar_and_microphone_and_cleans_up(bool caller)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         var media = new FakeMedia();
@@ -158,10 +162,11 @@ public sealed class LanCallViewModelTests
         await vm.HangupAsync();
         Assert.True(media.Disposed);
         Assert.False(File.Exists(imagePath));
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Unavailable_own_avatar_ends_call_without_opening_media_or_camera()
+    [Fact]
+    public Task Unavailable_own_avatar_ends_call_without_opening_media_or_camera()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         var created = false;
@@ -182,10 +187,11 @@ public sealed class LanCallViewModelTests
         Assert.Empty(signaling.Sent);
         Assert.Contains("avatar est indisponible", vm.Status);
         Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Hangup_cancels_pending_avatar_download_without_opening_media()
+    [Fact]
+    public Task Hangup_cancels_pending_avatar_download_without_opening_media()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         var loading = false;
@@ -213,13 +219,14 @@ public sealed class LanCallViewModelTests
         Assert.False(vm.Busy);
         Assert.Empty(signaling.Sent);
         Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData("8.8.8.8")]
     [InlineData("2001:db8::1")]
     [InlineData("fd00::1")]
-    public async Task Public_or_private_ip_can_be_selected_for_an_explicitly_consented_direct_call(string address)
+    public Task Public_or_private_ip_can_be_selected_for_an_explicitly_consented_direct_call(string address)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         await using var vm = Configure(signaling, (_, _) => throw new Exception("No media before acceptance"));
@@ -228,10 +235,11 @@ public sealed class LanCallViewModelTests
         await vm.InviteCommand.ExecuteAsync(null);
         Assert.Equal(1, signaling.Invites);
         Assert.True(vm.Busy);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task No_capture_starts_before_explicit_acceptance_and_endpoint_exchange()
+    [Fact]
+    public Task No_capture_starts_before_explicit_acceptance_and_endpoint_exchange()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         var media = new FakeMedia();
@@ -256,10 +264,11 @@ public sealed class LanCallViewModelTests
         Assert.False(vm.Busy);
         Assert.Null(vm.LocalVideo);
         Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Caller_waits_for_consent_and_interruption_releases_media_without_reconnecting()
+    [Fact]
+    public Task Caller_waits_for_consent_and_interruption_releases_media_without_reconnecting()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         var media = new FakeMedia();
@@ -277,10 +286,11 @@ public sealed class LanCallViewModelTests
         Assert.False(vm.Busy);
         Assert.Null(vm.RemoteVideo);
         Assert.Contains("interrompue", vm.Status);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Missing_disclosure_consent_or_devices_blocks_the_invitation()
+    [Fact]
+    public Task Missing_disclosure_consent_or_devices_blocks_the_invitation()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         await using var vm = Configure(signaling, (_, _) => throw new Exception("Must not capture"));
@@ -294,10 +304,11 @@ public sealed class LanCallViewModelTests
         Assert.Equal(0, signaling.Invites);
         Assert.Contains("camera", vm.Status);
         Assert.False(vm.Busy);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Refusal_never_creates_media_and_late_signals_cannot_restart_capture()
+    [Fact]
+    public Task Refusal_never_creates_media_and_late_signals_cannot_restart_capture()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         var created = 0;
@@ -310,10 +321,11 @@ public sealed class LanCallViewModelTests
         await Task.Delay(30, TestContext.Current.CancellationToken);
         Assert.Equal(0, created);
         Assert.False(vm.Busy);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Platform_devices_and_factory_are_used_and_backgrounding_ends_capture()
+    [Fact]
+    public Task Platform_devices_and_factory_are_used_and_backgrounding_ends_capture()
+        => ui.RunAsync(async () =>
     {
         var previousDevices = Platform.GetLanCallDevices;
         var previousFactory = Platform.CreateLanCallMedia;
@@ -361,10 +373,11 @@ public sealed class LanCallViewModelTests
             Platform.GetLanCallDevices = previousDevices;
             Platform.CreateLanCallMedia = previousFactory;
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Hangup_cancels_pending_native_start_without_waiting_for_startup_timeout()
+    [Fact]
+    public Task Hangup_cancels_pending_native_start_without_waiting_for_startup_timeout()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         var media = new FakeMedia { DelayStartup = true };
@@ -378,10 +391,11 @@ public sealed class LanCallViewModelTests
         Assert.True(media.Disposed);
         Assert.False(vm.Busy);
         Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Media_failure_ends_the_call_and_disposes_capture()
+    [Fact]
+    public Task Media_failure_ends_the_call_and_disposes_capture()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         var media = new FakeMedia();
@@ -394,7 +408,7 @@ public sealed class LanCallViewModelTests
         Assert.False(vm.Busy);
         Assert.Contains("test media failure", vm.Status);
         Assert.Contains(signaling.Call.Id, signaling.EndedCalls);
-    }
+    }, TestContext.Current.CancellationToken);
 
     private static async Task WaitAsync(Func<bool> condition)
     {

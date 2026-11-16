@@ -3,7 +3,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Headless;
-using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Logging;
 using Avalonia.Threading;
@@ -22,7 +21,8 @@ using SkiaSharp;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public class BlogReaderTests
+[Collection(AvaloniaUiCollection.Name)]
+public class BlogReaderTests(AvaloniaUiFixture ui)
 {
     private static BlogPostDto Post(string article = "Texte du billet.") => new()
     {
@@ -106,8 +106,9 @@ public class BlogReaderTests
         Assert.Equal(expected, vm.CanOpenExternal);
     }
 
-    [AvaloniaFact]
-    public async Task Reader_hides_editor_and_wires_hyperlinks_to_the_application()
+    [Fact]
+    public Task Reader_hides_editor_and_wires_hyperlinks_to_the_application()
+        => ui.RunAsync(async () =>
     {
         var vm = CreateViewModel();
         await vm.InitializeAsync();
@@ -138,16 +139,17 @@ public class BlogReaderTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(360, 800, false)]
     [InlineData(1000, 420, true)]
     [InlineData(1000, 280, true)]
     [InlineData(600, 600, true)]
     [InlineData(599, 600, false)]
     [InlineData(601, 600, true)]
-    public async Task Blog_layout_uses_columns_from_the_square_window_threshold(int width, int height, bool wide)
+    public Task Blog_layout_uses_columns_from_the_square_window_threshold(int width, int height, bool wide)
+        => ui.RunAsync(async () =>
     {
         var vm = CreateViewModel();
         await vm.InitializeAsync();
@@ -226,10 +228,11 @@ public class BlogReaderTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Resizing_between_portrait_and_landscape_preserves_the_editor_and_draft()
+    [Fact]
+    public Task Resizing_between_portrait_and_landscape_preserves_the_editor_and_draft()
+        => ui.RunAsync(async () =>
     {
         var vm = CreateViewModel();
         await vm.InitializeAsync();
@@ -272,10 +275,11 @@ public class BlogReaderTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Image_http_failure_is_logged_with_its_url_and_is_not_swallowed()
+    [Fact]
+    public Task Image_http_failure_is_logged_with_its_url_and_is_not_swallowed()
+        => ui.RunAsync(async () =>
     {
         const string url = "https://org.example.test/files/paul/absent.jpg";
         using var client = new HttpClient(new BlogResourceServiceTests.StubHandler(
@@ -294,7 +298,7 @@ public class BlogReaderTests
         {
             Logger.Sink = previousSink;
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     private sealed class RecordingLogSink : ILogSink
     {
@@ -306,8 +310,9 @@ public class BlogReaderTests
             => Entries.Add((area, values));
     }
 
-    [AvaloniaFact]
-    public async Task Long_reading_content_scrolls_and_clears_when_selection_is_removed()
+    [Fact]
+    public Task Long_reading_content_scrolls_and_clears_when_selection_is_removed()
+        => ui.RunAsync(async () =>
     {
         var vm = CreateViewModel();
         await vm.InitializeAsync();
@@ -335,7 +340,7 @@ public class BlogReaderTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Theory]
     [InlineData("https://yavsc.pschneider.fr/files/paul/blogs/14/IMG-20260923-WA0001.jpg")]
@@ -397,8 +402,9 @@ public class BlogReaderTests
         }
     }
 
-    [AvaloniaFact]
-    public async Task Clicking_a_user_video_pushes_a_dedicated_video_viewmodel()
+    [Fact]
+    public Task Clicking_a_user_video_pushes_a_dedicated_video_viewmodel()
+        => ui.RunAsync(async () =>
     {
         using var client = new HttpClient(new BlogResourceServiceTests.StubHandler(request =>
         {
@@ -433,19 +439,21 @@ public class BlogReaderTests
         {
             app.DataTemplates.Remove(template);
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public void Video_viewmodel_resolves_to_the_shared_page_with_a_platform_video_surface_slot()
+    [Fact]
+    public Task Video_viewmodel_resolves_to_the_shared_page_with_a_platform_video_surface_slot()
+        => ui.RunAsync(() =>
     {
         var vm = new VideoPageViewModel(new Uri("https://org.example.test/files/paul/clip.mp4"), "video/mp4");
         var page = Assert.IsType<VideoPage>(new ViewLocator().Build(vm));
         Assert.NotNull(page.FindControl<ContentControl>("VideoSurface"));
         Assert.Null(page.FindControl<Button>("PlayButton"));
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Video_page_observes_platform_lifecycle_only_while_navigated()
+    [Fact]
+    public Task Video_page_observes_platform_lifecycle_only_while_navigated()
+        => ui.RunAsync(async () =>
     {
         var nav = new NavigationPage();
         await nav.PushAsync(new ContentPage());
@@ -461,7 +469,7 @@ public class BlogReaderTests
         status.Text = "No longer active";
         Platform.SuspendPlayback();
         Assert.Equal("No longer active", status.Text);
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task Broken_resource_reports_an_error_and_releases_busy_state()

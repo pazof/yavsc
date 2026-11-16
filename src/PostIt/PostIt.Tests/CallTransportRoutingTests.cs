@@ -1,4 +1,3 @@
-using Avalonia.Headless.XUnit;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using PostIt.Views.Chat;
@@ -10,12 +9,14 @@ using Yavsc.Abstract.Chat.Calls;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public sealed class CallTransportRoutingTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class CallTransportRoutingTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(CallTransports.LanSrtp)]
     [InlineData(CallTransports.WebRtc)]
-    public async Task Incoming_calls_are_handled_only_by_the_matching_transport(string transport)
+    public Task Incoming_calls_are_handled_only_by_the_matching_transport(string transport)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         await using var lan = new LanCallViewModel(signaling);
@@ -35,10 +36,11 @@ public sealed class CallTransportRoutingTests
         Assert.Equal([call.Id], signaling.EndedCalls);
         Assert.False(lan.Busy);
         Assert.False(webRtc.Busy);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Audio_page_keeps_srtp_avatar_call_and_received_video_available_without_camera_controls()
+    [Fact]
+    public Task Audio_page_keeps_srtp_avatar_call_and_received_video_available_without_camera_controls()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         await using var lan = new LanCallViewModel(signaling, loadAvatar: (_, _) => Task.FromResult<Bitmap?>(null))
@@ -60,10 +62,11 @@ public sealed class CallTransportRoutingTests
             Assert.Same(lan.RemoteVideo, video.Content);
         }
         finally { window.Close(); }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Audio_page_shows_static_image_and_hides_video_and_srtp_controls()
+    [Fact]
+    public Task Audio_page_shows_static_image_and_hides_video_and_srtp_controls()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         await using var webRtc = new WebRtcCallViewModel(signaling);
@@ -88,10 +91,11 @@ public sealed class CallTransportRoutingTests
             Assert.Same(webRtc.RemoteAvatar, displayedAvatar.Source);
         }
         finally { window.Close(); }
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaFact]
-    public async Task Unknown_transport_is_rejected_once_without_starting_either_call()
+    [Fact]
+    public Task Unknown_transport_is_rejected_once_without_starting_either_call()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         await using var lan = new LanCallViewModel(signaling);
@@ -105,12 +109,13 @@ public sealed class CallTransportRoutingTests
         Assert.Equal([call.Id], signaling.EndedCalls);
         Assert.False(lan.Busy);
         Assert.False(webRtc.Busy);
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(CallTransports.LanSrtp)]
     [InlineData(CallTransports.WebRtc)]
-    public async Task Chat_updates_both_rooms_and_disconnects_the_active_transport(string transport)
+    public Task Chat_updates_both_rooms_and_disconnects_the_active_transport(string transport)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         var chat = new ChatViewModel(settings: new Settings());
@@ -136,7 +141,7 @@ public sealed class CallTransportRoutingTests
         signaling.Invite(call);
         Assert.False(lan.Incoming);
         Assert.False(webRtc.Incoming);
-    }
+    }, TestContext.Current.CancellationToken);
 
     private static async Task WaitAsync(Func<bool> condition)
     {
@@ -145,8 +150,9 @@ public sealed class CallTransportRoutingTests
         while (!condition()) await Task.Delay(10, timeout.Token);
     }
 
-    [AvaloniaFact]
-    public async Task Selecting_a_room_member_prepares_both_transports_without_inviting()
+    [Fact]
+    public Task Selecting_a_room_member_prepares_both_transports_without_inviting()
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         await using var lan = new LanCallViewModel(signaling);
@@ -177,12 +183,13 @@ public sealed class CallTransportRoutingTests
         chat.SelectedRoom = "Other";
         Assert.Null(chat.SelectedUser);
         Assert.False(chat.OpenCallCommand.CanExecute(null));
-    }
+    }, TestContext.Current.CancellationToken);
 
-    [AvaloniaTheory]
+    [Theory]
     [InlineData(CallTransports.LanSrtp)]
     [InlineData(CallTransports.WebRtc)]
-    public async Task Leaving_text_chat_preserves_invitation_and_leaving_call_page_ends_it(string transport)
+    public Task Leaving_text_chat_preserves_invitation_and_leaving_call_page_ends_it(string transport)
+        => ui.RunAsync(async () =>
     {
         var signaling = new Signaling();
         await using var lan = new LanCallViewModel(signaling);
@@ -211,7 +218,7 @@ public sealed class CallTransportRoutingTests
             Assert.False(webRtc.Busy);
         }
         finally { window.Close(); }
-    }
+    }, TestContext.Current.CancellationToken);
 
     private sealed class Signaling : IWebRtcCallSignaling
     {

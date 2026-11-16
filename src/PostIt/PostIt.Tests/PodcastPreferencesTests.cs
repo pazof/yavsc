@@ -1,4 +1,3 @@
-using Avalonia.Headless.XUnit;
 using PostIt.Services;
 using PostIt.ViewModels;
 using Yavsc.Api.Client;
@@ -8,10 +7,12 @@ using Yavsc.Abstract.Streaming;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public sealed class PodcastPreferencesTests
+[Collection(AvaloniaUiCollection.Name)]
+public sealed class PodcastPreferencesTests(AvaloniaUiFixture ui)
 {
-    [AvaloniaFact]
-    public async Task Detection_selection_and_title_survive_settings_reload_without_detecting_again()
+    [Fact]
+    public Task Detection_selection_and_title_survive_settings_reload_without_detecting_again()
+        => ui.RunAsync(async () =>
     {
         var path = Path.Combine(Path.GetTempPath(), $"postit-preferences-{Guid.NewGuid():N}.json");
         var previous = Platform.GetPodcastCaptureDevices;
@@ -78,7 +79,7 @@ public sealed class PodcastPreferencesTests
             File.Delete(path + ".tokens");
         }
 
-    }
+    }, TestContext.Current.CancellationToken);
 
     private sealed class PreferencesApi(Settings settings, TokenStore store) : YavscApiClient(settings, store)
     {
@@ -90,8 +91,9 @@ public sealed class PodcastPreferencesTests
         }
     }
 
-    [AvaloniaFact]
-    public async Task Failed_save_is_reported_without_losing_the_title()
+    [Fact]
+    public Task Failed_save_is_reported_without_losing_the_title()
+        => ui.RunAsync(async () =>
     {
         var path = Path.Combine(Path.GetTempPath(), $"postit-preferences-{Guid.NewGuid():N}");
         Directory.CreateDirectory(path);
@@ -106,5 +108,5 @@ public sealed class PodcastPreferencesTests
             Assert.True(settings.IsDirty);
         }
         finally { Directory.Delete(path); File.Delete(path + ".tokens"); }
-    }
+    }, TestContext.Current.CancellationToken);
 }

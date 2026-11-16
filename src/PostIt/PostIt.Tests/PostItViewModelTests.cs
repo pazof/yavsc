@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Yavsc.Blogspot;
@@ -11,7 +10,8 @@ using PostIt.Views.Blogs;
 namespace PostIt.Tests;
 
 [Trait("Category", "non-reg")]
-public class PostItViewModelTests
+[Collection(AvaloniaUiCollection.Name)]
+public class PostItViewModelTests(AvaloniaUiFixture ui)
 {
     [Fact]
     public void Draft_modified_tracks_title_body_and_attachments_not_publication()
@@ -33,8 +33,9 @@ public class PostItViewModelTests
         Assert.True(vm.IsDraftModified);
     }
 
-    [AvaloniaFact]
-    public async Task Save_keeps_selection_and_editor_open_and_resets_highlight()
+    [Fact]
+    public Task Save_keeps_selection_and_editor_open_and_resets_highlight()
+        => ui.RunAsync(async () =>
     {
         var recorder = new CallRecorder();
         var vm = new BlogsViewModel(new BlogApiClient(new RecordingYavscApiClient(recorder),
@@ -81,7 +82,7 @@ public class PostItViewModelTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public async Task Failed_save_preserves_draft_attachments_and_modified_state()
@@ -101,8 +102,9 @@ public class PostItViewModelTests
         Assert.False(vm.IsBusy);
     }
 
-    [AvaloniaFact]
-    public void Published_badge_tracks_post_publication_state()
+    [Fact]
+    public Task Published_badge_tracks_post_publication_state()
+        => ui.RunAsync(() =>
     {
         var post = new BlogPostDto { Id = 42, Title = "Test post", IsPublished = true };
         var page = new BlogsPage();
@@ -130,7 +132,7 @@ public class PostItViewModelTests
         {
             window.Close();
         }
-    }
+    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public void SearchCommand_filters_posts_by_title_article_or_author()
