@@ -20,7 +20,7 @@ public static class ServiceCollectionHelpers
 
         var tokenStore = new TokenStore(System.IO.Path.Combine(
             System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData),
-            "PostIt", "tokens.json"));
+            App.AppName, "tokens.json"));
 
         var api = new YavscApiClient(settings, tokenStore);
         var client = new BlogApiClient(api, settings.BlogsApiUrl);

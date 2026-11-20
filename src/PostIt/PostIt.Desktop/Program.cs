@@ -2,6 +2,7 @@ using System;
 using Avalonia;
 using PostIt.Services;
 using PostIt.CLIOptions;
+using MonApp.Services.Linux;
 
 namespace PostIt.Desktop;
 
@@ -14,6 +15,13 @@ sealed class Program
     public static void Main(string[] args)
     {
         Platform.IsPodcastSupported = true;
+
+        if (OperatingSystem.IsLinux())
+        {
+            Platform.IsScreenCaptureSupported = true;
+            Platform.CreateScreenCaptureService = () => new LinuxScreenCaptureService();
+        }
+
         Platform.CreateBrowser = () => new CustomSchemeBrowser("postit://callback");
 
         CLIOptionHandler.HandleArgs(args);

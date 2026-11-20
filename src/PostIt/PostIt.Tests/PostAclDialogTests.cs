@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Json;
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
-using PostIt.Helpers;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;

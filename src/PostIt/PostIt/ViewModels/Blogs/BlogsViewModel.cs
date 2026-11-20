@@ -15,6 +15,8 @@ using Yavsc.Server.Helpers;
 using AvaloniaEdit.Document;
 using Avalonia.Controls;
 using PostIt.Services;
+using PostIt.ViewModels.Capture;
+using PostIt.Interfaces;
 
 namespace PostIt.ViewModels;
 
@@ -129,6 +131,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
     [ObservableProperty]
     public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
+
 
     [ObservableProperty]
     public partial string SearchText { get; set; }
@@ -533,6 +536,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         SettingsModel = new Settings();
         Init(SettingsModel);
         BlogClient = null;
+        ScreenCaptureViewModel = Platform.IsScreenCaptureSupported ? new ScreenCaptureViewModel() : null;
     }
 
     private void Init(Settings? settings)
@@ -547,7 +551,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         Settings = settings ?? new Settings();
         SearchText = Settings.SearchText;
         IsMarkdownViewerVisible = false;
-        WindowTitle = "PostIt";
+        WindowTitle = App.AppName;
         DraftTitle = string.Empty;
         DraftArticle = string.Empty;
 
@@ -835,4 +839,23 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
 
     private static string EscapePathSegment(string segment)
         => Uri.EscapeDataString(segment);
+
+        [RelayCommand]
+        public async Task ToggleScreencast()
+        {
+            if (ScreenCaptureViewModel != null)
+                await ScreenCaptureViewModel.ToggleRecordingAsync();
+        }
+
+        [ObservableProperty]
+        public partial ScreenCaptureViewModel? ScreenCaptureViewModel { get; set; } = null;
+
+        public bool IsScreencastRecording
+        { get => ScreenCaptureViewModel?.IsRecording ?? false;
+         set {  if (ScreenCaptureViewModel != null && value != ScreenCaptureViewModel.IsRecording)
+                    if (value && !ScreenCaptureViewModel.IsRecording || !value && ScreenCaptureViewModel.IsRecording)
+                _ = ScreenCaptureViewModel.ToggleRecordingAsync();
+         }
+        }
+
 }

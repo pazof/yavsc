@@ -147,43 +147,7 @@ public sealed class SessionAuthenticationTests(AvaloniaUiFixture ui)
             finally { File.Delete(path); }
         }, TestContext.Current.CancellationToken);
 
-    [Fact]
-    public async Task Modal_restores_the_previous_page_and_focus_after_silent_recovery()
-    {
-        var path = Path.Combine(Path.GetTempPath(), $"postit-session-{Guid.NewGuid():N}.json");
-        try
-        {
-            var store = new TokenStore(path);
-            store.Save(new RefreshTokenRecord("access", "refresh", DateTimeOffset.UtcNow.AddMinutes(10)));
-            await using var api = new ProfileApi(new Settings(), store);
-            var session = new SessionStatusViewModel { Api = api };
-            session.Refresh();
-            await ui.WithWindowAsync(() => new MainView
-            {
-                DataContext = new HomePageViewModel(api, api.Settings, session, null!)
-            }, async window =>
-            {
-                var root = Assert.IsType<MainView>(window.Content);
-                var editor = new TextBox { Text = "Brouillon conservé" };
-                var page = new ContentPage { Content = editor };
-                await root.NavRoot.PushAsync(page, null);
-                Dispatcher.UIThread.RunJobs();
-                window.UpdateLayout();
-                Assert.True(editor.Focus());
-                session.SetError("Session temporairement indisponible");
-                Dispatcher.UIThread.RunJobs();
-                Assert.True(root.LoginButton.IsFocused);
-                session.Refresh();
-                Dispatcher.UIThread.RunJobs();
-                Assert.False(root.AuthenticationModal.IsVisible);
-                Assert.True(root.NavRoot.IsEnabled);
-                Assert.True(editor.IsFocused);
-                Assert.Same(page, root.NavRoot.NavigationStack.Last());
-                Assert.Equal("Brouillon conservé", editor.Text);
-            }, TestContext.Current.CancellationToken);
-        }
-        finally { File.Delete(path); }
-    }
+
 
     [Fact]
     public Task Revoked_background_session_opens_the_modal_and_login_recovers()

@@ -73,7 +73,7 @@ public sealed class PodcastBroadcaster : IAsyncDisposable
         IPodcastCapture? capture = null;
         PodcastBroadcaster? broadcaster = null;
         var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "PostIt", "podcast-capture", Guid.NewGuid().ToString("N"));
+            App.AppName, "podcast-capture", Guid.NewGuid().ToString("N"));
         PodcastResponse? podcast = null;
         try
         {

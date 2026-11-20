@@ -263,10 +263,6 @@ public sealed class ChatHubConnection : IAsyncDisposable
 
     private void ReportError(string message)
     {
-        if (App.Current is App { ServiceProvider: not null } && !Avalonia.Threading.Dispatcher.UIThread.CheckAccess())
-            Avalonia.Threading.Dispatcher.UIThread.Post(() => _api.Settings.SetActionStatus(message, StatusSeverity.Error));
-        else
-            _api.Settings.SetActionStatus(message, StatusSeverity.Error);
         Error?.Invoke(message);
     }
 

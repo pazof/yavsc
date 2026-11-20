@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using LibVLCSharp.Shared;
+using PostIt.Interfaces;
 
 namespace PostIt.Services;
 
@@ -48,22 +49,12 @@ public static class Platform
     public static void ResumePlayback() => PlaybackResuming?.Invoke();
 
     /// <summary>
-    /// Default redirect URI for the running platform. The shared
-    /// default uses a custom URI scheme (<c>postit://callback</c>)
-    /// so the OAuth2 redirect is delivered to the running instance
-    /// through the OS scheme handler — no loopback HTTP listener
-    /// required (see RFC 8252 §7.1). Platform projects may still
-    /// override this property at startup (e.g. PostIt.Android sets
-    /// it to <c>android://postit-signin</c>).
-    /// </summary>
-    public const string RedirectUri = "postit://callback";
-
-    /// <summary>
     /// Scheme prefix the <see cref="CustomSchemeBrowser"/> matches
     /// against <c>BrowserOptions.EndUrl</c>. Overridable for apps
     /// that want to register their own scheme.
     /// </summary>
     public const string CustomScheme = "postit";
+
 
     /// <summary>
     /// Constructs a fresh <see cref="IBrowser"/> for the running platform.
@@ -82,4 +73,6 @@ public static class Platform
         _ => Task.FromResult(CurrentLocationResult.Unavailable());
 
     public static bool IsPodcastSupported { get; set; } = false;
+    public static bool IsScreenCaptureSupported { get; set; } = false;
+    public static Func<IScreenCaptureService>? CreateScreenCaptureService { get; set; }
 }

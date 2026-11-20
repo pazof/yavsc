@@ -25,14 +25,4 @@ internal static class AndroidSettings
         });
         return completion.Task;
     }
-
-    internal static void ReportError(Settings settings, string message)
-    {
-        _ = ReportAsync();
-        async Task ReportAsync()
-        {
-            try { await UpdateAsync(settings, s => s.SetActionStatus(message, PostIt.Models.StatusSeverity.Error)); }
-            catch (Exception ex) { global::Android.Util.Log.Error("PostIt.Chat", ex.ToString()); }
-        }
-    }
 }

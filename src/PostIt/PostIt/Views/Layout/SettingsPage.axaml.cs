@@ -96,10 +96,7 @@ public partial class SettingsPage: ContentPage
 
     private void SetAvatarStatus(string message, StatusSeverity severity)
     {
-        if (DataContext is Settings settings)
-        {
-            settings.SetActionStatus(message, severity);
-        }
+        NotificationService.Instance.Post(message, severity);
     }
 
     private static string GetMimeType(string fileName)

@@ -28,7 +28,7 @@ internal static class AndroidServiceProvider
             catch (Exception ex)
             {
                 global::Android.Util.Log.Error("PostIt.Chat", ex.ToString());
-                AndroidSettings.ReportError(api.Settings, ex.Message);
+                NotificationService.Instance.Post(ex.Message, PostIt.Models.StatusSeverity.Error);
             }
             return System.Threading.Tasks.Task.CompletedTask;
         };

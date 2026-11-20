@@ -36,8 +36,7 @@ public sealed class ChatBootReceiver : BroadcastReceiver
                 if (api is not null)
                 {
                     api.QueueExceptionReport(ex, "PostIt.Android.Chat");
-                    AndroidSettings.ReportError(api.Settings,
-                        "Android a refuse le redemarrage de la messagerie : " + ex.Message);
+                    NotificationService.Instance.Post("Android a refuse le redemarrage de la messagerie : " + ex.Message, PostIt.Models.StatusSeverity.Error);
                 }
             }
             finally { pending?.Finish(); }

@@ -105,6 +105,8 @@
             <PathIcon Data="{StaticResource send_regular}" />
           </CommandBarToggleButton.Icon>
         </CommandBarToggleButton>
+
+
         <CommandBarToggleButton
           DataContext="{Binding #BlogsPageRoot.DataContext}"
           IsChecked="{Binding IsMarkdownViewerVisible, Mode=TwoWay}"
@@ -147,6 +149,18 @@
             <PathIcon Data="{StaticResource form_new_regular}" />
           </CommandBarButton.Icon>
         </CommandBarButton>
+
+
+        <CommandBarToggleButton
+          x:Name="ToggleScreencastButton"
+          Command="{Binding ToggleScreencast}"
+          DataContext="{Binding #BlogsPageRoot.DataContext}"
+          IsChecked="{Binding IsScreencastRecording, Mode=TwoWay}"
+          Label="Caster votre écran">
+          <CommandBarToggleButton.Icon>
+            <PathIcon Data="{StaticResource preview_link_regular}" />
+          </CommandBarToggleButton.Icon>
+        </CommandBarToggleButton>
       </CommandBar.SecondaryCommands>
     </CommandBar>
   </NavigationPage.TopCommandBar>
@@ -321,6 +335,6 @@
           Text="Choisissez un billet dans la liste pour le lire."
           TextWrapping="Wrap" />
       </Grid>
-      
+
     </Grid>
 </ContentPage>

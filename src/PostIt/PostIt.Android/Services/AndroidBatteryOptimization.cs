@@ -2,6 +2,7 @@ using System;
 using Android.Content;
 using Android.OS;
 using Android.Util;
+using PostIt.Services;
 using PostIt.ViewModels;
 using AndroidSettingsIntent = Android.Provider.Settings;
 
@@ -26,8 +27,7 @@ internal static class AndroidBatteryOptimization
         if (MainActivity.Current is not { IsFinishing: false, IsDestroyed: false } activity
             || !MainActivity.IsForeground)
         {
-            AndroidSettings.ReportError(settings,
-                "Ouvrez PostIt pour demander l'exemption d'optimisation batterie.");
+            NotificationService.Instance.Post("Ouvrez PostIt pour demander l'exemption d'optimisation batterie.", PostIt.Models.StatusSeverity.Error);
             return;
         }
         activity.RunOnUiThread(() =>
@@ -43,8 +43,7 @@ internal static class AndroidBatteryOptimization
             catch (Exception ex)
             {
                 Log.Error("PostIt.Chat", "Battery optimization settings failed: " + ex);
-                AndroidSettings.ReportError(settings,
-                    "Impossible d'ouvrir les parametres batterie Android : " + ex.Message);
+                NotificationService.Instance.Post("Impossible d'ouvrir les parametres batterie Android : " + ex.Message, PostIt.Models.StatusSeverity.Error);
             }
         });
     }

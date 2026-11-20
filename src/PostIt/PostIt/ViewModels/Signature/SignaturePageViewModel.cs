@@ -167,7 +167,7 @@ public partial class SignaturePageViewModel : ViewModelBase, IActionStatusViewMo
     {
         var dir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "PostIt", "signatures");
+            App.AppName, "signatures");
         Directory.CreateDirectory(dir);
 
         var fileName = $"signature-{DateTime.UtcNow:yyyyMMdd-HHmmssfff}.json";

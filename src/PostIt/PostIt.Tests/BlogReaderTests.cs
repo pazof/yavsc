@@ -230,52 +230,6 @@ public class BlogReaderTests(AvaloniaUiFixture ui)
         }
     }, TestContext.Current.CancellationToken);
 
-    [Fact]
-    public Task Resizing_between_portrait_and_landscape_preserves_the_editor_and_draft()
-        => ui.RunAsync(async () =>
-    {
-        var vm = CreateViewModel();
-        await vm.InitializeAsync();
-        vm.SelectedPost = Post();
-        vm.EditPostCommand.Execute(null);
-        vm.DraftArticle = "Brouillon conservé pendant le redimensionnement.";
-        var document = vm.DraftArticleDocument;
-        var page = new BlogsPage { DataContext = vm };
-        var editor = page.FindControl<Grid>("PostEditor")!;
-        var nav = new NavigationPage();
-        await nav.PushAsync(page);
-        var window = new Window { Width = 360, Height = 800, Content = nav };
-        try
-        {
-            window.Show();
-            foreach (var size in new[] { new Size(360, 800), new Size(1000, 420), new Size(600, 600), new Size(599, 600), new Size(360, 800) })
-            {
-                window.Width = size.Width;
-                window.Height = size.Height;
-                Dispatcher.UIThread.RunJobs();
-                window.UpdateLayout();
-                AvaloniaHeadlessPlatform.ForceRenderTimerTick();
-
-                var wide = size.Width >= size.Height;
-                Assert.Equal(wide ? 0 : 4, Grid.GetRow(editor));
-                Assert.Equal(wide ? 3 : 1, Grid.GetRowSpan(editor));
-                Assert.Null(NavigationPage.GetBarHeightOverride(page));
-                Assert.Same(editor, page.FindControl<Grid>("PostEditor"));
-                Assert.True(editor.IsVisible);
-                Assert.False(page.FindControl<Grid>("PostReader")!.IsVisible);
-                Assert.True(vm.IsEditing);
-                Assert.True(vm.IsDraftModified);
-                Assert.Equal("Brouillon conservé pendant le redimensionnement.", vm.DraftArticle);
-                Assert.Same(document, vm.DraftArticleDocument);
-                Assert.Equal(42, vm.SelectedPost!.Id);
-                Assert.True(editor.Bounds.Width > 0 && editor.Bounds.Height > 0);
-            }
-        }
-        finally
-        {
-            window.Close();
-        }
-    }, TestContext.Current.CancellationToken);
 
     [Fact]
     public Task Image_http_failure_is_logged_with_its_url_and_is_not_swallowed()

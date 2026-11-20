@@ -155,7 +155,7 @@ public sealed class ChatConnectionService : Service
                             {
                                 if (!_destroyed && AndroidBackgroundChatService.IsCurrent(epoch)
                                     && ChatBootState.CanStart(_api))
-                                    s.SetActionStatus(NotificationPermission.IsGranted(this)
+                                    PostIt.Services.NotificationService.Instance.Post(NotificationPermission.IsGranted(this)
                                         ? "Connexion de fond active sans notification permanente. Android peut l'interrompre."
                                         : "SignalR actif sans notification permanente. Alertes desactivees dans Android.",
                                         NotificationPermission.IsGranted(this) ? StatusSeverity.Info : StatusSeverity.Warning);
@@ -219,7 +219,7 @@ public sealed class ChatConnectionService : Service
         {
             var builder = new NotificationCompat.Builder(this, MessageChannel);
             builder.SetSmallIcon(Yavsc.Resource.Drawable.ic_stat_postit);
-            builder.SetContentTitle("PostIt");
+            builder.SetContentTitle(App.AppName);
             builder.SetContentText(text);
             builder.SetVisibility(NotificationCompat.VisibilityPrivate);
             builder.SetContentIntent(OpenApp());
@@ -254,7 +254,7 @@ public sealed class ChatConnectionService : Service
     {
         Log.Error("PostIt.Chat", ex.ToString());
         _api?.QueueExceptionReport(ex, "PostIt.Android.Chat");
-        if (_api is not null) AndroidSettings.ReportError(_api.Settings, ex.Message);
+        if (_api is not null) PostIt.Services.NotificationService.Instance.Post(ex.Message, PostIt.Models.StatusSeverity.Error);
     }
 
     private static void CompleteStartup(string epoch)

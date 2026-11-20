@@ -77,7 +77,7 @@ public class AdministrationToolsTests(AvaloniaUiFixture ui)
     [Fact]
     public void Client_form_retains_every_scalar_field_and_validates_numeric_input()
     {
-        var settings = new ClientSettings { ClientId = "postit", ClientName = "PostIt", AccessTokenLifetime = 900,
+        var settings = new ClientSettings { ClientId = "postit", ClientName = App.AppName, AccessTokenLifetime = 900,
             ConsentLifetime = null, RequireConsent = true, PairWiseSubjectSalt = null };
         var fields = AdministrationFieldViewModel.From(settings);
         Assert.Equal(typeof(ClientSettings).GetProperties().Length, fields.Count);

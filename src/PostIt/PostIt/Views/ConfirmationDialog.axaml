@@ -4,6 +4,9 @@
              x:Class="PostIt.Views.ConfirmationDialog"
              x:DataType="vm:ConfirmationDialogViewModel"
              Header="Confirmation">
+             <Design.DataContext>
+                 <vm:ConfirmationDialogViewModel />
+             </Design.DataContext>
   <Border Margin="20" Padding="20" CornerRadius="10" BorderBrush="#D0D7DE" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center">
     <StackPanel Spacing="14" MaxWidth="420">
       <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" />

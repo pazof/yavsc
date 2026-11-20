@@ -404,6 +404,15 @@ pour les requetes.
 Le document OpenAPI dedie est `/openapi/podcasts.json`, accessible en
 developpement aux administrateurs comme les autres documents de l'API.
 
+## PostIt.Desktop - Capture d'écran
+
+
+### Pré-requis Sur Ubuntu / Debian
+
+````bash
+sudo apt install xdg-desktop-portal gstreamer1.0-tools gstreamer1.0-pipewire gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-vaapi
+````
+
 ## Composition root (`App.axaml.cs`)
 
 `App.OnFrameworkInitializationCompleted` est le seul endroit où

@@ -59,7 +59,7 @@ public sealed class MessagingSession : IAsyncDisposable
                     try { await OnSigningOutAsync(); }
                     catch (Exception ex)
                     {
-                        _api.Settings.SetActionStatus($"Arret du service de messagerie incomplet : {ex.Message}", Models.StatusSeverity.Error);
+                        NotificationService.Instance.Post($"Arret du service de messagerie incomplet : {ex.Message}", Models.StatusSeverity.Error);
                     }
                     _session.Refresh();
                 }
@@ -108,7 +108,7 @@ public sealed class MessagingSession : IAsyncDisposable
         }
         catch (Exception ex)
         {
-            _api.Settings.SetActionStatus($"Mise a jour de la messagerie impossible : {ex.Message}", Models.StatusSeverity.Error);
+            NotificationService.Instance.Post($"Mise a jour de la messagerie impossible : {ex.Message}", Models.StatusSeverity.Error);
         }
     }
 
@@ -135,7 +135,7 @@ public sealed class MessagingSession : IAsyncDisposable
             catch (OperationCanceledException) when (_signingOut || _lifetime.IsCancellationRequested || !_api.Settings.AndroidKeepChatConnected) { }
             catch (Exception ex)
             {
-                _api.Settings.SetActionStatus($"Service de messagerie Android indisponible : {ex.Message}", Models.StatusSeverity.Error);
+                NotificationService.Instance.Post($"Service de messagerie Android indisponible : {ex.Message}", Models.StatusSeverity.Error);
             }
         }
         finally { _gate.Release(); }

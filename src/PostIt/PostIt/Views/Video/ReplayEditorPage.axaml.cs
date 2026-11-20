@@ -86,7 +86,7 @@ public partial class ReplayEditorPage : ContentPage
             vm.SeekRequested += Seek;
             vm.CaptureThumbnail = CaptureThumbnailAsync;
             _snapshotDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "PostIt", "replay-editor", Guid.NewGuid().ToString("N"));
+                App.AppName, "replay-editor", Guid.NewGuid().ToString("N"));
             _input = new PodcastReplayMediaInput(vm.PodcastClient, vm.Podcast.Id, vm.SourceBytes, draftSource: true);
             _input.Failed += InputFailed;
             _libVlc = new LibVLC();

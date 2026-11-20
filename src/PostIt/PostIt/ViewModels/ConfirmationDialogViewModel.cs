@@ -9,6 +9,14 @@ public partial class ConfirmationDialogViewModel : ViewModelBase
     private readonly TaskCompletionSource<bool> _completion =
         new(TaskCreationOptions.RunContinuationsAsynchronously);
 
+    public ConfirmationDialogViewModel()
+    {
+        Title = "Confirmation";
+        Message = "Êtes-vous sûr de vouloir continuer ?";
+        ConfirmText = "Confirmer";
+        CancelText = "Annuler";
+    }
+
     public ConfirmationDialogViewModel(string title, string message, string confirmText = "Confirmer", string cancelText = "Annuler")
     {
         Title = title;

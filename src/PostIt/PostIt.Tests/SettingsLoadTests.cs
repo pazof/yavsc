@@ -45,7 +45,7 @@ public class SettingsLoadTests
         // Skip if a user-level file exists (CI / different dev machines).
         var userConfigPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "PostIt",
+            App.AppName,
             "postit-settings.json");
         if (File.Exists(userConfigPath))
         {

@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using PostIt.Models;
 using PostIt.Services;
+using Avalonia.Threading;
 
 [assembly: InternalsVisibleTo("PostIt.Tests")]
 
@@ -81,11 +82,6 @@ public partial class Settings : ViewModelBase
     [JsonIgnore]
     public bool SupportsBackgroundChatService => OperatingSystem.IsAndroid();
 
-    [ObservableProperty]
-    [JsonIgnore]
-    public partial StatusNotice ActionStatus { get; set; } = StatusNotice.Info("Pret.");
-
-
     [JsonIgnore]
     public bool Loaded { get; private set; } = false;
 
@@ -147,16 +143,6 @@ public partial class Settings : ViewModelBase
         "api"
     };
     private readonly string DEFAULT_SETTINGS_FILENAME = "postit-settings.json";
-
-    public void SetActionStatus(string message, StatusSeverity severity = StatusSeverity.Info)
-    {
-        ActionStatus = severity switch
-        {
-            StatusSeverity.Error => StatusNotice.Error(message),
-            StatusSeverity.Warning => StatusNotice.Warning(message),
-            _ => StatusNotice.Info(message),
-        };
-    }
 
     /// <summary>
     /// Catch top-level mutations: the four ObservableProperty
@@ -350,7 +336,7 @@ public partial class Settings : ViewModelBase
         {
              string configDir = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "PostIt");
+                App.AppName);
             SettingsFileFullName = Path.Combine(configDir, "postit-settings.json");
         }
 
@@ -560,13 +546,14 @@ public partial class Settings : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanSave))]
     public void Save()
     {
-        SetActionStatus("Enregistrement des parametres...", StatusSeverity.Info);
+        NotificationService.Instance.Post("Enregistrement des parametres...", StatusSeverity.Info);
+        
 
         if (SettingsFileFullName is null)
         {
             var configDir = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "PostIt");
+                App.AppName);
             Directory.CreateDirectory(configDir);
             SettingsFileFullName = Path.Combine(configDir, DEFAULT_SETTINGS_FILENAME);
         }
@@ -587,13 +574,13 @@ public partial class Settings : ViewModelBase
                     File.SetUnixFileMode(configPath,
                         UnixFileMode.UserRead | UnixFileMode.UserWrite);
                 IsDirty = false;
-                SetActionStatus("Parametres sauvegardes.", StatusSeverity.Info);
+                NotificationService.Instance.Post("Parametres sauvegardes.", StatusSeverity.Info);
 
                 Console.WriteLine($"💾 Settings saved to {configPath}");
             }
             catch (Exception ex)
             {
-                SetActionStatus($"Echec sauvegarde parametres: {ex.Message}", StatusSeverity.Error);
+                NotificationService.Instance.Post($"Echec sauvegarde parametres: {ex.Message}", StatusSeverity.Error);
                 Console.Error.WriteLine($"🩎 Error saving settings to {configPath}: {ex.Message}");
                 throw;
             }

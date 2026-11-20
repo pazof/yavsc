@@ -36,8 +36,6 @@ public static class ActionStatusViewModelExtensions
 
         if (App.Current is App app && app.ServiceProvider is { } serviceProvider)
         {
-            var settings = serviceProvider.GetRequiredService<Settings>();
-            settings.SetActionStatus(normalizedMessage, severity);
             var notificationService = serviceProvider.GetRequiredService<NotificationService>();
             notificationService.Show(normalizedMessage, severity);
         }

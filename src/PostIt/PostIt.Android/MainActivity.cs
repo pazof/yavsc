@@ -48,7 +48,7 @@ public class MainActivity : AvaloniaMainActivity
     {
         if (Current is not { } activity || !IsForeground)
         {
-            global::Android.Util.Log.Warn("PostIt", "Cannot show the keyboard without a foreground activity.");
+            global::Android.Util.Log.Warn(App.AppName, "Cannot show the keyboard without a foreground activity.");
             return;
         }
 
@@ -57,12 +57,12 @@ public class MainActivity : AvaloniaMainActivity
             if (activity.CurrentFocus is not { } view
                 || activity.GetSystemService(InputMethodService) is not global::Android.Views.InputMethods.InputMethodManager inputMethod)
             {
-                global::Android.Util.Log.Warn("PostIt", "Cannot show the keyboard without a focused native view and input method.");
+                global::Android.Util.Log.Warn(App.AppName, "Cannot show the keyboard without a focused native view and input method.");
                 return;
             }
 
             if (!inputMethod.ShowSoftInput(view, global::Android.Views.InputMethods.ShowFlags.Implicit))
-                global::Android.Util.Log.Warn("PostIt", "The input method did not accept the keyboard activation request.");
+                global::Android.Util.Log.Warn(App.AppName, "The input method did not accept the keyboard activation request.");
         });
     }
 

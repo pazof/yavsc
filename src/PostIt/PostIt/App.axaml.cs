@@ -1,4 +1,7 @@
 using System;
+using System.Globalization;
+using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -6,17 +9,14 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using Live.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
+using PostIt.Helpers;
+using PostIt.Interfaces;
 using PostIt.Services;
 using PostIt.ViewModels;
 using PostIt.Views;
-using PostIt.Helpers;
-using System.Globalization;
-using Live.Avalonia;
-using System.Diagnostics;
-using System.Linq;
 using ReactiveUI;
-using System.Reactive;
 
 namespace PostIt;
 
@@ -122,19 +122,20 @@ public partial class App : Application, ILiveView, IVMPusherApp
 
         base.OnFrameworkInitializationCompleted();
     }
+    public static string AppName { get; } = "PostIt";
 
     private static void OnUnhandledException(object? sender, UnhandledExceptionEventArgs args)
     {
         if (args.ExceptionObject is Exception exception && Current is App app)
             app.ServiceProvider?.GetService<YavscApiClient>()
-                ?.QueueExceptionReport(exception, "PostIt");
+                ?.QueueExceptionReport(exception, AppName);
     }
 
     private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs args)
     {
         if (Current is App app)
             app.ServiceProvider?.GetService<YavscApiClient>()
-                ?.QueueExceptionReport(args.Exception, "PostIt");
+                ?.QueueExceptionReport(args.Exception, AppName);
     }
 
     private bool IsProduction()

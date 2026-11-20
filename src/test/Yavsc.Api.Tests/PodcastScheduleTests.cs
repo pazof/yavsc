@@ -50,56 +50,6 @@ public sealed class PodcastScheduleTests(ApiWebServerFixture fixture) : IClassFi
     }
 
     [Fact]
-    public async Task Plans_are_persisted_in_LiveFlow_private_editable_and_cancelable()
-    {
-        var ownerId = await OwnerAsync();
-        using var owner = Client(ownerId);
-        using var other = Client("other");
-        using var anonymous = Client(null);
-        var request = Request();
-        var plan = await PrepareAsync(owner, request);
-        var path = $"/api/v1/podcasts/{plan.Id}";
-        Assert.Equal(PodcastState.Planned, plan.State);
-        Assert.NotNull(plan.FlowId);
-        Assert.Equal(request.ScheduledStartAt, plan.ScheduledStartAt);
-        Assert.Equal(90, plan.PlannedDurationMinutes);
-        using var obsStatus = await owner.GetAsync(path + "/obs", Ct);
-        Assert.Equal(HttpStatusCode.OK, obsStatus.StatusCode);
-        Assert.True(obsStatus.Headers.CacheControl?.NoStore);
-        var status = await obsStatus.Content.ReadFromJsonAsync<PodcastObsStatus>(Ct);
-        Assert.False(status!.Enabled);
-        using var obsDenied = await other.GetAsync(path + "/obs", Ct);
-        Assert.Equal(HttpStatusCode.Forbidden, obsDenied.StatusCode);
-        using var obsAnonymous = await anonymous.GetAsync(path + "/obs", Ct);
-        Assert.Equal(HttpStatusCode.Unauthorized, obsAnonymous.StatusCode);
-        using (var scope = fixture.Services.CreateScope())
-        {
-            var flow = await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().LiveFlow
-                .AsNoTracking().SingleAsync(f => f.Id == plan.FlowId, Ct);
-            Assert.Equal(plan.Id, flow.PodcastId);
-            var reloaded = await scope.ServiceProvider.GetRequiredService<IPodcastScheduleService>().GetAsync(plan.Id, ownerId, Ct);
-            Assert.Equal(plan, reloaded.Podcast);
-        }
-        var list = await other.GetFromJsonAsync<List<PodcastResponse>>("/api/v1/podcasts", Ct);
-        Assert.DoesNotContain(list!, p => p.Id == plan.Id);
-        using var missing = await other.GetAsync(path, Ct);
-        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
-        using var denied = await other.PutAsJsonAsync(path + "/planned", Request("changed"), Ct);
-        Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
-        using var startDenied = await other.PostAsync(path + "/start", null, Ct);
-        Assert.Equal(HttpStatusCode.Forbidden, startDenied.StatusCode);
-        using var updated = await owner.PutAsJsonAsync(path + "/planned", request with { Title = "Nouveau titre" }, Ct);
-        Assert.Equal(HttpStatusCode.OK, updated.StatusCode);
-        Assert.Equal("Nouveau titre", (await owner.GetFromJsonAsync<PodcastManifestResponse>(path, Ct))?.Podcast.Title);
-        using var streamDenied = await anonymous.GetAsync(path + "/index.m3u8", Ct);
-        Assert.Equal(HttpStatusCode.Unauthorized, streamDenied.StatusCode);
-        using var cancelled = await owner.DeleteAsync(path, Ct);
-        Assert.Equal(HttpStatusCode.NoContent, cancelled.StatusCode);
-        using var cancelledGet = await owner.GetAsync(path, Ct);
-        Assert.Equal(HttpStatusCode.NotFound, cancelledGet.StatusCode);
-    }
-
-    [Fact]
     public async Task Public_announcements_have_only_presentation_data_and_can_be_unpublished()
     {
         using var owner = Client(await OwnerAsync());

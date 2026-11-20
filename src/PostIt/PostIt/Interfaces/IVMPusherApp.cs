@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using PostIt.ViewModels;
 using Avalonia.Controls;
 
-namespace PostIt;
+namespace PostIt.Interfaces;
 
 internal interface IVMPusherApp
 {

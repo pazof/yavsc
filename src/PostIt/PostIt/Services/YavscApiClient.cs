@@ -136,7 +136,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         var report = new BugReport
         {
             Component = component,
-            FeatureShortName = "PostIt",
+            FeatureShortName = App.AppName,
             ExceptionObjectJson = exceptionJson
         };
         await CallAsync(HttpMethod.Post, endpoint.ToString(), report, ct).ConfigureAwait(false);
@@ -230,7 +230,7 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
                 {
                     Console.Error.WriteLine($"Session maintenance failed: {ex}");
                     SessionChanged?.Invoke($"Renouvellement automatique de la session impossible : {ex.Message}");
-                    Settings.SetActionStatus($"Renouvellement automatique de la session impossible : {ex.Message}",
+                    NotificationService.Instance.Post($"Renouvellement automatique de la session impossible : {ex.Message}",
                         PostIt.Models.StatusSeverity.Error);
                     await _maintenanceChanged.WaitAsync(TimeSpan.FromSeconds(30), ct).ConfigureAwait(false);
                 }

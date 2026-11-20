@@ -62,17 +62,12 @@ internal sealed class AndroidBackgroundChatService : IBackgroundChatService
                     {
                         var granted = await NotificationPermission.RequestAsync(activity, ct).ConfigureAwait(false);
                         Validate(api, epoch, identity, ct);
-                        await AndroidSettings.UpdateAsync(api.Settings, s => s.SetActionStatus(granted
-                            ? "Connexion de fond active sans notification permanente. Android peut l'interrompre."
-                            : "Notifications refusees : SignalR reste actif, mais les alertes ne seront pas affichees.",
-                            granted ? StatusSeverity.Info : StatusSeverity.Warning)).ConfigureAwait(false);
                     }
                     catch (OperationCanceledException) { throw; }
                     catch (Exception ex)
                     {
                         Log.Error("PostIt.Chat", "Notification permission request failed: " + ex);
-                        AndroidSettings.ReportError(api.Settings,
-                            "SignalR reste actif ; demande d'autorisation des alertes impossible : " + ex.Message);
+                        NotificationService.Instance.Post("SignalR reste actif ; demande d'autorisation des alertes impossible : " + ex.Message, PostIt.Models.StatusSeverity.Error);
                     }
                 }
             }
@@ -88,12 +83,6 @@ internal sealed class AndroidBackgroundChatService : IBackgroundChatService
             Cancel(epoch);
             Log.Error("PostIt.Chat", ex.ToString());
             api.QueueExceptionReport(ex, "PostIt.Android.Chat");
-            try
-            {
-                await AndroidSettings.UpdateAsync(api.Settings, s => s.SetActionStatus(ex.Message, StatusSeverity.Error))
-                    .ConfigureAwait(false);
-            }
-            catch (Exception statusError) { Log.Error("PostIt.Chat", statusError.ToString()); }
             if (ex is BackgroundChatException) throw;
             throw new BackgroundChatException(BackgroundChatFailure.StartRejected,
                 "Android n'a pas pu demarrer le service de messagerie : " + ex.Message, ex);
@@ -110,7 +99,7 @@ internal sealed class AndroidBackgroundChatService : IBackgroundChatService
         catch (Exception ex)
         {
             Log.Error("PostIt.Chat", ex.ToString());
-            AndroidSettings.ReportError(api.Settings, ex.Message);
+            NotificationService.Instance.Post("Erreur lors de la desactivation du service de messagerie : " + ex.Message, PostIt.Models.StatusSeverity.Error);
         }
         return Task.CompletedTask;
     }

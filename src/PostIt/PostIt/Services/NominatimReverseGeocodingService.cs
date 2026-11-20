@@ -51,7 +51,7 @@ public sealed class NominatimReverseGeocodingService : IReverseGeocodingService
             Timeout = TimeSpan.FromSeconds(10),
         };
         client.DefaultRequestHeaders.UserAgent.Clear();
-        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("PostIt", "1.1"));
+        client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(App.AppName, "1.1"));
         client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("fr-FR"));
         client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("fr", 0.9));
         return client;
