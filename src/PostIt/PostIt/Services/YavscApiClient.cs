@@ -11,6 +11,7 @@ using IdentityModel.OidcClient;
 using PostIt.ViewModels;
 using Yavsc.ApiControllers;
 using Yavsc.Api.Client;
+using Yavsc.Exceptions;
 
 namespace PostIt.Services;
 
@@ -547,10 +548,10 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
         try
         {
             if (IsSigningOut)
-                throw new InvalidOperationException("Deconnexion en cours.");
+                throw new NoTokenException("Deconnexion en cours.");
             var tokens = _tokens;
             if (tokens is null)
-                throw new InvalidOperationException("Session expirée. Veuillez vous reconnecter.");
+                throw new NoTokenException("Session expirée. Veuillez vous reconnecter.");
             if (string.IsNullOrEmpty(tokens.RefreshToken))
             {
                 _store.Clear();
@@ -851,11 +852,4 @@ public class YavscApiClient : IYavscApiClient, IAsyncDisposable
             return base.SendAsync(request, cancellationToken);
         }
     }
-}
-
-public sealed class RefreshFailedException : Exception
-{
-    public bool IsPermanent { get; }
-    public RefreshFailedException(string message, bool isPermanent)
-        : base(message) => IsPermanent = isPermanent;
 }
