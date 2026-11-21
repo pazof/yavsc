@@ -606,6 +606,9 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
         Services = services;
         _resources = resources ?? new BlogResourceService();
         Init(settings);
+        ScreenCaptureViewModel = Platform.IsScreenCaptureSupported && services is not null
+            ? services.GetService<ScreenCaptureViewModel>()
+            : null;
     }
 
     partial void OnSearchTextChanged(string value)

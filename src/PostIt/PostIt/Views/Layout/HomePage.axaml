@@ -86,6 +86,11 @@
           Label="Mon abonnement PayPal" />
         <CommandBarButton
           HorizontalAlignment="Center"
+          Command="{Binding OpenScreenCapture}"
+          IsEnabled="{Binding SessionStatus.IsLoggedIn}"
+          Label="Capture d'écran" />
+        <CommandBarButton
+          HorizontalAlignment="Center"
           Command="{Binding OpenAdministration}"
           IsVisible="{Binding SessionStatus.IsAdministrator}"
           Label="Administration" />

@@ -13,6 +13,7 @@ using PostIt.ViewModels.Chat;
 using Yavsc.Abstract.Workflow;
 using Yavsc.Abstract.Models.Messaging;
 using Yavsc.Api.Client;
+using PostIt.ViewModels.Capture;
 
 
 namespace PostIt.ViewModels;
@@ -86,6 +87,13 @@ public class HomePageViewModel : ViewModelBase
                 ?? throw new InvalidOperationException("Page podcasts indisponible.");
             await app.PushPageAsync(vm);
         });
+        OpenScreenCapture = new AsyncRelayCommand(async () =>
+        {
+            var app = Application.Current as App ?? throw new InvalidOperationException("Application indisponible.");
+            var vm = app.ServiceProvider?.GetRequiredService<ScreenCaptureViewModel>()
+                ?? throw new InvalidOperationException("Page capture d'écran indisponible.");
+            await app.PushPageAsync(vm);
+        });
     }
 
 
@@ -105,6 +113,8 @@ public class HomePageViewModel : ViewModelBase
     public IAsyncRelayCommand OpenMyFiles { get; }
     public IAsyncRelayCommand RefreshNotificationsCommand { get; }
     public IAsyncRelayCommand<Notification?> DismissNotificationCommand { get; }
+
+    public IAsyncRelayCommand OpenScreenCapture { get; }
 
     public async Task DismissNotificationAsync(Notification? notification)
     {

@@ -1,0 +1,37 @@
+<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PostIt.ViewModels.Capture"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PostIt.Views.Video.ScreenCaptureView"
+             x:DataType="vm:ScreenCaptureViewModel"
+             >
+             <Design.DataContext>
+                 <vm:ScreenCaptureViewModel />
+             </Design.DataContext>
+             <StackPanel Spacing="8" Margin="12">
+                 <TextBlock Text="Capture d'écran" FontWeight="SemiBold" />
+                 <TextBlock Text="Enregistrement en cours" IsVisible="{Binding IsRecording}" />
+                 <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+                 <TextBox Text="{Binding ScreencastNName}"
+                          PlaceholderText="Nom de la capture"
+                          IsEnabled="{Binding CanConfigure}" />
+                 <ComboBox ItemsSource="{Binding CaptureSources}"
+                           SelectedItem="{Binding SelectedCaptureSource}"
+                           IsEnabled="{Binding CanConfigure}">
+                     <ComboBox.ItemTemplate>
+                         <DataTemplate x:DataType="vm:CaptureSourceOption">
+                             <TextBlock Text="{Binding Label}" />
+                         </DataTemplate>
+                     </ComboBox.ItemTemplate>
+                 </ComboBox>
+                 <CheckBox Content="Inclure l'audio du système"
+                           IsChecked="{Binding CaptureAudio}"
+                           IsEnabled="{Binding CanConfigure}" />
+                 <Button Content="Démarrer / arrêter la capture"
+                         Command="{Binding ToggleRecordingAsync}"
+                         IsEnabled="{Binding !IsBusy}" />
+             </StackPanel>
+
+</ContentPage>

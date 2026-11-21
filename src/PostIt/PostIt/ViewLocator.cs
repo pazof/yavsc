@@ -10,6 +10,8 @@ using PostIt.Views;
 using PostIt.Views.Blogs;
 using PostIt.Views.Chat;
 using PostIt.Views.Commands;
+using PostIt.ViewModels.Capture;
+using PostIt.Views.Video;
 
 namespace PostIt;
 
@@ -41,6 +43,7 @@ public class ViewLocator : IDataTemplate
         var services = app!.ServiceProvider!;
         return data switch
         {
+            ScreenCaptureViewModel => services.GetRequiredService<ScreenCaptureView>(),
             BlogsViewModel => services.GetRequiredService<BlogsPage>(),
             VideoPageViewModel => services.GetRequiredService<VideoPage>(),
             ReplayEditorPageViewModel => services.GetRequiredService<ReplayEditorPage>(),

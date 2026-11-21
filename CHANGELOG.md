@@ -36,6 +36,10 @@
 
 ### Fixed
 
+* [PostIt/Capture] Automatically upload finalized screen recordings as `video/mp4` to `Mes fichiers / screencast`, streaming the multipart file from disk and retaining the local copy if the upload fails.
+
+* [PostIt/Capture] Decode the PipeWire node identifier from the ScreenCast portal `streams` array of `(node id, properties)` structures, let the user choose a full screen, a window or the portal picker, and mux system audio from the default output monitor into the H.264/AAC MP4. Stop GStreamer with SIGINT so the muxer receives EOS and writes a valid `moov` atom.
+
 * [PostIt.Tests] Run every Avalonia UI test in the shared `AvaloniaUiCollection` fixture: replace `[AvaloniaFact]`/`[AvaloniaTheory]` and direct `GetOrStartForAssembly` dispatches, which started a second headless session alongside the fixture's and could hang `PodcastBroadcasterTests`, with `ui.RunAsync` (new synchronous overload). Update contact-preference assertions in `MessagingSessionTests` for the audio-only capabilities the Linux desktop announces.
 
 * [PostIt/Podcasts] Reuse the replay playback controls for live video on desktop and Android, remove the duplicate play/pause button, and retain seeking only for replays. Report resume failures and cover playback controls with targeted tests.

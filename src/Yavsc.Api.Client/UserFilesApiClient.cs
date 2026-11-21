@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -68,6 +69,34 @@ public sealed class UserFilesApiClient
     }
 
     /// <summary>
+    /// Téléverse un fichier depuis le disque sans le charger intégralement
+    /// en mémoire. La fabrique rouvre le flux si une nouvelle tentative
+    /// d'authentification est nécessaire après une réponse 401.
+    /// </summary>
+    public Task<List<FileReceivedDto>> UploadAsync(
+        string subdir,
+        string filePath,
+        string? contentType = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+            throw new ArgumentException("File path is required.", nameof(filePath));
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException("The upload file does not exist.", filePath);
+
+        var path = string.IsNullOrWhiteSpace(subdir)
+            ? PathPrefix
+            : $"{PathPrefix}/{subdir.TrimStart('/')}";
+        var fileName = Path.GetFileName(filePath);
+
+        return _api.CallAsync<List<FileReceivedDto>>(
+            HttpMethod.Post,
+            path,
+            () => CreateMultipartContent(fileName, () => File.OpenRead(filePath), contentType),
+            ct);
+    }
+
+    /// <summary>
     /// Supprime un fichier ou répertoire de l'espace perso
     /// (<c>DELETE fs/{path}</c>).
     /// </summary>
@@ -107,6 +136,19 @@ public sealed class UserFilesApiClient
                 string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType);
             content.Add(fileContent, "file", file.FileName);
         }
+        return content;
+    }
+
+    private static HttpContent CreateMultipartContent(
+        string fileName,
+        Func<Stream> streamFactory,
+        string? contentType)
+    {
+        var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(streamFactory());
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue(
+            string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType);
+        content.Add(fileContent, "file", fileName);
         return content;
     }
 }

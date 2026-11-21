@@ -23,6 +23,7 @@ public class LinuxScreenCaptureService : IScreenCaptureService
 
     private DBusConnection? _dbusConnection;
     private Process? _gstProcess;
+    private Task<string>? _gstErrorOutput;
     private SafeFileHandle? _pipewireFd;
     private CancellationTokenSource? _timerCts;
 
@@ -32,9 +33,13 @@ public class LinuxScreenCaptureService : IScreenCaptureService
     [DllImport("libc", SetLastError = true)]
     private static extern int fcntl(int fd, int cmd, int arg);
 
+    [DllImport("libc", SetLastError = true)]
+    private static extern int kill(int pid, int sig);
+
     private const int F_GETFD = 1;
     private const int F_SETFD = 2;
     private const int FD_CLOEXEC = 1;
+    private const int SIGINT = 2;
 
     public string? LatestRestoreToken { get; private set; }
 
@@ -52,6 +57,8 @@ public class LinuxScreenCaptureService : IScreenCaptureService
     {
         if (IsRecording) throw new InvalidOperationException("Un enregistrement est déjà en cours.");
 
+        LatestRestoreToken = options.RestoreToken;
+
         // 1. Connexion D-Bus avec DBusConnection et DBusAddress
         _dbusConnection = new DBusConnection(DBusAddress.Session!);
         await _dbusConnection.ConnectAsync();
@@ -68,16 +75,19 @@ public class LinuxScreenCaptureService : IScreenCaptureService
             () => CallCreateSessionAsync(createToken, sessionToken),
             cancellationToken
         );
-        if (createResponse.TryGetValue("restore_token", out var tokenVariant))
-        {
-            LatestRestoreToken = tokenVariant.GetString();
-            // Pense à sauvegarder LatestRestoreToken dans tes préférences utilisateur ici !
-        }
-
         string sessionHandle = createResponse["session_handle"].GetString();
 
         // 3. Sélection de la source
-        uint sourceType = options.TargetWindowHandle.HasValue ? 2u : 1u;
+        ScreenCaptureSource effectiveSource = options.TargetWindowHandle.HasValue
+            ? ScreenCaptureSource.Window
+            : options.Source;
+        uint sourceType = effectiveSource switch
+        {
+            ScreenCaptureSource.Screen => 1u,
+            ScreenCaptureSource.Window => 2u,
+            ScreenCaptureSource.Prompt => 3u,
+            _ => throw new ArgumentOutOfRangeException(nameof(options), options.Source, "Source de capture inconnue.")
+        };
         uint cursorMode = options.CaptureCursor ? 2u : 1u;
 
         string selectToken = $"monapp_req_{Guid.NewGuid():N}";
@@ -85,7 +95,12 @@ public class LinuxScreenCaptureService : IScreenCaptureService
 
         await SendPortalRequestAsync(
             expectedSelectPath,
-            () => CallSelectSourcesAsync(sessionHandle, selectToken, sourceType, cursorMode, LatestRestoreToken),
+            () => CallSelectSourcesAsync(
+                sessionHandle,
+                selectToken,
+                sourceType,
+                cursorMode,
+                effectiveSource == ScreenCaptureSource.Screen ? LatestRestoreToken : null),
             cancellationToken
         );
 
@@ -99,11 +114,16 @@ public class LinuxScreenCaptureService : IScreenCaptureService
             cancellationToken
         );
 
-        var streams = startResponse["streams"].GetArray<VariantValue>();
-        if (streams.Length == 0)
+        if (startResponse.TryGetValue("restore_token", out var tokenVariant))
+        {
+            LatestRestoreToken = tokenVariant.GetString();
+        }
+
+        var streams = startResponse["streams"];
+        if (streams.Count == 0)
             throw new OperationCanceledException("Aucune source vidéo sélectionnée.");
 
-        uint pipewireNodeId = streams[0].GetUInt32();
+        uint pipewireNodeId = streams.GetItem(0).GetItem(0).GetUInt32();
 
         // 5. Récupération du File Descriptor PipeWire
 
@@ -112,7 +132,7 @@ public class LinuxScreenCaptureService : IScreenCaptureService
 
         MakeFdInheritable(rawFd); // Indispensable pour que gst-launch-1.0 voie le flux PipeWire
 
-        StartGStreamerPipeline(rawFd, pipewireNodeId, options);
+        await StartGStreamerPipelineAsync(rawFd, pipewireNodeId, options);
 
         IsRecording = true;
         StartDurationTimer();
@@ -131,7 +151,7 @@ public class LinuxScreenCaptureService : IScreenCaptureService
         });
     }
 
-    private void StartGStreamerPipeline(int fd, uint nodeId, CaptureOptions options)
+    private async Task StartGStreamerPipelineAsync(int fd, uint nodeId, CaptureOptions options)
     {
         // Pipeline GStreamer :
         // pipewiresrc lit directement les textures GPU (DMA-BUF)
@@ -143,7 +163,16 @@ public class LinuxScreenCaptureService : IScreenCaptureService
 
         string args = $"-e pipewiresrc fd={fd} path={nodeId} do-timestamp=true keepalive-time=1000 ! " +
                       $"videorate ! video/x-raw,framerate={options.Fps}/1 ! " +
-                      $"{encoder} ! h264parse ! mp4mux ! filesink location=\"{options.OutputFilePath}\"";
+                      $"{encoder} ! h264parse ! queue ! mp4mux name=mux ! " +
+                      $"filesink location=\"{EscapeGStreamerString(options.OutputFilePath)}\"";
+
+        if (options.CaptureAudio)
+        {
+            string audioDevice = await GetDefaultAudioMonitorAsync();
+            args += $" pulsesrc device=\"{EscapeGStreamerString(audioDevice)}\" do-timestamp=true ! " +
+                    "queue ! audioconvert ! audioresample ! avenc_aac bitrate=192000 ! " +
+                    "aacparse ! queue ! mux.";
+        }
 
         _gstProcess = new Process
         {
@@ -158,7 +187,61 @@ public class LinuxScreenCaptureService : IScreenCaptureService
         };
 
         _gstProcess.Start();
+        _gstErrorOutput = _gstProcess.StandardError.ReadToEndAsync();
     }
+
+    private static string EscapeGStreamerString(string value) =>
+        value.Replace("\\", "\\\\", StringComparison.Ordinal)
+             .Replace("\"", "\\\"", StringComparison.Ordinal);
+
+    private static async Task<string> GetDefaultAudioMonitorAsync()
+    {
+        Process process = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "pactl",
+                Arguments = "get-default-sink",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            }
+        };
+
+        try
+        {
+            process.Start();
+            Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
+            Task<string> errorTask = process.StandardError.ReadToEndAsync();
+            await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(3));
+
+            string output = (await outputTask).Trim();
+            if (process.ExitCode != 0 || string.IsNullOrWhiteSpace(output))
+            {
+                string error = (await errorTask).Trim();
+                throw new InvalidOperationException(
+                    $"Impossible de déterminer la sortie audio par défaut.{FormatProcessError(error)}");
+            }
+
+            return output + ".monitor";
+        }
+        catch (TimeoutException)
+        {
+            if (!process.HasExited)
+            {
+                process.Kill(entireProcessTree: true);
+                await process.WaitForExitAsync();
+            }
+
+            throw new InvalidOperationException("La détection de la sortie audio a expiré.");
+        }
+        finally
+        {
+            process.Dispose();
+        }
+    }
+
     private static bool HasVaapiSupport()
     {
         try
@@ -200,10 +283,71 @@ public class LinuxScreenCaptureService : IScreenCaptureService
 
     public async Task StopRecordingAsync()
     {
-        if (!IsRecording) return;
+        if (!IsRecording && _gstProcess is null) return;
 
         IsRecording = false;
+        _timerCts?.Cancel();
+        _timerCts?.Dispose();
+        _timerCts = null;
+
+        Process? process = _gstProcess;
+        if (process is null) return;
+
+        string errorOutput;
+        int exitCode;
+        try
+        {
+            if (!process.HasExited && kill(process.Id, SIGINT) != 0)
+            {
+                throw new InvalidOperationException(
+                    $"Impossible d'envoyer SIGINT à GStreamer (errno {Marshal.GetLastPInvokeError()}).");
+            }
+
+            await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(10));
+            errorOutput = _gstErrorOutput is null ? string.Empty : await _gstErrorOutput;
+            exitCode = process.ExitCode;
+        }
+        catch (TimeoutException)
+        {
+            if (!process.HasExited)
+            {
+                process.Kill(entireProcessTree: true);
+                await process.WaitForExitAsync();
+            }
+
+            throw new InvalidOperationException(
+                "GStreamer n'a pas finalisé le fichier MP4 dans les dix secondes.");
+        }
+        catch
+        {
+            if (!process.HasExited)
+            {
+                process.Kill(entireProcessTree: true);
+                await process.WaitForExitAsync();
+            }
+
+            throw;
+        }
+        finally
+        {
+            _pipewireFd?.Dispose();
+            _pipewireFd = null;
+            _dbusConnection?.Dispose();
+            _dbusConnection = null;
+            process.Dispose();
+            _gstProcess = null;
+            _gstErrorOutput = null;
+        }
+
+        if (exitCode != 0)
+        {
+            throw new InvalidOperationException(
+                $"GStreamer s'est arrêté avec le code {exitCode}.{FormatProcessError(errorOutput)}");
+        }
     }
+
+    private static string FormatProcessError(string errorOutput) =>
+        string.IsNullOrWhiteSpace(errorOutput) ? string.Empty : $" Détail : {errorOutput.Trim()}";
 
     private async Task<Dictionary<string, VariantValue>> SendPortalRequestAsync(
         string expectedRequestPath,
@@ -339,8 +483,23 @@ public class LinuxScreenCaptureService : IScreenCaptureService
     public void Dispose()
     {
         _timerCts?.Cancel();
-        _gstProcess?.Kill();
-        _gstProcess?.Dispose();
+        _timerCts?.Dispose();
+
+        if (_gstProcess is not null)
+        {
+            if (!_gstProcess.HasExited)
+            {
+                kill(_gstProcess.Id, SIGINT);
+                if (!_gstProcess.WaitForExit(10_000))
+                {
+                    _gstProcess.Kill(entireProcessTree: true);
+                    _gstProcess.WaitForExit();
+                }
+            }
+
+            _gstProcess.Dispose();
+        }
+
         _pipewireFd?.Dispose();
         _dbusConnection?.Dispose();
     }

@@ -5,6 +5,9 @@
     xmlns:vm="using:PostIt.ViewModels"
     xmlns:abs="using:Yavsc.Abstract.Streaming"
     x:DataType="vm:ReplayEditorPageViewModel">
+    <Design.DataContext>
+        <vm:ReplayEditorPageViewModel />
+    </Design.DataContext>
     <Grid x:Name="EditorGrid" ColumnDefinitions="2*,*" RowDefinitions="Auto,*,Auto,Auto" Margin="16" ColumnSpacing="16" RowSpacing="8">
         <TextBlock x:Name="EditorTitle" Grid.ColumnSpan="2" Text="{Binding Title}" FontSize="22" TextWrapping="Wrap" />
         <Border x:Name="VideoBorder" Grid.Row="1" Background="Black" BorderThickness="1" BorderBrush="Green" MinHeight="240">

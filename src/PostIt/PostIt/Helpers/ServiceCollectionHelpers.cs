@@ -2,11 +2,13 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using PostIt.Services;
 using PostIt.ViewModels;
+using PostIt.ViewModels.Capture;
 using PostIt.ViewModels.Chat;
 using PostIt.Views;
 using PostIt.Views.Blogs;
 using PostIt.Views.Chat;
 using PostIt.Views.Commands;
+using PostIt.Views.Video;
 using Yavsc.Api.Client;
 
 namespace PostIt.Helpers;
@@ -137,7 +139,8 @@ public static class ServiceCollectionHelpers
         services.AddTransient<ContactsPageViewModel>();
         services.AddSingleton<ActivitiesPageViewModel>();
         services.AddTransient<SelectableHairPrestationItem>();
-
+        services.AddSingleton<ScreenCaptureViewModel>();
+        services.AddSingleton<ScreenCaptureView>();
         // Dialogs (modal-light pages): the ViewLocator resolves
         // them when a caller pushes a PostAclDialogViewModel or
         // AddCircleMemberDialogViewModel via App.PushPageAsync.
