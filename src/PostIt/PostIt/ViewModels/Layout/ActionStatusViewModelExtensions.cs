@@ -37,7 +37,7 @@ public static class ActionStatusViewModelExtensions
         if (App.Current is App app && app.ServiceProvider is { } serviceProvider)
         {
             var notificationService = serviceProvider.GetRequiredService<NotificationService>();
-            notificationService.Show(normalizedMessage, severity);
+            notificationService.Post(normalizedMessage, severity);
         }
     }
 }

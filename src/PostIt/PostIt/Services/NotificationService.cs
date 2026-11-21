@@ -16,7 +16,7 @@ public sealed class NotificationService
     public void Post(string message, StatusSeverity severity = StatusSeverity.Info, string? actionLabel = null, Action? action = null)
         => Avalonia.Threading.Dispatcher.UIThread.Post(() => Show(message, severity, actionLabel, action));
 
-    public void Show(string message, StatusSeverity severity = StatusSeverity.Info, string? actionLabel = null, Action? action = null)
+    private void Show(string message, StatusSeverity severity = StatusSeverity.Info, string? actionLabel = null, Action? action = null)
         => NotificationRequested?.Invoke(this, new NotificationRequest(message, severity, actionLabel, action));
 
     public void Hide()
