@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using PostIt.Models;
 using PostIt.Services;
 
@@ -34,10 +33,6 @@ public static class ActionStatusViewModelExtensions
         viewModel.StatusMessage = normalizedMessage;
         viewModel.ActionStatus = statusNotice;
 
-        if (App.Current is App app && app.ServiceProvider is { } serviceProvider)
-        {
-            var notificationService = serviceProvider.GetRequiredService<NotificationService>();
-            notificationService.Post(normalizedMessage, severity);
-        }
+        NotificationService.Instance.Post(normalizedMessage, severity);
     }
 }

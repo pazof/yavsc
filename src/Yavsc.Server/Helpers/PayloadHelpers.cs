@@ -1,4 +1,5 @@
 using Yavsc.Models.Blog;
+using Yavsc.Blogspot;
 
 public static class PayloadHelpers
 {
@@ -14,6 +15,7 @@ public static class PayloadHelpers
             post.DateModified,
             post.UserModified,
             post.AuthorId,
+            Author = ((IBlogPost)post).Author,
             ACL = post.GetACL(),
             Tags = post.GetTags(),
             post.IsPublished

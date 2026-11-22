@@ -156,7 +156,7 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     [ObservableProperty]
     public partial string? ReaderBaseUrl { get; private set; }
 
-    public string ReaderArticle => ReaderBaseUrl is not null ? SelectedPost?.Article ?? string.Empty : string.Empty;
+    public string ReaderArticle => SelectedPost?.Article ?? string.Empty;
     public string ReaderAuthor => SelectedPost?.Author?.UserName ?? string.Empty;
     public string ReaderTitle => SelectedPost?.Title ?? string.Empty;
     public DateTime? ReaderDateModified => SelectedPost?.DateModified;
@@ -647,15 +647,17 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
     private void UpdateReader()
     {
         string? baseUrl = null;
-        try
+        if (SelectedPost is not null && !string.IsNullOrWhiteSpace(ReaderAuthor))
         {
-            if (SelectedPost is not null)
+            try
+            {
                 baseUrl = BlogResourceService.GetUserBaseUri(
                     Settings.Authentication.Authority, ReaderAuthor).AbsoluteUri;
-        }
-        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or UriFormatException)
-        {
-            this.SetErrorStatus($"Impossible de résoudre les ressources du billet : {ex.Message}");
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or UriFormatException)
+            {
+                this.SetErrorStatus($"Impossible de résoudre les ressources du billet : {ex.Message}");
+            }
         }
         ReaderBaseUrl = baseUrl;
         OnPropertyChanged(nameof(SelectedPost));
@@ -719,7 +721,15 @@ public partial class BlogsViewModel : ViewModelBase, IActionStatusViewModel
                 .OrderByDescending(p => p.DateModified);
 
         var selection = SelectedPost;
-        var visiblePosts = filtered.Select(post => post.Id == selection?.Id ? selection : post).ToArray();
+        if (selection is { Id: > 0, Author: null })
+        {
+            var hydratedSelection = Posts.FirstOrDefault(post =>
+                post.Id == selection.Id && post.Author is not null);
+            if (hydratedSelection is not null)
+                selection = hydratedSelection;
+        }
+
+        var visiblePosts = filtered.Select(post => post.Id == selection?.Id ? selection! : post).ToArray();
         _preserveDraft = true;
         try
         {

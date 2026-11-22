@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using PostIt.Models;
 using Yavsc.Blogspot;
 using Yavsc.Api.Client;
 using PostIt.Services;
@@ -100,6 +101,31 @@ public class PostItViewModelTests(AvaloniaUiFixture ui)
         Assert.Single(vm.DraftAttachments);
         Assert.True(vm.IsDraftModified);
         Assert.False(vm.IsBusy);
+    }
+
+    [Fact]
+    public async Task Creating_post_without_author_keeps_article_readable_and_success_status()
+    {
+        var recorder = new CallRecorder();
+        var vm = new BlogsViewModel(new BlogApiClient(new RecordingYavscApiClient(recorder),
+            "https://blogs.example.test/api/v1/"),
+            new Settings
+            {
+                Authentication = new AuthenticationSettings
+                {
+                    Authority = "https://org.example.test"
+                }
+            });
+        vm.DraftTitle = "Nouveau billet";
+        vm.DraftArticle = "Contenu lisible.";
+
+        await vm.SaveAsync();
+
+        Assert.NotNull(vm.SelectedPost);
+        Assert.Equal("Contenu lisible.", vm.ReaderArticle);
+        Assert.Null(vm.ReaderBaseUrl);
+        Assert.Equal(StatusSeverity.Info, vm.ActionStatus.Severity);
+        Assert.Equal("Billet 42 créé.", vm.StatusMessage);
     }
 
     [Fact]

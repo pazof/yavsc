@@ -191,6 +191,8 @@ public sealed class BlogApiTests : IClassFixture<BlogsWebServerFixture>
         );
         Assert.NotNull(created);
         Assert.Equal("tester", created!.AuthorId);
+        Assert.NotNull(created.Author);
+        Assert.Equal("tester", created.Author.UserName);
 
         var listResponse = await http.GetAsync(_fixture.BlogSpotUrl(),
         TestContext.Current.CancellationToken);

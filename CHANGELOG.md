@@ -36,6 +36,8 @@
 
 ### Fixed
 
+* [PostIt/Blogs] Keep a newly created post readable when its creation response temporarily omits author details, and include the author in server-side create/detail payloads so relative resource URLs can be resolved after save.
+
 * [PostIt/Capture] Automatically upload finalized screen recordings as `video/mp4` to `Mes fichiers / screencast`, streaming the multipart file from disk and retaining the local copy if the upload fails.
 
 * [PostIt/Capture] Decode the PipeWire node identifier from the ScreenCast portal `streams` array of `(node id, properties)` structures, let the user choose a full screen, a window or the portal picker, and mux system audio from the default output monitor into the H.264/AAC MP4. Stop GStreamer with SIGINT so the muxer receives EOS and writes a valid `moov` atom.

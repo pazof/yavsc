@@ -110,6 +110,7 @@ public class BlogSpotService
         // Sauvegarder le post d'abord pour obtenir son ID
         // Le créateur vient de l'authentification, donc on ne le prend pas du post
         post.AuthorId = userId;
+        post.Author = _context.Users.Single(u => u.Id == userId);
         _context.BlogSpot.Add(post);
         _context.SaveChanges(userId);
         // A freshly created post has no BlogSpotPublication row,
