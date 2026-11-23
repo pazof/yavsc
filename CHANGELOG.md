@@ -36,6 +36,8 @@
 
 ### Fixed
 
+* [Yavsc.Api/Tests] Preserve the shared SQLite schema while resetting API integration-test data, preventing hosted workers from observing missing `LiveFlow` tables during test-host shutdown.
+
 * [PostIt/Blogs] Keep a newly created post readable when its creation response temporarily omits author details, and include the author in server-side create/detail payloads so relative resource URLs can be resolved after save.
 
 * [PostIt/Capture] Automatically upload finalized screen recordings as `video/mp4` to `Mes fichiers / screencast`, streaming the multipart file from disk and retaining the local copy if the upload fails.

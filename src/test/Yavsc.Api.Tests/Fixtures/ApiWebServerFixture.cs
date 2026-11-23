@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
@@ -377,7 +376,10 @@ public sealed class ApiWebServerFixture : WebHostFixture
             return;
         }
 
-        // EnsureDeleted cannot clear a shared in-memory database kept alive by the anchor.
+        // Keep the schema in place while the hosted workers are running. Dropping and
+        // recreating every table exposes a race where a worker queries LiveFlow
+        // between those operations and faults; Host.StopAsync later rethrows that
+        // fault when the shared test host shuts down.
         db.Database.OpenConnection();
         try
         {
@@ -397,9 +399,11 @@ public sealed class ApiWebServerFixture : WebHostFixture
                 command.Transaction = transaction.GetDbTransaction();
                 foreach (var table in tables)
                 {
-                    command.CommandText = $"DROP TABLE \"{table.Replace("\"", "\"\"")}\";";
+                    command.CommandText = $"DELETE FROM \"{table.Replace("\"", "\"\"")}\";";
                     command.ExecuteNonQuery();
                 }
+                command.CommandText = "DELETE FROM sqlite_sequence;";
+                command.ExecuteNonQuery();
                 transaction.Commit();
             }
             finally
@@ -413,8 +417,6 @@ public sealed class ApiWebServerFixture : WebHostFixture
         {
             db.Database.CloseConnection();
         }
-        // SQLite retains sqlite_sequence, so EnsureCreated would incorrectly see an existing schema.
-        db.GetService<IRelationalDatabaseCreator>().CreateTables();
     }
 
     public void ResetAndSeedRdvQueryGraph()
