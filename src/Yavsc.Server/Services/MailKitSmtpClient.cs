@@ -1,4 +1,5 @@
 using MailKit.Security;
+using MailKit.Net;
 using MimeKit;
 using Yavsc.Interfaces;
 
@@ -13,10 +14,12 @@ namespace Yavsc.Services
     public sealed class MailKitSmtpClient : ISmtpClient
     {
         private readonly MailKit.Net.Smtp.SmtpClient _client;
+        private readonly FormatOptions _Options;
 
         public MailKitSmtpClient()
         {
             _client = new MailKit.Net.Smtp.SmtpClient();
+            _Options = new FormatOptions();
         }
 
         public int Timeout
@@ -37,7 +40,8 @@ namespace Yavsc.Services
 
         public Task SendAsync(MimeMessage message, CancellationToken cancellationToken = default)
         {
-            return _client.SendAsync(message, cancellationToken);
+            MailKit.SendRequest request = new MailKit.SendRequest(message);
+            return _client.SendAsync(_Options, request, cancellationToken);
         }
 
         public void Disconnect(bool quit)

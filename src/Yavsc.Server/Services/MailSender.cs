@@ -120,8 +120,9 @@ namespace Yavsc.Services
                 };
 
                 msg.Subject = subject;
+                var domain = new Uri(siteSettings.Authority).Host;
                 msg.MessageId = MimeKit.Utils.MimeUtils.GenerateMessageId(
-                    siteSettings.Authority
+                    domain
                 );
                 using Yavsc.Interfaces.ISmtpClient sc = _smtpClientFactory.CreateClient();
                 {

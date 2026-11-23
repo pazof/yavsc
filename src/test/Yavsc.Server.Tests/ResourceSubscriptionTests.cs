@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 using System.Text.Json;
 using Yavsc.Models;
 using Yavsc.Models.Payment;
@@ -86,11 +87,12 @@ public sealed class ResourceSubscriptionTests
         => Assert.Equal(grant, ResourceUsageCredit.MonthlyGrant(gross, previous, allowance));
 
     [Theory]
-    [InlineData("Premium", 2.4, 5)]
-    [InlineData("Discovery", 1.2, 2)]
+    [InlineData("Premium", "2.4", 5)]
+    [InlineData("Discovery", "1.2", 2)]
     public async Task Paid_disk_quota_uses_standard_reference_and_survives_cancellation_until_anniversary(
-        string pack, decimal amount, long multiplier)
+        string pack, string amountText, long multiplier)
     {
+        var amount = decimal.Parse(amountText, NumberStyles.Number, CultureInfo.InvariantCulture);
         var clock = new Clock();
         var gateway = new Gateway();
         using var provider = Provider(clock, gateway);
@@ -120,12 +122,13 @@ public sealed class ResourceSubscriptionTests
     }
 
     [Theory]
-    [InlineData("Discovery", "PENDING", 1.2)]
-    [InlineData("Discovery", "FAILED", 1.2)]
-    [InlineData("Premium", "PENDING", 2.4)]
-    [InlineData("Premium", "FAILED", 2.4)]
-    public async Task Unpaid_subscriptions_do_not_grant_disk_bonus(string pack, string state, decimal amount)
+    [InlineData("Discovery", "PENDING", "1.2")]
+    [InlineData("Discovery", "FAILED", "1.2")]
+    [InlineData("Premium", "PENDING", "2.4")]
+    [InlineData("Premium", "FAILED", "2.4")]
+    public async Task Unpaid_subscriptions_do_not_grant_disk_bonus(string pack, string state, string amountText)
     {
+        var amount = decimal.Parse(amountText, NumberStyles.Number, CultureInfo.InvariantCulture);
         var clock = new Clock();
         var gateway = new Gateway();
         using var provider = Provider(clock, gateway);
@@ -141,10 +144,11 @@ public sealed class ResourceSubscriptionTests
     }
 
     [Theory]
-    [InlineData("Premium", 2.4)]
-    [InlineData("Discovery", 1.2)]
-    public async Task Refund_revokes_disk_bonus_but_not_another_paid_period(string pack, decimal amount)
+    [InlineData("Premium", "2.4")]
+    [InlineData("Discovery", "1.2")]
+    public async Task Refund_revokes_disk_bonus_but_not_another_paid_period(string pack, string amountText)
     {
+        var amount = decimal.Parse(amountText, NumberStyles.Number, CultureInfo.InvariantCulture);
         var clock = new Clock();
         var gateway = new Gateway();
         using var provider = Provider(clock, gateway);
@@ -190,11 +194,12 @@ public sealed class ResourceSubscriptionTests
     }
 
     [Theory]
-    [InlineData("Discovery", 1.2, 1000, 3000)]
-    [InlineData("Premium", 2.4, 3000, 1000)]
+    [InlineData("Discovery", "1.2", 1000, 3000)]
+    [InlineData("Premium", "2.4", 3000, 1000)]
     public async Task Current_backend_defaults_give_one_or_three_thousand_monthly_points(
-        string pack, decimal amount, decimal monthlyPoints, decimal remainingUsage)
+        string pack, string amountText, decimal monthlyPoints, decimal remainingUsage)
     {
+        var amount = decimal.Parse(amountText, NumberStyles.Number, CultureInfo.InvariantCulture);
         var clock = new Clock();
         var gateway = new Gateway();
         using var provider = Provider(clock, gateway, useBackendDefaults: true);
