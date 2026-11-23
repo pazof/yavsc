@@ -24,12 +24,19 @@ IClassFixture<MappedClaimsBlogsWebServerFixture>
         _fixture = fixture;
     }
 
-    private void ResetDatabase()
+    private void ResetDatabase(string authenticatedUserId)
     {
         using var scope = _fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         db.Database.EnsureDeleted();
         db.Database.EnsureCreated();
+        db.Users.Add(new ApplicationUser
+        {
+            Id = authenticatedUserId,
+            UserName = authenticatedUserId,
+            Email = $"{authenticatedUserId}@example.test"
+        });
+        db.SaveChanges();
     }
 
     private HttpClient NewClient(string subject = "tester")
@@ -69,7 +76,7 @@ IClassFixture<MappedClaimsBlogsWebServerFixture>
     [Fact]
     public async Task PostBlog_with_mapped_sub_claim_sets_AuthorId_from_authenticated_user()
     {
-        ResetDatabase();
+        ResetDatabase("mapped-user");
         using var http = NewClient(subject: "mapped-user");
 
         var draft = new BlogPost
@@ -91,12 +98,13 @@ IClassFixture<MappedClaimsBlogsWebServerFixture>
         var created = await response.Content.ReadFromJsonAsync<BlogPost>(TestContext.Current.CancellationToken);
         Assert.NotNull(created);
         Assert.Equal("mapped-user", created!.AuthorId);
+        Assert.Equal("mapped-user", created.Author?.UserName);
     }
 
     [Fact]
     public async Task PutBlog_with_mapped_sub_claim_allows_owner_to_update()
     {
-        ResetDatabase();
+        ResetDatabase("mapped-owner");
         using var http = NewClient(subject: "mapped-owner");
 
         var createdResponse = await http.PostAsJsonAsync(_fixture.BlogSpotUrl(), new BlogPost
@@ -129,7 +137,7 @@ IClassFixture<MappedClaimsBlogsWebServerFixture>
     [Fact]
     public async Task PutBlog_with_mapped_sub_claim_rejects_non_owner()
     {
-        ResetDatabase();
+        ResetDatabase("mapped-owner");
         using var ownerHttp = NewClient(subject: "mapped-owner");
 
         var createdResponse = await ownerHttp.PostAsJsonAsync(_fixture.BlogSpotUrl(), new BlogPost
