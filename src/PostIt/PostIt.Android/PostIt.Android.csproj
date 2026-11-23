@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net11.0-android</TargetFramework>
-    <SupportedOSPlatformVersion>23</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>24.0</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <ApplicationId>fr.pschneider.postit</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
